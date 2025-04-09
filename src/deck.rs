@@ -6,7 +6,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::card_ids::CardId;
 use crate::database::get_card_by_enum;
-use crate::types::{Card, EnergyType, BASIC_STAGE};
+use crate::types::{Card, EnergyType};
 
 /// Represents a deck of cards.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -69,19 +69,15 @@ impl Deck {
             });
         }
 
-        // Validate Deck
-        if cards.len() != 20 {
-            return Err("Deck should have 20 cards.".to_string());
-        }
-        let basic = cards.iter().filter(|x| is_basic(x)).count();
-        if basic < 1 {
-            return Err("Deck should have at least 1 basic Pokémon.".to_string());
-        }
-
         Ok(Self {
             cards,
             energy_types: energy_types.into_iter().collect(),
         })
+    }
+
+    pub fn is_valid(&self) -> bool {
+        let basic = self.cards.iter().filter(|x| x.is_basic()).count();
+        self.cards.len() == 20 && basic >= 1
     }
 
     /// Draws a card from the deck.
@@ -142,10 +138,7 @@ impl Card {
 }
 
 pub fn is_basic(card: &Card) -> bool {
-    match card {
-        Card::Pokemon(pokemon_card) => pokemon_card.stage == BASIC_STAGE,
-        _ => false,
-    }
+    card.is_basic()
 }
 
 #[cfg(test)]

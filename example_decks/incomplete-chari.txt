@@ -1,0 +1,10 @@
+Energy: Fire
+2 Charmander A1 33
+2 Charmeleon A1 34
+2 Charizard ex A1 36
+2 Moltres ex A1 47
+2 Sabrina A1 225
+2 Leaf A1a 68
+2 Cyrus A2 150
+2 Poke Ball P-A 5
+2 Professor's Research P-A 7

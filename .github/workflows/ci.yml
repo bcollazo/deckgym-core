@@ -34,10 +34,13 @@ jobs:
         run: cargo test
 
       - name: Run example 1
-        run: RUST_LOG=debug cargo run --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r
+        run: cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
 
       - name: Run example 2
-        run: RUST_LOG=warn cargo run --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 --players r,r
+        run: cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vv
+
+      - name: Run example 3
+        run: cargo run optimize example_decks/incomplete-chari.txt A2147,A2148 example_decks/ --num 10 --players e,e -v
 
       - name: Generate card_ids.rs
         run: cargo run --bin card_enum_generator > tmp.rs && mv tmp.rs src/card_ids.rs && cargo fmt

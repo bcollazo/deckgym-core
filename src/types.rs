@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-use crate::tool_ids::ToolId;
+use crate::{card_ids::CardId, tool_ids::ToolId};
 
 /// Represents the type of energy.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
@@ -152,7 +152,7 @@ impl Card {
         // A pokemon is EX if after splitting by spaces in the name, the last word is "EX"
         match self {
             Card::Pokemon(pokemon_card) => {
-                pokemon_card.name.to_lowercase().split(' ').last() == Some("ex")
+                pokemon_card.name.to_lowercase().split(' ').next_back() == Some("ex")
             }
             _ => false,
         }
@@ -176,6 +176,17 @@ impl Card {
         match self {
             Card::Pokemon(pokemon_card) => Some(pokemon_card.energy_type),
             _ => None,
+        }
+    }
+
+    pub fn get_card_id(&self) -> CardId {
+        CardId::from_card_id(self.get_id().as_str()).expect("Card ID should be valid")
+    }
+
+    pub fn is_basic(&self) -> bool {
+        match self {
+            Card::Pokemon(pokemon_card) => pokemon_card.stage == BASIC_STAGE,
+            _ => false,
         }
     }
 }
@@ -224,7 +235,7 @@ impl PlayedCard {
 
     pub(crate) fn attach_energy(&mut self, energy: &EnergyType, amount: u8) {
         self.attached_energy
-            .extend(std::iter::repeat(*energy).take(amount as usize));
+            .extend(std::iter::repeat_n(*energy, amount as usize));
     }
 
     // Discard 1 of energy type

@@ -61,7 +61,7 @@ fn print_enums(
     println!();
     println!("use serde::{{Deserialize, Serialize}};");
     println!();
-    println!("#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]");
+    println!("#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]");
     println!("pub enum CardId {{");
     for (name, _) in card_map.iter() {
         println!("    {},", name);

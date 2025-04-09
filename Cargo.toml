@@ -2,6 +2,8 @@
 name = "deckgym"
 version = "0.1.0"
 edition = "2021"
+default-run = "deckgym"
+description = "A high-performance Rust library for simulating Pokémon TCG Pocket games."
 
 [dependencies]
 rand = "0.8"

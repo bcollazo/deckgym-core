@@ -3,7 +3,6 @@ use rand::rngs::StdRng;
 
 use crate::{
     card_ids::CardId,
-    deck::is_basic,
     state::GameOutcome,
     tool_ids::ToolId,
     types::{Card, EnergyType, TrainerCard},
@@ -119,7 +118,7 @@ fn pokeball_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mut
     let num_basic_in_deck = state.decks[acting_player]
         .cards
         .iter()
-        .filter(|x| is_basic(x))
+        .filter(|x| x.is_basic())
         .count();
     if num_basic_in_deck == 0 {
         deterministic({
@@ -139,7 +138,7 @@ fn pokeball_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mut
                     let card = state.decks[action.actor]
                         .cards
                         .iter()
-                        .filter(|x| is_basic(x))
+                        .filter(|x| x.is_basic())
                         .nth(i)
                         .cloned()
                         .expect("Should be a basic card");
@@ -251,7 +250,7 @@ fn professor_oak_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 fn mythical_slab_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Look at the top card of your deck. If that card is a Psychic Pokemon,\n        put it in your hand. If it is not a Psychic Pokemon, put it on the\n        bottom of your deck.
     if let Some(card) = state.decks[action.actor].cards.first() {
-        if is_basic(card) {
+        if card.is_basic() {
             state.hands[action.actor].push(card.clone());
             state.decks[action.actor].cards.remove(0);
         } else {

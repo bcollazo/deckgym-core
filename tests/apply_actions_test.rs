@@ -3,7 +3,6 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    deck::is_basic,
     generate_possible_actions,
     types::{Card, EnergyType},
     Game,
@@ -18,13 +17,17 @@ fn test_initial_build_phase() {
 
     // Both players should have an active pokemon and are basic
     assert!(state.in_play_pokemon[0][0].is_some());
-    assert!(is_basic(
-        &state.in_play_pokemon[0][0].as_ref().unwrap().card
-    ));
+    assert!(&state.in_play_pokemon[0][0]
+        .as_ref()
+        .unwrap()
+        .card
+        .is_basic());
     assert!(state.in_play_pokemon[1][0].is_some());
-    assert!(is_basic(
-        &state.in_play_pokemon[1][0].as_ref().unwrap().card
-    ));
+    assert!(&state.in_play_pokemon[1][0]
+        .as_ref()
+        .unwrap()
+        .card
+        .is_basic());
 
     // No Supporter cards should have been played and thus in discard pile
     assert!(state.discard_piles[0].is_empty());

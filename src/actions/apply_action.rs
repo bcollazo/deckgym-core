@@ -79,7 +79,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                     .as_mut()
                     .expect("Pokemon should be there if attaching energy to it")
                     .attached_energy
-                    .extend(std::iter::repeat(*energy).take(*amount as usize));
+                    .extend(std::iter::repeat_n(*energy, *amount as usize));
             }
             if *is_turn_energy {
                 state.current_energy = None;

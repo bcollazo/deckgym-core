@@ -15,7 +15,7 @@ The CLI runs simulations between two decks in DeckGym Format. To create these fi
 We already provide several example decks in the repo you can use to get started. For example, to face off a VenusaurEx-ExeggutorEx deck with a Weezing-Arbok deck 1,000 times, run:
 
 ```bash
-RUST_LOG=info cargo run --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
 ```
 
 ## Contributing
@@ -71,8 +71,10 @@ cargo bench
 **Running Main Script**
 
 ```bash
-RUST_LOG=debug cargo run --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r
-RUST_LOG=warn cargo run --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 --players r,r
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 --players r,r
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vv
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vvvv
+cargo run optimize example_decks/incomplete-chari.txt A2147,A2148 example_decks/ --num 10 --players e,e -v
 ```
 
 **Generating database.rs**
@@ -89,5 +91,5 @@ cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/data
 
 ```
 cargo install flamegraph
-sudo RUST_LOG=warn cargo flamegraph --dev --bin deckgym -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 100 && open flamegraph.svg
+sudo cargo flamegraph --root --dev -- simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 && open flamegraph.svg
 ```
