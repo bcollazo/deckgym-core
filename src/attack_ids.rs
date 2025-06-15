@@ -66,6 +66,13 @@ pub enum AttackId {
     A2030HeatRotomHeatBreath,
     A2039FloatzelJetScrew,
     A2126EeveeQuickAttack,
+    // A2 Multiple coin flip attacks
+    A2084GliscorAcrobatics,
+    A2098SneaselDoubleScratch,
+    A2106DrapionCrossPoison,
+    A2118ProbopassTripleNose,
+    A2131AmbipomDoubleHit,
+    A2141ChatotFuryAttack,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -174,6 +181,14 @@ lazy_static::lazy_static! {
         m.insert(("A2 039", 0), AttackId::A2039FloatzelJetScrew);
         m.insert(("A2 126", 0), AttackId::A2126EeveeQuickAttack);
         m.insert(("A2 158", 0), AttackId::A2019CarnivineFlop); // Same attack as A2 019
+        
+        // A2 Multiple coin flip attacks
+        m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
+        m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A2 106", 0), AttackId::A2106DrapionCrossPoison);
+        m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
+        m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
+        m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
 
         // A2a
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);

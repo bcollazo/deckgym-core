@@ -180,6 +180,41 @@ fn forecast_effect_attack(
         AttackId::A2126EeveeQuickAttack => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 20])
         }
+        // A2 Multiple coin flip attacks
+        AttackId::A2084GliscorAcrobatics => {
+            // 2 coins, 20 damage per heads: 0-40 damage
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
+        AttackId::A2098SneaselDoubleScratch => {
+            // 2 coins, 20 damage per heads: 0-40 damage
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
+        AttackId::A2106DrapionCrossPoison => {
+            // 4 coins, 40 damage per heads, poison if at least 2 heads
+            use crate::actions::mutations::{active_damage_effect_mutation, build_status_effect};
+            use crate::types::StatusCondition;
+            let probabilities = vec![0.0625, 0.25, 0.375, 0.25, 0.0625];
+            let mutations = vec![
+                active_damage_mutation(0),    // 0 heads - no poison
+                active_damage_mutation(40),   // 1 heads - no poison
+                active_damage_effect_mutation(80, build_status_effect(StatusCondition::Poisoned)),  // 2 heads - poison
+                active_damage_effect_mutation(120, build_status_effect(StatusCondition::Poisoned)), // 3 heads - poison
+                active_damage_effect_mutation(160, build_status_effect(StatusCondition::Poisoned)), // 4 heads - poison
+            ];
+            (probabilities, mutations)
+        }
+        AttackId::A2118ProbopassTripleNose => {
+            // 3 coins, 50 damage per heads: 0-150 damage
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
+        }
+        AttackId::A2131AmbipomDoubleHit => {
+            // 2 coins, 40 damage per heads: 0-80 damage
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
+        }
+        AttackId::A2141ChatotFuryAttack => {
+            // 3 coins, 20 damage per heads: 0-60 damage
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
+        }
     }
 }
 
