@@ -81,6 +81,9 @@ pub enum AttackId {
     // A2 Probabilistic Damage Attacks - Flip Until Tails
     A2115WormadamIronHead,
     A2125LickilickyExLickingFury,
+    // A2 Probabilistic Damage Attacks - Variable Coin Count
+    A2107CroagunkGroupBeatdown,
+    A2108ToxicroakGroupBeatdown,
     // A2a Probabilistic Damage Attacks
     A2a001HeracrossSingleHornThrow,
     A2a017WhiscashThrash,
@@ -224,6 +227,9 @@ lazy_static::lazy_static! {
         m.insert(("A2 125", 0), AttackId::A2125LickilickyExLickingFury);
         m.insert(("A2 189", 0), AttackId::A2125LickilickyExLickingFury); // Duplicate card
         m.insert(("A2 203", 0), AttackId::A2125LickilickyExLickingFury); // Duplicate card
+        m.insert(("A2 107", 0), AttackId::A2107CroagunkGroupBeatdown);
+        m.insert(("A2 173", 0), AttackId::A2107CroagunkGroupBeatdown); // Duplicate card
+        m.insert(("A2 108", 0), AttackId::A2108ToxicroakGroupBeatdown);
 
         // A2a
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);

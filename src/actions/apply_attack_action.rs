@@ -107,6 +107,33 @@ fn gholdengo_scintillating_surfing(
     probabilistic_damage_attack(probabilities, damages)
 }
 
+fn croagunk_group_beatdown(
+    acting_player: usize,
+    state: &State,
+    damage_per_heads: u32,
+) -> (Probabilities, Mutations) {
+    let total_pokemon = state.enumerate_in_play_pokemon(acting_player).count();
+
+    if total_pokemon == 0 {
+        // No Pokémon in play, no coins to flip
+        return probabilistic_damage_attack(vec![1.0], vec![0]);
+    }
+
+    // Generate all possible outcomes for flipping N coins
+    let num_outcomes = 2_usize.pow(total_pokemon as u32);
+    let mut probabilities = vec![0.0; total_pokemon + 1]; // 0 to total_pokemon heads
+    let mut damages = Vec::new();
+
+    // For each possible outcome (0 to total_pokemon heads)
+    for (heads, prob) in probabilities.iter_mut().enumerate() {
+        // Probability of getting exactly 'heads' heads out of 'total_pokemon' coins
+        *prob = binomial_coefficient(total_pokemon, heads) as f64 / (num_outcomes as f64);
+        damages.push((heads as u32) * damage_per_heads);
+    }
+
+    probabilistic_damage_attack(probabilities, damages)
+}
+
 /// Handles attacks that have effects.
 fn forecast_effect_attack(
     acting_player: usize,
@@ -276,6 +303,9 @@ fn forecast_effect_attack(
         // A2 Probabilistic Damage Attacks - Flip Until Tails
         AttackId::A2115WormadamIronHead => flip_until_tails_attack(30),
         AttackId::A2125LickilickyExLickingFury => flip_until_tails_attack(40),
+        // A2 Probabilistic Damage Attacks - Variable Coin Count
+        AttackId::A2107CroagunkGroupBeatdown => croagunk_group_beatdown(acting_player, state, 20),
+        AttackId::A2108ToxicroakGroupBeatdown => croagunk_group_beatdown(acting_player, state, 40),
         // A2a Probabilistic Damage Attacks
         AttackId::A2a001HeracrossSingleHornThrow => {
             probabilistic_damage_attack(vec![0.75, 0.25], vec![0, 70])
@@ -900,6 +930,41 @@ mod test {
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_croagunk_group_beatdown() {
+        // Test with 2 Pokémon in play (2 coins)
+        let mut state = State::default();
+
+        // Set up a Pokemon in the active position
+        let croagunk = get_card_by_enum(CardId::A2107Croagunk);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&croagunk, false));
+        // Add a Pokémon to the bench
+        let other_pokemon = get_card_by_enum(CardId::A1001Bulbasaur);
+        state.in_play_pokemon[0][1] = Some(to_playable_card(&other_pokemon, false));
+
+        let (probabilities, _mutations) = croagunk_group_beatdown(0, &state, 20);
+
+        // Should have 3 outcomes (0, 1, 2 heads) since we have 2 Pokémon
+        assert_eq!(probabilities.len(), 3);
+
+        // Check probabilities for 2 coins: 0.25, 0.5, 0.25
+        assert!((probabilities[0] - 0.25).abs() < 0.001); // 0 heads: C(2,0) / 4 = 1/4
+        assert!((probabilities[1] - 0.5).abs() < 0.001); // 1 heads: C(2,1) / 4 = 2/4
+        assert!((probabilities[2] - 0.25).abs() < 0.001); // 2 heads: C(2,2) / 4 = 1/4
+
+        // Test Toxicroak with same setup (40 damage per heads)
+        let toxicroak = get_card_by_enum(CardId::A2108Toxicroak);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&toxicroak, false));
+
+        let (probabilities_toxicroak, _mutations) = croagunk_group_beatdown(0, &state, 40);
+
+        // Should have same probabilities since coin count is same
+        assert_eq!(probabilities_toxicroak.len(), 3);
+        assert!((probabilities_toxicroak[0] - 0.25).abs() < 0.001);
+        assert!((probabilities_toxicroak[1] - 0.5).abs() < 0.001);
+        assert!((probabilities_toxicroak[2] - 0.25).abs() < 0.001);
     }
 
     #[test]
