@@ -35,30 +35,53 @@ pub(crate) fn forecast_attack(
     }
 }
 
-fn celebi_powerful_bloom(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+/// Generates a coin flip attack with variable number of coins based on energy count
+/// Optionally filters by energy type
+fn variable_coin_attack(
+    acting_player: usize,
+    state: &State,
+    damage_per_heads: u32,
+    energy_type_filter: Option<EnergyType>,
+) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(acting_player);
-    let total_energy = active_pokemon.attached_energy.len();
+    let coin_count = if let Some(energy_type) = energy_type_filter {
+        active_pokemon
+            .attached_energy
+            .iter()
+            .filter(|&energy| *energy == energy_type)
+            .count()
+    } else {
+        active_pokemon.attached_energy.len()
+    };
 
-    if total_energy == 0 {
-        // No energy attached, no coins to flip
+    fixed_coin_count_attack(coin_count, damage_per_heads)
+}
+
+/// Generates a probabilistic attack with a fixed number of coin flips
+fn fixed_coin_count_attack(coin_count: usize, damage_per_heads: u32) -> (Probabilities, Mutations) {
+    if coin_count == 0 {
+        // No coins to flip
         return probabilistic_damage_attack(vec![1.0], vec![0]);
     }
 
     // Generate all possible outcomes for flipping N coins
-    // Each coin can be heads (1) or tails (0)
-    let num_outcomes = 2_usize.pow(total_energy as u32);
-    let mut probabilities = vec![0.0; total_energy + 1]; // 0 to total_energy heads
+    let num_outcomes = 2_usize.pow(coin_count as u32);
+    let mut probabilities = vec![0.0; coin_count + 1]; // 0 to coin_count heads
     let mut damages = Vec::new();
 
-    // For each possible outcome (0 to total_energy heads)
+    // For each possible outcome (0 to coin_count heads)
     for (heads, prob) in probabilities.iter_mut().enumerate() {
-        // Probability of getting exactly 'heads' heads out of 'total_energy' coins
+        // Probability of getting exactly 'heads' heads out of 'coin_count' coins
         // This follows a binomial distribution: C(n,k) * (1/2)^n
-        *prob = binomial_coefficient(total_energy, heads) as f64 / (num_outcomes as f64);
-        damages.push((heads as u32) * 50); // 50 damage per heads
+        *prob = binomial_coefficient(coin_count, heads) as f64 / (num_outcomes as f64);
+        damages.push((heads as u32) * damage_per_heads);
     }
 
     probabilistic_damage_attack(probabilities, damages)
+}
+
+fn celebi_powerful_bloom(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    variable_coin_attack(acting_player, state, 50, None)
 }
 
 fn binomial_coefficient(n: usize, k: usize) -> usize {
@@ -80,31 +103,7 @@ fn gholdengo_scintillating_surfing(
     acting_player: usize,
     state: &State,
 ) -> (Probabilities, Mutations) {
-    let active_pokemon = state.get_active(acting_player);
-    let metal_energy_count = active_pokemon
-        .attached_energy
-        .iter()
-        .filter(|&energy| *energy == EnergyType::Metal)
-        .count();
-
-    if metal_energy_count == 0 {
-        // No metal energy attached, no coins to flip
-        return probabilistic_damage_attack(vec![1.0], vec![0]);
-    }
-
-    // Generate all possible outcomes for flipping N coins
-    let num_outcomes = 2_usize.pow(metal_energy_count as u32);
-    let mut probabilities = vec![0.0; metal_energy_count + 1]; // 0 to metal_energy_count heads
-    let mut damages = Vec::new();
-
-    // For each possible outcome (0 to metal_energy_count heads)
-    for (heads, prob) in probabilities.iter_mut().enumerate() {
-        // Probability of getting exactly 'heads' heads out of 'metal_energy_count' coins
-        *prob = binomial_coefficient(metal_energy_count, heads) as f64 / (num_outcomes as f64);
-        damages.push((heads as u32) * 50); // 50 damage per heads
-    }
-
-    probabilistic_damage_attack(probabilities, damages)
+    variable_coin_attack(acting_player, state, 50, Some(EnergyType::Metal))
 }
 
 fn croagunk_group_beatdown(
@@ -113,25 +112,7 @@ fn croagunk_group_beatdown(
     damage_per_heads: u32,
 ) -> (Probabilities, Mutations) {
     let total_pokemon = state.enumerate_in_play_pokemon(acting_player).count();
-
-    if total_pokemon == 0 {
-        // No Pokémon in play, no coins to flip
-        return probabilistic_damage_attack(vec![1.0], vec![0]);
-    }
-
-    // Generate all possible outcomes for flipping N coins
-    let num_outcomes = 2_usize.pow(total_pokemon as u32);
-    let mut probabilities = vec![0.0; total_pokemon + 1]; // 0 to total_pokemon heads
-    let mut damages = Vec::new();
-
-    // For each possible outcome (0 to total_pokemon heads)
-    for (heads, prob) in probabilities.iter_mut().enumerate() {
-        // Probability of getting exactly 'heads' heads out of 'total_pokemon' coins
-        *prob = binomial_coefficient(total_pokemon, heads) as f64 / (num_outcomes as f64);
-        damages.push((heads as u32) * damage_per_heads);
-    }
-
-    probabilistic_damage_attack(probabilities, damages)
+    fixed_coin_count_attack(total_pokemon, damage_per_heads)
 }
 
 /// Handles attacks that have effects.
