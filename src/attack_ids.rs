@@ -73,6 +73,12 @@ pub enum AttackId {
     A2118ProbopassTripleNose,
     A2131AmbipomDoubleHit,
     A2141ChatotFuryAttack,
+    // A2 Variable coin flip attacks
+    A2107CroagunkGroupBeatdown,
+    A2108ToxicroakGroupBeatdown,
+    // A2 Flip until tails attacks
+    A2115WormadamIronHead,
+    A2125LickilickyExLickingFury,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -173,7 +179,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 207", 0), AttackId::A2119DialgaExMetallicTurbo);
-        
+
         // A2 Simple coin flip attacks
         m.insert(("A2 016", 0), AttackId::A2016WormadamLeafCutter);
         m.insert(("A2 019", 0), AttackId::A2019CarnivineFlop);
@@ -181,7 +187,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 039", 0), AttackId::A2039FloatzelJetScrew);
         m.insert(("A2 126", 0), AttackId::A2126EeveeQuickAttack);
         m.insert(("A2 158", 0), AttackId::A2019CarnivineFlop); // Same attack as A2 019
-        
+
         // A2 Multiple coin flip attacks
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
@@ -189,6 +195,17 @@ lazy_static::lazy_static! {
         m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
         m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
         m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
+
+        // A2 Variable coin flip attacks
+        m.insert(("A2 107", 0), AttackId::A2107CroagunkGroupBeatdown);
+        m.insert(("A2 108", 0), AttackId::A2108ToxicroakGroupBeatdown);
+        m.insert(("A2 173", 0), AttackId::A2107CroagunkGroupBeatdown); // Same attack as A2 107
+
+        // A2 Flip until tails attacks
+        m.insert(("A2 115", 0), AttackId::A2115WormadamIronHead);
+        m.insert(("A2 125", 0), AttackId::A2125LickilickyExLickingFury);
+        m.insert(("A2 189", 0), AttackId::A2125LickilickyExLickingFury); // Same attack as A2 125
+        m.insert(("A2 203", 0), AttackId::A2125LickilickyExLickingFury); // Same attack as A2 125
 
         // A2a
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);

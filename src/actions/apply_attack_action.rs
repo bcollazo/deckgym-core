@@ -35,6 +35,43 @@ pub(crate) fn forecast_attack(
     }
 }
 
+/// For attacks that flip a coin for each Pokemon in play and deal damage per heads
+fn pokemon_count_probabilistic_attack(
+    acting_player: usize,
+    state: &State,
+    damage_per_heads: u32,
+) -> (Probabilities, Mutations) {
+    // Count total Pokemon in play (active + bench)
+    let mut pokemon_count = 1; // active Pokemon
+    for _ in state.enumerate_bench_pokemon(acting_player) {
+        pokemon_count += 1;
+    }
+
+    // Calculate binomial probabilities for pokemon_count coins
+    let mut probabilities = Vec::new();
+    let mut damages = Vec::new();
+
+    for heads in 0..=pokemon_count {
+        let n = pokemon_count as i32;
+        let k = heads as i32;
+        // P(k heads in n flips) = C(n,k) * (0.5)^n
+        let combinations = if k == 0 || k == n {
+            1
+        } else {
+            let mut result = 1;
+            for i in 0..k.min(n - k) {
+                result = result * (n - i) / (i + 1);
+            }
+            result
+        };
+        let probability = (combinations as f64) * (0.5_f64.powi(n));
+        probabilities.push(probability);
+        damages.push(heads * damage_per_heads);
+    }
+
+    probabilistic_damage_attack(probabilities, damages)
+}
+
 /// Handles attacks that have effects.
 fn forecast_effect_attack(
     acting_player: usize,
@@ -168,18 +205,12 @@ fn forecast_effect_attack(
         AttackId::A2016WormadamLeafCutter => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
         }
-        AttackId::A2019CarnivineFlop => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50])
-        }
+        AttackId::A2019CarnivineFlop => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
         AttackId::A2030HeatRotomHeatBreath => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
         }
-        AttackId::A2039FloatzelJetScrew => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
-        }
-        AttackId::A2126EeveeQuickAttack => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 20])
-        }
+        AttackId::A2039FloatzelJetScrew => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30]),
+        AttackId::A2126EeveeQuickAttack => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 20]),
         // A2 Multiple coin flip attacks
         AttackId::A2084GliscorAcrobatics => {
             // 2 coins, 20 damage per heads: 0-40 damage
@@ -195,9 +226,9 @@ fn forecast_effect_attack(
             use crate::types::StatusCondition;
             let probabilities = vec![0.0625, 0.25, 0.375, 0.25, 0.0625];
             let mutations = vec![
-                active_damage_mutation(0),    // 0 heads - no poison
-                active_damage_mutation(40),   // 1 heads - no poison
-                active_damage_effect_mutation(80, build_status_effect(StatusCondition::Poisoned)),  // 2 heads - poison
+                active_damage_mutation(0),  // 0 heads - no poison
+                active_damage_mutation(40), // 1 heads - no poison
+                active_damage_effect_mutation(80, build_status_effect(StatusCondition::Poisoned)), // 2 heads - poison
                 active_damage_effect_mutation(120, build_status_effect(StatusCondition::Poisoned)), // 3 heads - poison
                 active_damage_effect_mutation(160, build_status_effect(StatusCondition::Poisoned)), // 4 heads - poison
             ];
@@ -215,6 +246,16 @@ fn forecast_effect_attack(
             // 3 coins, 20 damage per heads: 0-60 damage
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
         }
+        // A2 Variable coin flip attacks
+        AttackId::A2107CroagunkGroupBeatdown => {
+            pokemon_count_probabilistic_attack(acting_player, state, 20)
+        }
+        AttackId::A2108ToxicroakGroupBeatdown => {
+            pokemon_count_probabilistic_attack(acting_player, state, 40)
+        }
+        // A2 Flip until tails attacks
+        AttackId::A2115WormadamIronHead => flip_until_tails_attack(30),
+        AttackId::A2125LickilickyExLickingFury => flip_until_tails_attack(40),
     }
 }
 
