@@ -64,6 +64,41 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
+    // A2 Probabilistic Damage Attacks - Single Coin
+    A2016WormadamLeafCutter,
+    A2019CarnivineFlog,
+    A2030HeatRotomHeatBreath,
+    A2039FloatzelJetScrew,
+    A2126EeveeQuickAttack,
+    A2139GlameowPose,
+    // A2 Probabilistic Damage Attacks - Multi Coin Fixed
+    A2084GliscorAcrobatics,
+    A2098SneaselDoubleScratch,
+    A2131AmbipomDoubleHit,
+    A2141ChatotFuryAttack,
+    A2106DrapionCrossPoison,
+    A2118ProbopassTripleNose,
+    // A2 Probabilistic Damage Attacks - Flip Until Tails
+    A2115WormadamIronHead,
+    A2125LickilickyExLickingFury,
+    // A2a Probabilistic Damage Attacks
+    A2a001HeracrossSingleHornThrow,
+    A2a017WhiscashThrash,
+    A2a023OriginFormePalkiaZoneSmash,
+    A2a044MedichamKickShot,
+    A2a060OriginFormeDialgaTimeMash,
+    // A2b Probabilistic Damage Attacks - Single Coin
+    A2b024ElectrodeTumblingAttack,
+    A2b038MachokePummel,
+    A2b053TinkatuffTenaciousHammer,
+    A2b054TinkatonExTerrificThumping,
+    // A2b Probabilistic Damage Attacks - Multi Coin Fixed
+    A2b032MrMimeJuggling,
+    A2b044FlamigoDoubleKick,
+    // A2b Probabilistic Damage Attacks - Flip Until Tails
+    A2b004PinsirGuillotineRush,
+    // A2b Probabilistic Damage Attacks - Variable Coin Count
+    A2b057GholdengoScintillatingSurfing,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -170,12 +205,50 @@ lazy_static::lazy_static! {
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 207", 0), AttackId::A2119DialgaExMetallicTurbo);
+        // A2 Probabilistic Damage Attacks
+        m.insert(("A2 016", 0), AttackId::A2016WormadamLeafCutter);
+        m.insert(("A2 019", 0), AttackId::A2019CarnivineFlog);
+        m.insert(("A2 158", 0), AttackId::A2019CarnivineFlog); // Duplicate card
+        m.insert(("A2 030", 0), AttackId::A2030HeatRotomHeatBreath);
+        m.insert(("A2 039", 0), AttackId::A2039FloatzelJetScrew);
+        m.insert(("A2 126", 0), AttackId::A2126EeveeQuickAttack);
+        m.insert(("A2 139", 0), AttackId::A2139GlameowPose);
+        m.insert(("A2 178", 0), AttackId::A2139GlameowPose); // Duplicate card
+        m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
+        m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
+        m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
+        m.insert(("A2 106", 0), AttackId::A2106DrapionCrossPoison);
+        m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
+        m.insert(("A2 115", 0), AttackId::A2115WormadamIronHead);
+        m.insert(("A2 125", 0), AttackId::A2125LickilickyExLickingFury);
+        m.insert(("A2 189", 0), AttackId::A2125LickilickyExLickingFury); // Duplicate card
+        m.insert(("A2 203", 0), AttackId::A2125LickilickyExLickingFury); // Duplicate card
 
         // A2a
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 086", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 095", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 096", 0), AttackId::A2a071ArceusExUltimateForce);
+        // A2a Probabilistic Damage Attacks
+        m.insert(("A2a 001", 0), AttackId::A2a001HeracrossSingleHornThrow);
+        m.insert(("A2a 017", 0), AttackId::A2a017WhiscashThrash);
+        m.insert(("A2a 023", 0), AttackId::A2a023OriginFormePalkiaZoneSmash);
+        m.insert(("A2a 044", 0), AttackId::A2a044MedichamKickShot);
+        m.insert(("A2a 060", 0), AttackId::A2a060OriginFormeDialgaTimeMash);
+
+        // A2b Probabilistic Damage Attacks
+        m.insert(("A2b 024", 0), AttackId::A2b024ElectrodeTumblingAttack);
+        m.insert(("A2b 038", 0), AttackId::A2b038MachokePummel);
+        m.insert(("A2b 053", 0), AttackId::A2b053TinkatuffTenaciousHammer);
+        m.insert(("A2b 054", 0), AttackId::A2b054TinkatonExTerrificThumping);
+        m.insert(("A2b 086", 0), AttackId::A2b054TinkatonExTerrificThumping); // Duplicate card
+        m.insert(("A2b 094", 0), AttackId::A2b054TinkatonExTerrificThumping); // Duplicate card
+        m.insert(("A2b 032", 0), AttackId::A2b032MrMimeJuggling);
+        m.insert(("A2b 044", 0), AttackId::A2b044FlamigoDoubleKick);
+        m.insert(("A2b 004", 0), AttackId::A2b004PinsirGuillotineRush);
+        m.insert(("A2b 057", 0), AttackId::A2b057GholdengoScintillatingSurfing);
+        m.insert(("A2b 077", 0), AttackId::A2b057GholdengoScintillatingSurfing); // Duplicate card
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);

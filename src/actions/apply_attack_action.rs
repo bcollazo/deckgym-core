@@ -76,6 +76,37 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
     result
 }
 
+fn gholdengo_scintillating_surfing(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    let active_pokemon = state.get_active(acting_player);
+    let metal_energy_count = active_pokemon
+        .attached_energy
+        .iter()
+        .filter(|&energy| *energy == EnergyType::Metal)
+        .count();
+
+    if metal_energy_count == 0 {
+        // No metal energy attached, no coins to flip
+        return probabilistic_damage_attack(vec![1.0], vec![0]);
+    }
+
+    // Generate all possible outcomes for flipping N coins
+    let num_outcomes = 2_usize.pow(metal_energy_count as u32);
+    let mut probabilities = vec![0.0; metal_energy_count + 1]; // 0 to metal_energy_count heads
+    let mut damages = Vec::new();
+
+    // For each possible outcome (0 to metal_energy_count heads)
+    for (heads, prob) in probabilities.iter_mut().enumerate() {
+        // Probability of getting exactly 'heads' heads out of 'metal_energy_count' coins
+        *prob = binomial_coefficient(metal_energy_count, heads) as f64 / (num_outcomes as f64);
+        damages.push((heads as u32) * 50); // 50 damage per heads
+    }
+
+    probabilistic_damage_attack(probabilities, damages)
+}
+
 /// Handles attacks that have effects.
 fn forecast_effect_attack(
     acting_player: usize,
@@ -210,6 +241,76 @@ fn forecast_effect_attack(
         AttackId::A2119DialgaExMetallicTurbo => energy_bench_attack(index, 2, EnergyType::Metal),
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
+        }
+        // A2 Probabilistic Damage Attacks - Single Coin
+        AttackId::A2016WormadamLeafCutter => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2019CarnivineFlog => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
+        AttackId::A2030HeatRotomHeatBreath => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2039FloatzelJetScrew => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30]),
+        AttackId::A2126EeveeQuickAttack => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 20]),
+        AttackId::A2139GlameowPose => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40]),
+        // A2 Probabilistic Damage Attacks - Multi Coin Fixed
+        AttackId::A2084GliscorAcrobatics => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
+        AttackId::A2098SneaselDoubleScratch => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
+        AttackId::A2131AmbipomDoubleHit => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
+        }
+        AttackId::A2141ChatotFuryAttack => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
+        }
+        AttackId::A2106DrapionCrossPoison => probabilistic_damage_attack(
+            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
+            vec![0, 40, 80, 120, 160],
+        ),
+        AttackId::A2118ProbopassTripleNose => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
+        }
+        // A2 Probabilistic Damage Attacks - Flip Until Tails
+        AttackId::A2115WormadamIronHead => flip_until_tails_attack(30),
+        AttackId::A2125LickilickyExLickingFury => flip_until_tails_attack(40),
+        // A2a Probabilistic Damage Attacks
+        AttackId::A2a001HeracrossSingleHornThrow => {
+            probabilistic_damage_attack(vec![0.75, 0.25], vec![0, 70])
+        }
+        AttackId::A2a017WhiscashThrash => extra_or_self_damage_attack(0, 60, 20),
+        AttackId::A2a023OriginFormePalkiaZoneSmash => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 60])
+        }
+        AttackId::A2a044MedichamKickShot => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 80])
+        }
+        AttackId::A2a060OriginFormeDialgaTimeMash => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![100, 100])
+        } // TODO: Add "can't attack next turn" effect for tails
+        // A2b Probabilistic Damage Attacks
+        AttackId::A2b024ElectrodeTumblingAttack => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2b038MachokePummel => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30]),
+        AttackId::A2b053TinkatuffTenaciousHammer => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2b054TinkatonExTerrificThumping => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 80])
+        }
+        AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
+            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
+            vec![0, 20, 40, 60, 80],
+        ),
+        AttackId::A2b044FlamigoDoubleKick => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
+        }
+        AttackId::A2b004PinsirGuillotineRush => flip_until_tails_attack(40),
+        AttackId::A2b057GholdengoScintillatingSurfing => {
+            gholdengo_scintillating_surfing(acting_player, state)
         }
     }
 }
@@ -745,6 +846,60 @@ mod test {
         // Should have 1 outcome (0 damage)
         assert_eq!(probabilities_no_energy.len(), 1);
         assert!((probabilities_no_energy[0] - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_gholdengo_scintillating_surfing() {
+        // Test with 2 metal energy attached (2 coins)
+        let mut state = State::default();
+
+        // Set up a Pokemon in the active position
+        let gholdengo = get_card_by_enum(CardId::A2b057Gholdengo);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&gholdengo, false));
+
+        let active = state.get_active_mut(0);
+        active.attached_energy.push(EnergyType::Metal);
+        active.attached_energy.push(EnergyType::Metal);
+        active.attached_energy.push(EnergyType::Fire); // Non-metal energy should be ignored
+
+        let (probabilities, _mutations) = gholdengo_scintillating_surfing(0, &state);
+
+        // Should have 3 outcomes (0, 1, 2 heads) since we have 2 metal energy
+        assert_eq!(probabilities.len(), 3);
+
+        // Check probabilities for 2 coins: 0.25, 0.5, 0.25
+        assert!((probabilities[0] - 0.25).abs() < 0.001); // 0 heads: C(2,0) / 4 = 1/4
+        assert!((probabilities[1] - 0.5).abs() < 0.001); // 1 heads: C(2,1) / 4 = 2/4
+        assert!((probabilities[2] - 0.25).abs() < 0.001); // 2 heads: C(2,2) / 4 = 1/4
+
+        // Test with no metal energy attached
+        let mut state_no_metal = State::default();
+        state_no_metal.in_play_pokemon[0][0] = Some(to_playable_card(&gholdengo, false));
+        let active_no_metal = state_no_metal.get_active_mut(0);
+        active_no_metal.attached_energy.push(EnergyType::Fire);
+        active_no_metal.attached_energy.push(EnergyType::Water);
+
+        let (probabilities_no_metal, _) = gholdengo_scintillating_surfing(0, &state_no_metal);
+
+        // Should have 1 outcome (0 damage)
+        assert_eq!(probabilities_no_metal.len(), 1);
+        assert!((probabilities_no_metal[0] - 1.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_a2_single_coin_attacks() {
+        // Test some A2 single coin attacks
+        // Wormadam Leaf Cutter: 0 + 30 if heads
+        let (probabilities, _mutations) = probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30]);
+        assert_eq!(probabilities.len(), 2);
+        assert!((probabilities[0] - 0.5).abs() < 0.001);
+        assert!((probabilities[1] - 0.5).abs() < 0.001);
+
+        // Carnivine Flog: 0 + 50 if heads
+        let (probabilities, _mutations) = probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]);
+        assert_eq!(probabilities.len(), 2);
+        assert!((probabilities[0] - 0.5).abs() < 0.001);
+        assert!((probabilities[1] - 0.5).abs() < 0.001);
     }
 
     #[test]
