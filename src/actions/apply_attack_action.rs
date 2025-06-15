@@ -164,6 +164,22 @@ fn forecast_effect_attack(
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
+        // A2 Simple coin flip attacks
+        AttackId::A2016WormadamLeafCutter => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2019CarnivineFlop => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50])
+        }
+        AttackId::A2030HeatRotomHeatBreath => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2039FloatzelJetScrew => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30])
+        }
+        AttackId::A2126EeveeQuickAttack => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 20])
+        }
     }
 }
 
