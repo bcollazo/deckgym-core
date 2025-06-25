@@ -1,3 +1,6 @@
 /target
 
 TODO.md
+
+__pycache__/
+*.so
