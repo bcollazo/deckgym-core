@@ -24,3 +24,15 @@ pub use move_generation::generate_possible_trainer_actions;
 pub use optimize::optimize;
 pub use simulate::simulate;
 pub use state::State;
+
+#[cfg(feature = "python")]
+pub mod python_bindings;
+
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
+
+#[cfg(feature = "python")]
+#[pymodule]
+fn deckgym(_py: Python, m: &PyModule) -> PyResult<()> {
+    python_bindings::deckgym(_py, m)
+}
