@@ -31,7 +31,7 @@ pub fn optimize(
             }
             let number = &s[s.len() - 3..];
             let prefix = &s[..s.len() - 3];
-            let id = format!("{} {}", prefix, number);
+            let id = format!("{prefix} {number}");
             CardId::from_card_id(id.as_str()).expect("Card ID should be valid")
         })
         .collect();

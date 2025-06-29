@@ -35,11 +35,14 @@ pub enum AttackId {
     A1079LaprasHydroPump,
     A1080VaporeonBubbleDrain,
     A1083ArticunoIceBeam,
+    A1084ArticunoExBlizzard,
+    A1091BruxishSecondStrike,
     A1093FrosmothPowderSnow,
     A1095RaichuThunderbolt,
     A1096PikachuExCircleCircuit,
     A1101ElectabuzzThunderPunch,
     A1102JolteonPinMissile,
+    A1103ZapdosRagingThunder,
     A1104ZapdosExThunderingHurricane,
     A1106ZebstrikaThunderSpear,
     A1128MewtwoPowerBlast,
@@ -58,12 +61,15 @@ pub enum AttackId {
     A1a010PonytaStomp,
     A1a011RapidashRisingLunge,
     A1a026RaichuGigashock,
+    A1a021LumineonAqua,
     A1a030DedenneThunderShock,
     A1a041MankeyFocusFist,
     A1a061EeveeContinuousSteps,
+    A2035PiplupHeal,
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
+    PA034PiplupHeal,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -104,11 +110,14 @@ lazy_static::lazy_static! {
         m.insert(("A1 234", 0), AttackId::A1079LaprasHydroPump); // Full art version
         m.insert(("A1 080", 0), AttackId::A1080VaporeonBubbleDrain);
         m.insert(("A1 083", 0), AttackId::A1083ArticunoIceBeam);
+        m.insert(("A1 084", 1), AttackId::A1084ArticunoExBlizzard);
+        m.insert(("A1 091", 0), AttackId::A1091BruxishSecondStrike);
         m.insert(("A1 093", 0), AttackId::A1093FrosmothPowderSnow);
         m.insert(("A1 095", 0), AttackId::A1095RaichuThunderbolt);
         m.insert(("A1 096", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 101", 0), AttackId::A1101ElectabuzzThunderPunch);
         m.insert(("A1 102", 0), AttackId::A1102JolteonPinMissile);
+        m.insert(("A1 103", 0), AttackId::A1103ZapdosRagingThunder);
         m.insert(("A1 104", 1), AttackId::A1104ZapdosExThunderingHurricane);
         m.insert(("A1 106", 0), AttackId::A1106ZebstrikaThunderSpear);
         m.insert(("A1 128", 0), AttackId::A1128MewtwoPowerBlast);
@@ -152,6 +161,7 @@ lazy_static::lazy_static! {
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 010", 0), AttackId::A1a010PonytaStomp);
         m.insert(("A1a 011", 0), AttackId::A1a011RapidashRisingLunge);
+        m.insert(("A1a 021", 0), AttackId::A1a021LumineonAqua);
         m.insert(("A1a 026", 0), AttackId::A1a026RaichuGigashock);
         m.insert(("A1a 030", 0), AttackId::A1a030DedenneThunderShock);
         m.insert(("A1a 041", 0), AttackId::A1a041MankeyFocusFist);
@@ -162,6 +172,7 @@ lazy_static::lazy_static! {
         m.insert(("A1a 085", 0), AttackId::A1a003CelebiExPowerfulBloom);
 
         // A2
+        m.insert(("A2 035", 0), AttackId::A2035PiplupHeal);
         m.insert(("A2 049", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaDimensionalStorm);
@@ -179,6 +190,7 @@ lazy_static::lazy_static! {
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
+        m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
 
         m
     };

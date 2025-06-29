@@ -150,6 +150,8 @@ fn forecast_effect_attack(
         AttackId::A1083ArticunoIceBeam => {
             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
         }
+        AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
+        AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
         AttackId::A1093FrosmothPowderSnow => damage_status_attack(40, StatusCondition::Asleep),
         AttackId::A1095RaichuThunderbolt => thunderbolt_attack(),
         AttackId::A1096PikachuExCircleCircuit => {
@@ -160,6 +162,7 @@ fn forecast_effect_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 40, 80, 120, 160],
         ),
+        AttackId::A1103ZapdosRagingThunder => self_benched_damage(30, index),
         AttackId::A1104ZapdosExThunderingHurricane => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 50, 100, 150, 200],
@@ -192,6 +195,7 @@ fn forecast_effect_attack(
         AttackId::A1a011RapidashRisingLunge => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
         }
+        AttackId::A1a021LumineonAqua => direct_damage(50, true),
         AttackId::A1a026RaichuGigashock => {
             let opponent = (state.current_player + 1) % 2;
             let targets: Vec<(u32, usize)> = state
@@ -211,6 +215,7 @@ fn forecast_effect_attack(
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
+        AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
     }
 }
 
@@ -378,7 +383,7 @@ fn damage_chance_status_attack(
     (probabilities, mutations)
 }
 
-/// Used for attacks that do damage for each pokemon (optionally of a type) in your bench.
+/// For attacks that do damage for each pokemon (optionally of a type) in your bench.
 ///  e.g. "Pikachu Ex Circle Circuit".
 fn bench_count_attack(
     acting_player: usize,
@@ -398,6 +403,22 @@ fn bench_count_attack(
         }
     }
     active_damage_doutcome(base_damage + damage_per * bench_count)
+}
+
+/// Used for attacks that can go directly to one of your own benched Pokémon.
+fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Mutations) {
+    index_active_damage_doutcome(attack_index, move |_, state, action| {
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
+            choices.push(SimpleAction::ApplyDamage {
+                targets: vec![(damage, in_play_idx)],
+            });
+        }
+        if choices.is_empty() {
+            return;
+        }
+        state.move_generation_stack.push((action.actor, choices));
+    })
 }
 
 /// Used for attacks that can go directly to bench.
@@ -565,6 +586,33 @@ fn thunderbolt_attack() -> (Probabilities, Mutations) {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
     })
+}
+
+fn articuno_ex_blizzard(state: &State) -> (Probabilities, Mutations) {
+    // Blizzard: 80 to active, 10 to each opponent's benched Pokémon
+    let opponent = (state.current_player + 1) % 2;
+    let mut targets: Vec<(u32, usize)> = state
+        .enumerate_bench_pokemon(opponent)
+        .map(|(idx, _)| (10, idx))
+        .collect();
+    // Active Pokémon is always index 0
+    targets.push((80, 0));
+    damage_effect_doutcome(targets, |_, _, _| {})
+}
+
+fn extra_damage_if_hurt(
+    base: u32,
+    extra: u32,
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    if opponent_active.remaining_hp < opponent_active.total_hp {
+        active_damage_doutcome(base + extra)
+    } else {
+        active_damage_doutcome(base)
+    }
 }
 
 #[cfg(test)]

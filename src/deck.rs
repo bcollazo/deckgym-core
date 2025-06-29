@@ -29,7 +29,7 @@ impl Deck {
     /// Parses a deck file and returns a `Deck` struct with cards flattened based on their counts.
     pub fn from_file(file_path: &str) -> Result<Self, String> {
         let contents = fs::read_to_string(file_path)
-            .map_err(|err| format!("Failed to read file {}: {}", file_path, err))?;
+            .map_err(|err| format!("Failed to read file {file_path}: {err}"))?;
 
         Self::from_string(&contents)
     }
@@ -117,7 +117,7 @@ impl Card {
     pub fn from_str_with_count(line: &str) -> Result<(u32, Card), String> {
         let parts: Vec<&str> = line.split_whitespace().collect();
         if parts.len() < 3 {
-            return Err(format!("Invalid card format: {}", line));
+            return Err(format!("Invalid card format: {line}"));
         }
 
         let count = parts[0]
@@ -126,11 +126,11 @@ impl Card {
         let set = parts[parts.len() - 2];
         // maybe pad number with 0 on the left if missing 0s
         let number = parts[parts.len() - 1];
-        let padded_number = format!("{:0>3}", number);
-        let id = format!("{} {}", set, padded_number);
+        let padded_number = format!("{number:0>3}");
+        let id = format!("{set} {padded_number}");
 
         let card_id =
-            CardId::from_card_id(&id).ok_or_else(|| format!("Card ID not found for id: {}", id))?;
+            CardId::from_card_id(&id).ok_or_else(|| format!("Card ID not found for id: {id}"))?;
         let card = get_card_by_enum(card_id);
 
         Ok((count, card.clone()))

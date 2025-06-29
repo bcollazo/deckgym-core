@@ -106,7 +106,7 @@ impl Game {
             debug!(
                 "{}{}",
                 format!("===== {}|{:?}|", self.state.turn_count, self.state.points).color(color),
-                format!("{}:{:?}", actor, player).color(color),
+                format!("{actor}:{player:?}").color(color),
             );
         }
     }

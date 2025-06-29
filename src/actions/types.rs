@@ -58,12 +58,12 @@ impl fmt::Display for SimpleAction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             SimpleAction::DrawCard => write!(f, "DrawCard"),
-            SimpleAction::Play { trainer_card } => write!(f, "Play({:?})", trainer_card),
-            SimpleAction::Place(card, index) => write!(f, "Place({}, {})", card, index),
-            SimpleAction::Evolve(card, index) => write!(f, "Evolve({}, {})", card, index),
-            SimpleAction::UseAbility(index) => write!(f, "UseAbility({})", index),
-            SimpleAction::Attack(index) => write!(f, "Attack({})", index),
-            SimpleAction::Retreat(index) => write!(f, "Retreat({})", index),
+            SimpleAction::Play { trainer_card } => write!(f, "Play({trainer_card:?})"),
+            SimpleAction::Place(card, index) => write!(f, "Place({card}, {index})"),
+            SimpleAction::Evolve(card, index) => write!(f, "Evolve({card}, {index})"),
+            SimpleAction::UseAbility(index) => write!(f, "UseAbility({index})"),
+            SimpleAction::Attack(index) => write!(f, "Attack({index})"),
+            SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
             SimpleAction::Attach {
                 attachments,
@@ -72,31 +72,31 @@ impl fmt::Display for SimpleAction {
                 let attachments_str = attachments
                     .iter()
                     .map(|(amount, energy_type, in_play_idx)| {
-                        format!("({}, {:?}, {})", amount, energy_type, in_play_idx)
+                        format!("({amount}, {energy_type:?}, {in_play_idx})")
                     })
                     .collect::<Vec<_>>()
                     .join(", ");
-                write!(f, "Attach({:?}, {})", attachments_str, is_turn_energy)
+                write!(f, "Attach({attachments_str:?}, {is_turn_energy})")
             }
             SimpleAction::AttachTool {
                 in_play_idx,
                 tool_id,
             } => {
-                write!(f, "AttachTool({}, {:?})", in_play_idx, tool_id)
+                write!(f, "AttachTool({in_play_idx}, {tool_id:?})")
             }
             SimpleAction::Heal {
                 in_play_idx,
                 amount,
-            } => write!(f, "Heal({}, {})", in_play_idx, amount),
+            } => write!(f, "Heal({in_play_idx}, {amount})"),
             SimpleAction::ApplyDamage { targets } => {
                 let targets_str = targets
                     .iter()
-                    .map(|(damage, in_play_idx)| format!("({}, {})", damage, in_play_idx))
+                    .map(|(damage, in_play_idx)| format!("({damage}, {in_play_idx})"))
                     .collect::<Vec<_>>()
                     .join(", ");
-                write!(f, "ApplyDamage({})", targets_str)
+                write!(f, "ApplyDamage({targets_str})")
             }
-            SimpleAction::Activate { in_play_idx } => write!(f, "Activate({})", in_play_idx),
+            SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
         }
     }
 }
