@@ -1,3 +1,7 @@
 /target
+.venv
 
 TODO.md
+
+__pycache__/
+*.so
