@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
-use std::collections::HashMap;
+use pyo3::types::PyModule;
 use pyo3::wrap_pyfunction;
+use std::collections::HashMap;
 
 use crate::{
     deck::Deck,
@@ -57,8 +58,9 @@ pub struct PyDeck {
 impl PyDeck {
     #[new]
     pub fn new(deck_path: &str) -> PyResult<Self> {
-        let deck = Deck::from_file(deck_path)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck: {}", e)))?;
+        let deck = Deck::from_file(deck_path).map_err(|e| {
+            PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck: {}", e))
+        })?;
         Ok(PyDeck { deck })
     }
 
@@ -124,11 +126,19 @@ pub struct PyGame {
 #[pymethods]
 impl PyGame {
     #[new]
-    pub fn new(deck_a_path: &str, deck_b_path: &str, players: Option<Vec<String>>, seed: Option<u64>) -> PyResult<Self> {
-        let deck_a = Deck::from_file(deck_a_path)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck A: {}", e)))?;
-        let deck_b = Deck::from_file(deck_b_path)
-            .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck B: {}", e)))?;
+    #[pyo3(signature = (deck_a_path, deck_b_path, players=None, seed=None))]
+    pub fn new(
+        deck_a_path: &str,
+        deck_b_path: &str,
+        players: Option<Vec<String>>,
+        seed: Option<u64>,
+    ) -> PyResult<Self> {
+        let deck_a = Deck::from_file(deck_a_path).map_err(|e| {
+            PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck A: {}", e))
+        })?;
+        let deck_b = Deck::from_file(deck_b_path).map_err(|e| {
+            PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck B: {}", e))
+        })?;
 
         let player_codes = if let Some(player_strs) = players {
             let mut codes = Vec::new();
@@ -221,10 +231,12 @@ pub fn py_simulate(
     num_simulations: u32,
     seed: Option<u64>,
 ) -> PyResult<PySimulationResults> {
-    let deck_a = Deck::from_file(deck_a_path)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck A: {}", e)))?;
-    let deck_b = Deck::from_file(deck_b_path)
-        .map_err(|e| PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck B: {}", e)))?;
+    let deck_a = Deck::from_file(deck_a_path).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck A: {}", e))
+    })?;
+    let deck_b = Deck::from_file(deck_b_path).map_err(|e| {
+        PyErr::new::<pyo3::exceptions::PyIOError, _>(format!("Failed to load deck B: {}", e))
+    })?;
 
     let player_codes = if let Some(player_strs) = players {
         let mut codes = Vec::new();
@@ -239,16 +251,16 @@ pub fn py_simulate(
     };
 
     let cli_players = fill_code_array(player_codes);
-    
+
     // Run simulations
     let mut wins_per_deck = [0u32, 0u32, 0u32]; // [player_a, player_b, ties]
-    
+
     for _ in 0..num_simulations {
         let players = create_players(deck_a.clone(), deck_b.clone(), cli_players.clone());
         let game_seed = seed.unwrap_or_else(|| rand::random::<u64>());
         let mut game = Game::new(players, game_seed);
         let outcome = game.play();
-        
+
         match outcome {
             Some(GameOutcome::Win(winner)) => {
                 wins_per_deck[winner] += 1;
@@ -286,7 +298,7 @@ pub fn get_player_types() -> HashMap<String, String> {
 }
 
 /// Python module definition
-pub fn deckgym(_py: Python, m: &PyModule) -> PyResult<()> {
+pub fn deckgym(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyDeck>()?;
     m.add_class::<PyGame>()?;
     m.add_class::<PyState>()?;

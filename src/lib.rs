@@ -30,9 +30,11 @@ pub mod python_bindings;
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
+#[cfg(feature = "python")]
+use pyo3::types::PyModule;
 
 #[cfg(feature = "python")]
 #[pymodule]
-fn deckgym(_py: Python, m: &PyModule) -> PyResult<()> {
-    python_bindings::deckgym(_py, m)
+fn deckgym(py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    python_bindings::deckgym(py, m)
 }

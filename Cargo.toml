@@ -18,7 +18,7 @@ chrono = "0.4.39"
 indexmap = "2.7.0"
 num-format = "0.4.4"
 humantime = "2.1.0"
-pyo3 = { version = "0.20", features = ["extension-module"], optional = true }
+pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
 
 [features]
 default = []
