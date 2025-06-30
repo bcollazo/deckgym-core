@@ -266,9 +266,10 @@ pub fn py_simulate(
                 if winner < 2 {
                     wins_per_deck[winner] += 1;
                 } else {
-                    return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
-                        format!("Invalid winner index: {}", winner),
-                    ));
+                    return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(format!(
+                        "Invalid winner index: {}",
+                        winner
+                    )));
                 }
             }
             Some(GameOutcome::Tie) | None => {
