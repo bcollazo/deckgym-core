@@ -43,7 +43,7 @@ impl PyGameOutcome {
         } else if let Some(winner) = self.winner {
             format!("GameOutcome::Win({})", winner)
         } else {
-            "GameOutcome::Unknown".to_string()
+            panic!("Invalid state: PyGameOutcome has neither a winner nor a tie.");
         }
     }
 }
