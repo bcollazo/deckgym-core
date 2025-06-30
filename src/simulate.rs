@@ -58,8 +58,8 @@ pub fn simulate(
     warn!(
         "Ran {} simulations in {} ({} per game)!",
         num_simulations.to_formatted_string(&Locale::en),
-        humantime::format_duration(duration).to_string(),
-        humantime::format_duration(avg_duration).to_string()
+        humantime::format_duration(duration),
+        humantime::format_duration(avg_duration)
     );
     warn!(
         "Average number of turns per game: {:.2}",

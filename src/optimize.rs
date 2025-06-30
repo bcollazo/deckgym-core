@@ -113,14 +113,14 @@ pub fn optimize(
 
     warn!(
         "Estimated time: {} ({} combinations × {} enemy decks × {} games per deck)",
-        humantime::format_duration(total_time).to_string(),
+        humantime::format_duration(total_time),
         combinations.len(),
         enemy_valid_decks.len(),
         num
     );
     warn!(
         "Time estimation: {} per game ({} non-R players, {} R players)",
-        humantime::format_duration(time_per_game).to_string(),
+        humantime::format_duration(time_per_game),
         count_player_types(&player_codes, false),
         count_player_types(&player_codes, true)
     );
