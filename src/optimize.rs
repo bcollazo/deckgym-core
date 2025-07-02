@@ -41,9 +41,7 @@ pub fn optimize(
         Deck::from_file(incomplete_deck_path).expect("Failed to parse incomplete deck file");
     let current_count = incomplete_deck.cards.len();
     let missing_count = 20 - current_count;
-    warn!(
-        "Incomplete deck has {current_count} cards, missing {missing_count} cards"
-    );
+    warn!("Incomplete deck has {current_count} cards, missing {missing_count} cards");
     if missing_count == 0 {
         warn!("Deck is already complete (20 cards). No optimization needed.");
         return;
@@ -180,9 +178,7 @@ pub fn optimize(
     // Report the best combination found.
     match best_combination {
         Some(comb) => {
-            warn!(
-                "Best combination: {comb:?} with win percentage: {best_win_percent:.2}%"
-            );
+            warn!("Best combination: {comb:?} with win percentage: {best_win_percent:.2}%");
         }
         None => {
             warn!("No valid combination found.");

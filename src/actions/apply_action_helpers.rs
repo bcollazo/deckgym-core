@@ -240,9 +240,7 @@ pub(crate) fn handle_attack_damage(
                 .enumerate_bench_pokemon(ko_receiver)
                 .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
                 .collect::<Vec<_>>();
-            debug!(
-                "Triggering Activate moves: {possible_moves:?} to player {ko_receiver}"
-            );
+            debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
             state
                 .move_generation_stack
                 .push((ko_receiver, possible_moves));
