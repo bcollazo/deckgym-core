@@ -40,7 +40,7 @@ pub fn simulate(
         turns_per_game.push(game.get_state_clone().turn_count);
         plys_per_game.push(game.get_num_plys());
         total_degrees.extend(game.get_degrees_per_ply().iter());
-        info!("Simulation {}: Winner is {:?}", i, outcome);
+        info!("Simulation {i}: Winner is {outcome:?}");
         match outcome {
             Some(GameOutcome::Win(winner_name)) => {
                 wins_per_deck[winner_name] += 1;

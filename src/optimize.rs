@@ -42,8 +42,7 @@ pub fn optimize(
     let current_count = incomplete_deck.cards.len();
     let missing_count = 20 - current_count;
     warn!(
-        "Incomplete deck has {} cards, missing {} cards",
-        current_count, missing_count
+        "Incomplete deck has {current_count} cards, missing {missing_count} cards"
     );
     if missing_count == 0 {
         warn!("Deck is already complete (20 cards). No optimization needed.");
@@ -82,7 +81,7 @@ pub fn optimize(
             if deck.cards.len() == 20 {
                 Some(deck)
             } else {
-                warn!("Skipping enemy deck {} since not valid", path);
+                warn!("Skipping enemy deck {path} since not valid");
                 None
             }
         })
@@ -103,7 +102,7 @@ pub fn optimize(
         "Generated {} possible combinations to complete the deck.",
         combinations.len()
     );
-    warn!("Combinations: {:?}", combinations);
+    warn!("Combinations: {combinations:?}");
 
     // Estimate the time it will take to run all simulations
     let player_codes = fill_code_array(players.clone());
@@ -171,7 +170,7 @@ pub fn optimize(
 
         let win_percent = (total_wins as f32 / total_games as f32) * 100.0;
         results.push((comb.clone(), win_percent));
-        warn!("Combination {:?} win percentage: {:.2}%", comb, win_percent);
+        warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
         if win_percent > best_win_percent {
             best_win_percent = win_percent;
             best_combination = Some(comb.clone());
@@ -182,8 +181,7 @@ pub fn optimize(
     match best_combination {
         Some(comb) => {
             warn!(
-                "Best combination: {:?} with win percentage: {:.2}%",
-                comb, best_win_percent
+                "Best combination: {comb:?} with win percentage: {best_win_percent:.2}%"
             );
         }
         None => {

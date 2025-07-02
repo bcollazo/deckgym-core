@@ -146,7 +146,7 @@ fn pokeball_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mut
                     // Put 1 random Basic Pokemon from your deck into your hand.
                     let deck = &mut state.decks[action.actor];
                     // Select a random one
-                    debug!("Pokeball selected card: {:?}", card);
+                    debug!("Pokeball selected card: {card:?}");
                     // Add it to hand and remove one of it from deck
                     state.hands[action.actor].push(card.clone());
                     if let Some(pos) = deck.cards.iter().position(|x| x == &card) {

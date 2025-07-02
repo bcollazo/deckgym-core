@@ -26,7 +26,7 @@ pub(crate) fn forecast_attack(
 ) -> (Probabilities, Mutations) {
     let active = state.get_active(acting_player);
     let attack = active.card.get_attacks()[index].clone();
-    trace!("Forecasting attack: {:?} {:?}", active, attack);
+    trace!("Forecasting attack: {active:?} {attack:?}");
     if attack.effect.is_none() {
         let damage = get_damage_from_attack(state, acting_player, index, 0);
         active_damage_doutcome(damage)
