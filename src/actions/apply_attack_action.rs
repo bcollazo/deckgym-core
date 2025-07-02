@@ -171,6 +171,9 @@ fn forecast_effect_attack(
         AttackId::A1109EelektrossThunderFang => {
             damage_chance_status_attack(80, 0.5, StatusCondition::Paralyzed)
         }
+        AttackId::A1111HelioliskQuickAttack => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 80])
+        }
         AttackId::A1128MewtwoPowerBlast => {
             self_energy_discard_attack(index, vec![EnergyType::Psychic])
         }
