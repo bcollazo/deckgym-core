@@ -40,7 +40,7 @@ pub fn simulate(
         turns_per_game.push(game.get_state_clone().turn_count);
         plys_per_game.push(game.get_num_plys());
         total_degrees.extend(game.get_degrees_per_ply().iter());
-        info!("Simulation {}: Winner is {:?}", i, outcome);
+        info!("Simulation {i}: Winner is {outcome:?}");
         match outcome {
             Some(GameOutcome::Win(winner_name)) => {
                 wins_per_deck[winner_name] += 1;
@@ -58,8 +58,8 @@ pub fn simulate(
     warn!(
         "Ran {} simulations in {} ({} per game)!",
         num_simulations.to_formatted_string(&Locale::en),
-        humantime::format_duration(duration).to_string(),
-        humantime::format_duration(avg_duration).to_string()
+        humantime::format_duration(duration),
+        humantime::format_duration(avg_duration)
     );
     warn!(
         "Average number of turns per game: {:.2}",

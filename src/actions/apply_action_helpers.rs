@@ -58,7 +58,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
             }
             if pokemon.poisoned {
                 poisons_to_handle.push((player, i));
-                debug!("{}'s Pokemon {} is poisoned", player, i);
+                debug!("{player}'s Pokemon {i} is poisoned");
             }
         }
     }
@@ -103,7 +103,7 @@ fn apply_pokemon_checkup(
                 .as_mut()
                 .expect("Pokemon should be there...");
             pokemon.asleep = false;
-            debug!("{}'s Pokemon {} woke up", player, in_play_idx);
+            debug!("{player}'s Pokemon {in_play_idx} woke up");
         }
     }
     // These always happen regardless of outcome_binary_vector
@@ -112,7 +112,7 @@ fn apply_pokemon_checkup(
             .as_mut()
             .expect("Pokemon should be there...");
         pokemon.paralyzed = false;
-        debug!("{}'s Pokemon {} is un-paralyzed", player, in_play_idx);
+        debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
     for (player, in_play_idx) in poisons_to_handle {
         let opponent = (player + 1) % 2;
@@ -202,7 +202,7 @@ pub(crate) fn handle_attack_damage(
         // Move card (and evolution chain) into discard pile
         let mut cards_to_discard = ko_pokemon.cards_behind.clone();
         cards_to_discard.push(ko_pokemon.card.clone());
-        debug!("Discarding: {:?}", cards_to_discard);
+        debug!("Discarding: {cards_to_discard:?}");
         state.discard_piles[ko_receiver].extend(cards_to_discard);
         state.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
     }
@@ -234,16 +234,13 @@ pub(crate) fn handle_attack_damage(
             // If no bench pokemon, opponent loses
             let ko_initiator = (ko_receiver + 1) % 2;
             state.winner = Some(GameOutcome::Win(ko_initiator));
-            debug!("Player {} lost due to no bench pokemon", ko_receiver);
+            debug!("Player {ko_receiver} lost due to no bench pokemon");
         } else {
             let possible_moves = state
                 .enumerate_bench_pokemon(ko_receiver)
                 .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
                 .collect::<Vec<_>>();
-            debug!(
-                "Triggering Activate moves: {:?} to player {}",
-                possible_moves, ko_receiver
-            );
+            debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
             state
                 .move_generation_stack
                 .push((ko_receiver, possible_moves));

@@ -30,7 +30,7 @@ impl Player for ExpectiMiniMaxPlayer {
             .collect();
         log::set_max_level(original_level); // Restore the original logging level
 
-        trace!("Scores: {:?}", scores);
+        trace!("Scores: {scores:?}");
         // Select the one with best score
         let best_idx = scores
             .iter()
@@ -53,7 +53,7 @@ fn expected_value_function(
     depth: usize,
     myself: usize,
 ) -> f64 {
-    trace!("E({}) depth left: {} action: {:?}", myself, depth, action);
+    trace!("E({myself}) depth left: {depth} action: {action:?}");
     let (probabilities, mutations) = forecast_action(state, action);
     let mut outcomes: Vec<State> = vec![];
     for mutation in mutations {
@@ -66,7 +66,7 @@ fn expected_value_function(
         .zip(probabilities.iter())
         .map(|(outcome, prob)| expectiminimax(rng, outcome, depth, myself) * prob)
         .sum();
-    trace!("E({}) action: {:?} score: {}", myself, action, score);
+    trace!("E({myself}) action: {action:?} score: {score}");
     score
 }
 
@@ -136,21 +136,13 @@ fn value_function(state: &State, myself: usize) -> f64 {
 
     // Weighted value function
     trace!(
-        "Value function: points: {}, opponent_points: {}, total_health_in_play: {}, enemy_total_health_in_play: {}, remaining_health_in_play: {}, enemy_remaining_total_health_in_play: {}, attached_energy_in_play: {}, enemy_attached_energy_in_play: {}",
-        points,
-        opponent_points,
-        total_health_in_play,
-        enemy_total_health_in_play,
-        remaining_health_in_play,
-        enemy_remaining_total_health_in_play,
-        attached_energy_in_play,
-        enemy_attached_energy_in_play
+        "Value function: points: {points}, opponent_points: {opponent_points}, total_health_in_play: {total_health_in_play}, enemy_total_health_in_play: {enemy_total_health_in_play}, remaining_health_in_play: {remaining_health_in_play}, enemy_remaining_total_health_in_play: {enemy_remaining_total_health_in_play}, attached_energy_in_play: {attached_energy_in_play}, enemy_attached_energy_in_play: {enemy_attached_energy_in_play}"
     );
     let score = (points - opponent_points) * 1000.0
         + (total_health_in_play - enemy_total_health_in_play)
         + (remaining_health_in_play - enemy_remaining_total_health_in_play)
         + (attached_energy_in_play - enemy_attached_energy_in_play) * 50.0;
-    trace!("Value function: {}", score);
+    trace!("Value function: {score}");
     score
 }
 

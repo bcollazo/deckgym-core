@@ -41,10 +41,7 @@ pub fn optimize(
         Deck::from_file(incomplete_deck_path).expect("Failed to parse incomplete deck file");
     let current_count = incomplete_deck.cards.len();
     let missing_count = 20 - current_count;
-    warn!(
-        "Incomplete deck has {} cards, missing {} cards",
-        current_count, missing_count
-    );
+    warn!("Incomplete deck has {current_count} cards, missing {missing_count} cards");
     if missing_count == 0 {
         warn!("Deck is already complete (20 cards). No optimization needed.");
         return;
@@ -82,7 +79,7 @@ pub fn optimize(
             if deck.cards.len() == 20 {
                 Some(deck)
             } else {
-                warn!("Skipping enemy deck {} since not valid", path);
+                warn!("Skipping enemy deck {path} since not valid");
                 None
             }
         })
@@ -103,7 +100,7 @@ pub fn optimize(
         "Generated {} possible combinations to complete the deck.",
         combinations.len()
     );
-    warn!("Combinations: {:?}", combinations);
+    warn!("Combinations: {combinations:?}");
 
     // Estimate the time it will take to run all simulations
     let player_codes = fill_code_array(players.clone());
@@ -113,14 +110,14 @@ pub fn optimize(
 
     warn!(
         "Estimated time: {} ({} combinations × {} enemy decks × {} games per deck)",
-        humantime::format_duration(total_time).to_string(),
+        humantime::format_duration(total_time),
         combinations.len(),
         enemy_valid_decks.len(),
         num
     );
     warn!(
         "Time estimation: {} per game ({} non-R players, {} R players)",
-        humantime::format_duration(time_per_game).to_string(),
+        humantime::format_duration(time_per_game),
         count_player_types(&player_codes, false),
         count_player_types(&player_codes, true)
     );
@@ -171,7 +168,7 @@ pub fn optimize(
 
         let win_percent = (total_wins as f32 / total_games as f32) * 100.0;
         results.push((comb.clone(), win_percent));
-        warn!("Combination {:?} win percentage: {:.2}%", comb, win_percent);
+        warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
         if win_percent > best_win_percent {
             best_win_percent = win_percent;
             best_combination = Some(comb.clone());
@@ -181,10 +178,7 @@ pub fn optimize(
     // Report the best combination found.
     match best_combination {
         Some(comb) => {
-            warn!(
-                "Best combination: {:?} with win percentage: {:.2}%",
-                comb, best_win_percent
-            );
+            warn!("Best combination: {comb:?} with win percentage: {best_win_percent:.2}%");
         }
         None => {
             warn!("No valid combination found.");
