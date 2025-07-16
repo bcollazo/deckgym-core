@@ -36,5 +36,11 @@ pub(crate) fn apply_abilities_action(acting_player: usize, state: &mut State, in
         AbilityId::A2a071Arceus => {
             panic!("Arceus's ability cant be used");
         }
+        AbilityId::A3122SolgaleoExRisingRoad => {
+            // Once during your turn, if this Pokémon is on your Bench, you may switch it with your Active Pokémon.
+            debug!("Solgaleo's ability: Switching with active Pokemon");
+            // TODO: Use a model method that carries out the switch logic (e.g. cures status, etc.)
+            state.in_play_pokemon[acting_player].swap(0, index);
+        }
     }
 }
