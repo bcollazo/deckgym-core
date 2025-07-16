@@ -234,6 +234,8 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A3085CosmogTeleport => teleport_attack(),
+        AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3a094JynxPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
@@ -242,8 +244,6 @@ fn forecast_effect_attack(
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
-        AttackId::A3085CosmogTeleport => teleport_attack(),
-        AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
     }
 }
 
