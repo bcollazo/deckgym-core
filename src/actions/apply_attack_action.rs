@@ -241,6 +241,7 @@ fn forecast_effect_attack(
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
+        AttackId::A3085CosmogTeleport => teleport_attack(),
     }
 }
 
