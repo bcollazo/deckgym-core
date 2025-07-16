@@ -26818,7 +26818,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Unknown",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }
@@ -27313,7 +27313,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Unknown",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }

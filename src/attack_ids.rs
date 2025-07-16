@@ -76,6 +76,7 @@ pub enum AttackId {
     A1a030DedenneThunderShock,
     A1a041MankeyFocusFist,
     A1a061EeveeContinuousSteps,
+    A3b055EeveeCollect,
     A2035PiplupHeal,
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
