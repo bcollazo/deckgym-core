@@ -243,6 +243,7 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 0, 30, None)
         }
         AttackId::A3085CosmogTeleport => teleport_attack(),
+        AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
     }
 }
 
