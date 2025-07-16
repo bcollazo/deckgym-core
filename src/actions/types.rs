@@ -49,6 +49,7 @@ pub enum SimpleAction {
     ApplyDamage {
         targets: Vec<(u32, usize)>, // Vec of (damage, in_play_idx)
     },
+    /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
         in_play_idx: usize,
     },

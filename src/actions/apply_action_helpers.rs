@@ -261,4 +261,10 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
             state.has_played_support = true;
         }
     }
+    if let SimpleAction::UseAbility(index) = &action.action {
+        let pokemon = state.in_play_pokemon[action.actor][*index]
+            .as_mut()
+            .expect("Pokemon should be there if using ability");
+        pokemon.ability_used = true;
+    }
 }

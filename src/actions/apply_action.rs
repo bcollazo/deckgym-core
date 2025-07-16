@@ -3,13 +3,13 @@ use std::panic;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
+    actions::apply_abilities_action::forecast_ability,
     hooks::{get_retreat_cost, on_attach_tool, to_playable_card},
     state::State,
     types::{Card, PlayedCard},
 };
 
 use super::{
-    apply_abilities_action::apply_abilities_action,
     apply_action_helpers::{
         apply_common_mutation, forecast_end_turn, handle_attack_damage, Mutations, Probabilities,
     },
@@ -42,7 +42,6 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Attach { .. }
         | SimpleAction::AttachTool { .. }
         | SimpleAction::Evolve(_, _)
-        | SimpleAction::UseAbility(_)
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
@@ -54,6 +53,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
                 }
             })],
         ),
+        SimpleAction::UseAbility(index) => forecast_ability(state, action, *index),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
@@ -102,9 +102,6 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         }
         SimpleAction::Evolve(card, position) => {
             apply_evolve(action.actor, state, card, *position);
-        }
-        SimpleAction::UseAbility(position) => {
-            apply_abilities_action(action.actor, state, *position);
         }
         SimpleAction::Activate { in_play_idx } => {
             apply_retreat(action.actor, state, *in_play_idx, true);

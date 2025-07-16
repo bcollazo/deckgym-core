@@ -2,6 +2,7 @@ use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
+    actions::{mutations::doutcome, shared_mutations::pokeball_outcomes},
     card_ids::CardId,
     state::GameOutcome,
     tool_ids::ToolId,
@@ -23,32 +24,22 @@ pub fn forecast_trainer_action(
     let trainer_id =
         CardId::from_numeric_id(trainer_card.numeric_id).expect("CardId should be known");
     match trainer_id {
-        CardId::PA001Potion => deterministic(potion_effect),
-        CardId::PA002XSpeed => deterministic(turn_effect),
+        CardId::PA001Potion => doutcome(potion_effect),
+        CardId::PA002XSpeed => doutcome(turn_effect),
         CardId::PA005PokeBall => pokeball_outcomes(acting_player, state),
-        CardId::PA006RedCard => deterministic(red_card_effect),
-        CardId::PA007ProfessorsResearch => deterministic(professor_oak_effect),
-        CardId::A1219Erika | CardId::A1266Erika => deterministic(erika_effect),
+        CardId::PA006RedCard => doutcome(red_card_effect),
+        CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
+        CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
-        CardId::A1222Koga | CardId::A1269Koga => deterministic(koga_effect),
-        CardId::A1223Giovanni | CardId::A1270Giovanni => deterministic(giovanni_effect),
-        CardId::A1225Sabrina | CardId::A1272Sabrina => deterministic(sabrina_effect),
-        CardId::A1a065MythicalSlab => deterministic(mythical_slab_effect),
-        CardId::A1a068Leaf | CardId::A1a082Leaf => deterministic(turn_effect),
-        CardId::A2150Cyrus | CardId::A2190Cyrus => deterministic(cyrus_effect),
-        CardId::A2147GiantCape => deterministic(attach_tool),
+        CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
+        CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
+        CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
+        CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
+        CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(turn_effect),
+        CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
+        CardId::A2147GiantCape => doutcome(attach_tool),
         _ => panic!("Unsupported Trainer Card"),
     }
-}
-
-fn deterministic(mutation: fn(&mut StdRng, &mut State, &Action)) -> (Probabilities, Mutations) {
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, action| {
-            apply_common_mutation(state, action);
-            mutation(rng, state, action);
-        })],
-    )
 }
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -112,55 +103,6 @@ fn misty_outcomes() -> (Probabilities, Mutations) {
         }));
     }
     (probabilities, outcomes)
-}
-
-fn pokeball_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
-    let num_basic_in_deck = state.decks[acting_player]
-        .cards
-        .iter()
-        .filter(|x| x.is_basic())
-        .count();
-    if num_basic_in_deck == 0 {
-        deterministic({
-            |rng, state, action| {
-                // If there are no basic Pokemon in the deck, just shuffle it
-                state.decks[action.actor].shuffle(false, rng);
-            }
-        })
-    } else {
-        let probabilities = vec![1.0 / (num_basic_in_deck as f64); num_basic_in_deck];
-        let mut outcomes: Mutations = vec![];
-        for i in 0..num_basic_in_deck {
-            outcomes.push(Box::new({
-                move |rng, state, action| {
-                    apply_common_mutation(state, action);
-
-                    let card = state.decks[action.actor]
-                        .cards
-                        .iter()
-                        .filter(|x| x.is_basic())
-                        .nth(i)
-                        .cloned()
-                        .expect("Should be a basic card");
-
-                    // Put 1 random Basic Pokemon from your deck into your hand.
-                    let deck = &mut state.decks[action.actor];
-                    // Select a random one
-                    debug!("Pokeball selected card: {card:?}");
-                    // Add it to hand and remove one of it from deck
-                    state.hands[action.actor].push(card.clone());
-                    if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
-                        deck.cards.remove(pos);
-                    } else {
-                        panic!("Card should be in deck");
-                    }
-
-                    deck.shuffle(false, rng);
-                }
-            }));
-        }
-        (probabilities, outcomes)
-    }
 }
 
 // Remember to implement these in the main controller / hooks.
