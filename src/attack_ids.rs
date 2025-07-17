@@ -218,9 +218,8 @@ lazy_static::lazy_static! {
 
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
-        m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
-        m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
+        m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 207", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 239", 0), AttackId::A3122SolgaleoExSolBreaker);
@@ -228,11 +227,17 @@ lazy_static::lazy_static! {
         // A3a
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
+        // A3b
+        m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
+        m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
+
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
+        m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
+
 
         m
     };
