@@ -6,17 +6,28 @@ use log::debug;
 use crate::{
     card_ids::CardId,
     tool_ids::ToolId,
-    types::{Card, EnergyType, PlayedCard},
+    types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     State,
 };
 
-const PLAYABLE_TRAINER_CARD_NAMES: [&str; 3] = ["Helix Fossil", "Dome Fossil", "Old Amber"];
+// Fossils
+const FOSSIL_CARD_NAMES: [&str; 5] = [
+    "Helix Fossil",
+    "Dome Fossil",
+    "Old Amber",
+    "Skull Fossil",
+    "Armor Fossil",
+];
+
+fn is_fossil(trainer_card: &TrainerCard) -> bool {
+    FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
+}
 
 pub(crate) fn to_playable_card(card: &crate::types::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
-            if PLAYABLE_TRAINER_CARD_NAMES.contains(&trainer_card.name.as_str()) {
+            if is_fossil(trainer_card) {
                 40
             } else {
                 panic!("Unplayable Trainer Card: {:?}", trainer_card);
@@ -35,6 +46,19 @@ pub(crate) fn to_playable_card(card: &crate::types::Card, played_this_turn: bool
         paralyzed: false,
         asleep: false,
         cards_behind: vec![],
+    }
+}
+
+pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
+    match &played_card.card {
+        Card::Pokemon(pokemon_card) => pokemon_card.stage,
+        Card::Trainer(trainer_card) => {
+            if is_fossil(&trainer_card) {
+                BASIC_STAGE // Fossils are considered basic for stage purposes
+            } else {
+                panic!("Trainer cards do not have a stage")
+            }
+        }
     }
 }
 

@@ -65,8 +65,11 @@ fn print_enums(
     println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
     println!();
     println!("use serde::{{Deserialize, Serialize}};");
+    println!("use strum_macros::EnumIter;");
     println!();
-    println!("#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]");
+    println!(
+        "#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize, EnumIter)]"
+    );
     println!("pub enum CardId {{");
     for (name, _) in card_map.iter() {
         println!("    {name},");

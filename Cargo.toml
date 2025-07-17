@@ -19,6 +19,8 @@ indexmap = "2.7.0"
 num-format = "0.4.4"
 humantime = "2.1.0"
 pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
+strum = "0.27"
+strum_macros = "0.27"
 
 [features]
 default = []

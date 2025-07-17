@@ -1,6 +1,7 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
+    card_logic::can_rare_candy_evolve,
     database::get_card_by_enum,
     hooks::can_play_support,
     types::{EnergyType, TrainerCard, TrainerType},
@@ -44,6 +45,7 @@ pub fn generate_possible_trainer_actions(
         CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
         CardId::A1225Sabrina | CardId::A1272Sabrina => can_play_sabrina(state, trainer_card),
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
+        CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
@@ -64,11 +66,11 @@ fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
         .filter(|(_, x)| x.has_tool_attached())
         .count();
     if in_play_without_tools > 0 {
-        return Some(vec![SimpleAction::Play {
+        Some(vec![SimpleAction::Play {
             trainer_card: trainer_card.clone(),
-        }]);
+        }])
     } else {
-        return Some(vec![]);
+        Some(vec![])
     }
 }
 
@@ -143,6 +145,25 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged())
         .count();
     if damaged_bench_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state.turn_count <= 2 {
+        return cannot_play_trainer();
+    }
+
+    let player = state.current_player;
+    let hand = &state.hands[player];
+
+    // Check if there's at least 1 basic pokemon in field with a corresponding stage2-rare-candy-evolvable in hand
+    let has_valid_evolution_pair = state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, in_play)| hand.iter().any(|card| can_rare_candy_evolve(card, in_play)));
+    if has_valid_evolution_pair {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

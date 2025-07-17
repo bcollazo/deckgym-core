@@ -2,6 +2,7 @@ mod ability_ids;
 pub mod actions;
 mod attack_ids;
 pub mod card_ids;
+pub mod card_logic;
 pub mod database;
 pub mod deck;
 pub mod game;

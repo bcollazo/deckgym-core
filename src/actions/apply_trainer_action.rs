@@ -4,6 +4,7 @@ use rand::rngs::StdRng;
 use crate::{
     actions::{mutations::doutcome, shared_mutations::pokeball_outcomes},
     card_ids::CardId,
+    card_logic::can_rare_candy_evolve,
     state::GameOutcome,
     tool_ids::ToolId,
     types::{Card, EnergyType, TrainerCard},
@@ -38,6 +39,7 @@ pub fn forecast_trainer_action(
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(turn_effect),
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
         CardId::A2147GiantCape => doutcome(attach_tool),
+        CardId::A3144RareCandy => doutcome(rare_candy_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -232,5 +234,27 @@ fn attach_tool(_: &mut StdRng, state: &mut State, action: &Action) {
         state.move_generation_stack.push((action.actor, choices));
     } else {
         panic!("Tool should have been played");
+    }
+}
+
+/// Makes user select what Stage2-Basic pair to evolve.
+fn rare_candy_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let hand = &state.hands[player];
+
+    // Flat-map basic in play with valid stage 2 in hand pairs
+    let possible_candy_evolutions: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .flat_map(|(in_play_idx, in_play)| {
+            hand.iter()
+                .filter(|card| can_rare_candy_evolve(card, in_play))
+                .map(move |card| SimpleAction::Evolve(card.clone(), in_play_idx))
+        })
+        .collect();
+
+    if !possible_candy_evolutions.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_candy_evolutions));
     }
 }
