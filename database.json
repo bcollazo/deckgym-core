@@ -19829,7 +19829,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Unknown",
+          "title": "Teleport",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -21671,7 +21671,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Unknown",
+          "title": "Teleport",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -29509,7 +29509,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Unknown",
+          "title": "Teleport",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
