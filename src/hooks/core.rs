@@ -54,7 +54,7 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     match &played_card.card {
         Card::Pokemon(pokemon_card) => pokemon_card.stage,
         Card::Trainer(trainer_card) => {
-            if is_fossil(&trainer_card) {
+            if is_fossil(trainer_card) {
                 BASIC_STAGE // Fossils are considered basic for stage purposes
             } else {
                 panic!("Trainer cards do not have a stage")
@@ -81,15 +81,12 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
 /// Called when a Pokémon evolves
 pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
-        match ability_id {
-            AbilityId::A3b034SylveonExHappyRibbon => {
-                // Give the user the option to draw 2 cards
-                state.move_generation_stack.push((
-                    actor,
-                    vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
-                ));
-            }
-            _ => {}
+        if ability_id == AbilityId::A3b034SylveonExHappyRibbon {
+            // Give the user the option to draw 2 cards
+            state.move_generation_stack.push((
+                actor,
+                vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
+            ));
         }
     }
 }

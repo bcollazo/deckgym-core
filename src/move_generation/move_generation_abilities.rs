@@ -16,8 +16,12 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
     }
 
     let is_active = *in_play_index == 0;
-    let ability = AbilityId::from_pokemon_id(&card.card.get_id()[..])
-        .expect(&format!("Ability seems not implemented for card ID: {}", card.card.get_id()));
+    let ability = AbilityId::from_pokemon_id(&card.card.get_id()[..]).unwrap_or_else(|| {
+        panic!(
+            "Ability seems not implemented for card ID: {}",
+            card.card.get_id()
+        )
+    });
     match ability {
         AbilityId::A1007Butterfree => !card.ability_used,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
