@@ -135,6 +135,7 @@ impl Game {
         self.degrees_per_ply.clone()
     }
 
+    /// see https://github.com/colored-rs/colored?tab=readme-ov-file#colors
     fn get_color(&self, actor: usize) -> String {
         let energy = self.state.decks[actor].energy_types[0];
         let color = match energy {
@@ -146,7 +147,7 @@ impl Game {
             EnergyType::Psychic => "magenta",
             EnergyType::Water => "blue",
             EnergyType::Darkness => "black",
-            EnergyType::Metal => "black",
+            EnergyType::Metal => "bright_black",
             EnergyType::Dragon => todo!(),
         };
         color.to_string()

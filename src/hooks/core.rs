@@ -162,8 +162,8 @@ pub(crate) fn get_damage_from_attack(
         increased_turn_effect_modifiers,
         reduced_card_effect_modifiers
     );
-    attack.fixed_damage + weakness_modifier + increased_turn_effect_modifiers
-        - reduced_card_effect_modifiers
+    (attack.fixed_damage + weakness_modifier + increased_turn_effect_modifiers)
+        .saturating_sub(reduced_card_effect_modifiers)
 }
 
 // Check if attached satisfies cost (considering Colorless)
