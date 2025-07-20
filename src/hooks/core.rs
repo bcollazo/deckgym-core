@@ -5,7 +5,7 @@ use log::debug;
 
 use crate::{
     actions::SimpleAction,
-    card_ids::CardId,
+    effects::TurnEffect,
     tool_ids::ToolId,
     types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     AbilityId, State,
@@ -35,19 +35,14 @@ pub(crate) fn to_playable_card(card: &crate::types::Card, played_this_turn: bool
             }
         }
     };
-    PlayedCard {
-        card: card.clone(),
-        remaining_hp: total_hp,
+    PlayedCard::new(
+        card.clone(),
         total_hp,
-        attached_energy: vec![],
-        attached_tool: None,
+        total_hp,
+        vec![],
         played_this_turn,
-        ability_used: false,
-        poisoned: false,
-        paralyzed: false,
-        asleep: false,
-        cards_behind: vec![],
-    }
+        vec![],
+    )
 }
 
 pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
@@ -93,11 +88,12 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
 
 // TODO: Implement Gengars ability that disallow playing support cards.
 pub(crate) fn can_play_support(state: &State) -> bool {
-    let psyduck_headache = state
+    let has_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .any(|x| CardId::from_card_id(&x.get_id()) == Some(CardId::A1057Psyduck));
-    !state.has_played_support && !psyduck_headache
+        .any(|x| matches!(x, TurnEffect::NoSupportCards));
+
+    !state.has_played_support && !has_modifiers
 }
 
 pub(crate) fn get_damage_from_attack(
@@ -121,16 +117,16 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
-    // Giovanni's Modifier
-    let mut giovanni_modifier = 0;
-    let giovanni_ids = [CardId::A1223Giovanni, CardId::A1270Giovanni];
-    if state
+    // Modifiers by effect
+    let effect_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .any(|x| giovanni_ids.contains(&CardId::from_card_id(&x.get_id()).unwrap()))
-    {
-        giovanni_modifier = 10;
-    }
+        .filter(|x| matches!(x, TurnEffect::IncreasedDamage { .. }))
+        .map(|x| match x {
+            TurnEffect::IncreasedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>();
 
     // Weakness Modifier
     let opponent = (player + 1) % 2;
@@ -148,10 +144,10 @@ pub(crate) fn get_damage_from_attack(
     }
 
     debug!(
-        "Attack: {:?}, Weakness: {}, Giovanni: {}",
-        attack.fixed_damage, weakness_modifier, giovanni_modifier
+        "Attack: {:?}, Weakness: {}, Effects: {}",
+        attack.fixed_damage, weakness_modifier, effect_modifiers
     );
-    attack.fixed_damage + weakness_modifier + giovanni_modifier
+    attack.fixed_damage + weakness_modifier + effect_modifiers
 }
 
 // Check if attached satisfies cost (considering Colorless)
@@ -177,7 +173,7 @@ pub(crate) fn contains_energy(attached: &[EnergyType], cost: &[EnergyType]) -> b
 // Test Colorless is wildcard when counting energy
 #[cfg(test)]
 mod tests {
-    use crate::database::get_card_by_enum;
+    use crate::{card_ids::CardId, database::get_card_by_enum};
 
     use super::*;
 
@@ -224,7 +220,7 @@ mod tests {
         assert!(can_play_support(&state));
 
         // With Psyduck headache effect, it should disallow
-        state.add_turn_effect(get_card_by_enum(CardId::A1057Psyduck), 1);
+        state.add_turn_effect(TurnEffect::NoSupportCards, 1);
         assert!(!can_play_support(&state));
     }
 
@@ -247,7 +243,7 @@ mod tests {
         let base_damage = get_damage_from_attack(&state, 0, 0, 0);
 
         // Add Giovanni effect
-        state.add_turn_effect(get_card_by_enum(CardId::A1223Giovanni), 0);
+        state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
         let damage_with_giovanni = get_damage_from_attack(&state, 0, 0, 0);

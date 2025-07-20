@@ -5,9 +5,10 @@ use crate::{
     actions::{mutations::doutcome, shared_mutations::pokeball_outcomes},
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
+    effects::TurnEffect,
     state::GameOutcome,
     tool_ids::ToolId,
-    types::{Card, EnergyType, TrainerCard},
+    types::{EnergyType, TrainerCard},
     State,
 };
 
@@ -26,7 +27,7 @@ pub fn forecast_trainer_action(
         CardId::from_numeric_id(trainer_card.numeric_id).expect("CardId should be known");
     match trainer_id {
         CardId::PA001Potion => doutcome(potion_effect),
-        CardId::PA002XSpeed => doutcome(turn_effect),
+        CardId::PA002XSpeed => doutcome(x_speed_effect),
         CardId::PA005PokeBall => pokeball_outcomes(acting_player, state),
         CardId::PA006RedCard => doutcome(red_card_effect),
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
@@ -36,7 +37,7 @@ pub fn forecast_trainer_action(
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
-        CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(turn_effect),
+        CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
         CardId::A2147GiantCape => doutcome(attach_tool),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
@@ -108,13 +109,11 @@ fn misty_outcomes() -> (Probabilities, Mutations) {
 }
 
 // Remember to implement these in the main controller / hooks.
-fn turn_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    if let SimpleAction::Play { trainer_card } = &action.action {
-        let card = Card::Trainer(trainer_card.clone());
-        state.add_turn_effect(card, 0);
-    } else {
-        panic!("Something went wrong. An action was played but couldnt get the card");
-    }
+fn x_speed_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 1 }, 0);
+}
+fn leaf_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 2 }, 0);
 }
 
 fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -142,14 +141,9 @@ fn cyrus_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .push((opponent_player, possible_moves));
 }
 
-fn giovanni_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    if let SimpleAction::Play { trainer_card } = &action.action {
-        // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
-        let card = Card::Trainer(trainer_card.clone());
-        state.add_turn_effect(card, 0);
-    } else {
-        panic!("XSpeed should be played");
-    }
+fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 }
 
 fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {

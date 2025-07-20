@@ -6,7 +6,7 @@ use crate::{
     actions::apply_abilities_action::forecast_ability,
     hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
     state::State,
-    types::{Card, PlayedCard},
+    types::Card,
 };
 
 use super::{
@@ -132,6 +132,8 @@ fn apply_healing(acting_player: usize, state: &mut State, position: usize, amoun
     active.heal(amount);
 }
 
+/// is_free is analogous to "via retreat". If false, its because this comes from an Activate.
+/// Note: This might be called when a K.O. happens, so can't assume there is an active...
 fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_free: bool) {
     if !is_free {
         let active = state.in_play_pokemon[acting_player][0]
@@ -151,14 +153,9 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
 
     state.in_play_pokemon[acting_player].swap(0, bench_idx);
 
-    // Cure any status conditions
-    if let Some(pokemon) = &state.in_play_pokemon[acting_player][bench_idx] {
-        state.in_play_pokemon[acting_player][bench_idx] = Some(PlayedCard {
-            poisoned: false,
-            paralyzed: false,
-            asleep: false,
-            ..pokemon.clone()
-        });
+    // Clear status and effects of the new bench Pokemon
+    if let Some(pokemon) = state.in_play_pokemon[acting_player][bench_idx].as_mut() {
+        pokemon.clear_status_and_effects();
     }
 
     state.has_retreated = true;
@@ -224,54 +221,39 @@ mod tests {
         apply_evolve(0, &mut state, &primeape, 0);
         assert_eq!(
             state.in_play_pokemon[0][0],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 60, // 90 - 30 = 60
-                total_hp: 90,
-                attached_energy: vec![energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                60, // 90 - 30 = 60
+                90,
+                vec![energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
 
         // Evolve Bench
         apply_evolve(0, &mut state, &primeape, 2);
         assert_eq!(
             state.in_play_pokemon[0][0],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 60, // 90 - 30 = 60
-                total_hp: 90,
-                attached_energy: vec![energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                60, // 90 - 30 = 60
+                90,
+                vec![energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
         assert_eq!(
             state.in_play_pokemon[0][2],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 90, // 90 - 0 = 90
-                total_hp: 90,
-                attached_energy: vec![energy, energy, energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                90, // 90 - 0 = 90
+                90,
+                vec![energy, energy, energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
     }
 

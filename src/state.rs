@@ -6,6 +6,7 @@ use std::hash::Hash;
 use crate::{
     actions::SimpleAction,
     deck::Deck,
+    effects::TurnEffect,
     types::{Card, EnergyType, PlayedCard},
 };
 
@@ -38,7 +39,7 @@ pub struct State {
     pub(crate) has_played_support: bool,
     pub(crate) has_retreated: bool,
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
-    turn_effects: BTreeMap<u8, Vec<Card>>,
+    turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
 
 impl State {
@@ -139,13 +140,12 @@ impl State {
         self.current_energy = Some(*generated);
     }
 
-    pub(crate) fn reset_turn_states(&mut self) {
+    pub(crate) fn end_turn_maintenance(&mut self) {
         // Reset .played_this_turn and .ability_used for all in-play pokemon
         for i in 0..2 {
             self.in_play_pokemon[i].iter_mut().for_each(|x| {
-                if let Some(pokemon) = x {
-                    pokemon.played_this_turn = false;
-                    pokemon.ability_used = false;
+                if let Some(played_card) = x {
+                    played_card.end_turn_maintenance();
                 }
             });
         }
@@ -158,19 +158,20 @@ impl State {
     ///
     /// # Arguments
     ///
-    /// * `card` - The card representing the effect to be applied
-    /// * `duration` - The number of turns the effect should remain active. 0 means current turn only,
-    ///   1 means current turn and the next turn, etc.
-    pub(crate) fn add_turn_effect(&mut self, card: Card, duration: u8) {
+    /// * `effect` - The effect to be added.
+    /// * `duration` - The number of turns the effect should remain active.
+    ///     0 means current turn only,
+    ///     1 means current turn and the next turn, etc.
+    pub(crate) fn add_turn_effect(&mut self, effect: TurnEffect, duration: u8) {
         for turn_offset in 0..(duration + 1) {
             let target_turn = self.turn_count + turn_offset;
             self.turn_effects
                 .entry(target_turn)
                 .or_default()
-                .push(card.clone());
+                .push(effect.clone());
             trace!(
                 "Adding effect {:?} for {} turns, current turn: {}, target turn: {}",
-                canonical_name(&card),
+                effect,
                 duration,
                 self.turn_count,
                 target_turn
@@ -179,7 +180,7 @@ impl State {
     }
 
     /// Retrieves all effects scheduled for the current turn
-    pub(crate) fn get_current_turn_effects(&self) -> Vec<Card> {
+    pub(crate) fn get_current_turn_effects(&self) -> Vec<TurnEffect> {
         self.turn_effects
             .get(&self.turn_count)
             .cloned()
@@ -232,7 +233,7 @@ impl State {
         );
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
-        self.reset_turn_states();
+        self.end_turn_maintenance();
         self.queue_draw_action(self.current_player, 1);
         self.generate_energy();
     }

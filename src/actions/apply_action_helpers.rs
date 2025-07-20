@@ -32,7 +32,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
                     if both_players_initiated {
                         // Actually start game (no energy generation)
                         state.turn_count = 1;
-                        state.reset_turn_states();
+                        state.end_turn_maintenance();
                         state.queue_draw_action(state.current_player, 1);
                     }
                 }
