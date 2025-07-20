@@ -152,7 +152,7 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 }
 
 fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    if state.turn_count <= 2 {
+    if state.is_users_first_turn() {
         return cannot_play_trainer();
     }
 

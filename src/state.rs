@@ -246,6 +246,10 @@ impl State {
             .filter(|(_, x)| x.get_energy_type() == Some(energy))
             .count()
     }
+
+    pub(crate) fn is_users_first_turn(&self) -> bool {
+        self.turn_count <= 2
+    }
 }
 
 fn format_cards(played_cards: &[Option<PlayedCard>]) -> Vec<String> {
