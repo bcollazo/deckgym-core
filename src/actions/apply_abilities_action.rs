@@ -27,9 +27,10 @@ pub(crate) fn forecast_ability(
         AbilityId::A1007Butterfree => heal_your_pokemon(20),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
-        AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used"),
+        AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3a027ShiinoticIlluminate => pokeball_outcomes(action.actor, state),
+        AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
     }
 }
 

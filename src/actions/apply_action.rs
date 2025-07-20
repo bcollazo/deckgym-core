@@ -4,7 +4,7 @@ use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
     actions::apply_abilities_action::forecast_ability,
-    hooks::{get_retreat_cost, on_attach_tool, to_playable_card},
+    hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
     state::State,
     types::{Card, PlayedCard},
 };
@@ -37,7 +37,7 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
 pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutations) {
     match &action.action {
         // Deterministic Actions
-        SimpleAction::DrawCard // TODO: DrawCard should return actual deck probabilities.
+        SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
         | SimpleAction::Attach { .. }
         | SimpleAction::AttachTool { .. }
@@ -45,7 +45,8 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
-        | SimpleAction::Heal { .. } => (
+        | SimpleAction::Heal { .. }
+        | SimpleAction::Noop => (
             vec![1.0],
             vec![Box::new({
                 |_, mutable_state, action| {
@@ -67,7 +68,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
     apply_common_mutation(state, action);
 
     match &action.action {
-        SimpleAction::DrawCard => {
+        SimpleAction::DrawCard { .. } => {
             state.maybe_draw_card(action.actor);
         }
         SimpleAction::Attach {
@@ -119,6 +120,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         } => {
             apply_healing(action.actor, state, *in_play_idx, *amount);
         }
+        SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
 }
@@ -164,29 +166,31 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
 
 // We will replace the PlayedCard, but taking into account the attached energy
 //  and the remaining HP.
-fn apply_evolve(acting_player: usize, state: &mut State, card: &Card, position: usize) {
+fn apply_evolve(acting_player: usize, state: &mut State, to_card: &Card, position: usize) {
     // This removes status conditions
-    let mut played_card = to_playable_card(card, true);
+    let mut played_card = to_playable_card(to_card, true);
 
-    let old_pokemon = state.in_play_pokemon[acting_player][position]
+    let from_pokemon = state.in_play_pokemon[acting_player][position]
         .as_ref()
         .expect("Pokemon should be there if evolving it");
-    if let Card::Pokemon(pokemon_card) = &played_card.card {
-        if pokemon_card.stage == 0 {
-            panic!("Only stage 1 or 2 pokemons can be evolved");
+    if let Card::Pokemon(to_pokemon) = &played_card.card {
+        if to_pokemon.stage == 0 {
+            panic!("Basic pokemon do not evolve from others...");
         }
 
-        let damage_taken = old_pokemon.total_hp - old_pokemon.remaining_hp;
+        let damage_taken = from_pokemon.total_hp - from_pokemon.remaining_hp;
         played_card.remaining_hp -= damage_taken;
-        played_card.attached_energy = old_pokemon.attached_energy.clone();
-        played_card.cards_behind = old_pokemon.cards_behind.clone();
-        played_card.cards_behind.push(old_pokemon.card.clone());
+        played_card.attached_energy = from_pokemon.attached_energy.clone();
+        played_card.cards_behind = from_pokemon.cards_behind.clone();
+        played_card.cards_behind.push(from_pokemon.card.clone());
         state.in_play_pokemon[acting_player][position] = Some(played_card);
     } else {
         panic!("Only Pokemon cards can be evolved");
     }
-    state.remove_card_from_hand(acting_player, card);
-    // NOTE: Phantomly leave the Stage 0 card behind the newly evolved card
+    state.remove_card_from_hand(acting_player, to_card);
+
+    // Run special logic hooks on evolution
+    on_evolve(acting_player, state, to_card)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.

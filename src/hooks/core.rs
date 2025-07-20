@@ -4,10 +4,11 @@ use std::vec;
 use log::debug;
 
 use crate::{
+    actions::SimpleAction,
     card_ids::CardId,
     tool_ids::ToolId,
     types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
-    State,
+    AbilityId, State,
 };
 
 // Fossils
@@ -74,6 +75,22 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
         }
         // Many tools do nothing on attach
         ToolId::A2148RockyHelmet => {}
+    }
+}
+
+/// Called when a Pokémon evolves
+pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
+        match ability_id {
+            AbilityId::A3b034SylveonExHappyRibbon => {
+                // Give the user the option to draw 2 cards
+                state.move_generation_stack.push((
+                    actor,
+                    vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
+                ));
+            }
+            _ => {}
+        }
     }
 }
 

@@ -10,6 +10,7 @@ pub(crate) use core::contains_energy;
 pub(crate) use core::get_damage_from_attack;
 pub(crate) use core::get_stage;
 pub(crate) use core::on_attach_tool;
+pub(crate) use core::on_evolve;
 pub(crate) use core::to_playable_card;
 pub(crate) use counterattack::get_counterattack_damage;
 pub(crate) use retreat::can_retreat;

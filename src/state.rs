@@ -206,9 +206,9 @@ impl State {
             .filter(|(i, _)| *i != 0)
     }
 
-    pub(crate) fn queue_draw_action(&mut self, actor: usize) {
+    pub(crate) fn queue_draw_action(&mut self, actor: usize, amount: u8) {
         self.move_generation_stack
-            .push((actor, vec![SimpleAction::DrawCard]));
+            .push((actor, vec![SimpleAction::DrawCard { amount }]));
     }
 
     pub(crate) fn get_active(&self, player: usize) -> &PlayedCard {
@@ -233,7 +233,7 @@ impl State {
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
         self.reset_turn_states();
-        self.queue_draw_action(self.current_player);
+        self.queue_draw_action(self.current_player, 1);
         self.generate_energy();
     }
 

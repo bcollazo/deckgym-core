@@ -525,7 +525,7 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         state
             .move_generation_stack
-            .push((action.actor, vec![SimpleAction::DrawCard]));
+            .push((action.actor, vec![SimpleAction::DrawCard { amount: 1 }]));
     })
 }
 

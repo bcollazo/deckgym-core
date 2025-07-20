@@ -33,7 +33,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
                         // Actually start game (no energy generation)
                         state.turn_count = 1;
                         state.reset_turn_states();
-                        state.queue_draw_action(state.current_player);
+                        state.queue_draw_action(state.current_player, 1);
                     }
                 }
             })],
