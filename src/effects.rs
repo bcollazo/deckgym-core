@@ -2,6 +2,7 @@
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub enum CardEffect {
     NoRetreat,
+    ReducedDamage { amount: u32 },
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]

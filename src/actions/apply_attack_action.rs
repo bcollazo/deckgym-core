@@ -201,9 +201,12 @@ fn forecast_effect_attack(
         }
         AttackId::A1154HitmonleeStretchKick => direct_damage(30, true),
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
-        AttackId::A1165ArbokCorner => {
-            damage_and_card_effect_attack(index, 1, CardEffect::NoRetreat)
-        }
+        AttackId::A1165ArbokCorner => damage_and_card_effect_attack(
+            index,
+            (state.current_player + 1) % 2,
+            1,
+            CardEffect::NoRetreat,
+        ),
         AttackId::A1171NidokingPoisonHorn => damage_status_attack(90, StatusCondition::Poisoned),
         AttackId::A1174GrimerPoisonGas => damage_status_attack(10, StatusCondition::Poisoned),
         AttackId::A1178MawileCrunch => mawile_crunch(),
@@ -240,6 +243,12 @@ fn forecast_effect_attack(
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
         AttackId::A3085CosmogTeleport => teleport_attack(),
+        AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
+            0,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 50 },
+        ),
         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3a094JynxPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
@@ -617,13 +626,13 @@ fn damage_and_turn_effect_attack(
 
 fn damage_and_card_effect_attack(
     index: usize,
+    player: usize,
     effect_duration: u8,
     effect: CardEffect,
 ) -> (Probabilities, Mutations) {
     index_active_damage_doutcome(index, move |_, state, _| {
-        let opponent = (state.current_player + 1) % 2;
         state
-            .get_active_mut(opponent)
+            .get_active_mut(player)
             .add_effect(effect, effect_duration);
     })
 }
