@@ -9,8 +9,7 @@ pub(crate) fn can_retreat(state: &State) -> bool {
     let has_no_retreat = state
         .get_active(state.current_player)
         .get_active_effects()
-        .iter()
-        .any(|x| *x == CardEffect::NoRetreat);
+        .contains(&CardEffect::NoRetreat);
 
     !state.has_retreated && !has_no_retreat
 }

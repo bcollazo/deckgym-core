@@ -160,15 +160,15 @@ impl State {
     ///
     /// * `effect` - The effect to be added.
     /// * `duration` - The number of turns the effect should remain active.
-    ///     0 means current turn only,
-    ///     1 means current turn and the next turn, etc.
+    ///   0 means current turn only,
+    ///   1 means current turn and the next turn, etc.
     pub(crate) fn add_turn_effect(&mut self, effect: TurnEffect, duration: u8) {
         for turn_offset in 0..(duration + 1) {
             let target_turn = self.turn_count + turn_offset;
             self.turn_effects
                 .entry(target_turn)
                 .or_default()
-                .push(effect.clone());
+                .push(effect);
             trace!(
                 "Adding effect {:?} for {} turns, current turn: {}, target turn: {}",
                 effect,
