@@ -12,6 +12,7 @@ pub mod move_generation;
 mod optimize;
 pub mod players;
 pub mod simulate;
+pub mod simulation_event_handler;
 pub mod state;
 pub mod test_helpers; // TODO: Compile/Expose only in test mode?
 pub mod tool_ids;
@@ -24,7 +25,7 @@ pub use game::Game;
 pub use move_generation::generate_possible_actions;
 pub use move_generation::generate_possible_trainer_actions;
 pub use optimize::optimize;
-pub use simulate::{simulate, Simulation, SimulationResults};
+pub use simulate::{simulate, Simulation};
 pub use state::State;
 
 #[cfg(feature = "python")]

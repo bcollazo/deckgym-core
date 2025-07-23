@@ -6,25 +6,25 @@ use crate::{
     actions::{apply_action, Action},
     generate_possible_actions,
     players::Player,
+    simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
     state::GameOutcome,
     types::EnergyType,
     State,
 };
 
-pub struct Game {
+// It has a lifetime to allow it to borrow the event handler mutably for the duration of the game
+pub struct Game<'a> {
     seed: u64,
     rng: StdRng,
     players: Vec<Box<dyn Player>>,
 
     state: State,
 
-    // keeping statistics for Game analysis here (outside of "State")
-    degrees_per_ply: Vec<u32>,
-
     debug: bool,
+    event_handler: Option<&'a mut CompositeSimulationEventHandler>,
 }
 
-impl Game {
+impl<'a> Game<'a> {
     pub fn from_state(state: State, players: Vec<Box<dyn Player>>, seed: u64) -> Self {
         let rng = StdRng::seed_from_u64(seed);
         Game {
@@ -32,8 +32,8 @@ impl Game {
             rng,
             players,
             state,
-            degrees_per_ply: vec![],
             debug: false,
+            event_handler: None,
         }
     }
 
@@ -47,9 +47,19 @@ impl Game {
             rng,
             players,
             state,
-            degrees_per_ply: vec![],
             debug: true,
+            event_handler: None,
         }
+    }
+
+    pub fn new_with_event_handlers(
+        players: Vec<Box<dyn Player>>,
+        seed: u64,
+        event_handler: &'a mut CompositeSimulationEventHandler,
+    ) -> Self {
+        let mut game = Game::new(players, seed);
+        game.event_handler = Some(event_handler);
+        game
     }
 
     // Returns None if the game times out
@@ -65,7 +75,6 @@ impl Game {
 
     pub fn play_tick(&mut self) -> Action {
         let (actor, actions) = generate_possible_actions(&self.state);
-        self.degrees_per_ply.push(actions.len() as u32);
 
         let player = &self.players[actor];
         let color = self.get_color(actor);
@@ -81,6 +90,10 @@ impl Game {
             );
             player.decision_fn(&mut self.rng, &self.state, &actions)
         };
+        if let Some(handler) = &mut self.event_handler {
+            handler.on_action(actor, &actions, &action);
+        }
+
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
         self.apply_action(&action);
@@ -125,14 +138,6 @@ impl Game {
         if self.debug {
             trace!("{}", self.state.debug_string());
         }
-    }
-
-    pub fn get_num_plys(&self) -> u32 {
-        self.degrees_per_ply.len() as u32
-    }
-
-    pub fn get_degrees_per_ply(&self) -> Vec<u32> {
-        self.degrees_per_ply.clone()
     }
 
     /// see https://github.com/colored-rs/colored?tab=readme-ov-file#colors
