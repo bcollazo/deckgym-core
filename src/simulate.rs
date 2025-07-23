@@ -6,7 +6,7 @@ use num_format::{Locale, ToFormattedString};
 use crate::{
     players::{create_players, fill_code_array, PlayerCode},
     state::GameOutcome,
-    Deck, Game,
+    Deck, Game, State,
 };
 
 /// Object-oriented simulation configuration and runner
@@ -18,6 +18,7 @@ pub struct Simulation {
     player_codes: Vec<PlayerCode>,
     num_simulations: u32,
     seed: Option<u64>,
+    event_handlers: Vec<Box<dyn SimulationEventHandler + Send + Sync>>,
 }
 
 impl Simulation {
@@ -28,6 +29,7 @@ impl Simulation {
         players: Option<Vec<PlayerCode>>,
         num_simulations: u32,
         seed: Option<u64>,
+        event_handlers: Vec<Box<dyn SimulationEventHandler + Send + Sync>>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let deck_a = Deck::from_file(deck_a_path)?;
         let deck_b = Deck::from_file(deck_b_path)?;
@@ -41,6 +43,7 @@ impl Simulation {
             player_codes,
             num_simulations,
             seed,
+            event_handlers,
         })
     }
 
@@ -51,6 +54,7 @@ impl Simulation {
         players: Option<Vec<PlayerCode>>,
         num_simulations: u32,
         seed: Option<u64>,
+        event_handlers: Vec<Box<dyn SimulationEventHandler + Send + Sync>>,
     ) -> Self {
         let player_codes = fill_code_array(players);
 
@@ -62,11 +66,12 @@ impl Simulation {
             player_codes,
             num_simulations,
             seed,
+            event_handlers,
         }
     }
 
     /// Run the simulation and return results
-    pub fn run(&self) -> SimulationResults {
+    pub fn run(&mut self) -> SimulationResults {
         // Simulate Games and accumulate statistics
         warn!(
             "Running {} games with players {:?}",
@@ -80,6 +85,7 @@ impl Simulation {
         let mut plys_per_game = Vec::new();
         let mut total_degrees = Vec::new();
 
+        self.broadcast(|h| h.on_simulation_start());
         for i in 1..=self.num_simulations {
             let players = create_players(
                 self.deck_a.clone(),
@@ -88,7 +94,11 @@ impl Simulation {
             );
             let seed = self.seed.unwrap_or(rand::random::<u64>());
             let mut game = Game::new(players, seed);
+
+            self.broadcast(|h| h.on_game_start(game.get_state_clone()));
             let outcome = game.play();
+            self.broadcast(|h| h.on_game_end(game.get_state_clone(), outcome));
+
             turns_per_game.push(game.get_state_clone().turn_count);
             plys_per_game.push(game.get_num_plys());
             total_degrees.extend(game.get_degrees_per_ply().iter());
@@ -102,6 +112,7 @@ impl Simulation {
                 }
             }
         }
+        self.broadcast(|h| h.on_simulation_end());
 
         let duration = start.elapsed(); // Measure elapsed time
         let avg_time_per_game = duration.as_secs_f64() / self.num_simulations as f64;
@@ -140,10 +151,19 @@ impl Simulation {
     }
 
     /// Run the simulation and print the results
-    pub fn run_and_print(&self) -> SimulationResults {
+    pub fn run_and_print(&mut self) -> SimulationResults {
         let results = self.run();
         results.print_stats(&self.deck_a_path, &self.deck_b_path, &self.player_codes);
         results
+    }
+
+    fn broadcast<F>(&mut self, mut f: F)
+    where
+        F: FnMut(&mut dyn SimulationEventHandler),
+    {
+        for handler in self.event_handlers.iter_mut() {
+            f(handler.as_mut());
+        }
     }
 }
 
@@ -155,8 +175,15 @@ pub fn simulate(
     num_simulations: u32,
     seed: Option<u64>,
 ) {
-    let simulation = Simulation::new(deck_a_path, deck_b_path, players, num_simulations, seed)
-        .expect("Failed to create simulation");
+    let mut simulation = Simulation::new(
+        deck_a_path,
+        deck_b_path,
+        players,
+        num_simulations,
+        seed,
+        vec![],
+    )
+    .expect("Failed to create simulation");
     simulation.run_and_print();
 }
 
@@ -218,4 +245,15 @@ impl SimulationResults {
             self.tie_rate * 100.0
         );
     }
+}
+
+pub trait SimulationEventHandler {
+    fn on_simulation_start(&mut self) {}
+    fn on_simulation_end(&mut self) {}
+
+    fn on_game_start(&mut self, _state: State) {}
+    fn on_game_end(&mut self, _state: State, _result: Option<GameOutcome>) {}
+
+    // TODO: Implement
+    // fn on_turn(&mut self, _turn: usize, _state: &State) {}
 }
