@@ -79,7 +79,7 @@ impl Game {
                 "Possible Actions: {:?}",
                 actions.iter().map(|x| x.action.clone()).collect::<Vec<_>>()
             );
-            player.decision_fn(&mut self.rng, &self.state, actions)
+            player.decision_fn(&mut self.rng, &self.state, &actions)
         };
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);

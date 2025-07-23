@@ -14,7 +14,7 @@ pub struct EndTurnPlayer {
 }
 
 impl Player for EndTurnPlayer {
-    fn decision_fn(&mut self, _: &mut StdRng, _: &State, possible_actions: Vec<Action>) -> Action {
+    fn decision_fn(&mut self, _: &mut StdRng, _: &State, possible_actions: &Vec<Action>) -> Action {
         let maybe_end_turn = possible_actions
             .iter()
             .find(|action| matches!(action.action, SimpleAction::EndTurn));

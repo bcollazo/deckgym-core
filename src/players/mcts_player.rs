@@ -31,7 +31,7 @@ impl Player for MctsPlayer {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         // Step 1: Initialize the root node of the search tree
         let investigator = possible_actions[0].actor; // myself

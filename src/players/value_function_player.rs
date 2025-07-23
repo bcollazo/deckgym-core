@@ -15,7 +15,7 @@ impl Player for ValueFunctionPlayer {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         // Get value for the possible actions
         let myself = possible_actions[0].actor;

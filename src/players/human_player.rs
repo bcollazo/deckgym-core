@@ -16,7 +16,7 @@ impl Player for HumanPlayer {
         &mut self,
         _: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         if possible_actions.len() == 1 {
             println!("Only one possible action, selecting it.");

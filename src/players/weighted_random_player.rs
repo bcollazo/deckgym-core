@@ -16,7 +16,7 @@ impl Player for WeightedRandomPlayer {
         &mut self,
         rng: &mut StdRng,
         _: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         // Get weights for the possible actions
         let weights: Vec<u32> = possible_actions

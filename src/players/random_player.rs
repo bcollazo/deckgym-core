@@ -14,7 +14,7 @@ impl Player for RandomPlayer {
         &mut self,
         rng: &mut StdRng,
         _: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         possible_actions
             .choose(rng)

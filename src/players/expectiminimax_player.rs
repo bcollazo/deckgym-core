@@ -17,7 +17,7 @@ impl Player for ExpectiMiniMaxPlayer {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &Vec<Action>,
     ) -> Action {
         let myself = possible_actions[0].actor;
 
