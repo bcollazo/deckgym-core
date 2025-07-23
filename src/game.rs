@@ -151,7 +151,7 @@ impl<'a> Game<'a> {
             EnergyType::Lightning => "yellow",
             EnergyType::Psychic => "magenta",
             EnergyType::Water => "blue",
-            EnergyType::Darkness => "black",
+            EnergyType::Darkness => "bright_black",
             EnergyType::Metal => "bright_black",
             EnergyType::Dragon => todo!(),
         };
