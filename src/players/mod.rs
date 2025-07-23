@@ -64,13 +64,13 @@ pub fn parse_player_code_generic(s: String) -> Result<PlayerCode, String> {
 
 pub fn fill_code_array(maybe_players: Option<Vec<PlayerCode>>) -> Vec<PlayerCode> {
     match maybe_players {
-        Some(mut cli_players) => {
-            if cli_players.is_empty() || cli_players.len() > 2 {
+        Some(mut player_codes) => {
+            if player_codes.is_empty() || player_codes.len() > 2 {
                 panic!("Invalid number of players");
-            } else if cli_players.len() == 1 {
-                cli_players.push(PlayerCode::R);
+            } else if player_codes.len() == 1 {
+                player_codes.push(PlayerCode::R);
             }
-            cli_players
+            player_codes
         }
         None => vec![PlayerCode::R, PlayerCode::R],
     }

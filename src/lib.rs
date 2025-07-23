@@ -24,7 +24,7 @@ pub use game::Game;
 pub use move_generation::generate_possible_actions;
 pub use move_generation::generate_possible_trainer_actions;
 pub use optimize::optimize;
-pub use simulate::simulate;
+pub use simulate::{simulate, Simulation, SimulationResults};
 pub use state::State;
 
 #[cfg(feature = "python")]
