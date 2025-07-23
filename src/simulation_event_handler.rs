@@ -1,4 +1,4 @@
-use log::warn;
+use log::{info, warn};
 use num_format::{Locale, ToFormattedString};
 use std::time::{Duration, Instant};
 
@@ -7,9 +7,9 @@ use crate::{actions::Action, state::GameOutcome, State};
 pub trait SimulationEventHandler {
     fn on_simulation_start(&mut self) {}
 
-    fn on_game_start(&mut self) {}
+    fn on_game_start(&mut self, _id: u32) {}
     fn on_action(&mut self, _actor: usize, _playable_actions: &Vec<Action>, _action: &Action) {}
-    fn on_game_end(&mut self, _state: State, _result: Option<GameOutcome>) {}
+    fn on_game_end(&mut self, _id: u32, _state: State, _result: Option<GameOutcome>) {}
 
     fn on_simulation_end(&mut self) {}
 }
@@ -38,9 +38,9 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
-    fn on_game_start(&mut self) {
+    fn on_game_start(&mut self, id: u32) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_start();
+            handler.on_game_start(id);
         }
     }
 
@@ -50,9 +50,9 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
-    fn on_game_end(&mut self, state: State, result: Option<GameOutcome>) {
+    fn on_game_end(&mut self, id: u32, state: State, result: Option<GameOutcome>) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_end(state.clone(), result.clone());
+            handler.on_game_end(id, state.clone(), result.clone());
         }
     }
 
@@ -99,7 +99,7 @@ impl SimulationEventHandler for StatsCollector {
         self.start = Instant::now(); // Start the timer
     }
 
-    fn on_game_start(&mut self) {
+    fn on_game_start(&mut self, _id: u32) {
         self.degrees_per_ply.clear();
     }
 
@@ -107,7 +107,9 @@ impl SimulationEventHandler for StatsCollector {
         self.degrees_per_ply.push(playable_actions.len() as u32);
     }
 
-    fn on_game_end(&mut self, state: State, outcome: Option<GameOutcome>) {
+    fn on_game_end(&mut self, id: u32, state: State, outcome: Option<GameOutcome>) {
+        info!("Simulation {id}: Winner is {outcome:?}");
+
         self.num_games += 1;
         self.turns_per_game.push(state.turn_count);
         self.plys_per_game.push(self.degrees_per_ply.len() as u32);
