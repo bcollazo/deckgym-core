@@ -4,7 +4,9 @@ use uuid::Uuid;
 use deckgym::{
     actions::Action,
     players::PlayerCode,
-    simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
+    simulation_event_handler::{
+        CompositeSimulationEventHandler, SimulationEventHandler, StatsCollector,
+    },
     Simulation, State,
 };
 
@@ -13,11 +15,13 @@ fn main() {
     let num_simulations = 1000;
     let deck_a_path = "example_decks/solgaleo_sylveon.txt";
     let deck_b_path = "example_decks/mewtwoex.txt";
-    let player_codes = vec![PlayerCode::E, PlayerCode::E];
+    let player_codes = vec![PlayerCode::ER, PlayerCode::ER];
     println!("This will count how fast the user cant draw cards from the deck.");
 
+    let stats_collector = Box::new(StatsCollector::new());
     let deckout_collector = Box::new(DeckOutCollector::new());
     let mut composite_handler = CompositeSimulationEventHandler::new();
+    composite_handler.add_handler(stats_collector);
     composite_handler.add_handler(deckout_collector);
     let mut simulation = Simulation::new(
         deck_a_path,
@@ -32,6 +36,7 @@ fn main() {
 }
 
 /// Simulation event handler that counts how fast players run out of cards in their decks.
+/// It generates a CSV file with (game_id, turn, actor, last_known_deck_size) tuples for each game.
 pub struct DeckOutCollector {
     deck_sizes: HashMap<(Uuid, u8, usize), usize>, // (game_id, turn, actor) -> deck_size
 }
@@ -44,17 +49,13 @@ impl DeckOutCollector {
     }
 }
 
-/// It'd be nice to have the state passed in on_action, so that we can access the current player and their deck.
-/// we probably have to keep track of (turn, actor, deck_size) tuples to know when a player runs out of cards.
-/// Then with that, we can get a turn-where-player-ran-out-of-cards per game.
-/// This will generate a CSV file with (game_id, turn, actor, deck_size) tuples for each game.
 impl SimulationEventHandler for DeckOutCollector {
     fn on_action(
         &mut self,
         game_id: Uuid,
         _state_before_action: &State,
         actor: usize,
-        _playable_actions: &Vec<Action>,
+        _playable_actions: &[Action],
         _action: &Action,
         state_after_action: &State,
     ) {
@@ -62,7 +63,7 @@ impl SimulationEventHandler for DeckOutCollector {
         let deck_size = state_after_action.decks[actor].cards.len();
 
         // Since this is called multiple times per turn, writing idempotently
-        // we'll store the last known deck size for each actor and turn.
+        // we'll store the last known deck size for each game-turn-actor combination.
         self.deck_sizes.insert((game_id, turn, actor), deck_size);
     }
 
