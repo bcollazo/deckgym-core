@@ -189,6 +189,13 @@ impl Card {
             _ => false,
         }
     }
+
+    pub(crate) fn as_trainer(&self) -> TrainerCard {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.clone(),
+            _ => panic!("Card is not a Trainer"),
+        }
+    }
 }
 
 /// This represents a card in the mat. Has a pointer to the card

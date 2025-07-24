@@ -1,5 +1,6 @@
 mod attach_attack_player;
 mod end_turn_player;
+mod evolution_rusher_player;
 mod expectiminimax_player;
 mod human_player;
 mod mcts_player;
@@ -10,6 +11,7 @@ mod weighted_random_player;
 pub use attach_attack_player::AttachAttackPlayer;
 use clap::ValueEnum;
 pub use end_turn_player::EndTurnPlayer;
+pub use evolution_rusher_player::EvolutionRusherPlayer;
 pub use expectiminimax_player::ExpectiMiniMaxPlayer;
 pub use human_player::HumanPlayer;
 pub use mcts_player::MctsPlayer;
@@ -42,6 +44,7 @@ pub enum PlayerCode {
     M,
     V,
     E,
+    ER, // Evolution Rusher
 }
 /// Custom parser function enforcing case-insensitivity
 pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
@@ -54,6 +57,7 @@ pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
         "m" => Ok(PlayerCode::M),
         "v" => Ok(PlayerCode::V),
         "e" => Ok(PlayerCode::E),
+        "er" => Ok(PlayerCode::ER),
         _ => Err(format!("Invalid player code: {s}")),
     }
 }
@@ -96,5 +100,6 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
         PlayerCode::M => Box::new(MctsPlayer::new(deck, 100)),
         PlayerCode::V => Box::new(ValueFunctionPlayer { deck }),
         PlayerCode::E => Box::new(ExpectiMiniMaxPlayer { deck, max_depth: 3 }),
+        PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
     }
 }
