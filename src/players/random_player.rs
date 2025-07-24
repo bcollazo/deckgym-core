@@ -10,12 +10,7 @@ pub struct RandomPlayer {
 }
 
 impl Player for RandomPlayer {
-    fn decision_fn(
-        &mut self,
-        rng: &mut StdRng,
-        _: &State,
-        possible_actions: &Vec<Action>,
-    ) -> Action {
+    fn decision_fn(&mut self, rng: &mut StdRng, _: &State, possible_actions: &[Action]) -> Action {
         possible_actions
             .choose(rng)
             .expect("There should always be at least one playable action")

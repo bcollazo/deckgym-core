@@ -29,7 +29,7 @@ impl Player for EvolutionRusherPlayer {
         &mut self,
         _: &mut StdRng,
         state: &State,
-        possible_actions: &Vec<Action>,
+        possible_actions: &[Action],
     ) -> Action {
         // Draw priorities
         let pokeball_trainer = get_card_by_enum(CardId::PA005PokeBall).as_trainer();

@@ -8,7 +8,7 @@ pub trait SimulationEventHandler {
     fn on_simulation_start(&mut self) {}
 
     fn on_game_start(&mut self, _id: u32) {}
-    fn on_action(&mut self, _actor: usize, _playable_actions: &Vec<Action>, _action: &Action) {}
+    fn on_action(&mut self, _actor: usize, _playable_actions: &[Action], _action: &Action) {}
     fn on_game_end(&mut self, _id: u32, _state: State, _result: Option<GameOutcome>) {}
 
     fn on_simulation_end(&mut self) {}
@@ -50,7 +50,7 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
-    fn on_action(&mut self, actor: usize, playable_actions: &Vec<Action>, action: &Action) {
+    fn on_action(&mut self, actor: usize, playable_actions: &[Action], action: &Action) {
         for handler in self.handlers.iter_mut() {
             handler.on_action(actor, playable_actions, action);
         }
@@ -115,7 +115,7 @@ impl SimulationEventHandler for StatsCollector {
         self.degrees_per_ply.clear();
     }
 
-    fn on_action(&mut self, _actor: usize, playable_actions: &Vec<Action>, _action: &Action) {
+    fn on_action(&mut self, _actor: usize, playable_actions: &[Action], _action: &Action) {
         self.degrees_per_ply.push(playable_actions.len() as u32);
     }
 
@@ -168,13 +168,9 @@ impl SimulationEventHandler for StatsCollector {
             humantime::format_duration(duration),
             humantime::format_duration(avg_duration)
         );
-        warn!(
-            "Average number of turns per game: {avg_turns_per_game:.2}"
-        );
+        warn!("Average number of turns per game: {avg_turns_per_game:.2}");
         warn!("Average number of plys per game: {avg_plys_per_game:.2}");
-        warn!(
-            "Average number of degrees per ply: {avg_degrees_per_ply:.2}"
-        );
+        warn!("Average number of degrees per ply: {avg_degrees_per_ply:.2}");
 
         let player_a_win_rate = self.player_a_wins as f32 / self.num_games as f32;
         let player_b_win_rate = self.player_b_wins as f32 / self.num_games as f32;

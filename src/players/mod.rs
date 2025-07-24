@@ -29,7 +29,7 @@ pub trait Player: Debug {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: &Vec<Action>,
+        possible_actions: &[Action],
     ) -> Action;
 }
 
