@@ -14,9 +14,11 @@ use super::Player;
 ///   1. Using Poke Ball if possible
 ///   2. Using Shiinotic Ability if possible
 ///   3. Using Prof Research if possible
+///
 /// Then it will try to Rush Evolution by:
 ///   1. Using Rare Candy if available
 ///   2. Evolve Pokemon if possible
+///
 /// After those priorities, it will try to attach energy and attack if possible.
 pub struct EvolutionRusherPlayer {
     pub deck: Deck,

@@ -19,6 +19,12 @@ pub struct CompositeSimulationEventHandler {
     handlers: Vec<Box<dyn SimulationEventHandler>>,
 }
 
+impl Default for CompositeSimulationEventHandler {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CompositeSimulationEventHandler {
     pub fn new() -> Self {
         Self {
@@ -52,7 +58,7 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
 
     fn on_game_end(&mut self, id: u32, state: State, result: Option<GameOutcome>) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_end(id, state.clone(), result.clone());
+            handler.on_game_end(id, state.clone(), result);
         }
     }
 
@@ -76,6 +82,12 @@ pub struct StatsCollector {
     turns_per_game: Vec<u8>,
     plys_per_game: Vec<u32>,
     total_degrees: Vec<u32>,
+}
+
+impl Default for StatsCollector {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl StatsCollector {
@@ -157,13 +169,11 @@ impl SimulationEventHandler for StatsCollector {
             humantime::format_duration(avg_duration)
         );
         warn!(
-            "Average number of turns per game: {:.2}",
-            avg_turns_per_game
+            "Average number of turns per game: {avg_turns_per_game:.2}"
         );
-        warn!("Average number of plys per game: {:.2}", avg_plys_per_game);
+        warn!("Average number of plys per game: {avg_plys_per_game:.2}");
         warn!(
-            "Average number of degrees per ply: {:.2}",
-            avg_degrees_per_ply
+            "Average number of degrees per ply: {avg_degrees_per_ply:.2}"
         );
 
         let player_a_win_rate = self.player_a_wins as f32 / self.num_games as f32;
