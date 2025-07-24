@@ -1,6 +1,7 @@
 use colored::Colorize;
 use log::{debug, info, trace};
 use rand::{rngs::StdRng, SeedableRng};
+use uuid::Uuid;
 
 use crate::{
     actions::{apply_action, Action},
@@ -16,6 +17,7 @@ use crate::{
 pub struct Game<'a> {
     seed: u64,
     rng: StdRng,
+    id: Uuid,
     players: Vec<Box<dyn Player>>,
 
     state: State,
@@ -30,6 +32,7 @@ impl<'a> Game<'a> {
         Game {
             seed,
             rng,
+            id: Uuid::new_v4(),
             players,
             state,
             debug: false,
@@ -45,6 +48,7 @@ impl<'a> Game<'a> {
         Game {
             seed,
             rng,
+            id: Uuid::new_v4(),
             players,
             state,
             debug: true,
@@ -53,12 +57,14 @@ impl<'a> Game<'a> {
     }
 
     pub fn new_with_event_handlers(
+        game_id: Uuid,
         players: Vec<Box<dyn Player>>,
         seed: u64,
         event_handler: &'a mut CompositeSimulationEventHandler,
     ) -> Self {
         let mut game = Game::new(players, seed);
         game.event_handler = Some(event_handler);
+        game.id = game_id;
         game
     }
 
@@ -90,13 +96,25 @@ impl<'a> Game<'a> {
             );
             player.decision_fn(&mut self.rng, &self.state, &actions)
         };
-        if let Some(handler) = &mut self.event_handler {
-            handler.on_action(actor, &actions, &action);
-        }
 
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
-        self.apply_action(&action);
+        if self.event_handler.is_some() {
+            let state_before_action = self.state.clone();
+            self.apply_action(&action);
+            if let Some(handler) = &mut self.event_handler {
+                handler.on_action(
+                    self.id,
+                    &state_before_action,
+                    actor,
+                    &actions,
+                    &action,
+                    &self.state,
+                );
+            }
+        } else {
+            self.apply_action(&action);
+        }
         self.print_state();
         action
     }

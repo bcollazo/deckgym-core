@@ -1,15 +1,25 @@
 use log::{info, warn};
 use num_format::{Locale, ToFormattedString};
 use std::time::{Duration, Instant};
+use uuid::Uuid;
 
 use crate::{actions::Action, state::GameOutcome, State};
 
 pub trait SimulationEventHandler {
     fn on_simulation_start(&mut self) {}
 
-    fn on_game_start(&mut self, _id: u32) {}
-    fn on_action(&mut self, _actor: usize, _playable_actions: &[Action], _action: &Action) {}
-    fn on_game_end(&mut self, _id: u32, _state: State, _result: Option<GameOutcome>) {}
+    fn on_game_start(&mut self, _game_id: Uuid) {}
+    fn on_action(
+        &mut self,
+        _game_id: Uuid,
+        _state_before_action: &State,
+        _actor: usize,
+        _playable_actions: &[Action],
+        _action: &Action,
+        _state_after_action: &State,
+    ) {
+    }
+    fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
 
     fn on_simulation_end(&mut self) {}
 }
@@ -44,21 +54,36 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
-    fn on_game_start(&mut self, id: u32) {
+    fn on_game_start(&mut self, game_id: Uuid) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_start(id);
+            handler.on_game_start(game_id);
         }
     }
 
-    fn on_action(&mut self, actor: usize, playable_actions: &[Action], action: &Action) {
+    fn on_action(
+        &mut self,
+        game_id: Uuid,
+        state_before_action: &State,
+        actor: usize,
+        playable_actions: &[Action],
+        action: &Action,
+        state_after_action: &State,
+    ) {
         for handler in self.handlers.iter_mut() {
-            handler.on_action(actor, playable_actions, action);
+            handler.on_action(
+                game_id,
+                state_before_action,
+                actor,
+                playable_actions,
+                action,
+                state_after_action,
+            );
         }
     }
 
-    fn on_game_end(&mut self, id: u32, state: State, result: Option<GameOutcome>) {
+    fn on_game_end(&mut self, game_id: Uuid, state: State, result: Option<GameOutcome>) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_end(id, state.clone(), result);
+            handler.on_game_end(game_id, state.clone(), result.clone());
         }
     }
 
@@ -111,16 +136,24 @@ impl SimulationEventHandler for StatsCollector {
         self.start = Instant::now(); // Start the timer
     }
 
-    fn on_game_start(&mut self, _id: u32) {
+    fn on_game_start(&mut self, _game_id: Uuid) {
         self.degrees_per_ply.clear();
     }
 
-    fn on_action(&mut self, _actor: usize, playable_actions: &[Action], _action: &Action) {
+    fn on_action(
+        &mut self,
+        _game_id: Uuid,
+        _state_before_action: &State,
+        _actor: usize,
+        playable_actions: &[Action],
+        _action: &Action,
+        _state_after_action: &State,
+    ) {
         self.degrees_per_ply.push(playable_actions.len() as u32);
     }
 
-    fn on_game_end(&mut self, id: u32, state: State, outcome: Option<GameOutcome>) {
-        info!("Simulation {id}: Winner is {outcome:?}");
+    fn on_game_end(&mut self, game_id: Uuid, state: State, outcome: Option<GameOutcome>) {
+        info!("Simulation {game_id}: Winner is {outcome:?}");
 
         self.num_games += 1;
         self.turns_per_game.push(state.turn_count);

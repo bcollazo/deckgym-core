@@ -1,5 +1,6 @@
 use log::warn;
 use num_format::{Locale, ToFormattedString};
+use uuid::Uuid;
 
 use crate::{
     players::{create_players, fill_code_array, PlayerCode},
@@ -44,22 +45,24 @@ impl Simulation {
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
         self.event_handler.on_simulation_start();
         let mut outcomes = vec![];
-        for i in 1..=self.num_simulations {
+        for _ in 1..=self.num_simulations {
             let players = create_players(
                 self.deck_a.clone(),
                 self.deck_b.clone(),
                 self.player_codes.clone(),
             );
             let seed = self.seed.unwrap_or(rand::random::<u64>());
-            self.event_handler.on_game_start(i);
+            let game_id = Uuid::new_v4();
+            self.event_handler.on_game_start(game_id);
 
             // Give the self.event_handler a mutable reference to the Game
-            let mut game = Game::new_with_event_handlers(players, seed, &mut self.event_handler);
+            let mut game =
+                Game::new_with_event_handlers(game_id, players, seed, &mut self.event_handler);
             let outcome = game.play();
             let clone = game.get_state_clone();
             // done with the game, should be dropped now
 
-            self.event_handler.on_game_end(i, clone, outcome);
+            self.event_handler.on_game_end(game_id, clone, outcome);
 
             outcomes.push(outcome);
         }
