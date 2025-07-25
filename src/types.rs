@@ -244,14 +244,14 @@ impl PlayedCard {
         }
     }
 
-    pub(crate) fn get_id(&self) -> String {
+    pub fn get_id(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.id.clone(),
             Card::Trainer(trainer_card) => trainer_card.id.clone(),
         }
     }
 
-    pub(crate) fn get_name(&self) -> String {
+    pub fn get_name(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.name.clone(),
             Card::Trainer(trainer_card) => trainer_card.name.clone(),

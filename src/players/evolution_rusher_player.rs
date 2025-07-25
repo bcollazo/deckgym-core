@@ -19,7 +19,10 @@ use super::Player;
 ///   1. Using Rare Candy if available
 ///   2. Evolve Pokemon if possible
 ///
-/// After those priorities, it will try to attach energy and attack if possible.
+/// Lastly, it will try to draw cards if possible (saying "yes" to Sylveon's ability).
+///
+/// After those priorities, it will try to attach energy and attack if possible, or choose
+/// the first available action.
 pub struct EvolutionRusherPlayer {
     pub deck: Deck,
 }
@@ -75,6 +78,14 @@ impl Player for EvolutionRusherPlayer {
             .find(|action| matches!(action.action, SimpleAction::Evolve(_, _)));
         if let Some(evolve) = maybe_evolve {
             return evolve.clone();
+        }
+
+        // Draw cards if possible (Sylveon's ability)
+        let maybe_draw = possible_actions
+            .iter()
+            .find(|action| matches!(action.action, SimpleAction::DrawCard { .. }));
+        if let Some(draw) = maybe_draw {
+            return draw.clone();
         }
 
         // Attach randomly and attack if possible

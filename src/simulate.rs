@@ -1,5 +1,7 @@
+use env_logger::{Builder, Env};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
+use std::io::Write;
 use uuid::Uuid;
 
 use crate::{
@@ -102,4 +104,17 @@ pub fn simulate(
     )
     .expect("Failed to create simulation");
     simulation.run();
+}
+
+// Set up the logger according to the given verbosity.
+pub fn initialize_logger(verbose: u8) {
+    let level = match verbose {
+        1 => "warn",
+        2 => "info",
+        3 => "debug",
+        _ => "trace",
+    };
+    Builder::from_env(Env::default().default_filter_or(level))
+        .format(|buf, record| writeln!(buf, "{}", record.args()))
+        .init();
 }
