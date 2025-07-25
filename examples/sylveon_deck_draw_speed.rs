@@ -16,7 +16,7 @@ fn main() {
     let num_simulations = 1000;
     let deck_a_path = "example_decks/solgaleo_sylveon.txt";
     let deck_b_path = "example_decks/mewtwoex.txt";
-    let player_codes = vec![PlayerCode::R, PlayerCode::R];
+    let player_codes = vec![PlayerCode::ER, PlayerCode::ER];
     initialize_logger(1);
     println!("This will count how fast the user cant draw cards from the deck.");
 
