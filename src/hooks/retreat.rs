@@ -1,37 +1,34 @@
 use crate::{
-    card_ids::CardId,
-    database::get_card_by_enum,
+    effects::{CardEffect, TurnEffect},
     types::{Card, EnergyType, PlayedCard},
     State,
 };
 
 pub(crate) fn can_retreat(state: &State) -> bool {
-    let no_arbok_corner = !state
-        .get_current_turn_effects()
-        .iter()
-        .any(|x| matches!(x, Card::Pokemon(pokemon_card) if pokemon_card.name == "Arbok"));
-    !state.has_retreated && no_arbok_corner
+    // Get Active card of the current player, check it has no CardEffect::NoRetreat
+    let has_no_retreat = state
+        .get_active(state.current_player)
+        .get_active_effects()
+        .contains(&CardEffect::NoRetreat);
+
+    !state.has_retreated && !has_no_retreat
 }
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
         let mut normal_cost = pokemon_card.retreat_cost.clone();
         // Implement Retreat Cost Modifiers here
-        let x_speed = state
+        let to_subtract = state
             .get_current_turn_effects()
             .iter()
-            .filter(|x| **x == get_card_by_enum(CardId::PA002XSpeed))
-            .count();
-        let leafs = state
-            .get_current_turn_effects()
-            .iter()
-            .filter(|x| {
-                **x == get_card_by_enum(CardId::A1a068Leaf)
-                    || **x == get_card_by_enum(CardId::A1a082Leaf)
+            .filter(|x| matches!(x, TurnEffect::ReducedRetreatCost { .. }))
+            .map(|x| match x {
+                TurnEffect::ReducedRetreatCost { amount } => *amount,
+                _ => 0,
             })
-            .count();
+            .sum::<u8>();
+
         // Retreat Effects accumulate so we add them.
-        let to_subtract = leafs * 2 + x_speed;
         for _ in 0..to_subtract {
             normal_cost.pop(); // Remove one colorless energy from retreat cost
         }
@@ -44,7 +41,10 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
 // Test Colorless is wildcard when counting energy
 #[cfg(test)]
 mod tests {
-    use crate::hooks::core::to_playable_card;
+    use crate::{
+        card_ids::CardId, database::get_card_by_enum, effects::TurnEffect,
+        hooks::core::to_playable_card,
+    };
 
     use super::*;
 
@@ -67,7 +67,7 @@ mod tests {
     #[test]
     fn test_retreat_costs_with_xspeed() {
         let mut state = State::default();
-        state.add_turn_effect(get_card_by_enum(CardId::PA002XSpeed), 0);
+        state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 1 }, 0);
         let card = get_card_by_enum(CardId::A1055Blastoise);
         let playable_card = to_playable_card(&card, false);
         let retreat_cost = get_retreat_cost(&state, &playable_card);
@@ -80,9 +80,9 @@ mod tests {
     #[test]
     fn test_retreat_costs_with_two_xspeed_and_two_leafs() {
         let mut state = State::default();
-        state.add_turn_effect(get_card_by_enum(CardId::PA002XSpeed), 0);
-        state.add_turn_effect(get_card_by_enum(CardId::PA002XSpeed), 0);
-        state.add_turn_effect(get_card_by_enum(CardId::A1a068Leaf), 0);
+        state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 1 }, 0);
+        state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 1 }, 0);
+        state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 2 }, 0);
         let card = get_card_by_enum(CardId::A1211Snorlax);
         let playable_card = to_playable_card(&card, false);
         let retreat_cost = get_retreat_cost(&state, &playable_card);

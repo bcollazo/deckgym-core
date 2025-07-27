@@ -3,6 +3,7 @@ use rand::Rng;
 
 use crate::{
     attack_ids::AttackId,
+    effects::{CardEffect, TurnEffect},
     hooks::get_damage_from_attack,
     types::{EnergyType, StatusCondition},
     State,
@@ -133,7 +134,9 @@ fn forecast_effect_attack(
         AttackId::A1056BlastoiseExHydroBazooka => {
             hydro_pump_attack(acting_player, state, 100, 5, 60)
         }
-        AttackId::A1057PsyduckHeadache => damage_and_turn_effect_attack(0, 1),
+        AttackId::A1057PsyduckHeadache => {
+            damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
+        }
         AttackId::A1063TentacruelPoisonTentacles => {
             damage_status_attack(50, StatusCondition::Poisoned)
         }
@@ -198,7 +201,9 @@ fn forecast_effect_attack(
         }
         AttackId::A1154HitmonleeStretchKick => direct_damage(30, true),
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
-        AttackId::A1165ArbokCorner => damage_and_turn_effect_attack(index, 1),
+        AttackId::A1165ArbokCorner => {
+            damage_and_card_effect_attack(index, 1, CardEffect::NoRetreat)
+        }
         AttackId::A1171NidokingPoisonHorn => damage_status_attack(90, StatusCondition::Poisoned),
         AttackId::A1174GrimerPoisonGas => damage_status_attack(10, StatusCondition::Poisoned),
         AttackId::A1178MawileCrunch => mawile_crunch(),
@@ -234,9 +239,12 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A3085CosmogTeleport => teleport_attack(),
+        AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3a094JynxPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
+        AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
@@ -522,7 +530,7 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         state
             .move_generation_stack
-            .push((action.actor, vec![SimpleAction::DrawCard]));
+            .push((action.actor, vec![SimpleAction::DrawCard { amount: 1 }]));
     })
 }
 
@@ -597,11 +605,26 @@ fn self_heal_attack(heal: u32, index: usize) -> (Probabilities, Mutations) {
     })
 }
 
-fn damage_and_turn_effect_attack(index: usize, effect_duration: u8) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(index, move |_, state, action| {
-        let active = state.get_active(action.actor);
-        // TODO: Maybe create an EffectId enum and have a mapping between card,attack_idx to effect?
-        state.add_turn_effect(active.card.clone(), effect_duration);
+fn damage_and_turn_effect_attack(
+    index: usize,
+    effect_duration: u8,
+    effect: TurnEffect,
+) -> (Probabilities, Mutations) {
+    index_active_damage_doutcome(index, move |_, state, _| {
+        state.add_turn_effect(effect, effect_duration);
+    })
+}
+
+fn damage_and_card_effect_attack(
+    index: usize,
+    effect_duration: u8,
+    effect: CardEffect,
+) -> (Probabilities, Mutations) {
+    index_active_damage_doutcome(index, move |_, state, _| {
+        let opponent = (state.current_player + 1) % 2;
+        state
+            .get_active_mut(opponent)
+            .add_effect(effect, effect_duration);
     })
 }
 

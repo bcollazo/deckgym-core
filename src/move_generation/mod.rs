@@ -153,7 +153,7 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                 } else {
                     // Evolutions can only be played if previous stage
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
-                    if state.turn_count <= 2 {
+                    if state.is_users_first_turn() {
                         return;
                     }
                     // For each non-zero stage pokemon in hand, check if the evolves_from is in play

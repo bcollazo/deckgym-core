@@ -3,13 +3,13 @@ use std::panic;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
-    hooks::{get_retreat_cost, on_attach_tool, to_playable_card},
+    actions::apply_abilities_action::forecast_ability,
+    hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
     state::State,
-    types::{Card, PlayedCard},
+    types::Card,
 };
 
 use super::{
-    apply_abilities_action::apply_abilities_action,
     apply_action_helpers::{
         apply_common_mutation, forecast_end_turn, handle_attack_damage, Mutations, Probabilities,
     },
@@ -37,16 +37,16 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
 pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutations) {
     match &action.action {
         // Deterministic Actions
-        SimpleAction::DrawCard // TODO: DrawCard should return actual deck probabilities.
+        SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
         | SimpleAction::Attach { .. }
         | SimpleAction::AttachTool { .. }
         | SimpleAction::Evolve(_, _)
-        | SimpleAction::UseAbility(_)
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
-        | SimpleAction::Heal { .. } => (
+        | SimpleAction::Heal { .. }
+        | SimpleAction::Noop => (
             vec![1.0],
             vec![Box::new({
                 |_, mutable_state, action| {
@@ -54,6 +54,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
                 }
             })],
         ),
+        SimpleAction::UseAbility(index) => forecast_ability(state, action, *index),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
@@ -67,7 +68,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
     apply_common_mutation(state, action);
 
     match &action.action {
-        SimpleAction::DrawCard => {
+        SimpleAction::DrawCard { .. } => {
             state.maybe_draw_card(action.actor);
         }
         SimpleAction::Attach {
@@ -103,9 +104,6 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::Evolve(card, position) => {
             apply_evolve(action.actor, state, card, *position);
         }
-        SimpleAction::UseAbility(position) => {
-            apply_abilities_action(action.actor, state, *position);
-        }
         SimpleAction::Activate { in_play_idx } => {
             apply_retreat(action.actor, state, *in_play_idx, true);
         }
@@ -122,6 +120,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         } => {
             apply_healing(action.actor, state, *in_play_idx, *amount);
         }
+        SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
 }
@@ -133,6 +132,8 @@ fn apply_healing(acting_player: usize, state: &mut State, position: usize, amoun
     active.heal(amount);
 }
 
+/// is_free is analogous to "via retreat". If false, its because this comes from an Activate.
+/// Note: This might be called when a K.O. happens, so can't assume there is an active...
 fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_free: bool) {
     if !is_free {
         let active = state.in_play_pokemon[acting_player][0]
@@ -152,14 +153,9 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
 
     state.in_play_pokemon[acting_player].swap(0, bench_idx);
 
-    // Cure any status conditions
-    if let Some(pokemon) = &state.in_play_pokemon[acting_player][bench_idx] {
-        state.in_play_pokemon[acting_player][bench_idx] = Some(PlayedCard {
-            poisoned: false,
-            paralyzed: false,
-            asleep: false,
-            ..pokemon.clone()
-        });
+    // Clear status and effects of the new bench Pokemon
+    if let Some(pokemon) = state.in_play_pokemon[acting_player][bench_idx].as_mut() {
+        pokemon.clear_status_and_effects();
     }
 
     state.has_retreated = true;
@@ -167,29 +163,31 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
 
 // We will replace the PlayedCard, but taking into account the attached energy
 //  and the remaining HP.
-fn apply_evolve(acting_player: usize, state: &mut State, card: &Card, position: usize) {
+fn apply_evolve(acting_player: usize, state: &mut State, to_card: &Card, position: usize) {
     // This removes status conditions
-    let mut played_card = to_playable_card(card, true);
+    let mut played_card = to_playable_card(to_card, true);
 
-    let old_pokemon = state.in_play_pokemon[acting_player][position]
+    let from_pokemon = state.in_play_pokemon[acting_player][position]
         .as_ref()
         .expect("Pokemon should be there if evolving it");
-    if let Card::Pokemon(pokemon_card) = &played_card.card {
-        if pokemon_card.stage == 0 {
-            panic!("Only stage 1 or 2 pokemons can be evolved");
+    if let Card::Pokemon(to_pokemon) = &played_card.card {
+        if to_pokemon.stage == 0 {
+            panic!("Basic pokemon do not evolve from others...");
         }
 
-        let damage_taken = old_pokemon.total_hp - old_pokemon.remaining_hp;
+        let damage_taken = from_pokemon.total_hp - from_pokemon.remaining_hp;
         played_card.remaining_hp -= damage_taken;
-        played_card.attached_energy = old_pokemon.attached_energy.clone();
-        played_card.cards_behind = old_pokemon.cards_behind.clone();
-        played_card.cards_behind.push(old_pokemon.card.clone());
+        played_card.attached_energy = from_pokemon.attached_energy.clone();
+        played_card.cards_behind = from_pokemon.cards_behind.clone();
+        played_card.cards_behind.push(from_pokemon.card.clone());
         state.in_play_pokemon[acting_player][position] = Some(played_card);
     } else {
         panic!("Only Pokemon cards can be evolved");
     }
-    state.remove_card_from_hand(acting_player, card);
-    // NOTE: Phantomly leave the Stage 0 card behind the newly evolved card
+    state.remove_card_from_hand(acting_player, to_card);
+
+    // Run special logic hooks on evolution
+    on_evolve(acting_player, state, to_card)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
@@ -223,54 +221,39 @@ mod tests {
         apply_evolve(0, &mut state, &primeape, 0);
         assert_eq!(
             state.in_play_pokemon[0][0],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 60, // 90 - 30 = 60
-                total_hp: 90,
-                attached_energy: vec![energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                60, // 90 - 30 = 60
+                90,
+                vec![energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
 
         // Evolve Bench
         apply_evolve(0, &mut state, &primeape, 2);
         assert_eq!(
             state.in_play_pokemon[0][0],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 60, // 90 - 30 = 60
-                total_hp: 90,
-                attached_energy: vec![energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                60, // 90 - 30 = 60
+                90,
+                vec![energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
         assert_eq!(
             state.in_play_pokemon[0][2],
-            Some(PlayedCard {
-                card: primeape.clone(),
-                remaining_hp: 90, // 90 - 0 = 90
-                total_hp: 90,
-                attached_energy: vec![energy, energy, energy],
-                attached_tool: None,
-                played_this_turn: true,
-                ability_used: false,
-                poisoned: false,
-                paralyzed: false,
-                asleep: false,
-                cards_behind: vec![mankey.clone()]
-            })
+            Some(PlayedCard::new(
+                primeape.clone(),
+                90, // 90 - 0 = 90
+                90,
+                vec![energy, energy, energy],
+                true,
+                vec![mankey.clone()]
+            ))
         );
     }
 

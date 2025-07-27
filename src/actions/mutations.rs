@@ -15,7 +15,37 @@ use super::{
 // to promote pokemon after knockout, etc... apply to all attacks.
 
 // === Helper functions to build Outcomes (Probabilities, Mutations)
-// Doutcome means deterministic outcome.
+// Doutcome means deterministic outcome
+pub(crate) fn doutcome(
+    mutation: fn(&mut StdRng, &mut State, &Action),
+) -> (Probabilities, Mutations) {
+    (
+        vec![1.0],
+        vec![Box::new(move |rng, state, action| {
+            apply_common_mutation(state, action);
+            mutation(rng, state, action);
+        })],
+    )
+}
+
+// Useful for abilities
+pub(crate) fn ability_doutcome(mutation: Mutation) -> (Probabilities, Mutations) {
+    (vec![1.0], vec![mutation])
+}
+
+pub(crate) fn ability_mutation<F>(additional_effect: F) -> Mutation
+where
+    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
+{
+    Box::new({
+        move |rng, state, action| {
+            apply_common_mutation(state, action);
+            additional_effect(rng, state, action);
+        }
+    })
+}
+
+// Useful for attacks
 pub(crate) fn active_damage_doutcome(damage: u32) -> (Probabilities, Mutations) {
     damage_doutcome(vec![(damage, 0)])
 }

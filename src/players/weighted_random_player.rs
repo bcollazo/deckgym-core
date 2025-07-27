@@ -44,7 +44,7 @@ impl Debug for WeightedRandomPlayer {
 
 fn get_weight(action: &SimpleAction) -> u32 {
     match action {
-        SimpleAction::DrawCard => 1,
+        SimpleAction::DrawCard { .. } => 1,
         SimpleAction::Play { .. } => 5,
         SimpleAction::Place(_, _) => 5,
         SimpleAction::Attach { .. } => 10,
@@ -57,5 +57,6 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,
         SimpleAction::Activate { .. } => 1,
+        SimpleAction::Noop => 0, // No operation has no weight
     }
 }

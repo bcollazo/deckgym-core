@@ -1,8 +1,9 @@
 // This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.
 
 use serde::{Deserialize, Serialize};
+use strum_macros::EnumIter;
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize, EnumIter)]
 pub enum CardId {
     A1001Bulbasaur,
     A1002Ivysaur,

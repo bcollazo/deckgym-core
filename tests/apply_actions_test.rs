@@ -109,7 +109,7 @@ fn test_draw_action() {
     let deck_size = state.decks[state.current_player].cards.len();
     let action = Action {
         actor: state.current_player,
-        action: SimpleAction::DrawCard,
+        action: SimpleAction::DrawCard { amount: 1 },
         is_stack: false,
     };
     game.apply_action(&action);
