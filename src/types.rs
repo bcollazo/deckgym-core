@@ -189,6 +189,13 @@ impl Card {
             _ => false,
         }
     }
+
+    pub(crate) fn as_trainer(&self) -> TrainerCard {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.clone(),
+            _ => panic!("Card is not a Trainer"),
+        }
+    }
 }
 
 /// This represents a card in the mat. Has a pointer to the card
@@ -237,14 +244,14 @@ impl PlayedCard {
         }
     }
 
-    pub(crate) fn get_id(&self) -> String {
+    pub fn get_id(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.id.clone(),
             Card::Trainer(trainer_card) => trainer_card.id.clone(),
         }
     }
 
-    pub(crate) fn get_name(&self) -> String {
+    pub fn get_name(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.name.clone(),
             Card::Trainer(trainer_card) => trainer_card.name.clone(),
@@ -294,6 +301,10 @@ impl PlayedCard {
         self.attached_tool.is_some()
     }
 
+    /// Duration means:
+    ///   - 0: only during this turn
+    ///   - 1: during opponent's next turn
+    ///   - 2: on your next turn
     pub(crate) fn add_effect(&mut self, effect: CardEffect, duration: u8) {
         self.effects.push((effect, duration));
     }
@@ -310,10 +321,14 @@ impl PlayedCard {
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
-        // Decrease the duration of all effects by 1, and remove those that are 0
-        self.effects.retain_mut(|(_, turns_left)| {
-            *turns_left = turns_left.saturating_sub(1);
-            *turns_left > 0
+        // Remove all the ones that are 0, and subtract 1 from the rest
+        self.effects.retain_mut(|(_, duration)| {
+            if *duration > 0 {
+                *duration -= 1;
+                true
+            } else {
+                false
+            }
         });
 
         // Reset played_this_turn and ability_used

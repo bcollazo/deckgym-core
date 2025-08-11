@@ -1,4 +1,4 @@
-Energy: Grass
+Energy: Psychic
 1 A1 128
 2 A1 129
 2 A1 130

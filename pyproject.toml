@@ -7,10 +7,8 @@ name = "deckgym"
 description = "Python bindings for the deckgym-core Pokémon TCG Pocket simulator"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE.txt"}
-authors = [
-    {name = "DeckGym Team"},
-]
+license = { file = "LICENSE.txt" }
+authors = [{ name = "DeckGym Team" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -36,6 +34,4 @@ python-source = "python"
 module-name = "deckgym"
 
 [dependency-groups]
-dev = [
-    "pytest>=8.3.5",
-]
+dev = ["pytest>=8.3.5"]

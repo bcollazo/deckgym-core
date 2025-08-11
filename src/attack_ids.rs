@@ -82,6 +82,7 @@ pub enum AttackId {
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
     A3085CosmogTeleport,
+    A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     PA031CinccinoDoTheWave,
@@ -218,6 +219,7 @@ lazy_static::lazy_static! {
 
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
+        m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);

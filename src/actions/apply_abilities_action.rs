@@ -5,7 +5,7 @@ use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
         mutations::{ability_doutcome, ability_mutation},
-        shared_mutations::pokeball_outcomes,
+        shared_mutations::pokemon_search_outcomes,
         Action, SimpleAction,
     },
     types::EnergyType,
@@ -29,7 +29,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
-        AbilityId::A3a027ShiinoticIlluminate => pokeball_outcomes(action.actor, state),
+        AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
     }
 }

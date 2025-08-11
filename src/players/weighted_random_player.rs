@@ -12,12 +12,7 @@ pub struct WeightedRandomPlayer {
 }
 
 impl Player for WeightedRandomPlayer {
-    fn decision_fn(
-        &mut self,
-        rng: &mut StdRng,
-        _: &State,
-        possible_actions: Vec<Action>,
-    ) -> Action {
+    fn decision_fn(&mut self, rng: &mut StdRng, _: &State, possible_actions: &[Action]) -> Action {
         // Get weights for the possible actions
         let weights: Vec<u32> = possible_actions
             .iter()

@@ -5,7 +5,7 @@ use log::debug;
 
 use crate::{
     actions::SimpleAction,
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     tool_ids::ToolId,
     types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     AbilityId, State,
@@ -117,13 +117,25 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
-    // Modifiers by effect
-    let effect_modifiers = state
+    // Modifiers by effect (like Giovanni)
+    let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
         .filter(|x| matches!(x, TurnEffect::IncreasedDamage { .. }))
         .map(|x| match x {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>();
+
+    // Modifiers by receiving card effects
+    let reduced_card_effect_modifiers = state
+        .get_active((player + 1) % 2)
+        .get_active_effects()
+        .iter()
+        .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
+        .map(|effect| match effect {
+            CardEffect::ReducedDamage { amount } => *amount,
             _ => 0,
         })
         .sum::<u32>();
@@ -144,10 +156,14 @@ pub(crate) fn get_damage_from_attack(
     }
 
     debug!(
-        "Attack: {:?}, Weakness: {}, Effects: {}",
-        attack.fixed_damage, weakness_modifier, effect_modifiers
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
+        attack.fixed_damage,
+        weakness_modifier,
+        increased_turn_effect_modifiers,
+        reduced_card_effect_modifiers
     );
-    attack.fixed_damage + weakness_modifier + effect_modifiers
+    (attack.fixed_damage + weakness_modifier + increased_turn_effect_modifiers)
+        .saturating_sub(reduced_card_effect_modifiers)
 }
 
 // Check if attached satisfies cost (considering Colorless)
@@ -253,6 +269,31 @@ mod tests {
             damage_with_giovanni,
             base_damage + 10,
             "Giovanni should add exactly 10 damage to attacks"
+        );
+    }
+
+    #[test]
+    fn test_cosmoem_reduced_damage() {
+        // Arrange
+        let mut state = State::default();
+        let attacker = get_card_by_enum(CardId::A3122SolgaleoEx);
+        let played_attacker = to_playable_card(&attacker, false);
+        state.in_play_pokemon[0][0] = Some(played_attacker);
+        let defender = get_card_by_enum(CardId::A3086Cosmoem);
+        let played_defender = to_playable_card(&defender, false);
+        state.in_play_pokemon[1][0] = Some(played_defender);
+        state.in_play_pokemon[1][0]
+            .as_mut()
+            .unwrap()
+            .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
+
+        // Act
+        let damage_with_stiffen = get_damage_from_attack(&state, 0, 0, 0);
+
+        // Assert
+        assert_eq!(
+            damage_with_stiffen, 70,
+            "Cosmoem's Stiffen should reduce damage by exactly 50"
         );
     }
 }

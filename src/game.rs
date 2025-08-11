@@ -1,39 +1,42 @@
 use colored::Colorize;
 use log::{debug, info, trace};
 use rand::{rngs::StdRng, SeedableRng};
+use uuid::Uuid;
 
 use crate::{
     actions::{apply_action, Action},
     generate_possible_actions,
     players::Player,
+    simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
     state::GameOutcome,
     types::EnergyType,
     State,
 };
 
-pub struct Game {
+// It has a lifetime to allow it to borrow the event handler mutably for the duration of the game
+pub struct Game<'a> {
     seed: u64,
     rng: StdRng,
+    id: Uuid,
     players: Vec<Box<dyn Player>>,
 
     state: State,
 
-    // keeping statistics for Game analysis here (outside of "State")
-    degrees_per_ply: Vec<u32>,
-
     debug: bool,
+    event_handler: Option<&'a mut CompositeSimulationEventHandler>,
 }
 
-impl Game {
+impl<'a> Game<'a> {
     pub fn from_state(state: State, players: Vec<Box<dyn Player>>, seed: u64) -> Self {
         let rng = StdRng::seed_from_u64(seed);
         Game {
             seed,
             rng,
+            id: Uuid::new_v4(),
             players,
             state,
-            degrees_per_ply: vec![],
             debug: false,
+            event_handler: None,
         }
     }
 
@@ -45,11 +48,24 @@ impl Game {
         Game {
             seed,
             rng,
+            id: Uuid::new_v4(),
             players,
             state,
-            degrees_per_ply: vec![],
             debug: true,
+            event_handler: None,
         }
+    }
+
+    pub fn new_with_event_handlers(
+        game_id: Uuid,
+        players: Vec<Box<dyn Player>>,
+        seed: u64,
+        event_handler: &'a mut CompositeSimulationEventHandler,
+    ) -> Self {
+        let mut game = Game::new(players, seed);
+        game.event_handler = Some(event_handler);
+        game.id = game_id;
+        game
     }
 
     // Returns None if the game times out
@@ -65,7 +81,6 @@ impl Game {
 
     pub fn play_tick(&mut self) -> Action {
         let (actor, actions) = generate_possible_actions(&self.state);
-        self.degrees_per_ply.push(actions.len() as u32);
 
         let player = &self.players[actor];
         let color = self.get_color(actor);
@@ -79,11 +94,27 @@ impl Game {
                 "Possible Actions: {:?}",
                 actions.iter().map(|x| x.action.clone()).collect::<Vec<_>>()
             );
-            player.decision_fn(&mut self.rng, &self.state, actions)
+            player.decision_fn(&mut self.rng, &self.state, &actions)
         };
+
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
-        self.apply_action(&action);
+        if self.event_handler.is_some() {
+            let state_before_action = self.state.clone();
+            self.apply_action(&action);
+            if let Some(handler) = &mut self.event_handler {
+                handler.on_action(
+                    self.id,
+                    &state_before_action,
+                    actor,
+                    &actions,
+                    &action,
+                    &self.state,
+                );
+            }
+        } else {
+            self.apply_action(&action);
+        }
         self.print_state();
         action
     }
@@ -127,14 +158,7 @@ impl Game {
         }
     }
 
-    pub fn get_num_plys(&self) -> u32 {
-        self.degrees_per_ply.len() as u32
-    }
-
-    pub fn get_degrees_per_ply(&self) -> Vec<u32> {
-        self.degrees_per_ply.clone()
-    }
-
+    /// see https://github.com/colored-rs/colored?tab=readme-ov-file#colors
     fn get_color(&self, actor: usize) -> String {
         let energy = self.state.decks[actor].energy_types[0];
         let color = match energy {
@@ -145,8 +169,8 @@ impl Game {
             EnergyType::Lightning => "yellow",
             EnergyType::Psychic => "magenta",
             EnergyType::Water => "blue",
-            EnergyType::Darkness => "black",
-            EnergyType::Metal => "black",
+            EnergyType::Darkness => "bright_black",
+            EnergyType::Metal => "bright_black",
             EnergyType::Dragon => todo!(),
         };
         color.to_string()

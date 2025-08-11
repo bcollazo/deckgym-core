@@ -2,7 +2,7 @@ use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
-    actions::{mutations::doutcome, shared_mutations::pokeball_outcomes},
+    actions::{mutations::doutcome, shared_mutations::pokemon_search_outcomes},
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
@@ -28,7 +28,7 @@ pub fn forecast_trainer_action(
     match trainer_id {
         CardId::PA001Potion => doutcome(potion_effect),
         CardId::PA002XSpeed => doutcome(x_speed_effect),
-        CardId::PA005PokeBall => pokeball_outcomes(acting_player, state),
+        CardId::PA005PokeBall => pokemon_search_outcomes(acting_player, state, true),
         CardId::PA006RedCard => doutcome(red_card_effect),
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),

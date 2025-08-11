@@ -141,7 +141,7 @@ impl State {
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
-        // Reset .played_this_turn and .ability_used for all in-play pokemon
+        // Maintain PlayedCard state for _all_ players
         for i in 0..2 {
             self.in_play_pokemon[i].iter_mut().for_each(|x| {
                 if let Some(played_card) = x {
