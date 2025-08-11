@@ -282,7 +282,12 @@ fn to_canonical_names(cards: &[Card]) -> Vec<&String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{deck::is_basic, test_helpers::load_test_decks};
+    use crate::{
+        card_ids::CardId,
+        database::get_card_by_enum,
+        deck::is_basic,
+        test_helpers::load_test_decks,
+    };
 
     use super::*;
 
@@ -311,5 +316,182 @@ mod tests {
         assert_eq!(state.decks[1].cards.len(), 15);
         assert!(state.hands[0].iter().any(is_basic));
         assert!(state.hands[1].iter().any(is_basic));
+    }
+
+    #[test]
+    fn test_add_and_get_turn_effects() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        
+        // Set initial state to turn 1 (to avoid special handling in turn 0)
+        state.turn_count = 1;
+        state.current_player = 0;
+        
+        // Initially there should be no effects
+        assert_eq!(state.get_current_turn_effects().len(), 0);
+        
+        // Add an effect for the current turn only
+        let effect1 = TurnEffect::NoSupportCards;
+        state.add_turn_effect(effect1, 0);
+        
+        // Add an effect that lasts for multiple turns
+        let effect2 = TurnEffect::ReducedRetreatCost { amount: 1 };
+        state.add_turn_effect(effect2, 2);
+        
+        // Check that both effects are present for the current turn
+        let current_effects = state.get_current_turn_effects();
+        assert_eq!(current_effects.len(), 2);
+        assert!(current_effects.contains(&effect1));
+        assert!(current_effects.contains(&effect2));
+        
+        // Advance the turn and check that only the second effect remains
+        // This will change turn_count to 2 and current_player to 1
+        state.advance_turn();
+        
+        // Verify turn state
+        assert_eq!(state.turn_count, 2);
+        assert_eq!(state.current_player, 1);
+        
+        // Check effects for turn 2
+        let next_turn_effects = state.get_current_turn_effects();
+        assert_eq!(next_turn_effects.len(), 1);
+        assert_eq!(next_turn_effects[0], effect2);
+        
+        // Advance to turn 3
+        state.advance_turn();
+        
+        // Verify turn state
+        assert_eq!(state.turn_count, 3);
+        assert_eq!(state.current_player, 0);
+        
+        // Check effects for turn 3
+        let turn3_effects = state.get_current_turn_effects();
+        assert_eq!(turn3_effects.len(), 1);
+        assert_eq!(turn3_effects[0], effect2);
+        
+        // Advance to turn 4
+        state.advance_turn();
+        
+        // Verify turn state
+        assert_eq!(state.turn_count, 4);
+        assert_eq!(state.current_player, 1);
+        
+        // Check that no effects remain for turn 4
+        assert_eq!(state.get_current_turn_effects().len(), 0);
+    }
+    
+    #[test]
+    fn test_advance_turn() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        
+        // Set initial state
+        state.turn_count = 1; // Ensure we're not in turn 0
+        state.current_player = 0;
+        state.has_played_support = true;
+        state.has_retreated = true;
+        
+        // Verify initial state
+        assert_eq!(state.current_player, 0);
+        assert_eq!(state.turn_count, 1);
+        assert!(state.has_played_support);
+        assert!(state.has_retreated);
+        assert_eq!(state.move_generation_stack.len(), 0);
+        assert!(state.current_energy.is_none());
+        
+        // Advance the turn
+        state.advance_turn();
+        
+        // Verify state after advancing turn
+        assert_eq!(state.current_player, 1); // Player should change
+        assert_eq!(state.turn_count, 2); // Turn count should increment
+        assert!(!state.has_played_support); // Should be reset
+        assert!(!state.has_retreated); // Should be reset
+        assert_eq!(state.move_generation_stack.len(), 1); // Should have a draw action queued
+        
+        // Verify the queued draw action
+        let (actor, actions) = &state.move_generation_stack[0];
+        assert_eq!(*actor, 1); // Current player should be the actor
+        assert_eq!(actions.len(), 1);
+        match &actions[0] {
+            SimpleAction::DrawCard { amount } => assert_eq!(*amount, 1),
+            _ => panic!("Expected DrawCard action"),
+        }
+        
+        // Verify energy was generated
+        assert!(state.current_energy.is_some());
+    }
+    
+    #[test]
+    fn test_is_game_over() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        
+        // Game should not be over initially
+        assert!(!state.is_game_over());
+        
+        // Game should be over if there's a winner
+        state.winner = Some(GameOutcome::Win(0));
+        assert!(state.is_game_over());
+        
+        // Reset winner
+        state.winner = None;
+        assert!(!state.is_game_over());
+        
+        // Game should be over if turn count reaches 100
+        state.turn_count = 99;
+        assert!(!state.is_game_over());
+        state.turn_count = 100;
+        assert!(state.is_game_over());
+        
+        // Game should be over if there's a tie
+        state.turn_count = 50;
+        state.winner = Some(GameOutcome::Tie);
+        assert!(state.is_game_over());
+    }
+    
+    #[test]
+    fn test_enumerate_bench_pokemon() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        
+        // Initially there should be no bench Pokémon
+        assert_eq!(state.enumerate_bench_pokemon(0).count(), 0);
+        
+        // Create a played card for testing
+        let card = get_card_by_enum(CardId::A1001Bulbasaur);
+        let played_card = PlayedCard::new(
+            card.clone(),
+            40, // HP
+            40, // Total HP
+            vec![], // No energy
+            false, // Not played this turn
+            vec![], // No cards behind
+        );
+        
+        // Add an active Pokémon
+        state.in_play_pokemon[0][0] = Some(played_card.clone());
+        
+        // Should still have no bench Pokémon
+        assert_eq!(state.enumerate_bench_pokemon(0).count(), 0);
+        
+        // Add a bench Pokémon
+        state.in_play_pokemon[0][1] = Some(played_card.clone());
+        
+        // Should now have one bench Pokémon
+        assert_eq!(state.enumerate_bench_pokemon(0).count(), 1);
+        
+        // Add another bench Pokémon
+        state.in_play_pokemon[0][2] = Some(played_card.clone());
+        
+        // Should now have two bench Pokémon
+        let bench_pokemon: Vec<_> = state.enumerate_bench_pokemon(0).collect();
+        assert_eq!(bench_pokemon.len(), 2);
+        assert_eq!(bench_pokemon[0].0, 1); // First bench slot
+        assert_eq!(bench_pokemon[1].0, 2); // Second bench slot
+        
+        // Verify the Pokémon is correct
+        assert_eq!(bench_pokemon[0].1.card.get_name(), "Bulbasaur");
+        assert_eq!(bench_pokemon[1].1.card.get_name(), "Bulbasaur");
     }
 }
