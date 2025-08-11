@@ -83,7 +83,7 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
 
     fn on_game_end(&mut self, game_id: Uuid, state: State, result: Option<GameOutcome>) {
         for handler in self.handlers.iter_mut() {
-            handler.on_game_end(game_id, state.clone(), result.clone());
+            handler.on_game_end(game_id, state.clone(), result);
         }
     }
 
