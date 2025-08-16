@@ -109,7 +109,7 @@ fn test_draw_action() {
     let deck_size = state.decks[state.current_player].cards.len();
     let action = Action {
         actor: state.current_player,
-        action: SimpleAction::DrawCard,
+        action: SimpleAction::DrawCard { amount: 1 },
         is_stack: false,
     };
     game.apply_action(&action);
@@ -212,7 +212,7 @@ fn test_attach_action() {
     ); // 1 grass energy
 }
 
-fn get_initialized_game(seed: u64) -> Game {
+fn get_initialized_game(seed: u64) -> Game<'static> {
     let players = init_random_players();
     let mut game = deckgym::Game::new(players, seed);
     while game.get_state_clone().turn_count == 0 {

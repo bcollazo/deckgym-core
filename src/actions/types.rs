@@ -15,7 +15,9 @@ pub struct Action {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum SimpleAction {
-    DrawCard,
+    DrawCard {
+        amount: u8,
+    },
     Play {
         trainer_card: TrainerCard,
     },
@@ -49,15 +51,17 @@ pub enum SimpleAction {
     ApplyDamage {
         targets: Vec<(u32, usize)>, // Vec of (damage, in_play_idx)
     },
+    /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
         in_play_idx: usize,
     },
+    Noop, // No operation, used to have the user say "no" to a question
 }
 
 impl fmt::Display for SimpleAction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            SimpleAction::DrawCard => write!(f, "DrawCard"),
+            SimpleAction::DrawCard { amount } => write!(f, "DrawCard({amount})"),
             SimpleAction::Play { trainer_card } => write!(f, "Play({trainer_card:?})"),
             SimpleAction::Place(card, index) => write!(f, "Place({card}, {index})"),
             SimpleAction::Evolve(card, index) => write!(f, "Evolve({card}, {index})"),
@@ -97,6 +101,7 @@ impl fmt::Display for SimpleAction {
                 write!(f, "ApplyDamage({targets_str})")
             }
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
+            SimpleAction::Noop => write!(f, "Noop"),
         }
     }
 }

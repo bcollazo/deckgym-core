@@ -1,5 +1,6 @@
 mod attach_attack_player;
 mod end_turn_player;
+mod evolution_rusher_player;
 mod expectiminimax_player;
 mod human_player;
 mod mcts_player;
@@ -10,6 +11,7 @@ mod weighted_random_player;
 pub use attach_attack_player::AttachAttackPlayer;
 use clap::ValueEnum;
 pub use end_turn_player::EndTurnPlayer;
+pub use evolution_rusher_player::EvolutionRusherPlayer;
 pub use expectiminimax_player::ExpectiMiniMaxPlayer;
 pub use human_player::HumanPlayer;
 pub use mcts_player::MctsPlayer;
@@ -27,7 +29,7 @@ pub trait Player: Debug {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &[Action],
     ) -> Action;
 }
 
@@ -42,6 +44,7 @@ pub enum PlayerCode {
     M,
     V,
     E,
+    ER, // Evolution Rusher
 }
 /// Custom parser function enforcing case-insensitivity
 pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
@@ -54,6 +57,7 @@ pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
         "m" => Ok(PlayerCode::M),
         "v" => Ok(PlayerCode::V),
         "e" => Ok(PlayerCode::E),
+        "er" => Ok(PlayerCode::ER),
         _ => Err(format!("Invalid player code: {s}")),
     }
 }
@@ -64,13 +68,13 @@ pub fn parse_player_code_generic(s: String) -> Result<PlayerCode, String> {
 
 pub fn fill_code_array(maybe_players: Option<Vec<PlayerCode>>) -> Vec<PlayerCode> {
     match maybe_players {
-        Some(mut cli_players) => {
-            if cli_players.is_empty() || cli_players.len() > 2 {
+        Some(mut player_codes) => {
+            if player_codes.is_empty() || player_codes.len() > 2 {
                 panic!("Invalid number of players");
-            } else if cli_players.len() == 1 {
-                cli_players.push(PlayerCode::R);
+            } else if player_codes.len() == 1 {
+                player_codes.push(PlayerCode::R);
             }
-            cli_players
+            player_codes
         }
         None => vec![PlayerCode::R, PlayerCode::R],
     }
@@ -96,5 +100,6 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
         PlayerCode::M => Box::new(MctsPlayer::new(deck, 100)),
         PlayerCode::V => Box::new(ValueFunctionPlayer { deck }),
         PlayerCode::E => Box::new(ExpectiMiniMaxPlayer { deck, max_depth: 3 }),
+        PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
     }
 }

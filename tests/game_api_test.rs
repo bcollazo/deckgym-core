@@ -29,7 +29,10 @@ fn test_mcts_player() {
     // }
     game.play();
 
-    assert_eq!(game.get_state_clone().turn_count, 30);
+    // This test is flaky, since if we change the order of operations the random
+    // number generator is used, then it will change. But we keep it just to
+    // keep learning what changes lead to this.
+    assert_eq!(game.get_state_clone().turn_count, 18);
 }
 
 #[test]

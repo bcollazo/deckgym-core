@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{card_ids::CardId, tool_ids::ToolId};
+use crate::{card_ids::CardId, effects::CardEffect, tool_ids::ToolId};
 
 /// Represents the type of energy.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
@@ -189,6 +189,13 @@ impl Card {
             _ => false,
         }
     }
+
+    pub(crate) fn as_trainer(&self) -> TrainerCard {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.clone(),
+            _ => panic!("Card is not a Trainer"),
+        }
+    }
 }
 
 /// This represents a card in the mat. Has a pointer to the card
@@ -206,16 +213,45 @@ pub struct PlayedCard {
     pub paralyzed: bool,
     pub asleep: bool,
     pub cards_behind: Vec<Card>,
+
+    /// Effects that should be cleared if moved to the bench (by retreat or similar).
+    /// The second value is the number of turns left for the effect.
+    effects: Vec<(CardEffect, u8)>,
 }
 impl PlayedCard {
-    pub(crate) fn get_id(&self) -> String {
+    pub fn new(
+        card: Card,
+        remaining_hp: u32,
+        total_hp: u32,
+        attached_energy: Vec<EnergyType>,
+        played_this_turn: bool,
+        cards_behind: Vec<Card>,
+    ) -> Self {
+        PlayedCard {
+            card,
+            remaining_hp,
+            total_hp,
+            attached_energy,
+            played_this_turn,
+            cards_behind,
+
+            attached_tool: None,
+            ability_used: false,
+            poisoned: false,
+            paralyzed: false,
+            asleep: false,
+            effects: vec![],
+        }
+    }
+
+    pub fn get_id(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.id.clone(),
             Card::Trainer(trainer_card) => trainer_card.id.clone(),
         }
     }
 
-    pub(crate) fn get_name(&self) -> String {
+    pub fn get_name(&self) -> String {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.name.clone(),
             Card::Trainer(trainer_card) => trainer_card.name.clone(),
@@ -263,6 +299,41 @@ impl PlayedCard {
 
     pub(crate) fn has_tool_attached(&self) -> bool {
         self.attached_tool.is_some()
+    }
+
+    /// Duration means:
+    ///   - 0: only during this turn
+    ///   - 1: during opponent's next turn
+    ///   - 2: on your next turn
+    pub(crate) fn add_effect(&mut self, effect: CardEffect, duration: u8) {
+        self.effects.push((effect, duration));
+    }
+
+    pub(crate) fn get_active_effects(&self) -> Vec<CardEffect> {
+        self.effects.iter().map(|(effect, _)| *effect).collect()
+    }
+
+    pub(crate) fn clear_status_and_effects(&mut self) {
+        self.poisoned = false;
+        self.paralyzed = false;
+        self.asleep = false;
+        self.effects.clear();
+    }
+
+    pub(crate) fn end_turn_maintenance(&mut self) {
+        // Remove all the ones that are 0, and subtract 1 from the rest
+        self.effects.retain_mut(|(_, duration)| {
+            if *duration > 0 {
+                *duration -= 1;
+                true
+            } else {
+                false
+            }
+        });
+
+        // Reset played_this_turn and ability_used
+        self.played_this_turn = false;
+        self.ability_used = false;
     }
 }
 

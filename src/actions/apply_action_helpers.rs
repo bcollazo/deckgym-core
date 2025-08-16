@@ -32,8 +32,8 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
                     if both_players_initiated {
                         // Actually start game (no energy generation)
                         state.turn_count = 1;
-                        state.reset_turn_states();
-                        state.queue_draw_action(state.current_player);
+                        state.end_turn_maintenance();
+                        state.queue_draw_action(state.current_player, 1);
                     }
                 }
             })],
@@ -260,5 +260,11 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
         if card.is_support() {
             state.has_played_support = true;
         }
+    }
+    if let SimpleAction::UseAbility(index) = &action.action {
+        let pokemon = state.in_play_pokemon[action.actor][*index]
+            .as_mut()
+            .expect("Pokemon should be there if using ability");
+        pokemon.ability_used = true;
     }
 }

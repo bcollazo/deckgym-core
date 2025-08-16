@@ -641,7 +641,7 @@ impl PyState {
 /// Python wrapper for Game
 #[pyclass(unsendable)]
 pub struct PyGame {
-    game: Game,
+    game: Game<'static>,
 }
 
 #[pymethods]

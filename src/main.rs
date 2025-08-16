@@ -1,10 +1,9 @@
 use clap::{ArgAction, Parser, Subcommand};
 use colored::Colorize;
 use deckgym::players::{parse_player_code, PlayerCode};
+use deckgym::simulate::initialize_logger;
 use deckgym::{optimize, simulate};
-use env_logger::{Builder, Env};
 use log::warn;
-use std::io::Write;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -110,17 +109,4 @@ fn main() {
             );
         }
     }
-}
-
-// Set up the logger according to the given verbosity.
-fn initialize_logger(verbose: u8) {
-    let level = match verbose {
-        1 => "warn",
-        2 => "info",
-        3 => "debug",
-        _ => "trace",
-    };
-    Builder::from_env(Env::default().default_filter_or(level))
-        .format(|buf, record| writeln!(buf, "{}", record.args()))
-        .init();
 }

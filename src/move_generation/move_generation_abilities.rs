@@ -16,12 +16,19 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
     }
 
     let is_active = *in_play_index == 0;
-    let ability = AbilityId::from_pokemon_id(&card.card.get_id()[..]);
+    let ability = AbilityId::from_pokemon_id(&card.card.get_id()[..]).unwrap_or_else(|| {
+        panic!(
+            "Ability seems not implemented for card ID: {}",
+            card.card.get_id()
+        )
+    });
     match ability {
-        Some(AbilityId::A1007Butterfree) => !card.ability_used,
-        Some(AbilityId::A1177Weezing) => is_active && !card.ability_used,
-        Some(AbilityId::A1132Gardevoir) => !card.ability_used,
-        Some(AbilityId::A2a071Arceus) => false,
-        None => panic!("Ability not implemented"),
+        AbilityId::A1007Butterfree => !card.ability_used,
+        AbilityId::A1177Weezing => is_active && !card.ability_used,
+        AbilityId::A1132Gardevoir => !card.ability_used,
+        AbilityId::A3122SolgaleoExRisingRoad => !is_active && !card.ability_used,
+        AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
+        AbilityId::A2a071Arceus => false,
+        AbilityId::A3b034SylveonExHappyRibbon => false,
     }
 }

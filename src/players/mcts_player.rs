@@ -31,14 +31,14 @@ impl Player for MctsPlayer {
         &mut self,
         rng: &mut StdRng,
         state: &State,
-        possible_actions: Vec<Action>,
+        possible_actions: &[Action],
     ) -> Action {
         // Step 1: Initialize the root node of the search tree
         let investigator = possible_actions[0].actor; // myself
         let mut root = self
             .node_lookup
             .entry(state.clone())
-            .or_insert_with(|| MctsNode::new(state.clone(), possible_actions.clone()))
+            .or_insert_with(|| MctsNode::new(state.clone(), possible_actions.to_vec()))
             .clone();
 
         // Step 2: Perform iterations of MCTS

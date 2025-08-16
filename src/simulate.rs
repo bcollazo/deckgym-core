@@ -1,14 +1,80 @@
-use std::time::{Duration, Instant};
-
-use log::{info, warn};
+use env_logger::{Builder, Env};
+use log::warn;
 use num_format::{Locale, ToFormattedString};
+use std::io::Write;
+use uuid::Uuid;
 
 use crate::{
     players::{create_players, fill_code_array, PlayerCode},
+    simulation_event_handler::{
+        CompositeSimulationEventHandler, SimulationEventHandler, StatsCollector,
+    },
     state::GameOutcome,
     Deck, Game,
 };
 
+pub struct Simulation {
+    deck_a: Deck,
+    deck_b: Deck,
+    player_codes: Vec<PlayerCode>,
+    num_simulations: u32,
+    seed: Option<u64>,
+    event_handler: CompositeSimulationEventHandler,
+}
+
+impl Simulation {
+    pub fn new(
+        deck_a_path: &str,
+        deck_b_path: &str,
+        player_codes: Vec<PlayerCode>,
+        num_simulations: u32,
+        seed: Option<u64>,
+        event_handler: CompositeSimulationEventHandler,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let deck_a = Deck::from_file(deck_a_path)?;
+        let deck_b = Deck::from_file(deck_b_path)?;
+
+        Ok(Simulation {
+            deck_a,
+            deck_b,
+            player_codes,
+            num_simulations,
+            seed,
+            event_handler,
+        })
+    }
+
+    pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
+        self.event_handler.on_simulation_start();
+        let mut outcomes = vec![];
+        for _ in 1..=self.num_simulations {
+            let players = create_players(
+                self.deck_a.clone(),
+                self.deck_b.clone(),
+                self.player_codes.clone(),
+            );
+            let seed = self.seed.unwrap_or(rand::random::<u64>());
+            let game_id = Uuid::new_v4();
+            self.event_handler.on_game_start(game_id);
+
+            // Give the self.event_handler a mutable reference to the Game
+            let mut game =
+                Game::new_with_event_handlers(game_id, players, seed, &mut self.event_handler);
+            let outcome = game.play();
+            let clone = game.get_state_clone();
+            // done with the game, should be dropped now
+
+            self.event_handler.on_game_end(game_id, clone, outcome);
+
+            outcomes.push(outcome);
+        }
+        self.event_handler.on_simulation_end();
+
+        outcomes
+    }
+}
+
+/// Legacy functional API for backwards compatibility
 pub fn simulate(
     deck_a_path: &str,
     deck_b_path: &str,
@@ -16,84 +82,39 @@ pub fn simulate(
     num_simulations: u32,
     seed: Option<u64>,
 ) {
-    // Read the decks files and initialize Players
-    let deck_a = Deck::from_file(deck_a_path).expect("Failed to parse deck from file");
-    let deck_b = Deck::from_file(deck_b_path).expect("Failed to parse deck from file");
-    let cli_players = fill_code_array(players);
+    let player_codes = fill_code_array(players);
 
-    // Simulate Games and accumulate statistics
     warn!(
-        "Running {} games with players {:?}",
+        "Running {} games with players:",
         num_simulations.to_formatted_string(&Locale::en),
-        cli_players
     );
-    let start = Instant::now(); // Start the timer
-    let mut wins_per_deck = [0, 0, 0];
-    let mut turns_per_game = Vec::new();
-    let mut plys_per_game = Vec::new();
-    let mut total_degrees = Vec::new();
-    for i in 1..=num_simulations {
-        let players = create_players(deck_a.clone(), deck_b.clone(), cli_players.clone());
-        let seed = seed.unwrap_or(rand::random::<u64>());
-        let mut game = Game::new(players, seed);
-        let outcome = game.play();
-        turns_per_game.push(game.get_state_clone().turn_count);
-        plys_per_game.push(game.get_num_plys());
-        total_degrees.extend(game.get_degrees_per_ply().iter());
-        info!("Simulation {i}: Winner is {outcome:?}");
-        match outcome {
-            Some(GameOutcome::Win(winner_name)) => {
-                wins_per_deck[winner_name] += 1;
-            }
-            Some(GameOutcome::Tie) | None => {
-                wins_per_deck[2] += 1;
-            }
-        }
-    }
-    let duration = start.elapsed(); // Measure elapsed time
-    let avg_time_per_game = duration.as_secs_f64() / num_simulations as f64;
-    let avg_duration = Duration::from_secs_f64(avg_time_per_game);
+    warn!("\tPlayer 0: {:?}({})", player_codes[0], deck_a_path);
+    warn!("\tPlayer 1: {:?}({})", player_codes[1], deck_b_path);
 
-    // Print statistics
-    warn!(
-        "Ran {} simulations in {} ({} per game)!",
-        num_simulations.to_formatted_string(&Locale::en),
-        humantime::format_duration(duration),
-        humantime::format_duration(avg_duration)
-    );
-    warn!(
-        "Average number of turns per game: {:.2}",
-        turns_per_game
-            .iter()
-            .map(|&turns| turns as u32)
-            .sum::<u32>() as f32
-            / num_simulations as f32
-    );
-    warn!(
-        "Average number of plys per game: {:.2}",
-        plys_per_game.iter().sum::<u32>() as f32 / num_simulations as f32
-    );
-    warn!(
-        "Average number of degrees per ply: {:.2}",
-        total_degrees.iter().sum::<u32>() as f32 / total_degrees.len() as f32
-    );
-    warn!(
-        "Player {:?} with Deck {} wins: {} ({:.2}%)",
-        cli_players[0],
+    let stats_collector = Box::new(StatsCollector::new());
+    let mut composite_handler = CompositeSimulationEventHandler::new();
+    composite_handler.add_handler(stats_collector);
+    let mut simulation = Simulation::new(
         deck_a_path,
-        wins_per_deck[0].to_formatted_string(&Locale::en),
-        wins_per_deck[0] as f32 / num_simulations as f32 * 100.0
-    );
-    warn!(
-        "Player {:?} with Deck {} wins: {} ({:.2}%)",
-        cli_players[1],
         deck_b_path,
-        wins_per_deck[1].to_formatted_string(&Locale::en),
-        wins_per_deck[1] as f32 / num_simulations as f32 * 100.0
-    );
-    warn!(
-        "Draws: {} ({:.2}%)",
-        wins_per_deck[2].to_formatted_string(&Locale::en),
-        wins_per_deck[2] as f32 / num_simulations as f32 * 100.0
-    );
+        player_codes,
+        num_simulations,
+        seed,
+        composite_handler,
+    )
+    .expect("Failed to create simulation");
+    simulation.run();
+}
+
+// Set up the logger according to the given verbosity.
+pub fn initialize_logger(verbose: u8) {
+    let level = match verbose {
+        1 => "warn",
+        2 => "info",
+        3 => "debug",
+        _ => "trace",
+    };
+    Builder::from_env(Env::default().default_filter_or(level))
+        .format(|buf, record| writeln!(buf, "{}", record.args()))
+        .init();
 }

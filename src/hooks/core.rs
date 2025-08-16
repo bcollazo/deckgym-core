@@ -4,37 +4,57 @@ use std::vec;
 use log::debug;
 
 use crate::{
-    card_ids::CardId,
+    actions::SimpleAction,
+    effects::{CardEffect, TurnEffect},
     tool_ids::ToolId,
-    types::{Card, EnergyType, PlayedCard},
-    State,
+    types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
+    AbilityId, State,
 };
 
-const PLAYABLE_TRAINER_CARD_NAMES: [&str; 3] = ["Helix Fossil", "Dome Fossil", "Old Amber"];
+// Fossils
+const FOSSIL_CARD_NAMES: [&str; 5] = [
+    "Helix Fossil",
+    "Dome Fossil",
+    "Old Amber",
+    "Skull Fossil",
+    "Armor Fossil",
+];
+
+fn is_fossil(trainer_card: &TrainerCard) -> bool {
+    FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
+}
 
 pub(crate) fn to_playable_card(card: &crate::types::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
-            if PLAYABLE_TRAINER_CARD_NAMES.contains(&trainer_card.name.as_str()) {
+            if is_fossil(trainer_card) {
                 40
             } else {
                 panic!("Unplayable Trainer Card: {:?}", trainer_card);
             }
         }
     };
-    PlayedCard {
-        card: card.clone(),
-        remaining_hp: total_hp,
+    PlayedCard::new(
+        card.clone(),
         total_hp,
-        attached_energy: vec![],
-        attached_tool: None,
+        total_hp,
+        vec![],
         played_this_turn,
-        ability_used: false,
-        poisoned: false,
-        paralyzed: false,
-        asleep: false,
-        cards_behind: vec![],
+        vec![],
+    )
+}
+
+pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
+    match &played_card.card {
+        Card::Pokemon(pokemon_card) => pokemon_card.stage,
+        Card::Trainer(trainer_card) => {
+            if is_fossil(trainer_card) {
+                BASIC_STAGE // Fossils are considered basic for stage purposes
+            } else {
+                panic!("Trainer cards do not have a stage")
+            }
+        }
     }
 }
 
@@ -53,13 +73,27 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
     }
 }
 
+/// Called when a Pokémon evolves
+pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
+        if ability_id == AbilityId::A3b034SylveonExHappyRibbon {
+            // Give the user the option to draw 2 cards
+            state.move_generation_stack.push((
+                actor,
+                vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
+            ));
+        }
+    }
+}
+
 // TODO: Implement Gengars ability that disallow playing support cards.
 pub(crate) fn can_play_support(state: &State) -> bool {
-    let psyduck_headache = state
+    let has_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .any(|x| CardId::from_card_id(&x.get_id()) == Some(CardId::A1057Psyduck));
-    !state.has_played_support && !psyduck_headache
+        .any(|x| matches!(x, TurnEffect::NoSupportCards));
+
+    !state.has_played_support && !has_modifiers
 }
 
 pub(crate) fn get_damage_from_attack(
@@ -83,16 +117,28 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
-    // Giovanni's Modifier
-    let mut giovanni_modifier = 0;
-    let giovanni_ids = [CardId::A1223Giovanni, CardId::A1270Giovanni];
-    if state
+    // Modifiers by effect (like Giovanni)
+    let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .any(|x| giovanni_ids.contains(&CardId::from_card_id(&x.get_id()).unwrap()))
-    {
-        giovanni_modifier = 10;
-    }
+        .filter(|x| matches!(x, TurnEffect::IncreasedDamage { .. }))
+        .map(|x| match x {
+            TurnEffect::IncreasedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>();
+
+    // Modifiers by receiving card effects
+    let reduced_card_effect_modifiers = state
+        .get_active((player + 1) % 2)
+        .get_active_effects()
+        .iter()
+        .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
+        .map(|effect| match effect {
+            CardEffect::ReducedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>();
 
     // Weakness Modifier
     let opponent = (player + 1) % 2;
@@ -110,10 +156,14 @@ pub(crate) fn get_damage_from_attack(
     }
 
     debug!(
-        "Attack: {:?}, Weakness: {}, Giovanni: {}",
-        attack.fixed_damage, weakness_modifier, giovanni_modifier
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
+        attack.fixed_damage,
+        weakness_modifier,
+        increased_turn_effect_modifiers,
+        reduced_card_effect_modifiers
     );
-    attack.fixed_damage + weakness_modifier + giovanni_modifier
+    (attack.fixed_damage + weakness_modifier + increased_turn_effect_modifiers)
+        .saturating_sub(reduced_card_effect_modifiers)
 }
 
 // Check if attached satisfies cost (considering Colorless)
@@ -139,7 +189,7 @@ pub(crate) fn contains_energy(attached: &[EnergyType], cost: &[EnergyType]) -> b
 // Test Colorless is wildcard when counting energy
 #[cfg(test)]
 mod tests {
-    use crate::database::get_card_by_enum;
+    use crate::{card_ids::CardId, database::get_card_by_enum};
 
     use super::*;
 
@@ -186,7 +236,7 @@ mod tests {
         assert!(can_play_support(&state));
 
         // With Psyduck headache effect, it should disallow
-        state.add_turn_effect(get_card_by_enum(CardId::A1057Psyduck), 1);
+        state.add_turn_effect(TurnEffect::NoSupportCards, 1);
         assert!(!can_play_support(&state));
     }
 
@@ -209,7 +259,7 @@ mod tests {
         let base_damage = get_damage_from_attack(&state, 0, 0, 0);
 
         // Add Giovanni effect
-        state.add_turn_effect(get_card_by_enum(CardId::A1223Giovanni), 0);
+        state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
         let damage_with_giovanni = get_damage_from_attack(&state, 0, 0, 0);
@@ -219,6 +269,31 @@ mod tests {
             damage_with_giovanni,
             base_damage + 10,
             "Giovanni should add exactly 10 damage to attacks"
+        );
+    }
+
+    #[test]
+    fn test_cosmoem_reduced_damage() {
+        // Arrange
+        let mut state = State::default();
+        let attacker = get_card_by_enum(CardId::A3122SolgaleoEx);
+        let played_attacker = to_playable_card(&attacker, false);
+        state.in_play_pokemon[0][0] = Some(played_attacker);
+        let defender = get_card_by_enum(CardId::A3086Cosmoem);
+        let played_defender = to_playable_card(&defender, false);
+        state.in_play_pokemon[1][0] = Some(played_defender);
+        state.in_play_pokemon[1][0]
+            .as_mut()
+            .unwrap()
+            .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
+
+        // Act
+        let damage_with_stiffen = get_damage_from_attack(&state, 0, 0, 0);
+
+        // Assert
+        assert_eq!(
+            damage_with_stiffen, 70,
+            "Cosmoem's Stiffen should reduce damage by exactly 50"
         );
     }
 }
