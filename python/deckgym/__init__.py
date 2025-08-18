@@ -1,4 +1,9 @@
 from .deckgym import (
+    PyEnergyType as EnergyType,
+    PyAttack as Attack,
+    PyAbility as Ability,
+    PyCard as Card,
+    PyPlayedCard as PlayedCard,
     PyDeck as Deck,
     PyGame as Game,
     PyState as State,
@@ -9,6 +14,11 @@ from .deckgym import (
 )
 
 __all__ = [
+    "EnergyType",
+    "Attack",
+    "Ability",
+    "Card",
+    "PlayedCard",
     "Deck",
     "Game",
     "State",
