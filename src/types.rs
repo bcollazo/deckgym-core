@@ -94,7 +94,6 @@ pub enum TrainerType {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TrainerCard {
     pub id: String,
-    pub numeric_id: u16,
     pub trainer_card_type: TrainerType,
     pub name: String,
     pub effect: String,
