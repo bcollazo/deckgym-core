@@ -37,7 +37,7 @@ pub fn generate_possible_trainer_actions(
         return can_play_tool(state, trainer_card);
     }
 
-    let trainer_id = CardId::from_numeric_id(trainer_card.numeric_id).expect("CardId should exist");
+    let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
     match trainer_id {
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),

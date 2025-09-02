@@ -24,7 +24,7 @@ pub fn forecast_trainer_action(
     trainer_card: &TrainerCard,
 ) -> (Probabilities, Mutations) {
     let trainer_id =
-        CardId::from_numeric_id(trainer_card.numeric_id).expect("CardId should be known");
+        CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should be known");
     match trainer_id {
         CardId::PA001Potion => doutcome(potion_effect),
         CardId::PA002XSpeed => doutcome(x_speed_effect),

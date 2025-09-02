@@ -2,7 +2,7 @@ use std::{fs::File, io::Read};
 
 use clap::Parser;
 
-use deckgym::types::{Ability, Attack, Card, EnergyType, TrainerCard};
+use deckgym::types::{Ability, Attack, Card, EnergyType};
 use indexmap::IndexMap;
 
 #[derive(Parser, Debug)]
@@ -27,7 +27,6 @@ fn main() {
     // Generate the Enum Names
     let mut card_map: IndexMap<String, Card> = IndexMap::new();
     let mut id_to_enum: IndexMap<String, String> = IndexMap::new();
-    let mut numeric_id_to_enum: IndexMap<u16, String> = IndexMap::new();
     for card in deserialized_cards {
         // Remove special characters from the name
         let mut enum_name = (card.get_id() + &card.get_name())
@@ -45,23 +44,16 @@ fn main() {
         }
         card_map.insert(enum_name.clone(), card.clone());
         id_to_enum.insert(card.get_id().clone(), enum_name.clone());
-        if let Card::Trainer(TrainerCard { numeric_id, .. }) = &card {
-            numeric_id_to_enum.insert(*numeric_id, enum_name.clone());
-        }
     }
 
     if args.database {
         print_database(&card_map);
     } else {
-        print_enums(&card_map, &id_to_enum, &numeric_id_to_enum);
+        print_enums(&card_map, &id_to_enum);
     }
 }
 
-fn print_enums(
-    card_map: &IndexMap<String, Card>,
-    id_to_enum: &IndexMap<String, String>,
-    numeric_id_to_enum: &IndexMap<u16, String>,
-) {
+fn print_enums(card_map: &IndexMap<String, Card>, id_to_enum: &IndexMap<String, String>) {
     println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
     println!();
     println!("use serde::{{Deserialize, Serialize}};");
@@ -87,14 +79,6 @@ fn print_enums(
     println!("        }}");
     println!("    }}");
     println!();
-    println!("    pub(crate) fn from_numeric_id(id: u16) -> Option<Self> {{");
-    println!("        match id {{");
-    for (numeric_id, enum_name) in numeric_id_to_enum.iter() {
-        println!("            {numeric_id} => Some(CardId::{enum_name}),");
-    }
-    println!("            _ => None,");
-    println!("        }}");
-    println!("    }}");
     println!("}}");
 }
 
@@ -159,7 +143,6 @@ fn print_card(enum_name: &str, card: &Card) {
         Card::Trainer(trainer_card) => {
             println!("        CardId::{enum_name} => Card::Trainer(TrainerCard {{");
             println!("            id: \"{}\".to_string(),", trainer_card.id);
-            println!("            numeric_id: {},", trainer_card.numeric_id);
             println!("            name: \"{}\".to_string(),", trainer_card.name);
             println!(
                 "            effect: \"{}\".to_string(),",
