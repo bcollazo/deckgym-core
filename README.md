@@ -2,7 +2,7 @@
 
 # deckgym-core: Pokémon TCG Pocket Simulator
 
-![Card Implemented](https://img.shields.io/badge/Cards_Implemented-304_%2F_690_%2844.06%25%29-yellow)
+![Card Implemented](https://img.shields.io/badge/Cards_Implemented-702_%2F_1654_%2842.44%25%29-yellow)
 
 **deckgym-core** is a high-performance Rust library designed for simulating Pokémon TCG Pocket games. It features a command-line interface (CLI) capable of running 10,000 simulations in approximately 3 seconds. This is the library that powers https://www.deckgym.com.
 
