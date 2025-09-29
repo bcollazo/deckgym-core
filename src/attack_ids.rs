@@ -5,6 +5,7 @@ use std::collections::HashMap;
 pub enum AttackId {
     A1003VenusaurMegaDrain,
     A1004VenusaurExGiantBloom,
+    A1005CaterpieFindAFriend,
     A1013VileplumeSoothingScent,
     A1017VenomothPoisonPowder,
     A1022ExeggutorStomp,
@@ -96,6 +97,7 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
         m.insert(("A1 003", 0), AttackId::A1003VenusaurMegaDrain);
         m.insert(("A1 004", 1), AttackId::A1004VenusaurExGiantBloom);
+        m.insert(("A1 005", 0), AttackId::A1005CaterpieFindAFriend);
         m.insert(("A1 013", 0), AttackId::A1013VileplumeSoothingScent);
         m.insert(("A1 017", 0), AttackId::A1017VenomothPoisonPowder);
         m.insert(("A1 022", 0), AttackId::A1022ExeggutorStomp);

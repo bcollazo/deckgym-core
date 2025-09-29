@@ -16,6 +16,7 @@ use super::{
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
         index_active_damage_doutcome,
     },
+    shared_mutations::pokemon_search_outcomes_by_type,
     SimpleAction,
 };
 
@@ -97,6 +98,9 @@ fn forecast_effect_attack(
     match attack_id {
         AttackId::A1003VenusaurMegaDrain => self_heal_attack(30, index),
         AttackId::A1004VenusaurExGiantBloom => self_heal_attack(30, index),
+        AttackId::A1005CaterpieFindAFriend => {
+            pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
+        }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
