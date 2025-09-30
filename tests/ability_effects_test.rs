@@ -5,7 +5,6 @@ use deckgym::{
     database::get_card_by_enum,
     generate_possible_actions,
     types::{EnergyType, PlayedCard},
-    Game,
 };
 
 mod common;

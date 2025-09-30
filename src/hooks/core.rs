@@ -356,4 +356,55 @@ mod tests {
             "Cosmoem's Stiffen should reduce damage by exactly 50"
         );
     }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_with_serperior() {
+        // Arrange: Create a state with Serperior on the bench
+        let mut state = State::default();
+        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
+        let played_serperior = to_playable_card(&serperior_card, false);
+
+        // Place Serperior in bench slot 1
+        state.in_play_pokemon[0][1] = Some(played_serperior);
+
+        // Act & Assert
+        assert!(
+            has_serperior_jungle_totem(&state, 0),
+            "Should detect Serperior's Jungle Totem ability when Serperior is in play"
+        );
+    }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_without_serperior() {
+        // Arrange: Create a state without Serperior
+        let mut state = State::default();
+        let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
+        let played_bulbasaur = to_playable_card(&bulbasaur_card, false);
+
+        // Place Bulbasaur in active slot
+        state.in_play_pokemon[0][0] = Some(played_bulbasaur);
+
+        // Act & Assert
+        assert!(
+            !has_serperior_jungle_totem(&state, 0),
+            "Should not detect Jungle Totem ability when Serperior is not in play"
+        );
+    }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_wrong_player() {
+        // Arrange: Create a state with Serperior for player 0
+        let mut state = State::default();
+        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
+        let played_serperior = to_playable_card(&serperior_card, false);
+
+        // Place Serperior in player 0's bench
+        state.in_play_pokemon[0][1] = Some(played_serperior);
+
+        // Act & Assert: Check for player 1
+        assert!(
+            !has_serperior_jungle_totem(&state, 1),
+            "Should not detect Jungle Totem ability for opponent player"
+        );
+    }
 }
