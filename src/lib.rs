@@ -10,7 +10,6 @@ pub mod game;
 mod hooks;
 pub mod move_generation;
 mod optimize;
-pub mod played_card;
 pub mod players;
 pub mod simulate;
 pub mod simulation_event_handler;

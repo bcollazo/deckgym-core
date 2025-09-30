@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    played_card::PlayedCard,
-    types::{EnergyType, TrainerCard},
+    types::{EnergyType, PlayedCard, TrainerCard},
     State,
 };
 

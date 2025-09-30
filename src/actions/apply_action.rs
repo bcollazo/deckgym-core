@@ -236,8 +236,10 @@ mod tests {
     use super::*;
     use crate::card_ids::CardId;
     use crate::database::get_card_by_enum;
-    use crate::played_card::PlayedCard;
-    use crate::{types::EnergyType, Deck};
+    use crate::{
+        types::{EnergyType, PlayedCard},
+        Deck,
+    };
 
     #[test]
     fn test_apply_evolve() {

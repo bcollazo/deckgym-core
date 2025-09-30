@@ -3,8 +3,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    played_card::PlayedCard,
-    types::EnergyType,
+    types::{EnergyType, PlayedCard},
 };
 
 mod common;

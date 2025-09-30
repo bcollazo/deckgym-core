@@ -7,8 +7,7 @@ use crate::{
     actions::SimpleAction,
     deck::Deck,
     effects::TurnEffect,
-    played_card::PlayedCard,
-    types::{Card, EnergyType},
+    types::{Card, EnergyType, PlayedCard},
 };
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]

@@ -196,7 +196,7 @@ impl fmt::Debug for PlayedCard {
     }
 }
 
-pub(crate) fn has_serperior_jungle_totem(state: &crate::state::State, player: usize) -> bool {
+pub fn has_serperior_jungle_totem(state: &crate::state::State, player: usize) -> bool {
     state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
         AbilityId::from_pokemon_id(&pokemon.get_id()[..])
             .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
@@ -207,8 +207,8 @@ pub(crate) fn has_serperior_jungle_totem(state: &crate::state::State, player: us
 #[cfg(test)]
 mod tests {
     use crate::{
-        card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card,
-        played_card::has_serperior_jungle_totem, state::State,
+        card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card, state::State,
+        types::has_serperior_jungle_totem,
     };
 
     #[test]

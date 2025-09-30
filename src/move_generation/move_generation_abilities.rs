@@ -1,4 +1,4 @@
-use crate::{ability_ids::AbilityId, actions::SimpleAction, played_card::PlayedCard, State};
+use crate::{ability_ids::AbilityId, actions::SimpleAction, types::PlayedCard, State};
 
 // Use the new function in the filter method
 pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {

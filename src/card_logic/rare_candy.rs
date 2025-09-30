@@ -1,8 +1,10 @@
 use strum::IntoEnumIterator;
 
 use crate::{
-    card_ids::CardId, database::get_card_by_enum, hooks::get_stage, played_card::PlayedCard,
-    types::Card,
+    card_ids::CardId,
+    database::get_card_by_enum,
+    hooks::get_stage,
+    types::{Card, PlayedCard},
 };
 
 /// Check if a Stage 2 Pokemon can evolve from a Basic Pokemon using Rare Candy

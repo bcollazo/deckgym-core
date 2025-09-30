@@ -6,9 +6,8 @@ use log::debug;
 use crate::{
     actions::SimpleAction,
     effects::{CardEffect, TurnEffect},
-    played_card::PlayedCard,
     tool_ids::ToolId,
-    types::{Card, EnergyType, TrainerCard, BASIC_STAGE},
+    types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     AbilityId, State,
 };
 
