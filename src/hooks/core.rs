@@ -176,12 +176,14 @@ pub(crate) fn get_damage_from_attack(
 
 // Check if attached satisfies cost (considering Colorless and Serperior's ability)
 pub(crate) fn contains_energy(
-    attached: &[EnergyType],
+    pokemon: &PlayedCard,
     cost: &[EnergyType],
     state: &State,
     player: usize,
-    pokemon_type: Option<EnergyType>,
 ) -> bool {
+    let attached = &pokemon.attached_energy;
+    let pokemon_type = pokemon.card.get_type();
+
     // Check if Serperior's Jungle Totem ability is active
     let jungle_totem_active = has_serperior_jungle_totem(state, player);
     let double_grass = jungle_totem_active && pokemon_type == Some(EnergyType::Grass);
@@ -218,7 +220,7 @@ pub(crate) fn contains_energy(
 }
 
 // Helper function to check if Serperior's Jungle Totem is active
-fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
+pub(crate) fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
     state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
         AbilityId::from_pokemon_id(&pokemon.get_id()[..])
             .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
@@ -236,57 +238,41 @@ mod tests {
     #[test]
     fn test_contains_energy() {
         let state = State::default();
-        let slice_a = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
-        let slice_b = vec![EnergyType::Colorless, EnergyType::Fire];
-        assert!(contains_energy(
-            &slice_a,
-            &slice_b,
-            &state,
-            0,
-            Some(EnergyType::Fire)
-        ));
+        let fire_card = get_card_by_enum(CardId::A1033Charmander);
+        let mut pokemon = to_playable_card(&fire_card, false);
+        pokemon.attached_energy = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
+        let cost = vec![EnergyType::Colorless, EnergyType::Fire];
+        assert!(contains_energy(&pokemon, &cost, &state, 0));
     }
 
     #[test]
     fn test_contains_energy_colorless() {
         let state = State::default();
-        let slice_a = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Water];
-        let slice_b = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Fire];
-        assert!(contains_energy(
-            &slice_a,
-            &slice_b,
-            &state,
-            0,
-            Some(EnergyType::Fire)
-        ));
+        let fire_card = get_card_by_enum(CardId::A1033Charmander);
+        let mut pokemon = to_playable_card(&fire_card, false);
+        pokemon.attached_energy = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Water];
+        let cost = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Fire];
+        assert!(contains_energy(&pokemon, &cost, &state, 0));
     }
 
     #[test]
     fn test_contains_energy_false_missing() {
         let state = State::default();
-        let slice_a = vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Fire];
-        let slice_b = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Water];
-        assert!(!contains_energy(
-            &slice_a,
-            &slice_b,
-            &state,
-            0,
-            Some(EnergyType::Grass)
-        ));
+        let grass_card = get_card_by_enum(CardId::A1001Bulbasaur);
+        let mut pokemon = to_playable_card(&grass_card, false);
+        pokemon.attached_energy = vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Fire];
+        let cost = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Water];
+        assert!(!contains_energy(&pokemon, &cost, &state, 0));
     }
 
     #[test]
     fn test_contains_energy_double_colorless() {
         let state = State::default();
-        let slice_a = vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire];
-        let slice_b = vec![EnergyType::Colorless, EnergyType::Colorless];
-        assert!(contains_energy(
-            &slice_a,
-            &slice_b,
-            &state,
-            0,
-            Some(EnergyType::Water)
-        ));
+        let water_card = get_card_by_enum(CardId::A1053Squirtle);
+        let mut pokemon = to_playable_card(&water_card, false);
+        pokemon.attached_energy = vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire];
+        let cost = vec![EnergyType::Colorless, EnergyType::Colorless];
+        assert!(contains_energy(&pokemon, &cost, &state, 0));
     }
 
     #[test]

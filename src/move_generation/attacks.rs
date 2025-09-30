@@ -10,11 +10,10 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             .enumerate()
             .for_each(|(i, attack)| {
                 if contains_energy(
-                    active_pokemon.attached_energy.as_slice(),
+                    active_pokemon,
                     &attack.energy_required,
                     state,
                     current_player,
-                    active_pokemon.card.get_type(),
                 ) {
                     actions.push(SimpleAction::Attack(i));
                 }
