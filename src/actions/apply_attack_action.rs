@@ -112,6 +112,9 @@ fn forecast_effect_attack(
         AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
+        AttackId::A2b007MeowscaradaFightingClaws => {
+            extra_damage_if_opponent_is_ex(acting_player, state, 60, 70)
+        }
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
         AttackId::A1023ExeggutorExTropicalSwing => {
@@ -709,6 +712,22 @@ fn damage_based_on_opponent_energy(
     let opponent = (acting_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = base_damage + (opponent_active.attached_energy.len() as u32) * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_opponent_is_ex(
+    acting_player: usize,
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let damage = if opponent_active.card.is_ex() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
     active_damage_doutcome(damage)
 }
 
