@@ -106,7 +106,7 @@ cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/data
 
 **Profiling Main Script**
 
-```
+```bash
 cargo install flamegraph
 sudo cargo flamegraph --root --dev -- simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 && open flamegraph.svg
 ```
