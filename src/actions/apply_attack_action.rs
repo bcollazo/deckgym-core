@@ -264,9 +264,7 @@ fn forecast_effect_attack(
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
-        AttackId::A4134EeveeFindAFriend | AttackId::A4231EeveeFindAFriend => {
-            pokemon_search_outcomes(acting_player, state, false)
-        }
+        AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
