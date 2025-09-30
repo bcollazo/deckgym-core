@@ -39,8 +39,8 @@ fn test_serperior_jungle_totem_ability() {
     // Set up Serperior on the bench
     let serperior = PlayedCard::new(
         serperior_card.clone(),
-        110, // remaining_hp
-        110, // total_hp
+        110,    // remaining_hp
+        110,    // total_hp
         vec![], // No energy needed for ability
         false,
         vec![],
@@ -60,7 +60,10 @@ fn test_serperior_jungle_totem_ability() {
         .iter()
         .any(|action| matches!(action.action, SimpleAction::Attack(_)));
 
-    assert_eq!(actor, test_player, "Current player should match test_player");
+    assert_eq!(
+        actor, test_player,
+        "Current player should match test_player"
+    );
     assert!(
         has_attack_action,
         "With Serperior's Jungle Totem, Bulbasaur should be able to attack with only 1 Grass energy"
