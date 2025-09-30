@@ -1,0 +1,12 @@
+Energy: Grass
+2 Bulbasaur A1 1
+1 Ivysaur A1 2
+2 Venusaur ex A1 4
+2 Snivy A1a 4
+2 Serperior A1a 6
+1 Erika A1 219
+2 Rocky Helmet A2 148
+2 Rare Candy A3 144
+2 Leaf Cape A3 147
+2 Poké Ball P-A 5
+2 Professor's Research P-A 7

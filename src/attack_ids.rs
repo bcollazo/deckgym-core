@@ -91,6 +91,7 @@ pub enum AttackId {
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
+    A4032MagbyToasty,
     A4134EeveeFindAFriend,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
@@ -255,6 +256,8 @@ lazy_static::lazy_static! {
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
 
         // A4
+        m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
+        m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
 

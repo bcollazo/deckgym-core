@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::{
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
-    hooks::get_damage_from_attack,
+    hooks::{get_damage_from_attack, get_stage},
     types::{EnergyType, StatusCondition},
     State,
 };
@@ -271,6 +271,9 @@ fn forecast_effect_attack(
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
+        AttackId::A4032MagbyToasty => {
+            attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
+        }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
@@ -763,6 +766,28 @@ fn mawile_crunch() -> (Probabilities, Mutations) {
         }),
     ];
     (probabilities, mutations)
+}
+
+/// For baby pokémon attacks: Attach an energy from Energy Zone to a benched Basic pokémon
+fn attach_energy_to_benched_basic(
+    acting_player: usize,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, _| {
+        let possible_moves = state
+            .enumerate_bench_pokemon(acting_player)
+            .filter(|(_, pokemon)| get_stage(pokemon) == 0)
+            .map(|(in_play_idx, _)| SimpleAction::Attach {
+                attachments: vec![(1, energy_type, in_play_idx)],
+                is_turn_energy: false,
+            })
+            .collect::<Vec<_>>();
+        if !possible_moves.is_empty() {
+            state
+                .move_generation_stack
+                .push((acting_player, possible_moves));
+        }
+    })
 }
 
 #[cfg(test)]
