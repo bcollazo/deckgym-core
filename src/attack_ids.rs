@@ -82,12 +82,14 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
+    A2b005SprigatitoCryForHelp,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
+    PA052SprigatitoCryForHelp,
     PA072AlolanGrimerPoison,
 }
 
@@ -219,6 +221,9 @@ lazy_static::lazy_static! {
         m.insert(("A2a 095", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 096", 0), AttackId::A2a071ArceusExUltimateForce);
 
+        // A2b
+        m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
+
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -239,6 +244,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
+        m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
 

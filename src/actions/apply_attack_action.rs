@@ -102,6 +102,9 @@ fn forecast_effect_attack(
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
+        AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
+            pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
+        }
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
         AttackId::A1023ExeggutorExTropicalSwing => {
