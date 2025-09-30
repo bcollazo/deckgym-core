@@ -138,7 +138,10 @@ pub(crate) fn search_and_bench_by_name(
 
                 // Put the card onto the bench
                 let deck = &mut state.decks[action.actor];
-                debug!("Fetched {card:?} from deck for player {} to place on bench", action.actor);
+                debug!(
+                    "Fetched {card:?} from deck for player {} to place on bench",
+                    action.actor
+                );
 
                 // Remove card from deck
                 if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
