@@ -1,4 +1,4 @@
-use common::init_random_players;
+use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
@@ -64,13 +64,4 @@ fn test_weedle_multiply_attack() {
         "Weedle",
         "The benched pokemon should be Weedle"
     );
-}
-
-fn get_initialized_game(seed: u64) -> Game<'static> {
-    let players = init_random_players();
-    let mut game = deckgym::Game::new(players, seed);
-    while game.get_state_clone().turn_count == 0 {
-        game.play_tick();
-    }
-    game
 }
