@@ -5,6 +5,7 @@ use crate::{
         apply_action_helpers::{apply_common_mutation, Mutations, Probabilities},
         mutations::doutcome,
     },
+    hooks::to_playable_card,
     types::{Card, EnergyType},
     State,
 };
@@ -82,6 +83,74 @@ where
                 } else {
                     panic!("Card should be in deck");
                 }
+
+                deck.shuffle(false, rng);
+            }));
+        }
+        (probabilities, outcomes)
+    }
+}
+
+pub(crate) fn search_and_bench_by_name(
+    acting_player: usize,
+    state: &State,
+    card_name: &'static str,
+) -> (Probabilities, Mutations) {
+    let num_cards_in_deck = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|c| c.get_name() == card_name)
+        .count();
+
+    if num_cards_in_deck == 0 {
+        doutcome({
+            |rng, state, action| {
+                // If there are no matching cards in the deck, just shuffle it
+                state.decks[action.actor].shuffle(false, rng);
+            }
+        })
+    } else {
+        let probabilities = vec![1.0 / (num_cards_in_deck as f64); num_cards_in_deck];
+        let mut outcomes: Mutations = vec![];
+
+        for i in 0..num_cards_in_deck {
+            outcomes.push(Box::new(move |rng, state, action| {
+                apply_common_mutation(state, action);
+
+                // Check if there's bench space first
+                let bench_space = state.in_play_pokemon[action.actor]
+                    .iter()
+                    .position(|x| x.is_none());
+
+                if bench_space.is_none() {
+                    debug!("No bench space available, shuffling deck without placing card");
+                    state.decks[action.actor].shuffle(false, rng);
+                    return;
+                }
+
+                let card = state.decks[action.actor]
+                    .cards
+                    .iter()
+                    .filter(|c| c.get_name() == card_name)
+                    .nth(i)
+                    .cloned()
+                    .expect("Card should be in deck");
+
+                // Put the card onto the bench
+                let deck = &mut state.decks[action.actor];
+                debug!("Fetched {card:?} from deck for player {} to place on bench", action.actor);
+
+                // Remove card from deck
+                if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
+                    deck.cards.remove(pos);
+                } else {
+                    panic!("Card should be in deck");
+                }
+
+                // Place on bench
+                let bench_idx = bench_space.unwrap();
+                let playable_card = to_playable_card(&card, true);
+                state.in_play_pokemon[action.actor][bench_idx] = Some(playable_card);
 
                 deck.shuffle(false, rng);
             }));

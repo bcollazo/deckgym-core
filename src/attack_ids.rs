@@ -82,6 +82,7 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
+    A2b001WeedleMultiply,
     A2b005SprigatitoCryForHelp,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
@@ -224,6 +225,8 @@ lazy_static::lazy_static! {
         m.insert(("A2a 096", 0), AttackId::A2a071ArceusExUltimateForce);
 
         // A2b
+        m.insert(("A2b 001", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
         m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
 
         // A3

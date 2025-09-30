@@ -16,7 +16,9 @@ use super::{
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
         index_active_damage_doutcome,
     },
-    shared_mutations::{pokemon_search_outcomes, pokemon_search_outcomes_by_type},
+    shared_mutations::{
+        pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
+    },
     SimpleAction,
 };
 
@@ -102,6 +104,7 @@ fn forecast_effect_attack(
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
+        AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
         AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
