@@ -6,8 +6,9 @@ use log::debug;
 use crate::{
     actions::SimpleAction,
     effects::{CardEffect, TurnEffect},
+    played_card::PlayedCard,
     tool_ids::ToolId,
-    types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
+    types::{Card, EnergyType, TrainerCard, BASIC_STAGE},
     AbilityId, State,
 };
 
@@ -181,26 +182,7 @@ pub(crate) fn contains_energy(
     state: &State,
     player: usize,
 ) -> bool {
-    let attached = &pokemon.attached_energy;
-    let pokemon_type = pokemon.card.get_type();
-
-    // Check if Serperior's Jungle Totem ability is active
-    let jungle_totem_active = has_serperior_jungle_totem(state, player);
-    let double_grass = jungle_totem_active && pokemon_type == Some(EnergyType::Grass);
-
-    // If Jungle Totem is active for Grass Pokemon, double count Grass energy
-    let mut effective_attached = if double_grass {
-        let mut doubled = Vec::new();
-        for energy in attached {
-            doubled.push(*energy);
-            if *energy == EnergyType::Grass {
-                doubled.push(EnergyType::Grass); // Add another Grass energy
-            }
-        }
-        doubled
-    } else {
-        attached.to_vec()
-    };
+    let mut effective_attached = pokemon.get_effective_attached_energy(state, player);
 
     // First try to match the non-colorless energy
     let non_colorless_cost = cost.iter().filter(|x| **x != EnergyType::Colorless);
@@ -217,15 +199,6 @@ pub(crate) fn contains_energy(
 
     // If all non-colorless energy is satisfied, check if there are enough colorless energy
     effective_attached.len() >= colorless_cost.count()
-}
-
-// Helper function to check if Serperior's Jungle Totem is active
-pub(crate) fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
-    state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
-        AbilityId::from_pokemon_id(&pokemon.get_id()[..])
-            .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
-            .unwrap_or(false)
-    })
 }
 
 // Test Colorless is wildcard when counting energy
@@ -348,57 +321,6 @@ mod tests {
         assert_eq!(
             damage_with_stiffen, 70,
             "Cosmoem's Stiffen should reduce damage by exactly 50"
-        );
-    }
-
-    #[test]
-    fn test_has_serperior_jungle_totem_with_serperior() {
-        // Arrange: Create a state with Serperior on the bench
-        let mut state = State::default();
-        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
-        let played_serperior = to_playable_card(&serperior_card, false);
-
-        // Place Serperior in bench slot 1
-        state.in_play_pokemon[0][1] = Some(played_serperior);
-
-        // Act & Assert
-        assert!(
-            has_serperior_jungle_totem(&state, 0),
-            "Should detect Serperior's Jungle Totem ability when Serperior is in play"
-        );
-    }
-
-    #[test]
-    fn test_has_serperior_jungle_totem_without_serperior() {
-        // Arrange: Create a state without Serperior
-        let mut state = State::default();
-        let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-        let played_bulbasaur = to_playable_card(&bulbasaur_card, false);
-
-        // Place Bulbasaur in active slot
-        state.in_play_pokemon[0][0] = Some(played_bulbasaur);
-
-        // Act & Assert
-        assert!(
-            !has_serperior_jungle_totem(&state, 0),
-            "Should not detect Jungle Totem ability when Serperior is not in play"
-        );
-    }
-
-    #[test]
-    fn test_has_serperior_jungle_totem_wrong_player() {
-        // Arrange: Create a state with Serperior for player 0
-        let mut state = State::default();
-        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
-        let played_serperior = to_playable_card(&serperior_card, false);
-
-        // Place Serperior in player 0's bench
-        state.in_play_pokemon[0][1] = Some(played_serperior);
-
-        // Act & Assert: Check for player 1
-        assert!(
-            !has_serperior_jungle_totem(&state, 1),
-            "Should not detect Jungle Totem ability for opponent player"
         );
     }
 }

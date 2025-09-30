@@ -6,7 +6,7 @@ use crate::{
     actions::apply_abilities_action::forecast_ability,
     hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
     state::State,
-    types::Card,
+    types::{Card, EnergyType},
 };
 
 use super::{
@@ -139,7 +139,8 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
         let active = state.in_play_pokemon[acting_player][0]
             .as_ref()
             .expect("Active Pokemon should be there if paid retreating");
-        let retreat_cost = get_retreat_cost(state, active);
+        let double_grass = active.has_double_grass(state, acting_player);
+        let retreat_cost = get_retreat_cost(state, active).len();
         let attached_energy: &mut Vec<_> = state.in_play_pokemon[acting_player][0]
             .as_mut()
             .expect("Active Pokemon should be there if paid retreating")
@@ -147,8 +148,34 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
             .as_mut();
 
         // TODO: Maybe give option to user to select which energy to discard
-        let count = retreat_cost.len();
-        attached_energy.truncate(attached_energy.len() - count);
+
+        // Some energies are worth more than others... For now decide the ordering
+        // that keeps as much Grass energy as possible (since possibly worth more).
+
+        // Re-order energies so that Grass are at the beginning
+        attached_energy.sort_by(|a, b| {
+            if *a == EnergyType::Grass && *b != EnergyType::Grass {
+                std::cmp::Ordering::Less
+            } else if *a != EnergyType::Grass && *b == EnergyType::Grass {
+                std::cmp::Ordering::Greater
+            } else {
+                std::cmp::Ordering::Equal
+            }
+        });
+
+        // Start walking from the back in the attached, removing energies until retreat cost is paid
+        let mut remaining_cost = retreat_cost;
+        while remaining_cost > 0 && !attached_energy.is_empty() {
+            let energy = attached_energy.pop().unwrap();
+            if energy == EnergyType::Grass && double_grass {
+                remaining_cost = remaining_cost.saturating_sub(2);
+            } else {
+                remaining_cost = remaining_cost.saturating_sub(1);
+            }
+        }
+        if remaining_cost > 0 {
+            panic!("Not enough energy to pay retreat cost");
+        }
     }
 
     state.in_play_pokemon[acting_player].swap(0, bench_idx);
@@ -198,7 +225,7 @@ mod tests {
     use super::*;
     use crate::card_ids::CardId;
     use crate::database::get_card_by_enum;
-    use crate::types::PlayedCard;
+    use crate::played_card::PlayedCard;
     use crate::{types::EnergyType, Deck};
 
     #[test]

@@ -1,10 +1,7 @@
 use common::get_initialized_game;
 use deckgym::{
-    actions::SimpleAction,
-    card_ids::CardId,
-    database::get_card_by_enum,
-    generate_possible_actions,
-    types::{EnergyType, PlayedCard},
+    actions::SimpleAction, card_ids::CardId, database::get_card_by_enum, generate_possible_actions,
+    played_card::PlayedCard, types::EnergyType,
 };
 
 mod common;

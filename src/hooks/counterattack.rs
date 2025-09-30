@@ -1,4 +1,4 @@
-use crate::{card_ids::CardId, tool_ids::ToolId, types::PlayedCard};
+use crate::{card_ids::CardId, played_card::PlayedCard, tool_ids::ToolId};
 
 /// Some cards counterattack either because of RockyHelmet or because of their own ability.
 pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
