@@ -6,6 +6,7 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
+    hooks::get_stage,
     state::GameOutcome,
     tool_ids::ToolId,
     types::{EnergyType, TrainerCard},
@@ -33,6 +34,7 @@ pub fn forecast_trainer_action(
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
@@ -49,6 +51,22 @@ pub fn forecast_trainer_action(
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 50, Some(EnergyType::Grass));
+}
+
+fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| get_stage(x) == 2)
+        .map(|(i, _)| SimpleAction::Heal {
+            in_play_idx: i,
+            amount: 60,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {

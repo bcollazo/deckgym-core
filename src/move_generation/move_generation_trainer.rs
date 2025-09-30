@@ -3,7 +3,7 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     database::get_card_by_enum,
-    hooks::can_play_support,
+    hooks::{can_play_support, get_stage},
     tool_ids::ToolId,
     types::{EnergyType, TrainerCard, TrainerType},
     State,
@@ -43,6 +43,9 @@ pub fn generate_possible_trainer_actions(
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
+        CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => {
+            can_play_lillie(state, trainer_card)
+        }
         CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
         CardId::A1225Sabrina | CardId::A1272Sabrina => can_play_sabrina(state, trainer_card),
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
@@ -96,6 +99,19 @@ fn can_play_erika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.get_energy_type() == Some(EnergyType::Grass))
         .count();
     if damaged_grass_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Lillie can be played (requires at least 1 damaged Stage 2 pokemon in play)
+fn can_play_lillie(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let damaged_stage2_count = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .filter(|(_, x)| x.is_damaged() && get_stage(x) == 2)
+        .count();
+    if damaged_stage2_count > 0 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
