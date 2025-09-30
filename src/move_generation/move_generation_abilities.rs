@@ -28,6 +28,7 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
         AbilityId::A1177Weezing => is_active && !card.ability_used,
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
+        AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A3122SolgaleoExRisingRoad => !is_active && !card.ability_used,
         AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
         AbilityId::A2a071Arceus => false,

@@ -29,6 +29,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
+        AbilityId::A2a010LeafeonExForestBreath => charge_grass_pokemon(action.actor),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
@@ -85,6 +86,24 @@ fn switch_opponent_basic_to_active(acting_player: usize) -> (Probabilities, Muta
             .enumerate_bench_pokemon(opponent_player)
             .filter(|(_, pokemon)| pokemon.card.is_basic())
             .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((acting_player, possible_moves));
+    }))
+}
+
+fn charge_grass_pokemon(acting_player: usize) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, _| {
+        // Take a Grass Energy from Energy Zone and attach it to 1 of your Grass Pokémon.
+        debug!("Leafeon ex's ability: Attaching 1 Grass Energy to a Grass Pokemon");
+        let possible_moves = state
+            .enumerate_in_play_pokemon(acting_player)
+            .filter(|(_, pokemon)| pokemon.card.get_type() == Some(EnergyType::Grass))
+            .map(|(in_play_idx, _)| SimpleAction::Attach {
+                attachments: vec![(1, EnergyType::Grass, in_play_idx)],
+                is_turn_energy: false,
+            })
             .collect::<Vec<_>>();
         state
             .move_generation_stack
