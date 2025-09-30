@@ -1,11 +1,10 @@
-use common::init_random_players;
+use common::{get_initialized_game, init_random_players};
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     generate_possible_actions,
     types::{Card, EnergyType},
-    Game,
 };
 
 mod common;
@@ -210,13 +209,4 @@ fn test_attach_action() {
             .attached_energy,
         &vec![EnergyType::Grass]
     ); // 1 grass energy
-}
-
-fn get_initialized_game(seed: u64) -> Game<'static> {
-    let players = init_random_players();
-    let mut game = deckgym::Game::new(players, seed);
-    while game.get_state_clone().turn_count == 0 {
-        game.play_tick();
-    }
-    game
 }

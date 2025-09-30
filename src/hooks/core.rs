@@ -166,24 +166,56 @@ pub(crate) fn get_damage_from_attack(
         .saturating_sub(reduced_card_effect_modifiers)
 }
 
-// Check if attached satisfies cost (considering Colorless)
-pub(crate) fn contains_energy(attached: &[EnergyType], cost: &[EnergyType]) -> bool {
+// Check if attached satisfies cost (considering Colorless and Serperior's ability)
+pub(crate) fn contains_energy(
+    attached: &[EnergyType],
+    cost: &[EnergyType],
+    state: &State,
+    player: usize,
+    pokemon_type: Option<EnergyType>,
+) -> bool {
+    // Check if Serperior's Jungle Totem ability is active
+    let jungle_totem_active = has_serperior_jungle_totem(state, player);
+    let double_grass = jungle_totem_active && pokemon_type == Some(EnergyType::Grass);
+
+    // If Jungle Totem is active for Grass Pokemon, double count Grass energy
+    let mut effective_attached = if double_grass {
+        let mut doubled = Vec::new();
+        for energy in attached {
+            doubled.push(*energy);
+            if *energy == EnergyType::Grass {
+                doubled.push(EnergyType::Grass); // Add another Grass energy
+            }
+        }
+        doubled
+    } else {
+        attached.to_vec()
+    };
+
     // First try to match the non-colorless energy
     let non_colorless_cost = cost.iter().filter(|x| **x != EnergyType::Colorless);
     let colorless_cost = cost.iter().filter(|x| **x == EnergyType::Colorless);
 
-    let mut attached_copy: Vec<EnergyType> = attached.to_vec();
     for energy in non_colorless_cost {
-        let index = attached_copy.iter().position(|x| *x == *energy);
+        let index = effective_attached.iter().position(|x| *x == *energy);
         if let Some(i) = index {
-            attached_copy.remove(i);
+            effective_attached.remove(i);
         } else {
             return false;
         }
     }
 
     // If all non-colorless energy is satisfied, check if there are enough colorless energy
-    attached_copy.len() >= colorless_cost.count()
+    effective_attached.len() >= colorless_cost.count()
+}
+
+// Helper function to check if Serperior's Jungle Totem is active
+fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
+    state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
+        AbilityId::from_pokemon_id(&pokemon.get_id()[..])
+            .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
+            .unwrap_or(false)
+    })
 }
 
 // Test Colorless is wildcard when counting energy
@@ -195,30 +227,58 @@ mod tests {
 
     #[test]
     fn test_contains_energy() {
+        let state = State::default();
         let slice_a = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
         let slice_b = vec![EnergyType::Colorless, EnergyType::Fire];
-        assert!(contains_energy(&slice_a, &slice_b));
+        assert!(contains_energy(
+            &slice_a,
+            &slice_b,
+            &state,
+            0,
+            Some(EnergyType::Fire)
+        ));
     }
 
     #[test]
     fn test_contains_energy_colorless() {
+        let state = State::default();
         let slice_a = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Water];
         let slice_b = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Fire];
-        assert!(contains_energy(&slice_a, &slice_b));
+        assert!(contains_energy(
+            &slice_a,
+            &slice_b,
+            &state,
+            0,
+            Some(EnergyType::Fire)
+        ));
     }
 
     #[test]
     fn test_contains_energy_false_missing() {
+        let state = State::default();
         let slice_a = vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Fire];
         let slice_b = vec![EnergyType::Colorless, EnergyType::Fire, EnergyType::Water];
-        assert!(!contains_energy(&slice_a, &slice_b));
+        assert!(!contains_energy(
+            &slice_a,
+            &slice_b,
+            &state,
+            0,
+            Some(EnergyType::Grass)
+        ));
     }
 
     #[test]
     fn test_contains_energy_double_colorless() {
+        let state = State::default();
         let slice_a = vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire];
         let slice_b = vec![EnergyType::Colorless, EnergyType::Colorless];
-        assert!(contains_energy(&slice_a, &slice_b));
+        assert!(contains_energy(
+            &slice_a,
+            &slice_b,
+            &state,
+            0,
+            Some(EnergyType::Water)
+        ));
     }
 
     #[test]
@@ -294,6 +354,57 @@ mod tests {
         assert_eq!(
             damage_with_stiffen, 70,
             "Cosmoem's Stiffen should reduce damage by exactly 50"
+        );
+    }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_with_serperior() {
+        // Arrange: Create a state with Serperior on the bench
+        let mut state = State::default();
+        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
+        let played_serperior = to_playable_card(&serperior_card, false);
+
+        // Place Serperior in bench slot 1
+        state.in_play_pokemon[0][1] = Some(played_serperior);
+
+        // Act & Assert
+        assert!(
+            has_serperior_jungle_totem(&state, 0),
+            "Should detect Serperior's Jungle Totem ability when Serperior is in play"
+        );
+    }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_without_serperior() {
+        // Arrange: Create a state without Serperior
+        let mut state = State::default();
+        let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
+        let played_bulbasaur = to_playable_card(&bulbasaur_card, false);
+
+        // Place Bulbasaur in active slot
+        state.in_play_pokemon[0][0] = Some(played_bulbasaur);
+
+        // Act & Assert
+        assert!(
+            !has_serperior_jungle_totem(&state, 0),
+            "Should not detect Jungle Totem ability when Serperior is not in play"
+        );
+    }
+
+    #[test]
+    fn test_has_serperior_jungle_totem_wrong_player() {
+        // Arrange: Create a state with Serperior for player 0
+        let mut state = State::default();
+        let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
+        let played_serperior = to_playable_card(&serperior_card, false);
+
+        // Place Serperior in player 0's bench
+        state.in_play_pokemon[0][1] = Some(played_serperior);
+
+        // Act & Assert: Check for player 1
+        assert!(
+            !has_serperior_jungle_totem(&state, 1),
+            "Should not detect Jungle Totem ability for opponent player"
         );
     }
 }

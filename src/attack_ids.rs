@@ -5,6 +5,7 @@ use std::collections::HashMap;
 pub enum AttackId {
     A1003VenusaurMegaDrain,
     A1004VenusaurExGiantBloom,
+    A1005CaterpieFindAFriend,
     A1013VileplumeSoothingScent,
     A1017VenomothPoisonPowder,
     A1022ExeggutorStomp,
@@ -81,12 +82,16 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
+    A2b001WeedleMultiply,
+    A2b005SprigatitoCryForHelp,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
+    A4134EeveeFindAFriend,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
+    PA052SprigatitoCryForHelp,
     PA072AlolanGrimerPoison,
 }
 
@@ -96,6 +101,7 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
         m.insert(("A1 003", 0), AttackId::A1003VenusaurMegaDrain);
         m.insert(("A1 004", 1), AttackId::A1004VenusaurExGiantBloom);
+        m.insert(("A1 005", 0), AttackId::A1005CaterpieFindAFriend);
         m.insert(("A1 013", 0), AttackId::A1013VileplumeSoothingScent);
         m.insert(("A1 017", 0), AttackId::A1017VenomothPoisonPowder);
         m.insert(("A1 022", 0), AttackId::A1022ExeggutorStomp);
@@ -217,6 +223,11 @@ lazy_static::lazy_static! {
         m.insert(("A2a 095", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 096", 0), AttackId::A2a071ArceusExUltimateForce);
 
+        // A2b
+        m.insert(("A2b 001", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
+
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -233,10 +244,15 @@ lazy_static::lazy_static! {
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
 
+        // A4
+        m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
+
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
+        m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
 

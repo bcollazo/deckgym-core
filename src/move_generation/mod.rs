@@ -74,6 +74,9 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
             && contains_energy(
                 card.attached_energy.as_slice(),
                 &get_retreat_cost(state, card),
+                state,
+                current_player,
+                card.card.get_type(),
             )
         {
             state

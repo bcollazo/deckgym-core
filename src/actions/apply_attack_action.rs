@@ -16,6 +16,9 @@ use super::{
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
         index_active_damage_doutcome,
     },
+    shared_mutations::{
+        pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
+    },
     SimpleAction,
 };
 
@@ -97,7 +100,14 @@ fn forecast_effect_attack(
     match attack_id {
         AttackId::A1003VenusaurMegaDrain => self_heal_attack(30, index),
         AttackId::A1004VenusaurExGiantBloom => self_heal_attack(30, index),
+        AttackId::A1005CaterpieFindAFriend => {
+            pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
+        }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
+        AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
+        AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
+            pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
+        }
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
         AttackId::A1023ExeggutorExTropicalSwing => {
@@ -254,6 +264,7 @@ fn forecast_effect_attack(
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
+        AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
