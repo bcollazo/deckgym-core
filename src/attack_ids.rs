@@ -87,6 +87,8 @@ pub enum AttackId {
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
+    A4134EeveeFindAFriend,
+    A4231EeveeFindAFriend,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
@@ -239,6 +241,10 @@ lazy_static::lazy_static! {
         // A3b
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
+
+        // A4
+        m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4 231", 0), AttackId::A4231EeveeFindAFriend);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
