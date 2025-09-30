@@ -2,7 +2,7 @@ use log::debug;
 
 use crate::{
     actions::{
-        apply_action_helpers::{apply_common_mutation, Mutations, Probabilities},
+        apply_action_helpers::{Mutations, Probabilities},
         mutations::doutcome,
     },
     hooks::to_playable_card,
@@ -63,8 +63,6 @@ where
         for i in 0..num_pokemon_in_deck {
             let filter = card_filter.clone();
             outcomes.push(Box::new(move |rng, state, action| {
-                apply_common_mutation(state, action);
-
                 let card = state.decks[action.actor]
                     .cards
                     .iter()
@@ -115,8 +113,6 @@ pub(crate) fn search_and_bench_by_name(
 
         for i in 0..num_cards_in_deck {
             outcomes.push(Box::new(move |rng, state, action| {
-                apply_common_mutation(state, action);
-
                 // Check if there's bench space first
                 let bench_space = state.in_play_pokemon[action.actor]
                     .iter()

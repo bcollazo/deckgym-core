@@ -83,11 +83,15 @@ pub enum AttackId {
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
     A2b001WeedleMultiply,
+    A2b002KakunaStringShot,
+    A2b003BeedrillExCrushingSpear,
     A2b005SprigatitoCryForHelp,
+    A2b007MeowscaradaFightingClaws,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
+    A4032MagbyToasty,
     A4134EeveeFindAFriend,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
@@ -226,7 +230,14 @@ lazy_static::lazy_static! {
         // A2b
         m.insert(("A2b 001", 0), AttackId::A2b001WeedleMultiply);
         m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 002", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A2b 003", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
+        m.insert(("A2b 007", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
 
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
@@ -245,6 +256,8 @@ lazy_static::lazy_static! {
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
 
         // A4
+        m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
+        m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
 

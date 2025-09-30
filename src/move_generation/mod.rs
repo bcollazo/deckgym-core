@@ -71,13 +71,7 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
     // Maybe retreat pokemon
     if let Some(card) = &state.in_play_pokemon[current_player][0] {
         if can_retreat(state)
-            && contains_energy(
-                card.attached_energy.as_slice(),
-                &get_retreat_cost(state, card),
-                state,
-                current_player,
-                card.card.get_type(),
-            )
+            && contains_energy(card, &get_retreat_cost(state, card), state, current_player)
         {
             state
                 .enumerate_bench_pokemon(current_player)

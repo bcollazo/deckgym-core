@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::{
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
-    hooks::get_damage_from_attack,
+    hooks::{get_damage_from_attack, get_stage},
     types::{EnergyType, StatusCondition},
     State,
 };
@@ -105,8 +105,15 @@ fn forecast_effect_attack(
         }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
         AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
+        AttackId::A2b002KakunaStringShot => {
+            damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)
+        }
+        AttackId::A2b003BeedrillExCrushingSpear => damage_and_discard_energy(80, 1),
         AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
+        }
+        AttackId::A2b007MeowscaradaFightingClaws => {
+            extra_damage_if_opponent_is_ex(acting_player, state, 60, 70)
         }
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
@@ -264,6 +271,9 @@ fn forecast_effect_attack(
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
+        AttackId::A4032MagbyToasty => {
+            attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
+        }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
@@ -708,6 +718,22 @@ fn damage_based_on_opponent_energy(
     active_damage_doutcome(damage)
 }
 
+fn extra_damage_if_opponent_is_ex(
+    acting_player: usize,
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let damage = if opponent_active.card.is_ex() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
 fn knock_back_attack(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
@@ -740,6 +766,28 @@ fn mawile_crunch() -> (Probabilities, Mutations) {
         }),
     ];
     (probabilities, mutations)
+}
+
+/// For baby pokémon attacks: Attach an energy from Energy Zone to a benched Basic pokémon
+fn attach_energy_to_benched_basic(
+    acting_player: usize,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, _| {
+        let possible_moves = state
+            .enumerate_bench_pokemon(acting_player)
+            .filter(|(_, pokemon)| get_stage(pokemon) == 0)
+            .map(|(in_play_idx, _)| SimpleAction::Attach {
+                attachments: vec![(1, energy_type, in_play_idx)],
+                is_turn_energy: false,
+            })
+            .collect::<Vec<_>>();
+        if !possible_moves.is_empty() {
+            state
+                .move_generation_stack
+                .push((acting_player, possible_moves));
+        }
+    })
 }
 
 #[cfg(test)]

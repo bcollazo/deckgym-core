@@ -4,10 +4,8 @@ use rand::rngs::StdRng;
 use crate::{card_ids::CardId, hooks::get_damage_from_attack, types::StatusCondition, State};
 
 use super::{
-    apply_action_helpers::{
-        apply_common_mutation, handle_attack_damage, FnMutation, Mutation, Mutations, Probabilities,
-    },
-    Action, SimpleAction,
+    apply_action_helpers::{handle_attack_damage, FnMutation, Mutation, Mutations, Probabilities},
+    Action,
 };
 
 // These functions should share the common code of
@@ -22,7 +20,6 @@ pub(crate) fn doutcome(
     (
         vec![1.0],
         vec![Box::new(move |rng, state, action| {
-            apply_common_mutation(state, action);
             mutation(rng, state, action);
         })],
     )
@@ -39,7 +36,6 @@ where
 {
     Box::new({
         move |rng, state, action| {
-            apply_common_mutation(state, action);
             additional_effect(rng, state, action);
         }
     })
@@ -76,10 +72,6 @@ where
     (
         vec![1.0],
         vec![Box::new(move |rng, state, action| {
-            apply_common_mutation(state, action);
-            state
-                .move_generation_stack
-                .push((action.actor, vec![SimpleAction::EndTurn]));
             additional_effect(rng, state, action);
 
             let damage = get_damage_from_attack(state, action.actor, attack_index, 0);
@@ -126,10 +118,6 @@ where
 {
     Box::new({
         move |rng, state, action| {
-            apply_common_mutation(state, action);
-            state
-                .move_generation_stack
-                .push((action.actor, vec![SimpleAction::EndTurn]));
             additional_effect(rng, state, action);
             handle_attack_damage(state, action.actor, &targets);
         }
@@ -170,7 +158,10 @@ pub(crate) fn build_status_effect(status: StatusCondition) -> FnMutation {
 mod test {
     use rand::SeedableRng;
 
-    use crate::{card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card};
+    use crate::{
+        actions::SimpleAction, card_ids::CardId, database::get_card_by_enum,
+        hooks::to_playable_card,
+    };
 
     use super::*;
 

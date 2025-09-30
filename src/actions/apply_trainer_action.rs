@@ -6,6 +6,7 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
+    hooks::get_stage,
     state::GameOutcome,
     tool_ids::ToolId,
     types::{EnergyType, TrainerCard},
@@ -13,7 +14,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{apply_common_mutation, Mutations, Probabilities},
+    apply_action_helpers::{Mutations, Probabilities},
     Action, SimpleAction,
 };
 
@@ -33,13 +34,16 @@ pub fn forecast_trainer_action(
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
+        CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape => {
+            doutcome(attach_tool)
+        }
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
-        CardId::A2147GiantCape => doutcome(attach_tool),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -47,6 +51,22 @@ pub fn forecast_trainer_action(
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 50, Some(EnergyType::Grass));
+}
+
+fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| get_stage(x) == 2)
+        .map(|(i, _)| SimpleAction::Heal {
+            in_play_idx: i,
+            amount: 60,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -76,7 +96,7 @@ fn inner_healing_effect(
     }
 }
 
-// Will return 6 outputs, one that attaches no energy justruns apply_common, one that
+// Will return 6 outputs, one that attaches no energy, one that
 //  queues decision of attaching 1 energy to in_play waters.
 fn misty_outcomes() -> (Probabilities, Mutations) {
     // probabilistic attach energy to water pokemon
@@ -86,8 +106,6 @@ fn misty_outcomes() -> (Probabilities, Mutations) {
     for j in 0..6 {
         outcomes.push(Box::new({
             move |_, state, action| {
-                apply_common_mutation(state, action);
-
                 // For each in_play water pokemon
                 let possible_moves = state
                     .enumerate_in_play_pokemon(action.actor)
@@ -217,9 +235,8 @@ fn red_card_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn attach_tool(_: &mut StdRng, state: &mut State, action: &Action) {
     if let SimpleAction::Play { trainer_card } = &action.action {
         let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
-        let choices = state
-            .enumerate_in_play_pokemon(action.actor)
-            .filter(|(_, x)| !x.has_tool_attached())
+        let choices = tool_id
+            .enumerate_choices(state, action.actor)
             .map(|(in_play_idx, _)| SimpleAction::AttachTool {
                 in_play_idx,
                 tool_id,
