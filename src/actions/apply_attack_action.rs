@@ -105,6 +105,9 @@ fn forecast_effect_attack(
         }
         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
         AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
+        AttackId::A2b002KakunaStringShot => {
+            damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)
+        }
         AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
