@@ -25,6 +25,7 @@ pub(crate) fn forecast_ability(
         .expect("Pokemon should have ability implemented");
     match ability_id {
         AbilityId::A1007Butterfree => heal_your_pokemon(20),
+        AbilityId::A1020VictreebelFragranceTrap => switch_opponent_basic_to_active(action.actor),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
@@ -71,5 +72,21 @@ fn rising_road(index: usize) -> (Probabilities, Mutations) {
         debug!("Solgaleo's ability: Switching with active Pokemon");
         let choices = vec![SimpleAction::Activate { in_play_idx: index }];
         state.move_generation_stack.push((action.actor, choices));
+    }))
+}
+
+fn switch_opponent_basic_to_active(acting_player: usize) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, _| {
+        // Switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot.
+        debug!("Victreebel's ability: Switching opponent's benched basic Pokemon to active");
+        let opponent_player = (acting_player + 1) % 2;
+        let possible_moves = state
+            .enumerate_bench_pokemon(opponent_player)
+            .filter(|(_, pokemon)| pokemon.card.is_basic())
+            .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((acting_player, possible_moves));
     }))
 }
