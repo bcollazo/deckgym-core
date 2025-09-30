@@ -108,6 +108,7 @@ fn forecast_effect_attack(
         AttackId::A2b002KakunaStringShot => {
             damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)
         }
+        AttackId::A2b003BeedrillExCrushingSpear => damage_and_discard_energy(80, 1),
         AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
