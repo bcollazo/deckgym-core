@@ -7,6 +7,7 @@ pub enum AbilityId {
     A1177Weezing,
     A1007Butterfree,
     A1132Gardevoir,
+    A1a006SerperiorJungleTotem,
     A2a071Arceus,
     A3122SolgaleoExRisingRoad,
     A3a027ShiinoticIlluminate,
@@ -21,6 +22,8 @@ lazy_static::lazy_static! {
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("A1 177", AbilityId::A1177Weezing);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
+        m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 070", AbilityId::A1a006SerperiorJungleTotem);
         m.insert("A2a 071", AbilityId::A2a071Arceus);
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);

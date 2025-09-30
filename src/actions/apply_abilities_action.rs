@@ -28,6 +28,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1020VictreebelFragranceTrap => switch_opponent_basic_to_active(action.actor),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
+        AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
