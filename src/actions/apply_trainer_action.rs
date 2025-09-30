@@ -38,8 +38,10 @@ pub fn forecast_trainer_action(
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
+        CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape => {
+            doutcome(attach_tool)
+        }
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
-        CardId::A2147GiantCape => doutcome(attach_tool),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -217,9 +219,8 @@ fn red_card_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn attach_tool(_: &mut StdRng, state: &mut State, action: &Action) {
     if let SimpleAction::Play { trainer_card } = &action.action {
         let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
-        let choices = state
-            .enumerate_in_play_pokemon(action.actor)
-            .filter(|(_, x)| !x.has_tool_attached())
+        let choices = tool_id
+            .enumerate_choices(state, action.actor)
             .map(|(in_play_idx, _)| SimpleAction::AttachTool {
                 in_play_idx,
                 tool_id,

@@ -68,6 +68,14 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
             card.remaining_hp += 20;
             card.total_hp += 20;
         }
+        ToolId::A3147LeafCape => {
+            // Add +30 to remaining_hp and total_hp (only for Grass pokemon)
+            let card = state.in_play_pokemon[actor][in_play_idx]
+                .as_mut()
+                .expect("Active Pokemon should be there");
+            card.remaining_hp += 30;
+            card.total_hp += 30;
+        }
         // Many tools do nothing on attach
         ToolId::A2148RockyHelmet => {}
     }

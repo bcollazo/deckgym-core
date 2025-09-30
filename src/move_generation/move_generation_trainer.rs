@@ -4,6 +4,7 @@ use crate::{
     card_logic::can_rare_candy_evolve,
     database::get_card_by_enum,
     hooks::can_play_support,
+    tool_ids::ToolId,
     types::{EnergyType, TrainerCard, TrainerType},
     State,
 };
@@ -61,11 +62,12 @@ pub fn generate_possible_trainer_actions(
 
 /// Check if a Pokemon tool can be played (requires at least 1 pokemon in play without a tool)
 fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    let in_play_without_tools = state
-        .enumerate_in_play_pokemon(state.current_player)
-        .filter(|(_, x)| x.has_tool_attached())
+    let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
+
+    let valid_targets = tool_id
+        .enumerate_choices(state, state.current_player)
         .count();
-    if in_play_without_tools > 0 {
+    if valid_targets > 0 {
         Some(vec![SimpleAction::Play {
             trainer_card: trainer_card.clone(),
         }])
