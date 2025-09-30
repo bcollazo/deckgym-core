@@ -3,16 +3,17 @@ use std::panic;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
-    actions::apply_abilities_action::forecast_ability,
+    actions::{
+        apply_abilities_action::forecast_ability,
+        apply_action_helpers::{apply_common_mutation, Mutation},
+    },
     hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
     state::State,
     types::{Card, EnergyType},
 };
 
 use super::{
-    apply_action_helpers::{
-        apply_common_mutation, forecast_end_turn, handle_attack_damage, Mutations, Probabilities,
-    },
+    apply_action_helpers::{forecast_end_turn, handle_attack_damage, Mutations, Probabilities},
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -35,7 +36,7 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
 /// This should be mostly a "router" function that calls the appropriate forecast function
 /// based on the action type.
 pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutations) {
-    match &action.action {
+    let (proba, mutas) = match &action.action {
         // Deterministic Actions
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
@@ -46,14 +47,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
-        | SimpleAction::Noop => (
-            vec![1.0],
-            vec![Box::new({
-                |_, mutable_state, action| {
-                    apply_deterministic_action(mutable_state, action);
-                }
-            })],
-        ),
+        | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility(index) => forecast_ability(state, action, *index),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
@@ -61,12 +55,29 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         }
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
         SimpleAction::EndTurn => forecast_end_turn(state),
+    };
+
+    let mut wrapped_mutations: Mutations = vec![];
+    for original_mutation in mutas {
+        let mutation_closure: Mutation = Box::new(original_mutation);
+        wrapped_mutations.push(Box::new(move |rng, state, action| {
+            apply_common_mutation(state, action);
+            mutation_closure(rng, state, action);
+        }));
     }
+    (proba, wrapped_mutations)
+}
+
+fn forecast_deterministic_action() -> (Probabilities, Mutations) {
+    (
+        vec![1.0],
+        vec![Box::new(move |_, state, action| {
+            apply_deterministic_action(state, action);
+        })],
+    )
 }
 
 fn apply_deterministic_action(state: &mut State, action: &Action) {
-    apply_common_mutation(state, action);
-
     match &action.action {
         SimpleAction::DrawCard { .. } => {
             state.maybe_draw_card(action.actor);

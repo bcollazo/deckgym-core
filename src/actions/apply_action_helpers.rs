@@ -23,8 +23,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
         (
             vec![1.0],
             vec![Box::new({
-                |_, state, action| {
-                    apply_common_mutation(state, action);
+                |_, state, _| {
                     // advance current_player, but only advance "turn" (i.e. stay in 0) when both players done.
                     state.current_player = (state.current_player + 1) % 2;
                     let both_players_initiated = state.in_play_pokemon[0][0].is_some()
@@ -74,8 +73,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
         let paralyzed_to_handle = paralyzed_to_handle.clone();
         let poisons_to_handle = poisons_to_handle.clone();
         outcomes.push(Box::new({
-            |_, state, action| {
-                apply_common_mutation(state, action);
+            |_, state, _| {
                 apply_pokemon_checkup(
                     state,
                     sleeps_to_handle,
@@ -266,5 +264,10 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
             .as_mut()
             .expect("Pokemon should be there if using ability");
         pokemon.ability_used = true;
+    }
+    if let SimpleAction::Attack(_) = &action.action {
+        state
+            .move_generation_stack
+            .push((action.actor, vec![SimpleAction::EndTurn]));
     }
 }

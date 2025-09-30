@@ -14,7 +14,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{apply_common_mutation, Mutations, Probabilities},
+    apply_action_helpers::{Mutations, Probabilities},
     Action, SimpleAction,
 };
 
@@ -96,7 +96,7 @@ fn inner_healing_effect(
     }
 }
 
-// Will return 6 outputs, one that attaches no energy justruns apply_common, one that
+// Will return 6 outputs, one that attaches no energy, one that
 //  queues decision of attaching 1 energy to in_play waters.
 fn misty_outcomes() -> (Probabilities, Mutations) {
     // probabilistic attach energy to water pokemon
@@ -106,8 +106,6 @@ fn misty_outcomes() -> (Probabilities, Mutations) {
     for j in 0..6 {
         outcomes.push(Box::new({
             move |_, state, action| {
-                apply_common_mutation(state, action);
-
                 // For each in_play water pokemon
                 let possible_moves = state
                     .enumerate_in_play_pokemon(action.actor)
