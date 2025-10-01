@@ -8,7 +8,7 @@ use deckgym::{
     State,
     Game,
     test_helpers::load_test_decks,
-    players::{Player, RandomPlayer},
+    players::{Player, ExpectiMiniMaxPlayer},
     generate_possible_actions,
 };
 use rand::{thread_rng, Rng};
@@ -28,6 +28,7 @@ use std::{
 
 struct App {
     game: Game<'static>,
+    scroll_offset: u16,
 }
 
 impl App {
@@ -35,9 +36,9 @@ impl App {
         // Initialize a real Game like in integration tests
         let (deck_a, deck_b) = load_test_decks(); // venusaur-exeggutor vs weezing-arbok
 
-        // Create random players
-        let player_a = Box::new(RandomPlayer { deck: deck_a });
-        let player_b = Box::new(RandomPlayer { deck: deck_b });
+        // Create ExpectiMiniMax players
+        let player_a = Box::new(ExpectiMiniMaxPlayer { deck: deck_a, max_depth: 3 });
+        let player_b = Box::new(ExpectiMiniMaxPlayer { deck: deck_b, max_depth: 3 });
         let players: Vec<Box<dyn Player>> = vec![player_a, player_b];
 
         // Initialize game with a fixed seed for reproducible results
@@ -52,7 +53,7 @@ impl App {
             ticks_played += 1;
         }
 
-        App { game }
+        App { game, scroll_offset: 0 }
     }
 
     fn get_state(&self) -> State {
@@ -62,10 +63,36 @@ impl App {
     fn play_tick(&mut self) {
         self.game.play_tick();
     }
+
+    fn scroll_up(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_sub(1);
+    }
+
+    fn scroll_down(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_add(1);
+    }
+
+    fn scroll_page_up(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_sub(10);
+    }
+
+    fn scroll_page_down(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_add(10);
+    }
 }
 
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // Setup panic hook to restore terminal on panic
+    let original_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |panic_info| {
+        // Attempt to restore terminal
+        let _ = disable_raw_mode();
+        let _ = execute!(io::stdout(), LeaveAlternateScreen, DisableMouseCapture);
+        // Call the original panic hook
+        original_hook(panic_info);
+    }));
+
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -109,6 +136,10 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                 match key.code {
                     KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
                     KeyCode::Right | KeyCode::Char(' ') => app.play_tick(),
+                    KeyCode::Up => app.scroll_up(),
+                    KeyCode::Down => app.scroll_down(),
+                    KeyCode::PageUp => app.scroll_page_up(),
+                    KeyCode::PageDown => app.scroll_page_down(),
                     _ => {}
                 }
             }
@@ -256,9 +287,19 @@ fn render_pokemon_card<'a>(
 fn ui(f: &mut Frame, app: &App) {
     let state = app.get_state();
 
+    // Main layout: left (game) and right (debug)
+    let main_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .margin(1)
+        .constraints([
+            Constraint::Percentage(70),  // Game area
+            Constraint::Percentage(30),  // Debug area
+        ])
+        .split(f.area());
+
+    // Left side: game area with header, battle mat, and footer
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .margin(1)
         .constraints(
             [
                 Constraint::Length(3),
@@ -267,7 +308,7 @@ fn ui(f: &mut Frame, app: &App) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(main_chunks[0]);
 
     // Title block with game status
     let title_text = format!(
@@ -470,7 +511,7 @@ fn ui(f: &mut Frame, app: &App) {
     };
 
     let footer_text = format!(
-        "Controls: ESC/q=quit, Space/Right=next tick | Current Player: P{}\nPossible Actions: {}",
+        "Controls: ESC/q=quit, Space/Right=next tick, Up/Down=scroll, PgUp/PgDn=scroll fast | Current Player: P{}\nPossible Actions: {}",
         actor + 1,
         actions_text
     );
@@ -479,4 +520,12 @@ fn ui(f: &mut Frame, app: &App) {
         .style(Style::default().fg(Color::Yellow))
         .block(Block::default().borders(Borders::ALL).title("Actions"));
     f.render_widget(footer, chunks[2]);
+
+    // Right side: Debug panel with state
+    let state_debug = format!("{:#?}", state);
+    let debug_panel = Paragraph::new(state_debug)
+        .style(Style::default().fg(Color::Cyan))
+        .block(Block::default().borders(Borders::ALL).title(format!("State Debug (scroll: {})", app.scroll_offset)))
+        .scroll((app.scroll_offset, 0));
+    f.render_widget(debug_panel, main_chunks[1]);
 }
