@@ -1,5 +1,6 @@
 use rand::seq::SliceRandom;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs;
 use std::hash::{Hash, Hasher};
@@ -9,7 +10,7 @@ use crate::database::get_card_by_enum;
 use crate::types::{Card, EnergyType};
 
 /// Represents a deck of cards.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct Deck {
     pub cards: Vec<Card>,
     pub(crate) energy_types: Vec<EnergyType>,
