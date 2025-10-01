@@ -17,7 +17,7 @@ use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, BorderType, Borders, Paragraph},
     Frame, Terminal,
 };
 use std::{
@@ -120,6 +120,21 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
     }
 }
 
+fn energy_type_to_color(energy_type: EnergyType) -> Color {
+    match energy_type {
+        EnergyType::Grass => Color::Green,
+        EnergyType::Fire => Color::Red,
+        EnergyType::Water => Color::Blue,
+        EnergyType::Lightning => Color::Yellow,
+        EnergyType::Psychic => Color::Magenta,
+        EnergyType::Fighting => Color::Red,
+        EnergyType::Darkness => Color::DarkGray,
+        EnergyType::Metal => Color::White,
+        EnergyType::Dragon => Color::Cyan,
+        EnergyType::Colorless => Color::Gray,
+    }
+}
+
 fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a>>, Style) {
     let name = card.get_name();
     let truncated_name = if name.len() > 18 {
@@ -148,7 +163,7 @@ fn render_pokemon_card<'a>(
     pokemon: &'a Option<PlayedCard>,
     _title: &str,
     player_color: Color,
-) -> (Vec<Line<'a>>, Style) {
+) -> (Vec<Line<'a>>, Style, Color, bool) {
     match pokemon {
         Some(played_card) => {
             let name = played_card.card.get_name();
@@ -167,10 +182,10 @@ fn render_pokemon_card<'a>(
                 "".to_string()
             };
 
-            // Get attack names (only if it's a Pokemon card)
-            let attack_names: Vec<String> = match &played_card.card {
+            // Get attack names and energy type (only if it's a Pokemon card)
+            let (attack_names, card_type_color): (Vec<String>, Color) = match &played_card.card {
                 Card::Pokemon(pokemon_card) => {
-                    pokemon_card.attacks.iter()
+                    let attacks = pokemon_card.attacks.iter()
                         .map(|a| {
                             let truncated = if a.title.len() > 20 {
                                 format!("{}...", &a.title[..17])
@@ -179,9 +194,11 @@ fn render_pokemon_card<'a>(
                             };
                             truncated
                         })
-                        .collect()
+                        .collect();
+                    let color = energy_type_to_color(pokemon_card.energy_type);
+                    (attacks, color)
                 },
-                _ => vec![]
+                _ => (vec![], Color::Gray)
             };
 
             // Create first line with name on left and HP on right
@@ -220,7 +237,7 @@ fn render_pokemon_card<'a>(
                 Span::styled(energy_icons, Style::default().fg(Color::Yellow))
             ]));
 
-            (lines, Style::default().fg(player_color))
+            (lines, Style::default().fg(player_color), card_type_color, false)
         }
         None => {
             let lines = vec![
@@ -231,7 +248,7 @@ fn render_pokemon_card<'a>(
                 Line::from(""),
                 Line::from("")
             ];
-            (lines, Style::default().fg(Color::DarkGray))
+            (lines, Style::default().fg(Color::White), Color::White, true)
         }
     }
 }
@@ -306,11 +323,16 @@ fn ui(f: &mut Frame, app: &App) {
     let bench_indices = [1, 3, 5]; // Skip spacing slots
     for (bench_pos, &chunk_idx) in bench_indices.iter().enumerate() {
         let pokemon = &state.in_play_pokemon[0][bench_pos + 1]; // bench positions 1, 2, 3
-        let (lines, style) = render_pokemon_card(pokemon, &format!("Opp Bench {}", bench_pos + 1), Color::Red);
+        let (lines, style, border_color, is_empty) = render_pokemon_card(pokemon, &format!("Opp Bench {}", bench_pos + 1), Color::Red);
+
+        let mut block = Block::default().borders(Borders::ALL).border_style(Style::default().fg(border_color)).title_alignment(Alignment::Center).title(format!("Bench {}", bench_pos + 1));
+        if is_empty {
+            block = block.border_type(BorderType::Rounded);
+        }
 
         let pokemon_block = Paragraph::new(lines)
             .style(style)
-            .block(Block::default().borders(Borders::ALL).title_alignment(Alignment::Center).title(format!("Bench {}", bench_pos + 1)));
+            .block(block);
         f.render_widget(pokemon_block, opponent_bench_chunks[chunk_idx]);
     }
 
@@ -329,10 +351,16 @@ fn ui(f: &mut Frame, app: &App) {
         .split(battle_area[1]);
 
     let opponent_active = &state.in_play_pokemon[0][0];
-    let (lines, style) = render_pokemon_card(opponent_active, "Opponent Active", Color::Red);
+    let (lines, style, border_color, is_empty) = render_pokemon_card(opponent_active, "Opponent Active", Color::Red);
+
+    let mut block = Block::default().borders(Borders::ALL).border_style(Style::default().fg(border_color)).title_alignment(Alignment::Center).title("Active");
+    if is_empty {
+        block = block.border_type(BorderType::Rounded);
+    }
+
     let opponent_active_block = Paragraph::new(lines)
         .style(style)
-        .block(Block::default().borders(Borders::ALL).title_alignment(Alignment::Center).title("Active"));
+        .block(block);
     f.render_widget(opponent_active_block, opponent_active_area[3]); // Use middle position (index 3)
 
     // Player active (center) - match bench alignment
@@ -350,10 +378,16 @@ fn ui(f: &mut Frame, app: &App) {
         .split(battle_area[2]);
 
     let player_active = &state.in_play_pokemon[1][0];
-    let (lines, style) = render_pokemon_card(player_active, "Your Active", Color::Green);
+    let (lines, style, border_color, is_empty) = render_pokemon_card(player_active, "Your Active", Color::Green);
+
+    let mut block = Block::default().borders(Borders::ALL).border_style(Style::default().fg(border_color)).title_alignment(Alignment::Center).title("Active");
+    if is_empty {
+        block = block.border_type(BorderType::Rounded);
+    }
+
     let player_active_block = Paragraph::new(lines)
         .style(style)
-        .block(Block::default().borders(Borders::ALL).title_alignment(Alignment::Center).title("Active"));
+        .block(block);
     f.render_widget(player_active_block, player_active_area[3]); // Use middle position (index 3)
 
     // Player bench (bottom row) - centered layout
@@ -374,11 +408,16 @@ fn ui(f: &mut Frame, app: &App) {
     let bench_indices = [1, 3, 5]; // Skip spacing slots
     for (bench_pos, &chunk_idx) in bench_indices.iter().enumerate() {
         let pokemon = &state.in_play_pokemon[1][bench_pos + 1]; // bench positions 1, 2, 3
-        let (lines, style) = render_pokemon_card(pokemon, &format!("Your Bench {}", bench_pos + 1), Color::Green);
+        let (lines, style, border_color, is_empty) = render_pokemon_card(pokemon, &format!("Your Bench {}", bench_pos + 1), Color::Green);
+
+        let mut block = Block::default().borders(Borders::ALL).border_style(Style::default().fg(border_color)).title_alignment(Alignment::Center).title(format!("Bench {}", bench_pos + 1));
+        if is_empty {
+            block = block.border_type(BorderType::Rounded);
+        }
 
         let pokemon_block = Paragraph::new(lines)
             .style(style)
-            .block(Block::default().borders(Borders::ALL).title_alignment(Alignment::Center).title(format!("Bench {}", bench_pos + 1)));
+            .block(block);
         f.render_widget(pokemon_block, player_bench_chunks[chunk_idx]);
     }
 
