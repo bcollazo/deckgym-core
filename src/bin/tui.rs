@@ -226,6 +226,21 @@ fn energy_type_to_color(energy_type: EnergyType) -> Color {
     }
 }
 
+fn energy_type_to_symbol(energy_type: EnergyType) -> &'static str {
+    match energy_type {
+        EnergyType::Grass => "●",
+        EnergyType::Fire => "●",
+        EnergyType::Water => "●",
+        EnergyType::Lightning => "●",
+        EnergyType::Psychic => "●",
+        EnergyType::Fighting => "●",
+        EnergyType::Darkness => "●",
+        EnergyType::Metal => "●",
+        EnergyType::Dragon => "●",
+        EnergyType::Colorless => "●",
+    }
+}
+
 fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a>>, Style) {
     let name = card.get_name();
     const MAX_WIDTH: usize = 16; // Max characters per line
@@ -291,8 +306,6 @@ fn render_pokemon_card<'a>(
         Some(played_card) => {
             let name = played_card.card.get_name();
             let hp_text = format!("{}/{}", played_card.remaining_hp, played_card.total_hp);
-            let energy_count = played_card.attached_energy.len();
-            let energy_icons = "⚡".repeat(energy_count);
 
             let mut status_effects = Vec::new();
             if played_card.poisoned { status_effects.push("🟣PSN"); }
@@ -355,10 +368,16 @@ fn render_pokemon_card<'a>(
                 lines.push(Line::from(""));
             }
 
-            // Add energy icons at the bottom
-            lines.push(Line::from(vec![
-                Span::styled(energy_icons, Style::default().fg(Color::Yellow))
-            ]));
+            // Add energy icons at the bottom with colors
+            let energy_spans: Vec<Span> = played_card.attached_energy.iter()
+                .map(|&energy_type| {
+                    Span::styled(
+                        energy_type_to_symbol(energy_type),
+                        Style::default().fg(energy_type_to_color(energy_type))
+                    )
+                })
+                .collect();
+            lines.push(Line::from(energy_spans));
 
             (lines, Style::default().fg(player_color), card_type_color, false)
         }
@@ -681,6 +700,19 @@ fn ui(f: &mut Frame, app: &App) {
     // Left side: Battle log panel with actions
     let mut log_lines = Vec::new();
 
+    // Add initial turn header
+    if !app.states.is_empty() {
+        let initial_turn = app.states[0].turn_count;
+        let header = if initial_turn == 0 {
+            "━━━ Setup Phase ━━━".to_string()
+        } else {
+            format!("━━━ Turn {} ━━━", initial_turn)
+        };
+        log_lines.push(Line::from(vec![
+            Span::styled(header, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+        ]));
+    }
+
     for (i, action) in app.actions.iter().enumerate() {
         let player_num = action.actor;
         let player_color = if player_num == 0 { Color::Red } else { Color::Green };
@@ -697,14 +729,32 @@ fn ui(f: &mut Frame, app: &App) {
             Span::styled(format!("P{}: ", player_num + 1), Style::default().fg(player_color).add_modifier(Modifier::BOLD)),
             Span::styled(format!("{}", action.action), Style::default().fg(Color::White))
         ]));
+
+        // Check if turn changed after this action
+        if i + 1 < app.states.len() {
+            let current_turn = app.states[i].turn_count;
+            let next_turn = app.states[i + 1].turn_count;
+
+            if next_turn != current_turn {
+                log_lines.push(Line::from(""));
+                let header = if next_turn == 0 {
+                    "━━━ Setup Phase ━━━".to_string()
+                } else {
+                    format!("━━━ Turn {} ━━━", next_turn)
+                };
+                log_lines.push(Line::from(vec![
+                    Span::styled(header, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+                ]));
+            }
+        }
     }
 
-    // If we're at the initial state (before any actions)
-    if app.current_state_index == 0 {
-        log_lines.insert(0, Line::from(vec![
+    // If we're at the initial state and there are no actions yet
+    if app.current_state_index == 0 && app.actions.is_empty() {
+        log_lines.push(Line::from(vec![
             Span::styled(">>> CURRENT <<<", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
         ]));
-        log_lines.insert(1, Line::from(""));
+        log_lines.push(Line::from("Game Start"));
     }
 
     let battle_log = Paragraph::new(log_lines)
