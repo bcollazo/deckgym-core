@@ -93,8 +93,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                     KeyCode::Up => app.prev_state(),
                     KeyCode::PageUp => app.scroll_page_up(),
                     KeyCode::PageDown => app.scroll_page_down(),
-                    KeyCode::Char('a') => app.scroll_player_hand_left(),
-                    KeyCode::Char('d') => app.scroll_player_hand_right(),
+                    KeyCode::Left => app.scroll_player_hand_left(),
+                    KeyCode::Right => app.scroll_player_hand_right(),
                     KeyCode::Char('A') => app.scroll_opponent_hand_left(),
                     KeyCode::Char('D') => app.scroll_opponent_hand_right(),
                     _ => {}
