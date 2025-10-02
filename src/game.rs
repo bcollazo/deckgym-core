@@ -68,6 +68,10 @@ impl<'a> Game<'a> {
         game
     }
 
+    pub fn is_game_over(&self) -> bool {
+        self.state.is_game_over()
+    }
+
     // Returns None if the game times out
     pub fn play(&mut self) -> Option<GameOutcome> {
         if self.debug {

@@ -38,7 +38,7 @@ impl App {
         let mut actions = Vec::new();
         states.push(game.get_state_clone()); // Initial state
 
-        while game.get_state_clone().winner.is_none() {
+        while !game.is_game_over() {
             let action = game.play_tick();
             actions.push(action);
             states.push(game.get_state_clone());
