@@ -25,7 +25,7 @@ The TUI provides an interactive way to view and replay games with a visual repre
 To use the TUI, you need to enable the `tui` feature:
 
 ```bash
-cargo run --bin tui --features tui -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players r,r
+cargo run --bin tui --features tui -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players e,e
 ```
 
 ### Controls
