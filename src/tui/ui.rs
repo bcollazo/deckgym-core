@@ -362,7 +362,7 @@ pub fn ui(f: &mut Frame, app: &App) {
     );
 
     let footer = Paragraph::new(footer_text)
-        .style(Style::default().fg(Color::Yellow))
+        .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title("Actions"));
     f.render_widget(footer, chunks[4]);
 
@@ -451,7 +451,7 @@ pub fn ui(f: &mut Frame, app: &App) {
     }
 
     let battle_log = Paragraph::new(log_lines)
-        .style(Style::default().fg(Color::White))
+        .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title("Battle Log"))
         .scroll((app.scroll_offset, 0));
     f.render_widget(battle_log, main_chunks[0]);
