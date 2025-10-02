@@ -33,17 +33,16 @@ impl App {
         let seed = rng.gen::<u64>();
         let mut game = Game::new(players, seed);
 
-        // Play the full game and collect all states
+        // Play the full game and collect all states and actions
         let mut states = Vec::new();
+        let mut actions = Vec::new();
         states.push(game.get_state_clone()); // Initial state
 
         while game.get_state_clone().winner.is_none() {
-            game.play_tick();
+            let action = game.play_tick();
+            actions.push(action);
             states.push(game.get_state_clone());
         }
-
-        // Get the action log from the game
-        let actions = game.action_log.clone();
 
         Ok(App {
             states,
