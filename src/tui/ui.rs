@@ -356,7 +356,7 @@ pub fn ui(f: &mut Frame, app: &App) {
     };
 
     let footer_text = format!(
-        "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{} | Possible Actions: {}",
+        "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
         actor + 1,
         actions_text
     );
