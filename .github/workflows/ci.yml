@@ -33,6 +33,9 @@ jobs:
       - name: Run tests
         run: cargo test
 
+      - name: Build TUI with feature flag
+        run: cargo build --bin tui --features tui
+
       - name: Run example 1
         run: cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
 

@@ -18,6 +18,24 @@ We already provide several example decks in the repo you can use to get started.
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
 ```
 
+## Terminal User Interface (TUI)
+
+The TUI provides an interactive way to view and replay games with a visual representation of the game state.
+
+To use the TUI, you need to enable the `tui` feature:
+
+```bash
+cargo run --bin tui --features tui -- example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players e,e
+```
+
+### Controls
+
+- **↑/↓/Space**: Navigate between game states (forward/backward)
+- **PageUp/PageDown**: Scroll through battle log
+- **A/D**: Scroll through your hand cards
+- **Shift+A/Shift+D**: Scroll through opponent's hand cards
+- **Q/Esc**: Quit
+
 ## Contributing
 
 New to Open Source? See [CONTRIBUTING.md](./CONTRIBUTING.md).

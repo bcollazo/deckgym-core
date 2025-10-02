@@ -31,6 +31,9 @@ pub use state::State;
 #[cfg(feature = "python")]
 pub mod python_bindings;
 
+#[cfg(feature = "tui")]
+pub mod tui;
+
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 #[cfg(feature = "python")]

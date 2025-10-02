@@ -99,6 +99,7 @@ impl<'a> Game<'a> {
 
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
+
         if self.event_handler.is_some() {
             let state_before_action = self.state.clone();
             self.apply_action(&action);

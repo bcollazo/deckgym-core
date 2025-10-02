@@ -1,5 +1,6 @@
 use log::{debug, trace};
 use rand::{seq::SliceRandom, Rng};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::hash::Hash;
 
@@ -10,13 +11,13 @@ use crate::{
     types::{Card, EnergyType, PlayedCard},
 };
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameOutcome {
     Win(usize),
     Tie,
 }
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct State {
     // Turn State
     pub winner: Option<GameOutcome>,

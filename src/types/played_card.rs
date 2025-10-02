@@ -1,4 +1,5 @@
 use core::fmt;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     effects::CardEffect,
@@ -9,7 +10,7 @@ use crate::{
 
 /// This represents a card in the mat. Has a pointer to the card
 /// description, but captures the extra variable properties while in mat.
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct PlayedCard {
     pub card: Card,
     pub remaining_hp: u32,

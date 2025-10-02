@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::{
@@ -6,7 +7,7 @@ use crate::{
 };
 
 // TODO: Probably best to generate this file from database.json via card_enum_generator.rs.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ToolId {
     A2147GiantCape,
     A2148RockyHelmet,

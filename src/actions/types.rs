@@ -2,18 +2,19 @@ use crate::{
     tool_ids::ToolId,
     types::{Card, EnergyType, TrainerCard},
 };
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Main structure for following Game Tree design. Using "nesting" with a
 /// SimpleAction to share common fields here.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Action {
     pub actor: usize,
     pub action: SimpleAction,
     pub is_stack: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum SimpleAction {
     DrawCard {
         amount: u8,
