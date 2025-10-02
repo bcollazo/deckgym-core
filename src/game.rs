@@ -24,6 +24,7 @@ pub struct Game<'a> {
 
     debug: bool,
     event_handler: Option<&'a mut CompositeSimulationEventHandler>,
+    pub action_log: Vec<Action>,
 }
 
 impl<'a> Game<'a> {
@@ -37,6 +38,7 @@ impl<'a> Game<'a> {
             state,
             debug: false,
             event_handler: None,
+            action_log: Vec::new(),
         }
     }
 
@@ -53,6 +55,7 @@ impl<'a> Game<'a> {
             state,
             debug: true,
             event_handler: None,
+            action_log: Vec::new(),
         }
     }
 
@@ -65,6 +68,7 @@ impl<'a> Game<'a> {
         let mut game = Game::new(players, seed);
         game.event_handler = Some(event_handler);
         game.id = game_id;
+        game.action_log = Vec::new();
         game
     }
 
@@ -99,6 +103,10 @@ impl<'a> Game<'a> {
 
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
+
+        // Log the action
+        self.action_log.push(action.clone());
+
         if self.event_handler.is_some() {
             let state_before_action = self.state.clone();
             self.apply_action(&action);
