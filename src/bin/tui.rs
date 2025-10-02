@@ -103,14 +103,6 @@ impl App {
         }
     }
 
-    fn scroll_up(&mut self) {
-        self.scroll_offset = self.scroll_offset.saturating_sub(1);
-    }
-
-    fn scroll_down(&mut self) {
-        self.scroll_offset = self.scroll_offset.saturating_add(1);
-    }
-
     fn scroll_page_up(&mut self) {
         self.scroll_offset = self.scroll_offset.saturating_sub(10);
     }
@@ -200,10 +192,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
             if let Event::Key(key) = event::read()? {
                 match key.code {
                     KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
-                    KeyCode::Right | KeyCode::Char(' ') => app.next_state(),
-                    KeyCode::Left => app.prev_state(),
-                    KeyCode::Up => app.scroll_up(),
-                    KeyCode::Down => app.scroll_down(),
+                    KeyCode::Down | KeyCode::Char(' ') => app.next_state(),
+                    KeyCode::Up => app.prev_state(),
                     KeyCode::PageUp => app.scroll_page_up(),
                     KeyCode::PageDown => app.scroll_page_down(),
                     KeyCode::Char('a') => app.scroll_player_hand_left(),
@@ -238,21 +228,56 @@ fn energy_type_to_color(energy_type: EnergyType) -> Color {
 
 fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a>>, Style) {
     let name = card.get_name();
-    let truncated_name = if name.len() > 10 {
-        format!("{}...", &name[..7])
-    } else {
-        name
-    };
+    const MAX_WIDTH: usize = 16; // Max characters per line
 
-    let lines = vec![
+    // Split the name into words and wrap them
+    let mut lines = vec![
         Line::from(vec![
             Span::styled(format!("#{}", index + 1), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
-        ]),
-        Line::from(vec![
-            Span::styled(truncated_name, Style::default().fg(Color::Cyan))
-        ]),
-        Line::from("")
+        ])
     ];
+
+    let words: Vec<&str> = name.split_whitespace().collect();
+    let mut current_line = String::new();
+
+    for word in words {
+        // If adding this word would exceed max width, start a new line
+        if !current_line.is_empty() && current_line.len() + 1 + word.len() > MAX_WIDTH {
+            lines.push(Line::from(vec![
+                Span::styled(current_line.clone(), Style::default().fg(Color::Cyan))
+            ]));
+            current_line.clear();
+        }
+
+        // If the word itself is too long, truncate it
+        if word.len() > MAX_WIDTH {
+            if !current_line.is_empty() {
+                lines.push(Line::from(vec![
+                    Span::styled(current_line.clone(), Style::default().fg(Color::Cyan))
+                ]));
+                current_line.clear();
+            }
+            lines.push(Line::from(vec![
+                Span::styled(format!("{}...", &word[..MAX_WIDTH-3]), Style::default().fg(Color::Cyan))
+            ]));
+            continue;
+        }
+
+        if !current_line.is_empty() {
+            current_line.push(' ');
+        }
+        current_line.push_str(word);
+    }
+
+    // Add the last line if there's content
+    if !current_line.is_empty() {
+        lines.push(Line::from(vec![
+            Span::styled(current_line, Style::default().fg(Color::Cyan))
+        ]));
+    }
+
+    // Add an empty line at the end for spacing
+    lines.push(Line::from(""));
 
     (lines, Style::default().fg(Color::Cyan))
 }
@@ -401,15 +426,15 @@ fn ui(f: &mut Frame, app: &App) {
         .direction(Direction::Horizontal)
         .constraints([
             Constraint::Min(0),     // Left padding
-            Constraint::Length(12), // Card 1
+            Constraint::Length(18), // Card 1
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 2
+            Constraint::Length(18), // Card 2
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 3
+            Constraint::Length(18), // Card 3
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 4
+            Constraint::Length(18), // Card 4
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 5
+            Constraint::Length(18), // Card 5
             Constraint::Min(0),     // Right padding
         ])
         .split(chunks[1]);
@@ -584,15 +609,15 @@ fn ui(f: &mut Frame, app: &App) {
         .direction(Direction::Horizontal)
         .constraints([
             Constraint::Min(0),     // Left padding
-            Constraint::Length(12), // Card 1 (shorter)
+            Constraint::Length(18), // Card 1
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 2
+            Constraint::Length(18), // Card 2
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 3
+            Constraint::Length(18), // Card 3
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 4
+            Constraint::Length(18), // Card 4
             Constraint::Length(1),  // Spacing
-            Constraint::Length(12), // Card 5
+            Constraint::Length(18), // Card 5
             Constraint::Min(0),     // Right padding
         ])
         .split(chunks[3]);
@@ -643,7 +668,7 @@ fn ui(f: &mut Frame, app: &App) {
     };
 
     let footer_text = format!(
-        "Controls: ESC/q=quit, Left/Right=navigate states, Space=next, Up/Down=scroll log, a/d=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{} | Possible Actions: {}",
+        "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, a/d=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{} | Possible Actions: {}",
         actor + 1,
         actions_text
     );
