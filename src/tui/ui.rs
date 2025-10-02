@@ -320,10 +320,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             lines.insert(
                 0,
                 Line::from(vec![
-                    Span::styled(
-                        format!("{left_arrow} "),
-                        Style::default().fg(Color::Yellow),
-                    ),
+                    Span::styled(format!("{left_arrow} "), Style::default().fg(Color::Yellow)),
                     Span::styled(
                         format!(" {right_arrow}"),
                         Style::default().fg(Color::Yellow),
