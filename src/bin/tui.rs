@@ -89,6 +89,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
             if let Event::Key(key) = event::read()? {
                 match key.code {
                     KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
+                    // Numeric keys for action selection (1-9)
+                    KeyCode::Char(c @ '1'..='9') => {
+                        let index = (c as usize) - ('1' as usize);
+                        app.handle_action_selection(index);
+                    }
+                    // Replay mode controls
                     KeyCode::Down | KeyCode::Char(' ') => app.next_state(),
                     KeyCode::Up => app.prev_state(),
                     KeyCode::PageUp => app.scroll_page_up(),
@@ -103,6 +109,14 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
         }
 
         if last_tick.elapsed() >= tick_rate {
+            // Tick the game (advances game in interactive mode)
+            app.tick_game();
+
+            // Check if game is over
+            if app.is_game_over() {
+                return Ok(());
+            }
+
             last_tick = Instant::now();
         }
     }
