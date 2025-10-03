@@ -54,7 +54,7 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
         if !current_line.is_empty() && current_line.len() + 1 + word.len() > MAX_WIDTH {
             lines.push(Line::from(vec![Span::styled(
                 current_line.clone(),
-                Style::default().fg(Color::Cyan),
+                Style::default().fg(Color::LightBlue),
             )]));
             current_line.clear();
         }
@@ -64,13 +64,13 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
             if !current_line.is_empty() {
                 lines.push(Line::from(vec![Span::styled(
                     current_line.clone(),
-                    Style::default().fg(Color::Cyan),
+                    Style::default().fg(Color::LightBlue),
                 )]));
                 current_line.clear();
             }
             lines.push(Line::from(vec![Span::styled(
                 format!("{}...", &word[..MAX_WIDTH - 3]),
-                Style::default().fg(Color::Cyan),
+                Style::default().fg(Color::LightBlue),
             )]));
             continue;
         }
@@ -85,14 +85,14 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
     if !current_line.is_empty() {
         lines.push(Line::from(vec![Span::styled(
             current_line,
-            Style::default().fg(Color::Cyan),
+            Style::default().fg(Color::LightBlue),
         )]));
     }
 
     // Add an empty line at the end for spacing
     lines.push(Line::from(""));
 
-    (lines, Style::default().fg(Color::Cyan))
+    (lines, Style::default().fg(Color::LightBlue))
 }
 
 pub(crate) fn render_pokemon_card<'a>(

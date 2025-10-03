@@ -1,4 +1,3 @@
-use crate::generate_possible_actions;
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -7,11 +6,12 @@ use ratatui::{
     Frame,
 };
 
-use super::app::App;
+use super::app::{App, AppMode};
 use super::render::{render_hand_card, render_pokemon_card};
 
 pub fn ui(f: &mut Frame, app: &App) {
     let state = app.get_state();
+    let is_interactive = matches!(&app.mode, super::app::AppMode::Interactive { .. });
 
     // Main layout: left (battle log), center (game)
     let main_chunks = Layout::default()
@@ -39,14 +39,21 @@ pub fn ui(f: &mut Frame, app: &App) {
         .split(main_chunks[1]);
 
     // Title block with game status
-    let title_text = format!(
-        "DeckGym TUI - State: {}/{} | Turn: {} | P1 Points: {} | P2 Points: {}",
-        app.current_state_index + 1,
-        app.states.len(),
-        state.turn_count,
-        state.points[0],
-        state.points[1]
-    );
+    let title_text = if is_interactive {
+        format!(
+            "DeckGym TUI [INTERACTIVE] | Turn: {} | P1 Points: {} | P2 Points: {}",
+            state.turn_count, state.points[0], state.points[1]
+        )
+    } else {
+        format!(
+            "DeckGym TUI [REPLAY] - State: {}/{} | Turn: {} | P1 Points: {} | P2 Points: {}",
+            app.get_current_state_index() + 1,
+            app.get_states_len(),
+            state.turn_count,
+            state.points[0],
+            state.points[1]
+        )
+    };
     let title = Paragraph::new(title_text)
         .style(
             Style::default()
@@ -342,116 +349,234 @@ pub fn ui(f: &mut Frame, app: &App) {
     }
 
     // Footer with possible actions
-    let (actor, actions) = generate_possible_actions(state);
-    let action_strings: Vec<String> = actions
-        .iter()
-        .take(10) // Limit to first 10 actions
-        .map(|a| format!("{:?}", a.action))
-        .collect();
+    let actor = app.get_current_actor();
+    let actions = app.get_possible_actions();
 
-    let actions_text = if action_strings.is_empty() {
-        "No actions available".to_string()
+    let footer_text = if is_interactive {
+        // Interactive mode footer
+        let current_actor = app.get_current_actor();
+        let is_human_turn = current_actor == 1;
+
+        if is_human_turn {
+            // Show numbered actions for human player
+            let action_strings: Vec<String> = actions
+                .iter()
+                .take(9) // Limit to first 9 actions (1-9 keys)
+                .enumerate()
+                .map(|(i, a)| format!("{}. {:?}", i + 1, a.action))
+                .collect();
+
+            let actions_text = if action_strings.is_empty() {
+                "No actions available".to_string()
+            } else {
+                action_strings.join(" | ")
+            };
+
+            format!(
+                "Controls: ESC/q=quit, 1-9=select action, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
+                actions_text
+            )
+        } else {
+            // AI turn - show waiting message
+            "Controls: ESC/q=quit, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
+        }
     } else {
-        action_strings.join(" | ")
+        // Replay mode footer
+        let action_strings: Vec<String> = actions
+            .iter()
+            .take(10)
+            .map(|a| format!("{:?}", a.action))
+            .collect();
+
+        let actions_text = if action_strings.is_empty() {
+            "No actions available".to_string()
+        } else {
+            action_strings.join(" | ")
+        };
+
+        format!(
+            "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
+            actor + 1,
+            actions_text
+        )
     };
 
-    let footer_text = format!(
-        "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, a/d=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{} | Possible Actions: {}",
-        actor + 1,
-        actions_text
-    );
-
     let footer = Paragraph::new(footer_text)
-        .style(Style::default().fg(Color::Yellow))
+        .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title("Actions"));
     f.render_widget(footer, chunks[4]);
 
     // Left side: Battle log panel with actions
     let mut log_lines = Vec::new();
+    let actions = app.get_actions();
 
-    // Add initial turn header
-    if !app.states.is_empty() {
-        let initial_turn = app.states[0].turn_count;
-        let header = if initial_turn == 0 {
-            "━━━ Setup Phase ━━━".to_string()
-        } else {
-            format!("━━━ Turn {initial_turn} ━━━")
-        };
+    if is_interactive {
+        // Interactive mode - live battle log
+        let turn_history = app.get_turn_history().unwrap_or_default();
+        let mut current_turn: u8 = 0;
+
+        // Initial header
         log_lines.push(Line::from(vec![Span::styled(
-            header,
+            "━━━ Setup Phase ━━━",
             Style::default()
                 .fg(Color::Cyan)
                 .add_modifier(Modifier::BOLD),
         )]));
-    }
 
-    for (i, action) in app.actions.iter().enumerate() {
-        let player_num = action.actor;
-        let player_color = if player_num == 0 {
-            Color::Red
-        } else {
-            Color::Green
-        };
+        for (i, action) in actions.iter().enumerate() {
+            let player_num = action.actor;
+            let player_color = if player_num == 0 {
+                Color::Red
+            } else {
+                Color::Green
+            };
 
-        // Add cursor indicator before this action if we're between state i and i+1
-        if i == app.current_state_index && i < app.actions.len() {
+            // Check if turn changed before this action
+            if i < turn_history.len() {
+                let action_turn = turn_history[i];
+                if action_turn != current_turn {
+                    current_turn = action_turn;
+                    log_lines.push(Line::from(""));
+                    let header = if current_turn == 0 {
+                        "━━━ Setup Phase ━━━".to_string()
+                    } else {
+                        format!("━━━ Turn {} ━━━", current_turn)
+                    };
+                    log_lines.push(Line::from(vec![Span::styled(
+                        header,
+                        Style::default()
+                            .fg(Color::Cyan)
+                            .add_modifier(Modifier::BOLD),
+                    )]));
+                }
+            }
+
+            // Add the action line
+            log_lines.push(Line::from(vec![
+                Span::styled(
+                    format!("P{}: ", player_num + 1),
+                    Style::default()
+                        .fg(player_color)
+                        .add_modifier(Modifier::BOLD),
+                ),
+                Span::styled(
+                    format!("{}", action.action),
+                    Style::default().fg(Color::White),
+                ),
+            ]));
+        }
+
+        // Show current turn header at the end if it's different
+        if state.turn_count != current_turn {
+            log_lines.push(Line::from(""));
+            let header = if state.turn_count == 0 {
+                "━━━ Setup Phase ━━━".to_string()
+            } else {
+                format!("━━━ Turn {} ━━━", state.turn_count)
+            };
             log_lines.push(Line::from(vec![Span::styled(
-                ">>> CURRENT <<<",
+                header,
                 Style::default()
-                    .fg(Color::Yellow)
+                    .fg(Color::Cyan)
                     .add_modifier(Modifier::BOLD),
             )]));
         }
+    } else {
+        // Replay mode - show full history with turn headers
+        if let AppMode::Replay {
+            states,
+            current_index,
+            ..
+        } = &app.mode
+        {
+            let mut current_turn: u8 = if !states.is_empty() {
+                states[0].turn_count
+            } else {
+                0
+            };
 
-        // Add the action line
-        log_lines.push(Line::from(vec![
-            Span::styled(
-                format!("P{}: ", player_num + 1),
+            // Add initial turn header
+            let header = if current_turn == 0 {
+                "━━━ Setup Phase ━━━".to_string()
+            } else {
+                format!("━━━ Turn {current_turn} ━━━")
+            };
+            log_lines.push(Line::from(vec![Span::styled(
+                header,
                 Style::default()
-                    .fg(player_color)
+                    .fg(Color::Cyan)
                     .add_modifier(Modifier::BOLD),
-            ),
-            Span::styled(
-                format!("{}", action.action),
-                Style::default().fg(Color::White),
-            ),
-        ]));
+            )]));
 
-        // Check if turn changed after this action
-        if i + 1 < app.states.len() {
-            let current_turn = app.states[i].turn_count;
-            let next_turn = app.states[i + 1].turn_count;
-
-            if next_turn != current_turn {
-                log_lines.push(Line::from(""));
-                let header = if next_turn == 0 {
-                    "━━━ Setup Phase ━━━".to_string()
+            for (i, action) in actions.iter().enumerate() {
+                let player_num = action.actor;
+                let player_color = if player_num == 0 {
+                    Color::Red
                 } else {
-                    format!("━━━ Turn {next_turn} ━━━")
+                    Color::Green
                 };
+
+                // Add cursor indicator before this action if we're between state i and i+1
+                if i == *current_index && i < actions.len() {
+                    log_lines.push(Line::from(vec![Span::styled(
+                        ">>> CURRENT <<<",
+                        Style::default()
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::BOLD),
+                    )]));
+                }
+
+                // Add the action line
+                log_lines.push(Line::from(vec![
+                    Span::styled(
+                        format!("P{}: ", player_num + 1),
+                        Style::default()
+                            .fg(player_color)
+                            .add_modifier(Modifier::BOLD),
+                    ),
+                    Span::styled(
+                        format!("{}", action.action),
+                        Style::default().fg(Color::White),
+                    ),
+                ]));
+
+                // Check if turn changed after this action
+                if i + 1 < states.len() {
+                    let next_turn = states[i + 1].turn_count;
+
+                    if next_turn != current_turn {
+                        current_turn = next_turn;
+                        log_lines.push(Line::from(""));
+                        let header = if next_turn == 0 {
+                            "━━━ Setup Phase ━━━".to_string()
+                        } else {
+                            format!("━━━ Turn {next_turn} ━━━")
+                        };
+                        log_lines.push(Line::from(vec![Span::styled(
+                            header,
+                            Style::default()
+                                .fg(Color::Cyan)
+                                .add_modifier(Modifier::BOLD),
+                        )]));
+                    }
+                }
+            }
+
+            // If we're at the initial state and there are no actions yet
+            if *current_index == 0 && actions.is_empty() {
                 log_lines.push(Line::from(vec![Span::styled(
-                    header,
+                    ">>> CURRENT <<<",
                     Style::default()
-                        .fg(Color::Cyan)
+                        .fg(Color::Yellow)
                         .add_modifier(Modifier::BOLD),
                 )]));
+                log_lines.push(Line::from("Game Start"));
             }
         }
     }
 
-    // If we're at the initial state and there are no actions yet
-    if app.current_state_index == 0 && app.actions.is_empty() {
-        log_lines.push(Line::from(vec![Span::styled(
-            ">>> CURRENT <<<",
-            Style::default()
-                .fg(Color::Yellow)
-                .add_modifier(Modifier::BOLD),
-        )]));
-        log_lines.push(Line::from("Game Start"));
-    }
-
     let battle_log = Paragraph::new(log_lines)
-        .style(Style::default().fg(Color::White))
+        .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title("Battle Log"))
         .scroll((app.scroll_offset, 0));
     f.render_widget(battle_log, main_chunks[0]);

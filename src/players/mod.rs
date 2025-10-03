@@ -34,7 +34,7 @@ pub trait Player: Debug {
 }
 
 /// Enum for allowed player strategies
-#[derive(Debug, ValueEnum, Clone)]
+#[derive(Debug, ValueEnum, Clone, PartialEq)]
 pub enum PlayerCode {
     AA,
     ET,
