@@ -665,7 +665,7 @@ impl PyGame {
             let mut codes = Vec::new();
             for player_str in player_strs {
                 let code = parse_player_code(&player_str)
-                    .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e))?;
+                    .map_err(PyErr::new::<pyo3::exceptions::PyValueError, _>)?;
                 codes.push(code);
             }
             Some(codes)
@@ -675,7 +675,7 @@ impl PyGame {
 
         let cli_players = fill_code_array(player_codes);
         let rust_players = create_players(deck_a, deck_b, cli_players);
-        let game_seed = seed.unwrap_or_else(|| rand::random::<u64>());
+        let game_seed = seed.unwrap_or_else(rand::random::<u64>);
         let game = Game::new(rust_players, game_seed);
 
         Ok(PyGame { game })
@@ -763,7 +763,7 @@ pub fn py_simulate(
         let mut codes = Vec::new();
         for player_str in player_strs {
             let code = parse_player_code(&player_str)
-                .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(e))?;
+                .map_err(PyErr::new::<pyo3::exceptions::PyValueError, _>)?;
             codes.push(code);
         }
         Some(codes)
@@ -778,7 +778,7 @@ pub fn py_simulate(
 
     for _ in 0..num_simulations {
         let players = create_players(deck_a.clone(), deck_b.clone(), cli_players.clone());
-        let game_seed = seed.unwrap_or_else(|| rand::random::<u64>());
+        let game_seed = seed.unwrap_or_else(rand::random::<u64>);
         let mut game = Game::new(players, game_seed);
         let outcome = game.play();
 

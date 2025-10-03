@@ -46,14 +46,14 @@ impl App {
         let deck_b = Deck::from_file(deck_b_path)?;
 
         // Detect if any player is human
-        let has_human = player_codes.iter().any(|code| *code == PlayerCode::H);
+        let has_human = player_codes.contains(&PlayerCode::H);
 
         let mode = if has_human {
             // Interactive mode - create live game
             let players: Vec<Box<dyn Player>> = create_players(deck_a, deck_b, player_codes);
             let mut rng = thread_rng();
             let seed = rng.gen::<u64>();
-            let game = Game::new(players, seed);
+            let game = Box::new(Game::new(players, seed));
 
             // Get initial state and possible actions
             let (current_actor, possible_actions) =

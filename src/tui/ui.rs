@@ -378,9 +378,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             )
         } else {
             // AI turn - show waiting message
-            format!(
-                "Controls: ESC/q=quit, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent..."
-            )
+            "Controls: ESC/q=quit, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
         }
     } else {
         // Replay mode footer
