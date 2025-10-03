@@ -9,7 +9,7 @@ pub(crate) fn energy_type_to_color(energy_type: EnergyType) -> Color {
         EnergyType::Grass => Color::Green,
         EnergyType::Fire => Color::Red,
         EnergyType::Water => Color::Blue,
-        EnergyType::Lightning => Color::Yellow,
+        EnergyType::Lightning => Color::LightYellow,
         EnergyType::Psychic => Color::Magenta,
         EnergyType::Fighting => Color::Red,
         EnergyType::Darkness => Color::DarkGray,
@@ -42,7 +42,7 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
     let mut lines = vec![Line::from(vec![Span::styled(
         format!("#{}", index + 1),
         Style::default()
-            .fg(Color::Yellow)
+            .fg(Color::LightYellow)
             .add_modifier(Modifier::BOLD),
     )])];
 

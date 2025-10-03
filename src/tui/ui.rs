@@ -327,10 +327,13 @@ pub fn ui(f: &mut Frame, app: &App) {
             lines.insert(
                 0,
                 Line::from(vec![
-                    Span::styled(format!("{left_arrow} "), Style::default().fg(Color::Yellow)),
+                    Span::styled(
+                        format!("{left_arrow} "),
+                        Style::default().fg(Color::LightYellow),
+                    ),
                     Span::styled(
                         format!(" {right_arrow}"),
-                        Style::default().fg(Color::Yellow),
+                        Style::default().fg(Color::LightYellow),
                     ),
                 ]),
             );
@@ -521,7 +524,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                     log_lines.push(Line::from(vec![Span::styled(
                         ">>> CURRENT <<<",
                         Style::default()
-                            .fg(Color::Yellow)
+                            .fg(Color::LightYellow)
                             .add_modifier(Modifier::BOLD),
                     )]));
                 }
@@ -567,7 +570,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                 log_lines.push(Line::from(vec![Span::styled(
                     ">>> CURRENT <<<",
                     Style::default()
-                        .fg(Color::Yellow)
+                        .fg(Color::LightYellow)
                         .add_modifier(Modifier::BOLD),
                 )]));
                 log_lines.push(Line::from("Game Start"));
