@@ -44,6 +44,12 @@ pub struct FirstTurnSeenCollector {
     game_ids: HashSet<Uuid>,
 }
 
+impl Default for FirstTurnSeenCollector {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FirstTurnSeenCollector {
     pub fn new() -> Self {
         Self {
@@ -68,9 +74,7 @@ impl SimulationEventHandler for FirstTurnSeenCollector {
             if let Some(card) = card {
                 let card_name = card.get_name();
                 let key = (game_id, actor, card_name.clone());
-                if !self.first_turn_seen.contains_key(&key) {
-                    self.first_turn_seen.insert(key, turn);
-                }
+                self.first_turn_seen.entry(key).or_insert(turn);
             }
         }
     }
@@ -108,7 +112,7 @@ impl SimulationEventHandler for FirstTurnSeenCollector {
             .sort_by_key(|((game_id, actor, card_name), _)| (*game_id, *actor, card_name.clone()));
 
         // Write header
-        wtr.write_record(&["game_id", "actor", "card_name", "min_turn"])
+        wtr.write_record(["game_id", "actor", "card_name", "min_turn"])
             .expect("Failed to write header to CSV");
         for ((game_id, actor, card_name), min_turn) in &sorted_data {
             wtr.write_record(&[
