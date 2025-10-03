@@ -9,17 +9,17 @@ use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;
 
-struct StateNode {
+struct DebugStateNode {
     acting_player: usize,
     state: State,
-    children: Vec<ActionNode>,
+    children: Vec<DebugActionNode>,
     proba: f64,
     value: f64,
 }
 
-struct ActionNode {
+struct DebugActionNode {
     action: Action,
-    children: Vec<StateNode>,
+    children: Vec<DebugStateNode>,
     value: f64,
 }
 
@@ -37,8 +37,8 @@ impl Player for ExpectiMiniMaxPlayer {
     ) -> Action {
         let myself = possible_actions[0].actor;
 
-        // create a tree for debugging purposes
-        let mut root = StateNode {
+        // Create a tree for debugging purposes
+        let mut root = DebugStateNode {
             acting_player: myself,
             state: state.clone(),
             children: vec![],
@@ -77,10 +77,7 @@ impl Player for ExpectiMiniMaxPlayer {
         let filename = loop {
             let candidate = format!(
                 "{}/expectiminimax_tree_turn{}_p{}_{}.dot",
-                folder,
-                state.turn_count,
-                myself,
-                counter
+                folder, state.turn_count, myself, counter
             );
             if !std::path::Path::new(&candidate).exists() {
                 break candidate;
@@ -104,7 +101,7 @@ fn expected_value_function(
     action: &Action,
     depth: usize,
     myself: usize,
-) -> (f64, ActionNode) {
+) -> (f64, DebugActionNode) {
     let indent = "  ".repeat(depth);
     info!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
@@ -118,7 +115,7 @@ fn expected_value_function(
 
     // Mantain node
     let mut scores = vec![];
-    let mut action_node = ActionNode {
+    let mut action_node = DebugActionNode {
         action: action.clone(),
         children: vec![],
         value: 0.0,
@@ -155,10 +152,10 @@ fn expectiminimax(
     state: &State,
     depth: usize,
     myself: usize,
-) -> (f64, StateNode) {
+) -> (f64, DebugStateNode) {
     if state.is_game_over() || depth == 0 {
         let score = value_function(state, myself);
-        let state_node = StateNode {
+        let state_node = DebugStateNode {
             acting_player: state.current_player,
             state: state.clone(),
             children: vec![],
@@ -180,7 +177,7 @@ fn expectiminimax(
             children.push(action_node);
         }
         let best_score = scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
-        let state_node = StateNode {
+        let state_node = DebugStateNode {
             acting_player: actor,
             state: state.clone(),
             children,
@@ -193,7 +190,7 @@ fn expectiminimax(
         //  not everything is public information. So we would have to have
         //  our own version of it that only returns the actions that are
         let mut scores: Vec<f64> = Vec::with_capacity(actions.len());
-        let mut children: Vec<ActionNode> = Vec::new();
+        let mut children: Vec<DebugActionNode> = Vec::new();
         for action in actions.iter() {
             let (score, action_node) =
                 expected_value_function(rng, state, action, depth - 1, myself);
@@ -201,7 +198,7 @@ fn expectiminimax(
             children.push(action_node);
         }
         let best_score = scores.iter().cloned().fold(f64::INFINITY, f64::min);
-        let state_node = StateNode {
+        let state_node = DebugStateNode {
             acting_player: actor,
             state: state.clone(),
             children,
@@ -224,7 +221,8 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let my_value = state
         .enumerate_in_play_pokemon(myself)
         .map(|(pos, card)| {
-            let hp_energy_product = card.remaining_hp as f64 * card.attached_energy.len() as f64;
+            let hp_energy_product =
+                card.remaining_hp as f64 * (card.attached_energy.len() + 1) as f64;
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
@@ -237,7 +235,8 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let opponent_value = state
         .enumerate_in_play_pokemon(opponent)
         .map(|(pos, card)| {
-            let hp_energy_product = card.remaining_hp as f64 * card.attached_energy.len() as f64;
+            let hp_energy_product =
+                card.remaining_hp as f64 * (card.attached_energy.len() + 1) as f64;
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
@@ -246,10 +245,16 @@ fn value_function(state: &State, myself: usize) -> f64 {
         })
         .sum::<f64>();
 
+    // Hand size advantage
+    let hand_size = state.hands[myself].len() as f64;
+    let opponent_hand_size = state.hands[opponent].len() as f64;
+
     trace!(
-        "Value function: points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}"
+        "Value function: points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size}"
     );
-    let score = (points - opponent_points) * 1000.0 + (my_value - opponent_value);
+    let score = (points - opponent_points) * 10000.0
+        + (my_value - opponent_value)
+        + (hand_size - opponent_hand_size) * 1.0;
     trace!("Value function: {score}");
     score
 }
@@ -260,52 +265,72 @@ impl Debug for ExpectiMiniMaxPlayer {
     }
 }
 
-fn save_tree_as_dot(root: &StateNode, filename: String) -> std::io::Result<()> {
+fn save_tree_as_dot(root: &DebugStateNode, filename: String) -> std::io::Result<()> {
     let dot_representation = generate_dot(root);
     std::fs::write(filename, dot_representation)
 }
 
-fn generate_dot(root: &StateNode) -> String {
+fn generate_dot(root: &DebugStateNode) -> String {
     let mut dot = String::new();
     writeln!(dot, "digraph GameTree {{").unwrap();
     writeln!(dot, "    rankdir=TB;").unwrap();
     writeln!(dot, "    node [shape=box];").unwrap();
 
     // Add info node with root state debug string
-    let debug_str = root.state.debug_string().replace('"', "'").replace('\n', "\\l") + "\\l";
+    let debug_str = root
+        .state
+        .debug_string()
+        .replace('"', "'")
+        .replace('\n', "\\l")
+        + "\\l";
     writeln!(
         dot,
         "    info [label=\"{}\", shape=box, style=filled, fillcolor=lightyellow, align=left];",
         debug_str
-    ).unwrap();
+    )
+    .unwrap();
 
     let mut state_counter = 0;
     let mut action_counter = 0;
 
-    generate_dot_recursive(root, &mut dot, &mut state_counter, &mut action_counter, 0);
+    generate_dot_recursive(
+        root,
+        &mut dot,
+        &mut state_counter,
+        &mut action_counter,
+        0,
+        root.acting_player,
+    );
 
     writeln!(dot, "}}").unwrap();
     dot
 }
 
 fn generate_dot_recursive(
-    state: &StateNode,
+    state: &DebugStateNode,
     dot: &mut String,
     state_counter: &mut usize,
     action_counter: &mut usize,
     current_state_id: usize,
+    myself: usize,
 ) {
-    // Define the state node
+    // Define the state node with color based on acting player
+    let color = if state.acting_player == myself {
+        "lightgreen"
+    } else {
+        "lightcoral"
+    };
     writeln!(
         dot,
-        "    s{} [label=\"{}\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor=lightblue];",
+        "    s{} [label=\"{}\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor={}];",
         current_state_id,
         // replay " with '
         // state.state.debug_string().replace('"', "'"),
         "State",
         state.acting_player,
         state.proba,
-        state.value
+        state.value,
+        color
     ).unwrap();
 
     // Process each action child
@@ -313,10 +338,10 @@ fn generate_dot_recursive(
         *action_counter += 1;
         let action_id = *action_counter;
 
-        // Define the action node
+        // Define the action node (neutral color)
         writeln!(
             dot,
-            "    a{} [label=\"{}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgreen];",
+            "    a{} [label=\"{}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgrey];",
             action_id,
             format!("P{} {}\n{:?}", action_node.action.actor, action_node.action.is_stack, action_node.action.action),
             action_node.value
@@ -340,6 +365,7 @@ fn generate_dot_recursive(
                 state_counter,
                 action_counter,
                 child_state_id,
+                myself,
             );
         }
     }
