@@ -26,6 +26,7 @@ struct DebugActionNode {
 pub struct ExpectiMiniMaxPlayer {
     pub deck: Deck,
     pub max_depth: usize, // max_depth = 1 it should be value function player
+    pub write_debug_trees: bool,
 }
 
 impl Player for ExpectiMiniMaxPlayer {
@@ -68,23 +69,25 @@ impl Player for ExpectiMiniMaxPlayer {
             .unwrap();
         root.value = best_score;
 
-        // Output Tree in Dot format for visualization
-        let folder = "expectiminimax_trees";
-        std::fs::create_dir_all(folder).unwrap();
+        // Output Tree in Dot format for visualization if enabled
+        if self.write_debug_trees {
+            let folder = "expectiminimax_trees";
+            std::fs::create_dir_all(folder).unwrap();
 
-        // Find next available filename to avoid overwriting
-        let mut counter = 0;
-        let filename = loop {
-            let candidate = format!(
-                "{}/expectiminimax_tree_turn{}_p{}_{}.dot",
-                folder, state.turn_count, myself, counter
-            );
-            if !std::path::Path::new(&candidate).exists() {
-                break candidate;
-            }
-            counter += 1;
-        };
-        save_tree_as_dot(&root, filename).unwrap();
+            // Find next available filename to avoid overwriting
+            let mut counter = 0;
+            let filename = loop {
+                let candidate = format!(
+                    "{}/expectiminimax_tree_turn{}_p{}_{}.dot",
+                    folder, state.turn_count, myself, counter
+                );
+                if !std::path::Path::new(&candidate).exists() {
+                    break candidate;
+                }
+                counter += 1;
+            };
+            save_tree_as_dot(&root, filename).unwrap();
+        }
 
         // You can now use both best_idx and best_score as needed
         possible_actions[best_idx].clone()
