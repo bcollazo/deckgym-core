@@ -28654,7 +28654,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Toasty",
           "fixed_damage": 0,
           "effect": "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
@@ -29445,7 +29445,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Crackly",
           "fixed_damage": 0,
           "effect": "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
@@ -31626,7 +31626,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Toasty",
           "fixed_damage": 0,
           "effect": "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
@@ -31741,7 +31741,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Crackly",
           "fixed_damage": 0,
           "effect": "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
@@ -33854,7 +33854,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Splashy",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
@@ -35701,7 +35701,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Splashy",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."

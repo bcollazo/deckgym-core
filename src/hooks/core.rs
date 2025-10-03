@@ -248,6 +248,16 @@ mod tests {
     }
 
     #[test]
+    fn test_baby_pokemon_contain_energy() {
+        let state = State::default();
+        let baby_card = get_card_by_enum(CardId::A4032Magby);
+        let mut pokemon = to_playable_card(&baby_card, false);
+        pokemon.attached_energy = vec![];
+        let cost = vec![];
+        assert!(contains_energy(&pokemon, &cost, &state, 0));
+    }
+
+    #[test]
     fn test_can_play_support() {
         // Normal state should allow support cards
         let mut state = State::default();
