@@ -1,6 +1,7 @@
 use log::{info, trace, LevelFilter};
 use rand::rngs::StdRng;
 use std::fmt::Debug;
+use std::fmt::Write;
 use std::vec;
 
 use crate::actions::{forecast_action, Action};
@@ -67,15 +68,25 @@ impl Player for ExpectiMiniMaxPlayer {
             .unwrap();
         root.value = best_score;
 
-        // Output Tree in Dot format for visualization. Use a unique filename each time to avoid overwriting
-        // all in one folder.
+        // Output Tree in Dot format for visualization
         let folder = "expectiminimax_trees";
         std::fs::create_dir_all(folder).unwrap();
-        let filename = format!(
-            "{}/expectiminimax_tree_{}.dot",
-            folder,
-            uuid::Uuid::new_v4()
-        );
+
+        // Find next available filename to avoid overwriting
+        let mut counter = 0;
+        let filename = loop {
+            let candidate = format!(
+                "{}/expectiminimax_tree_turn{}_p{}_{}.dot",
+                folder,
+                state.turn_count,
+                myself,
+                counter
+            );
+            if !std::path::Path::new(&candidate).exists() {
+                break candidate;
+            }
+            counter += 1;
+        };
         save_tree_as_dot(&root, filename).unwrap();
 
         // You can now use both best_idx and best_score as needed
@@ -84,84 +95,6 @@ impl Player for ExpectiMiniMaxPlayer {
 
     fn get_deck(&self) -> Deck {
         self.deck.clone()
-    }
-}
-
-fn save_tree_as_dot(root: &StateNode, filename: String) -> std::io::Result<()> {
-    let dot_representation = generate_dot(root);
-    std::fs::write(filename, dot_representation)
-}
-
-use std::fmt::Write;
-
-fn generate_dot(root: &StateNode) -> String {
-    let mut dot = String::new();
-    writeln!(dot, "digraph GameTree {{").unwrap();
-    writeln!(dot, "    rankdir=TB;").unwrap();
-    writeln!(dot, "    node [shape=box];").unwrap();
-
-    let mut state_counter = 0;
-    let mut action_counter = 0;
-
-    generate_dot_recursive(root, &mut dot, &mut state_counter, &mut action_counter, 0);
-
-    writeln!(dot, "}}").unwrap();
-    dot
-}
-
-fn generate_dot_recursive(
-    state: &StateNode,
-    dot: &mut String,
-    state_counter: &mut usize,
-    action_counter: &mut usize,
-    current_state_id: usize,
-) {
-    // Define the state node
-    writeln!(
-        dot,
-        "    s{} [label=\"{}\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor=lightblue];",
-        current_state_id,
-        // replay " with '
-        state.state.debug_string().replace('"', "'"),
-        state.acting_player,
-        state.proba,
-        state.value
-    ).unwrap();
-
-    // Process each action child
-    for action_node in &state.children {
-        *action_counter += 1;
-        let action_id = *action_counter;
-
-        // Define the action node
-        writeln!(
-            dot,
-            "    a{} [label=\"{}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgreen];",
-            action_id,
-            format!("P{} {:?} {}", action_node.action.actor, action_node.action.action, action_node.action.is_stack),
-            action_node.value
-        ).unwrap();
-
-        // Edge from state to action
-        writeln!(dot, "    s{} -> a{};", current_state_id, action_id).unwrap();
-
-        // Process each state child of this action
-        for child_state in &action_node.children {
-            *state_counter += 1;
-            let child_state_id = *state_counter;
-
-            // Edge from action to child state
-            writeln!(dot, "    a{} -> s{};", action_id, child_state_id).unwrap();
-
-            // Recursively process the child state
-            generate_dot_recursive(
-                child_state,
-                dot,
-                state_counter,
-                action_counter,
-                child_state_id,
-            );
-        }
     }
 }
 
@@ -280,52 +213,43 @@ fn expectiminimax(
 }
 
 fn value_function(state: &State, myself: usize) -> f64 {
-    // TODO: Add more features
-    // Give priorities to attached energies?
     let opponent = (myself + 1) % 2;
+    let active_factor = 2.0; // Weight for active pokemon
 
     // Points
     let points = state.points[myself] as f64;
     let opponent_points = state.points[opponent] as f64;
 
-    // Attached energy
-    let attached_energy_in_play = state
+    // HP * Energy for my pokemon
+    let my_value = state
         .enumerate_in_play_pokemon(myself)
-        .map(|(_, card)| card.attached_energy.len() as f64)
-        .sum::<f64>();
-    let enemy_attached_energy_in_play = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(_, card)| card.attached_energy.len() as f64)
+        .map(|(pos, card)| {
+            let hp_energy_product = card.remaining_hp as f64 * card.attached_energy.len() as f64;
+            if pos == 0 {
+                hp_energy_product * active_factor
+            } else {
+                hp_energy_product
+            }
+        })
         .sum::<f64>();
 
-    // Total health of Pokémon on the board
-    let total_health_in_play = state
-        .enumerate_in_play_pokemon(myself)
-        .map(|(_, card)| card.total_hp as f64)
-        .sum::<f64>();
-    let enemy_total_health_in_play = state
+    // HP * Energy for opponent's pokemon
+    let opponent_value = state
         .enumerate_in_play_pokemon(opponent)
-        .map(|(_, card)| card.total_hp as f64)
+        .map(|(pos, card)| {
+            let hp_energy_product = card.remaining_hp as f64 * card.attached_energy.len() as f64;
+            if pos == 0 {
+                hp_energy_product * active_factor
+            } else {
+                hp_energy_product
+            }
+        })
         .sum::<f64>();
 
-    // Remaining health of Pokémon on the board
-    let remaining_health_in_play = state
-        .enumerate_in_play_pokemon(myself)
-        .map(|(_, card)| card.remaining_hp as f64)
-        .sum::<f64>();
-    let enemy_remaining_total_health_in_play = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(_, card)| card.remaining_hp as f64)
-        .sum::<f64>();
-
-    // Weighted value function
     trace!(
-        "Value function: points: {points}, opponent_points: {opponent_points}, total_health_in_play: {total_health_in_play}, enemy_total_health_in_play: {enemy_total_health_in_play}, remaining_health_in_play: {remaining_health_in_play}, enemy_remaining_total_health_in_play: {enemy_remaining_total_health_in_play}, attached_energy_in_play: {attached_energy_in_play}, enemy_attached_energy_in_play: {enemy_attached_energy_in_play}"
+        "Value function: points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}"
     );
-    let score = (points - opponent_points) * 1000.0
-        + (total_health_in_play - enemy_total_health_in_play)
-        + (remaining_health_in_play - enemy_remaining_total_health_in_play)
-        + (attached_energy_in_play - enemy_attached_energy_in_play) * 30.0;
+    let score = (points - opponent_points) * 1000.0 + (my_value - opponent_value);
     trace!("Value function: {score}");
     score
 }
@@ -333,5 +257,90 @@ fn value_function(state: &State, myself: usize) -> f64 {
 impl Debug for ExpectiMiniMaxPlayer {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "ExpectiMiniMaxPlayer")
+    }
+}
+
+fn save_tree_as_dot(root: &StateNode, filename: String) -> std::io::Result<()> {
+    let dot_representation = generate_dot(root);
+    std::fs::write(filename, dot_representation)
+}
+
+fn generate_dot(root: &StateNode) -> String {
+    let mut dot = String::new();
+    writeln!(dot, "digraph GameTree {{").unwrap();
+    writeln!(dot, "    rankdir=TB;").unwrap();
+    writeln!(dot, "    node [shape=box];").unwrap();
+
+    // Add info node with root state debug string
+    let debug_str = root.state.debug_string().replace('"', "'").replace('\n', "\\l") + "\\l";
+    writeln!(
+        dot,
+        "    info [label=\"{}\", shape=box, style=filled, fillcolor=lightyellow, align=left];",
+        debug_str
+    ).unwrap();
+
+    let mut state_counter = 0;
+    let mut action_counter = 0;
+
+    generate_dot_recursive(root, &mut dot, &mut state_counter, &mut action_counter, 0);
+
+    writeln!(dot, "}}").unwrap();
+    dot
+}
+
+fn generate_dot_recursive(
+    state: &StateNode,
+    dot: &mut String,
+    state_counter: &mut usize,
+    action_counter: &mut usize,
+    current_state_id: usize,
+) {
+    // Define the state node
+    writeln!(
+        dot,
+        "    s{} [label=\"{}\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor=lightblue];",
+        current_state_id,
+        // replay " with '
+        // state.state.debug_string().replace('"', "'"),
+        "State",
+        state.acting_player,
+        state.proba,
+        state.value
+    ).unwrap();
+
+    // Process each action child
+    for action_node in &state.children {
+        *action_counter += 1;
+        let action_id = *action_counter;
+
+        // Define the action node
+        writeln!(
+            dot,
+            "    a{} [label=\"{}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgreen];",
+            action_id,
+            format!("P{} {}\n{:?}", action_node.action.actor, action_node.action.is_stack, action_node.action.action),
+            action_node.value
+        ).unwrap();
+
+        // Edge from state to action
+        writeln!(dot, "    s{} -> a{};", current_state_id, action_id).unwrap();
+
+        // Process each state child of this action
+        for child_state in &action_node.children {
+            *state_counter += 1;
+            let child_state_id = *state_counter;
+
+            // Edge from action to child state
+            writeln!(dot, "    a{} -> s{};", action_id, child_state_id).unwrap();
+
+            // Recursively process the child state
+            generate_dot_recursive(
+                child_state,
+                dot,
+                state_counter,
+                action_counter,
+                child_state_id,
+            );
+        }
     }
 }
