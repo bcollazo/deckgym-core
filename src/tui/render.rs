@@ -176,8 +176,8 @@ pub(crate) fn render_pokemon_card<'a>(
                 )]));
             }
 
-            // Pad to maintain consistent height (total 6 lines of content)
-            while lines.len() < 5 {
+            // Pad to maintain consistent height (total 5 lines of content)
+            while lines.len() < 4 {
                 lines.push(Line::from(""));
             }
 
@@ -203,7 +203,6 @@ pub(crate) fn render_pokemon_card<'a>(
         }
         None => {
             let lines = vec![
-                Line::from(""),
                 Line::from(""),
                 Line::from(""),
                 Line::from(""),
