@@ -325,11 +325,8 @@ fn generate_dot_recursive(
     };
     writeln!(
         dot,
-        "    s{} [label=\"{}\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor={}];",
+        "    s{} [label=\"State\\nPlayer: {}\\nProba: {:.3}\\nValue: {:.3}\", style=filled, fillcolor={}];",
         current_state_id,
-        // replay " with '
-        // state.state.debug_string().replace('"', "'"),
-        "State",
         state.acting_player,
         state.proba,
         state.value,
@@ -344,9 +341,11 @@ fn generate_dot_recursive(
         // Define the action node (neutral color)
         writeln!(
             dot,
-            "    a{} [label=\"{}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgrey];",
+            "    a{} [label=\"P{} {}\\n{:?}\\nValue: {:.3}\", shape=ellipse, style=filled, fillcolor=lightgrey];",
             action_id,
-            format!("P{} {}\n{:?}", action_node.action.actor, action_node.action.is_stack, action_node.action.action),
+            action_node.action.actor,
+            action_node.action.is_stack,
+            action_node.action.action,
             action_node.value
         ).unwrap();
 
