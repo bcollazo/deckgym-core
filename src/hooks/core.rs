@@ -94,6 +94,10 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     }
 }
 
+pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
+    // TODO: Implement Suicune, Zeraora, etc... that trigger on turn end
+}
+
 // TODO: Implement Gengars ability that disallow playing support cards.
 pub(crate) fn can_play_support(state: &State) -> bool {
     let has_modifiers = state

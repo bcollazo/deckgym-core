@@ -2,7 +2,11 @@ use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
-    actions::SimpleAction, hooks::get_counterattack_damage, state::GameOutcome, types::Card, State,
+    actions::SimpleAction,
+    hooks::{get_counterattack_damage, on_end_turn},
+    state::GameOutcome,
+    types::Card,
+    State,
 };
 
 use super::Action;
@@ -73,7 +77,10 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
         let paralyzed_to_handle = paralyzed_to_handle.clone();
         let poisons_to_handle = poisons_to_handle.clone();
         outcomes.push(Box::new({
-            |_, state, _| {
+            |_, state, action| {
+                // Important for these to happen before Pokemon Checkup (Zeraora, Suicune, etc)
+                on_end_turn(action.actor, state);
+
                 apply_pokemon_checkup(
                     state,
                     sleeps_to_handle,
