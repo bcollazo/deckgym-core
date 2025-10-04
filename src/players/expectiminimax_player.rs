@@ -1,4 +1,4 @@
-use log::{info, trace, LevelFilter};
+use log::{trace, LevelFilter};
 use rand::rngs::StdRng;
 use std::fmt::Debug;
 use std::fmt::Write;
@@ -106,7 +106,7 @@ fn expected_value_function(
     myself: usize,
 ) -> (f64, DebugActionNode) {
     let indent = "  ".repeat(depth);
-    info!("{indent}E({myself}) depth left: {depth} action: {action:?}");
+    trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
     let (probabilities, mutations) = forecast_action(state, action);
     let mut outcomes: Vec<State> = vec![];
@@ -137,7 +137,7 @@ fn expected_value_function(
         .sum::<f64>();
 
     action_node.value = score;
-    info!("{indent}E({myself}) action: {action:?} score: {score}");
+    trace!("{indent}E({myself}) action: {action:?} score: {score}");
     (score, action_node)
 }
 
