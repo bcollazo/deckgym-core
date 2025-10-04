@@ -376,12 +376,12 @@ pub fn ui(f: &mut Frame, app: &App) {
             };
 
             format!(
-                "Controls: ESC/q=quit, 1-9=select action, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
+                "Controls: ESC/q=quit, 1-9=select action, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
                 actions_text
             )
         } else {
             // AI turn - show waiting message
-            "Controls: ESC/q=quit, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
+            "Controls: ESC/q=quit, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
         }
     } else {
         // Replay mode footer
@@ -398,7 +398,7 @@ pub fn ui(f: &mut Frame, app: &App) {
         };
 
         format!(
-            "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
+            "Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
             actor + 1,
             actions_text
         )
