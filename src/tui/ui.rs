@@ -78,14 +78,12 @@ pub fn ui(f: &mut Frame, app: &App) {
             " "
         };
 
-        let lines = vec![
-            Line::from(vec![Span::styled(
-                format!("{left_arrow} ? {right_arrow}"),
-                Style::default()
-                    .fg(Color::DarkGray)
-                    .add_modifier(Modifier::BOLD),
-            )]),
-        ];
+        let lines = vec![Line::from(vec![Span::styled(
+            format!("{left_arrow} ? {right_arrow}"),
+            Style::default()
+                .fg(Color::DarkGray)
+                .add_modifier(Modifier::BOLD),
+        )])];
 
         let title = format!("#{}", card_index + 1);
         let opponent_card_block = Paragraph::new(lines)
