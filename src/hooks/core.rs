@@ -94,7 +94,7 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     }
 }
 
-pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
+pub(crate) fn on_end_turn(_player_ending_turn: usize, _state: &mut State) {
     // TODO: Implement Suicune, Zeraora, etc... that trigger on turn end
 }
 
