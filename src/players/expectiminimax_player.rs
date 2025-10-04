@@ -123,28 +123,19 @@ fn expected_value_function(
         children: vec![],
         value: 0.0,
     };
-    for (i, outcome) in outcomes.iter().enumerate() {
+    for (prob, outcome) in probabilities.iter().zip(outcomes.iter()) {
         let (score, mut state_node) = expectiminimax(rng, outcome, depth, myself);
         scores.push(score);
-        state_node.proba = if probabilities.is_empty() {
-            1.0
-        } else {
-            probabilities[i]
-        };
+        state_node.proba = *prob;
         action_node.children.push(state_node);
     }
 
-    let score = if probabilities.is_empty() {
-        // Deterministic action
-        scores[0]
-    } else {
-        // Stochastic action
-        probabilities
-            .iter()
-            .zip(scores.iter())
-            .map(|(p, s)| p * s)
-            .sum::<f64>()
-    };
+    let score = probabilities
+        .iter()
+        .zip(scores.iter())
+        .map(|(p, s)| p * s)
+        .sum::<f64>();
+
     action_node.value = score;
     info!("{indent}E({myself}) action: {action:?} score: {score}");
     (score, action_node)
