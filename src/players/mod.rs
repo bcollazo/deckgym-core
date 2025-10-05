@@ -99,7 +99,11 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
         PlayerCode::W => Box::new(WeightedRandomPlayer { deck }),
         PlayerCode::M => Box::new(MctsPlayer::new(deck, 100)),
         PlayerCode::V => Box::new(ValueFunctionPlayer { deck }),
-        PlayerCode::E => Box::new(ExpectiMiniMaxPlayer { deck, max_depth: 3 }),
+        PlayerCode::E => Box::new(ExpectiMiniMaxPlayer {
+            deck,
+            max_depth: 3,
+            write_debug_trees: false,
+        }),
         PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
     }
 }

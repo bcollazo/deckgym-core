@@ -25623,7 +25623,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Toasty".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
@@ -26337,7 +26337,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Crackly".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
@@ -28294,7 +28294,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Toasty".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
@@ -28399,7 +28399,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Crackly".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
@@ -30274,7 +30274,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Splashy".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
@@ -31904,7 +31904,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Splashy".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),

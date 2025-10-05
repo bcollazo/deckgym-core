@@ -23,45 +23,19 @@ pub fn ui(f: &mut Frame, app: &App) {
         ])
         .split(f.area());
 
-    // Center: game area with header, battle mat, hand areas, and footer
+    // Center: game area with battle mat, hand areas, and footer (no separate header)
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
-                Constraint::Length(3), // Header
-                Constraint::Length(5), // Opponent's hand
+                Constraint::Length(3), // Opponent's hand (reduced height)
                 Constraint::Min(0),    // Battle mat
                 Constraint::Length(5), // Player's hand
-                Constraint::Length(8), // Footer
+                Constraint::Length(6), // Footer (includes header info, reduced size)
             ]
             .as_ref(),
         )
         .split(main_chunks[1]);
-
-    // Title block with game status
-    let title_text = if is_interactive {
-        format!(
-            "DeckGym TUI [INTERACTIVE] | Turn: {} | P1 Points: {} | P2 Points: {}",
-            state.turn_count, state.points[0], state.points[1]
-        )
-    } else {
-        format!(
-            "DeckGym TUI [REPLAY] - State: {}/{} | Turn: {} | P1 Points: {} | P2 Points: {}",
-            app.get_current_state_index() + 1,
-            app.get_states_len(),
-            state.turn_count,
-            state.points[0],
-            state.points[1]
-        )
-    };
-    let title = Paragraph::new(title_text)
-        .style(
-            Style::default()
-                .fg(Color::Cyan)
-                .add_modifier(Modifier::BOLD),
-        )
-        .block(Block::default().borders(Borders::ALL).title("DeckGym"));
-    f.render_widget(title, chunks[0]);
 
     // Opponent's hand (opponent is player 0)
     let opponent_hand = &state.hands[0];
@@ -82,7 +56,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             Constraint::Length(18), // Card 5
             Constraint::Min(0),     // Right padding
         ])
-        .split(chunks[1]);
+        .split(chunks[0]);
 
     // Render up to 5 cards from opponent's hand (as hidden cards) with scroll offset
     let opponent_start = app.opponent_hand_scroll;
@@ -104,23 +78,17 @@ pub fn ui(f: &mut Frame, app: &App) {
             " "
         };
 
-        let lines = vec![
-            Line::from(vec![Span::styled(
-                format!("{left_arrow} 🂠 {right_arrow}"),
-                Style::default()
-                    .fg(Color::DarkGray)
-                    .add_modifier(Modifier::BOLD),
-            )]),
-            Line::from(vec![Span::styled(
-                "????",
-                Style::default().fg(Color::DarkGray),
-            )]),
-            Line::from(""),
-        ];
+        let lines = vec![Line::from(vec![Span::styled(
+            format!("{left_arrow} ? {right_arrow}"),
+            Style::default()
+                .fg(Color::DarkGray)
+                .add_modifier(Modifier::BOLD),
+        )])];
 
         let title = format!("#{}", card_index + 1);
         let opponent_card_block = Paragraph::new(lines)
             .style(Style::default().fg(Color::DarkGray))
+            .alignment(Alignment::Center)
             .block(
                 Block::default()
                     .borders(Borders::ALL)
@@ -145,7 +113,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             ]
             .as_ref(),
         )
-        .split(chunks[2]);
+        .split(chunks[1]);
 
     // Opponent bench (top row) - centered layout
     let opponent_bench_chunks = Layout::default()
@@ -297,7 +265,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             Constraint::Length(18), // Card 5
             Constraint::Min(0),     // Right padding
         ])
-        .split(chunks[3]);
+        .split(chunks[2]);
 
     // Render up to 5 cards from player's hand with scroll offset
     let player_start = app.player_hand_scroll;
@@ -327,10 +295,13 @@ pub fn ui(f: &mut Frame, app: &App) {
             lines.insert(
                 0,
                 Line::from(vec![
-                    Span::styled(format!("{left_arrow} "), Style::default().fg(Color::Yellow)),
+                    Span::styled(
+                        format!("{left_arrow} "),
+                        Style::default().fg(Color::LightYellow),
+                    ),
                     Span::styled(
                         format!(" {right_arrow}"),
-                        Style::default().fg(Color::Yellow),
+                        Style::default().fg(Color::LightYellow),
                     ),
                 ]),
             );
@@ -348,9 +319,26 @@ pub fn ui(f: &mut Frame, app: &App) {
         f.render_widget(hand_card_block, hand_chunks[chunk_index]);
     }
 
-    // Footer with possible actions
+    // Footer with game status and possible actions
     let actor = app.get_current_actor();
     let actions = app.get_possible_actions();
+
+    // Build header line with game status
+    let header_line = if is_interactive {
+        format!(
+            "DeckGym [INTERACTIVE] | Turn: {} | P1: {} pts | P2: {} pts",
+            state.turn_count, state.points[0], state.points[1]
+        )
+    } else {
+        format!(
+            "DeckGym [REPLAY] State: {}/{} | Turn: {} | P1: {} pts | P2: {} pts",
+            app.get_current_state_index() + 1,
+            app.get_states_len(),
+            state.turn_count,
+            state.points[0],
+            state.points[1]
+        )
+    };
 
     let footer_text = if is_interactive {
         // Interactive mode footer
@@ -373,12 +361,12 @@ pub fn ui(f: &mut Frame, app: &App) {
             };
 
             format!(
-                "Controls: ESC/q=quit, 1-9=select action, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
+                "Controls: ESC/q=quit, 1-9=select action, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
                 actions_text
             )
         } else {
             // AI turn - show waiting message
-            "Controls: ESC/q=quit, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
+            "Controls: ESC/q=quit, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
         }
     } else {
         // Replay mode footer
@@ -395,7 +383,7 @@ pub fn ui(f: &mut Frame, app: &App) {
         };
 
         format!(
-            "Controls: ESC/q=quit, Up/Down=navigate states, Space=next, PgUp/PgDn=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
+            "Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
             actor + 1,
             actions_text
         )
@@ -403,8 +391,8 @@ pub fn ui(f: &mut Frame, app: &App) {
 
     let footer = Paragraph::new(footer_text)
         .style(Style::default().fg(Color::Cyan))
-        .block(Block::default().borders(Borders::ALL).title("Actions"));
-    f.render_widget(footer, chunks[4]);
+        .block(Block::default().borders(Borders::ALL).title(header_line));
+    f.render_widget(footer, chunks[3]);
 
     // Left side: Battle log panel with actions
     let mut log_lines = Vec::new();
@@ -521,7 +509,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                     log_lines.push(Line::from(vec![Span::styled(
                         ">>> CURRENT <<<",
                         Style::default()
-                            .fg(Color::Yellow)
+                            .fg(Color::LightYellow)
                             .add_modifier(Modifier::BOLD),
                     )]));
                 }
@@ -567,7 +555,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                 log_lines.push(Line::from(vec![Span::styled(
                     ">>> CURRENT <<<",
                     Style::default()
-                        .fg(Color::Yellow)
+                        .fg(Color::LightYellow)
                         .add_modifier(Modifier::BOLD),
                 )]));
                 log_lines.push(Line::from("Game Start"));

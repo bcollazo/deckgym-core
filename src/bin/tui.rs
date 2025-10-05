@@ -95,10 +95,10 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                         app.handle_action_selection(index);
                     }
                     // Replay mode controls
-                    KeyCode::Down | KeyCode::Char(' ') => app.next_state(),
+                    KeyCode::Down => app.next_state(),
                     KeyCode::Up => app.prev_state(),
-                    KeyCode::PageUp => app.scroll_page_up(),
-                    KeyCode::PageDown => app.scroll_page_down(),
+                    KeyCode::Char('w') => app.scroll_page_up(),
+                    KeyCode::Char('s') => app.scroll_page_down(),
                     KeyCode::Left => app.scroll_player_hand_left(),
                     KeyCode::Right => app.scroll_player_hand_right(),
                     KeyCode::Char('A') => app.scroll_opponent_hand_left(),

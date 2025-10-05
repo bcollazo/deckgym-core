@@ -94,6 +94,10 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     }
 }
 
+pub(crate) fn on_end_turn(_player_ending_turn: usize, _state: &mut State) {
+    // TODO: Implement Suicune, Zeraora, etc... that trigger on turn end
+}
+
 // TODO: Implement Gengars ability that disallow playing support cards.
 pub(crate) fn can_play_support(state: &State) -> bool {
     let has_modifiers = state
@@ -244,6 +248,16 @@ mod tests {
         let mut pokemon = to_playable_card(&water_card, false);
         pokemon.attached_energy = vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire];
         let cost = vec![EnergyType::Colorless, EnergyType::Colorless];
+        assert!(contains_energy(&pokemon, &cost, &state, 0));
+    }
+
+    #[test]
+    fn test_baby_pokemon_contain_energy() {
+        let state = State::default();
+        let baby_card = get_card_by_enum(CardId::A4032Magby);
+        let mut pokemon = to_playable_card(&baby_card, false);
+        pokemon.attached_energy = vec![];
+        let cost = vec![];
         assert!(contains_energy(&pokemon, &cost, &state, 0));
     }
 

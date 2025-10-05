@@ -9,7 +9,7 @@ pub(crate) fn energy_type_to_color(energy_type: EnergyType) -> Color {
         EnergyType::Grass => Color::Green,
         EnergyType::Fire => Color::Red,
         EnergyType::Water => Color::Blue,
-        EnergyType::Lightning => Color::Yellow,
+        EnergyType::Lightning => Color::LightYellow,
         EnergyType::Psychic => Color::Magenta,
         EnergyType::Fighting => Color::Red,
         EnergyType::Darkness => Color::DarkGray,
@@ -42,7 +42,7 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
     let mut lines = vec![Line::from(vec![Span::styled(
         format!("#{}", index + 1),
         Style::default()
-            .fg(Color::Yellow)
+            .fg(Color::LightYellow)
             .add_modifier(Modifier::BOLD),
     )])];
 
@@ -176,8 +176,8 @@ pub(crate) fn render_pokemon_card<'a>(
                 )]));
             }
 
-            // Pad to maintain consistent height (total 6 lines of content)
-            while lines.len() < 5 {
+            // Pad to maintain consistent height (total 5 lines of content)
+            while lines.len() < 4 {
                 lines.push(Line::from(""));
             }
 
@@ -203,7 +203,6 @@ pub(crate) fn render_pokemon_card<'a>(
         }
         None => {
             let lines = vec![
-                Line::from(""),
                 Line::from(""),
                 Line::from(""),
                 Line::from(""),
