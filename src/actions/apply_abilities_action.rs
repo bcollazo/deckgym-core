@@ -26,6 +26,7 @@ pub(crate) fn forecast_ability(
     match ability_id {
         AbilityId::A1007Butterfree => heal_your_pokemon(20),
         AbilityId::A1020VictreebelFragranceTrap => switch_opponent_basic_to_active(action.actor),
+        AbilityId::A1089GreninjaWaterShuriken => damage_opponent_pokemon(action.actor, 20),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
@@ -103,6 +104,26 @@ fn charge_grass_pokemon(acting_player: usize) -> (Probabilities, Mutations) {
             .map(|(in_play_idx, _)| SimpleAction::Attach {
                 attachments: vec![(1, EnergyType::Grass, in_play_idx)],
                 is_turn_energy: false,
+            })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((acting_player, possible_moves));
+    }))
+}
+
+fn damage_opponent_pokemon(acting_player: usize, damage: u32) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, _| {
+        // Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.
+        debug!(
+            "Greninja's ability: Dealing {} damage to 1 opponent's Pokemon",
+            damage
+        );
+        let opponent = (acting_player + 1) % 2;
+        let possible_moves = state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+                targets: vec![(damage, in_play_idx)],
             })
             .collect::<Vec<_>>();
         state
