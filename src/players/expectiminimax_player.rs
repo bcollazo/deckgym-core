@@ -105,7 +105,7 @@ fn expected_value_function(
     depth: usize,
     myself: usize,
 ) -> (f64, DebugActionNode) {
-    let indent = "\t".repeat(3 - depth);
+    let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
     let (probabilities, mutations) = forecast_action(state, action);
