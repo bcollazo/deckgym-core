@@ -11,6 +11,7 @@ pub enum AbilityId {
     A1a006SerperiorJungleTotem,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2b035GiratinaExBrokenSpaceBellow,
     A3122SolgaleoExRisingRoad,
     A3a027ShiinoticIlluminate,
     A3b034SylveonExHappyRibbon,
@@ -35,6 +36,9 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2b 035", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
+        m.insert("A2b 083", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
+        m.insert("A2b 096", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A3 122", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 207", AbilityId::A3122SolgaleoExRisingRoad);
