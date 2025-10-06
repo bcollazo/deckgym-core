@@ -34,6 +34,7 @@ pub fn forecast_trainer_action(
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A2a072Irida | CardId::A2a087Irida => doutcome(irida_effect),
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
@@ -52,6 +53,16 @@ pub fn forecast_trainer_action(
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 50, Some(EnergyType::Grass));
+}
+
+fn irida_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 40 damage from each of your Pokémon that has any Water Energy attached.
+    debug!("Irida: Healing 40 damage from each Pokemon with Water Energy attached");
+    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+        if pokemon.attached_energy.contains(&EnergyType::Water) {
+            pokemon.heal(40);
+        }
+    }
 }
 
 fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
