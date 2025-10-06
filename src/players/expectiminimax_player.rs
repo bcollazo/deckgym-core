@@ -105,15 +105,15 @@ fn expected_value_function(
     depth: usize,
     myself: usize,
 ) -> (f64, DebugActionNode) {
-    let indent = "  ".repeat(depth);
+    let indent = "\t".repeat(3 - depth);
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
     let (probabilities, mutations) = forecast_action(state, action);
     let mut outcomes: Vec<State> = vec![];
     for mutation in mutations {
-        let mut state = state.clone();
-        mutation(rng, &mut state, action);
-        outcomes.push(state);
+        let mut state_copy = state.clone();
+        mutation(rng, &mut state_copy, action);
+        outcomes.push(state_copy);
     }
 
     // Mantain node
@@ -243,13 +243,10 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let hand_size = state.hands[myself].len() as f64;
     let opponent_hand_size = state.hands[opponent].len() as f64;
 
-    trace!(
-        "Value function: points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size}"
-    );
     let score = (points - opponent_points) * 10000.0
         + (my_value - opponent_value)
         + (hand_size - opponent_hand_size) * 1.0;
-    trace!("Value function: {score}");
+    trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size})");
     score
 }
 
