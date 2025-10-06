@@ -47,6 +47,7 @@ pub fn forecast_trainer_action(
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
         CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
+        CardId::A3a064Repel => doutcome(repel_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -148,6 +149,18 @@ fn leaf_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 
 fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    let opponent_player = (action.actor + 1) % 2;
+    let possible_moves = state
+        .enumerate_bench_pokemon(opponent_player)
+        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .collect::<Vec<_>>();
+    state
+        .move_generation_stack
+        .push((opponent_player, possible_moves));
+}
+
+fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)

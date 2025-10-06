@@ -52,6 +52,7 @@ pub fn generate_possible_trainer_actions(
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
         CardId::A2155Mars | CardId::A2195Mars => can_play_trainer(state, trainer_card),
         CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
+        CardId::A3a064Repel => can_play_repel(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
@@ -178,6 +179,17 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged())
         .count();
     if damaged_bench_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Repel can be played (requires opponent's active to be a Basic pokemon)
+fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    if opponent_active.card.is_basic() {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
