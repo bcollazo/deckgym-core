@@ -49,6 +49,7 @@ pub fn generate_possible_trainer_actions(
         CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
         CardId::A1225Sabrina | CardId::A1272Sabrina => can_play_sabrina(state, trainer_card),
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
+        CardId::A2155Mars | CardId::A2195Mars => can_play_trainer(state, trainer_card),
         CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
