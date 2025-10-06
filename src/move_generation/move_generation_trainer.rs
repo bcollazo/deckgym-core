@@ -29,8 +29,11 @@ pub fn generate_possible_trainer_actions(
     state: &State,
     trainer_card: &TrainerCard,
 ) -> Option<Vec<SimpleAction>> {
+    if state.turn_count == 0 {
+        return cannot_play_trainer(); // No trainers on initial setup phase
+    }
     if trainer_card.trainer_card_type == TrainerType::Supporter && !can_play_support(state) {
-        return Some(vec![]); // dont even check which type it is
+        return cannot_play_trainer(); // dont even check which type it is
     }
 
     // Pokemon tools can be played if there is a space in the mat for them.
