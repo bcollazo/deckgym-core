@@ -115,6 +115,7 @@ fn forecast_effect_attack(
         AttackId::A2b007MeowscaradaFightingClaws => {
             extra_damage_if_opponent_is_ex(acting_player, state, 60, 70)
         }
+        AttackId::A2b035GiratinaExChaoticImpact => self_damage_attack(130, 20),
         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
         AttackId::A1023ExeggutorExTropicalSwing => {
@@ -275,6 +276,7 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
+        AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
@@ -466,6 +468,20 @@ fn bench_count_attack(
         }
     }
     active_damage_doutcome(base_damage + damage_per * bench_count)
+}
+
+/// For attacks that do damage for each benched Pokémon on both sides.
+///  e.g. "Suicune Ex Crystal Waltz".
+fn all_bench_count_attack(
+    acting_player: usize,
+    state: &State,
+    damage_per: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let your_bench_count = state.enumerate_bench_pokemon(acting_player).count() as u32;
+    let opponent_bench_count = state.enumerate_bench_pokemon(opponent).count() as u32;
+    let total_bench_count = your_bench_count + opponent_bench_count;
+    active_damage_doutcome(damage_per * total_bench_count)
 }
 
 /// Used for attacks that can go directly to one of your own benched Pokémon.
