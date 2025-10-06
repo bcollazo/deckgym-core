@@ -192,7 +192,8 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
-    if opponent_active.card.is_basic() {
+    let opponent_bench_count = state.enumerate_bench_pokemon(opponent).count();
+    if opponent_active.card.is_basic() && opponent_bench_count > 0 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
