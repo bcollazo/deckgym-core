@@ -94,8 +94,19 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     }
 }
 
-pub(crate) fn on_end_turn(_player_ending_turn: usize, _state: &mut State) {
-    // TODO: Implement Suicune, Zeraora, etc... that trigger on turn end
+pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
+    // Check if active Pokémon has an end-of-turn ability
+    let active = state.get_active(player_ending_turn);
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&active.card.get_id()[..]) {
+        if ability_id == AbilityId::A4a020SuicuneExLegendaryPulse {
+            // At the end of your turn, if this Pokémon is in the Active Spot, draw a card.
+            debug!("Suicune ex's Legendary Pulse: Drawing a card");
+            state.move_generation_stack.push((
+                player_ending_turn,
+                vec![SimpleAction::DrawCard { amount: 1 }],
+            ));
+        }
+    }
 }
 
 // TODO: Implement Gengars ability that disallow playing support cards.
