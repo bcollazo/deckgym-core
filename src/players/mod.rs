@@ -9,7 +9,6 @@ mod value_function_player;
 mod weighted_random_player;
 
 pub use attach_attack_player::AttachAttackPlayer;
-use clap::ValueEnum;
 pub use end_turn_player::EndTurnPlayer;
 pub use evolution_rusher_player::EvolutionRusherPlayer;
 pub use expectiminimax_player::ExpectiMiniMaxPlayer;
@@ -34,7 +33,7 @@ pub trait Player: Debug {
 }
 
 /// Enum for allowed player strategies
-#[derive(Debug, ValueEnum, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PlayerCode {
     AA,
     ET,
@@ -43,12 +42,27 @@ pub enum PlayerCode {
     W,
     M,
     V,
-    E,
+    E { max_depth: usize },
     ER, // Evolution Rusher
 }
 /// Custom parser function enforcing case-insensitivity
 pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
-    match s.to_ascii_lowercase().as_str() {
+    let lower = s.to_ascii_lowercase();
+
+    // Check if it starts with 'e' followed by digits (e.g., e2, e4)
+    if lower.starts_with('e') && lower.len() > 1 {
+        let rest = &lower[1..];
+        if let Ok(max_depth) = rest.parse::<usize>() {
+            return Ok(PlayerCode::E { max_depth });
+        }
+        // If it starts with 'e' but not followed by valid number, check if it's 'er'
+        if lower == "er" {
+            return Ok(PlayerCode::ER);
+        }
+        return Err(format!("Invalid player code: {s}. Use 'e<number>' for ExpectiMiniMax with depth, e.g., 'e2', 'e5'"));
+    }
+
+    match lower.as_str() {
         "aa" => Ok(PlayerCode::AA),
         "et" => Ok(PlayerCode::ET),
         "r" => Ok(PlayerCode::R),
@@ -56,7 +70,7 @@ pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
         "w" => Ok(PlayerCode::W),
         "m" => Ok(PlayerCode::M),
         "v" => Ok(PlayerCode::V),
-        "e" => Ok(PlayerCode::E),
+        "e" => Ok(PlayerCode::E { max_depth: 3 }), // Default depth
         "er" => Ok(PlayerCode::ER),
         _ => Err(format!("Invalid player code: {s}")),
     }
@@ -99,9 +113,9 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
         PlayerCode::W => Box::new(WeightedRandomPlayer { deck }),
         PlayerCode::M => Box::new(MctsPlayer::new(deck, 100)),
         PlayerCode::V => Box::new(ValueFunctionPlayer { deck }),
-        PlayerCode::E => Box::new(ExpectiMiniMaxPlayer {
+        PlayerCode::E { max_depth } => Box::new(ExpectiMiniMaxPlayer {
             deck,
-            max_depth: 3,
+            max_depth: *max_depth,
             write_debug_trees: false,
         }),
         PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
