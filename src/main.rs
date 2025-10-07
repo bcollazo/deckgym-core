@@ -39,6 +39,10 @@ enum Commands {
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
+
+        /// Export training data to JSON file
+        #[arg(long)]
+        export_training_data: Option<String>,
     },
     /// Optimize an incomplete deck against enemy decks
     Optimize {
@@ -83,12 +87,13 @@ fn main() {
             num,
             seed,
             verbose,
+            export_training_data,
         } => {
             initialize_logger(verbose);
 
             warn!("Welcome to {} simulation!", "deckgym".blue().bold());
 
-            simulate(&deck_a, &deck_b, players, num, seed);
+            simulate(&deck_a, &deck_b, players, num, seed, export_training_data.as_deref());
         }
         Commands::Optimize {
             incomplete_deck,
