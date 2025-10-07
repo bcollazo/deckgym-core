@@ -6,6 +6,7 @@ pub mod card_logic;
 pub mod database;
 pub mod deck;
 pub mod effects;
+pub mod export;
 pub mod game;
 mod hooks;
 pub mod move_generation;
