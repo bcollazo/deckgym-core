@@ -196,23 +196,36 @@ pub(crate) fn contains_energy(
     state: &State,
     player: usize,
 ) -> bool {
+    energy_missing(pokemon, cost, state, player).is_empty()
+}
+
+pub(crate) fn energy_missing(
+    pokemon: &PlayedCard,
+    cost: &[EnergyType],
+    state: &State,
+    player: usize,
+) -> Vec<EnergyType> {
+    let mut energy_missing = vec![];
     let mut effective_attached = pokemon.get_effective_attached_energy(state, player);
 
     // First try to match the non-colorless energy
     let non_colorless_cost = cost.iter().filter(|x| **x != EnergyType::Colorless);
-    let colorless_cost = cost.iter().filter(|x| **x == EnergyType::Colorless);
-
     for energy in non_colorless_cost {
         let index = effective_attached.iter().position(|x| *x == *energy);
         if let Some(i) = index {
             effective_attached.remove(i);
         } else {
-            return false;
+            energy_missing.push(*energy);
         }
     }
-
     // If all non-colorless energy is satisfied, check if there are enough colorless energy
-    effective_attached.len() >= colorless_cost.count()
+    // with what is left
+    let colorless_cost = cost.iter().filter(|x| **x == EnergyType::Colorless);
+    let colorless_missing = colorless_cost
+        .count()
+        .saturating_sub(effective_attached.len());
+    energy_missing.extend(vec![EnergyType::Colorless; colorless_missing]);
+    energy_missing
 }
 
 // Test Colorless is wildcard when counting energy
