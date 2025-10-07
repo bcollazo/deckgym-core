@@ -29,8 +29,11 @@ pub fn generate_possible_trainer_actions(
     state: &State,
     trainer_card: &TrainerCard,
 ) -> Option<Vec<SimpleAction>> {
+    if state.turn_count == 0 {
+        return cannot_play_trainer(); // No trainers on initial setup phase
+    }
     if trainer_card.trainer_card_type == TrainerType::Supporter && !can_play_support(state) {
-        return Some(vec![]); // dont even check which type it is
+        return cannot_play_trainer(); // dont even check which type it is
     }
 
     // Pokemon tools can be played if there is a space in the mat for them.
@@ -43,13 +46,16 @@ pub fn generate_possible_trainer_actions(
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
+        CardId::A2a072Irida | CardId::A2a087Irida => can_play_irida(state, trainer_card),
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => {
             can_play_lillie(state, trainer_card)
         }
         CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
         CardId::A1225Sabrina | CardId::A1272Sabrina => can_play_sabrina(state, trainer_card),
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
+        CardId::A2155Mars | CardId::A2195Mars => can_play_trainer(state, trainer_card),
         CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
+        CardId::A3a064Repel => can_play_repel(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
@@ -99,6 +105,19 @@ fn can_play_erika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.get_energy_type() == Some(EnergyType::Grass))
         .count();
     if damaged_grass_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Irida can be played (requires at least 1 damaged pokemon with Water energy attached)
+fn can_play_irida(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let damaged_water_count = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .filter(|(_, x)| x.is_damaged() && x.attached_energy.contains(&EnergyType::Water))
+        .count();
+    if damaged_water_count > 0 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
@@ -163,6 +182,18 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged())
         .count();
     if damaged_bench_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Repel can be played (requires opponent's active to be a Basic pokemon)
+fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let opponent_bench_count = state.enumerate_bench_pokemon(opponent).count();
+    if opponent_active.card.is_basic() && opponent_bench_count > 0 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

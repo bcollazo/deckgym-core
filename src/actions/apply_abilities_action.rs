@@ -26,14 +26,19 @@ pub(crate) fn forecast_ability(
     match ability_id {
         AbilityId::A1007Butterfree => heal_your_pokemon(20),
         AbilityId::A1020VictreebelFragranceTrap => switch_opponent_basic_to_active(action.actor),
+        AbilityId::A1089GreninjaWaterShuriken => damage_opponent_pokemon(action.actor, 20),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A2a010LeafeonExForestBreath => charge_grass_pokemon(action.actor),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2b035GiratinaExBrokenSpaceBellow => charge_giratina_and_end_turn(index),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
+        AbilityId::A4a020SuicuneExLegendaryPulse => {
+            panic!("Legendary Pulse is triggered at end of turn")
+        }
     }
 }
 
@@ -108,5 +113,41 @@ fn charge_grass_pokemon(acting_player: usize) -> (Probabilities, Mutations) {
         state
             .move_generation_stack
             .push((acting_player, possible_moves));
+    }))
+}
+
+fn damage_opponent_pokemon(acting_player: usize, damage: u32) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, _| {
+        // Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.
+        debug!(
+            "Greninja's ability: Dealing {} damage to 1 opponent's Pokemon",
+            damage
+        );
+        let opponent = (acting_player + 1) % 2;
+        let possible_moves = state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+                targets: vec![(damage, in_play_idx)],
+            })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((acting_player, possible_moves));
+    }))
+}
+
+fn charge_giratina_and_end_turn(index: usize) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, action| {
+        // Once during your turn, you may take a Psychic Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.
+        debug!("Giratina ex's ability: Attaching 1 Psychic Energy and ending turn");
+        let pokemon = state.in_play_pokemon[action.actor][index]
+            .as_mut()
+            .expect("Pokemon should be there");
+        pokemon.attach_energy(&EnergyType::Psychic, 1);
+
+        // End the turn after using this ability
+        state
+            .move_generation_stack
+            .push((action.actor, vec![SimpleAction::EndTurn]));
     }))
 }

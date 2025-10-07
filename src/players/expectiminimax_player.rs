@@ -5,6 +5,9 @@ use std::fmt::Write;
 use std::vec;
 
 use crate::actions::{forecast_action, Action};
+use crate::hooks::energy_missing;
+use crate::types::EnergyType;
+use crate::types::PlayedCard;
 use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;
@@ -105,15 +108,15 @@ fn expected_value_function(
     depth: usize,
     myself: usize,
 ) -> (f64, DebugActionNode) {
-    let indent = "  ".repeat(depth);
+    let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
     let (probabilities, mutations) = forecast_action(state, action);
     let mut outcomes: Vec<State> = vec![];
     for mutation in mutations {
-        let mut state = state.clone();
-        mutation(rng, &mut state, action);
-        outcomes.push(state);
+        let mut state_copy = state.clone();
+        mutation(rng, &mut state_copy, action);
+        outcomes.push(state_copy);
     }
 
     // Mantain node
@@ -215,8 +218,8 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let my_value = state
         .enumerate_in_play_pokemon(myself)
         .map(|(pos, card)| {
-            let hp_energy_product =
-                card.remaining_hp as f64 * (card.attached_energy.len() + 1) as f64;
+            let relevant_energy = get_relevant_energy(state, opponent, card);
+            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
@@ -229,8 +232,8 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let opponent_value = state
         .enumerate_in_play_pokemon(opponent)
         .map(|(pos, card)| {
-            let hp_energy_product =
-                card.remaining_hp as f64 * (card.attached_energy.len() + 1) as f64;
+            let relevant_energy = get_relevant_energy(state, opponent, card);
+            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
@@ -243,13 +246,10 @@ fn value_function(state: &State, myself: usize) -> f64 {
     let hand_size = state.hands[myself].len() as f64;
     let opponent_hand_size = state.hands[opponent].len() as f64;
 
-    trace!(
-        "Value function: points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size}"
-    );
-    let score = (points - opponent_points) * 10000.0
+    let score = (points - opponent_points) * 1000000.0
         + (my_value - opponent_value)
         + (hand_size - opponent_hand_size) * 1.0;
-    trace!("Value function: {score}");
+    trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size})");
     score
 }
 
@@ -257,6 +257,21 @@ impl Debug for ExpectiMiniMaxPlayer {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "ExpectiMiniMaxPlayer")
     }
+}
+
+fn get_relevant_energy(state: &State, player: usize, card: &PlayedCard) -> f64 {
+    let most_expensive_attack_cost: Vec<EnergyType> = card
+        .card
+        .get_attacks()
+        .iter()
+        .map(|atk| atk.energy_required.clone())
+        .max()
+        .unwrap_or_default();
+
+    let missing = energy_missing(card, &most_expensive_attack_cost, state, player);
+
+    let total = most_expensive_attack_cost.len() as f64;
+    total - missing.len() as f64
 }
 
 fn save_tree_as_dot(root: &DebugStateNode, filename: String) -> std::io::Result<()> {

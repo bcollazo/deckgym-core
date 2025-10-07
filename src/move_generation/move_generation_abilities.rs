@@ -25,13 +25,16 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
     match ability {
         AbilityId::A1007Butterfree => !card.ability_used,
         AbilityId::A1020VictreebelFragranceTrap => is_active && !card.ability_used,
+        AbilityId::A1089GreninjaWaterShuriken => !card.ability_used,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
+        AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
         AbilityId::A3122SolgaleoExRisingRoad => !is_active && !card.ability_used,
         AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
         AbilityId::A2a071Arceus => false,
         AbilityId::A3b034SylveonExHappyRibbon => false,
+        AbilityId::A4a020SuicuneExLegendaryPulse => false,
     }
 }

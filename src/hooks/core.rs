@@ -94,8 +94,19 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     }
 }
 
-pub(crate) fn on_end_turn(_player_ending_turn: usize, _state: &mut State) {
-    // TODO: Implement Suicune, Zeraora, etc... that trigger on turn end
+pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
+    // Check if active Pokémon has an end-of-turn ability
+    let active = state.get_active(player_ending_turn);
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&active.card.get_id()[..]) {
+        if ability_id == AbilityId::A4a020SuicuneExLegendaryPulse {
+            // At the end of your turn, if this Pokémon is in the Active Spot, draw a card.
+            debug!("Suicune ex's Legendary Pulse: Drawing a card");
+            state.move_generation_stack.push((
+                player_ending_turn,
+                vec![SimpleAction::DrawCard { amount: 1 }],
+            ));
+        }
+    }
 }
 
 // TODO: Implement Gengars ability that disallow playing support cards.
@@ -185,23 +196,36 @@ pub(crate) fn contains_energy(
     state: &State,
     player: usize,
 ) -> bool {
+    energy_missing(pokemon, cost, state, player).is_empty()
+}
+
+pub(crate) fn energy_missing(
+    pokemon: &PlayedCard,
+    cost: &[EnergyType],
+    state: &State,
+    player: usize,
+) -> Vec<EnergyType> {
+    let mut energy_missing = vec![];
     let mut effective_attached = pokemon.get_effective_attached_energy(state, player);
 
     // First try to match the non-colorless energy
     let non_colorless_cost = cost.iter().filter(|x| **x != EnergyType::Colorless);
-    let colorless_cost = cost.iter().filter(|x| **x == EnergyType::Colorless);
-
     for energy in non_colorless_cost {
         let index = effective_attached.iter().position(|x| *x == *energy);
         if let Some(i) = index {
             effective_attached.remove(i);
         } else {
-            return false;
+            energy_missing.push(*energy);
         }
     }
-
     // If all non-colorless energy is satisfied, check if there are enough colorless energy
-    effective_attached.len() >= colorless_cost.count()
+    // with what is left
+    let colorless_cost = cost.iter().filter(|x| **x == EnergyType::Colorless);
+    let colorless_missing = colorless_cost
+        .count()
+        .saturating_sub(effective_attached.len());
+    energy_missing.extend(vec![EnergyType::Colorless; colorless_missing]);
+    energy_missing
 }
 
 // Test Colorless is wildcard when counting energy

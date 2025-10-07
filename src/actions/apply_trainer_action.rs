@@ -34,6 +34,7 @@ pub fn forecast_trainer_action(
         CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A2a072Irida | CardId::A2a087Irida => doutcome(irida_effect),
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
@@ -44,13 +45,25 @@ pub fn forecast_trainer_action(
             doutcome(attach_tool)
         }
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
+        CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
+        CardId::A3a064Repel => doutcome(repel_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 50, Some(EnergyType::Grass));
+}
+
+fn irida_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 40 damage from each of your Pokémon that has any Water Energy attached.
+    debug!("Irida: Healing 40 damage from each Pokemon with Water Energy attached");
+    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+        if pokemon.attached_energy.contains(&EnergyType::Water) {
+            pokemon.heal(40);
+        }
+    }
 }
 
 fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -146,6 +159,18 @@ fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .push((opponent_player, possible_moves));
 }
 
+fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    let opponent_player = (action.actor + 1) % 2;
+    let possible_moves = state
+        .enumerate_bench_pokemon(opponent_player)
+        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .collect::<Vec<_>>();
+    state
+        .move_generation_stack
+        .push((opponent_player, possible_moves));
+}
+
 fn cyrus_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Switch 1 of your opponent's Pokemon that has damage on it to the Active Spot.
     let opponent_player = (action.actor + 1) % 2;
@@ -157,6 +182,31 @@ fn cyrus_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((opponent_player, possible_moves));
+}
+
+fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Your opponent shuffles their hand into their deck and draws a card for each of their remaining points needed to win.
+    let opponent_player = (action.actor + 1) % 2;
+    let opponent_points = state.points[opponent_player];
+    let cards_to_draw = (3 - opponent_points) as usize;
+
+    debug!(
+        "Mars: Opponent has {} points, shuffling hand and drawing {} cards",
+        opponent_points, cards_to_draw
+    );
+
+    // Shuffle opponent's hand back into deck
+    state.decks[opponent_player]
+        .cards
+        .append(&mut state.hands[opponent_player]);
+    state.decks[opponent_player].shuffle(false, rng);
+
+    // Draw cards
+    for _ in 0..cards_to_draw {
+        if let Some(card) = state.decks[opponent_player].draw() {
+            state.hands[opponent_player].push(card);
+        }
+    }
 }
 
 fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
