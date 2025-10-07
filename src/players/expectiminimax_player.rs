@@ -219,7 +219,7 @@ fn value_function(state: &State, myself: usize) -> f64 {
         .enumerate_in_play_pokemon(myself)
         .map(|(pos, card)| {
             let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0) as f64;
+            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
