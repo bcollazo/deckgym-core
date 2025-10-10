@@ -73,8 +73,8 @@ pub fn cli_optimize(
 
 pub fn optimize(
     incomplete_deck: &Deck,
-    candidate_cards: &Vec<String>,
-    enemy_decks: &Vec<Deck>,
+    candidate_cards: &[String],
+    enemy_decks: &[Deck],
     num: u32,
     players: Option<Vec<PlayerCode>>,
     seed: Option<u64>,
@@ -317,7 +317,7 @@ mod tests {
             "A3 155".to_string(),
             "A3 155".to_string(),
         ];
-        let enemy_decks = vec![
+        let enemy_decks: Vec<Deck> = vec![
     "Energy: Grass\n2 Bulbasaur A1 1\n1 Ivysaur A1 2\n2 Venusaur ex A1 4\n2 Snivy A1a 4\n2 Serperior A1a 6\n1 Erika A1 266\n2 Rocky Helmet A2 148\n2 Rare Candy A3 144\n2 Leaf Cape A3 147\n2 Poké Ball P-A 5\n2 Professor's Research P-A 7",
     "Energy: Water\n2 Froakie A1 87\n2 Greninja A1 89\n1 Giratina ex A2b 35\n2 Suicune ex A4a 20\n1 Giant Cape A2 147\n2 Cyrus A2 150\n1 Mars A2 155\n2 Irida A2a 72\n2 Rare Candy A3 144\n1 Repel A3a 64\n2 Poké Ball P-A 5\n2 Professor's Research P-A 7"
 ]        .iter()
