@@ -9,7 +9,7 @@ pub mod effects;
 pub mod game;
 mod hooks;
 pub mod move_generation;
-mod optimize;
+pub mod optimize;
 pub mod players;
 pub mod simulate;
 pub mod simulation_event_handler;
@@ -24,7 +24,7 @@ pub use deck::Deck;
 pub use game::Game;
 pub use move_generation::generate_possible_actions;
 pub use move_generation::generate_possible_trainer_actions;
-pub use optimize::optimize;
+pub use optimize::{cli_optimize, optimize};
 pub use simulate::{simulate, Simulation};
 pub use state::State;
 

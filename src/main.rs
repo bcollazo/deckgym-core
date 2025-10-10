@@ -2,7 +2,7 @@ use clap::{ArgAction, Parser, Subcommand};
 use colored::Colorize;
 use deckgym::players::{parse_player_code, PlayerCode};
 use deckgym::simulate::initialize_logger;
-use deckgym::{optimize, simulate};
+use deckgym::{cli_optimize, simulate};
 use log::warn;
 
 #[derive(Parser, Debug)]
@@ -103,7 +103,7 @@ fn main() {
 
             warn!("Welcome to {} optimizer!", "deckgym".blue().bold());
 
-            optimize(
+            cli_optimize(
                 &incomplete_deck,
                 &candidate_cards,
                 &enemy_decks_folder,
