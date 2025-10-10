@@ -12,7 +12,7 @@ use crate::{
 };
 
 /// Optimizes a deck by simulating games with different combinations of candidate cards.
-pub fn optimize(
+pub fn cli_optimize(
     incomplete_deck_path: &str,
     candidate_cards_str: &str,
     enemy_decks_folder: &str,
@@ -20,45 +20,12 @@ pub fn optimize(
     players: Option<Vec<PlayerCode>>,
     seed: Option<u64>,
 ) {
-    // Parse the candidate cards list.
-    let candidate_cards: Vec<CardId> = candidate_cards_str
-        .split(',')
-        .map(|s| {
-            // take last 3 to be id, then the rest of prefix will be set
-            let s = s.trim();
-            if s.len() < 3 {
-                panic!("Card ID should be at least 3 characters long");
-            }
-            let number = &s[s.len() - 3..];
-            let prefix = &s[..s.len() - 3];
-            let id = format!("{prefix} {number}");
-            CardId::from_card_id(id.as_str()).expect("Card ID should be valid")
-        })
-        .collect();
-
-    // Read and validate the incomplete deck.
     let incomplete_deck =
         Deck::from_file(incomplete_deck_path).expect("Failed to parse incomplete deck file");
-    let current_count = incomplete_deck.cards.len();
-    let missing_count = 20 - current_count;
-    warn!("Incomplete deck has {current_count} cards, missing {missing_count} cards");
-    if missing_count == 0 {
-        warn!("Deck is already complete (20 cards). No optimization needed.");
-        return;
-    }
-
-    // For each candidate card, determine how many additional copies are allowed.
-    // A card cannot appear more than twice in the deck.
-    let mut allowed_map: HashMap<CardId, u32> = HashMap::new();
-    for card in &candidate_cards {
-        let count = incomplete_deck
-            .cards
-            .iter()
-            .filter(|c| c.get_card_id() == *card)
-            .count();
-        let allowed = 2_usize.saturating_sub(count);
-        allowed_map.insert(*card, allowed as u32);
-    }
+    let candidate_cards: Vec<String> = candidate_cards_str
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .collect();
 
     // Read enemy decks from the specified folder.
     let enemy_deck_paths: Vec<String> = fs::read_dir(enemy_decks_folder)
@@ -94,8 +61,70 @@ pub fn optimize(
             .collect::<Vec<_>>()
     );
 
+    optimize(
+        &incomplete_deck,
+        &candidate_cards,
+        &enemy_valid_decks,
+        num,
+        players,
+        seed,
+    );
+}
+
+pub fn optimize(
+    incomplete_deck: &Deck,
+    candidate_cards: &Vec<String>,
+    enemy_decks: &Vec<Deck>,
+    num: u32,
+    players: Option<Vec<PlayerCode>>,
+    seed: Option<u64>,
+) -> Vec<(Vec<CardId>, f32)> {
+    if enemy_decks.is_empty() {
+        warn!("No valid enemy decks provided. Optimization cannot proceed.");
+        return Vec::new();
+    }
+
+    // Parse the candidate cards list.
+    let candidate_card_ids: Vec<CardId> = candidate_cards
+        .iter()
+        .map(|s| {
+            // take last 3 to be id, then the rest of prefix will be set
+            let s = s.trim().replace(' ', "");
+            if s.len() < 3 {
+                panic!("Card ID should be at least 3 characters long");
+            }
+            let number = &s[s.len() - 3..];
+            let prefix = &s[..s.len() - 3];
+            let id = format!("{prefix} {number}");
+            CardId::from_card_id(id.as_str()).expect("Card ID should be valid")
+        })
+        .collect();
+
+    // Read and validate the incomplete deck.
+    let current_count = incomplete_deck.cards.len();
+    let missing_count = 20 - current_count;
+    warn!("Incomplete deck has {current_count} cards, missing {missing_count} cards");
+    if missing_count == 0 {
+        warn!("Deck is already complete (20 cards). No optimization needed.");
+        return Vec::new();
+    }
+
+    // For each candidate card, determine how many additional copies are allowed.
+    // A card cannot appear more than twice in the deck.
+    let mut allowed_map: HashMap<CardId, u32> = HashMap::new();
+    for card in &candidate_card_ids {
+        let count = incomplete_deck
+            .cards
+            .iter()
+            .filter(|c| c.get_card_id() == *card)
+            .count();
+        let allowed = 2_usize.saturating_sub(count);
+        allowed_map.insert(*card, allowed as u32);
+    }
+
     // Generate all valid combinations (multiset selections) of candidate cards that sum to missing_count.
-    let combinations = generate_combinations(&candidate_cards, &allowed_map, missing_count as u32);
+    let combinations =
+        generate_combinations(&candidate_card_ids, &allowed_map, missing_count as u32);
     warn!(
         "Generated {} possible combinations to complete the deck.",
         combinations.len()
@@ -104,7 +133,7 @@ pub fn optimize(
 
     // Estimate the time it will take to run all simulations
     let player_codes = fill_code_array(players.clone());
-    let total_games = combinations.len() as u64 * num as u64 * enemy_valid_decks.len() as u64;
+    let total_games = combinations.len() as u64 * num as u64 * enemy_decks.len() as u64;
     let time_per_game = estimate_time_per_game(&player_codes);
     let total_time = time_per_game.mul_f64(total_games as f64);
 
@@ -112,7 +141,7 @@ pub fn optimize(
         "Estimated time: {} ({} combinations × {} enemy decks × {} games per deck)",
         humantime::format_duration(total_time),
         combinations.len(),
-        enemy_valid_decks.len(),
+        enemy_decks.len(),
         num
     );
     warn!(
@@ -145,7 +174,7 @@ pub fn optimize(
         // Simulate games for each enemy deck.
         let mut total_wins = 0;
         let mut total_games = 0;
-        for enemy_deck in &enemy_valid_decks {
+        for enemy_deck in enemy_decks {
             for _ in 0..num {
                 let players = create_players(
                     completed_deck.clone(),
@@ -184,6 +213,9 @@ pub fn optimize(
             warn!("No valid combination found.");
         }
     }
+
+    results.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+    results
 }
 
 /// Estimates time per game based on player types
@@ -266,5 +298,42 @@ fn generate_combinations_recursive(
         for _ in 0..count {
             current.pop();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_optimize() {
+        let incomplete_deck = Deck::from_string(
+            "Energy: Grass\n2 Bulbasaur A1 1\n1 Ivysaur A1 2\n2 Venusaur ex A1 4\n2 Snivy A1a 4\n2 Serperior A1a 6\n2 Rocky Helmet A2 148\n2 Rare Candy A3 144\n2 Leaf Cape A3 147\n2 Poké Ball P-A 5\n2 Professor's Research P-A 7",
+        )
+        .unwrap();
+        let candidate_cards: Vec<String> = vec![
+            "A1 219".to_string(),
+            "A1 219".to_string(),
+            "A3 155".to_string(),
+            "A3 155".to_string(),
+        ];
+        let enemy_decks = vec![
+    "Energy: Grass\n2 Bulbasaur A1 1\n1 Ivysaur A1 2\n2 Venusaur ex A1 4\n2 Snivy A1a 4\n2 Serperior A1a 6\n1 Erika A1 266\n2 Rocky Helmet A2 148\n2 Rare Candy A3 144\n2 Leaf Cape A3 147\n2 Poké Ball P-A 5\n2 Professor's Research P-A 7",
+    "Energy: Water\n2 Froakie A1 87\n2 Greninja A1 89\n1 Giratina ex A2b 35\n2 Suicune ex A4a 20\n1 Giant Cape A2 147\n2 Cyrus A2 150\n1 Mars A2 155\n2 Irida A2a 72\n2 Rare Candy A3 144\n1 Repel A3a 64\n2 Poké Ball P-A 5\n2 Professor's Research P-A 7"
+]        .iter()
+        .map(|s| Deck::from_string(s).unwrap())
+        .collect();
+        let num = 1;
+        let players = Some(vec![PlayerCode::R, PlayerCode::R]);
+        let seed: Option<u64> = None;
+        let results = optimize(
+            &incomplete_deck,
+            &candidate_cards,
+            &enemy_decks,
+            num,
+            players,
+            seed,
+        );
+        assert!(!results.is_empty());
     }
 }
