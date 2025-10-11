@@ -78,7 +78,23 @@ impl Deck {
 
     pub fn is_valid(&self) -> bool {
         let basic = self.cards.iter().filter(|x| x.is_basic()).count();
-        self.cards.len() == 20 && basic >= 1
+        let has_correct_size = self.cards.len() == 20 && basic >= 1;
+
+        if !has_correct_size {
+            return false;
+        }
+
+        // Check that no card name appears more than twice
+        let mut card_counts = std::collections::HashMap::new();
+        for card in &self.cards {
+            let count = card_counts.entry(card.get_name()).or_insert(0);
+            *count += 1;
+            if *count > 2 {
+                return false;
+            }
+        }
+
+        true
     }
 
     /// Draws a card from the deck.
