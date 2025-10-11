@@ -99,35 +99,12 @@ pub fn optimize(
         return Vec::new();
     }
 
-    // Generate all k-combinations where k = missing_count
+    // Generate all unique k-combinations where k = missing_count
     // This generates all ways to choose missing_count cards from the candidate list
-    let all_combinations = generate_combinations(&candidate_card_ids, missing_count as usize);
+    // (automatically deduplicated)
+    let unique_combinations = generate_combinations(&candidate_card_ids, missing_count as usize);
     warn!(
-        "Generated {} possible combinations (before deduplication).",
-        all_combinations.len()
-    );
-
-    // Deduplicate combinations (since candidate pool may have repeated cards)
-    let unique_combinations: Vec<Vec<CardId>> = {
-        use std::collections::{HashMap, HashSet};
-        let mut seen = HashSet::new();
-        all_combinations
-            .into_iter()
-            .filter(|comb| {
-                // Create a canonical representation using card counts
-                let mut counts: HashMap<CardId, usize> = HashMap::new();
-                for &card_id in comb {
-                    *counts.entry(card_id).or_insert(0) += 1;
-                }
-                // Convert to a sorted vector - sort by discriminant value (as usize)
-                let mut canonical: Vec<_> = counts.into_iter().collect();
-                canonical.sort_by_key(|(id, _)| *id as usize);
-                seen.insert(canonical)
-            })
-            .collect()
-    };
-    warn!(
-        "Generated {} unique combinations (after deduplication).",
+        "Generated {} unique combinations.",
         unique_combinations.len()
     );
 
@@ -286,9 +263,31 @@ fn count_player_types(player_codes: &[PlayerCode], is_r: bool) -> usize {
         .count()
 }
 
-/// Generates all k-combinations from the candidate cards.
+/// Deduplicates combinations by creating canonical representations based on card counts.
+/// This is useful when the candidate pool may have repeated cards.
+pub fn deduplicate_combinations(combinations: Vec<Vec<CardId>>) -> Vec<Vec<CardId>> {
+    use std::collections::{HashMap, HashSet};
+    let mut seen = HashSet::new();
+    combinations
+        .into_iter()
+        .filter(|comb| {
+            // Create a canonical representation using card counts
+            let mut counts: HashMap<CardId, usize> = HashMap::new();
+            for &card_id in comb {
+                *counts.entry(card_id).or_insert(0) += 1;
+            }
+            // Convert to a sorted vector - sort by discriminant value (as usize)
+            let mut canonical: Vec<_> = counts.into_iter().collect();
+            canonical.sort_by_key(|(id, _)| *id as usize);
+            seen.insert(canonical)
+        })
+        .collect()
+}
+
+/// Generates all unique k-combinations from the candidate cards.
 /// This is a simple n choose k where we pick k items from the n candidates.
-fn generate_combinations(candidates: &[CardId], k: usize) -> Vec<Vec<CardId>> {
+/// Automatically deduplicates combinations (useful when candidate pool has repeated cards).
+pub fn generate_combinations(candidates: &[CardId], k: usize) -> Vec<Vec<CardId>> {
     let n = candidates.len();
     if k == 0 {
         return vec![vec![]];
@@ -297,9 +296,11 @@ fn generate_combinations(candidates: &[CardId], k: usize) -> Vec<Vec<CardId>> {
         return vec![];
     }
 
-    let mut result = Vec::new();
-    generate_combinations_recursive(candidates, k, 0, &mut vec![], &mut result);
-    result
+    let mut all_combinations = Vec::new();
+    generate_combinations_recursive(candidates, k, 0, &mut vec![], &mut all_combinations);
+
+    // Deduplicate the combinations
+    deduplicate_combinations(all_combinations)
 }
 
 /// Recursive helper to generate k-combinations.
