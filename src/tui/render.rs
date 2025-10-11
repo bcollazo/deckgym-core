@@ -1,4 +1,4 @@
-use crate::types::*;
+use crate::models::*;
 use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},

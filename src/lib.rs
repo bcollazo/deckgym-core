@@ -8,6 +8,7 @@ pub mod deck;
 pub mod effects;
 pub mod game;
 mod hooks;
+pub mod models;
 pub mod move_generation;
 pub mod optimize;
 pub mod players;
@@ -16,7 +17,6 @@ pub mod simulation_event_handler;
 pub mod state;
 pub mod test_helpers; // TODO: Compile/Expose only in test mode?
 pub mod tool_ids;
-pub mod types;
 
 pub use ability_ids::AbilityId;
 pub use attack_ids::AttackId;

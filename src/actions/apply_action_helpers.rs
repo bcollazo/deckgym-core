@@ -4,8 +4,8 @@ use rand::rngs::StdRng;
 use crate::{
     actions::SimpleAction,
     hooks::{get_counterattack_damage, on_end_turn},
+    models::Card,
     state::GameOutcome,
-    types::Card,
     State,
 };
 

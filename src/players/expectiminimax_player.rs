@@ -6,8 +6,8 @@ use std::vec;
 
 use crate::actions::{forecast_action, Action};
 use crate::hooks::energy_missing;
-use crate::types::EnergyType;
-use crate::types::PlayedCard;
+use crate::models::EnergyType;
+use crate::models::PlayedCard;
 use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;

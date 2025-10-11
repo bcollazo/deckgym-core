@@ -7,9 +7,9 @@ use crate::{
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
     hooks::get_stage,
+    models::{EnergyType, TrainerCard},
     state::GameOutcome,
     tool_ids::ToolId,
-    types::{EnergyType, TrainerCard},
     State,
 };
 

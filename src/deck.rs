@@ -7,7 +7,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::card_ids::CardId;
 use crate::database::get_card_by_enum;
-use crate::types::{Card, EnergyType};
+use crate::models::{Card, EnergyType};
 
 /// Represents a deck of cards.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]

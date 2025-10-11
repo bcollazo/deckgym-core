@@ -5,7 +5,7 @@ use crate::{
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
     hooks::{get_damage_from_attack, get_stage},
-    types::{EnergyType, StatusCondition},
+    models::{EnergyType, StatusCondition},
     State,
 };
 

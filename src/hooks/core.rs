@@ -6,8 +6,8 @@ use log::debug;
 use crate::{
     actions::SimpleAction,
     effects::{CardEffect, TurnEffect},
+    models::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     tool_ids::ToolId,
-    types::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
     AbilityId, State,
 };
 
@@ -24,7 +24,7 @@ fn is_fossil(trainer_card: &TrainerCard) -> bool {
     FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
 }
 
-pub(crate) fn to_playable_card(card: &crate::types::Card, played_this_turn: bool) -> PlayedCard {
+pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {

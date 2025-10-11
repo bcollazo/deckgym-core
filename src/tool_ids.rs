@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::{
-    types::{EnergyType, PlayedCard, TrainerCard},
+    models::{EnergyType, PlayedCard, TrainerCard},
     State,
 };
 

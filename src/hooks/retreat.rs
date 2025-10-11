@@ -1,6 +1,6 @@
 use crate::{
     effects::{CardEffect, TurnEffect},
-    types::{Card, EnergyType, PlayedCard},
+    models::{Card, EnergyType, PlayedCard},
     State,
 };
 

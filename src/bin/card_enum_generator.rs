@@ -2,7 +2,7 @@ use std::{fs::File, io::Read};
 
 use clap::Parser;
 
-use deckgym::types::{Ability, Attack, Card, EnergyType};
+use deckgym::models::{Ability, Attack, Card, EnergyType};
 use indexmap::IndexMap;
 
 #[derive(Parser, Debug)]

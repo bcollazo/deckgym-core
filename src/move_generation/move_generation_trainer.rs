@@ -3,8 +3,8 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     hooks::{can_play_support, get_stage},
+    models::{EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
-    types::{EnergyType, TrainerCard, TrainerType},
     State,
 };
 

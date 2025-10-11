@@ -6,10 +6,10 @@ use uuid::Uuid;
 use crate::{
     actions::{apply_action, Action},
     generate_possible_actions,
+    models::EnergyType,
     players::Player,
     simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
     state::GameOutcome,
-    types::EnergyType,
     State,
 };
 

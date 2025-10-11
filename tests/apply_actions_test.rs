@@ -4,7 +4,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     generate_possible_actions,
-    types::{Card, EnergyType},
+    models::{Card, EnergyType},
 };
 
 mod common;
@@ -49,7 +49,7 @@ fn test_no_supporter_or_evolutions_in_first_turns() {
             panic!("Evolution played in first 2 turns");
         }
         if let SimpleAction::Play { trainer_card } = action.action {
-            if trainer_card.trainer_card_type == deckgym::types::TrainerType::Supporter {
+            if trainer_card.trainer_card_type == deckgym::models::TrainerType::Supporter {
                 panic!("Supporter card played in first 2 turns");
             }
         }
