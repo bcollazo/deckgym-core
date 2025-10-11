@@ -1,0 +1,11 @@
+Energy: Grass
+1 Bulbasaur A1 1
+1 Ivysaur A1 2
+2 Venusaur ex A1 4
+2 Caterpie A1 5
+1 Metapod A1 6
+2 Butterfree A1 7
+2 Rare Candy A3 144
+1 Repel A3a 64
+2 Poké Ball P-A 5
+2 Professor's Research P-A 7
