@@ -16,7 +16,6 @@ pub trait SimulationEventHandler {
         _actor: usize,
         _playable_actions: &[Action],
         _action: &Action,
-        _state_after_action: &State,
     ) {
     }
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
@@ -67,7 +66,6 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         actor: usize,
         playable_actions: &[Action],
         action: &Action,
-        state_after_action: &State,
     ) {
         for handler in self.handlers.iter_mut() {
             handler.on_action(
@@ -76,7 +74,6 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
                 actor,
                 playable_actions,
                 action,
-                state_after_action,
             );
         }
     }
@@ -147,7 +144,6 @@ impl SimulationEventHandler for StatsCollector {
         _actor: usize,
         playable_actions: &[Action],
         _action: &Action,
-        _state_after_action: &State,
     ) {
         self.degrees_per_ply.push(playable_actions.len() as u32);
     }
