@@ -11,7 +11,7 @@ use deckgym::{
     Simulation, State,
 };
 
-/// Run with `cargo run --example sylveon_deck_draw_speed`
+/// Run with `cargo run --example sylveon_deck_draw_speed --features csv-export`
 fn main() {
     let num_simulations = 1_000_000;
     let deck_a_path = "example_decks/solgaleo_shiinotic.txt";
