@@ -47,10 +47,6 @@ name = "card_lookup_benchmark"
 harness = false
 
 [[bin]]
-name = "search"
-path = "src/bin/search.rs"
-
-[[bin]]
 name = "tui"
 path = "src/bin/tui.rs"
 required-features = ["tui"]
