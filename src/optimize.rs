@@ -102,7 +102,7 @@ pub fn optimize(
     // Generate all unique k-combinations where k = missing_count
     // This generates all ways to choose missing_count cards from the candidate list
     // (automatically deduplicated)
-    let unique_combinations = generate_combinations(&candidate_card_ids, missing_count as usize);
+    let unique_combinations = generate_combinations(&candidate_card_ids, missing_count);
     warn!(
         "Generated {} unique combinations.",
         unique_combinations.len()
@@ -221,9 +221,9 @@ fn robustly_parse_card_id_string(orig: &str) -> CardId {
         panic!("Card ID '{}' should be at least 3 characters long", orig);
     }
     // Try splitting by space or dash first
-    let (prefix, number) = if let Some(idx) = orig.find(|c| c == ' ' || c == '-') {
+    let (prefix, number) = if let Some(idx) = orig.find([' ', '-']) {
         let (pre, num) = orig.split_at(idx);
-        let num = num.trim_start_matches(|c| c == ' ' || c == '-');
+        let num = num.trim_start_matches([' ', '-']);
         (pre.trim(), num.trim())
     } else {
         // fallback: last 3 chars as number, rest as prefix
@@ -234,7 +234,7 @@ fn robustly_parse_card_id_string(orig: &str) -> CardId {
     let padded_number = format!("{:0>3}", number);
     let id = format!("{prefix} {padded_number}");
     CardId::from_card_id(id.as_str())
-        .expect(&format!("Invalid card ID '{}' in candidate cards", orig))
+        .unwrap_or_else(|| panic!("Invalid card ID '{}' in candidate cards", orig))
 }
 
 /// Estimates time per game based on player types

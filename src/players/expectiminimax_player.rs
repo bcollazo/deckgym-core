@@ -87,7 +87,7 @@ impl Player for ExpectiMiniMaxPlayer {
                 }
                 counter += 1;
             };
-            save_tree_as_dot(&root, &state, filename).unwrap();
+            save_tree_as_dot(&root, state, filename).unwrap();
         }
 
         // You can now use both best_idx and best_score as needed
@@ -274,7 +274,7 @@ fn save_tree_as_dot(
     root_state: &State,
     filename: String,
 ) -> std::io::Result<()> {
-    let dot_representation = generate_dot(root, &root_state);
+    let dot_representation = generate_dot(root, root_state);
     std::fs::write(filename, dot_representation)
 }
 
