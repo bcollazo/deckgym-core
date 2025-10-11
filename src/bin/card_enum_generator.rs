@@ -58,6 +58,8 @@ fn print_enums(card_map: &IndexMap<String, Card>, id_to_enum: &IndexMap<String, 
     println!();
     println!("use serde::{{Deserialize, Serialize}};");
     println!("use strum_macros::EnumIter;");
+    println!("use std::collections::HashMap;");
+    println!("use std::sync::LazyLock;");
     println!();
     println!(
         "#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize, EnumIter)]"
@@ -68,15 +70,17 @@ fn print_enums(card_map: &IndexMap<String, Card>, id_to_enum: &IndexMap<String, 
     }
     println!("}}\n");
     println!();
+    println!("static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {{");
+    println!("    let mut map = HashMap::new();");
+    for (id, enum_name) in id_to_enum.iter() {
+        println!("    map.insert(\"{id}\", CardId::{enum_name});");
+    }
+    println!("    map");
+    println!("}});");
     println!();
     println!("impl CardId {{");
     println!("    pub fn from_card_id(id: &str) -> Option<Self> {{");
-    println!("        match id {{");
-    for (id, enum_name) in id_to_enum.iter() {
-        println!("            \"{id}\" => Some(CardId::{enum_name}),");
-    }
-    println!("            _ => None,");
-    println!("        }}");
+    println!("        CARD_ID_MAP.get(id).copied()");
     println!("    }}");
     println!();
     println!("}}");
