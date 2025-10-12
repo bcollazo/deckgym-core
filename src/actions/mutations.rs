@@ -1,7 +1,7 @@
 use log::trace;
 use rand::rngs::StdRng;
 
-use crate::{card_ids::CardId, hooks::get_damage_from_attack, types::StatusCondition, State};
+use crate::{card_ids::CardId, hooks::get_damage_from_attack, models::StatusCondition, State};
 
 use super::{
     apply_action_helpers::{handle_attack_damage, FnMutation, Mutation, Mutations, Probabilities},

@@ -11,7 +11,7 @@ use deckgym::{
     Simulation, State,
 };
 
-/// Run with `cargo run --example sylveon_deck_draw_speed`
+/// Run with `cargo run --example sylveon_deck_draw_speed --features csv-export`
 fn main() {
     let num_simulations = 1_000_000;
     let deck_a_path = "example_decks/solgaleo_shiinotic.txt";
@@ -63,14 +63,13 @@ impl SimulationEventHandler for FirstTurnSeenCollector {
     fn on_action(
         &mut self,
         game_id: Uuid,
-        _state_before_action: &State,
+        state_before_action: &State,
         actor: usize,
         _playable_actions: &[Action],
         _action: &Action,
-        state_after_action: &State,
     ) {
-        let turn = state_after_action.turn_count;
-        for card in state_after_action.in_play_pokemon[actor].iter() {
+        let turn = state_before_action.turn_count;
+        for card in state_before_action.in_play_pokemon[actor].iter() {
             if let Some(card) = card {
                 let card_name = card.get_name();
                 let key = (game_id, actor, card_name.clone());

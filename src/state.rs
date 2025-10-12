@@ -8,7 +8,7 @@ use crate::{
     actions::SimpleAction,
     deck::Deck,
     effects::TurnEffect,
-    types::{Card, EnergyType, PlayedCard},
+    models::{Card, EnergyType, PlayedCard},
 };
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
@@ -213,7 +213,7 @@ impl State {
             .push((actor, vec![SimpleAction::DrawCard { amount }]));
     }
 
-    pub(crate) fn get_active(&self, player: usize) -> &PlayedCard {
+    pub fn get_active(&self, player: usize) -> &PlayedCard {
         self.in_play_pokemon[player][0]
             .as_ref()
             .expect("Active Pokemon should be there")

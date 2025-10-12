@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     effects::CardEffect,
+    models::{Attack, Card, EnergyType},
     tool_ids::ToolId,
-    types::{Attack, Card, EnergyType},
     AbilityId, State,
 };
 
@@ -208,8 +208,8 @@ pub fn has_serperior_jungle_totem(state: &crate::state::State, player: usize) ->
 #[cfg(test)]
 mod tests {
     use crate::{
-        card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card, state::State,
-        types::has_serperior_jungle_totem,
+        card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card,
+        models::has_serperior_jungle_totem, state::State,
     };
 
     #[test]

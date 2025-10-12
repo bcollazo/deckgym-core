@@ -4,7 +4,7 @@ use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     hooks::get_stage,
-    types::{Card, PlayedCard},
+    models::{Card, PlayedCard},
 };
 
 /// Check if a Stage 2 Pokemon can evolve from a Basic Pokemon using Rare Candy

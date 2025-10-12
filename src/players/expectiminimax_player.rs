@@ -6,15 +6,14 @@ use std::vec;
 
 use crate::actions::{forecast_action, Action};
 use crate::hooks::energy_missing;
-use crate::types::EnergyType;
-use crate::types::PlayedCard;
+use crate::models::EnergyType;
+use crate::models::PlayedCard;
 use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;
 
 struct DebugStateNode {
     acting_player: usize,
-    state: State,
     children: Vec<DebugActionNode>,
     proba: f64,
     value: f64,
@@ -44,7 +43,6 @@ impl Player for ExpectiMiniMaxPlayer {
         // Create a tree for debugging purposes
         let mut root = DebugStateNode {
             acting_player: myself,
-            state: state.clone(),
             children: vec![],
             proba: 1.0,
             value: 0.0,
@@ -89,7 +87,7 @@ impl Player for ExpectiMiniMaxPlayer {
                 }
                 counter += 1;
             };
-            save_tree_as_dot(&root, filename).unwrap();
+            save_tree_as_dot(&root, state, filename).unwrap();
         }
 
         // You can now use both best_idx and best_score as needed
@@ -154,7 +152,6 @@ fn expectiminimax(
         let score = value_function(state, myself);
         let state_node = DebugStateNode {
             acting_player: state.current_player,
-            state: state.clone(),
             children: vec![],
             proba: 1.0,
             value: score,
@@ -176,7 +173,6 @@ fn expectiminimax(
         let best_score = scores.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
         let state_node = DebugStateNode {
             acting_player: actor,
-            state: state.clone(),
             children,
             proba: 0.0, // this will get set by parent
             value: best_score,
@@ -197,7 +193,6 @@ fn expectiminimax(
         let best_score = scores.iter().cloned().fold(f64::INFINITY, f64::min);
         let state_node = DebugStateNode {
             acting_player: actor,
-            state: state.clone(),
             children,
             proba: 0.0, // this will get set by parent
             value: best_score,
@@ -274,20 +269,23 @@ fn get_relevant_energy(state: &State, player: usize, card: &PlayedCard) -> f64 {
     total - missing.len() as f64
 }
 
-fn save_tree_as_dot(root: &DebugStateNode, filename: String) -> std::io::Result<()> {
-    let dot_representation = generate_dot(root);
+fn save_tree_as_dot(
+    root: &DebugStateNode,
+    root_state: &State,
+    filename: String,
+) -> std::io::Result<()> {
+    let dot_representation = generate_dot(root, root_state);
     std::fs::write(filename, dot_representation)
 }
 
-fn generate_dot(root: &DebugStateNode) -> String {
+fn generate_dot(root: &DebugStateNode, root_state: &State) -> String {
     let mut dot = String::new();
     writeln!(dot, "digraph GameTree {{").unwrap();
     writeln!(dot, "    rankdir=TB;").unwrap();
     writeln!(dot, "    node [shape=box];").unwrap();
 
     // Add info node with root state debug string
-    let debug_str = root
-        .state
+    let debug_str = root_state
         .debug_string()
         .replace('"', "'")
         .replace('\n', "\\l")

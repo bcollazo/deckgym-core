@@ -4,8 +4,8 @@ mod move_generation_trainer;
 
 use crate::actions::{Action, SimpleAction};
 use crate::hooks::{can_retreat, contains_energy, get_retreat_cost};
+use crate::models::Card;
 use crate::state::State;
-use crate::types::Card;
 
 use attacks::generate_attack_actions;
 use move_generation_abilities::generate_ability_actions;

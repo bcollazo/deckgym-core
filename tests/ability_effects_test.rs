@@ -4,7 +4,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     generate_possible_actions,
-    types::{EnergyType, PlayedCard},
+    models::{EnergyType, PlayedCard},
 };
 
 mod common;

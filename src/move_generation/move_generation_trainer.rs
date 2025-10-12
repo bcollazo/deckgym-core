@@ -2,10 +2,9 @@ use crate::{
     actions::SimpleAction,
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
-    database::get_card_by_enum,
     hooks::{can_play_support, get_stage},
+    models::{EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
-    types::{EnergyType, TrainerCard, TrainerType},
     State,
 };
 
@@ -151,13 +150,13 @@ fn can_play_misty(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 fn can_play_koga(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let active_pokemon = &state.in_play_pokemon[state.current_player][0];
     if let Some(played_card) = active_pokemon {
-        let kogable_cards = vec![
-            get_card_by_enum(CardId::A1177Weezing),
-            get_card_by_enum(CardId::A1243Weezing),
-            get_card_by_enum(CardId::A1175Muk),
-        ];
-        if kogable_cards.contains(&played_card.card) {
-            return can_play_trainer(state, trainer_card);
+        let card_id =
+            CardId::from_card_id(played_card.get_id().as_str()).expect("CardId should be known");
+        match card_id {
+            CardId::A1177Weezing | CardId::A1243Weezing | CardId::A1175Muk => {
+                return can_play_trainer(state, trainer_card);
+            }
+            _ => {}
         }
     }
     cannot_play_trainer()

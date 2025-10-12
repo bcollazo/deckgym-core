@@ -6,9 +6,9 @@ use std::collections::HashMap;
 use crate::{
     deck::Deck,
     game::Game,
+    models::{Ability, Attack, Card, EnergyType, PlayedCard},
     players::{create_players, fill_code_array, parse_player_code},
     state::{GameOutcome, State},
-    types::{Ability, Attack, Card, EnergyType, PlayedCard},
 };
 
 /// Python wrapper for EnergyType

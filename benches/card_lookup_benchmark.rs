@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use deckgym::card_ids::CardId;
-use deckgym::types::{Attack, Card, EnergyType, PokemonCard};
+use deckgym::models::{Attack, Card, EnergyType, PokemonCard};
 use lazy_static::lazy_static;
 
 fn num_match_approach(id: u16) -> Option<CardId> {

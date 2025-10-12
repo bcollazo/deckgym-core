@@ -6,7 +6,7 @@ use crate::{
         mutations::doutcome,
     },
     hooks::to_playable_card,
-    types::{Card, EnergyType},
+    models::{Card, EnergyType},
     State,
 };
 

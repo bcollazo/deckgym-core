@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, time::Duration};
+use std::{fs, time::Duration};
 
 use log::warn;
 use num_format::{Locale, ToFormattedString};
@@ -87,17 +87,7 @@ pub fn optimize(
     // Parse the candidate cards list.
     let candidate_card_ids: Vec<CardId> = candidate_cards
         .iter()
-        .map(|s| {
-            // take last 3 to be id, then the rest of prefix will be set
-            let s = s.trim().replace(' ', "");
-            if s.len() < 3 {
-                panic!("Card ID should be at least 3 characters long");
-            }
-            let number = &s[s.len() - 3..];
-            let prefix = &s[..s.len() - 3];
-            let id = format!("{prefix} {number}");
-            CardId::from_card_id(id.as_str()).expect("Card ID should be valid")
-        })
+        .map(|s| robustly_parse_card_id_string(s))
         .collect();
 
     // Read and validate the incomplete deck.
@@ -109,27 +99,33 @@ pub fn optimize(
         return Vec::new();
     }
 
-    // For each candidate card, determine how many additional copies are allowed.
-    // A card cannot appear more than twice in the deck.
-    let mut allowed_map: HashMap<CardId, u32> = HashMap::new();
-    for card in &candidate_card_ids {
-        let count = incomplete_deck
-            .cards
-            .iter()
-            .filter(|c| c.get_card_id() == *card)
-            .count();
-        let allowed = 2_usize.saturating_sub(count);
-        allowed_map.insert(*card, allowed as u32);
-    }
-
-    // Generate all valid combinations (multiset selections) of candidate cards that sum to missing_count.
-    let combinations =
-        generate_combinations(&candidate_card_ids, &allowed_map, missing_count as u32);
+    // Generate all unique k-combinations where k = missing_count
+    // This generates all ways to choose missing_count cards from the candidate list
+    // (automatically deduplicated)
+    let unique_combinations = generate_combinations(&candidate_card_ids, missing_count);
     warn!(
-        "Generated {} possible combinations to complete the deck.",
+        "Generated {} unique combinations.",
+        unique_combinations.len()
+    );
+
+    // Filter to only valid combinations by checking deck validity
+    let combinations: Vec<Vec<CardId>> = unique_combinations
+        .into_iter()
+        .filter(|comb| {
+            let mut test_deck = incomplete_deck.clone();
+            for card_id in comb {
+                let card = get_card_by_enum(*card_id);
+                test_deck.cards.push(card);
+            }
+            test_deck.is_valid()
+        })
+        .collect();
+
+    warn!(
+        "Generated {} valid combinations to complete the deck.",
         combinations.len()
     );
-    warn!("Combinations: {combinations:?}");
+    warn!("Valid combinations: {combinations:?}");
 
     // Estimate the time it will take to run all simulations
     let player_codes = fill_code_array(players.clone());
@@ -218,6 +214,29 @@ pub fn optimize(
     results
 }
 
+/// Attempts to robustly parse a card ID string, handling various formats and padding the number if needed.
+fn robustly_parse_card_id_string(orig: &str) -> CardId {
+    let s = orig.trim().replace(' ', "");
+    if s.len() < 3 {
+        panic!("Card ID '{}' should be at least 3 characters long", orig);
+    }
+    // Try splitting by space or dash first
+    let (prefix, number) = if let Some(idx) = orig.find([' ', '-']) {
+        let (pre, num) = orig.split_at(idx);
+        let num = num.trim_start_matches([' ', '-']);
+        (pre.trim(), num.trim())
+    } else {
+        // fallback: last 3 chars as number, rest as prefix
+        let number = &s[s.len() - 3..];
+        let prefix = &s[..s.len() - 3];
+        (prefix, number)
+    };
+    let padded_number = format!("{:0>3}", number);
+    let id = format!("{prefix} {padded_number}");
+    CardId::from_card_id(id.as_str())
+        .unwrap_or_else(|| panic!("Invalid card ID '{}' in candidate cards", orig))
+}
+
 /// Estimates time per game based on player types
 fn estimate_time_per_game(player_codes: &[PlayerCode]) -> Duration {
     let non_r_count = count_player_types(player_codes, false) as u64;
@@ -244,60 +263,63 @@ fn count_player_types(player_codes: &[PlayerCode], is_r: bool) -> usize {
         .count()
 }
 
-/// Generates all valid multisets of candidate cards (as vectors of strings) whose total count is `remaining`.
-/// Each candidate card cannot be used more than allowed_map[card] times.
-fn generate_combinations(
-    candidates: &Vec<CardId>,
-    allowed_map: &HashMap<CardId, u32>,
-    remaining: u32,
-) -> Vec<Vec<CardId>> {
-    let mut result = Vec::new();
-    let mut current = Vec::new();
-    generate_combinations_recursive(
-        candidates,
-        allowed_map,
-        remaining,
-        0,
-        &mut current,
-        &mut result,
-    );
-    result
+/// Deduplicates combinations by creating canonical representations based on card counts.
+/// This is useful when the candidate pool may have repeated cards.
+pub fn deduplicate_combinations(combinations: Vec<Vec<CardId>>) -> Vec<Vec<CardId>> {
+    use std::collections::{HashMap, HashSet};
+    let mut seen = HashSet::new();
+    combinations
+        .into_iter()
+        .filter(|comb| {
+            // Create a canonical representation using card counts
+            let mut counts: HashMap<CardId, usize> = HashMap::new();
+            for &card_id in comb {
+                *counts.entry(card_id).or_insert(0) += 1;
+            }
+            // Convert to a sorted vector - sort by discriminant value (as usize)
+            let mut canonical: Vec<_> = counts.into_iter().collect();
+            canonical.sort_by_key(|(id, _)| *id as usize);
+            seen.insert(canonical)
+        })
+        .collect()
 }
 
-/// Helper recursive function to generate combinations.
+/// Generates all unique k-combinations from the candidate cards.
+/// This is a simple n choose k where we pick k items from the n candidates.
+/// Automatically deduplicates combinations (useful when candidate pool has repeated cards).
+pub fn generate_combinations(candidates: &[CardId], k: usize) -> Vec<Vec<CardId>> {
+    let n = candidates.len();
+    if k == 0 {
+        return vec![vec![]];
+    }
+    if n == 0 {
+        return vec![];
+    }
+
+    let mut all_combinations = Vec::new();
+    generate_combinations_recursive(candidates, k, 0, &mut vec![], &mut all_combinations);
+
+    // Deduplicate the combinations
+    deduplicate_combinations(all_combinations)
+}
+
+/// Recursive helper to generate k-combinations.
 fn generate_combinations_recursive(
-    candidates: &Vec<CardId>,
-    allowed_map: &HashMap<CardId, u32>,
-    remaining: u32,
-    index: usize,
+    candidates: &[CardId],
+    k: usize,
+    start: usize,
     current: &mut Vec<CardId>,
     result: &mut Vec<Vec<CardId>>,
 ) {
-    if remaining == 0 {
+    if current.len() == k {
         result.push(current.clone());
         return;
     }
-    if index >= candidates.len() {
-        return;
-    }
-    let candidate = &candidates[index];
-    let max_allowed = *allowed_map.get(candidate).unwrap_or(&2);
-    // Try using this candidate 0 up to min(max_allowed, remaining) times.
-    for count in 0..=std::cmp::min(max_allowed, remaining) {
-        for _ in 0..count {
-            current.push(*candidate);
-        }
-        generate_combinations_recursive(
-            candidates,
-            allowed_map,
-            remaining - count,
-            index + 1,
-            current,
-            result,
-        );
-        for _ in 0..count {
-            current.pop();
-        }
+
+    for i in start..candidates.len() {
+        current.push(candidates[i]);
+        generate_combinations_recursive(candidates, k, i + 1, current, result);
+        current.pop();
     }
 }
 

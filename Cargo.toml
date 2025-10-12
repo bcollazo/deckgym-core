@@ -19,7 +19,7 @@ indexmap = "2.7.0"
 num-format = "0.4.4"
 humantime = "2.1.0"
 uuid = { version = "1.17.0", features = ["v4", "js"] }
-csv = "1.3.1"
+csv = { version = "1.3.1", optional = true }
 pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
 strum = "0.27"
 strum_macros = "0.27"
@@ -30,6 +30,7 @@ crossterm = { version = "0.28", optional = true }
 default = []
 python = ["pyo3"]
 tui = ["ratatui", "crossterm"]
+csv-export = ["csv"]
 
 [lib]
 name = "deckgym"
@@ -47,10 +48,10 @@ name = "card_lookup_benchmark"
 harness = false
 
 [[bin]]
-name = "search"
-path = "src/bin/search.rs"
-
-[[bin]]
 name = "tui"
 path = "src/bin/tui.rs"
 required-features = ["tui"]
+
+[[example]]
+name = "sylveon_deck_draw_speed"
+required-features = ["csv-export"]

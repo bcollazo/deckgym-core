@@ -6,10 +6,10 @@ use uuid::Uuid;
 use crate::{
     actions::{apply_action, Action},
     generate_possible_actions,
+    models::EnergyType,
     players::Player,
     simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
     state::GameOutcome,
-    types::EnergyType,
     State,
 };
 
@@ -105,21 +105,11 @@ impl<'a> Game<'a> {
         self.print_action(&action, actor, player.as_ref(), &color);
 
         if self.event_handler.is_some() {
-            let state_before_action = self.state.clone();
-            self.apply_action(&action);
             if let Some(handler) = &mut self.event_handler {
-                handler.on_action(
-                    self.id,
-                    &state_before_action,
-                    actor,
-                    &actions,
-                    &action,
-                    &self.state,
-                );
+                handler.on_action(self.id, &self.state, actor, &actions, &action);
             }
-        } else {
-            self.apply_action(&action);
         }
+        self.apply_action(&action);
         self.print_state();
         action
     }

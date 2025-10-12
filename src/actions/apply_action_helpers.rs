@@ -4,8 +4,8 @@ use rand::rngs::StdRng;
 use crate::{
     actions::SimpleAction,
     hooks::{get_counterattack_damage, on_end_turn},
+    models::Card,
     state::GameOutcome,
-    types::Card,
     State,
 };
 
@@ -246,9 +246,22 @@ pub(crate) fn handle_attack_damage(
                 .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
-            state
+            // insert right next to EndTurn, so that if this was triggered by an attack,
+            // we resolve any move_generation_stack effects from that attack first.
+            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
+            let index_of_end_turn = state
                 .move_generation_stack
-                .push((ko_receiver, possible_moves));
+                .iter()
+                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
+            if let Some(index_of_end_turn) = index_of_end_turn {
+                state
+                    .move_generation_stack
+                    .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
+            } else {
+                state
+                    .move_generation_stack
+                    .push((ko_receiver, possible_moves));
+            }
         }
     }
 }

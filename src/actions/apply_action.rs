@@ -8,8 +8,8 @@ use crate::{
         apply_action_helpers::{apply_common_mutation, Mutation},
     },
     hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
+    models::{Card, EnergyType},
     state::State,
-    types::{Card, EnergyType},
 };
 
 use super::{
@@ -237,7 +237,7 @@ mod tests {
     use crate::card_ids::CardId;
     use crate::database::get_card_by_enum;
     use crate::{
-        types::{EnergyType, PlayedCard},
+        models::{EnergyType, PlayedCard},
         Deck,
     };
 

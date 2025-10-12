@@ -2,7 +2,7 @@
 
 use crate::{
     card_ids::CardId,
-    types::{Ability, Attack, Card, EnergyType, PokemonCard, TrainerCard, TrainerType},
+    models::{Ability, Attack, Card, EnergyType, PokemonCard, TrainerCard, TrainerType},
 };
 
 pub fn get_card_by_enum(id: CardId) -> Card {

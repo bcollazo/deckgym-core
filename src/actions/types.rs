@@ -1,6 +1,6 @@
 use crate::{
+    models::{Card, EnergyType, TrainerCard},
     tool_ids::ToolId,
-    types::{Card, EnergyType, TrainerCard},
 };
 use serde::{Deserialize, Serialize};
 use std::fmt;

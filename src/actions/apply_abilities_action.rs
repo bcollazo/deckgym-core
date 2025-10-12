@@ -8,7 +8,7 @@ use crate::{
         shared_mutations::pokemon_search_outcomes,
         Action, SimpleAction,
     },
-    types::EnergyType,
+    models::EnergyType,
     State,
 };
 
