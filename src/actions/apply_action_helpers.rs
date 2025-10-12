@@ -246,9 +246,17 @@ pub(crate) fn handle_attack_damage(
                 .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
+            // insert right next to EndTurn, so that if this was triggered by an attack,
+            // we resolve any move_generation_stack effects from that attack first.
+            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
+            let index_of_end_turn = state
+                .move_generation_stack
+                .iter()
+                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn))
+                .unwrap_or(state.move_generation_stack.len() - 1);
             state
                 .move_generation_stack
-                .push((ko_receiver, possible_moves));
+                .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
         }
     }
 }
