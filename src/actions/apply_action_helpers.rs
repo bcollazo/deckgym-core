@@ -252,11 +252,16 @@ pub(crate) fn handle_attack_damage(
             let index_of_end_turn = state
                 .move_generation_stack
                 .iter()
-                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn))
-                .unwrap_or(state.move_generation_stack.len() - 1);
-            state
-                .move_generation_stack
-                .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
+                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
+            if let Some(index_of_end_turn) = index_of_end_turn {
+                state
+                    .move_generation_stack
+                    .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
+            } else {
+                state
+                    .move_generation_stack
+                    .push((ko_receiver, possible_moves));
+            }
         }
     }
 }
