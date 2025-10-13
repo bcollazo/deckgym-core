@@ -275,7 +275,13 @@ fn forecast_effect_attack(
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
+        AttackId::A4066PichuCrackly => {
+            attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
+        }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
+        AttackId::A4a023MantykeSplashy => {
+            attach_energy_to_benched_basic(acting_player, EnergyType::Water)
+        }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {

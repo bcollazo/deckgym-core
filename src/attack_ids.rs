@@ -93,8 +93,10 @@ pub enum AttackId {
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     A4032MagbyToasty,
+    A4066PichuCrackly,
     A4134EeveeFindAFriend,
     A4a020SuicuneExCrystalWaltz,
+    A4a023MantykeSplashy,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
@@ -263,11 +265,15 @@ lazy_static::lazy_static! {
         // A4
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
+        m.insert(("A4 066", 0), AttackId::A4066PichuCrackly);
+        m.insert(("A4 171", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 023", 0), AttackId::A4a023MantykeSplashy);
+        m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
