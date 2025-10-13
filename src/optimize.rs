@@ -68,17 +68,22 @@ pub fn cli_optimize(
         num,
         players,
         seed,
+        None::<fn(usize, usize, &[CardId], f32)>,
     );
 }
 
-pub fn optimize(
+pub fn optimize<F>(
     incomplete_deck: &Deck,
     candidate_cards: &[String],
     enemy_decks: &[Deck],
     num: u32,
     players: Option<Vec<PlayerCode>>,
     seed: Option<u64>,
-) -> Vec<(Vec<CardId>, f32)> {
+    progress_callback: Option<F>,
+) -> Vec<(Vec<CardId>, f32)>
+where
+    F: Fn(usize, usize, &[CardId], f32),
+{
     if enemy_decks.is_empty() {
         warn!("No valid enemy decks provided. Optimization cannot proceed.");
         return Vec::new();
@@ -151,10 +156,11 @@ pub fn optimize(
     let mut best_win_percent = 0.0;
     let mut best_combination = None;
     let mut results = Vec::new();
-    for comb in combinations {
+    let total_combinations = combinations.len();
+    for comb in &combinations {
         // Create a completed deck by cloning the incomplete one and adding the candidate cards.
         let mut completed_deck = incomplete_deck.clone();
-        for card_id in &comb {
+        for card_id in comb {
             let card = get_card_by_enum(*card_id);
             completed_deck.cards.push(card);
         }
@@ -194,6 +200,12 @@ pub fn optimize(
         let win_percent = (total_wins as f32 / total_games as f32) * 100.0;
         results.push((comb.clone(), win_percent));
         warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
+
+        // Report progress via callback
+        if let Some(ref callback) = progress_callback {
+            callback(results.len(), total_combinations, comb, win_percent);
+        }
+
         if win_percent > best_win_percent {
             best_win_percent = win_percent;
             best_combination = Some(comb.clone());
@@ -355,6 +367,7 @@ mod tests {
             num,
             players,
             seed,
+            None::<fn(usize, usize, &[CardId], f32)>,
         );
         assert!(!results.is_empty());
     }
