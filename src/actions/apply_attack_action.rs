@@ -255,6 +255,7 @@ fn forecast_effect_attack(
         AttackId::A1a041MankeyFocusFist => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
         AttackId::A2049PalkiaDimensionalStorm => palkia_dimensional_storm(state),
+        AttackId::A2050ManaphyOceanic => manaphy_oceanic(acting_player),
         AttackId::A2119DialgaExMetallicTurbo => energy_bench_attack(index, 2, EnergyType::Metal),
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
@@ -288,6 +289,46 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 0, 30, None)
         }
     }
+}
+
+/// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
+fn manaphy_oceanic(acting_player: usize) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, _| {
+        let benched_pokemon: Vec<usize> = state
+            .enumerate_bench_pokemon(acting_player)
+            .map(|(idx, _)| idx)
+            .collect();
+
+        let mut choices = Vec::new();
+
+        if benched_pokemon.len() == 1 {
+            // Only 1 benched Pokémon, can only choose that one
+            choices.push(SimpleAction::Attach {
+                attachments: vec![(1, EnergyType::Water, benched_pokemon[0])],
+                is_turn_energy: false,
+            });
+        } else if benched_pokemon.len() >= 2 {
+            // 2 or more benched Pokémon: must choose exactly 2
+            // Generate all combinations of choosing 2 benched Pokémon
+            for i in 0..benched_pokemon.len() {
+                for j in (i + 1)..benched_pokemon.len() {
+                    choices.push(SimpleAction::Attach {
+                        attachments: vec![
+                            (1, EnergyType::Water, benched_pokemon[i]),
+                            (1, EnergyType::Water, benched_pokemon[j]),
+                        ],
+                        is_turn_energy: false,
+                    });
+                }
+            }
+        }
+
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((acting_player, choices));
+        }
+    })
 }
 
 fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
