@@ -324,9 +324,7 @@ fn manaphy_oceanic(acting_player: usize) -> (Probabilities, Mutations) {
         }
 
         if !choices.is_empty() {
-            state
-                .move_generation_stack
-                .push((acting_player, choices));
+            state.move_generation_stack.push((acting_player, choices));
         }
     })
 }
