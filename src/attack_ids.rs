@@ -80,6 +80,7 @@ pub enum AttackId {
     A3b055EeveeCollect,
     A2035PiplupHeal,
     A2049PalkiaDimensionalStorm,
+    A2050ManaphyOceanic,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
     A2b001WeedleMultiply,
@@ -93,8 +94,10 @@ pub enum AttackId {
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     A4032MagbyToasty,
+    A4066PichuCrackly,
     A4134EeveeFindAFriend,
     A4a020SuicuneExCrystalWaltz,
+    A4a023MantykeSplashy,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
@@ -218,6 +221,8 @@ lazy_static::lazy_static! {
         m.insert(("A2 182", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaDimensionalStorm);
+        m.insert(("A2 050", 0), AttackId::A2050ManaphyOceanic);
+        m.insert(("A2 162", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A2 119", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
@@ -263,16 +268,25 @@ lazy_static::lazy_static! {
         // A4
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
+        m.insert(("A4 066", 0), AttackId::A4066PichuCrackly);
+        m.insert(("A4 171", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 023", 0), AttackId::A4a023MantykeSplashy);
+        m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
+
+        // A4b
+        m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
+        m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
+        m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
