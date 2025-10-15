@@ -107,6 +107,23 @@ cargo run --bin search "Charizard"
 cargo run --bin search "Venusaur" --attack "Giant Bloom"
 ```
 
+**Card Implementation Status Tool**
+
+Check which cards are fully implemented versus which are missing attack effects, abilities, or trainer logic. This tool helps contributors identify cards that need implementation work.
+
+```bash
+# Show all cards with their implementation status
+cargo run --bin card_status
+
+# Show only incomplete cards
+cargo run --bin card_status -- --incomplete-only
+
+# Get the first incomplete card (useful for automation)
+cargo run --bin card_status -- --first-incomplete
+```
+
+The tool displays a summary showing total cards, completion percentage, and a breakdown of missing implementations by type (attacks, abilities, tools, trainer logic).
+
 **Generating database.rs**
 
 Ensure database.json is up-to-date with latest data. Mock the `get_card_by_enum` in `database.rs` with a `_ => panic` so that

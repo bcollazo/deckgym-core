@@ -3,6 +3,7 @@ pub mod actions;
 mod attack_ids;
 pub mod card_ids;
 pub mod card_logic;
+pub mod card_validation;
 pub mod database;
 pub mod deck;
 pub mod effects;

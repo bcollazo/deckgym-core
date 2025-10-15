@@ -2,6 +2,11 @@
 mode: agent
 ---
 
+- Decide what tool you want to implement. You can use:
+  ```bash
+  cargo run --bin card_status
+  ```
+  to see what tools are missing implementation.
 - Get the details of the tool card that you want to implement by using the following script:
 
   ```bash

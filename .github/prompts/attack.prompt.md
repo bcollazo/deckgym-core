@@ -2,13 +2,18 @@
 mode: agent
 ---
 
+- Decide what attack you want to implement. You can use:
+  ```bash
+  cargo run --bin card_status
+  ```
+  to see what cards are missing attacks.
 - Get the details of all the cards that have the attack you want to implement by using the following script:
 
   ```bash
   cargo run --bin search "Venusaur" --attack "Giant Bloom"
   ```
 
-- Copy the ids of cards to implement (including full art versions) in the given JSON.
+- Copy the ids of cards to implement (including full art versions) in the above JSON.
 - In `attack_ids.rs` add the attack to the `AttackId` enum and the `ATTACK_ID_MAP` map (with the correct index).
   - Only implement attacks with effects.
   - Keep the file ordered by set and number.
