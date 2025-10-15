@@ -130,6 +130,12 @@ impl PlayedCard {
         self.effects.clear();
     }
 
+    pub(crate) fn cure_status_conditions(&mut self) {
+        self.poisoned = false;
+        self.paralyzed = false;
+        self.asleep = false;
+    }
+
     pub(crate) fn end_turn_maintenance(&mut self) {
         // Remove all the ones that are 0, and subtract 1 from the rest
         self.effects.retain_mut(|(_, duration)| {

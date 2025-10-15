@@ -35,6 +35,9 @@ pub fn forecast_trainer_action(
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
         CardId::A2a072Irida | CardId::A2a087Irida => doutcome(irida_effect),
+        CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
+            doutcome(pokemon_center_lady_effect)
+        }
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
@@ -66,6 +69,24 @@ fn irida_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
+fn pokemon_center_lady_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions.
+    debug!("Pokemon Center Lady: Healing 30 damage and curing status conditions");
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .map(|(i, _)| SimpleAction::Heal {
+            in_play_idx: i,
+            amount: 30,
+            cure_status: true,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
 fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_in_play_pokemon(action.actor)
@@ -73,6 +94,7 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .map(|(i, _)| SimpleAction::Heal {
             in_play_idx: i,
             amount: 60,
+            cure_status: false,
         })
         .collect::<Vec<_>>();
     if !possible_moves.is_empty() {
@@ -100,6 +122,7 @@ fn inner_healing_effect(
         .map(|(i, _)| SimpleAction::Heal {
             in_play_idx: i,
             amount,
+            cure_status: false,
         })
         .collect::<Vec<_>>();
     if !possible_moves.is_empty() {

@@ -132,19 +132,29 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::Heal {
             in_play_idx,
             amount,
+            cure_status,
         } => {
-            apply_healing(action.actor, state, *in_play_idx, *amount);
+            apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status);
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
 }
 
-fn apply_healing(acting_player: usize, state: &mut State, position: usize, amount: u32) {
-    let active = state.in_play_pokemon[acting_player][position]
+fn apply_healing(
+    acting_player: usize,
+    state: &mut State,
+    position: usize,
+    amount: u32,
+    cure_status: bool,
+) {
+    let pokemon = state.in_play_pokemon[acting_player][position]
         .as_mut()
-        .expect("Pokemon should be there if applying potion to it");
-    active.heal(amount);
+        .expect("Pokemon should be there if healing it");
+    pokemon.heal(amount);
+    if cure_status {
+        pokemon.cure_status_conditions();
+    }
 }
 
 /// is_free is analogous to "via retreat". If false, its because this comes from an Activate.

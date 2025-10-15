@@ -48,6 +48,7 @@ pub enum SimpleAction {
     Heal {
         in_play_idx: usize,
         amount: u32,
+        cure_status: bool,
     },
     ApplyDamage {
         targets: Vec<(u32, usize)>, // Vec of (damage, in_play_idx)
@@ -92,7 +93,8 @@ impl fmt::Display for SimpleAction {
             SimpleAction::Heal {
                 in_play_idx,
                 amount,
-            } => write!(f, "Heal({in_play_idx}, {amount})"),
+                cure_status,
+            } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
             SimpleAction::ApplyDamage { targets } => {
                 let targets_str = targets
                     .iter()
