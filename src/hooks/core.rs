@@ -81,6 +81,34 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
     }
 }
 
+/// Called when energy is attached to a Pokémon
+pub(crate) fn on_attach_energy(
+    state: &mut State,
+    actor: usize,
+    in_play_idx: usize,
+    energy_type: EnergyType,
+    is_turn_energy: bool,
+) {
+    let pokemon = state.in_play_pokemon[actor][in_play_idx]
+        .as_ref()
+        .expect("Pokemon should be there if attaching energy to it");
+
+    // Check for Darkrai ex's Nightmare Aura ability
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
+        if ability_id == AbilityId::A2110DarkraiExNightmareAura
+            && energy_type == EnergyType::Darkness
+            && is_turn_energy
+        {
+            // Deal 20 damage to opponent's active Pokémon
+            debug!("Darkrai ex's Nightmare Aura: Dealing 20 damage to opponent's active Pokemon");
+            let opponent = (actor + 1) % 2;
+            if let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_mut() {
+                opponent_active.apply_damage(20);
+            }
+        }
+    }
+}
+
 /// Called when a Pokémon evolves
 pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
