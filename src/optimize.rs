@@ -254,9 +254,9 @@ fn estimate_time_per_game(player_codes: &[PlayerCode]) -> Duration {
     let non_r_count = count_player_types(player_codes, false) as u64;
     let r_count = count_player_types(player_codes, true) as u64;
 
-    // 15ms per non-R player, 150µs per R player
-    let non_r_time = Duration::from_millis(non_r_count * 15);
-    let r_time = Duration::from_micros(r_count * 150);
+    // 300ms per non-R player, 15ms per R player
+    let non_r_time = Duration::from_millis(non_r_count * 300);
+    let r_time = Duration::from_millis(r_count * 15);
 
     non_r_time.checked_add(r_time).unwrap_or(non_r_time)
 }
