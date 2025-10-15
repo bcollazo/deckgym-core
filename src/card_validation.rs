@@ -2,8 +2,9 @@ use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, TrainerType},
-    move_generation::generate_possible_trainer_actions,
+    move_generation::trainer_move_generation_implementation,
     state::State,
+    tool_ids::ToolId,
     AbilityId, AttackId,
 };
 use serde::{Deserialize, Serialize};
@@ -57,13 +58,13 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
         }
         Card::Trainer(trainer_card) => {
             if trainer_card.trainer_card_type == TrainerType::Tool
-                && crate::tool_ids::ToolId::from_trainer_card(&trainer_card).is_none()
+                && ToolId::from_trainer_card(&trainer_card).is_none()
             {
                 return ImplementationStatus::MissingTool;
             }
 
             // Verify it can generate moves
-            let moves = generate_possible_trainer_actions(&State::default(), &trainer_card);
+            let moves = trainer_move_generation_implementation(&State::default(), &trainer_card);
             if moves.is_none() {
                 return ImplementationStatus::MissingTrainer;
             };

@@ -9,7 +9,9 @@ use crate::state::State;
 
 use attacks::generate_attack_actions;
 use move_generation_abilities::generate_ability_actions;
-pub use move_generation_trainer::generate_possible_trainer_actions;
+pub use move_generation_trainer::{
+    generate_possible_trainer_actions, trainer_move_generation_implementation,
+};
 
 /// Generates a list of possible moves for the current player.
 ///
