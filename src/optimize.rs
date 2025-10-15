@@ -232,10 +232,10 @@ fn robustly_parse_card_id_string(orig: &str) -> CardId {
     if s.len() < 3 {
         panic!("Card ID '{}' should be at least 3 characters long", orig);
     }
-    // Try splitting by space or dash first
-    let (prefix, number) = if let Some(idx) = orig.find([' ', '-']) {
+    // Try splitting by space first
+    let (prefix, number) = if let Some(idx) = orig.find([' ']) {
         let (pre, num) = orig.split_at(idx);
-        let num = num.trim_start_matches([' ', '-']);
+        let num = num.trim_start_matches([' ']);
         (pre.trim(), num.trim())
     } else {
         // fallback: last 3 chars as number, rest as prefix
@@ -370,5 +370,19 @@ mod tests {
             None::<fn(usize, usize, &[CardId], f32)>,
         );
         assert!(!results.is_empty());
+    }
+
+    #[test]
+    fn test_robustly_parse_card_id_string() {
+        let cases = vec![
+            ("A1 53", CardId::from_card_id("A1 053").unwrap()),
+            ("P-A 5", CardId::from_card_id("P-A 005").unwrap()),
+            ("A1219", CardId::from_card_id("A1 219").unwrap()),
+            ("A2a 072", CardId::from_card_id("A2a 072").unwrap()),
+        ];
+        for (input, expected) in cases {
+            let parsed = robustly_parse_card_id_string(input);
+            assert_eq!(parsed, expected, "Failed to parse '{}'", input);
+        }
     }
 }
