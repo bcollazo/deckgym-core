@@ -7,7 +7,7 @@ use crate::{
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{apply_common_mutation, Mutation},
     },
-    hooks::{get_retreat_cost, on_attach_tool, on_evolve, to_playable_card},
+    hooks::{get_retreat_cost, on_attach_energy, on_attach_tool, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     state::State,
 };
@@ -92,6 +92,10 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                     .expect("Pokemon should be there if attaching energy to it")
                     .attached_energy
                     .extend(std::iter::repeat_n(*energy, *amount as usize));
+                // Call hook for each energy attached
+                for _ in 0..*amount {
+                    on_attach_energy(state, action.actor, *in_play_idx, *energy, *is_turn_energy);
+                }
             }
             if *is_turn_energy {
                 state.current_energy = None;
