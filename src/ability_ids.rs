@@ -5,6 +5,7 @@ use std::collections::HashMap;
 pub enum AbilityId {
     A1020VictreebelFragranceTrap,
     A1089GreninjaWaterShuriken,
+    A1098MagnetonVoltCharge,
     A1177Weezing,
     A1007Butterfree,
     A1132Gardevoir,
@@ -26,6 +27,7 @@ lazy_static::lazy_static! {
         m.insert("A1 007", AbilityId::A1007Butterfree);
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("A1 089", AbilityId::A1089GreninjaWaterShuriken);
+        m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 177", AbilityId::A1177Weezing);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
         m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
@@ -52,10 +54,13 @@ lazy_static::lazy_static! {
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 081", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 089", AbilityId::A3b034SylveonExHappyRibbon);
+        m.insert("A4 218", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4 233", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 080", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
+        m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
+        m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);

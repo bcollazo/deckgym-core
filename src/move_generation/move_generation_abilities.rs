@@ -26,6 +26,7 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
         AbilityId::A1007Butterfree => !card.ability_used,
         AbilityId::A1020VictreebelFragranceTrap => is_active && !card.ability_used,
         AbilityId::A1089GreninjaWaterShuriken => !card.ability_used,
+        AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
