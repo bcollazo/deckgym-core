@@ -168,20 +168,23 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
-    // Modifiers by effect (like Giovanni)
+    let opponent = (player + 1) % 2;
+    let opponent_is_ex = state.get_active(opponent).card.is_ex();
+
+    // Modifiers by effect (like Giovanni, Red)
     let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .filter(|x| matches!(x, TurnEffect::IncreasedDamage { .. }))
-        .map(|x| match x {
+        .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
             _ => 0,
         })
         .sum::<u32>();
 
     // Modifiers by receiving card effects
     let reduced_card_effect_modifiers = state
-        .get_active((player + 1) % 2)
+        .get_active(opponent)
         .get_active_effects()
         .iter()
         .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
@@ -192,7 +195,6 @@ pub(crate) fn get_damage_from_attack(
         .sum::<u32>();
 
     // Weakness Modifier
-    let opponent = (player + 1) % 2;
     let mut weakness_modifier = 0;
     let receiving = state.get_active(opponent);
     if let Card::Pokemon(pokemon_card) = &receiving.card {
@@ -361,6 +363,38 @@ mod tests {
             damage_with_giovanni,
             base_damage + 10,
             "Giovanni should add exactly 10 damage to attacks"
+        );
+    }
+
+    #[test]
+    fn test_red_modifier_only_affects_ex() {
+        let attacker_card = get_card_by_enum(CardId::A1001Bulbasaur);
+
+        // Non-EX opponent should not receive extra damage
+        let mut non_ex_state = State::default();
+        non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
+        let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
+        non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
+        let base_damage_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
+        let damage_with_red_vs_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        assert_eq!(
+            damage_with_red_vs_non_ex, base_damage_non_ex,
+            "Red should not increase damage against non-EX Pokémon"
+        );
+
+        // EX opponent should receive the bonus damage
+        let mut ex_state = State::default();
+        ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
+        let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
+        ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
+        let base_damage_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
+        let damage_with_red_vs_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        assert_eq!(
+            damage_with_red_vs_ex,
+            base_damage_ex + 20,
+            "Red should add 20 damage against Pokémon ex"
         );
     }
 

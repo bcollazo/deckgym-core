@@ -41,6 +41,9 @@ pub fn forecast_trainer_action(
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
+        CardId::A2b071Red | CardId::A2b090Red | CardId::A4b352Red | CardId::A4b353Red => {
+            doutcome(red_effect)
+        }
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
@@ -235,6 +238,11 @@ fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
+}
+
+fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.
+    state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
 }
 
 fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {

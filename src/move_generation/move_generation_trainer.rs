@@ -69,7 +69,11 @@ pub fn trainer_move_generation_implementation(
         | CardId::A1270Giovanni
         | CardId::A1a065MythicalSlab
         | CardId::A1a068Leaf
-        | CardId::A1a082Leaf => can_play_trainer(state, trainer_card),
+        | CardId::A1a082Leaf
+        | CardId::A2b071Red
+        | CardId::A2b090Red
+        | CardId::A4b352Red
+        | CardId::A4b353Red => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }

@@ -12,4 +12,5 @@ pub enum TurnEffect {
     NoSupportCards,
     ReducedRetreatCost { amount: u8 },
     IncreasedDamage { amount: u32 },
+    IncreasedDamageAgainstEx { amount: u32 },
 }
