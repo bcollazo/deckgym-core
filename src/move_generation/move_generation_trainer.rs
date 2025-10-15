@@ -21,9 +21,6 @@ fn cannot_play_trainer() -> Option<Vec<SimpleAction>> {
 }
 
 /// Generate possible actions for a trainer card.
-///
-/// Returns None instead of panicing if the trainer card is not implemented; this is so that the
-/// WASM module can do "feature detection", and know if a card is implemented.
 pub fn generate_possible_trainer_actions(
     state: &State,
     trainer_card: &TrainerCard,
@@ -35,6 +32,15 @@ pub fn generate_possible_trainer_actions(
         return cannot_play_trainer(); // dont even check which type it is
     }
 
+    trainer_move_generation_implementation(state, trainer_card)
+}
+
+/// Returns None instead of panicing if the trainer card is not implemented; this is so that the
+/// WASM module can do "feature detection", and know if a card is implemented.
+pub fn trainer_move_generation_implementation(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
     // Pokemon tools can be played if there is a space in the mat for them.
     if trainer_card.trainer_card_type == TrainerType::Tool {
         return can_play_tool(state, trainer_card);
@@ -148,7 +154,7 @@ fn can_play_misty(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 
 /// Check if Koga can be played (requires active pokemon to be Weezing or Muk)
 fn can_play_koga(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    let active_pokemon = &state.in_play_pokemon[state.current_player][0];
+    let active_pokemon = &state.maybe_get_active(state.current_player);
     if let Some(played_card) = active_pokemon {
         let card_id =
             CardId::from_card_id(played_card.get_id().as_str()).expect("CardId should be known");
@@ -190,13 +196,14 @@ fn can_play_cyrus(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 /// Check if Repel can be played (requires opponent's active to be a Basic pokemon)
 fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let opponent = (state.current_player + 1) % 2;
-    let opponent_active = state.get_active(opponent);
+    let opponent_active = &state.maybe_get_active(opponent);
     let opponent_bench_count = state.enumerate_bench_pokemon(opponent).count();
-    if opponent_active.card.is_basic() && opponent_bench_count > 0 {
-        can_play_trainer(state, trainer_card)
-    } else {
-        cannot_play_trainer()
+    if let Some(opponent_active) = opponent_active {
+        if opponent_active.card.is_basic() && opponent_bench_count > 0 {
+            return can_play_trainer(state, trainer_card);
+        }
     }
+    cannot_play_trainer()
 }
 
 fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
