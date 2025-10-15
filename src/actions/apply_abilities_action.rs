@@ -32,6 +32,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A2a010LeafeonExForestBreath => charge_grass_pokemon(action.actor),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2110DarkraiExNightmareAura => panic!("Darkrai ex's ability is passive"),
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => charge_giratina_and_end_turn(index),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),

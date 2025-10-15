@@ -11,6 +11,7 @@ pub enum AbilityId {
     A1a006SerperiorJungleTotem,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
     A3122SolgaleoExRisingRoad,
     A3a027ShiinoticIlluminate,
@@ -36,6 +37,9 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A2 202", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2b 035", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 083", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 096", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
@@ -52,6 +56,9 @@ lazy_static::lazy_static! {
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 080", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
+        m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 019", AbilityId::A1089GreninjaWaterShuriken);
         m
     };

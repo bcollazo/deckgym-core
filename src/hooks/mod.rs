@@ -10,6 +10,7 @@ pub(crate) use core::contains_energy;
 pub(crate) use core::energy_missing;
 pub(crate) use core::get_damage_from_attack;
 pub(crate) use core::get_stage;
+pub(crate) use core::on_attach_energy;
 pub(crate) use core::on_attach_tool;
 pub(crate) use core::on_end_turn;
 pub(crate) use core::on_evolve;
