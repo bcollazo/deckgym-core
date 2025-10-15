@@ -27,6 +27,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1007Butterfree => heal_your_pokemon(20),
         AbilityId::A1020VictreebelFragranceTrap => switch_opponent_basic_to_active(action.actor),
         AbilityId::A1089GreninjaWaterShuriken => damage_opponent_pokemon(action.actor, 20),
+        AbilityId::A1098MagnetonVoltCharge => charge_magneton(index),
         AbilityId::A1177Weezing => poison_opponent_active_pokemon(),
         AbilityId::A1132Gardevoir => charge_active(EnergyType::Psychic),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
@@ -133,6 +134,17 @@ fn damage_opponent_pokemon(acting_player: usize, damage: u32) -> (Probabilities,
         state
             .move_generation_stack
             .push((acting_player, possible_moves));
+    }))
+}
+
+fn charge_magneton(index: usize) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, action| {
+        // Once during your turn, you may take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
+        debug!("Magneton's Volt Charge: Attaching 1 Lightning Energy to Magneton");
+        let pokemon = state.in_play_pokemon[action.actor][index]
+            .as_mut()
+            .expect("Pokemon should be there");
+        pokemon.attach_energy(&EnergyType::Lightning, 1);
     }))
 }
 
