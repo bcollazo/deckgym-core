@@ -2,6 +2,11 @@
 mode: agent
 ---
 
+- Decide what trainer you want to implement. You can use:
+  ```bash
+  cargo run --bin card_status
+  ```
+  to see what trainers are missing implementation.
 - Get the details of the trainer card that you want to implement by using the following script:
 
   ```bash

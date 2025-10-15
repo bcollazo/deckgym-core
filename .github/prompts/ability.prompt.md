@@ -2,6 +2,11 @@
 mode: agent
 ---
 
+- Decide what ability you want to implement. You can use:
+  ```bash
+  cargo run --bin card_status
+  ```
+  to see what cards are missing abilities.
 - Get the details of all the cards that have the ability you want to implement by using the following script:
 
   ```bash
