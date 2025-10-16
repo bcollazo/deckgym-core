@@ -69,6 +69,7 @@ pub enum AttackId {
     A1201LickitungContinuousLick,
     A1203KangaskhanDizzyPunch,
     A1213CinccinoDoTheWave,
+    A1a001ExeggcuteGrowth,
     A1a003CelebiExPowerfulBloom,
     A1a010PonytaStomp,
     A1a011RapidashRisingLunge,
@@ -105,6 +106,7 @@ pub enum AttackId {
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
+    PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
 }
 
@@ -206,6 +208,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 285", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 286", 1), AttackId::A1129MewtwoExPsydrive);
         // A1a
+        m.insert(("A1a 001", 0), AttackId::A1a001ExeggcuteGrowth);
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 010", 0), AttackId::A1a010PonytaStomp);
         m.insert(("A1a 011", 0), AttackId::A1a011RapidashRisingLunge);
@@ -304,6 +307,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
+        m.insert(("P-A 060", 0), AttackId::PA060ExeggcuteGrowth);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
 

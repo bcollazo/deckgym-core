@@ -262,7 +262,12 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
-        AttackId::A3a019TapuKokoExPlasmaHurricane => plasma_hurricane_attack(),
+        AttackId::A3a019TapuKokoExPlasmaHurricane => {
+            self_charge_active_attack(20, EnergyType::Lightning, 1)
+        }
+        AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
+            self_charge_active_attack(0, EnergyType::Grass, 1)
+        }
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
@@ -568,10 +573,17 @@ fn active_then_choice_bench_attack(
     })
 }
 
-fn plasma_hurricane_attack() -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(20, move |_, state, action| {
+fn self_charge_active_attack(
+    damage: u32,
+    energy_type: EnergyType,
+    amount: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
-        active.attach_energy(&EnergyType::Lightning, 1);
+        active.attach_energy(&energy_type, amount);
+        for _ in 0..amount {
+            on_attach_energy(state, action.actor, 0, energy_type, false);
+        }
     })
 }
 
