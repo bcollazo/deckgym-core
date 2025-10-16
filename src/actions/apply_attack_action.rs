@@ -262,6 +262,7 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
             0,
@@ -280,6 +281,7 @@ fn forecast_effect_attack(
         AttackId::A4066PichuCrackly => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
+        AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
@@ -537,6 +539,25 @@ fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Muta
         for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
             choices.push(SimpleAction::ApplyDamage {
                 targets: vec![(damage, in_play_idx)],
+            });
+        }
+        if choices.is_empty() {
+            return;
+        }
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn active_then_choice_bench_attack(
+    active_damage: u32,
+    bench_damage: u32,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(active_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
+            choices.push(SimpleAction::ApplyDamage {
+                targets: vec![(bench_damage, in_play_idx)],
             });
         }
         if choices.is_empty() {
