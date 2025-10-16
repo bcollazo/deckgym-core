@@ -581,9 +581,6 @@ fn self_charge_active_attack(
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attach_energy(&energy_type, amount);
-        for _ in 0..amount {
-            on_attach_energy(state, action.actor, 0, energy_type, false);
-        }
     })
 }
 

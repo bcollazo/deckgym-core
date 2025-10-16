@@ -107,6 +107,10 @@ impl PlayedCard {
         self.remaining_hp < self.total_hp
     }
 
+    pub(crate) fn has_status_condition(&self) -> bool {
+        self.poisoned || self.paralyzed || self.asleep
+    }
+
     pub(crate) fn has_tool_attached(&self) -> bool {
         self.attached_tool.is_some()
     }
