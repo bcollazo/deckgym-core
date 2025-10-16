@@ -88,6 +88,7 @@ pub enum AttackId {
     A2b003BeedrillExCrushingSpear,
     A2b005SprigatitoCryForHelp,
     A2b007MeowscaradaFightingClaws,
+    A2b022PikachuExThunderbolt,
     A2b035GiratinaExChaoticImpact,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
@@ -236,18 +237,21 @@ lazy_static::lazy_static! {
 
         // A2b
         m.insert(("A2b 001", 0), AttackId::A2b001WeedleMultiply);
-        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
         m.insert(("A2b 002", 0), AttackId::A2b002KakunaStringShot);
-        m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
         m.insert(("A2b 003", 0), AttackId::A2b003BeedrillExCrushingSpear);
-        m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
-        m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
         m.insert(("A2b 007", 0), AttackId::A2b007MeowscaradaFightingClaws);
-        m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 022", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 035", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 082", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 083", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 092", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 096", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
 
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
