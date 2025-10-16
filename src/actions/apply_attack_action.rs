@@ -262,6 +262,7 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A3a019TapuKokoExPlasmaHurricane => plasma_hurricane_attack(),
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
@@ -564,6 +565,13 @@ fn active_then_choice_bench_attack(
             return;
         }
         state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn plasma_hurricane_attack() -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(20, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.attach_energy(&EnergyType::Lightning, 1);
     })
 }
 

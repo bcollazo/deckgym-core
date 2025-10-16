@@ -91,6 +91,7 @@ pub enum AttackId {
     A2b022PikachuExThunderbolt,
     A2b035GiratinaExChaoticImpact,
     A3a007PheromosaJumpBlues,
+    A3a019TapuKokoExPlasmaHurricane,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
@@ -267,6 +268,9 @@ lazy_static::lazy_static! {
         // A3a
         m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 071", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
@@ -283,6 +287,7 @@ lazy_static::lazy_static! {
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
