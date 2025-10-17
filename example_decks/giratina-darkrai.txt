@@ -8,9 +8,8 @@ Energy: Darkness
 1 Mars A2 155
 1 Pokémon Center Lady A2b 70
 1 Red A2b 71
-1 Guzma A3 151
 1 Repel A3a 64
 1 Potion P-A 1
 2 Poké Ball P-A 5
-1 Red Card P-A 6
+2 Red Card P-A 6
 2 Professor's Research P-A 7
