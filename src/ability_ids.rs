@@ -19,6 +19,7 @@ pub enum AbilityId {
     A3a021ZeraoraThunderclapFlash,
     A3a027ShiinoticIlluminate,
     A3b034SylveonExHappyRibbon,
+    A4083EspeonExPsychicHealing,
     A4a020SuicuneExLegendaryPulse,
 }
 
@@ -59,6 +60,9 @@ lazy_static::lazy_static! {
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 081", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 089", AbilityId::A3b034SylveonExHappyRibbon);
+        m.insert("A4 083", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4 190", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4 205", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4 218", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4 233", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
@@ -67,6 +71,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
+        m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);

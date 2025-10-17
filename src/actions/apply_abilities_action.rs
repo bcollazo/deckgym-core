@@ -42,6 +42,7 @@ pub(crate) fn forecast_ability(
         }
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
+        AbilityId::A4083EspeonExPsychicHealing => heal_one_pokemon(action.actor, 30),
         AbilityId::A4a020SuicuneExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
@@ -166,5 +167,27 @@ fn charge_giratina_and_end_turn(index: usize) -> (Probabilities, Mutations) {
         state
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::EndTurn]));
+    }))
+}
+
+fn heal_one_pokemon(acting_player: usize, amount: u32) -> (Probabilities, Mutations) {
+    ability_doutcome(ability_mutation(move |_, state, _| {
+        // Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon.
+        debug!(
+            "Espeon ex's Psychic Healing: Healing {} damage from 1 of your Pokemon",
+            amount
+        );
+        let possible_moves = state
+            .enumerate_in_play_pokemon(acting_player)
+            .filter(|(_, pokemon)| pokemon.is_damaged())
+            .map(|(in_play_idx, _)| SimpleAction::Heal {
+                in_play_idx,
+                amount,
+                cure_status: false,
+            })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((acting_player, possible_moves));
     }))
 }
