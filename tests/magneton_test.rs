@@ -43,7 +43,7 @@ fn test_magneton_volt_charge_attaches_lightning_energy() {
     // Act: Use Magneton's Volt Charge ability
     let action = Action {
         actor: current_player,
-        action: SimpleAction::UseAbility(1),
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
         is_stack: false,
     };
     game.apply_action(&action);
@@ -88,7 +88,7 @@ fn test_magneton_volt_charge_can_only_be_used_once() {
     // Act: Use Magneton's Volt Charge ability first time
     let action = Action {
         actor: current_player,
-        action: SimpleAction::UseAbility(0),
+        action: SimpleAction::UseAbility { in_play_idx: 0 },
         is_stack: false,
     };
     game.apply_action(&action);
@@ -107,7 +107,7 @@ fn test_magneton_volt_charge_can_only_be_used_once() {
     let (_actor, available_actions) = generate_possible_actions(&state);
     let ability_actions: Vec<_> = available_actions
         .iter()
-        .filter(|a| matches!(a.action, SimpleAction::UseAbility(0)))
+        .filter(|a| matches!(a.action, SimpleAction::UseAbility { in_play_idx: 0 }))
         .collect();
     assert_eq!(
         ability_actions.len(),
@@ -139,7 +139,7 @@ fn test_magneton_volt_charge_doesnt_end_turn() {
     // Act: Use Magneton's Volt Charge ability
     let action = Action {
         actor: current_player,
-        action: SimpleAction::UseAbility(0),
+        action: SimpleAction::UseAbility { in_play_idx: 0 },
         is_stack: false,
     };
     game.apply_action(&action);

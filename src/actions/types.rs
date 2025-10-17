@@ -27,7 +27,9 @@ pub enum SimpleAction {
     // usize is bench 1-based index, with 0 meaning Active pokemon, 1..4 meaning Bench
     Place(Card, usize),
     Evolve(Card, usize),
-    UseAbility(usize),
+    UseAbility {
+        in_play_idx: usize,
+    },
 
     // Its given it is with the active pokemon, to the other active.
     // usize is the index of the attack in the pokemon's attacks
@@ -51,7 +53,9 @@ pub enum SimpleAction {
         cure_status: bool,
     },
     ApplyDamage {
+        target_player: usize,
         targets: Vec<(u32, usize)>, // Vec of (damage, in_play_idx)
+        is_from_active_attack: bool,
     },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
@@ -67,7 +71,7 @@ impl fmt::Display for SimpleAction {
             SimpleAction::Play { trainer_card } => write!(f, "Play({trainer_card:?})"),
             SimpleAction::Place(card, index) => write!(f, "Place({card}, {index})"),
             SimpleAction::Evolve(card, index) => write!(f, "Evolve({card}, {index})"),
-            SimpleAction::UseAbility(index) => write!(f, "UseAbility({index})"),
+            SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
             SimpleAction::Attack(index) => write!(f, "Attack({index})"),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
@@ -95,13 +99,20 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
-            SimpleAction::ApplyDamage { targets } => {
+            SimpleAction::ApplyDamage {
+                target_player,
+                targets,
+                is_from_active_attack,
+            } => {
                 let targets_str = targets
                     .iter()
                     .map(|(damage, in_play_idx)| format!("({damage}, {in_play_idx})"))
                     .collect::<Vec<_>>()
                     .join(", ");
-                write!(f, "ApplyDamage({targets_str})")
+                write!(
+                    f,
+                    "ApplyDamage(player:{target_player}, targets:[{targets_str}], from_active:{is_from_active_attack})"
+                )
             }
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
             SimpleAction::Noop => write!(f, "Noop"),

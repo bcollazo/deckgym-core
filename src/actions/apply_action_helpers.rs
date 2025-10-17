@@ -120,8 +120,7 @@ fn apply_pokemon_checkup(
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
     for (player, in_play_idx) in poisons_to_handle {
-        let opponent = (player + 1) % 2;
-        handle_damage(mutated_state, opponent, &vec![(10, in_play_idx)]);
+        handle_damage(mutated_state, player, &vec![(10, in_play_idx)], false);
     }
     // Advance turn
     mutated_state.advance_turn();
@@ -142,19 +141,22 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
 
 pub(crate) fn handle_damage(
     state: &mut State,
-    attacking_player: usize,
+    target_player: usize,
     targets: &Vec<(u32, usize)>, // damage, in_play_idx
+    is_from_active_attack: bool,
 ) {
-    let defending_player = (attacking_player + 1) % 2;
+    let attacking_player = (target_player + 1) % 2;
     let mut knockouts: Vec<(usize, usize)> = vec![];
+
+    // Handle each target individually
     for (damage, target_pokemon_idx) in targets {
         if *damage == 0 {
             continue;
         }
 
-        // Create a closure for target_pokemon's mutations
-        let counter_damage = {
-            let target_pokemon = state.in_play_pokemon[defending_player][*target_pokemon_idx]
+        // Apply damage
+        {
+            let target_pokemon = state.in_play_pokemon[target_player][*target_pokemon_idx]
                 .as_mut()
                 .expect("Pokemon should be there if taking damage");
             target_pokemon.apply_damage(*damage); // Applies without surpassing 0 HP
@@ -163,29 +165,38 @@ pub(crate) fn handle_damage(
                 damage, target_pokemon_idx, target_pokemon.remaining_hp
             );
             if target_pokemon.remaining_hp == 0 {
-                knockouts.push((defending_player, *target_pokemon_idx));
+                knockouts.push((target_player, *target_pokemon_idx));
             }
+        }
 
+        // Consider Counter-Attack (only if from Active Attack to Active)
+        if !(is_from_active_attack && *target_pokemon_idx == 0) {
+            continue;
+        }
+
+        let target_pokemon = state.in_play_pokemon[target_player][*target_pokemon_idx]
+            .as_ref()
+            .expect("Pokemon should be there if taking damage");
+        let counter_damage = {
             if *target_pokemon_idx == 0 {
                 get_counterattack_damage(target_pokemon)
             } else {
                 0
             }
         };
-
-        // If pokemon not active, don't even look at counter-attack logic.
-        if *target_pokemon_idx == 0 && counter_damage > 0 {
-            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
-                .as_mut()
-                .expect("Active Pokemon should be there");
-            attacking_pokemon.apply_damage(counter_damage);
-            debug!(
-                "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
-                counter_damage, attacking_pokemon.remaining_hp
-            );
-            if attacking_pokemon.remaining_hp == 0 {
-                knockouts.push((attacking_player, 0));
-            }
+        if counter_damage == 0 {
+            continue;
+        }
+        let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+            .as_mut()
+            .expect("Active Pokemon should be there");
+        attacking_pokemon.apply_damage(counter_damage);
+        debug!(
+            "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
+            counter_damage, attacking_pokemon.remaining_hp
+        );
+        if attacking_pokemon.remaining_hp == 0 {
+            knockouts.push((attacking_player, 0));
         }
     }
 
@@ -208,15 +219,15 @@ pub(crate) fn handle_damage(
     }
 
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
-    if state.points[attacking_player] >= 3 && state.points[defending_player] >= 3 {
+    if state.points[attacking_player] >= 3 && state.points[target_player] >= 3 {
         debug!("Both players have 3 points, it's a tie");
         state.winner = Some(GameOutcome::Tie);
         return;
     } else if state.points[attacking_player] >= 3 {
         state.winner = Some(GameOutcome::Win(attacking_player));
         return; // attacking player could lose by attacking into a RockyHelmet e.g.
-    } else if state.points[defending_player] >= 3 {
-        state.winner = Some(GameOutcome::Win(defending_player));
+    } else if state.points[target_player] >= 3 {
+        state.winner = Some(GameOutcome::Win(target_player));
         return;
     }
 
@@ -274,8 +285,8 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
             state.has_played_support = true;
         }
     }
-    if let SimpleAction::UseAbility(index) = &action.action {
-        let pokemon = state.in_play_pokemon[action.actor][*index]
+    if let SimpleAction::UseAbility { in_play_idx } = &action.action {
+        let pokemon = state.in_play_pokemon[action.actor][*in_play_idx]
             .as_mut()
             .expect("Pokemon should be there if using ability");
         pokemon.ability_used = true;

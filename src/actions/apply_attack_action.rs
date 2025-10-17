@@ -552,7 +552,9 @@ fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Muta
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
             choices.push(SimpleAction::ApplyDamage {
+                target_player: action.actor,
                 targets: vec![(damage, in_play_idx)],
+                is_from_active_attack: true,
             });
         }
         if choices.is_empty() {
@@ -571,7 +573,9 @@ fn active_then_choice_bench_attack(
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
+                target_player: opponent,
                 targets: vec![(bench_damage, in_play_idx)],
+                is_from_active_attack: true,
             });
         }
         if choices.is_empty() {
@@ -601,13 +605,17 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
         if bench_only {
             for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
+                    target_player: opponent,
                     targets: vec![(damage, in_play_idx)],
+                    is_from_active_attack: true,
                 });
             }
         } else {
             for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
+                    target_player: opponent,
                     targets: vec![(damage, in_play_idx)],
+                    is_from_active_attack: true,
                 });
             }
         }

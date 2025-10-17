@@ -45,7 +45,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Attach { .. } => 10,
         SimpleAction::AttachTool { .. } => 10,
         SimpleAction::Evolve(_, _) => 10,
-        SimpleAction::UseAbility(_) => 10,
+        SimpleAction::UseAbility { .. } => 10,
         SimpleAction::Attack(_) => 10,
         SimpleAction::ApplyDamage { .. } => 10,
         SimpleAction::Retreat(_) => 2,

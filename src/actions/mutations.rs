@@ -12,33 +12,16 @@ use super::{
 // forcing the end of the turn, applying damage with calculations, forcing enemy
 // to promote pokemon after knockout, etc... apply to all attacks.
 
-// === Helper functions to build Outcomes (Probabilities, Mutations)
+// === Helper functions to build Outcomes = (Probabilities, Mutations)
 // Doutcome means deterministic outcome
 pub(crate) fn doutcome(
     mutation: fn(&mut StdRng, &mut State, &Action),
 ) -> (Probabilities, Mutations) {
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, action| {
-            mutation(rng, state, action);
-        })],
-    )
+    doutcome_from_mutation(Box::new(mutation))
 }
 
-// Useful for abilities
-pub(crate) fn ability_doutcome(mutation: Mutation) -> (Probabilities, Mutations) {
+pub(crate) fn doutcome_from_mutation(mutation: Mutation) -> (Probabilities, Mutations) {
     (vec![1.0], vec![mutation])
-}
-
-pub(crate) fn ability_mutation<F>(additional_effect: F) -> Mutation
-where
-    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
-{
-    Box::new({
-        move |rng, state, action| {
-            additional_effect(rng, state, action);
-        }
-    })
 }
 
 // Useful for attacks
@@ -75,7 +58,8 @@ where
             additional_effect(rng, state, action);
 
             let damage = get_damage_from_attack(state, action.actor, attack_index, 0);
-            handle_damage(state, action.actor, &vec![(damage, 0)]);
+            let target_player = (action.actor + 1) % 2;
+            handle_damage(state, target_player, &vec![(damage, 0)], true);
         })],
     )
 }
@@ -119,7 +103,8 @@ where
     Box::new({
         move |rng, state, action| {
             additional_effect(rng, state, action);
-            handle_damage(state, action.actor, &targets);
+            let target_player = (action.actor + 1) % 2;
+            handle_damage(state, target_player, &targets, true);
         }
     })
 }
