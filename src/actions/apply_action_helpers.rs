@@ -204,12 +204,7 @@ pub(crate) fn handle_damage(
             ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
         );
 
-        // Move card (and evolution chain) into discard pile
-        let mut cards_to_discard = ko_pokemon.cards_behind.clone();
-        cards_to_discard.push(ko_pokemon.card.clone());
-        debug!("Discarding: {cards_to_discard:?}");
-        state.discard_piles[ko_receiver].extend(cards_to_discard);
-        state.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
+        state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }
 
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
