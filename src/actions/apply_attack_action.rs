@@ -265,6 +265,9 @@ fn forecast_effect_attack(
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
         }
+        AttackId::A3a060TypeNullQuickBlow => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
+        }
         AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
