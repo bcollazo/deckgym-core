@@ -297,6 +297,9 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
+        AttackId::A2053MagnezoneThunderBlast => {
+            self_energy_discard_attack(0, vec![EnergyType::Lightning])
+        }
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)

@@ -105,6 +105,7 @@ pub enum AttackId {
     A4134EeveeFindAFriend,
     A4a020SuicuneExCrystalWaltz,
     A4a023MantykeSplashy,
+    A2053MagnezoneThunderBlast,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
@@ -227,6 +228,7 @@ lazy_static::lazy_static! {
         // A2
         m.insert(("A2 035", 0), AttackId::A2035PiplupHeal);
         m.insert(("A2 049", 1), AttackId::A2049PalkiaDimensionalStorm);
+        m.insert(("A2 053", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaDimensionalStorm);
@@ -305,6 +307,8 @@ lazy_static::lazy_static! {
         // A4b
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
+        m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);
+        m.insert(("A4b 138", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
