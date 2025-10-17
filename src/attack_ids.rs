@@ -99,6 +99,7 @@ pub enum AttackId {
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
+    A3b009FlareonExFireSpin,
     A4032MagbyToasty,
     A4066PichuCrackly,
     A4102HitmontopPiercingSpin,
@@ -285,8 +286,11 @@ lazy_static::lazy_static! {
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
+        m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
+        m.insert(("A3b 079", 0), AttackId::A3b009FlareonExFireSpin);
+        m.insert(("A3b 087", 0), AttackId::A3b009FlareonExFireSpin);
 
         // A4
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
@@ -309,6 +313,7 @@ lazy_static::lazy_static! {
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // A4b
+        m.insert(("A4b 066", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);

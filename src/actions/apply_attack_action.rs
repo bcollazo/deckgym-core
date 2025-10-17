@@ -284,6 +284,9 @@ fn forecast_effect_attack(
         AttackId::A3a094JynxPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
+        AttackId::A3b009FlareonExFireSpin => {
+            self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
+        }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
