@@ -268,6 +268,7 @@ fn forecast_effect_attack(
         AttackId::A3a060TypeNullQuickBlow => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
         }
+        AttackId::A3a061SilvallyBraveBuddies => brave_buddies_attack(state),
         AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
@@ -891,6 +892,15 @@ fn attach_energy_to_benched_basic(
                 .push((acting_player, possible_moves));
         }
     })
+}
+
+/// For Silvally's Brave Buddies attack: 50 damage, or 100 damage if a Supporter was played this turn
+fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
+    if state.has_played_support {
+        active_damage_doutcome(100)
+    } else {
+        active_damage_doutcome(50)
+    }
 }
 
 #[cfg(test)]

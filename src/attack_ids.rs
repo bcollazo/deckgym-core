@@ -94,6 +94,7 @@ pub enum AttackId {
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
     A3a060TypeNullQuickBlow,
+    A3a061SilvallyBraveBuddies,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
@@ -276,6 +277,8 @@ lazy_static::lazy_static! {
         m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A3a 060", 0), AttackId::A3a060TypeNullQuickBlow);
+        m.insert(("A3a 061", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A3a 074", 0), AttackId::A3a061SilvallyBraveBuddies);
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
@@ -304,6 +307,8 @@ lazy_static::lazy_static! {
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
+        m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A4b 303", 0), AttackId::A3a061SilvallyBraveBuddies);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
