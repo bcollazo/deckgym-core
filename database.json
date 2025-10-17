@@ -4328,7 +4328,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Lightning", "Colorless", "Colorless"],
-          "title": "Draco",
+          "title": "Draco Meteor",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -5556,7 +5556,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Lightning", "Colorless", "Colorless"],
-          "title": "Draco",
+          "title": "Draco Meteor",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it."
         }

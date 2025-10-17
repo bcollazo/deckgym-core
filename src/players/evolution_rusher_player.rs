@@ -44,9 +44,8 @@ impl Player for EvolutionRusherPlayer {
         }
         let shiinotic = get_card_by_enum(CardId::A3a027Shiinotic);
         let maybe_shiinotic = possible_actions.iter().find(|action| {
-            matches!(action.action, SimpleAction::UseAbility(idx) if {
-                let in_play_idx = action.actor;
-                let pokemon = &state.in_play_pokemon[in_play_idx][idx];
+            matches!(action.action, SimpleAction::UseAbility { in_play_idx } if {
+                let pokemon = &state.in_play_pokemon[action.actor][in_play_idx];
                 if let Some(pokemon) = pokemon {
                     pokemon.card == shiinotic
                 } else {

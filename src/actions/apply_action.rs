@@ -13,7 +13,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_attack_damage, Mutations, Probabilities},
+    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -48,7 +48,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
-        SimpleAction::UseAbility(index) => forecast_ability(state, action, *index),
+        SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
@@ -125,8 +125,12 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::Retreat(position) => {
             apply_retreat(action.actor, state, *position, false);
         }
-        SimpleAction::ApplyDamage { targets } => {
-            handle_attack_damage(state, action.actor, targets);
+        SimpleAction::ApplyDamage {
+            target_player,
+            targets,
+            is_from_active_attack,
+        } => {
+            handle_damage(state, *target_player, targets, *is_from_active_attack);
         }
         // Trainer-Specific Actions
         SimpleAction::Heal {

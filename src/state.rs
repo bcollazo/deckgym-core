@@ -33,6 +33,7 @@ pub struct State {
     pub hands: [Vec<Card>; 2],
     pub decks: [Deck; 2],
     pub discard_piles: [Vec<Card>; 2],
+    pub discard_energies: [Vec<EnergyType>; 2],
     // 0 index is the active pokemon, 1..4 are the bench
     pub in_play_pokemon: [[Option<PlayedCard>; 4]; 2],
 
@@ -55,6 +56,7 @@ impl State {
             hands: [Vec::new(), Vec::new()],
             decks: [deck_a.clone(), deck_b.clone()],
             discard_piles: [Vec::new(), Vec::new()],
+            discard_energies: [Vec::new(), Vec::new()],
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
             has_played_support: false,
             has_retreated: false,
@@ -256,6 +258,21 @@ impl State {
     pub(crate) fn is_users_first_turn(&self) -> bool {
         self.turn_count <= 2
     }
+
+    /// Discards a Pokemon from play, moving it, its evolution chain, and its energies
+    ///  to the discard pile.
+    pub(crate) fn discard_from_play(&mut self, ko_receiver: usize, ko_pokemon_idx: usize) {
+        let ko_pokemon = self.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+            .as_ref()
+            .expect("There should be a Pokemon to discard");
+        let mut cards_to_discard = ko_pokemon.cards_behind.clone();
+        // TODO: Include attached Tools
+        cards_to_discard.push(ko_pokemon.card.clone());
+        debug!("Discarding: {cards_to_discard:?}");
+        self.discard_piles[ko_receiver].extend(cards_to_discard);
+        self.discard_energies[ko_receiver].extend(ko_pokemon.attached_energy.iter().cloned());
+        self.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
+    }
 }
 
 fn format_cards(played_cards: &[Option<PlayedCard>]) -> Vec<String> {
@@ -287,7 +304,10 @@ fn to_canonical_names(cards: &[Card]) -> Vec<&String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{deck::is_basic, test_helpers::load_test_decks};
+    use crate::{
+        card_ids::CardId, database::get_card_by_enum, deck::is_basic, hooks::to_playable_card,
+        test_helpers::load_test_decks,
+    };
 
     use super::*;
 
@@ -316,5 +336,41 @@ mod tests {
         assert_eq!(state.decks[1].cards.len(), 15);
         assert!(state.hands[0].iter().any(is_basic));
         assert!(state.hands[1].iter().any(is_basic));
+    }
+
+    #[test]
+    fn test_discard_from_play_basic_pokemon() {
+        // Arrange: Create a state with a basic Pokemon in play
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+
+        let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
+        let mut played_bulbasaur = to_playable_card(&bulbasaur_card, false);
+
+        // Attach some energy to test energy discard
+        played_bulbasaur.attach_energy(&EnergyType::Grass, 2);
+
+        // Place Bulbasaur in active slot for player 0
+        state.in_play_pokemon[0][0] = Some(played_bulbasaur.clone());
+
+        // Verify initial state
+        assert!(state.in_play_pokemon[0][0].is_some());
+        assert_eq!(state.discard_piles[0].len(), 0);
+        assert_eq!(state.discard_energies[0].len(), 0);
+
+        // Act: Discard the Pokemon from play
+        state.discard_from_play(0, 0);
+
+        // Assert: Pokemon slot is now empty
+        assert!(state.in_play_pokemon[0][0].is_none());
+
+        // Assert: Card is in discard pile
+        assert_eq!(state.discard_piles[0].len(), 1);
+        assert_eq!(state.discard_piles[0][0], bulbasaur_card);
+
+        // Assert: Energy is in discard energy pile
+        assert_eq!(state.discard_energies[0].len(), 2);
+        assert_eq!(state.discard_energies[0][0], EnergyType::Grass);
+        assert_eq!(state.discard_energies[0][1], EnergyType::Grass);
     }
 }

@@ -290,6 +290,9 @@ fn forecast_effect_attack(
         AttackId::A3a094JynxPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 30, 20)
         }
+        AttackId::A3b009FlareonExFireSpin => {
+            self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
+        }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
@@ -303,6 +306,10 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
+        AttackId::A4a025RaikouExVoltaicBullet => active_then_choice_bench_attack(60, 10),
+        AttackId::A2053MagnezoneThunderBlast => {
+            self_energy_discard_attack(0, vec![EnergyType::Lightning])
+        }
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
@@ -554,7 +561,9 @@ fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Muta
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
             choices.push(SimpleAction::ApplyDamage {
+                target_player: action.actor,
                 targets: vec![(damage, in_play_idx)],
+                is_from_active_attack: true,
             });
         }
         if choices.is_empty() {
@@ -573,7 +582,9 @@ fn active_then_choice_bench_attack(
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
+                target_player: opponent,
                 targets: vec![(bench_damage, in_play_idx)],
+                is_from_active_attack: true,
             });
         }
         if choices.is_empty() {
@@ -603,13 +614,17 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
         if bench_only {
             for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
+                    target_player: opponent,
                     targets: vec![(damage, in_play_idx)],
+                    is_from_active_attack: true,
                 });
             }
         } else {
             for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
+                    target_player: opponent,
                     targets: vec![(damage, in_play_idx)],
+                    is_from_active_attack: true,
                 });
             }
         }
