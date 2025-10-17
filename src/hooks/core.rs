@@ -106,6 +106,14 @@ pub(crate) fn on_attach_energy(
                 opponent_active.apply_damage(20);
             }
         }
+
+        // Check for Komala's Comatose ability
+        if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 {
+            // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
+            debug!("Komala's Comatose: Putting Komala to sleep");
+            let komala = state.get_active_mut(actor);
+            komala.asleep = true;
+        }
     }
 }
 

@@ -15,6 +15,7 @@ pub enum AbilityId {
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
     A3122SolgaleoExRisingRoad,
+    A3141KomalaComatose,
     A3a027ShiinoticIlluminate,
     A3b034SylveonExHappyRibbon,
     A4a020SuicuneExLegendaryPulse,
@@ -49,6 +50,8 @@ lazy_static::lazy_static! {
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 207", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 239", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("A3 141", AbilityId::A3141KomalaComatose);
+        m.insert("A3 179", AbilityId::A3141KomalaComatose);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
