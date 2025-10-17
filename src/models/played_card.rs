@@ -107,6 +107,10 @@ impl PlayedCard {
         self.remaining_hp < self.total_hp
     }
 
+    pub(crate) fn has_status_condition(&self) -> bool {
+        self.poisoned || self.paralyzed || self.asleep
+    }
+
     pub(crate) fn has_tool_attached(&self) -> bool {
         self.attached_tool.is_some()
     }
@@ -128,6 +132,12 @@ impl PlayedCard {
         self.paralyzed = false;
         self.asleep = false;
         self.effects.clear();
+    }
+
+    pub(crate) fn cure_status_conditions(&mut self) {
+        self.poisoned = false;
+        self.paralyzed = false;
+        self.asleep = false;
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {

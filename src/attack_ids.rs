@@ -69,6 +69,7 @@ pub enum AttackId {
     A1201LickitungContinuousLick,
     A1203KangaskhanDizzyPunch,
     A1213CinccinoDoTheWave,
+    A1a001ExeggcuteGrowth,
     A1a003CelebiExPowerfulBloom,
     A1a010PonytaStomp,
     A1a011RapidashRisingLunge,
@@ -88,19 +89,26 @@ pub enum AttackId {
     A2b003BeedrillExCrushingSpear,
     A2b005SprigatitoCryForHelp,
     A2b007MeowscaradaFightingClaws,
+    A2b022PikachuExThunderbolt,
     A2b035GiratinaExChaoticImpact,
+    A3a007PheromosaJumpBlues,
+    A3a019TapuKokoExPlasmaHurricane,
+    A3a060TypeNullQuickBlow,
+    A3a061SilvallyBraveBuddies,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     A4032MagbyToasty,
     A4066PichuCrackly,
+    A4102HitmontopPiercingSpin,
     A4134EeveeFindAFriend,
     A4a020SuicuneExCrystalWaltz,
     A4a023MantykeSplashy,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
+    PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
 }
 
@@ -202,6 +210,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 285", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 286", 1), AttackId::A1129MewtwoExPsydrive);
         // A1a
+        m.insert(("A1a 001", 0), AttackId::A1a001ExeggcuteGrowth);
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 010", 0), AttackId::A1a010PonytaStomp);
         m.insert(("A1a 011", 0), AttackId::A1a011RapidashRisingLunge);
@@ -236,18 +245,21 @@ lazy_static::lazy_static! {
 
         // A2b
         m.insert(("A2b 001", 0), AttackId::A2b001WeedleMultiply);
-        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
         m.insert(("A2b 002", 0), AttackId::A2b002KakunaStringShot);
-        m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
         m.insert(("A2b 003", 0), AttackId::A2b003BeedrillExCrushingSpear);
-        m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
-        m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
         m.insert(("A2b 007", 0), AttackId::A2b007MeowscaradaFightingClaws);
-        m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 022", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 035", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 082", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 083", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 092", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 096", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
 
         // A3
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
@@ -259,6 +271,14 @@ lazy_static::lazy_static! {
         m.insert(("A3 239", 0), AttackId::A3122SolgaleoExSolBreaker);
 
         // A3a
+        m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A3a 071", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 060", 0), AttackId::A3a060TypeNullQuickBlow);
+        m.insert(("A3a 061", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A3a 074", 0), AttackId::A3a061SilvallyBraveBuddies);
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
@@ -270,8 +290,12 @@ lazy_static::lazy_static! {
         m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 066", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 171", 0), AttackId::A4066PichuCrackly);
+        m.insert(("A4 102", 0), AttackId::A4102HitmontopPiercingSpin);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
@@ -281,6 +305,10 @@ lazy_static::lazy_static! {
         // A4b
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
+        m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
+        m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
+        m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A4b 303", 0), AttackId::A3a061SilvallyBraveBuddies);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
@@ -288,6 +316,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
+        m.insert(("P-A 060", 0), AttackId::PA060ExeggcuteGrowth);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
 

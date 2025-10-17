@@ -174,7 +174,8 @@ fn forecast_effect_attack(
         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
         AttackId::A1093FrosmothPowderSnow => damage_status_attack(40, StatusCondition::Asleep),
-        AttackId::A1095RaichuThunderbolt => thunderbolt_attack(),
+        AttackId::A1095RaichuThunderbolt => thunderbolt_attack(140),
+        AttackId::A2b022PikachuExThunderbolt => thunderbolt_attack(150),
         AttackId::A1096PikachuExCircleCircuit => {
             bench_count_attack(acting_player, state, 0, 30, Some(EnergyType::Lightning))
         }
@@ -261,6 +262,17 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A3a019TapuKokoExPlasmaHurricane => {
+            self_charge_active_attack(20, EnergyType::Lightning, 1)
+        }
+        AttackId::A3a060TypeNullQuickBlow => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
+        }
+        AttackId::A3a061SilvallyBraveBuddies => brave_buddies_attack(state),
+        AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
+            self_charge_active_attack(0, EnergyType::Grass, 1)
+        }
+        AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
             0,
@@ -279,6 +291,7 @@ fn forecast_effect_attack(
         AttackId::A4066PichuCrackly => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
+        AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
@@ -545,6 +558,36 @@ fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Muta
     })
 }
 
+fn active_then_choice_bench_attack(
+    active_damage: u32,
+    bench_damage: u32,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(active_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
+            choices.push(SimpleAction::ApplyDamage {
+                targets: vec![(bench_damage, in_play_idx)],
+            });
+        }
+        if choices.is_empty() {
+            return;
+        }
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn self_charge_active_attack(
+    damage: u32,
+    energy_type: EnergyType,
+    amount: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.attach_energy(&energy_type, amount);
+    })
+}
+
 /// Used for attacks that can go directly to bench.
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
 fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
@@ -719,9 +762,9 @@ fn damage_and_card_effect_attack(
     })
 }
 
-/// For Raichu's Thunderbolt attack that deals 140 damage and discards all energy
-fn thunderbolt_attack() -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(140, move |_, state, action| {
+/// For Thunderbolt attacks that discard all energy after dealing damage.
+fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
     })
@@ -849,6 +892,15 @@ fn attach_energy_to_benched_basic(
                 .push((acting_player, possible_moves));
         }
     })
+}
+
+/// For Silvally's Brave Buddies attack: 50 damage, or 100 damage if a Supporter was played this turn
+fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
+    if state.has_played_support {
+        active_damage_doutcome(100)
+    } else {
+        active_damage_doutcome(50)
+    }
 }
 
 #[cfg(test)]

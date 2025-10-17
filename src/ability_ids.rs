@@ -15,6 +15,8 @@ pub enum AbilityId {
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
     A3122SolgaleoExRisingRoad,
+    A3141KomalaComatose,
+    A3a021ZeraoraThunderclapFlash,
     A3a027ShiinoticIlluminate,
     A3b034SylveonExHappyRibbon,
     A4a020SuicuneExLegendaryPulse,
@@ -49,6 +51,9 @@ lazy_static::lazy_static! {
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 207", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 239", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("A3 141", AbilityId::A3141KomalaComatose);
+        m.insert("A3 179", AbilityId::A3141KomalaComatose);
+        m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
@@ -61,6 +66,8 @@ lazy_static::lazy_static! {
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
+        m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
+        m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);

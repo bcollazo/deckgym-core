@@ -106,6 +106,14 @@ pub(crate) fn on_attach_energy(
                 opponent_active.apply_damage(20);
             }
         }
+
+        // Check for Komala's Comatose ability
+        if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 {
+            // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
+            debug!("Komala's Comatose: Putting Komala to sleep");
+            let komala = state.get_active_mut(actor);
+            komala.asleep = true;
+        }
     }
 }
 
@@ -133,6 +141,33 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 player_ending_turn,
                 vec![SimpleAction::DrawCard { amount: 1 }],
             ));
+        }
+    }
+
+    // Check for Zeraora's Thunderclap Flash ability (on first turn only)
+    // Turn 1 is player 0's first turn, turn 2 is player 1's first turn
+    if state.turn_count == 1 || state.turn_count == 2 {
+        // Collect indices first to avoid borrow checker issues
+        let zeraora_indices: Vec<usize> = state
+            .enumerate_in_play_pokemon(player_ending_turn)
+            .filter_map(|(in_play_idx, pokemon)| {
+                if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
+                    if ability_id == AbilityId::A3a021ZeraoraThunderclapFlash {
+                        return Some(in_play_idx);
+                    }
+                }
+                None
+            })
+            .collect();
+
+        // Now attach energy to all Zeraora pokemon
+        for in_play_idx in zeraora_indices {
+            // At the end of your first turn, take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
+            debug!("Zeraora's Thunderclap Flash: Attaching 1 Lightning Energy");
+            let zeraora = state.in_play_pokemon[player_ending_turn][in_play_idx]
+                .as_mut()
+                .expect("Zeraora should be there");
+            zeraora.attach_energy(&EnergyType::Lightning, 1);
         }
     }
 }
@@ -168,20 +203,23 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
-    // Modifiers by effect (like Giovanni)
+    let opponent = (player + 1) % 2;
+    let opponent_is_ex = state.get_active(opponent).card.is_ex();
+
+    // Modifiers by effect (like Giovanni, Red)
     let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
-        .filter(|x| matches!(x, TurnEffect::IncreasedDamage { .. }))
-        .map(|x| match x {
+        .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
             _ => 0,
         })
         .sum::<u32>();
 
     // Modifiers by receiving card effects
     let reduced_card_effect_modifiers = state
-        .get_active((player + 1) % 2)
+        .get_active(opponent)
         .get_active_effects()
         .iter()
         .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
@@ -192,7 +230,6 @@ pub(crate) fn get_damage_from_attack(
         .sum::<u32>();
 
     // Weakness Modifier
-    let opponent = (player + 1) % 2;
     let mut weakness_modifier = 0;
     let receiving = state.get_active(opponent);
     if let Card::Pokemon(pokemon_card) = &receiving.card {
@@ -361,6 +398,38 @@ mod tests {
             damage_with_giovanni,
             base_damage + 10,
             "Giovanni should add exactly 10 damage to attacks"
+        );
+    }
+
+    #[test]
+    fn test_red_modifier_only_affects_ex() {
+        let attacker_card = get_card_by_enum(CardId::A1001Bulbasaur);
+
+        // Non-EX opponent should not receive extra damage
+        let mut non_ex_state = State::default();
+        non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
+        let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
+        non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
+        let base_damage_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
+        let damage_with_red_vs_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        assert_eq!(
+            damage_with_red_vs_non_ex, base_damage_non_ex,
+            "Red should not increase damage against non-EX Pokémon"
+        );
+
+        // EX opponent should receive the bonus damage
+        let mut ex_state = State::default();
+        ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
+        let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
+        ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
+        let base_damage_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
+        let damage_with_red_vs_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        assert_eq!(
+            damage_with_red_vs_ex,
+            base_damage_ex + 20,
+            "Red should add 20 damage against Pokémon ex"
         );
     }
 

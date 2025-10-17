@@ -60,6 +60,9 @@ pub fn trainer_move_generation_implementation(
         CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
         CardId::A2155Mars | CardId::A2195Mars => can_play_trainer(state, trainer_card),
         CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
+        CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
+            can_play_pokemon_center_lady(state, trainer_card)
+        }
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
@@ -69,7 +72,11 @@ pub fn trainer_move_generation_implementation(
         | CardId::A1270Giovanni
         | CardId::A1a065MythicalSlab
         | CardId::A1a068Leaf
-        | CardId::A1a082Leaf => can_play_trainer(state, trainer_card),
+        | CardId::A1a082Leaf
+        | CardId::A2b071Red
+        | CardId::A2b090Red
+        | CardId::A4b352Red
+        | CardId::A4b353Red => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }
@@ -123,6 +130,21 @@ fn can_play_irida(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.attached_energy.contains(&EnergyType::Water))
         .count();
     if damaged_water_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Pokemon Center Lady can be played (requires at least 1 damaged or status-affected pokemon)
+fn can_play_pokemon_center_lady(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let has_valid_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.is_damaged() || pokemon.has_status_condition());
+    if has_valid_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
