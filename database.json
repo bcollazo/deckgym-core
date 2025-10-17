@@ -4235,7 +4235,7 @@
           "energy_required": ["Metal"],
           "title": "Amass",
           "fixed_damage": 0,
-          "effect": "Take 1 [M] Energy from your Energy Zone and attach it to this Pokémon."
+          "effect": "Take a [M] Energy from your Energy Zone and attach it to this Pokémon."
         }
       ],
       "weakness": "Fire",
@@ -19441,7 +19441,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "sycharge",
+          "title": "Psycharge",
           "fixed_damage": 0,
           "effect": "Take a [P] Energy from your Energy Zone and attach it to this Pokémon."
         }

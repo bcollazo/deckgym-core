@@ -64,6 +64,7 @@ pub enum AttackId {
     A1171NidokingPoisonHorn,
     A1174GrimerPoisonGas,
     A1178MawileCrunch,
+    A1181MeltanAmass,
     A1195WigglytuffSleepySong,
     A1196MeowthPayDay,
     A1201LickitungContinuousLick,
@@ -79,9 +80,11 @@ pub enum AttackId {
     A1a041MankeyFocusFist,
     A1a061EeveeContinuousSteps,
     A3b055EeveeCollect,
+    A2023MagmarStoke,
     A2035PiplupHeal,
     A2049PalkiaDimensionalStorm,
     A2050ManaphyOceanic,
+    A2056ElectabuzzCharge,
     A2119DialgaExMetallicTurbo,
     A2a071ArceusExUltimateForce,
     A2b001WeedleMultiply,
@@ -89,8 +92,11 @@ pub enum AttackId {
     A2b003BeedrillExCrushingSpear,
     A2b005SprigatitoCryForHelp,
     A2b007MeowscaradaFightingClaws,
+    A2b010CharizardExStoke,
     A2b022PikachuExThunderbolt,
     A2b035GiratinaExChaoticImpact,
+    A3040AlolanVulpixCallForth,
+    A3071SpoinkPsycharge,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
     A3a060TypeNullQuickBlow,
@@ -179,6 +185,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 171", 0), AttackId::A1171NidokingPoisonHorn);
         m.insert(("A1 174", 0), AttackId::A1174GrimerPoisonGas);
         m.insert(("A1 178", 0), AttackId::A1178MawileCrunch);
+        m.insert(("A1 181", 0), AttackId::A1181MeltanAmass);
         m.insert(("A1 195", 0), AttackId::A1195WigglytuffSleepySong);
         m.insert(("A1 196", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 201", 0), AttackId::A1201LickitungContinuousLick);
@@ -225,8 +232,10 @@ lazy_static::lazy_static! {
         m.insert(("A1a 085", 0), AttackId::A1a003CelebiExPowerfulBloom);
 
         // A2
+        m.insert(("A2 023", 0), AttackId::A2023MagmarStoke);
         m.insert(("A2 035", 0), AttackId::A2035PiplupHeal);
         m.insert(("A2 049", 1), AttackId::A2049PalkiaDimensionalStorm);
+        m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaDimensionalStorm);
@@ -249,10 +258,12 @@ lazy_static::lazy_static! {
         m.insert(("A2b 003", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A2b 005", 0), AttackId::A2b005SprigatitoCryForHelp);
         m.insert(("A2b 007", 0), AttackId::A2b007MeowscaradaFightingClaws);
+        m.insert(("A2b 010", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A2b 022", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 035", 0), AttackId::A2b035GiratinaExChaoticImpact);
         m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
         m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 080", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A2b 082", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 083", 0), AttackId::A2b035GiratinaExChaoticImpact);
         m.insert(("A2b 092", 0), AttackId::A2b022PikachuExThunderbolt);
@@ -260,8 +271,11 @@ lazy_static::lazy_static! {
         m.insert(("A2b 097", 0), AttackId::A2b001WeedleMultiply);
         m.insert(("A2b 098", 0), AttackId::A2b002KakunaStringShot);
         m.insert(("A2b 107", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A2b 108", 0), AttackId::A2b010CharizardExStoke);
 
         // A3
+        m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
+        m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
@@ -303,6 +317,7 @@ lazy_static::lazy_static! {
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // A4b
+        m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
