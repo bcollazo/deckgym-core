@@ -121,7 +121,7 @@ fn apply_pokemon_checkup(
     }
     for (player, in_play_idx) in poisons_to_handle {
         let opponent = (player + 1) % 2;
-        handle_attack_damage(mutated_state, opponent, &vec![(10, in_play_idx)]);
+        handle_damage(mutated_state, opponent, &vec![(10, in_play_idx)]);
     }
     // Advance turn
     mutated_state.advance_turn();
@@ -140,7 +140,7 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
         .collect()
 }
 
-pub(crate) fn handle_attack_damage(
+pub(crate) fn handle_damage(
     state: &mut State,
     attacking_player: usize,
     targets: &Vec<(u32, usize)>, // damage, in_play_idx

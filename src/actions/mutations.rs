@@ -4,7 +4,7 @@ use rand::rngs::StdRng;
 use crate::{card_ids::CardId, hooks::get_damage_from_attack, models::StatusCondition, State};
 
 use super::{
-    apply_action_helpers::{handle_attack_damage, FnMutation, Mutation, Mutations, Probabilities},
+    apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
     Action,
 };
 
@@ -75,7 +75,7 @@ where
             additional_effect(rng, state, action);
 
             let damage = get_damage_from_attack(state, action.actor, attack_index, 0);
-            handle_attack_damage(state, action.actor, &vec![(damage, 0)]);
+            handle_damage(state, action.actor, &vec![(damage, 0)]);
         })],
     )
 }
@@ -119,7 +119,7 @@ where
     Box::new({
         move |rng, state, action| {
             additional_effect(rng, state, action);
-            handle_attack_damage(state, action.actor, &targets);
+            handle_damage(state, action.actor, &targets);
         }
     })
 }

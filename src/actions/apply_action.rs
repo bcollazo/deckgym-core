@@ -13,7 +13,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_attack_damage, Mutations, Probabilities},
+    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -126,7 +126,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             apply_retreat(action.actor, state, *position, false);
         }
         SimpleAction::ApplyDamage { targets } => {
-            handle_attack_damage(state, action.actor, targets);
+            handle_damage(state, action.actor, targets);
         }
         // Trainer-Specific Actions
         SimpleAction::Heal {
