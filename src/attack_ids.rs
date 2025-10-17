@@ -105,6 +105,7 @@ pub enum AttackId {
     A4134EeveeFindAFriend,
     A4a020SuicuneExCrystalWaltz,
     A4a023MantykeSplashy,
+    A4a025RaikouExVoltaicBullet,
     A2053MagnezoneThunderBlast,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
@@ -302,6 +303,9 @@ lazy_static::lazy_static! {
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 023", 0), AttackId::A4a023MantykeSplashy);
+        m.insert(("A4a 025", 0), AttackId::A4a025RaikouExVoltaicBullet);
+        m.insert(("A4a 081", 0), AttackId::A4a025RaikouExVoltaicBullet);
+        m.insert(("A4a 088", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // A4b

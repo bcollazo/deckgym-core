@@ -297,6 +297,7 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
+        AttackId::A4a025RaikouExVoltaicBullet => active_then_choice_bench_attack(60, 10),
         AttackId::A2053MagnezoneThunderBlast => {
             self_energy_discard_attack(0, vec![EnergyType::Lightning])
         }
