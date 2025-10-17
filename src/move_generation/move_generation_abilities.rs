@@ -36,6 +36,7 @@ fn can_use_ability((in_play_index, card): &(usize, &PlayedCard)) -> bool {
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
         AbilityId::A3122SolgaleoExRisingRoad => !is_active && !card.ability_used,
         AbilityId::A3141KomalaComatose => false,
+        AbilityId::A3a021ZeraoraThunderclapFlash => false,
         AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
         AbilityId::A3b034SylveonExHappyRibbon => false,
         AbilityId::A4a020SuicuneExLegendaryPulse => false,

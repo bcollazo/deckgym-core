@@ -143,6 +143,33 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
             ));
         }
     }
+
+    // Check for Zeraora's Thunderclap Flash ability (on first turn only)
+    // Turn 1 is player 0's first turn, turn 2 is player 1's first turn
+    if state.turn_count == 1 || state.turn_count == 2 {
+        // Collect indices first to avoid borrow checker issues
+        let zeraora_indices: Vec<usize> = state
+            .enumerate_in_play_pokemon(player_ending_turn)
+            .filter_map(|(in_play_idx, pokemon)| {
+                if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
+                    if ability_id == AbilityId::A3a021ZeraoraThunderclapFlash {
+                        return Some(in_play_idx);
+                    }
+                }
+                None
+            })
+            .collect();
+
+        // Now attach energy to all Zeraora pokemon
+        for in_play_idx in zeraora_indices {
+            // At the end of your first turn, take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
+            debug!("Zeraora's Thunderclap Flash: Attaching 1 Lightning Energy");
+            let zeraora = state.in_play_pokemon[player_ending_turn][in_play_idx]
+                .as_mut()
+                .expect("Zeraora should be there");
+            zeraora.attach_energy(&EnergyType::Lightning, 1);
+        }
+    }
 }
 
 // TODO: Implement Gengars ability that disallow playing support cards.

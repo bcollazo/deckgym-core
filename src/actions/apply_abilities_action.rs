@@ -37,6 +37,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => charge_giratina_and_end_turn(index),
         AbilityId::A3122SolgaleoExRisingRoad => rising_road(index),
         AbilityId::A3141KomalaComatose => panic!("Comatose is a passive ability"),
+        AbilityId::A3a021ZeraoraThunderclapFlash => {
+            panic!("Thunderclap Flash is a passive ability")
+        }
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
         AbilityId::A4a020SuicuneExLegendaryPulse => {
