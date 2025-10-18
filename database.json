@@ -10712,7 +10712,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ouble Scratch",
+          "title": "Double Scratch",
           "fixed_damage": 0,
           "effect": "Flip 2 coins. This attack does 20 damage for each heads."
         }
