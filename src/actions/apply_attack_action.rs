@@ -260,16 +260,37 @@ fn forecast_effect_attack(
         AttackId::A2049PalkiaDimensionalStorm => palkia_dimensional_storm(state),
         AttackId::A2050ManaphyOceanic => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2084GliscorAcrobatics => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
+        }
+        AttackId::A2098SneaselDoubleScratch => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
         AttackId::A2119DialgaExMetallicTurbo => energy_bench_attack(index, 2, EnergyType::Metal),
+        AttackId::A2131AmbipomDoubleHit => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
+        }
+        AttackId::A2a001HeracrossSingleHornThrow => {
+            probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
+        }
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
+        AttackId::A2b044FlamigoDoubleKick => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
+        }
+        AttackId::A3019SteeneeDoubleSpin => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
+        }
         AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
+        }
+        AttackId::A3a044Poipole2Step => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
         AttackId::A3a060TypeNullQuickBlow => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
@@ -293,7 +314,16 @@ fn forecast_effect_attack(
         AttackId::A3b009FlareonExFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
         }
+        AttackId::A3b013IncineroarDarkestLariat => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
+        }
+        AttackId::A3b020VanilluxeDoubleSpin => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
+        }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
+        AttackId::A3b058AipomDoubleHit => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+        }
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
@@ -301,7 +331,13 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
         AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
+        AttackId::A4105BinacleDualChop => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
+        }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
+        AttackId::A4146UrsaringSwingAround => {
+            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
+        }
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }

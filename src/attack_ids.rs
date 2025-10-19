@@ -85,7 +85,11 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2050ManaphyOceanic,
     A2056ElectabuzzCharge,
+    A2084GliscorAcrobatics,
+    A2098SneaselDoubleScratch,
     A2119DialgaExMetallicTurbo,
+    A2131AmbipomDoubleHit,
+    A2a001HeracrossSingleHornThrow,
     A2a071ArceusExUltimateForce,
     A2b001WeedleMultiply,
     A2b002KakunaStringShot,
@@ -95,10 +99,13 @@ pub enum AttackId {
     A2b010CharizardExStoke,
     A2b022PikachuExThunderbolt,
     A2b035GiratinaExChaoticImpact,
+    A2b044FlamigoDoubleKick,
+    A3019SteeneeDoubleSpin,
     A3040AlolanVulpixCallForth,
     A3071SpoinkPsycharge,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
+    A3a044Poipole2Step,
     A3a060TypeNullQuickBlow,
     A3a061SilvallyBraveBuddies,
     A3085CosmogTeleport,
@@ -106,10 +113,15 @@ pub enum AttackId {
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     A3b009FlareonExFireSpin,
+    A3b013IncineroarDarkestLariat,
+    A3b020VanilluxeDoubleSpin,
+    A3b058AipomDoubleHit,
     A4032MagbyToasty,
     A4066PichuCrackly,
     A4102HitmontopPiercingSpin,
+    A4105BinacleDualChop,
     A4134EeveeFindAFriend,
+    A4146UrsaringSwingAround,
     A4a020SuicuneExCrystalWaltz,
     A4a023MantykeSplashy,
     A4a025RaikouExVoltaicBullet,
@@ -240,6 +252,9 @@ lazy_static::lazy_static! {
         m.insert(("A2 049", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 053", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
+        m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
+        m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaDimensionalStorm);
@@ -251,6 +266,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 207", 0), AttackId::A2119DialgaExMetallicTurbo);
 
         // A2a
+        m.insert(("A2a 001", 0), AttackId::A2a001HeracrossSingleHornThrow);
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 086", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 095", 0), AttackId::A2a071ArceusExUltimateForce);
@@ -265,6 +281,7 @@ lazy_static::lazy_static! {
         m.insert(("A2b 010", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A2b 022", 0), AttackId::A2b022PikachuExThunderbolt);
         m.insert(("A2b 035", 0), AttackId::A2b035GiratinaExChaoticImpact);
+        m.insert(("A2b 044", 0), AttackId::A2b044FlamigoDoubleKick);
         m.insert(("A2b 073", 0), AttackId::A2b007MeowscaradaFightingClaws);
         m.insert(("A2b 079", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A2b 080", 0), AttackId::A2b010CharizardExStoke);
@@ -278,6 +295,7 @@ lazy_static::lazy_static! {
         m.insert(("A2b 108", 0), AttackId::A2b010CharizardExStoke);
 
         // A3
+        m.insert(("A3 019", 0), AttackId::A3019SteeneeDoubleSpin);
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
@@ -286,10 +304,12 @@ lazy_static::lazy_static! {
         m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 207", 0), AttackId::A3122SolgaleoExSolBreaker);
+        m.insert(("A3 236", 0), AttackId::A1153MarowakExBonemerang);
         m.insert(("A3 239", 0), AttackId::A3122SolgaleoExSolBreaker);
 
         // A3a
         m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
         m.insert(("A3a 071", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
@@ -301,22 +321,26 @@ lazy_static::lazy_static! {
 
         // A3b
         m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
+        m.insert(("A3b 013", 0), AttackId::A3b013IncineroarDarkestLariat);
+        m.insert(("A3b 020", 0), AttackId::A3b020VanilluxeDoubleSpin);
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
+        m.insert(("A3b 058", 0), AttackId::A3b058AipomDoubleHit);
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 079", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A3b 087", 0), AttackId::A3b009FlareonExFireSpin);
 
         // A4
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
+        m.insert(("A4 105", 0), AttackId::A4105BinacleDualChop);
+        m.insert(("A4 146", 0), AttackId::A4146UrsaringSwingAround);
         m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 066", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 171", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 102", 0), AttackId::A4102HitmontopPiercingSpin);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
-        m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
-        m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
-        m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+
+        // A4a
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
@@ -324,15 +348,22 @@ lazy_static::lazy_static! {
         m.insert(("A4a 025", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 081", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 088", 0), AttackId::A4a025RaikouExVoltaicBullet);
+        m.insert(("A4a 096", 0), AttackId::A1069KinglerKOCrab);
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // A4b
+        m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A4b 066", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 138", 0), AttackId::A2053MagnezoneThunderBlast);
+        m.insert(("A4b 196", 0), AttackId::A1153MarowakExBonemerang);
+        m.insert(("A4b 242", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A4b 243", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
