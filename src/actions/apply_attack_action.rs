@@ -330,6 +330,7 @@ fn forecast_effect_attack(
         AttackId::A4066PichuCrackly => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
+        AttackId::A4077CleffaTwinkly => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
         AttackId::A4105BinacleDualChop => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
