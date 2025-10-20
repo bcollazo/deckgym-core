@@ -1231,7 +1231,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -1634,7 +1634,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -1749,7 +1749,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 40,
           "effect": null
         }
@@ -1887,7 +1887,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 40,
           "effect": null
         }
@@ -2264,7 +2264,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 20,
           "effect": null
         }
@@ -4791,7 +4791,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "opy",
+          "title": "Copy Anything",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing."
         }
@@ -5277,7 +5277,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -5628,7 +5628,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "opy",
+          "title": "Copy Anything",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing."
         }
@@ -6438,7 +6438,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "sy Report",
+          "title": "Psy Report",
           "fixed_damage": 20,
           "effect": "Your opponent reveals their hand."
         }
@@ -6985,7 +6985,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -7238,7 +7238,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "sy Report",
+          "title": "Psy Report",
           "fixed_damage": 20,
           "effect": "Your opponent reveals their hand."
         }
@@ -7261,13 +7261,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -7474,7 +7474,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ocus ist",
+          "title": "Focus Fist",
           "fixed_damage": 50,
           "effect": "Flip a coin. If tails, this attack does nothing."
         }
@@ -7661,7 +7661,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ivision",
+          "title": "Division",
           "fixed_damage": 0,
           "effect": "Put 1 random Koffing from your deck onto your Bench."
         }
@@ -7940,7 +7940,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ontinuous Steps",
+          "title": "Continuous Steps",
           "fixed_damage": 0,
           "effect": "Flip a coin until you get tails. This attack does 20 damage for each heads."
         }
@@ -8236,13 +8236,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -8344,13 +8344,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -8422,13 +8422,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -8819,7 +8819,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "all for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Basic Pokémon from your deck onto your Bench."
         }
@@ -9314,7 +9314,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -9429,7 +9429,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "aterfall",
+          "title": "Waterfall",
           "fixed_damage": 50,
           "effect": null
         }
@@ -9521,7 +9521,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 30,
           "effect": null
         }
@@ -9895,7 +9895,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "ound",
+          "title": "Pound",
           "fixed_damage": 20,
           "effect": null
         }
@@ -10220,7 +10220,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "sychic",
+          "title": "Psychic Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Pokémon."
         }
@@ -11014,7 +11014,7 @@
       "attacks": [
         {
           "energy_required": ["Metal"],
-          "title": "etal Arms",
+          "title": "Metal Arms",
           "fixed_damage": 0,
           "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage."
         }
@@ -11938,7 +11938,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "all for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Basic Pokémon from your deck onto your Bench."
         }
@@ -13413,7 +13413,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -13934,7 +13934,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ighting Headbutt",
+          "title": "Fighting Headbutt",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
         }
@@ -14268,7 +14268,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "arkness Fang",
+          "title": "Darkness Fang",
           "fixed_damage": 50,
           "effect": null
         }
@@ -14856,7 +14856,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -14905,7 +14905,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ighting Headbutt",
+          "title": "Fighting Headbutt",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
         }
@@ -15631,7 +15631,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 40,
           "effect": null
         }
@@ -15654,7 +15654,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 10,
           "effect": null
         }
@@ -15677,7 +15677,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater",
+          "title": "Water Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 30 damage to 1 of your opponent's Pokémon."
         }
@@ -15818,7 +15818,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 10,
           "effect": null
         }
@@ -15959,7 +15959,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         }
@@ -15982,7 +15982,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 30,
           "effect": null
         }
@@ -16123,7 +16123,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "hest-ouflage",
+          "title": "Chest-ouflage",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
         }
@@ -16956,7 +16956,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 10,
           "effect": null
         }
@@ -18852,7 +18852,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -18875,7 +18875,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 30,
           "effect": null
         }
@@ -22526,7 +22526,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -22618,7 +22618,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 40,
           "effect": null
         }
@@ -26138,7 +26138,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 40,
           "effect": null
         }
@@ -26445,7 +26445,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ark Binding",
+          "title": "Dark Binding",
           "fixed_damage": 40,
           "effect": "If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn."
         }
@@ -26721,7 +26721,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ollect",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }
@@ -27189,7 +27189,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ark Binding",
+          "title": "Dark Binding",
           "fixed_damage": 40,
           "effect": "If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn."
         }
@@ -27212,7 +27212,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ollect",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }
@@ -28793,7 +28793,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -28816,7 +28816,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 30,
           "effect": null
         }
@@ -28980,7 +28980,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 20,
           "effect": null
         }
@@ -29190,7 +29190,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -29400,7 +29400,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 10,
           "effect": null
         }
@@ -29722,7 +29722,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "harm",
+          "title": "Charm",
           "fixed_damage": 0,
           "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage."
         }
@@ -29794,7 +29794,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "eck",
+          "title": "Peck",
           "fixed_damage": 20,
           "effect": null
         }
@@ -29817,7 +29817,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic", "Psychic"],
-          "title": "Life",
+          "title": "Life Drain",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10."
         }
@@ -30010,7 +30010,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         }
@@ -31005,7 +31005,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ross-ut",
+          "title": "Cross-Cut",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage."
         }
@@ -31650,7 +31650,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ave Splash",
+          "title": "Wave Splash",
           "fixed_damage": 20,
           "effect": null
         }
@@ -31788,7 +31788,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "harm",
+          "title": "Charm",
           "fixed_damage": 0,
           "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage."
         }
@@ -31811,7 +31811,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic", "Psychic"],
-          "title": "Life",
+          "title": "Life Drain",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10."
         }
@@ -32746,7 +32746,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 20,
           "effect": null
         }
@@ -32846,7 +32846,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ocus ist",
+          "title": "Focus Fist",
           "fixed_damage": 50,
           "effect": "Flip a coin. If tails, this attack does nothing."
         }
@@ -33619,7 +33619,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "all for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Poliwag from your deck onto your Bench."
         }
@@ -33711,7 +33711,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -34327,7 +34327,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "lail",
+          "title": "Flail",
           "fixed_damage": 0,
           "effect": "This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it."
         }
@@ -35041,7 +35041,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "lail",
+          "title": "Flail",
           "fixed_damage": 0,
           "effect": "This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it."
         }
@@ -35621,13 +35621,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -37692,7 +37692,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -37715,7 +37715,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -38887,7 +38887,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 20,
           "effect": null
         }
@@ -38910,7 +38910,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 20,
           "effect": null
         }
@@ -39070,7 +39070,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 10,
           "effect": null
         }
@@ -39093,7 +39093,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 10,
           "effect": null
         }
@@ -39534,13 +39534,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -40464,7 +40464,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ighting Headbutt",
+          "title": "Fighting Headbutt",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
         }
@@ -40487,7 +40487,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "ighting Headbutt",
+          "title": "Fighting Headbutt",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
         }
@@ -41218,7 +41218,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "arkness Fang",
+          "title": "Darkness Fang",
           "fixed_damage": 50,
           "effect": null
         }
@@ -41244,7 +41244,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "arkness Fang",
+          "title": "Darkness Fang",
           "fixed_damage": 50,
           "effect": null
         }
@@ -41428,7 +41428,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ark Binding",
+          "title": "Dark Binding",
           "fixed_damage": 40,
           "effect": "If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn."
         }
@@ -41451,7 +41451,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ark Binding",
+          "title": "Dark Binding",
           "fixed_damage": 40,
           "effect": "If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn."
         }
@@ -41500,7 +41500,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ouble Scratch",
+          "title": "Double Scratch",
           "fixed_damage": 0,
           "effect": "Flip 2 coins. This attack does 20 damage for each heads."
         }
@@ -41523,7 +41523,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "ouble Scratch",
+          "title": "Double Scratch",
           "fixed_damage": 0,
           "effect": "Flip 2 coins. This attack does 20 damage for each heads."
         }
@@ -42518,7 +42518,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ollect",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }
@@ -42541,7 +42541,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "ollect",
+          "title": "Collect",
           "fixed_damage": 0,
           "effect": "Draw a card."
         }
@@ -43847,13 +43847,13 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "syshot",
+          "title": "Psyshot",
           "fixed_damage": 20,
           "effect": null
         },
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Genome",
+          "title": "Genome Hacking",
           "fixed_damage": 0,
           "effect": "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -44578,7 +44578,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "ightning Ball",
+          "title": "Lightning Ball",
           "fixed_damage": 20,
           "effect": null
         }
@@ -44791,7 +44791,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "ater Gun",
+          "title": "Water Gun",
           "fixed_damage": 20,
           "effect": null
         }
@@ -44932,7 +44932,7 @@
       "attacks": [
         {
           "energy_required": ["Metal"],
-          "title": "etal Arms",
+          "title": "Metal Arms",
           "fixed_damage": 0,
           "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage."
         }
@@ -44978,7 +44978,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "ound",
+          "title": "Pound",
           "fixed_damage": 20,
           "effect": null
         }
