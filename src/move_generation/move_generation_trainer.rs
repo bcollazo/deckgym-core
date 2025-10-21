@@ -48,6 +48,7 @@ pub fn trainer_move_generation_implementation(
 
     let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
     match trainer_id {
+        // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
@@ -67,6 +68,8 @@ pub fn trainer_move_generation_implementation(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
+        CardId::A3a067Gladion | CardId::A3a081Gladion => can_play_gladion(state, trainer_card),
+        // Simple cases: always can play
         CardId::A4158Silver
         | CardId::A4198Silver
         | CardId::A4b336Silver
@@ -271,5 +274,50 @@ fn can_play_pokemon_communication(
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
+    }
+}
+
+/// Check if Gladion can be played (requires possibility of Type: Null or Silvally in deck)
+fn can_play_gladion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+
+    // Count Type: Null and Silvally in play and discard
+    let mut type_null_count = 0;
+    let mut silvally_count = 0;
+
+    // Count in play Pokemon (including cards_behind)
+    for pokemon in state.in_play_pokemon[player].iter().flatten() {
+        // Check the current card
+        if pokemon.get_name() == "Type: Null" {
+            type_null_count += 1;
+        } else if pokemon.get_name() == "Silvally" {
+            silvally_count += 1;
+        }
+
+        // Check cards_behind (evolution chain)
+        for card in &pokemon.cards_behind {
+            if card.get_name() == "Type: Null" {
+                type_null_count += 1;
+            } else if card.get_name() == "Silvally" {
+                silvally_count += 1;
+            }
+        }
+    }
+
+    // Count in discard pile
+    for card in &state.discard_piles[player] {
+        if card.get_name() == "Type: Null" {
+            type_null_count += 1;
+        } else if card.get_name() == "Silvally" {
+            silvally_count += 1;
+        }
+    }
+
+    // Can play if we haven't accounted for all 2 Type: Null and 2 Silvally
+    // (meaning there might still be some in the deck)
+    if type_null_count >= 2 && silvally_count >= 2 {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
     }
 }

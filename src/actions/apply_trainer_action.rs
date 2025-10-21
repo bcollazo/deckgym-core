@@ -2,7 +2,10 @@ use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
-    actions::{mutations::doutcome, shared_mutations::pokemon_search_outcomes},
+    actions::{
+        mutations::doutcome,
+        shared_mutations::{gladion_search_outcomes, pokemon_search_outcomes},
+    },
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
@@ -57,6 +60,9 @@ pub fn forecast_trainer_action(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
+        CardId::A3a067Gladion | CardId::A3a081Gladion => {
+            gladion_search_outcomes(acting_player, state)
+        }
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             doutcome(silver_effect)
         }
