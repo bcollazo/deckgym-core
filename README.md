@@ -124,6 +124,22 @@ cargo run --bin card_status -- --first-incomplete
 
 The tool displays a summary showing total cards, completion percentage, and a breakdown of missing implementations by type (attacks, abilities, tools, trainer logic).
 
+**Setting Up Git Hooks (Optional)**
+
+The repository includes a pre-commit hook that ensures code quality by automatically fixing issues and running tests before each commit. To enable it:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The pre-commit hook runs:
+1. `cargo clippy --fix --allow-dirty --features tui -- -D warnings` - Auto-fixes linting issues
+2. `cargo fmt` - Auto-formats code
+3. `git add -u` - Adds clippy and formatting fixes to the commit
+4. `cargo test --features tui` - Runs the full test suite (fails commit if tests fail)
+
+This helps maintain code quality and prevents broken commits, but it's optional and each developer can choose whether to enable it.
+
 **Generating database.rs**
 
 Ensure database.json is up-to-date with latest data. Mock the `get_card_by_enum` in `database.rs` with a `_ => panic` so that
