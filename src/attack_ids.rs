@@ -102,6 +102,7 @@ pub enum AttackId {
     A2b044FlamigoDoubleKick,
     A3019SteeneeDoubleSpin,
     A3040AlolanVulpixCallForth,
+    A3041AlolanNinetalesBlizzard,
     A3071SpoinkPsycharge,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
@@ -116,6 +117,7 @@ pub enum AttackId {
     A3b013IncineroarDarkestLariat,
     A3b020VanilluxeDoubleSpin,
     A3b058AipomDoubleHit,
+    A4026NinetalesScorchingBreath,
     A4032MagbyToasty,
     A4066PichuCrackly,
     A4077CleffaTwinkly,
@@ -298,6 +300,7 @@ lazy_static::lazy_static! {
         // A3
         m.insert(("A3 019", 0), AttackId::A3019SteeneeDoubleSpin);
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
+        m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -331,6 +334,7 @@ lazy_static::lazy_static! {
         m.insert(("A3b 087", 0), AttackId::A3b009FlareonExFireSpin);
 
         // A4
+        m.insert(("A4 026", 0), AttackId::A4026NinetalesScorchingBreath);
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 105", 0), AttackId::A4105BinacleDualChop);
         m.insert(("A4 146", 0), AttackId::A4146UrsaringSwingAround);
@@ -379,6 +383,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
         m.insert(("P-A 060", 0), AttackId::PA060ExeggcuteGrowth);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
+        m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
 
 

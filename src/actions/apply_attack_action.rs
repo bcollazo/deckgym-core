@@ -285,6 +285,7 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
         AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
+        AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
@@ -324,6 +325,7 @@ fn forecast_effect_attack(
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(acting_player),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
@@ -838,6 +840,28 @@ fn articuno_ex_blizzard(state: &State) -> (Probabilities, Mutations) {
     // Active Pokémon is always index 0
     targets.push((80, 0));
     damage_effect_doutcome(targets, |_, _, _| {})
+}
+
+fn alolan_ninetales_blizzard(state: &State) -> (Probabilities, Mutations) {
+    // Blizzard: 60 to active, 20 to each opponent's benched Pokémon
+    let opponent = (state.current_player + 1) % 2;
+    let mut targets: Vec<(u32, usize)> = state
+        .enumerate_bench_pokemon(opponent)
+        .map(|(idx, _)| (20, idx))
+        .collect();
+    // Active Pokémon is always index 0
+    targets.push((60, 0));
+    damage_effect_doutcome(targets, |_, _, _| {})
+}
+
+fn scorching_breath_attack(acting_player: usize) -> (Probabilities, Mutations) {
+    // Scorching Breath: 120 damage, then this Pokémon can't attack next turn
+    active_damage_effect_doutcome(120, move |_, state, _| {
+        // Add CannotAttack effect with duration 2 (on your next turn)
+        if let Some(active) = state.in_play_pokemon[acting_player][0].as_mut() {
+            active.add_effect(CardEffect::CannotAttack, 2);
+        }
+    })
 }
 
 fn extra_damage_if_hurt(

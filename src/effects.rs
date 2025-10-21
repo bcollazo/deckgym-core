@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub enum CardEffect {
     NoRetreat,
     ReducedDamage { amount: u32 },
+    CannotAttack,
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
