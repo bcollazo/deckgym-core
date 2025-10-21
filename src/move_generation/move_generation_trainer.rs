@@ -3,7 +3,7 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     hooks::{can_play_support, get_stage},
-    models::{EnergyType, TrainerCard, TrainerType},
+    models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
     State,
 };
@@ -64,6 +64,9 @@ pub fn trainer_move_generation_implementation(
             can_play_pokemon_center_lady(state, trainer_card)
         }
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
+        CardId::A2146PokemonCommunication
+        | CardId::A4b316PokemonCommunication
+        | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
         CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
@@ -241,6 +244,26 @@ fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<
         .enumerate_in_play_pokemon(player)
         .any(|(_, in_play)| hand.iter().any(|card| can_rare_candy_evolve(card, in_play)));
     if has_valid_evolution_pair {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Pokemon Communication can be played (requires at least 1 Pokemon in hand and 1 in deck)
+fn can_play_pokemon_communication(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let has_pokemon_in_hand = state.hands[player]
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(_)));
+    let has_pokemon_in_deck = state.decks[player]
+        .cards
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(_)));
+    if has_pokemon_in_hand && has_pokemon_in_deck {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

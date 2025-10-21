@@ -7,7 +7,7 @@ use crate::{
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
     hooks::get_stage,
-    models::{EnergyType, TrainerCard},
+    models::{Card, EnergyType, TrainerCard},
     state::GameOutcome,
     tool_ids::ToolId,
     State,
@@ -54,6 +54,9 @@ pub fn forecast_trainer_action(
         CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
         CardId::A3a064Repel => doutcome(repel_effect),
+        CardId::A2146PokemonCommunication
+        | CardId::A4b316PokemonCommunication
+        | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -348,5 +351,21 @@ fn rare_candy_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((player, possible_candy_evolutions));
+    }
+}
+
+/// Queue the decision for user to select which Pokemon from hand to swap
+fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let possible_swaps: Vec<SimpleAction> = state.hands[player]
+        .iter()
+        .filter(|card| matches!(card, Card::Pokemon(_)))
+        .map(|card| SimpleAction::CommunicatePokemon {
+            hand_pokemon: card.clone(),
+        })
+        .collect();
+
+    if !possible_swaps.is_empty() {
+        state.move_generation_stack.push((player, possible_swaps));
     }
 }

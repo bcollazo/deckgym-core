@@ -1,5 +1,6 @@
 use std::panic;
 
+use log::debug;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
@@ -52,6 +53,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
+        }
+        SimpleAction::CommunicatePokemon { hand_pokemon } => {
+            forecast_pokemon_communication(action.actor, state, hand_pokemon)
         }
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
         SimpleAction::EndTurn => forecast_end_turn(state),
@@ -244,6 +248,78 @@ fn apply_evolve(acting_player: usize, state: &mut State, to_card: &Card, positio
 
     // Run special logic hooks on evolution
     on_evolve(acting_player, state, to_card)
+}
+
+fn forecast_pokemon_communication(
+    acting_player: usize,
+    state: &State,
+    hand_pokemon: &Card,
+) -> (Probabilities, Mutations) {
+    let deck_pokemon: Vec<_> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| matches!(card, Card::Pokemon(_)))
+        .collect();
+
+    let num_deck_pokemon = deck_pokemon.len();
+    if num_deck_pokemon == 0 {
+        // Should not happen if move generation is correct, but just shuffle deck
+        return (
+            vec![1.0],
+            vec![Box::new(|rng, state, action| {
+                state.decks[action.actor].shuffle(false, rng);
+            })],
+        );
+    }
+
+    // Create uniform probability for each deck Pokemon (1/N for each)
+    let probabilities = vec![1.0 / (num_deck_pokemon as f64); num_deck_pokemon];
+    let mut outcomes: Mutations = vec![];
+    for i in 0..num_deck_pokemon {
+        let hand_pokemon_clone = hand_pokemon.clone();
+        outcomes.push(Box::new(move |rng, state, action| {
+            // Get the i-th Pokemon from deck
+            let deck_pokemon_card = state.decks[action.actor]
+                .cards
+                .iter()
+                .filter(|card| matches!(card, Card::Pokemon(_)))
+                .nth(i)
+                .cloned()
+                .expect("Deck Pokemon should exist");
+
+            // Perform the swap
+            // 1. Remove hand Pokemon from hand
+            if let Some(pos) = state.hands[action.actor]
+                .iter()
+                .position(|c| c == &hand_pokemon_clone)
+            {
+                state.hands[action.actor].remove(pos);
+            }
+            // 2. Add deck Pokemon to hand
+            state.hands[action.actor].push(deck_pokemon_card.clone());
+            // 3. Remove deck Pokemon from deck
+            if let Some(pos) = state.decks[action.actor]
+                .cards
+                .iter()
+                .position(|c| c == &deck_pokemon_card)
+            {
+                state.decks[action.actor].cards.remove(pos);
+            }
+            // 4. Add hand Pokemon to deck
+            state.decks[action.actor]
+                .cards
+                .push(hand_pokemon_clone.clone());
+            // 5. Shuffle deck
+            state.decks[action.actor].shuffle(false, rng);
+
+            debug!(
+                "Pokemon Communication: Swapped {:?} from hand with {:?} from deck",
+                hand_pokemon_clone, deck_pokemon_card
+            );
+        }));
+    }
+
+    (probabilities, outcomes)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
