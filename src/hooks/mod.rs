@@ -5,6 +5,7 @@ mod core;
 mod counterattack;
 mod retreat;
 
+pub(crate) use core::can_evolve_into;
 pub(crate) use core::can_play_support;
 pub(crate) use core::contains_energy;
 pub(crate) use core::energy_missing;

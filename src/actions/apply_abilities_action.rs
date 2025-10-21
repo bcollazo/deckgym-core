@@ -46,6 +46,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3b009FlareonExCombust => doutcome_from_mutation(combust(in_play_idx)),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
+        AbilityId::A3b056EeveeExVeeveeVolve => panic!("Veevee 'volve is a passive ability"),
         AbilityId::A4083EspeonExPsychicHealing => doutcome(espeon_ex_ability),
         AbilityId::A4a020SuicuneExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")

@@ -58,6 +58,28 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     }
 }
 
+/// Check if a Pokemon in play can evolve into a card from hand
+/// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
+    if let Card::Pokemon(evolution_pokemon) = evolution_card {
+        if let Some(evolves_from) = &evolution_pokemon.evolves_from {
+            // Normal evolution: the card evolves from the base Pokemon's name
+            if base_pokemon.get_name() == *evolves_from {
+                return true;
+            }
+
+            // Special case: Eevee ex's Veevee 'volve ability
+            // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
+            if let Some(ability_id) = AbilityId::from_pokemon_id(&base_pokemon.card.get_id()[..]) {
+                if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee" {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
     match tool_id {
         ToolId::A2147GiantCape => {
@@ -457,6 +479,77 @@ mod tests {
         assert_eq!(
             damage_with_stiffen, 70,
             "Cosmoem's Stiffen should reduce damage by exactly 50"
+        );
+    }
+
+    #[test]
+    fn test_normal_evolution_works() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Ivysaur evolves from Bulbasaur
+        let ivysaur = get_card_by_enum(CardId::A1002Ivysaur);
+        let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+
+        assert!(
+            can_evolve_into(&ivysaur, &bulbasaur),
+            "Ivysaur should be able to evolve from Bulbasaur"
+        );
+    }
+
+    #[test]
+    fn test_normal_evolution_fails_wrong_pokemon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Charizard cannot evolve from Bulbasaur
+        let charizard = get_card_by_enum(CardId::A1035Charizard);
+        let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+
+        assert!(
+            !can_evolve_into(&charizard, &bulbasaur),
+            "Charizard should not be able to evolve from Bulbasaur"
+        );
+    }
+
+    #[test]
+    fn test_normal_eevee_can_evolve_into_vaporeon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Regular Eevee (not Eevee ex) should only evolve normally
+        let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
+        let normal_eevee = to_playable_card(&get_card_by_enum(CardId::A1206Eevee), false);
+
+        // Normal Eevee CAN evolve into Vaporeon (normal evolution)
+        assert!(
+            can_evolve_into(&vaporeon, &normal_eevee),
+            "Normal Eevee should be able to evolve into Vaporeon normally"
+        );
+    }
+
+    #[test]
+    fn test_eevee_ex_can_evolve_into_vaporeon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Eevee ex should be able to evolve into Vaporeon (which evolves from "Eevee")
+        let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
+        let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);
+
+        assert!(
+            can_evolve_into(&vaporeon, &eevee_ex),
+            "Eevee ex should be able to evolve into Vaporeon via Veevee 'volve ability"
+        );
+    }
+
+    #[test]
+    fn test_eevee_ex_cannot_evolve_into_charizard() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Eevee ex should NOT be able to evolve into Charizard (doesn't evolve from "Eevee")
+        let charizard = get_card_by_enum(CardId::A1035Charizard);
+        let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);
+
+        assert!(
+            !can_evolve_into(&charizard, &eevee_ex),
+            "Eevee ex should not be able to evolve into Charizard"
         );
     }
 }

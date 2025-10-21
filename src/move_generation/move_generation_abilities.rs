@@ -48,6 +48,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
                 && state.discard_energies[state.current_player].contains(&EnergyType::Fire)
         }
         AbilityId::A3b034SylveonExHappyRibbon => false,
+        AbilityId::A3b056EeveeExVeeveeVolve => false,
         AbilityId::A4083EspeonExPsychicHealing => is_active && !card.ability_used,
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
