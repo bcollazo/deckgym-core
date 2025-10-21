@@ -57,6 +57,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::CommunicatePokemon { hand_pokemon } => {
             forecast_pokemon_communication(action.actor, state, hand_pokemon)
         }
+        SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
+            forecast_shuffle_opponent_supporter(action.actor, supporter_card)
+        }
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
         SimpleAction::EndTurn => forecast_end_turn(state),
     };
@@ -320,6 +323,34 @@ fn forecast_pokemon_communication(
     }
 
     (probabilities, outcomes)
+}
+
+fn forecast_shuffle_opponent_supporter(
+    acting_player: usize,
+    supporter_card: &Card,
+) -> (Probabilities, Mutations) {
+    let supporter_clone = supporter_card.clone();
+    (
+        vec![1.0],
+        vec![Box::new(move |rng, state, _action| {
+            let opponent = (acting_player + 1) % 2;
+            // Remove Supporter from opponent's hand
+            if let Some(pos) = state.hands[opponent]
+                .iter()
+                .position(|c| c == &supporter_clone)
+            {
+                state.hands[opponent].remove(pos);
+            }
+            // Add Supporter to opponent's deck
+            state.decks[opponent].cards.push(supporter_clone.clone());
+            // Shuffle opponent's deck
+            state.decks[opponent].shuffle(false, rng);
+            debug!(
+                "Silver: Shuffled {:?} from opponent's hand into their deck",
+                supporter_clone
+            );
+        })],
+    )
 }
 
 // Test that when evolving a damanged pokemon, damage stays.

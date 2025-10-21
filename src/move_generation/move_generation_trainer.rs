@@ -67,7 +67,11 @@ pub fn trainer_move_generation_implementation(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
-        CardId::PA002XSpeed
+        CardId::A4158Silver
+        | CardId::A4198Silver
+        | CardId::A4b336Silver
+        | CardId::A4b337Silver
+        | CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
         | CardId::PA007ProfessorsResearch

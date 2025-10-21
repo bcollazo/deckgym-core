@@ -65,6 +65,10 @@ pub enum SimpleAction {
     CommunicatePokemon {
         hand_pokemon: Card,
     },
+    /// Silver: shuffle a specific Supporter from opponent's hand into their deck
+    ShuffleOpponentSupporter {
+        supporter_card: Card,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -121,6 +125,9 @@ impl fmt::Display for SimpleAction {
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
             SimpleAction::CommunicatePokemon { hand_pokemon } => {
                 write!(f, "CommunicatePokemon({hand_pokemon})")
+            }
+            SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
+                write!(f, "ShuffleOpponentSupporter({supporter_card})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

@@ -57,6 +57,9 @@ pub fn forecast_trainer_action(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
+        CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
+            doutcome(silver_effect)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -367,5 +370,24 @@ fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Acti
 
     if !possible_swaps.is_empty() {
         state.move_generation_stack.push((player, possible_swaps));
+    }
+}
+
+/// Queue the decision for user to select which Supporter from opponent's hand to shuffle
+fn silver_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let opponent = (player + 1) % 2;
+    let possible_shuffles: Vec<SimpleAction> = state.hands[opponent]
+        .iter()
+        .filter(|card| card.is_support())
+        .map(|card| SimpleAction::ShuffleOpponentSupporter {
+            supporter_card: card.clone(),
+        })
+        .collect();
+
+    if !possible_shuffles.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_shuffles));
     }
 }
