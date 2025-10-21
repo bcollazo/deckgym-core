@@ -325,9 +325,7 @@ fn forecast_effect_attack(
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A4026NinetalesScorchingBreath => {
-            scorching_breath_attack(acting_player)
-        }
+        AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(acting_player),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
