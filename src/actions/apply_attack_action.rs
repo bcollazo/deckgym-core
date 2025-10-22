@@ -297,6 +297,7 @@ fn forecast_effect_attack(
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A3a045NagaedelElectroHouse => damage_status_attack(40, StatusCondition::Poisoned),
         AttackId::A3a060TypeNullQuickBlow => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
         }

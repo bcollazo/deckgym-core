@@ -110,6 +110,7 @@ pub enum AttackId {
     A3a019TapuKokoExPlasmaHurricane,
     A3a043GuzzlordExGrindcore,
     A3a044Poipole2Step,
+    A3a045NagaedelElectroHouse,
     A3a060TypeNullQuickBlow,
     A3a061SilvallyBraveBuddies,
     A3a062CelesteelaMoombahton,
@@ -322,6 +323,7 @@ lazy_static::lazy_static! {
         m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A3a 043", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
+        m.insert(("A3a 045", 0), AttackId::A3a045NagaedelElectroHouse);
         m.insert(("A3a 060", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A3a 061", 0), AttackId::A3a061SilvallyBraveBuddies);
         m.insert(("A3a 062", 0), AttackId::A3a062CelesteelaMoombahton);
