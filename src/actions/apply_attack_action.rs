@@ -715,11 +715,12 @@ fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilitie
 }
 
 fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
-    // capped at 5 heads for practicality
+    // Flip coins until tails - capped at 5 heads for practicality
     let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
     let mut outcomes: Mutations = vec![];
     for energies_to_remove in 0..6 {
-        outcomes.push(Box::new({
+        outcomes.push(active_damage_effect_mutation(
+            30,
             move |_, state, action| {
                 let opponent = (action.actor + 1) % 2;
                 let active = state.get_active_mut(opponent);
@@ -728,10 +729,13 @@ fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
                     if active.attached_energy.is_empty() {
                         break; // No more energy to discard
                     }
+                    // NOTE: Using pop() instead of random selection to avoid expanding the game tree.
+                    // This is a simplification - the card text says "random Energy" but we always
+                    // remove the last one for performance reasons.
                     active.attached_energy.pop();
                 }
-            }
-        }));
+            },
+        ));
     }
     (probabilities, outcomes)
 }
