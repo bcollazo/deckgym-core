@@ -244,6 +244,18 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
+    // Check for Safeguard ability (prevents all damage from opponent's Pokémon ex)
+    let opponent = (player + 1) % 2;
+    let receiving_pokemon = &state.in_play_pokemon[opponent][receiving_index];
+    if let Some(defending_pokemon) = receiving_pokemon {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
+            if ability_id == AbilityId::A3066OricoricSafeguard && active.card.is_ex() {
+                debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
+                return 0;
+            }
+        }
+    }
+
     // If its bench attack, don't apply multipliers
     if receiving_index != 0 {
         debug!("Bench attack, returning fixed {}", attack.fixed_damage);

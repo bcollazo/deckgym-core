@@ -14,6 +14,7 @@ pub enum AbilityId {
     A2a071Arceus,
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
+    A3066OricoricSafeguard,
     A3122SolgaleoExRisingRoad,
     A3141KomalaComatose,
     A3a021ZeraoraThunderclapFlash,
@@ -52,12 +53,14 @@ lazy_static::lazy_static! {
         m.insert("A2b 035", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 083", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 096", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
+        m.insert("A3 066", AbilityId::A3066OricoricSafeguard);
         m.insert("A3 122", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("A3 141", AbilityId::A3141KomalaComatose);
+        m.insert("A3 165", AbilityId::A3066OricoricSafeguard);
+        m.insert("A3 179", AbilityId::A3141KomalaComatose);
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 207", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 239", AbilityId::A3122SolgaleoExRisingRoad);
-        m.insert("A3 141", AbilityId::A3141KomalaComatose);
-        m.insert("A3 179", AbilityId::A3141KomalaComatose);
         m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
         m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);
@@ -86,6 +89,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
+        m.insert("A4b 146", AbilityId::A3066OricoricSafeguard);
+        m.insert("A4b 147", AbilityId::A3066OricoricSafeguard);
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);

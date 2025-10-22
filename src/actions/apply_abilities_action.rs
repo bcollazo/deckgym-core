@@ -39,6 +39,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => {
             doutcome_from_mutation(charge_giratina_and_end_turn(in_play_idx))
         }
+        AbilityId::A3066OricoricSafeguard => panic!("Safeguard is a passive ability"),
         AbilityId::A3122SolgaleoExRisingRoad => doutcome_from_mutation(rising_road(in_play_idx)),
         AbilityId::A3141KomalaComatose => panic!("Comatose is a passive ability"),
         AbilityId::A3a021ZeraoraThunderclapFlash => {
