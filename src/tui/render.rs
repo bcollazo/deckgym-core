@@ -179,9 +179,9 @@ pub(crate) fn render_pokemon_card<'a>(
                         .fg(Color::Yellow)
                         .add_modifier(Modifier::ITALIC),
                 )]));
+            } else {
+                lines.push(Line::from("")); // Empty line if no tool
             }
-
-            lines.push(Line::from(""));
 
             // Add attack names
             for attack_name in attack_names {
