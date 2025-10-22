@@ -24,6 +24,29 @@ fn is_fossil(trainer_card: &TrainerCard) -> bool {
     FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
 }
 
+// Ultra Beasts
+// TODO: Move this to a field in PokemonCard and database in the future
+const ULTRA_BEAST_NAMES: [&str; 14] = [
+    "Buzzwole ex",
+    "Blacephalon",
+    "Kartana",
+    "Pheromosa",
+    "Xurkitree",
+    "Nihilego",
+    "Guzzlord ex",
+    "Poipole",
+    "Naganadel",
+    "Stakataka",
+    "Celesteela",
+    "Dawn Wings Necrozma",
+    "Dusk Mane Necrozma",
+    "Ultra Necrozma",
+];
+
+pub fn is_ultra_beast(pokemon_name: &str) -> bool {
+    ULTRA_BEAST_NAMES.contains(&pokemon_name)
+}
+
 pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
@@ -58,6 +81,28 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     }
 }
 
+/// Check if a Pokemon in play can evolve into a card from hand
+/// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
+    if let Card::Pokemon(evolution_pokemon) = evolution_card {
+        if let Some(evolves_from) = &evolution_pokemon.evolves_from {
+            // Normal evolution: the card evolves from the base Pokemon's name
+            if base_pokemon.get_name() == *evolves_from {
+                return true;
+            }
+
+            // Special case: Eevee ex's Veevee 'volve ability
+            // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
+            if let Some(ability_id) = AbilityId::from_pokemon_id(&base_pokemon.card.get_id()[..]) {
+                if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee" {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
     match tool_id {
         ToolId::A2147GiantCape => {
@@ -77,7 +122,7 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
             card.total_hp += 30;
         }
         // Many tools do nothing on attach
-        ToolId::A2148RockyHelmet => {}
+        ToolId::A2148RockyHelmet | ToolId::A3146PoisonBarb | ToolId::A4a067InflatableBoat => {}
     }
 }
 
@@ -199,6 +244,18 @@ pub(crate) fn get_damage_from_attack(
         return attack.fixed_damage;
     }
 
+    // Check for Safeguard ability (prevents all damage from opponent's Pokémon ex)
+    let opponent = (player + 1) % 2;
+    let receiving_pokemon = &state.in_play_pokemon[opponent][receiving_index];
+    if let Some(defending_pokemon) = receiving_pokemon {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
+            if ability_id == AbilityId::A3066OricoricSafeguard && active.card.is_ex() {
+                debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
+                return 0;
+            }
+        }
+    }
+
     // If its bench attack, don't apply multipliers
     if receiving_index != 0 {
         debug!("Bench attack, returning fixed {}", attack.fixed_damage);
@@ -207,14 +264,20 @@ pub(crate) fn get_damage_from_attack(
 
     let opponent = (player + 1) % 2;
     let opponent_is_ex = state.get_active(opponent).card.is_ex();
+    let attacker_is_eevee_evolution = active.evolved_from("Eevee");
 
-    // Modifiers by effect (like Giovanni, Red)
+    // Modifiers by effect (like Giovanni, Red, Eevee Bag)
     let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
         .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
             TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
+            TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
+                if attacker_is_eevee_evolution =>
+            {
+                *amount
+            }
             _ => 0,
         })
         .sum::<u32>();
@@ -457,6 +520,77 @@ mod tests {
         assert_eq!(
             damage_with_stiffen, 70,
             "Cosmoem's Stiffen should reduce damage by exactly 50"
+        );
+    }
+
+    #[test]
+    fn test_normal_evolution_works() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Ivysaur evolves from Bulbasaur
+        let ivysaur = get_card_by_enum(CardId::A1002Ivysaur);
+        let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+
+        assert!(
+            can_evolve_into(&ivysaur, &bulbasaur),
+            "Ivysaur should be able to evolve from Bulbasaur"
+        );
+    }
+
+    #[test]
+    fn test_normal_evolution_fails_wrong_pokemon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Charizard cannot evolve from Bulbasaur
+        let charizard = get_card_by_enum(CardId::A1035Charizard);
+        let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+
+        assert!(
+            !can_evolve_into(&charizard, &bulbasaur),
+            "Charizard should not be able to evolve from Bulbasaur"
+        );
+    }
+
+    #[test]
+    fn test_normal_eevee_can_evolve_into_vaporeon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Regular Eevee (not Eevee ex) should only evolve normally
+        let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
+        let normal_eevee = to_playable_card(&get_card_by_enum(CardId::A1206Eevee), false);
+
+        // Normal Eevee CAN evolve into Vaporeon (normal evolution)
+        assert!(
+            can_evolve_into(&vaporeon, &normal_eevee),
+            "Normal Eevee should be able to evolve into Vaporeon normally"
+        );
+    }
+
+    #[test]
+    fn test_eevee_ex_can_evolve_into_vaporeon() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Eevee ex should be able to evolve into Vaporeon (which evolves from "Eevee")
+        let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
+        let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);
+
+        assert!(
+            can_evolve_into(&vaporeon, &eevee_ex),
+            "Eevee ex should be able to evolve into Vaporeon via Veevee 'volve ability"
+        );
+    }
+
+    #[test]
+    fn test_eevee_ex_cannot_evolve_into_charizard() {
+        use crate::{card_ids::CardId, database::get_card_by_enum};
+
+        // Eevee ex should NOT be able to evolve into Charizard (doesn't evolve from "Eevee")
+        let charizard = get_card_by_enum(CardId::A1035Charizard);
+        let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);
+
+        assert!(
+            !can_evolve_into(&charizard, &eevee_ex),
+            "Eevee ex should not be able to evolve into Charizard"
         );
     }
 }

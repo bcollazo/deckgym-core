@@ -3,7 +3,7 @@ mod move_generation_abilities;
 mod move_generation_trainer;
 
 use crate::actions::{Action, SimpleAction};
-use crate::hooks::{can_retreat, contains_energy, get_retreat_cost};
+use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::state::State;
 
@@ -155,22 +155,15 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     if state.is_users_first_turn() {
                         return;
                     }
-                    // For each non-zero stage pokemon in hand, check if the evolves_from is in play
-                    // if so, add evolve action
-                    if let Some(evolves_from) = &pokemon_card.evolves_from {
-                        state.in_play_pokemon[current_player]
-                            .iter()
-                            .enumerate()
-                            .for_each(|(i, x)| {
-                                if let Some(pokemon) = x {
-                                    if !pokemon.played_this_turn
-                                        && pokemon.get_name() == *evolves_from
-                                    {
-                                        actions.push(SimpleAction::Evolve(hand_card.clone(), i));
-                                    }
-                                }
-                            });
-                    }
+                    // For each non-zero stage pokemon in hand, check if it can evolve
+                    // from any pokemon in play (using can_evolve_into which handles special abilities)
+                    state
+                        .enumerate_in_play_pokemon(current_player)
+                        .for_each(|(i, pokemon)| {
+                            if !pokemon.played_this_turn && can_evolve_into(hand_card, pokemon) {
+                                actions.push(SimpleAction::Evolve(hand_card.clone(), i));
+                            }
+                        });
                 }
             }
             Card::Trainer(trainer_card) => {

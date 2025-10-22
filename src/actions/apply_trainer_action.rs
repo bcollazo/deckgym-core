@@ -1,13 +1,18 @@
+use std::cmp::min;
+
 use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
-    actions::{mutations::doutcome, shared_mutations::pokemon_search_outcomes},
+    actions::{
+        mutations::doutcome,
+        shared_mutations::{gladion_search_outcomes, pokemon_search_outcomes},
+    },
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
-    hooks::get_stage,
-    models::{EnergyType, TrainerCard},
+    hooks::{get_stage, is_ultra_beast},
+    models::{Card, EnergyType, TrainerCard},
     state::GameOutcome,
     tool_ids::ToolId,
     State,
@@ -47,13 +52,39 @@ pub fn forecast_trainer_action(
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
-        CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape => {
-            doutcome(attach_tool)
-        }
+        CardId::A2147GiantCape
+        | CardId::A2148RockyHelmet
+        | CardId::A3146PoisonBarb
+        | CardId::A3147LeafCape
+        | CardId::A4a067InflatableBoat => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
         CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
         CardId::A3a064Repel => doutcome(repel_effect),
+        CardId::A2146PokemonCommunication
+        | CardId::A4b316PokemonCommunication
+        | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
+        CardId::A4151ElementalSwitch
+        | CardId::A4b310ElementalSwitch
+        | CardId::A4b311ElementalSwitch => doutcome(elemental_switch_effect),
+        CardId::A3a067Gladion | CardId::A3a081Gladion => {
+            gladion_search_outcomes(acting_player, state)
+        }
+        CardId::A3a069Lusamine
+        | CardId::A3a083Lusamine
+        | CardId::A4b350Lusamine
+        | CardId::A4b351Lusamine
+        | CardId::A4b375Lusamine => doutcome(lusamine_effect),
+        CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
+            doutcome(lyra_effect)
+        }
+        CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
+            doutcome(silver_effect)
+        }
+        CardId::A3b066EeveeBag
+        | CardId::A3b107EeveeBag
+        | CardId::A4b308EeveeBag
+        | CardId::A4b309EeveeBag => doutcome(eevee_bag_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -349,4 +380,108 @@ fn rare_candy_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             .move_generation_stack
             .push((player, possible_candy_evolutions));
     }
+}
+
+/// Queue the decision for user to select which Pokemon from hand to swap
+fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let possible_swaps: Vec<SimpleAction> = state.hands[player]
+        .iter()
+        .filter(|card| matches!(card, Card::Pokemon(_)))
+        .map(|card| SimpleAction::CommunicatePokemon {
+            hand_pokemon: card.clone(),
+        })
+        .collect();
+
+    if !possible_swaps.is_empty() {
+        state.move_generation_stack.push((player, possible_swaps));
+    }
+}
+
+fn elemental_switch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    if state.maybe_get_active(player).is_none() {
+        return;
+    }
+    let allowed_types = [EnergyType::Fire, EnergyType::Water, EnergyType::Lightning];
+    let mut possible_transfers = Vec::new();
+
+    for (from_idx, pokemon) in state.enumerate_bench_pokemon(player) {
+        for &energy in &pokemon.attached_energy {
+            if allowed_types.contains(&energy) {
+                let move_action = SimpleAction::MoveEnergy {
+                    from_in_play_idx: from_idx,
+                    to_in_play_idx: 0,
+                    energy,
+                };
+                if !possible_transfers.contains(&move_action) {
+                    possible_transfers.push(move_action);
+                }
+            }
+        }
+    }
+
+    if !possible_transfers.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_transfers));
+    }
+}
+
+/// Queue the decision for user to select which Supporter from opponent's hand to shuffle
+fn silver_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let opponent = (player + 1) % 2;
+    let possible_shuffles: Vec<SimpleAction> = state.hands[opponent]
+        .iter()
+        .filter(|card| card.is_support())
+        .map(|card| SimpleAction::ShuffleOpponentSupporter {
+            supporter_card: card.clone(),
+        })
+        .collect();
+
+    if !possible_shuffles.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_shuffles));
+    }
+}
+
+/// Queue the decision for user to select which Ultra Beast to attach energies to
+fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let num_energies_to_attach = min(2, state.discard_energies[player].len());
+
+    let possible_attachments: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
+        .map(|(idx, _)| SimpleAction::AttachFromDiscard {
+            in_play_idx: idx,
+            num_random_energies: num_energies_to_attach,
+        })
+        .collect();
+
+    if !possible_attachments.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_attachments));
+    }
+}
+
+fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_activations = state
+        .enumerate_bench_pokemon(action.actor)
+        .map(|(idx, _)| SimpleAction::Activate { in_play_idx: idx })
+        .collect();
+    state
+        .move_generation_stack
+        .push((action.actor, possible_activations))
+}
+
+fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let choices = vec![
+        SimpleAction::ApplyEeveeBagDamageBoost,
+        SimpleAction::HealAllEeveeEvolutions,
+    ];
+    state.move_generation_stack.push((action.actor, choices));
 }

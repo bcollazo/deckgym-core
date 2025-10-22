@@ -3,7 +3,7 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::SimpleAction,
-    hooks::{get_counterattack_damage, on_end_turn},
+    hooks::{get_counterattack_damage, on_end_turn, should_poison_attacker},
     models::Card,
     state::GameOutcome,
     State,
@@ -184,19 +184,29 @@ pub(crate) fn handle_damage(
                 0
             }
         };
-        if counter_damage == 0 {
-            continue;
-        }
-        let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
-            .as_mut()
-            .expect("Active Pokemon should be there");
-        attacking_pokemon.apply_damage(counter_damage);
-        debug!(
-            "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
-            counter_damage, attacking_pokemon.remaining_hp
-        );
-        if attacking_pokemon.remaining_hp == 0 {
-            knockouts.push((attacking_player, 0));
+        let should_poison = should_poison_attacker(target_pokemon);
+
+        // Apply counterattack damage and poison
+        if counter_damage > 0 || should_poison {
+            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                .as_mut()
+                .expect("Active Pokemon should be there");
+
+            if counter_damage > 0 {
+                attacking_pokemon.apply_damage(counter_damage);
+                debug!(
+                    "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
+                    counter_damage, attacking_pokemon.remaining_hp
+                );
+                if attacking_pokemon.remaining_hp == 0 {
+                    knockouts.push((attacking_player, 0));
+                }
+            }
+
+            if should_poison {
+                attacking_pokemon.poisoned = true;
+                debug!("Poison Barb: Poisoned the attacking Pokemon");
+            }
         }
     }
 

@@ -37,6 +37,16 @@ pub(crate) fn pokemon_search_outcomes_by_type(
     })
 }
 
+pub(crate) fn gladion_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+        let name = card.get_name();
+        name == "Type: Null" || name == "Silvally"
+    })
+}
+
 fn pokemon_search_outcomes_with_filter<F>(
     acting_player: usize,
     state: &State,

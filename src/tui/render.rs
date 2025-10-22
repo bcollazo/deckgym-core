@@ -1,4 +1,4 @@
-use crate::models::*;
+use crate::{models::*, tool_ids::ToolId};
 use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
@@ -31,6 +31,16 @@ pub(crate) fn energy_type_to_symbol(energy_type: EnergyType) -> &'static str {
         EnergyType::Metal => "●",
         EnergyType::Dragon => "●",
         EnergyType::Colorless => "●",
+    }
+}
+
+pub(crate) fn tool_id_to_name(tool_id: ToolId) -> &'static str {
+    match tool_id {
+        ToolId::A2147GiantCape => "Giant Cape",
+        ToolId::A2148RockyHelmet => "Rocky Helmet",
+        ToolId::A3146PoisonBarb => "Poison Barb",
+        ToolId::A3147LeafCape => "Leaf Cape",
+        ToolId::A4a067InflatableBoat => "Inflatable Boat",
     }
 }
 
@@ -158,7 +168,20 @@ pub(crate) fn render_pokemon_card<'a>(
                 ),
             ]);
 
-            let mut lines = vec![name_hp_line, Line::from("")];
+            let mut lines = vec![name_hp_line];
+
+            // Add tool name if attached
+            if let Some(tool_id) = played_card.attached_tool {
+                let tool_name = tool_id_to_name(tool_id);
+                lines.push(Line::from(vec![Span::styled(
+                    format!("🔧{}", tool_name),
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::ITALIC),
+                )]));
+            }
+
+            lines.push(Line::from(""));
 
             // Add attack names
             for attack_name in attack_names {

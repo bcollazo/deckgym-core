@@ -103,6 +103,16 @@ impl PlayedCard {
         }
     }
 
+    /// Check if this Pokemon evolved from a specific Pokemon name
+    pub(crate) fn evolved_from(&self, base_name: &str) -> bool {
+        if let Card::Pokemon(pokemon_card) = &self.card {
+            if let Some(evolves_from) = &pokemon_card.evolves_from {
+                return evolves_from == base_name;
+            }
+        }
+        false
+    }
+
     pub(crate) fn is_damaged(&self) -> bool {
         self.remaining_hp < self.total_hp
     }

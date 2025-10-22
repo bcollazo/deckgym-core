@@ -259,6 +259,31 @@ impl State {
         self.turn_count <= 2
     }
 
+    /// Attaches energies from the discard pile to a Pokemon in play.
+    /// Removes the specified energies from discard_energies and attaches them to the Pokemon.
+    pub(crate) fn attach_energies_from_discard(
+        &mut self,
+        player: usize,
+        in_play_idx: usize,
+        energies: &[EnergyType],
+    ) {
+        // Remove energies from discard pile
+        for energy in energies {
+            let pos = self.discard_energies[player]
+                .iter()
+                .position(|e| e == energy)
+                .expect("Energy should be in discard pile");
+            self.discard_energies[player].remove(pos);
+        }
+
+        // Attach energies to Pokemon
+        self.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if attaching energy to it")
+            .attached_energy
+            .extend(energies.iter().cloned());
+    }
+
     /// Discards a Pokemon from play, moving it, its evolution chain, and its energies
     ///  to the discard pile.
     pub(crate) fn discard_from_play(&mut self, ko_receiver: usize, ko_pokemon_idx: usize) {

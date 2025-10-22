@@ -1,5 +1,6 @@
-use std::panic;
+use std::{collections::HashMap, panic};
 
+use log::debug;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
@@ -41,18 +42,31 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
         | SimpleAction::Attach { .. }
+        | SimpleAction::MoveEnergy { .. }
         | SimpleAction::AttachTool { .. }
         | SimpleAction::Evolve(_, _)
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::ApplyEeveeBagDamageBoost
+        | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
         }
+        SimpleAction::CommunicatePokemon { hand_pokemon } => {
+            forecast_pokemon_communication(action.actor, state, hand_pokemon)
+        }
+        SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
+            forecast_shuffle_opponent_supporter(action.actor, supporter_card)
+        }
+        SimpleAction::AttachFromDiscard {
+            in_play_idx,
+            num_random_energies,
+        } => forecast_attach_from_discard(state, action.actor, *in_play_idx, *num_random_energies),
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
         SimpleAction::EndTurn => forecast_end_turn(state),
     };
@@ -111,6 +125,28 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                 .attached_tool = Some(*tool_id);
             on_attach_tool(state, action.actor, *in_play_idx, *tool_id);
         }
+        SimpleAction::MoveEnergy {
+            from_in_play_idx,
+            to_in_play_idx,
+            energy,
+        } => {
+            let actor_board = &mut state.in_play_pokemon[action.actor];
+            let mut removed = false;
+            if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
+                if let Some(pos) = from_card.attached_energy.iter().position(|e| e == energy) {
+                    from_card.attached_energy.swap_remove(pos);
+                    removed = true;
+                }
+            }
+            if removed {
+                if let Some(to_card) = actor_board[*to_in_play_idx].as_mut() {
+                    to_card.attached_energy.push(*energy);
+                } else if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
+                    // Put energy back if destination vanished (should not normally happen)
+                    from_card.attached_energy.push(*energy);
+                }
+            }
+        }
         SimpleAction::Place(card, index) => {
             let played_card = to_playable_card(card, true);
             state.in_play_pokemon[action.actor][*index] = Some(played_card);
@@ -139,6 +175,12 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             cure_status,
         } => {
             apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status);
+        }
+        SimpleAction::ApplyEeveeBagDamageBoost => {
+            apply_eevee_bag_damage_boost(state);
+        }
+        SimpleAction::HealAllEeveeEvolutions => {
+            apply_heal_all_eevee_evolutions(action.actor, state);
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
@@ -246,6 +288,185 @@ fn apply_evolve(acting_player: usize, state: &mut State, to_card: &Card, positio
     on_evolve(acting_player, state, to_card)
 }
 
+fn forecast_pokemon_communication(
+    acting_player: usize,
+    state: &State,
+    hand_pokemon: &Card,
+) -> (Probabilities, Mutations) {
+    let deck_pokemon: Vec<_> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| matches!(card, Card::Pokemon(_)))
+        .collect();
+
+    let num_deck_pokemon = deck_pokemon.len();
+    if num_deck_pokemon == 0 {
+        // Should not happen if move generation is correct, but just shuffle deck
+        return (
+            vec![1.0],
+            vec![Box::new(|rng, state, action| {
+                state.decks[action.actor].shuffle(false, rng);
+            })],
+        );
+    }
+
+    // Create uniform probability for each deck Pokemon (1/N for each)
+    let probabilities = vec![1.0 / (num_deck_pokemon as f64); num_deck_pokemon];
+    let mut outcomes: Mutations = vec![];
+    for i in 0..num_deck_pokemon {
+        let hand_pokemon_clone = hand_pokemon.clone();
+        outcomes.push(Box::new(move |rng, state, action| {
+            // Get the i-th Pokemon from deck
+            let deck_pokemon_card = state.decks[action.actor]
+                .cards
+                .iter()
+                .filter(|card| matches!(card, Card::Pokemon(_)))
+                .nth(i)
+                .cloned()
+                .expect("Deck Pokemon should exist");
+
+            // Perform the swap
+            // 1. Remove hand Pokemon from hand
+            if let Some(pos) = state.hands[action.actor]
+                .iter()
+                .position(|c| c == &hand_pokemon_clone)
+            {
+                state.hands[action.actor].remove(pos);
+            }
+            // 2. Add deck Pokemon to hand
+            state.hands[action.actor].push(deck_pokemon_card.clone());
+            // 3. Remove deck Pokemon from deck
+            if let Some(pos) = state.decks[action.actor]
+                .cards
+                .iter()
+                .position(|c| c == &deck_pokemon_card)
+            {
+                state.decks[action.actor].cards.remove(pos);
+            }
+            // 4. Add hand Pokemon to deck
+            state.decks[action.actor]
+                .cards
+                .push(hand_pokemon_clone.clone());
+            // 5. Shuffle deck
+            state.decks[action.actor].shuffle(false, rng);
+
+            debug!(
+                "Pokemon Communication: Swapped {:?} from hand with {:?} from deck",
+                hand_pokemon_clone, deck_pokemon_card
+            );
+        }));
+    }
+
+    (probabilities, outcomes)
+}
+
+fn forecast_shuffle_opponent_supporter(
+    acting_player: usize,
+    supporter_card: &Card,
+) -> (Probabilities, Mutations) {
+    let supporter_clone = supporter_card.clone();
+    (
+        vec![1.0],
+        vec![Box::new(move |rng, state, _action| {
+            let opponent = (acting_player + 1) % 2;
+            // Remove Supporter from opponent's hand
+            if let Some(pos) = state.hands[opponent]
+                .iter()
+                .position(|c| c == &supporter_clone)
+            {
+                state.hands[opponent].remove(pos);
+            }
+            // Add Supporter to opponent's deck
+            state.decks[opponent].cards.push(supporter_clone.clone());
+            // Shuffle opponent's deck
+            state.decks[opponent].shuffle(false, rng);
+            debug!(
+                "Silver: Shuffled {:?} from opponent's hand into their deck",
+                supporter_clone
+            );
+        })],
+    )
+}
+
+fn forecast_attach_from_discard(
+    state: &State,
+    acting_player: usize,
+    in_play_idx: usize,
+    num_random_energies: usize,
+) -> (Probabilities, Mutations) {
+    let discard_energies = &state.discard_energies[acting_player];
+    let actual_num = std::cmp::min(num_random_energies, discard_energies.len());
+
+    if actual_num == 0 {
+        return (vec![1.0], vec![Box::new(|_, _, _| {})]);
+    }
+    if actual_num == 1 {
+        // Deterministic: just attach the first energy
+        let energy = discard_energies[0];
+        return (
+            vec![1.0],
+            vec![Box::new(move |_rng, state, action| {
+                state.attach_energies_from_discard(action.actor, in_play_idx, &[energy]);
+                debug!(
+                    "Lusamine: Attached {:?} from discard to Pokemon at index {}",
+                    energy, in_play_idx
+                );
+            })],
+        );
+    }
+
+    // For 2 energies, generate all combinations and deduplicate
+    let combinations = generate_energy_combinations(discard_energies);
+    let total_combinations: usize = combinations.iter().map(|(_, count)| count).sum();
+
+    let mut probabilities = Vec::new();
+    let mut mutations: Mutations = Vec::new();
+    for (combo, count) in combinations {
+        let probability = count as f64 / total_combinations as f64;
+        probabilities.push(probability);
+        mutations.push(Box::new(move |_rng, state, action| {
+            state.attach_energies_from_discard(action.actor, in_play_idx, &combo);
+            debug!(
+                "Lusamine: Attached {:?} from discard to Pokemon at index {}",
+                combo, in_play_idx
+            );
+        }));
+    }
+
+    (probabilities, mutations)
+}
+
+/// Generate all unique 2-energy combinations from a list of energies in discard pile.
+/// Returns a vector of (combination, count) tuples where count is how many times
+/// this combination appears when considering all possible pairs.
+fn generate_energy_combinations(energies: &[EnergyType]) -> Vec<(Vec<EnergyType>, usize)> {
+    let mut combination_counts: HashMap<Vec<EnergyType>, usize> = HashMap::new();
+    for i in 0..energies.len() {
+        for j in (i + 1)..energies.len() {
+            let mut combo = vec![energies[i], energies[j]];
+            combo.sort(); // Sort to treat [Grass, Fire] same as [Fire, Grass]
+            *combination_counts.entry(combo).or_insert(0) += 1;
+        }
+    }
+    combination_counts.into_iter().collect()
+}
+
+fn apply_eevee_bag_damage_boost(state: &mut State) {
+    use crate::effects::TurnEffect;
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForEeveeEvolutions { amount: 10 },
+        0,
+    );
+}
+
+fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
+    for pokemon in state.in_play_pokemon[acting_player].iter_mut().flatten() {
+        if pokemon.evolved_from("Eevee") {
+            pokemon.heal(20);
+        }
+    }
+}
+
 // Test that when evolving a damanged pokemon, damage stays.
 #[cfg(test)]
 mod tests {
@@ -341,5 +562,57 @@ mod tests {
             state.in_play_pokemon[0][2],
             Some(to_playable_card(&mankey, false))
         );
+    }
+
+    #[test]
+    fn test_generate_energy_combinations_all_same_type() {
+        // [Grass, Grass, Grass] -> 1 unique combo [Grass, Grass] with count 3
+        let energies = vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Grass];
+        let combinations = super::generate_energy_combinations(&energies);
+
+        assert_eq!(combinations.len(), 1);
+        let (combo, count) = &combinations[0];
+        assert_eq!(combo, &vec![EnergyType::Grass, EnergyType::Grass]);
+        assert_eq!(*count, 3);
+    }
+
+    #[test]
+    fn test_generate_energy_combinations_mixed_types() {
+        // [Grass, Grass, Fire] -> 2 unique combos:
+        // [Grass, Grass] count 1, [Fire, Grass] or [Grass, Fire] count 2
+        let energies = vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Fire];
+        let combinations = super::generate_energy_combinations(&energies);
+
+        assert_eq!(combinations.len(), 2);
+
+        // Find the mixed Fire-Grass combo (sorted, so could be either order)
+        let fire_grass = combinations
+            .iter()
+            .find(|(combo, _)| {
+                combo.len() == 2
+                    && combo.contains(&EnergyType::Fire)
+                    && combo.contains(&EnergyType::Grass)
+                    && combo[0] != combo[1]
+            })
+            .expect("Should have Fire-Grass combo");
+        assert_eq!(fire_grass.1, 2);
+
+        let grass_grass = combinations
+            .iter()
+            .find(|(combo, _)| combo == &vec![EnergyType::Grass, EnergyType::Grass])
+            .expect("Should have Grass-Grass combo");
+        assert_eq!(grass_grass.1, 1);
+    }
+
+    #[test]
+    fn test_generate_energy_combinations_all_different() {
+        // [Grass, Fire, Water] -> 3 unique combos, each count 1
+        let energies = vec![EnergyType::Grass, EnergyType::Fire, EnergyType::Water];
+        let combinations = super::generate_energy_combinations(&energies);
+
+        assert_eq!(combinations.len(), 3); // C(3,2) = 3
+        for (_, count) in &combinations {
+            assert_eq!(*count, 1);
+        }
     }
 }

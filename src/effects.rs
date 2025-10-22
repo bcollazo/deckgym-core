@@ -1,3 +1,4 @@
+use crate::attack_ids::AttackId;
 use serde::{Deserialize, Serialize};
 
 /// I believe these are the "clearable" ones by retreating...
@@ -6,6 +7,7 @@ pub enum CardEffect {
     NoRetreat,
     ReducedDamage { amount: u32 },
     CannotAttack,
+    CannotUseAttack(AttackId),
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
@@ -14,4 +16,5 @@ pub enum TurnEffect {
     ReducedRetreatCost { amount: u8 },
     IncreasedDamage { amount: u32 },
     IncreasedDamageAgainstEx { amount: u32 },
+    IncreasedDamageForEeveeEvolutions { amount: u32 },
 }

@@ -43,6 +43,11 @@ pub enum SimpleAction {
         attachments: Vec<(u32, EnergyType, usize)>, // (amount, energy_type, in_play_idx)
         is_turn_energy: bool, // true if this is the energy from the zone that can be once per turn
     },
+    MoveEnergy {
+        from_in_play_idx: usize,
+        to_in_play_idx: usize,
+        energy: EnergyType,
+    },
     AttachTool {
         in_play_idx: usize,
         tool_id: ToolId,
@@ -61,6 +66,24 @@ pub enum SimpleAction {
     Activate {
         in_play_idx: usize,
     },
+    // Custom Mechanics:
+    /// Pokemon Communication: swap a specific Pokemon from hand with a random Pokemon from deck
+    CommunicatePokemon {
+        hand_pokemon: Card,
+    },
+    /// Silver: shuffle a specific Supporter from opponent's hand into their deck
+    ShuffleOpponentSupporter {
+        supporter_card: Card,
+    },
+    /// Lusamine: attach energies from discard to a Pokemon
+    AttachFromDiscard {
+        in_play_idx: usize,
+        num_random_energies: usize,
+    },
+    /// Eevee Bag Option 1: Apply damage boost for Eevee evolutions this turn
+    ApplyEeveeBagDamageBoost,
+    /// Eevee Bag Option 2: Heal all Eevee evolutions
+    HealAllEeveeEvolutions,
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -87,6 +110,16 @@ impl fmt::Display for SimpleAction {
                     .collect::<Vec<_>>()
                     .join(", ");
                 write!(f, "Attach({attachments_str:?}, {is_turn_energy})")
+            }
+            SimpleAction::MoveEnergy {
+                from_in_play_idx,
+                to_in_play_idx,
+                energy,
+            } => {
+                write!(
+                    f,
+                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {energy:?})"
+                )
             }
             SimpleAction::AttachTool {
                 in_play_idx,
@@ -115,6 +148,24 @@ impl fmt::Display for SimpleAction {
                 )
             }
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
+            SimpleAction::CommunicatePokemon { hand_pokemon } => {
+                write!(f, "CommunicatePokemon({hand_pokemon})")
+            }
+            SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
+                write!(f, "ShuffleOpponentSupporter({supporter_card})")
+            }
+            SimpleAction::AttachFromDiscard {
+                in_play_idx,
+                num_random_energies,
+            } => {
+                write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
+            }
+            SimpleAction::ApplyEeveeBagDamageBoost => {
+                write!(f, "ApplyEeveeBagDamageBoost")
+            }
+            SimpleAction::HealAllEeveeEvolutions => {
+                write!(f, "HealAllEeveeEvolutions")
+            }
             SimpleAction::Noop => write!(f, "Noop"),
         }
     }

@@ -2,8 +2,8 @@ use crate::{
     actions::SimpleAction,
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
-    hooks::{can_play_support, get_stage},
-    models::{EnergyType, TrainerCard, TrainerType},
+    hooks::{can_play_support, get_stage, is_ultra_beast},
+    models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
     State,
 };
@@ -48,6 +48,7 @@ pub fn trainer_move_generation_implementation(
 
     let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
     match trainer_id {
+        // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
@@ -63,8 +64,28 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
             can_play_pokemon_center_lady(state, trainer_card)
         }
+        CardId::A4151ElementalSwitch
+        | CardId::A4b310ElementalSwitch
+        | CardId::A4b311ElementalSwitch => can_play_elemental_switch(state, trainer_card),
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
-        CardId::PA002XSpeed
+        CardId::A2146PokemonCommunication
+        | CardId::A4b316PokemonCommunication
+        | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
+        CardId::A3a067Gladion | CardId::A3a081Gladion => can_play_gladion(state, trainer_card),
+        CardId::A3a069Lusamine
+        | CardId::A3a083Lusamine
+        | CardId::A4b350Lusamine
+        | CardId::A4b351Lusamine
+        | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
+        CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
+            can_play_lyra(state, trainer_card)
+        }
+        // Simple cases: always can play
+        CardId::A4158Silver
+        | CardId::A4198Silver
+        | CardId::A4b336Silver
+        | CardId::A4b337Silver
+        | CardId::PA002XSpeed
         | CardId::PA005PokeBall
         | CardId::PA006RedCard
         | CardId::PA007ProfessorsResearch
@@ -77,6 +98,10 @@ pub fn trainer_move_generation_implementation(
         | CardId::A2b090Red
         | CardId::A4b352Red
         | CardId::A4b353Red => can_play_trainer(state, trainer_card),
+        CardId::A3b066EeveeBag
+        | CardId::A3b107EeveeBag
+        | CardId::A4b308EeveeBag
+        | CardId::A4b309EeveeBag => can_play_eevee_bag(state, trainer_card),
         _ => None,
     }
 }
@@ -130,6 +155,31 @@ fn can_play_irida(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.attached_energy.contains(&EnergyType::Water))
         .count();
     if damaged_water_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+fn can_play_elemental_switch(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    if state.maybe_get_active(state.current_player).is_none() {
+        return cannot_play_trainer();
+    }
+    let allowed_types = [EnergyType::Fire, EnergyType::Water, EnergyType::Lightning];
+    let has_valid_source =
+        state
+            .enumerate_bench_pokemon(state.current_player)
+            .any(|(_, pokemon)| {
+                pokemon
+                    .attached_energy
+                    .iter()
+                    .any(|energy| allowed_types.contains(energy))
+            });
+
+    if has_valid_source {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
@@ -241,6 +291,124 @@ fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<
         .enumerate_in_play_pokemon(player)
         .any(|(_, in_play)| hand.iter().any(|card| can_rare_candy_evolve(card, in_play)));
     if has_valid_evolution_pair {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Pokemon Communication can be played (requires at least 1 Pokemon in hand and 1 in deck)
+fn can_play_pokemon_communication(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let has_pokemon_in_hand = state.hands[player]
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(_)));
+    let has_pokemon_in_deck = state.decks[player]
+        .cards
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(_)));
+    if has_pokemon_in_hand && has_pokemon_in_deck {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Gladion can be played (requires possibility of Type: Null or Silvally in deck)
+fn can_play_gladion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+
+    // Count Type: Null and Silvally in play and discard
+    let mut type_null_count = 0;
+    let mut silvally_count = 0;
+
+    // Count in play Pokemon (including cards_behind)
+    for pokemon in state.in_play_pokemon[player].iter().flatten() {
+        // Check the current card
+        if pokemon.get_name() == "Type: Null" {
+            type_null_count += 1;
+        } else if pokemon.get_name() == "Silvally" {
+            silvally_count += 1;
+        }
+
+        // Check cards_behind (evolution chain)
+        for card in &pokemon.cards_behind {
+            if card.get_name() == "Type: Null" {
+                type_null_count += 1;
+            } else if card.get_name() == "Silvally" {
+                silvally_count += 1;
+            }
+        }
+    }
+
+    // Count in discard pile
+    for card in &state.discard_piles[player] {
+        if card.get_name() == "Type: Null" {
+            type_null_count += 1;
+        } else if card.get_name() == "Silvally" {
+            silvally_count += 1;
+        }
+    }
+
+    // Can play if we haven't accounted for all 2 Type: Null and 2 Silvally
+    // (meaning there might still be some in the deck)
+    if type_null_count >= 2 && silvally_count >= 2 {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Check if Lusamine can be played (requires opponent has >= 1 point, player has Ultra Beast, >= 1 energy in discard)
+fn can_play_lusamine(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let opponent = (player + 1) % 2;
+
+    // Check if opponent has at least 1 point
+    if state.points[opponent] < 1 {
+        return cannot_play_trainer();
+    }
+
+    // Check if player has at least 1 Ultra Beast in play
+    let has_ultra_beast = state.in_play_pokemon[player]
+        .iter()
+        .flatten()
+        .any(|pokemon| is_ultra_beast(&pokemon.get_name()));
+    if !has_ultra_beast {
+        return cannot_play_trainer();
+    }
+
+    // Check if player has at least 1 energy in discard
+    if state.discard_energies[player].is_empty() {
+        return cannot_play_trainer();
+    }
+
+    can_play_trainer(state, trainer_card)
+}
+
+/// Check if Lyra can be played (requires active pokemon to have damage and at least 1 benched pokemon)
+fn can_play_lyra(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let active_pokemon = state.maybe_get_active(player);
+    let bench_count = state.enumerate_bench_pokemon(player).count();
+
+    if let Some(active) = active_pokemon {
+        if active.is_damaged() && bench_count > 0 {
+            return can_play_trainer(state, trainer_card);
+        }
+    }
+    cannot_play_trainer()
+}
+
+/// Check if Eevee Bag can be played (requires at least 1 Pokemon that evolved from Eevee in play)
+fn can_play_eevee_bag(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_eevee_evolution = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.evolved_from("Eevee"));
+    if has_eevee_evolution {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

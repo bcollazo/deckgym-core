@@ -20,3 +20,14 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
 
     total_damage
 }
+
+/// Check if the defending Pokemon should poison the attacker when damaged.
+/// Returns true if the attacker should be poisoned.
+pub(crate) fn should_poison_attacker(card: &PlayedCard) -> bool {
+    if let Some(tool) = card.attached_tool {
+        if tool == ToolId::A3146PoisonBarb {
+            return true;
+        }
+    }
+    false
+}
