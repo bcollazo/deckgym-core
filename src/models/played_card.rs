@@ -84,13 +84,6 @@ impl PlayedCard {
             .extend(std::iter::repeat_n(*energy, amount as usize));
     }
 
-    // Discard 1 of energy type
-    pub(crate) fn discard_energy(&mut self, energy: &EnergyType) {
-        if let Some(pos) = self.attached_energy.iter().position(|x| x == energy) {
-            self.attached_energy.swap_remove(pos);
-        }
-    }
-
     pub(crate) fn apply_damage(&mut self, damage: u32) {
         self.remaining_hp = self.remaining_hp.saturating_sub(damage);
     }

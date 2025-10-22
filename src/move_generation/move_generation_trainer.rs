@@ -87,10 +87,14 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b337Silver
         | CardId::PA002XSpeed
         | CardId::PA005PokeBall
+        | CardId::A2b111PokeBall
         | CardId::PA006RedCard
         | CardId::PA007ProfessorsResearch
+        | CardId::A4b373ProfessorsResearch
         | CardId::A1223Giovanni
         | CardId::A1270Giovanni
+        | CardId::A4b334Giovanni
+        | CardId::A4b335Giovanni
         | CardId::A1a065MythicalSlab
         | CardId::A1a068Leaf
         | CardId::A1a082Leaf
