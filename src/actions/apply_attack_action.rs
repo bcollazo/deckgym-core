@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::{
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
-    hooks::{get_damage_from_attack, get_stage},
+    hooks::get_stage,
     models::{EnergyType, StatusCondition},
     State,
 };
@@ -32,8 +32,7 @@ pub(crate) fn forecast_attack(
     let attack = active.card.get_attacks()[index].clone();
     trace!("Forecasting attack: {active:?} {attack:?}");
     if attack.effect.is_none() {
-        let damage = get_damage_from_attack(state, acting_player, index, 0);
-        active_damage_doutcome(damage)
+        active_damage_doutcome(attack.fixed_damage)
     } else {
         forecast_effect_attack(acting_player, state, index)
     }
@@ -1252,5 +1251,41 @@ mod test {
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_guzzlord_grindcore_does_not_respect_oricorio_safeguard() {
+        // Test that Guzzlord ex's Grindcore attack does damage to Oricorio
+        // despite Oricorio's Safeguard ability (which should prevent damage from ex Pokemon)
+        // The first mutation (0 heads, immediate tails) should still do 30 damage
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        // Set up Oricorio (with Safeguard ability) as the opponent's active
+        let oricorio = get_card_by_enum(CardId::A3066Oricorio); // 70 HP, Safeguard ability
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&oricorio, false));
+
+        // Set up Guzzlord ex as the attacker
+        let guzzlord = get_card_by_enum(CardId::A3a043GuzzlordEx); // 170 HP ex Pokemon
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&guzzlord, false));
+
+        // Get the mutations from guzzlord_ex_grindcore_attack
+        let (probabilities, mut mutations) = guzzlord_ex_grindcore_attack();
+
+        // Verify we have the expected number of outcomes
+        assert_eq!(probabilities.len(), 6);
+        assert_eq!(mutations.len(), 6);
+
+        // Apply the first mutation (0 heads, immediate tails)
+        // This should do 30 damage despite Oricorio's Safeguard ability
+        mutations.remove(0)(&mut rng, &mut state, &action);
+
+        // Verify Oricorio did NOT take damage
+        assert_eq!(state.get_active(1).remaining_hp, 70);
     }
 }

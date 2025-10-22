@@ -1,7 +1,7 @@
 use log::trace;
 use rand::rngs::StdRng;
 
-use crate::{card_ids::CardId, hooks::get_damage_from_attack, models::StatusCondition, State};
+use crate::{card_ids::CardId, models::StatusCondition, State};
 
 use super::{
     apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
@@ -57,7 +57,9 @@ where
         vec![Box::new(move |rng, state, action| {
             additional_effect(rng, state, action);
 
-            let damage = get_damage_from_attack(state, action.actor, attack_index, 0);
+            let active = state.get_active(action.actor);
+            let attack = active.card.get_attacks()[attack_index].clone();
+            let damage = attack.fixed_damage;
             let target_player = (action.actor + 1) % 2;
             handle_damage(state, target_player, &vec![(damage, 0)], true);
         })],

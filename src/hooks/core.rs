@@ -229,94 +229,95 @@ pub(crate) fn can_play_support(state: &State) -> bool {
     !state.has_played_support && !has_modifiers
 }
 
-pub(crate) fn get_damage_from_attack(
+// TODO: Confirm is_from_attack and goes to enemy active
+pub(crate) fn modify_damage(
     state: &State,
     player: usize,
-    index: usize,
-    receiving_index: usize,
+    base_damage: u32,
+    receiving_idx: usize,
+    is_from_active_attack: bool,
 ) -> u32 {
+    let opponent = (player + 1) % 2;
     let active = state.get_active(player);
-    let attack = active.card.get_attacks()[index].clone();
+    let receiving_pokemon = &state.in_play_pokemon[opponent][0];
+    let opponent_is_ex = state.get_active(opponent).card.is_ex();
+    let attacker_is_eevee_evolution = active.evolved_from("Eevee");
 
     // If attack is 0, not even Giovanni takes it to 10.
-    if attack.fixed_damage == 0 {
+    if base_damage == 0 {
         debug!("Attack is 0, returning 0");
-        return attack.fixed_damage;
+        return base_damage;
     }
 
     // Check for Safeguard ability (prevents all damage from opponent's Pokémon ex)
-    let opponent = (player + 1) % 2;
-    let receiving_pokemon = &state.in_play_pokemon[opponent][receiving_index];
     if let Some(defending_pokemon) = receiving_pokemon {
         if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
-            if ability_id == AbilityId::A3066OricoricSafeguard && active.card.is_ex() {
+            if ability_id == AbilityId::A3066OricoricSafeguard
+                && is_from_active_attack
+                && active.card.is_ex()
+            {
                 debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
                 return 0;
             }
         }
     }
 
-    // If its bench attack, don't apply multipliers
-    if receiving_index != 0 {
-        debug!("Bench attack, returning fixed {}", attack.fixed_damage);
-        return attack.fixed_damage;
-    }
+    if receiving_idx == 0 && is_from_active_attack {
+        // Modifiers by effect (like Giovanni, Red, Eevee Bag)
+        let increased_turn_effect_modifiers = state
+            .get_current_turn_effects()
+            .iter()
+            .map(|effect| match effect {
+                TurnEffect::IncreasedDamage { amount } => *amount,
+                TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
+                TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
+                    if attacker_is_eevee_evolution =>
+                {
+                    *amount
+                }
+                _ => 0,
+            })
+            .sum::<u32>();
 
-    let opponent = (player + 1) % 2;
-    let opponent_is_ex = state.get_active(opponent).card.is_ex();
-    let attacker_is_eevee_evolution = active.evolved_from("Eevee");
+        // Modifiers by receiving card effects
+        let reduced_card_effect_modifiers = state
+            .get_active(opponent)
+            .get_active_effects()
+            .iter()
+            .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
+            .map(|effect| match effect {
+                CardEffect::ReducedDamage { amount } => *amount,
+                _ => 0,
+            })
+            .sum::<u32>();
 
-    // Modifiers by effect (like Giovanni, Red, Eevee Bag)
-    let increased_turn_effect_modifiers = state
-        .get_current_turn_effects()
-        .iter()
-        .map(|effect| match effect {
-            TurnEffect::IncreasedDamage { amount } => *amount,
-            TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
-            TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
-                if attacker_is_eevee_evolution =>
-            {
-                *amount
+        // Weakness Modifier
+        let mut weakness_modifier = 0;
+        let receiving = state.get_active(opponent);
+        if let Card::Pokemon(pokemon_card) = &receiving.card {
+            if pokemon_card.weakness == active.card.get_type() {
+                debug!(
+                    "Weakness! {:?} is weak to {:?}",
+                    pokemon_card,
+                    active.card.get_type()
+                );
+                weakness_modifier = 20;
             }
-            _ => 0,
-        })
-        .sum::<u32>();
-
-    // Modifiers by receiving card effects
-    let reduced_card_effect_modifiers = state
-        .get_active(opponent)
-        .get_active_effects()
-        .iter()
-        .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
-        .map(|effect| match effect {
-            CardEffect::ReducedDamage { amount } => *amount,
-            _ => 0,
-        })
-        .sum::<u32>();
-
-    // Weakness Modifier
-    let mut weakness_modifier = 0;
-    let receiving = state.get_active(opponent);
-    if let Card::Pokemon(pokemon_card) = &receiving.card {
-        if pokemon_card.weakness == active.card.get_type() {
-            debug!(
-                "Weakness! {:?} is weak to {:?}",
-                pokemon_card,
-                active.card.get_type()
-            );
-            weakness_modifier = 20;
         }
-    }
 
-    debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
-        attack.fixed_damage,
-        weakness_modifier,
-        increased_turn_effect_modifiers,
-        reduced_card_effect_modifiers
-    );
-    (attack.fixed_damage + weakness_modifier + increased_turn_effect_modifiers)
-        .saturating_sub(reduced_card_effect_modifiers)
+        debug!(
+            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
+            base_damage,
+            weakness_modifier,
+            increased_turn_effect_modifiers,
+            reduced_card_effect_modifiers
+        );
+        (base_damage + weakness_modifier + increased_turn_effect_modifiers)
+            .saturating_sub(reduced_card_effect_modifiers)
+    } else {
+        debug!("Damage is to benched Pokémon or not from active attack");
+        return base_damage; // modifiers only apply to active Pokémon
+    }
 }
 
 // Check if attached satisfies cost (considering Colorless and Serperior's ability)
@@ -450,13 +451,14 @@ mod tests {
         state.in_play_pokemon[1][0] = Some(played_defender);
 
         // Get base damage without Giovanni effect
-        let base_damage = get_damage_from_attack(&state, 0, 0, 0);
+        let attack = attacker.get_attacks()[0].clone();
+        let base_damage = modify_damage(&state, 0, attack.fixed_damage, 0, true);
 
         // Add Giovanni effect
         state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
-        let damage_with_giovanni = get_damage_from_attack(&state, 0, 0, 0);
+        let damage_with_giovanni = modify_damage(&state, 0, attack.fixed_damage, 0, true);
 
         // Verify Giovanni adds exactly 10 damage
         assert_eq!(
@@ -475,9 +477,9 @@ mod tests {
         non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
         non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
-        let base_damage_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        let base_damage_non_ex = modify_damage(&non_ex_state, 0, 40, 0, true);
         non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_non_ex = get_damage_from_attack(&non_ex_state, 0, 0, 0);
+        let damage_with_red_vs_non_ex = modify_damage(&non_ex_state, 0, 40, 0, true);
         assert_eq!(
             damage_with_red_vs_non_ex, base_damage_non_ex,
             "Red should not increase damage against non-EX Pokémon"
@@ -488,9 +490,9 @@ mod tests {
         ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
         ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
-        let base_damage_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        let base_damage_ex = modify_damage(&ex_state, 0, 40, 0, true);
         ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_ex = get_damage_from_attack(&ex_state, 0, 0, 0);
+        let damage_with_red_vs_ex = modify_damage(&ex_state, 0, 40, 0, true);
         assert_eq!(
             damage_with_red_vs_ex,
             base_damage_ex + 20,
@@ -514,7 +516,7 @@ mod tests {
             .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
 
         // Act
-        let damage_with_stiffen = get_damage_from_attack(&state, 0, 0, 0);
+        let damage_with_stiffen = modify_damage(&state, 0, 120, 0, true);
 
         // Assert
         assert_eq!(
@@ -525,8 +527,6 @@ mod tests {
 
     #[test]
     fn test_normal_evolution_works() {
-        use crate::{card_ids::CardId, database::get_card_by_enum};
-
         // Ivysaur evolves from Bulbasaur
         let ivysaur = get_card_by_enum(CardId::A1002Ivysaur);
         let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
@@ -539,8 +539,6 @@ mod tests {
 
     #[test]
     fn test_normal_evolution_fails_wrong_pokemon() {
-        use crate::{card_ids::CardId, database::get_card_by_enum};
-
         // Charizard cannot evolve from Bulbasaur
         let charizard = get_card_by_enum(CardId::A1035Charizard);
         let bulbasaur = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
@@ -553,8 +551,6 @@ mod tests {
 
     #[test]
     fn test_normal_eevee_can_evolve_into_vaporeon() {
-        use crate::{card_ids::CardId, database::get_card_by_enum};
-
         // Regular Eevee (not Eevee ex) should only evolve normally
         let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
         let normal_eevee = to_playable_card(&get_card_by_enum(CardId::A1206Eevee), false);
@@ -568,8 +564,6 @@ mod tests {
 
     #[test]
     fn test_eevee_ex_can_evolve_into_vaporeon() {
-        use crate::{card_ids::CardId, database::get_card_by_enum};
-
         // Eevee ex should be able to evolve into Vaporeon (which evolves from "Eevee")
         let vaporeon = get_card_by_enum(CardId::A1080Vaporeon);
         let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);
@@ -582,8 +576,6 @@ mod tests {
 
     #[test]
     fn test_eevee_ex_cannot_evolve_into_charizard() {
-        use crate::{card_ids::CardId, database::get_card_by_enum};
-
         // Eevee ex should NOT be able to evolve into Charizard (doesn't evolve from "Eevee")
         let charizard = get_card_by_enum(CardId::A1035Charizard);
         let eevee_ex = to_playable_card(&get_card_by_enum(CardId::A3b056EeveeEx), false);

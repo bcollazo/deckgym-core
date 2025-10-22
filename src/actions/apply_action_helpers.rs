@@ -3,7 +3,7 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::SimpleAction,
-    hooks::{get_counterattack_damage, on_end_turn, should_poison_attacker},
+    hooks::{get_counterattack_damage, modify_damage, on_end_turn, should_poison_attacker},
     models::Card,
     state::GameOutcome,
     State,
@@ -139,6 +139,8 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
         .collect()
 }
 
+/// NOTE: This function also handles Counter-Attack logic, attack modifiers, and
+///  queues up promotion actions if any K.O.s happen.
 pub(crate) fn handle_damage(
     state: &mut State,
     target_player: usize,
@@ -148,37 +150,52 @@ pub(crate) fn handle_damage(
     let attacking_player = (target_player + 1) % 2;
     let mut knockouts: Vec<(usize, usize)> = vec![];
 
+    // Modify to apply any multipliers (e.g. Oricorio, Giovanni, etc...)
+    let modified_targets = targets
+        .iter()
+        .map(|(damage, target_pokemon_idx)| {
+            let modified_damage = modify_damage(
+                state,
+                attacking_player,
+                *damage,
+                *target_pokemon_idx,
+                is_from_active_attack,
+            );
+            (modified_damage, *target_pokemon_idx)
+        })
+        .collect::<Vec<(u32, usize)>>();
+
     // Handle each target individually
-    for (damage, target_pokemon_idx) in targets {
-        if *damage == 0 {
+    for (damage, target_pokemon_idx) in modified_targets {
+        if damage == 0 {
             continue;
         }
 
         // Apply damage
         {
-            let target_pokemon = state.in_play_pokemon[target_player][*target_pokemon_idx]
+            let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
                 .as_mut()
                 .expect("Pokemon should be there if taking damage");
-            target_pokemon.apply_damage(*damage); // Applies without surpassing 0 HP
+            target_pokemon.apply_damage(damage); // Applies without surpassing 0 HP
             debug!(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
                 damage, target_pokemon_idx, target_pokemon.remaining_hp
             );
             if target_pokemon.remaining_hp == 0 {
-                knockouts.push((target_player, *target_pokemon_idx));
+                knockouts.push((target_player, target_pokemon_idx));
             }
         }
 
         // Consider Counter-Attack (only if from Active Attack to Active)
-        if !(is_from_active_attack && *target_pokemon_idx == 0) {
+        if !(is_from_active_attack && target_pokemon_idx == 0) {
             continue;
         }
 
-        let target_pokemon = state.in_play_pokemon[target_player][*target_pokemon_idx]
+        let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
             .as_ref()
             .expect("Pokemon should be there if taking damage");
         let counter_damage = {
-            if *target_pokemon_idx == 0 {
+            if target_pokemon_idx == 0 {
                 get_counterattack_damage(target_pokemon)
             } else {
                 0
