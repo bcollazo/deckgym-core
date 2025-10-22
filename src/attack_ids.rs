@@ -1,7 +1,8 @@
 // TODO: Probably best to generate this file from database.json via card_enum_generator.rs.
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AttackId {
     A1003VenusaurMegaDrain,
     A1004VenusaurExGiantBloom,
@@ -104,8 +105,10 @@ pub enum AttackId {
     A3040AlolanVulpixCallForth,
     A3041AlolanNinetalesBlizzard,
     A3071SpoinkPsycharge,
+    A3a006BuzzwoleExBigBeat,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
+    A3a043GuzzlordExGrindcore,
     A3a044Poipole2Step,
     A3a060TypeNullQuickBlow,
     A3a061SilvallyBraveBuddies,
@@ -116,6 +119,7 @@ pub enum AttackId {
     A3b009FlareonExFireSpin,
     A3b013IncineroarDarkestLariat,
     A3b020VanilluxeDoubleSpin,
+    A3b053DragoniteExGigaImpact,
     A3b058AipomDoubleHit,
     A4026NinetalesScorchingBreath,
     A4032MagbyToasty,
@@ -312,26 +316,35 @@ lazy_static::lazy_static! {
         m.insert(("A3 239", 0), AttackId::A3122SolgaleoExSolBreaker);
 
         // A3a
+        m.insert(("A3a 006", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
-        m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
-        m.insert(("A3a 071", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
-        m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
-        m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 043", 0), AttackId::A3a043GuzzlordExGrindcore);
+        m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
         m.insert(("A3a 060", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A3a 061", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A3a 071", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 074", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A3a 076", 1), AttackId::A3a006BuzzwoleExBigBeat);
+        m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 079", 0), AttackId::A3a043GuzzlordExGrindcore);
+        m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 086", 0), AttackId::A3a043GuzzlordExGrindcore);
+        m.insert(("A3a 088", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
         m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A3b 013", 0), AttackId::A3b013IncineroarDarkestLariat);
         m.insert(("A3b 020", 0), AttackId::A3b020VanilluxeDoubleSpin);
+        m.insert(("A3b 053", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 058", 0), AttackId::A3b058AipomDoubleHit);
         m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 079", 0), AttackId::A3b009FlareonExFireSpin);
+        m.insert(("A3b 082", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A3b 087", 0), AttackId::A3b009FlareonExFireSpin);
+        m.insert(("A3b 090", 0), AttackId::A3b053DragoniteExGigaImpact);
 
         // A4
         m.insert(("A4 026", 0), AttackId::A4026NinetalesScorchingBreath);
@@ -358,6 +371,7 @@ lazy_static::lazy_static! {
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashy);
 
         // A4b
+        m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
@@ -370,10 +384,13 @@ lazy_static::lazy_static! {
         m.insert(("A4b 196", 0), AttackId::A1153MarowakExBonemerang);
         m.insert(("A4b 242", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 243", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A4b 248", 0), AttackId::A3a043GuzzlordExGrindcore);
+        m.insert(("A4b 271", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
         m.insert(("A4b 303", 0), AttackId::A3a061SilvallyBraveBuddies);
+        m.insert(("A4b 360", 1), AttackId::A3a006BuzzwoleExBigBeat);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);

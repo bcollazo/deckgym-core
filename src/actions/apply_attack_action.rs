@@ -287,9 +287,13 @@ fn forecast_effect_attack(
         AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
+        AttackId::A3a006BuzzwoleExBigBeat => {
+            cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
+        }
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
         }
+        AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
@@ -321,11 +325,12 @@ fn forecast_effect_attack(
         AttackId::A3b020VanilluxeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }
+        AttackId::A3b053DragoniteExGigaImpact => giga_impact_attack(),
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(acting_player),
+        AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
@@ -706,6 +711,28 @@ fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilitie
     })
 }
 
+fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
+    // capped at 5 heads for practicality
+    let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
+    let mut outcomes: Mutations = vec![];
+    for energies_to_remove in 0..6 {
+        outcomes.push(Box::new({
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                let active = state.get_active_mut(opponent);
+
+                for _ in 0..energies_to_remove {
+                    if active.attached_energy.is_empty() {
+                        break; // No more energy to discard
+                    }
+                    active.attached_energy.pop();
+                }
+            }
+        }));
+    }
+    (probabilities, outcomes)
+}
+
 /// For attacks that deal damage to opponent and also damage themselves
 fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
@@ -822,6 +849,19 @@ fn damage_and_card_effect_attack(
     })
 }
 
+fn cannot_use_attack_next_turn(
+    index: usize,
+    acting_player: usize,
+    attack_id: AttackId,
+) -> (Probabilities, Mutations) {
+    damage_and_card_effect_attack(
+        index,
+        acting_player,
+        2,
+        CardEffect::CannotUseAttack(attack_id),
+    )
+}
+
 /// For Thunderbolt attacks that discard all energy after dealing damage.
 fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
@@ -854,11 +894,18 @@ fn alolan_ninetales_blizzard(state: &State) -> (Probabilities, Mutations) {
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
-fn scorching_breath_attack(acting_player: usize) -> (Probabilities, Mutations) {
-    // Scorching Breath: 120 damage, then this Pokémon can't attack next turn
-    active_damage_effect_doutcome(120, move |_, state, _| {
-        // Add CannotAttack effect with duration 2 (on your next turn)
-        if let Some(active) = state.in_play_pokemon[acting_player][0].as_mut() {
+/// Scorching Breath: 120 damage, then this Pokémon can't attack next turn
+fn scorching_breath_attack() -> (Probabilities, Mutations) {
+    inner_damage_and_cant_attack_next_turn(120)
+}
+
+fn giga_impact_attack() -> (Probabilities, Mutations) {
+    inner_damage_and_cant_attack_next_turn(180)
+}
+
+fn inner_damage_and_cant_attack_next_turn(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.add_effect(CardEffect::CannotAttack, 2);
         }
     })
