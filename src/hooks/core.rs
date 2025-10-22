@@ -316,7 +316,7 @@ pub(crate) fn modify_damage(
             .saturating_sub(reduced_card_effect_modifiers)
     } else {
         debug!("Damage is to benched Pokémon or not from active attack");
-        return base_damage; // modifiers only apply to active Pokémon
+        base_damage // modifiers only apply to active Pokémon
     }
 }
 

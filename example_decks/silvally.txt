@@ -1,0 +1,12 @@
+Energy: Lightning
+2 Oricorio A3 66
+2 Zeraora A3a 21
+2 Type: Null A3a 60
+2 Silvally A3a 61
+2 Gladion A3a 67
+2 Elemental Switch A4 151
+1 Silver A4 158
+1 Giovanni A4b 334
+2 Red A4b 352
+2 Poké Ball P-A 5
+2 Professor's Research P-A 7

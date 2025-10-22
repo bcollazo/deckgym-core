@@ -1,0 +1,16 @@
+Energy: Fire
+1 Flareon A1 45
+2 Flareon ex A3b 9
+1 Sylveon ex A3b 34
+2 Eevee ex A3b 56
+1 Eevee A3b 78
+1 Eevee A4 134
+1 Pokémon Communication A2 146
+1 Rocky Helmet A2 148
+1 Poison Barb A3 146
+1 Repel A3a 64
+2 Eevee Bag A3b 66
+1 Silver A4 158
+1 Lyra A4 197
+2 Poké Ball P-A 5
+2 Professor's Research P-A 7
