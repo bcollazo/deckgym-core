@@ -70,6 +70,9 @@ pub fn forecast_trainer_action(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => doutcome(lusamine_effect),
+        CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
+            doutcome(lyra_effect)
+        }
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             doutcome(silver_effect)
         }
@@ -424,4 +427,14 @@ fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             .move_generation_stack
             .push((player, possible_attachments));
     }
+}
+
+fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_activations = state
+        .enumerate_bench_pokemon(action.actor)
+        .map(|(idx, _)| SimpleAction::Activate { in_play_idx: idx })
+        .collect();
+    state
+        .move_generation_stack
+        .push((action.actor, possible_activations))
 }

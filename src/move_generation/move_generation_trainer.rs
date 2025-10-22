@@ -74,6 +74,9 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
+        CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
+            can_play_lyra(state, trainer_card)
+        }
         // Simple cases: always can play
         CardId::A4158Silver
         | CardId::A4198Silver
@@ -352,4 +355,18 @@ fn can_play_lusamine(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Si
     }
 
     can_play_trainer(state, trainer_card)
+}
+
+/// Check if Lyra can be played (requires active pokemon to have damage and at least 1 benched pokemon)
+fn can_play_lyra(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let active_pokemon = state.maybe_get_active(player);
+    let bench_count = state.enumerate_bench_pokemon(player).count();
+
+    if let Some(active) = active_pokemon {
+        if active.is_damaged() && bench_count > 0 {
+            return can_play_trainer(state, trainer_card);
+        }
+    }
+    cannot_play_trainer()
 }
