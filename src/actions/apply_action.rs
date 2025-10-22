@@ -42,6 +42,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
         | SimpleAction::Attach { .. }
+        | SimpleAction::MoveEnergy { .. }
         | SimpleAction::AttachTool { .. }
         | SimpleAction::Evolve(_, _)
         | SimpleAction::Activate { .. }
@@ -121,6 +122,28 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                 .expect("Pokemon should be there if attaching tool to it")
                 .attached_tool = Some(*tool_id);
             on_attach_tool(state, action.actor, *in_play_idx, *tool_id);
+        }
+        SimpleAction::MoveEnergy {
+            from_in_play_idx,
+            to_in_play_idx,
+            energy,
+        } => {
+            let actor_board = &mut state.in_play_pokemon[action.actor];
+            let mut removed = false;
+            if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
+                if let Some(pos) = from_card.attached_energy.iter().position(|e| e == energy) {
+                    from_card.attached_energy.swap_remove(pos);
+                    removed = true;
+                }
+            }
+            if removed {
+                if let Some(to_card) = actor_board[*to_in_play_idx].as_mut() {
+                    to_card.attached_energy.push(*energy);
+                } else if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
+                    // Put energy back if destination vanished (should not normally happen)
+                    from_card.attached_energy.push(*energy);
+                }
+            }
         }
         SimpleAction::Place(card, index) => {
             let played_card = to_playable_card(card, true);

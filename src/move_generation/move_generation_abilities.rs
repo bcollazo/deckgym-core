@@ -1,6 +1,7 @@
 use crate::{
     ability_ids::AbilityId,
     actions::SimpleAction,
+    hooks::is_ultra_beast,
     models::{EnergyType, PlayedCard},
     State,
 };
@@ -43,6 +44,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A3141KomalaComatose => false,
         AbilityId::A3a021ZeraoraThunderclapFlash => false,
         AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
+        AbilityId::A3a062CelesteelaUltraThrusters => {
+            can_use_celesteela_ultra_thrusters(state, card)
+        }
         AbilityId::A3b009FlareonExCombust => {
             !card.ability_used
                 && state.discard_energies[state.current_player].contains(&EnergyType::Fire)
@@ -53,4 +57,17 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
     }
+}
+
+fn can_use_celesteela_ultra_thrusters(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    let active = state.get_active(state.current_player);
+    if !is_ultra_beast(&active.get_name()) {
+        return false;
+    }
+    state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
 }

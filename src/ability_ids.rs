@@ -18,6 +18,7 @@ pub enum AbilityId {
     A3141KomalaComatose,
     A3a021ZeraoraThunderclapFlash,
     A3a027ShiinoticIlluminate,
+    A3a062CelesteelaUltraThrusters,
     A3b009FlareonExCombust,
     A3b034SylveonExHappyRibbon,
     A3b056EeveeExVeeveeVolve,
@@ -59,6 +60,8 @@ lazy_static::lazy_static! {
         m.insert("A3 179", AbilityId::A3141KomalaComatose);
         m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
+        m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);
+        m.insert("A3a 075", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A3b 009", AbilityId::A3b009FlareonExCombust);
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
@@ -88,6 +91,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);
+        m.insert("A4b 304", AbilityId::A3a062CelesteelaUltraThrusters);
+        m.insert("A4b 305", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);

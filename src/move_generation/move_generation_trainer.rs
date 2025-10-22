@@ -64,6 +64,9 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
             can_play_pokemon_center_lady(state, trainer_card)
         }
+        CardId::A4151ElementalSwitch
+        | CardId::A4b310ElementalSwitch
+        | CardId::A4b311ElementalSwitch => can_play_elemental_switch(state, trainer_card),
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
@@ -148,6 +151,31 @@ fn can_play_irida(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.attached_energy.contains(&EnergyType::Water))
         .count();
     if damaged_water_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+fn can_play_elemental_switch(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    if state.maybe_get_active(state.current_player).is_none() {
+        return cannot_play_trainer();
+    }
+    let allowed_types = [EnergyType::Fire, EnergyType::Water, EnergyType::Lightning];
+    let has_valid_source =
+        state
+            .enumerate_bench_pokemon(state.current_player)
+            .any(|(_, pokemon)| {
+                pokemon
+                    .attached_energy
+                    .iter()
+                    .any(|energy| allowed_types.contains(energy))
+            });
+
+    if has_valid_source {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

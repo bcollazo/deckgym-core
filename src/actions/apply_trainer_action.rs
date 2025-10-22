@@ -52,9 +52,10 @@ pub fn forecast_trainer_action(
         CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
-        CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape => {
-            doutcome(attach_tool)
-        }
+        CardId::A2147GiantCape
+        | CardId::A2148RockyHelmet
+        | CardId::A3147LeafCape
+        | CardId::A4a067InflatableBoat => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
         CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
         CardId::A3144RareCandy => doutcome(rare_candy_effect),
@@ -62,6 +63,9 @@ pub fn forecast_trainer_action(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
+        CardId::A4151ElementalSwitch
+        | CardId::A4b310ElementalSwitch
+        | CardId::A4b311ElementalSwitch => doutcome(elemental_switch_effect),
         CardId::A3a067Gladion | CardId::A3a081Gladion => {
             gladion_search_outcomes(acting_player, state)
         }
@@ -386,6 +390,36 @@ fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Acti
 
     if !possible_swaps.is_empty() {
         state.move_generation_stack.push((player, possible_swaps));
+    }
+}
+
+fn elemental_switch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    if state.maybe_get_active(player).is_none() {
+        return;
+    }
+    let allowed_types = [EnergyType::Fire, EnergyType::Water, EnergyType::Lightning];
+    let mut possible_transfers = Vec::new();
+
+    for (from_idx, pokemon) in state.enumerate_bench_pokemon(player) {
+        for &energy in &pokemon.attached_energy {
+            if allowed_types.contains(&energy) {
+                let move_action = SimpleAction::MoveEnergy {
+                    from_in_play_idx: from_idx,
+                    to_in_play_idx: 0,
+                    energy,
+                };
+                if !possible_transfers.contains(&move_action) {
+                    possible_transfers.push(move_action);
+                }
+            }
+        }
+    }
+
+    if !possible_transfers.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_transfers));
     }
 }
 

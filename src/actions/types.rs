@@ -43,6 +43,11 @@ pub enum SimpleAction {
         attachments: Vec<(u32, EnergyType, usize)>, // (amount, energy_type, in_play_idx)
         is_turn_energy: bool, // true if this is the energy from the zone that can be once per turn
     },
+    MoveEnergy {
+        from_in_play_idx: usize,
+        to_in_play_idx: usize,
+        energy: EnergyType,
+    },
     AttachTool {
         in_play_idx: usize,
         tool_id: ToolId,
@@ -101,6 +106,16 @@ impl fmt::Display for SimpleAction {
                     .collect::<Vec<_>>()
                     .join(", ");
                 write!(f, "Attach({attachments_str:?}, {is_turn_energy})")
+            }
+            SimpleAction::MoveEnergy {
+                from_in_play_idx,
+                to_in_play_idx,
+                energy,
+            } => {
+                write!(
+                    f,
+                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {energy:?})"
+                )
             }
             SimpleAction::AttachTool {
                 in_play_idx,

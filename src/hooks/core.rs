@@ -122,7 +122,7 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
             card.total_hp += 30;
         }
         // Many tools do nothing on attach
-        ToolId::A2148RockyHelmet => {}
+        ToolId::A2148RockyHelmet | ToolId::A4a067InflatableBoat => {}
     }
 }
 

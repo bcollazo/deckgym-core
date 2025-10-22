@@ -9,6 +9,7 @@ use crate::{
         shared_mutations::pokemon_search_outcomes,
         Action, SimpleAction,
     },
+    hooks::is_ultra_beast,
     models::EnergyType,
     State,
 };
@@ -44,6 +45,7 @@ pub(crate) fn forecast_ability(
             panic!("Thunderclap Flash is a passive ability")
         }
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
+        AbilityId::A3a062CelesteelaUltraThrusters => doutcome(celesteela_ultra_thrusters),
         AbilityId::A3b009FlareonExCombust => doutcome_from_mutation(combust(in_play_idx)),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
         AbilityId::A3b056EeveeExVeeveeVolve => panic!("Veevee 'volve is a passive ability"),
@@ -103,6 +105,21 @@ fn victreebel_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
+}
+
+fn celesteela_ultra_thrusters(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may switch your Active Ultra Beast with 1 of your Benched Ultra Beasts.
+    debug!("Celesteela's Ultra Thrusters: Switching to a benched Ultra Beast");
+    let acting_player = action.actor;
+    let choices = state
+        .enumerate_bench_pokemon(acting_player)
+        .filter(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
+        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .collect::<Vec<_>>();
+    if choices.is_empty() {
+        return;
+    }
+    state.move_generation_stack.push((acting_player, choices));
 }
 
 fn leafon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {

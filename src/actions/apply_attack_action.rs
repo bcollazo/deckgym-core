@@ -301,6 +301,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
         }
         AttackId::A3a061SilvallyBraveBuddies => brave_buddies_attack(state),
+        AttackId::A3a062CelesteelaMoombahton => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
+        }
         AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
