@@ -3,9 +3,11 @@ name: Implementing Cards
 description: Fill out the implementation of effects of different attacks, abilities, and trainer cards in this Pokemon TCG Pocket engine codebase.
 ---
 
+# Implementing Cards
+
 To implement cards, first read the `models` module and the `state` module. Cards
 are not implemented if they are a Pokemon that is missing an Ability or Attack implementation,
-or a Trainer card (be it a tool or a normal one).
+or a Trainer card (be it a tool or a normal one) missig implementation.
 
 If the user hasn't specified what card to implement, you can use the tool:
   ```bash
