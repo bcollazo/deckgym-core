@@ -24,6 +24,29 @@ fn is_fossil(trainer_card: &TrainerCard) -> bool {
     FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
 }
 
+// Ultra Beasts
+// TODO: Move this to a field in PokemonCard and database in the future
+const ULTRA_BEAST_NAMES: [&str; 14] = [
+    "Buzzwole ex",
+    "Blacephalon",
+    "Kartana",
+    "Pheromosa",
+    "Xurkitree",
+    "Nihilego",
+    "Guzzlord ex",
+    "Poipole",
+    "Naganadel",
+    "Stakataka",
+    "Celesteela",
+    "Dawn Wings Necrozma",
+    "Dusk Mane Necrozma",
+    "Ultra Necrozma",
+];
+
+pub fn is_ultra_beast(pokemon_name: &str) -> bool {
+    ULTRA_BEAST_NAMES.contains(&pokemon_name)
+}
+
 pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,

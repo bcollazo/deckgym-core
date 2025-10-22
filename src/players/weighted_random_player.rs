@@ -54,6 +54,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Activate { .. } => 1,
         SimpleAction::CommunicatePokemon { .. } => 5,
         SimpleAction::ShuffleOpponentSupporter { .. } => 5,
+        SimpleAction::AttachFromDiscard { .. } => 10,
         SimpleAction::Noop => 0, // No operation has no weight
     }
 }

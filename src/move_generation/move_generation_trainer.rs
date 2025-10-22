@@ -2,7 +2,7 @@ use crate::{
     actions::SimpleAction,
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
-    hooks::{can_play_support, get_stage},
+    hooks::{can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
     State,
@@ -69,6 +69,11 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
         CardId::A3a067Gladion | CardId::A3a081Gladion => can_play_gladion(state, trainer_card),
+        CardId::A3a069Lusamine
+        | CardId::A3a083Lusamine
+        | CardId::A4b350Lusamine
+        | CardId::A4b351Lusamine
+        | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
         // Simple cases: always can play
         CardId::A4158Silver
         | CardId::A4198Silver
@@ -320,4 +325,31 @@ fn can_play_gladion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
     } else {
         can_play_trainer(state, trainer_card)
     }
+}
+
+/// Check if Lusamine can be played (requires opponent has >= 1 point, player has Ultra Beast, >= 1 energy in discard)
+fn can_play_lusamine(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let opponent = (player + 1) % 2;
+
+    // Check if opponent has at least 1 point
+    if state.points[opponent] < 1 {
+        return cannot_play_trainer();
+    }
+
+    // Check if player has at least 1 Ultra Beast in play
+    let has_ultra_beast = state.in_play_pokemon[player]
+        .iter()
+        .flatten()
+        .any(|pokemon| is_ultra_beast(&pokemon.get_name()));
+    if !has_ultra_beast {
+        return cannot_play_trainer();
+    }
+
+    // Check if player has at least 1 energy in discard
+    if state.discard_energies[player].is_empty() {
+        return cannot_play_trainer();
+    }
+
+    can_play_trainer(state, trainer_card)
 }

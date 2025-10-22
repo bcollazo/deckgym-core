@@ -61,6 +61,7 @@ pub enum SimpleAction {
     Activate {
         in_play_idx: usize,
     },
+    // Custom Mechanics:
     /// Pokemon Communication: swap a specific Pokemon from hand with a random Pokemon from deck
     CommunicatePokemon {
         hand_pokemon: Card,
@@ -68,6 +69,11 @@ pub enum SimpleAction {
     /// Silver: shuffle a specific Supporter from opponent's hand into their deck
     ShuffleOpponentSupporter {
         supporter_card: Card,
+    },
+    /// Lusamine: attach energies from discard to a Pokemon
+    AttachFromDiscard {
+        in_play_idx: usize,
+        num_random_energies: usize,
     },
     Noop, // No operation, used to have the user say "no" to a question
 }
@@ -128,6 +134,12 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")
+            }
+            SimpleAction::AttachFromDiscard {
+                in_play_idx,
+                num_random_energies,
+            } => {
+                write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

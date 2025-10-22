@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use log::debug;
 use rand::rngs::StdRng;
 
@@ -9,7 +11,7 @@ use crate::{
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
     effects::TurnEffect,
-    hooks::get_stage,
+    hooks::{get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard},
     state::GameOutcome,
     tool_ids::ToolId,
@@ -63,6 +65,11 @@ pub fn forecast_trainer_action(
         CardId::A3a067Gladion | CardId::A3a081Gladion => {
             gladion_search_outcomes(acting_player, state)
         }
+        CardId::A3a069Lusamine
+        | CardId::A3a083Lusamine
+        | CardId::A4b350Lusamine
+        | CardId::A4b351Lusamine
+        | CardId::A4b375Lusamine => doutcome(lusamine_effect),
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             doutcome(silver_effect)
         }
@@ -395,5 +402,26 @@ fn silver_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((player, possible_shuffles));
+    }
+}
+
+/// Queue the decision for user to select which Ultra Beast to attach energies to
+fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let num_energies_to_attach = min(2, state.discard_energies[player].len());
+
+    let possible_attachments: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
+        .map(|(idx, _)| SimpleAction::AttachFromDiscard {
+            in_play_idx: idx,
+            num_random_energies: num_energies_to_attach,
+        })
+        .collect();
+
+    if !possible_attachments.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_attachments));
     }
 }
