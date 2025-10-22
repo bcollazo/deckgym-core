@@ -80,6 +80,10 @@ pub fn forecast_trainer_action(
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             doutcome(silver_effect)
         }
+        CardId::A3b066EeveeBag
+        | CardId::A3b107EeveeBag
+        | CardId::A4b308EeveeBag
+        | CardId::A4b309EeveeBag => doutcome(eevee_bag_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -471,4 +475,12 @@ fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((action.actor, possible_activations))
+}
+
+fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let choices = vec![
+        SimpleAction::ApplyEeveeBagDamageBoost,
+        SimpleAction::HealAllEeveeEvolutions,
+    ];
+    state.move_generation_stack.push((action.actor, choices));
 }

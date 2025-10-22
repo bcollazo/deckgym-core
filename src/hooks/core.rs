@@ -264,14 +264,20 @@ pub(crate) fn get_damage_from_attack(
 
     let opponent = (player + 1) % 2;
     let opponent_is_ex = state.get_active(opponent).card.is_ex();
+    let attacker_is_eevee_evolution = active.evolved_from("Eevee");
 
-    // Modifiers by effect (like Giovanni, Red)
+    // Modifiers by effect (like Giovanni, Red, Eevee Bag)
     let increased_turn_effect_modifiers = state
         .get_current_turn_effects()
         .iter()
         .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
             TurnEffect::IncreasedDamageAgainstEx { amount } if opponent_is_ex => *amount,
+            TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
+                if attacker_is_eevee_evolution =>
+            {
+                *amount
+            }
             _ => 0,
         })
         .sum::<u32>();

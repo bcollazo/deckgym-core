@@ -16,4 +16,5 @@ pub enum TurnEffect {
     ReducedRetreatCost { amount: u8 },
     IncreasedDamage { amount: u32 },
     IncreasedDamageAgainstEx { amount: u32 },
+    IncreasedDamageForEeveeEvolutions { amount: u32 },
 }

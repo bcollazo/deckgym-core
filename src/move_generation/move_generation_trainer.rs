@@ -98,6 +98,10 @@ pub fn trainer_move_generation_implementation(
         | CardId::A2b090Red
         | CardId::A4b352Red
         | CardId::A4b353Red => can_play_trainer(state, trainer_card),
+        CardId::A3b066EeveeBag
+        | CardId::A3b107EeveeBag
+        | CardId::A4b308EeveeBag
+        | CardId::A4b309EeveeBag => can_play_eevee_bag(state, trainer_card),
         _ => None,
     }
 }
@@ -397,4 +401,16 @@ fn can_play_lyra(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
         }
     }
     cannot_play_trainer()
+}
+
+/// Check if Eevee Bag can be played (requires at least 1 Pokemon that evolved from Eevee in play)
+fn can_play_eevee_bag(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_eevee_evolution = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.evolved_from("Eevee"));
+    if has_eevee_evolution {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
 }

@@ -80,6 +80,10 @@ pub enum SimpleAction {
         in_play_idx: usize,
         num_random_energies: usize,
     },
+    /// Eevee Bag Option 1: Apply damage boost for Eevee evolutions this turn
+    ApplyEeveeBagDamageBoost,
+    /// Eevee Bag Option 2: Heal all Eevee evolutions
+    HealAllEeveeEvolutions,
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -155,6 +159,12 @@ impl fmt::Display for SimpleAction {
                 num_random_energies,
             } => {
                 write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
+            }
+            SimpleAction::ApplyEeveeBagDamageBoost => {
+                write!(f, "ApplyEeveeBagDamageBoost")
+            }
+            SimpleAction::HealAllEeveeEvolutions => {
+                write!(f, "HealAllEeveeEvolutions")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

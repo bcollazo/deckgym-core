@@ -49,6 +49,8 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::ApplyEeveeBagDamageBoost
+        | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -173,6 +175,12 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             cure_status,
         } => {
             apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status);
+        }
+        SimpleAction::ApplyEeveeBagDamageBoost => {
+            apply_eevee_bag_damage_boost(state);
+        }
+        SimpleAction::HealAllEeveeEvolutions => {
+            apply_heal_all_eevee_evolutions(action.actor, state);
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
@@ -441,6 +449,22 @@ fn generate_energy_combinations(energies: &[EnergyType]) -> Vec<(Vec<EnergyType>
         }
     }
     combination_counts.into_iter().collect()
+}
+
+fn apply_eevee_bag_damage_boost(state: &mut State) {
+    use crate::effects::TurnEffect;
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForEeveeEvolutions { amount: 10 },
+        0,
+    );
+}
+
+fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
+    for pokemon in state.in_play_pokemon[acting_player].iter_mut().flatten() {
+        if pokemon.evolved_from("Eevee") {
+            pokemon.heal(20);
+        }
+    }
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
