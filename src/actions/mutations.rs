@@ -61,7 +61,7 @@ where
             let attack = active.card.get_attacks()[attack_index].clone();
             let damage = attack.fixed_damage;
             let target_player = (action.actor + 1) % 2;
-            handle_damage(state, target_player, &vec![(damage, 0)], true);
+            handle_damage(state, target_player, &[(damage, 0)], true);
         })],
     )
 }

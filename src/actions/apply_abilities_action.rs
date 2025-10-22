@@ -219,6 +219,6 @@ fn combust(in_play_idx: usize) -> Mutation {
         flareon.attach_energy(&EnergyType::Fire, 1);
 
         // Deal 20 damage to Flareon EX using handle_damage
-        handle_damage(state, action.actor, &vec![(20, in_play_idx)], false);
+        handle_damage(state, action.actor, &[(20, in_play_idx)], false);
     })
 }

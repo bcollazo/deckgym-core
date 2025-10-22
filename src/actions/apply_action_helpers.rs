@@ -120,7 +120,7 @@ fn apply_pokemon_checkup(
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
     for (player, in_play_idx) in poisons_to_handle {
-        handle_damage(mutated_state, player, &vec![(10, in_play_idx)], false);
+        handle_damage(mutated_state, player, &[(10, in_play_idx)], false);
     }
     // Advance turn
     mutated_state.advance_turn();
@@ -144,7 +144,7 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
 pub(crate) fn handle_damage(
     state: &mut State,
     target_player: usize,
-    targets: &Vec<(u32, usize)>, // damage, in_play_idx
+    targets: &[(u32, usize)], // damage, in_play_idx
     is_from_active_attack: bool,
 ) {
     let attacking_player = (target_player + 1) % 2;
