@@ -411,10 +411,7 @@ fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
         .chain(std::iter::once((150, 0))) // Add active Pokémon directly
         .collect();
     damage_effect_doutcome(targets, |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.discard_energy(&EnergyType::Water);
-        active.discard_energy(&EnergyType::Water);
-        active.discard_energy(&EnergyType::Water);
+        state.discard_from_active(action.actor, &[EnergyType::Water; 3]);
     })
 }
 
@@ -688,10 +685,7 @@ fn self_energy_discard_attack(
     to_discard: Vec<EnergyType>,
 ) -> (Probabilities, Mutations) {
     index_active_damage_doutcome(attack_index, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        for energy in to_discard.iter() {
-            active.discard_energy(energy);
-        }
+        state.discard_from_active(action.actor, &to_discard);
     })
 }
 

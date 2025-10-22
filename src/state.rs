@@ -298,6 +298,18 @@ impl State {
         self.discard_energies[ko_receiver].extend(ko_pokemon.attached_energy.iter().cloned());
         self.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
     }
+
+    pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {
+        self.discard_energies[actor].extend(to_discard.iter().cloned());
+        let active = self.get_active_mut(actor);
+        for energy in to_discard {
+            if let Some(pos) = active.attached_energy.iter().position(|x| x == energy) {
+                active.attached_energy.swap_remove(pos);
+            } else {
+                panic!("Active Pokemon does not have energy to discard");
+            }
+        }
+    }
 }
 
 fn format_cards(played_cards: &[Option<PlayedCard>]) -> Vec<String> {

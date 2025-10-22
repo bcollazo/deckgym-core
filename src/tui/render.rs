@@ -116,7 +116,7 @@ pub(crate) fn count_discarded_energy_by_type(
     counts
 }
 
-pub(crate) fn render_discarded_energy_line(discard_energies: &[EnergyType]) -> Line {
+pub(crate) fn render_discarded_energy_line(discard_energies: &'_ [EnergyType]) -> Line<'_> {
     let energy_counts = count_discarded_energy_by_type(discard_energies);
 
     if energy_counts.is_empty() {
