@@ -54,6 +54,7 @@ pub fn forecast_trainer_action(
         CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
         CardId::A2147GiantCape
         | CardId::A2148RockyHelmet
+        | CardId::A3146PoisonBarb
         | CardId::A3147LeafCape
         | CardId::A4a067InflatableBoat => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),

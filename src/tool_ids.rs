@@ -11,6 +11,7 @@ use crate::{
 pub enum ToolId {
     A2147GiantCape,
     A2148RockyHelmet,
+    A3146PoisonBarb,
     A3147LeafCape,
     A4a067InflatableBoat,
 }
@@ -20,6 +21,7 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
         m.insert("A2 147", ToolId::A2147GiantCape);
         m.insert("A2 148", ToolId::A2148RockyHelmet);
+        m.insert("A3 146", ToolId::A3146PoisonBarb);
         m.insert("A3 147", ToolId::A3147LeafCape);
         m.insert("A4a 067", ToolId::A4a067InflatableBoat);
         m
@@ -43,7 +45,7 @@ impl ToolId {
                 pokemon.card.get_type() == Some(EnergyType::Water)
             }
             // Most tools can be attached to any pokemon
-            ToolId::A2147GiantCape | ToolId::A2148RockyHelmet => true,
+            ToolId::A2147GiantCape | ToolId::A2148RockyHelmet | ToolId::A3146PoisonBarb => true,
         }
     }
 
