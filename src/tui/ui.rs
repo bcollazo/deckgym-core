@@ -7,7 +7,7 @@ use ratatui::{
 };
 
 use super::app::{App, AppMode};
-use super::render::{render_hand_card, render_pokemon_card};
+use super::render::{render_discarded_energy_line, render_hand_card, render_pokemon_card};
 
 pub fn ui(f: &mut Frame, app: &App) {
     let state = app.get_state();
@@ -323,6 +323,10 @@ pub fn ui(f: &mut Frame, app: &App) {
     let actor = app.get_current_actor();
     let actions = app.get_possible_actions();
 
+    // Build discarded energy display
+    let p1_discard_line = render_discarded_energy_line(&state.discard_energies[0]);
+    let p2_discard_line = render_discarded_energy_line(&state.discard_energies[1]);
+
     // Build header line with game status
     let header_line = if is_interactive {
         format!(
@@ -340,10 +344,33 @@ pub fn ui(f: &mut Frame, app: &App) {
         )
     };
 
-    let footer_text = if is_interactive {
+    let footer_lines = if is_interactive {
         // Interactive mode footer
         let current_actor = app.get_current_actor();
         let is_human_turn = current_actor == 1;
+
+        let mut lines = vec![
+            Line::from(vec![Span::styled(
+                "P1 Discard: ",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            )])
+            .spans
+            .into_iter()
+            .chain(p1_discard_line.spans.into_iter())
+            .collect::<Vec<_>>()
+            .into(),
+            Line::from(vec![Span::styled(
+                "P2 Discard: ",
+                Style::default()
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD),
+            )])
+            .spans
+            .into_iter()
+            .chain(p2_discard_line.spans.into_iter())
+            .collect::<Vec<_>>()
+            .into(),
+        ];
 
         if is_human_turn {
             // Show numbered actions for human player
@@ -360,14 +387,23 @@ pub fn ui(f: &mut Frame, app: &App) {
                 action_strings.join(" | ")
             };
 
-            format!(
-                "Controls: ESC/q=quit, 1-9=select action, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nYOUR TURN - Select Action:\n{}",
-                actions_text
-            )
+            lines.push(Line::from("Controls: ESC/q=quit, 1-9=select action, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"));
+            lines.push(Line::from(vec![Span::styled(
+                "YOUR TURN - Select Action:",
+                Style::default()
+                    .fg(Color::LightYellow)
+                    .add_modifier(Modifier::BOLD),
+            )]));
+            lines.push(Line::from(actions_text));
         } else {
             // AI turn - show waiting message
-            "Controls: ESC/q=quit, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nAI TURN - Waiting for opponent...".to_string()
+            lines.push(Line::from("Controls: ESC/q=quit, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"));
+            lines.push(Line::from(vec![Span::styled(
+                "AI TURN - Waiting for opponent...",
+                Style::default().fg(Color::Yellow),
+            )]));
         }
+        lines
     } else {
         // Replay mode footer
         let action_strings: Vec<String> = actions
@@ -382,14 +418,20 @@ pub fn ui(f: &mut Frame, app: &App) {
             action_strings.join(" | ")
         };
 
-        format!(
-            "Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand\nCurrent Player: P{}\nPossible Actions: {}",
-            actor + 1,
-            actions_text
-        )
+        vec![
+            Line::from(vec![
+                Span::styled("P1 Discard: ", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)),
+            ]).spans.into_iter().chain(p1_discard_line.spans.into_iter()).collect::<Vec<_>>().into(),
+            Line::from(vec![
+                Span::styled("P2 Discard: ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
+            ]).spans.into_iter().chain(p2_discard_line.spans.into_iter()).collect::<Vec<_>>().into(),
+            Line::from("Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"),
+            Line::from(format!("Current Player: P{}", actor + 1)),
+            Line::from(format!("Possible Actions: {}", actions_text)),
+        ]
     };
 
-    let footer = Paragraph::new(footer_text)
+    let footer = Paragraph::new(footer_lines)
         .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title(header_line));
     f.render_widget(footer, chunks[3]);

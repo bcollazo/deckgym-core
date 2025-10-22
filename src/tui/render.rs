@@ -3,6 +3,7 @@ use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
 };
+use std::collections::HashMap;
 
 pub(crate) fn energy_type_to_color(energy_type: EnergyType) -> Color {
     match energy_type {
@@ -103,6 +104,59 @@ pub(crate) fn render_hand_card<'a>(card: &'a Card, index: usize) -> (Vec<Line<'a
     lines.push(Line::from(""));
 
     (lines, Style::default().fg(Color::LightBlue))
+}
+
+pub(crate) fn count_discarded_energy_by_type(
+    discard_energies: &[EnergyType],
+) -> HashMap<EnergyType, usize> {
+    let mut counts = HashMap::new();
+    for energy in discard_energies {
+        *counts.entry(*energy).or_insert(0) += 1;
+    }
+    counts
+}
+
+pub(crate) fn render_discarded_energy_line(discard_energies: &[EnergyType]) -> Line {
+    let energy_counts = count_discarded_energy_by_type(discard_energies);
+
+    if energy_counts.is_empty() {
+        return Line::from(vec![Span::styled("None", Style::default().fg(Color::Gray))]);
+    }
+
+    let mut spans = Vec::new();
+    let energy_types = [
+        EnergyType::Grass,
+        EnergyType::Fire,
+        EnergyType::Water,
+        EnergyType::Lightning,
+        EnergyType::Psychic,
+        EnergyType::Fighting,
+        EnergyType::Darkness,
+        EnergyType::Metal,
+        EnergyType::Dragon,
+        EnergyType::Colorless,
+    ];
+
+    let mut first = true;
+    for energy_type in energy_types {
+        if let Some(&count) = energy_counts.get(&energy_type) {
+            if !first {
+                spans.push(Span::styled(" ", Style::default()));
+            }
+            first = false;
+
+            spans.push(Span::styled(
+                energy_type_to_symbol(energy_type),
+                Style::default().fg(energy_type_to_color(energy_type)),
+            ));
+            spans.push(Span::styled(
+                format!("×{}", count),
+                Style::default().fg(Color::White),
+            ));
+        }
+    }
+
+    Line::from(spans)
 }
 
 pub(crate) fn render_pokemon_card<'a>(
