@@ -34,9 +34,13 @@ pub fn forecast_trainer_action(
     match trainer_id {
         CardId::PA001Potion => doutcome(potion_effect),
         CardId::PA002XSpeed => doutcome(x_speed_effect),
-        CardId::PA005PokeBall => pokemon_search_outcomes(acting_player, state, true),
+        CardId::PA005PokeBall | CardId::A2b111PokeBall => {
+            pokemon_search_outcomes(acting_player, state, true)
+        }
         CardId::PA006RedCard => doutcome(red_card_effect),
-        CardId::PA007ProfessorsResearch => doutcome(professor_oak_effect),
+        CardId::PA007ProfessorsResearch | CardId::A4b373ProfessorsResearch => {
+            doutcome(professor_oak_effect)
+        }
         CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
         CardId::A2a072Irida | CardId::A2a087Irida => doutcome(irida_effect),
@@ -45,7 +49,10 @@ pub fn forecast_trainer_action(
         }
         CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
-        CardId::A1223Giovanni | CardId::A1270Giovanni => doutcome(giovanni_effect),
+        CardId::A1223Giovanni
+        | CardId::A1270Giovanni
+        | CardId::A4b334Giovanni
+        | CardId::A4b335Giovanni => doutcome(giovanni_effect),
         CardId::A2b071Red | CardId::A2b090Red | CardId::A4b352Red | CardId::A4b353Red => {
             doutcome(red_effect)
         }
