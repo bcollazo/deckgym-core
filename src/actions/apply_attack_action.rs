@@ -265,9 +265,15 @@ fn forecast_effect_attack(
         AttackId::A2098SneaselDoubleScratch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A2118ProbopassTripleNose => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
+        }
         AttackId::A2119DialgaExMetallicTurbo => energy_bench_attack(index, 2, EnergyType::Metal),
         AttackId::A2131AmbipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
+        }
+        AttackId::A2141ChatotFuryAttack => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
         }
         AttackId::A2a001HeracrossSingleHornThrow => {
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
@@ -277,15 +283,29 @@ fn forecast_effect_attack(
         }
         AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
+        AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
+            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
+            vec![0, 20, 40, 60, 80],
+        ),
         AttackId::A2b044FlamigoDoubleKick => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
         }
         AttackId::A3019SteeneeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
+        AttackId::A3020TsareenaThreeKickCombo => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
+        }
         AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
+        AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
+            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
+            vec![0, 20, 40, 60, 80],
+        ),
+        AttackId::A3a003RowletFuryAttack => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
+        }
         AttackId::A3a006BuzzwoleExBigBeat => {
             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
         }
@@ -297,6 +317,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
         AttackId::A3a045NagaedelElectroHouse => damage_status_attack(40, StatusCondition::Poisoned),
+        AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
+        }
         AttackId::A3a060TypeNullQuickBlow => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
         }
@@ -333,6 +356,9 @@ fn forecast_effect_attack(
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A4021ShuckleExTripleSlap => {
+            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
+        }
         AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(),
         AttackId::A4032MagbyToasty => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
@@ -349,6 +375,10 @@ fn forecast_effect_attack(
         AttackId::A4146UrsaringSwingAround => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
         }
+        AttackId::A4149LugiaExElementalBlast => self_energy_discard_attack(
+            0,
+            vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
+        ),
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
