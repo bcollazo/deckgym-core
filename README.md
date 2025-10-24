@@ -8,6 +8,8 @@
 
 Its mission is to elevate the competitive TCG Pocket scene by helping players optimize their decks through large-scale simulations.
 
+Join our Discord: https://discord.gg/ymxXHrzhak!
+
 ## Usage
 
 The CLI runs simulations between two decks in DeckGym Format. To create these files, build your decks in https://www.deckgym.com/builder, select **Share** > **Copy as Text**, and save the content as a text file.
