@@ -1087,7 +1087,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
@@ -5832,7 +5832,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
@@ -6198,7 +6198,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
@@ -27810,7 +27810,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
@@ -37306,7 +37306,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
@@ -44601,7 +44601,7 @@
       "attacks": [
         {
           "energy_required": ["Fire"],
-          "title": "Inferno",
+          "title": "Inferno Dance",
           "fixed_damage": 0,
           "effect": "Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like."
         },
