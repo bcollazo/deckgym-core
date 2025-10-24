@@ -131,6 +131,7 @@ pub enum AttackId {
     A4105BinacleDualChop,
     A4134EeveeFindAFriend,
     A4146UrsaringSwingAround,
+    A4149LugiaExElementalBlast,
     A4a020SuicuneExCrystalWaltz,
     A4a023MantykeSplashy,
     A4a025RaikouExVoltaicBullet,
@@ -362,7 +363,11 @@ lazy_static::lazy_static! {
         m.insert(("A4 077", 0), AttackId::A4077CleffaTwinkly);
         m.insert(("A4 102", 0), AttackId::A4102HitmontopPiercingSpin);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4 149", 0), AttackId::A4149LugiaExElementalBlast);
+        m.insert(("A4 195", 0), AttackId::A4149LugiaExElementalBlast);
+        m.insert(("A4 211", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
 
         // A4a
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
@@ -391,6 +396,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 243", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 248", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A4b 271", 0), AttackId::A3b053DragoniteExGigaImpact);
+        m.insert(("A4b 289", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 302", 0), AttackId::A3a061SilvallyBraveBuddies);
@@ -398,6 +404,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 304", 0), AttackId::A3a062CelesteelaMoombahton);
         m.insert(("A4b 305", 0), AttackId::A3a062CelesteelaMoombahton);
         m.insert(("A4b 360", 1), AttackId::A3a006BuzzwoleExBigBeat);
+        m.insert(("A4b 371", 0), AttackId::A4149LugiaExElementalBlast);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
