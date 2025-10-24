@@ -375,6 +375,10 @@ fn forecast_effect_attack(
         AttackId::A4146UrsaringSwingAround => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
         }
+        AttackId::A4149LugiaExElementalBlast => self_energy_discard_attack(
+            0,
+            vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
+        ),
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
