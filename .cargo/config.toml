@@ -1,0 +1,18 @@
+# Repository-local cargo configuration to increase native stack reservation on Windows
+# This helps avoid stack overflows when compiling/initializing very large generated
+# data structures (e.g., database.rs) on Windows where the default stack reserve
+# can be small.
+# Adjust the size (in bytes) if you need more. 8 MiB is a reasonable starting point.
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "link-arg=/STACK:8388608"]
+
+[target.i686-pc-windows-msvc]
+rustflags = ["-C", "link-arg=/STACK:8388608"]
+
+# For GNU (mingw) toolchain use the GNU linker flag form
+[target.x86_64-pc-windows-gnu]
+rustflags = ["-C", "link-arg=-Wl,--stack,8388608"]
+
+[target.i686-pc-windows-gnu]
+rustflags = ["-C", "link-arg=-Wl,--stack,8388608"]
