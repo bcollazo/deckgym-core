@@ -74,15 +74,9 @@ pub fn forecast_trainer_action(
             doutcome(leaf_effect)
         }
         CardId::A2147GiantCape
-        | CardId::A4b320GiantCape
-        | CardId::A4b321GiantCape
         | CardId::A2148RockyHelmet
-        | CardId::A4b322RockyHelmet
-        | CardId::A4b323RockyHelmet
         | CardId::A3146PoisonBarb
         | CardId::A3147LeafCape
-        | CardId::A4b324LeafCape
-        | CardId::A4b325LeafCape
         | CardId::A4a067InflatableBoat => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
