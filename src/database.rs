@@ -108,7 +108,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Find a".to_string(),
+                    title: "Find a Friend".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random [G] Pokémon from your deck into your hand.".to_string()),
                 },
@@ -786,7 +786,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Tail".to_string(),
+                    title: "Tail Whip".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.".to_string()),
                 },
@@ -996,7 +996,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -1128,7 +1128,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -1491,7 +1491,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -1512,7 +1512,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
-                    title: "Water".to_string(),
+                    title: "Water Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -1596,7 +1596,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 40,
                     effect: None,
                 },
@@ -1722,7 +1722,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 40,
                     effect: None,
                 },
@@ -2064,7 +2064,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -2259,7 +2259,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "Thunder".to_string(),
+                    title: "Thunder Spear".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 30 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -3273,7 +3273,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Stretch".to_string(),
+                    title: "Stretch Kick".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 30 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
@@ -3525,7 +3525,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Call for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Nidoran♂ from your deck onto your Bench.".to_string()),
                 },
@@ -3924,7 +3924,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Draco".to_string(),
+                    title: "Draco Meteor".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -4344,7 +4344,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "opy".to_string(),
+                    title: "Copy Anything".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.".to_string()),
                 },
@@ -4449,7 +4449,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Primal".to_string(),
+                    title: "Primal Wingbeat".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck.".to_string()),
                 },
@@ -4768,7 +4768,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -5020,7 +5020,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Draco".to_string(),
+                    title: "Draco Meteor".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -5083,7 +5083,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "opy".to_string(),
+                    title: "Copy Anything".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.".to_string()),
                 },
@@ -5263,7 +5263,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -5588,7 +5588,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -5807,7 +5807,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "sy Report".to_string(),
+                    title: "Psy Report".to_string(),
                     fixed_damage: 20,
                     effect: Some("Your opponent reveals their hand.".to_string()),
                 },
@@ -5903,7 +5903,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Growth".to_string(),
+                    title: "Growth Spurt".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
@@ -6176,7 +6176,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
-                    title: "Volcanic".to_string(),
+                    title: "Volcanic Ash".to_string(),
                     fixed_damage: 0,
                     effect: Some("Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -6239,7 +6239,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Leap".to_string(),
+                    title: "Leap Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
                 },
@@ -6302,7 +6302,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -6323,7 +6323,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
-                    title: "Aqua".to_string(),
+                    title: "Aqua Liner".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
@@ -6449,7 +6449,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
-                    title: "Thunder".to_string(),
+                    title: "Thunder Spear".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 40 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -6533,7 +6533,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "sy Report".to_string(),
+                    title: "Psy Report".to_string(),
                     fixed_damage: 20,
                     effect: Some("Your opponent reveals their hand.".to_string()),
                 },
@@ -6554,13 +6554,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -6644,7 +6644,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "Hypnotic".to_string(),
+                    title: "Hypnotic Gaze".to_string(),
                     fixed_damage: 0,
                     effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
                 },
@@ -6749,7 +6749,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ocus ist".to_string(),
+                    title: "Focus Fist".to_string(),
                     fixed_damage: 50,
                     effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
                 },
@@ -6917,7 +6917,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ivision".to_string(),
+                    title: "Division".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Koffing from your deck onto your Bench.".to_string()),
                 },
@@ -7169,7 +7169,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ontinuous Steps".to_string(),
+                    title: "Continuous Steps".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin until you get tails. This attack does 20 damage for each heads.".to_string()),
                 },
@@ -7427,13 +7427,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -7520,13 +7520,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -7589,13 +7589,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -7952,7 +7952,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "all for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Basic Pokémon from your deck onto your Bench.".to_string()),
                 },
@@ -8393,7 +8393,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -8498,7 +8498,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "aterfall".to_string(),
+                    title: "Waterfall".to_string(),
                     fixed_damage: 50,
                     effect: None,
                 },
@@ -8582,7 +8582,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 30,
                     effect: None,
                 },
@@ -8651,7 +8651,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Oceanic".to_string(),
+                    title: "Oceanic Gift".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
                 },
@@ -8861,7 +8861,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
-                    title: "Volt".to_string(),
+                    title: "Volt Bolt".to_string(),
                     fixed_damage: 0,
                     effect: Some("Discard all [L] Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -8924,7 +8924,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "ound".to_string(),
+                    title: "Pound".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -9218,7 +9218,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "sychic".to_string(),
+                    title: "Psychic Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -9638,7 +9638,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
-                    title: "Skill".to_string(),
+                    title: "Skill Dive".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -9659,7 +9659,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ouble Scratch".to_string(),
+                    title: "Double Scratch".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
@@ -9785,7 +9785,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Swirling".to_string(),
+                    title: "Swirling Disaster".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 10 damage to each of your opponent's Pokémon.".to_string()),
                 },
@@ -9932,7 +9932,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Metal,],
-                    title: "etal Arms".to_string(),
+                    title: "Metal Arms".to_string(),
                     fixed_damage: 0,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
@@ -10442,7 +10442,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Super".to_string(),
+                    title: "Super Fang".to_string(),
                     fixed_damage: 0,
                     effect: Some("Halve your opponent's Active Pokémon's remaining HP, rounded down.".to_string()),
                 },
@@ -10589,7 +10589,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Spin".to_string(),
+                    title: "Spin Storm".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, put your opponent's Active Pokémon into their hand.".to_string()),
                 },
@@ -10748,7 +10748,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "all for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Basic Pokémon from your deck onto your Bench.".to_string()),
                 },
@@ -10853,7 +10853,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Oceanic".to_string(),
+                    title: "Oceanic Gift".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
                 },
@@ -11063,7 +11063,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Swirling".to_string(),
+                    title: "Swirling Disaster".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 10 damage to each of your opponent's Pokémon.".to_string()),
                 },
@@ -11168,7 +11168,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Super".to_string(),
+                    title: "Super Fang".to_string(),
                     fixed_damage: 0,
                     effect: Some("Halve your opponent's Active Pokémon's remaining HP, rounded down.".to_string()),
                 },
@@ -12050,7 +12050,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -12491,7 +12491,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Dash".to_string(),
+                    title: "Dash Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
@@ -12512,7 +12512,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ighting Headbutt".to_string(),
+                    title: "Fighting Headbutt".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
@@ -12743,7 +12743,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Linear".to_string(),
+                    title: "Linear Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -12812,7 +12812,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "arkness Fang".to_string(),
+                    title: "Darkness Fang".to_string(),
                     fixed_damage: 50,
                     effect: None,
                 },
@@ -13327,7 +13327,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -13369,7 +13369,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ighting Headbutt".to_string(),
+                    title: "Fighting Headbutt".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
@@ -13474,7 +13474,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Linear".to_string(),
+                    title: "Linear Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -13617,7 +13617,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Linear".to_string(),
+                    title: "Linear Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -13791,7 +13791,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Cry for".to_string(),
+                    title: "Cry for Help".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random [G] Pokémon from your deck into your hand.".to_string()),
                 },
@@ -14007,7 +14007,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 40,
                     effect: None,
                 },
@@ -14028,7 +14028,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -14049,7 +14049,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater".to_string(),
+                    title: "Water Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 30 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -14070,7 +14070,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Spring".to_string(),
+                    title: "Spring Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.".to_string()),
                 },
@@ -14091,7 +14091,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
-                    title: "Pop Out".to_string(),
+                    title: "Pop Out Throughout".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -14175,7 +14175,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -14301,7 +14301,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -14322,7 +14322,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 30,
                     effect: None,
                 },
@@ -14448,7 +14448,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "hest-ouflage".to_string(),
+                    title: "Chest-ouflage".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
                 },
@@ -15194,7 +15194,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -15347,7 +15347,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
-                    title: "Pop Out".to_string(),
+                    title: "Pop Out Throughout".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -15715,7 +15715,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Spring".to_string(),
+                    title: "Spring Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.".to_string()),
                 },
@@ -15889,7 +15889,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
-                    title: "Pop Out".to_string(),
+                    title: "Pop Out Throughout".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -16128,7 +16128,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Skill".to_string(),
+                    title: "Skill Dive".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 10 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -16170,7 +16170,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Pierce the".to_string(),
+                    title: "Pierce the Pain".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.".to_string()),
                 },
@@ -16239,7 +16239,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Petal".to_string(),
+                    title: "Petal Blizzard".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to each of your opponent's Pokémon.".to_string()),
                 },
@@ -16770,7 +16770,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Call Forth".to_string(),
+                    title: "Call Forth Cold".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
@@ -16896,7 +16896,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -16917,7 +16917,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 30,
                     effect: None,
                 },
@@ -16980,7 +16980,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Call for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.".to_string()),
                 },
@@ -17064,7 +17064,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Sprinkle ater".to_string(),
+                    title: "Sprinkle Water".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -17421,7 +17421,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "sycharge".to_string(),
+                    title: "Psycharge".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [P] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
@@ -17694,7 +17694,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "Energy".to_string(),
+                    title: "Energy Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.".to_string()),
                 },
@@ -17988,7 +17988,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Signs of".to_string(),
+                    title: "Signs of Evolution".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random card that evolves from Rockruff from your deck into your hand.".to_string()),
                 },
@@ -18135,7 +18135,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
-                    title: "Star".to_string(),
+                    title: "Star Drop".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 40 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -19150,7 +19150,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Call Forth".to_string(),
+                    title: "Call Forth Cold".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
@@ -19171,7 +19171,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Sprinkle ater".to_string(),
+                    title: "Sprinkle Water".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -19318,7 +19318,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "Energy".to_string(),
+                    title: "Energy Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.".to_string()),
                 },
@@ -19360,7 +19360,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Signs of".to_string(),
+                    title: "Signs of Evolution".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random card that evolves from Rockruff from your deck into your hand.".to_string()),
                 },
@@ -19402,7 +19402,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
-                    title: "Star".to_string(),
+                    title: "Star Drop".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 40 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -19528,7 +19528,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Pierce the".to_string(),
+                    title: "Pierce the Pain".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.".to_string()),
                 },
@@ -19814,7 +19814,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Pierce the".to_string(),
+                    title: "Pierce the Pain".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.".to_string()),
                 },
@@ -20157,7 +20157,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -20241,7 +20241,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 40,
                     effect: None,
                 },
@@ -20757,7 +20757,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Skill".to_string(),
+                    title: "Skill Dive".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -20778,7 +20778,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
-                    title: "Sniping".to_string(),
+                    title: "Sniping Arrow".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 70 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -21909,7 +21909,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Superpowered".to_string(),
+                    title: "Superpowered Hug".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.".to_string()),
                 },
@@ -22655,7 +22655,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Primal".to_string(),
+                    title: "Primal Wingbeat".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck.".to_string()),
                 },
@@ -23117,7 +23117,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
-                    title: "Ice".to_string(),
+                    title: "Ice Blade".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -23396,7 +23396,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 40,
                     effect: None,
                 },
@@ -23501,7 +23501,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
-                    title: "Try to".to_string(),
+                    title: "Try to Imitate".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -23669,7 +23669,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ark Binding".to_string(),
+                    title: "Dark Binding".to_string(),
                     fixed_damage: 40,
                     effect: Some("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.".to_string()),
                 },
@@ -23711,7 +23711,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Playful".to_string(),
+                    title: "Playful Knockdown".to_string(),
                     fixed_damage: 0,
                     effect: Some("Discard all Pokémon Tools from your opponent's Active Pokémon.".to_string()),
                 },
@@ -23921,7 +23921,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ollect".to_string(),
+                    title: "Collect".to_string(),
                     fixed_damage: 0,
                     effect: Some("Draw a card.".to_string()),
                 },
@@ -24247,7 +24247,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
-                    title: "Ice".to_string(),
+                    title: "Ice Blade".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -24331,7 +24331,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ark Binding".to_string(),
+                    title: "Dark Binding".to_string(),
                     fixed_damage: 40,
                     effect: Some("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.".to_string()),
                 },
@@ -24352,7 +24352,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ollect".to_string(),
+                    title: "Collect".to_string(),
                     fixed_damage: 0,
                     effect: Some("Draw a card.".to_string()),
                 },
@@ -24863,7 +24863,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -25603,7 +25603,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Colorless,],
-                    title: "Spurt".to_string(),
+                    title: "Spurt Fire".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -25624,7 +25624,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Toasty".to_string(),
+                    title: "Toasty Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -25750,7 +25750,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -25771,7 +25771,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 30,
                     effect: None,
                 },
@@ -25918,7 +25918,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -26086,7 +26086,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Find a".to_string(),
+                    title: "Find a Friend".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
                 },
@@ -26107,7 +26107,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -26296,7 +26296,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -26338,7 +26338,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Crackly".to_string(),
+                    title: "Crackly Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -26421,8 +26421,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
-                    title: "Zappy".to_string(),
+                    energy_required: vec![],
+                    title: "Zappy Shot".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
@@ -26526,7 +26526,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Shivery Wave".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
@@ -26568,8 +26568,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
-                    title: "Twinkly".to_string(),
+                    energy_required: vec![],
+                    title: "Twinkly Call".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
                 },
@@ -26590,7 +26590,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "harm".to_string(),
+                    title: "Charm".to_string(),
                     fixed_damage: 0,
                     effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
                 },
@@ -26653,7 +26653,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "eck".to_string(),
+                    title: "Peck".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -26674,7 +26674,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
-                    title: "Life".to_string(),
+                    title: "Life Drain".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.".to_string()),
                 },
@@ -26842,7 +26842,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -27072,9 +27072,9 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Slappy Knuckle".to_string(),
-                    fixed_damage: 2,
+                    fixed_damage: 20,
                     effect: None,
                 },
             ],
@@ -27283,7 +27283,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Bind own".to_string(),
+                    title: "Bind Down".to_string(),
                     fixed_damage: 40,
                     effect: Some("During your opponent's next turn, the Defending Pokémon can't retreat.".to_string()),
                 },
@@ -27472,7 +27472,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Leap".to_string(),
+                    title: "Leap Over".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 30 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
@@ -27745,7 +27745,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ross-ut".to_string(),
+                    title: "Cross-Cut".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.".to_string()),
                 },
@@ -27766,7 +27766,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Find a".to_string(),
+                    title: "Find a Friend".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
                 },
@@ -27997,7 +27997,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Honey".to_string(),
+                    title: "Honey Snack".to_string(),
                     fixed_damage: 0,
                     effect: Some("Heal 20 damage from this Pokémon.".to_string()),
                 },
@@ -28295,7 +28295,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Toasty".to_string(),
+                    title: "Toasty Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -28316,7 +28316,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ave Splash".to_string(),
+                    title: "Wave Splash".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -28400,7 +28400,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Crackly".to_string(),
+                    title: "Crackly Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -28442,7 +28442,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "harm".to_string(),
+                    title: "Charm".to_string(),
                     fixed_damage: 0,
                     effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
                 },
@@ -28463,7 +28463,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
-                    title: "Life".to_string(),
+                    title: "Life Drain".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.".to_string()),
                 },
@@ -29225,7 +29225,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Leap".to_string(),
+                    title: "Leap Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
                 },
@@ -29288,7 +29288,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -29372,7 +29372,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ocus ist".to_string(),
+                    title: "Focus Fist".to_string(),
                     fixed_damage: 50,
                     effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
                 },
@@ -29414,7 +29414,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Call for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Nidoran♂ from your deck onto your Bench.".to_string()),
                 },
@@ -29582,7 +29582,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Find a".to_string(),
+                    title: "Find a Friend".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
                 },
@@ -30065,7 +30065,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "all for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Poliwag from your deck onto your Bench.".to_string()),
                 },
@@ -30149,7 +30149,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -30233,7 +30233,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Leap".to_string(),
+                    title: "Leap Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
                 },
@@ -30275,7 +30275,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Splashy".to_string(),
+                    title: "Splashy Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -30296,7 +30296,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
-                    title: "Ice".to_string(),
+                    title: "Ice Blade".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 40 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -30485,7 +30485,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "Cursed".to_string(),
+                    title: "Cursed Prose".to_string(),
                     fixed_damage: 0,
                     effect: Some("At the end of your opponent's next turn, do 90 damage to the Defending Pokémon.".to_string()),
                 },
@@ -30695,7 +30695,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "lail".to_string(),
+                    title: "Flail".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.".to_string()),
                 },
@@ -30884,7 +30884,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Mental".to_string(),
+                    title: "Mental Surge".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 20 damage to each of your opponent's Pokémon.".to_string()),
                 },
@@ -30989,7 +30989,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Stretch".to_string(),
+                    title: "Stretch Tongue".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 30 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -31010,7 +31010,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Stretch".to_string(),
+                    title: "Stretch Tongue".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 60 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -31030,9 +31030,9 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
+                    energy_required: vec![],
                     title: "Sleepy Lullaby".to_string(),
-                    fixed_damage: 1,
+                    fixed_damage: 10,
                     effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
                 },
             ],
@@ -31114,8 +31114,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
-                    title: "Squishy".to_string(),
+                    energy_required: vec![],
+                    title: "Squishy Healing".to_string(),
                     fixed_damage: 0,
                     effect: Some("Heal 50 damage from 1 of your Benched Pokémon.".to_string()),
                 },
@@ -31323,7 +31323,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "lail".to_string(),
+                    title: "Flail".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.".to_string()),
                 },
@@ -31343,8 +31343,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ability: None,
             attacks: vec![
                 Attack {
-                    energy_required: vec![EnergyType::Colorless,],
-                    title: "Squishy".to_string(),
+                    energy_required: vec![],
+                    title: "Squishy Healing".to_string(),
                     fixed_damage: 0,
                     effect: Some("Heal 50 damage from 1 of your Benched Pokémon.".to_string()),
                 },
@@ -31725,7 +31725,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Sprinkle ater".to_string(),
+                    title: "Sprinkle Water".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -31830,13 +31830,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -31857,7 +31857,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Linear".to_string(),
+                    title: "Linear Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -31905,7 +31905,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![],
-                    title: "Splashy".to_string(),
+                    title: "Splashy Toss".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
@@ -32709,7 +32709,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Skill".to_string(),
+                    title: "Skill Dive".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 10 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -32730,7 +32730,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Skill".to_string(),
+                    title: "Skill Dive".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 10 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -32793,7 +32793,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Pierce the".to_string(),
+                    title: "Pierce the Pain".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.".to_string()),
                 },
@@ -32952,7 +32952,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Cry for".to_string(),
+                    title: "Cry for Help".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random [G] Pokémon from your deck into your hand.".to_string()),
                 },
@@ -32973,7 +32973,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Cry for".to_string(),
+                    title: "Cry for Help".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random [G] Pokémon from your deck into your hand.".to_string()),
                 },
@@ -33342,7 +33342,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -33690,7 +33690,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -33711,7 +33711,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -33969,7 +33969,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Leap".to_string(),
+                    title: "Leap Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
                 },
@@ -33990,7 +33990,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Leap".to_string(),
+                    title: "Leap Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
                 },
@@ -34233,7 +34233,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Oceanic".to_string(),
+                    title: "Oceanic Gift".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
                 },
@@ -34254,7 +34254,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Oceanic".to_string(),
+                    title: "Oceanic Gift".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
                 },
@@ -34533,7 +34533,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Call for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.".to_string()),
                 },
@@ -34554,7 +34554,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Call for".to_string(),
+                    title: "Call for Family".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.".to_string()),
                 },
@@ -34596,7 +34596,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Spring".to_string(),
+                    title: "Spring Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.".to_string()),
                 },
@@ -34617,7 +34617,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Spring".to_string(),
+                    title: "Spring Out".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.".to_string()),
                 },
@@ -34638,7 +34638,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
-                    title: "Pop Out".to_string(),
+                    title: "Pop Out Throughout".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
@@ -34764,7 +34764,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -34785,7 +34785,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -34917,7 +34917,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -34938,7 +34938,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 10,
                     effect: None,
                 },
@@ -35328,13 +35328,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -36153,7 +36153,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ighting Headbutt".to_string(),
+                    title: "Fighting Headbutt".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
@@ -36174,7 +36174,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "ighting Headbutt".to_string(),
+                    title: "Fighting Headbutt".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
@@ -36384,7 +36384,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
-                    title: "Linear".to_string(),
+                    title: "Linear Attack".to_string(),
                     fixed_damage: 0,
                     effect: Some("This attack does 50 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -36831,7 +36831,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "arkness Fang".to_string(),
+                    title: "Darkness Fang".to_string(),
                     fixed_damage: 50,
                     effect: None,
                 },
@@ -36852,7 +36852,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "arkness Fang".to_string(),
+                    title: "Darkness Fang".to_string(),
                     fixed_damage: 50,
                     effect: None,
                 },
@@ -37020,7 +37020,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ark Binding".to_string(),
+                    title: "Dark Binding".to_string(),
                     fixed_damage: 40,
                     effect: Some("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.".to_string()),
                 },
@@ -37041,7 +37041,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ark Binding".to_string(),
+                    title: "Dark Binding".to_string(),
                     fixed_damage: 40,
                     effect: Some("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.".to_string()),
                 },
@@ -37083,7 +37083,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ouble Scratch".to_string(),
+                    title: "Double Scratch".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
@@ -37104,7 +37104,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "ouble Scratch".to_string(),
+                    title: "Double Scratch".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
@@ -37998,7 +37998,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ollect".to_string(),
+                    title: "Collect".to_string(),
                     fixed_damage: 0,
                     effect: Some("Draw a card.".to_string()),
                 },
@@ -38019,7 +38019,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "ollect".to_string(),
+                    title: "Collect".to_string(),
                     fixed_damage: 0,
                     effect: Some("Draw a card.".to_string()),
                 },
@@ -39125,13 +39125,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "syshot".to_string(),
+                    title: "Psyshot".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Genome".to_string(),
+                    title: "Genome Hacking".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
                 },
@@ -39758,7 +39758,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
-                    title: "ightning Ball".to_string(),
+                    title: "Lightning Ball".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -39779,7 +39779,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
-                    title: "Inferno".to_string(),
+                    title: "Inferno Dance".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.".to_string()),
                 },
@@ -39848,7 +39848,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
-                    title: "Volcanic".to_string(),
+                    title: "Volcanic Ash".to_string(),
                     fixed_damage: 0,
                     effect: Some("Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon.".to_string()),
                 },
@@ -39953,7 +39953,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "ater Gun".to_string(),
+                    title: "Water Gun".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -40058,7 +40058,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "Confuse".to_string(),
+                    title: "Confuse Ray".to_string(),
                     fixed_damage: 0,
                     effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
                 },
@@ -40079,7 +40079,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Metal,],
-                    title: "etal Arms".to_string(),
+                    title: "Metal Arms".to_string(),
                     fixed_damage: 0,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
@@ -40121,7 +40121,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
-                    title: "ound".to_string(),
+                    title: "Pound".to_string(),
                     fixed_damage: 20,
                     effect: None,
                 },
@@ -40205,7 +40205,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Iron".to_string(),
+                    title: "Iron Defense".to_string(),
                     fixed_damage: 0,
                     effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.".to_string()),
                 },
@@ -40268,7 +40268,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Oceanic".to_string(),
+                    title: "Oceanic Gift".to_string(),
                     fixed_damage: 0,
                     effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
                 },
@@ -40358,7 +40358,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
-                    title: "Cry for".to_string(),
+                    title: "Cry for Help".to_string(),
                     fixed_damage: 0,
                     effect: Some("Put 1 random [G] Pokémon from your deck into your hand.".to_string()),
                 },
@@ -40379,7 +40379,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,],
-                    title: "Attack the ound".to_string(),
+                    title: "Attack the Wound".to_string(),
                     fixed_damage: 0,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
@@ -40442,7 +40442,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Poison".to_string(),
+                    title: "Poison Sting".to_string(),
                     fixed_damage: 0,
                     effect: Some("Your opponent's Active Pokémon is now Poisoned.".to_string()),
                 },
@@ -40526,7 +40526,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
-                    title: "Growth".to_string(),
+                    title: "Growth Spurt".to_string(),
                     fixed_damage: 0,
                     effect: Some("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
@@ -40610,7 +40610,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Draco".to_string(),
+                    title: "Draco Meteor".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it.".to_string()),
                 },
@@ -40631,7 +40631,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Draco".to_string(),
+                    title: "Draco Meteor".to_string(),
                     fixed_damage: 0,
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it.".to_string()),
                 },
@@ -40778,7 +40778,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
-                    title: "Poison".to_string(),
+                    title: "Poison Gas".to_string(),
                     fixed_damage: 0,
                     effect: Some("Your opponent's Active Pokémon is now Poisoned.".to_string()),
                 },

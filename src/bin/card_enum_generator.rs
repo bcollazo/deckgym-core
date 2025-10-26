@@ -92,7 +92,7 @@ fn print_database(card_map: &IndexMap<String, Card>) {
     println!("use crate::{{");
     println!("    card_ids::CardId,");
     println!(
-        "    types::{{Ability, Attack, Card, EnergyType, PokemonCard, TrainerCard, TrainerType}},"
+        "    models::{{Ability, Attack, Card, EnergyType, PokemonCard, TrainerCard, TrainerType}},"
     );
     println!("}};");
     println!();
