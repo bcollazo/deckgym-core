@@ -112,6 +112,62 @@ impl App {
         }
     }
 
+    // Helper method to calculate turn boundaries in the battle log
+    // Returns the scroll offset (line number) where each turn header appears
+    fn calculate_turn_boundaries(&self) -> Vec<usize> {
+        let mut boundaries = Vec::new();
+        let mut line_count = 0;
+
+        match &self.mode {
+            AppMode::Interactive {
+                action_history,
+                turn_history,
+                ..
+            } => {
+                // TODO: Implement turn boundary calculation for interactive mode
+            }
+            AppMode::Replay {
+                states, actions, current_index, ..
+            } => {
+                if states.is_empty() {
+                    return boundaries;
+                }
+
+                let mut current_turn = states[0].turn_count;
+                boundaries.push(line_count); // Initial turn header
+                line_count += 1;
+
+                for i in 0..actions.len() {
+                    // Add cursor marker line if this is the current action
+                    if i == *current_index && i < actions.len() {
+                        line_count += 1; // Cursor marker ">>> CURRENT <<<"
+                    }
+                    
+                    // Each action takes exactly 1 line
+                    line_count += 1;
+
+                    // Check if turn changed after this action
+                    if i + 1 < states.len() {
+                        let next_turn = states[i + 1].turn_count;
+                        if next_turn != current_turn && i + 1 < actions.len() {
+                            line_count += 1; // Empty line
+                            boundaries.push(line_count);
+                            line_count += 1; // Turn header
+                            current_turn = next_turn;
+                        }
+                    }
+                }
+                
+                // Check if cursor is at the end (after all actions)
+                if *current_index == actions.len() {
+                    line_count += 1;
+                }
+            }
+        }
+
+        boundaries
+    }
+
     pub fn next_state(&mut self) {
         if let AppMode::Replay {
             current_index,
@@ -135,6 +191,82 @@ impl App {
 
     pub fn toggle_lock_actions_center(&mut self) {
         self.lock_actions_center = !self.lock_actions_center;
+    }
+
+    fn jump_turn(&mut self, forward: bool) {
+        if self.lock_actions_center {
+            // Center lock on: jump state to beginning of next/previous turn
+            match &mut self.mode {
+                AppMode::Replay {
+                    states,
+                    current_index,
+                    ..
+                } => {
+                    let valid_range = if forward {
+                        *current_index < states.len()
+                    } else {
+                        *current_index > 0
+                    };
+
+                    if valid_range {
+                        let current_turn = states[*current_index].turn_count;
+                        
+                        // Find a state with different turn number
+                        let mut target_turn = None;
+                        if forward {
+                            for i in (*current_index + 1)..states.len() {
+                                if states[i].turn_count != current_turn {
+                                    target_turn = Some(states[i].turn_count);
+                                    break;
+                                }
+                            }
+                        } else {
+                            for i in (0..*current_index).rev() {
+                                if states[i].turn_count != current_turn {
+                                    target_turn = Some(states[i].turn_count);
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // If we found a different turn, find the FIRST state of that turn
+                        if let Some(turn) = target_turn {
+                            for i in 0..states.len() {
+                                if states[i].turn_count == turn {
+                                    *current_index = i;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                AppMode::Interactive { .. } => {
+                    // TODO: Implement turn jump for interactive mode
+                }
+            }
+        } else {
+            // Center lock off: just scroll the battle log to next/previous turn header
+            let boundaries = self.calculate_turn_boundaries();
+            let current_line = self.scroll_offset as usize;
+            
+            if forward {
+                if let Some(&next_line) = boundaries.iter().find(|&&line| line > current_line) {
+                    self.scroll_offset = next_line as u16;
+                }
+            } else {
+                if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
+                    self.scroll_offset = prev_line as u16;
+                }
+            }
+        }
+    }
+
+    pub fn jump_to_next_turn(&mut self) {
+        self.jump_turn(true);
+    }
+
+    pub fn jump_to_prev_turn(&mut self) {
+        self.jump_turn(false);
     }
 
     pub fn scroll_page_up(&mut self) {

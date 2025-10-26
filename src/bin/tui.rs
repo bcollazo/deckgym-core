@@ -97,8 +97,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                     // Replay mode controls
                     KeyCode::Down => app.next_state(),
                     KeyCode::Up => app.prev_state(),
-                    KeyCode::Char('w') => app.scroll_page_up(),
-                    KeyCode::Char('s') => app.scroll_page_down(),
+                    KeyCode::Char('w') => app.jump_to_prev_turn(),
+                    KeyCode::Char('s') => app.jump_to_next_turn(),
                     KeyCode::Left => app.scroll_player_hand_left(),
                     KeyCode::Right => app.scroll_player_hand_right(),
                     KeyCode::Char('c') => app.toggle_lock_actions_center(),
