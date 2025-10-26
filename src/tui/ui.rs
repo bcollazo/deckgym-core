@@ -425,7 +425,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             Line::from(vec![
                 Span::styled("P2 Discard: ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
             ]).spans.into_iter().chain(p2_discard_line.spans.into_iter()).collect::<Vec<_>>().into(),
-            Line::from("Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"),
+            Line::from("Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand, C=toggle center"),
             Line::from(format!("Current Player: P{}", actor + 1)),
             Line::from(format!("Possible Actions: {}", actions_text)),
         ]
@@ -439,6 +439,9 @@ pub fn ui(f: &mut Frame, app: &App) {
     // Left side: Battle log panel with actions
     let mut log_lines = Vec::new();
     let actions = app.get_actions();
+
+    // Track where the "CURRENT" marker is placed in the log_lines vector
+    let mut current_marker_line: Option<usize> = None;
 
     if is_interactive {
         // Interactive mode - live battle log
@@ -548,6 +551,7 @@ pub fn ui(f: &mut Frame, app: &App) {
 
                 // Add cursor indicator before this action if we're between state i and i+1
                 if i == *current_index && i < actions.len() {
+                    current_marker_line = Some(log_lines.len());
                     log_lines.push(Line::from(vec![Span::styled(
                         ">>> CURRENT <<<",
                         Style::default()
@@ -574,8 +578,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                 if i + 1 < states.len() {
                     let next_turn = states[i + 1].turn_count;
 
-                    if next_turn != current_turn {
-                        current_turn = next_turn;
+                    if next_turn != current_turn && i + 1 < actions.len() {
                         log_lines.push(Line::from(""));
                         let header = if next_turn == 0 {
                             "━━━ Setup Phase ━━━".to_string()
@@ -589,18 +592,50 @@ pub fn ui(f: &mut Frame, app: &App) {
                                 .add_modifier(Modifier::BOLD),
                         )]));
                     }
+
+                    current_turn = next_turn;
                 }
             }
 
-            // If we're at the initial state and there are no actions yet
-            if *current_index == 0 && actions.is_empty() {
+            // If we're at the initial state and there are no actions yet, or at the final state
+            if current_marker_line.is_none() && *current_index == actions.len() {
+                current_marker_line = Some(log_lines.len());
                 log_lines.push(Line::from(vec![Span::styled(
                     ">>> CURRENT <<<",
                     Style::default()
                         .fg(Color::LightYellow)
                         .add_modifier(Modifier::BOLD),
                 )]));
-                log_lines.push(Line::from("Game Start"));
+
+                if actions.is_empty() {
+                    log_lines.push(Line::from("Game Start"));
+                }
+            }
+        }
+    }
+
+    // Center the battle log view around the current marker when in
+    // Replay mode and the lock_actions_center flag enabled by the user,
+    let mut battle_log_scroll = app.scroll_offset;
+
+    if let AppMode::Replay { .. } = &app.mode {
+        if app.lock_actions_center {
+            if let Some(marker_idx) = current_marker_line {
+                // Visible lines inside the block - account for borders (2 lines)
+                let area_height = main_chunks[0].height as usize;
+                let visible = area_height.saturating_sub(2).max(1);
+                let total_lines = log_lines.len();
+
+                // Desired top line so marker is centered
+                let desired_top = if marker_idx > visible / 2 {
+                    marker_idx - visible / 2
+                } else {
+                    0
+                };
+
+                let max_top = total_lines.saturating_sub(visible);
+                let top = std::cmp::min(desired_top, max_top);
+                battle_log_scroll = top as u16;
             }
         }
     }
@@ -608,6 +643,6 @@ pub fn ui(f: &mut Frame, app: &App) {
     let battle_log = Paragraph::new(log_lines)
         .style(Style::default().fg(Color::Cyan))
         .block(Block::default().borders(Borders::ALL).title("Battle Log"))
-        .scroll((app.scroll_offset, 0));
+        .scroll((battle_log_scroll, 0));
     f.render_widget(battle_log, main_chunks[0]);
 }
