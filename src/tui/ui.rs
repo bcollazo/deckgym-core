@@ -614,29 +614,31 @@ pub fn ui(f: &mut Frame, app: &App) {
         }
     }
 
-    // Center the battle log view around the current marker when in
-    // Replay mode and the lock_actions_center flag enabled by the user,
+    // If the game has ended, add "Game over" header to the log
+    if state.is_game_over() {
+        log_lines.push(Line::from(""));
+        log_lines.push(Line::from(vec![Span::styled(
+            "━━━ Game over ━━━",
+            Style::default()
+                .fg(Color::Magenta)
+                .add_modifier(Modifier::BOLD),
+        )]));
+    }
+
+    // Adjust scroll to center around current marker in battle log if flag is on
     let mut battle_log_scroll = app.scroll_offset;
+    if app.lock_actions_center {
+        if let Some(marker_idx) = current_marker_line {
+            // Visible lines inside the block - account for borders (2 lines)
+            let area_height = main_chunks[0].height as usize;
+            let visible = area_height.saturating_sub(2).max(1);
+            let total_lines = log_lines.len();
 
-    if let AppMode::Replay { .. } = &app.mode {
-        if app.lock_actions_center {
-            if let Some(marker_idx) = current_marker_line {
-                // Visible lines inside the block - account for borders (2 lines)
-                let area_height = main_chunks[0].height as usize;
-                let visible = area_height.saturating_sub(2).max(1);
-                let total_lines = log_lines.len();
-
-                // Desired top line so marker is centered
-                let desired_top = if marker_idx > visible / 2 {
-                    marker_idx - visible / 2
-                } else {
-                    0
-                };
-
-                let max_top = total_lines.saturating_sub(visible);
-                let top = std::cmp::min(desired_top, max_top);
-                battle_log_scroll = top as u16;
-            }
+            // Desired top line so marker is centered
+            let desired_top = marker_idx.saturating_sub(visible / 2);
+            let max_top = total_lines.saturating_sub(visible);
+            let top = std::cmp::min(desired_top, max_top);
+            battle_log_scroll = top as u16;
         }
     }
 
