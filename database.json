@@ -109,7 +109,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Find a",
+          "title": "Find a Friend",
           "fixed_damage": 0,
           "effect": "Put 1 random [G] Pokémon from your deck into your hand."
         }
@@ -857,7 +857,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Tail",
+          "title": "Tail Whip",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn."
         }
@@ -1657,7 +1657,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water", "Water"],
-          "title": "Water",
+          "title": "Water Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         }
@@ -2485,7 +2485,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning"],
-          "title": "Thunder",
+          "title": "Thunder Spear",
           "fixed_damage": 0,
           "effect": "This attack does 30 damage to 1 of your opponent's Pokémon."
         }
@@ -3609,7 +3609,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Stretch",
+          "title": "Stretch Kick",
           "fixed_damage": 0,
           "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
         }
@@ -3885,7 +3885,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Call for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Nidoran♂ from your deck onto your Bench."
         }
@@ -4235,7 +4235,7 @@
           "energy_required": ["Metal"],
           "title": "Amass",
           "fixed_damage": 0,
-          "effect": "Take a [M] Energy from your Energy Zone and attach it to this Pokémon."
+          "effect": "Take 1 [M] Energy from your Energy Zone and attach it to this Pokémon."
         }
       ],
       "weakness": "Fire",
@@ -4909,7 +4909,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Primal",
+          "title": "Primal Wingbeat",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck."
         }
@@ -6542,7 +6542,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Growth",
+          "title": "Growth Spurt",
           "fixed_damage": 0,
           "effect": "Take a [G] Energy from your Energy Zone and attach it to this Pokémon."
         }
@@ -6844,7 +6844,7 @@
       "attacks": [
         {
           "energy_required": ["Fire", "Fire", "Colorless"],
-          "title": "Volcanic",
+          "title": "Volcanic Ash",
           "fixed_damage": 0,
           "effect": "Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon."
         }
@@ -6913,7 +6913,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Leap",
+          "title": "Leap Out",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -7008,7 +7008,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water"],
-          "title": "Aqua",
+          "title": "Aqua Liner",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Benched Pokémon."
         }
@@ -7146,7 +7146,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning", "Lightning"],
-          "title": "Thunder",
+          "title": "Thunder Spear",
           "fixed_damage": 0,
           "effect": "This attack does 40 damage to 1 of your opponent's Pokémon."
         }
@@ -7359,7 +7359,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "Hypnotic",
+          "title": "Hypnotic Gaze",
           "fixed_damage": 0,
           "effect": "Your opponent's Active Pokémon is now Asleep."
         }
@@ -9596,7 +9596,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Oceanic",
+          "title": "Oceanic Gift",
           "fixed_damage": 0,
           "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
         }
@@ -9826,7 +9826,7 @@
       "attacks": [
         {
           "energy_required": ["Lightning", "Lightning", "Lightning"],
-          "title": "Volt",
+          "title": "Volt Bolt",
           "fixed_damage": 0,
           "effect": "Discard all [L] Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Pokémon."
         }
@@ -10689,7 +10689,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness", "Darkness"],
-          "title": "Skill",
+          "title": "Skill Dive",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         }
@@ -10850,7 +10850,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Swirling",
+          "title": "Swirling Disaster",
           "fixed_damage": 0,
           "effect": "This attack does 10 damage to each of your opponent's Pokémon."
         }
@@ -11583,7 +11583,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Super",
+          "title": "Super Fang",
           "fixed_damage": 0,
           "effect": "Halve your opponent's Active Pokémon's remaining HP, rounded down."
         }
@@ -11744,7 +11744,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Spin",
+          "title": "Spin Storm",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, put your opponent's Active Pokémon into their hand."
         }
@@ -12059,7 +12059,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Oceanic",
+          "title": "Oceanic Gift",
           "fixed_damage": 0,
           "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
         }
@@ -12295,7 +12295,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Swirling",
+          "title": "Swirling Disaster",
           "fixed_damage": 0,
           "effect": "This attack does 10 damage to each of your opponent's Pokémon."
         }
@@ -12413,7 +12413,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Super",
+          "title": "Super Fang",
           "fixed_damage": 0,
           "effect": "Halve your opponent's Active Pokémon's remaining HP, rounded down."
         }
@@ -13911,7 +13911,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Dash",
+          "title": "Dash Attack",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Benched Pokémon."
         }
@@ -14190,7 +14190,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Linear",
+          "title": "Linear Attack",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         },
@@ -15029,7 +15029,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Linear",
+          "title": "Linear Attack",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         },
@@ -15199,7 +15199,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Linear",
+          "title": "Linear Attack",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         },
@@ -15395,7 +15395,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Cry for",
+          "title": "Cry for Help",
           "fixed_damage": 0,
           "effect": "Put 1 random [G] Pokémon from your deck into your hand."
         }
@@ -15700,7 +15700,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Spring",
+          "title": "Spring Out",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random. Do 30 damage to it."
         }
@@ -15723,7 +15723,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water", "Water"],
-          "title": "Pop Out",
+          "title": "Pop Out Throughout",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -17132,7 +17132,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water", "Water"],
-          "title": "Pop Out",
+          "title": "Pop Out Throughout",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -17556,7 +17556,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Spring",
+          "title": "Spring Out",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random. Do 30 damage to it."
         }
@@ -17746,7 +17746,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water", "Water"],
-          "title": "Pop Out",
+          "title": "Pop Out Throughout",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -18009,7 +18009,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Skill",
+          "title": "Skill Dive",
           "fixed_damage": 0,
           "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
         }
@@ -18055,7 +18055,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Pierce the",
+          "title": "Pierce the Pain",
           "fixed_damage": 0,
           "effect": "This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them."
         },
@@ -18130,7 +18130,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Petal",
+          "title": "Petal Blizzard",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to each of your opponent's Pokémon."
         }
@@ -18714,7 +18714,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Call Forth",
+          "title": "Call Forth Cold",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to this Pokémon."
         }
@@ -18947,7 +18947,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Call for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench."
         }
@@ -19042,7 +19042,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Sprinkle ater",
+          "title": "Sprinkle Water",
           "fixed_damage": 20,
           "effect": null
         }
@@ -19743,7 +19743,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "Energy",
+          "title": "Energy Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon."
         }
@@ -20071,7 +20071,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Signs of",
+          "title": "Signs of Evolution",
           "fixed_damage": 0,
           "effect": "Put a random card that evolves from Rockruff from your deck into your hand."
         }
@@ -20235,7 +20235,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting", "Fighting"],
-          "title": "Star",
+          "title": "Star Drop",
           "fixed_damage": 0,
           "effect": "This attack does 40 damage to 1 of your opponent's Pokémon."
         }
@@ -21378,7 +21378,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Call Forth",
+          "title": "Call Forth Cold",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to this Pokémon."
         }
@@ -21404,7 +21404,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Sprinkle ater",
+          "title": "Sprinkle Water",
           "fixed_damage": 20,
           "effect": null
         }
@@ -21571,7 +21571,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "Energy",
+          "title": "Energy Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon."
         }
@@ -21617,7 +21617,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Signs of",
+          "title": "Signs of Evolution",
           "fixed_damage": 0,
           "effect": "Put a random card that evolves from Rockruff from your deck into your hand."
         }
@@ -21663,7 +21663,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting", "Fighting"],
-          "title": "Star",
+          "title": "Star Drop",
           "fixed_damage": 0,
           "effect": "This attack does 40 damage to 1 of your opponent's Pokémon."
         }
@@ -21809,7 +21809,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Pierce the",
+          "title": "Pierce the Pain",
           "fixed_damage": 0,
           "effect": "This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them."
         },
@@ -22140,7 +22140,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Pierce the",
+          "title": "Pierce the Pain",
           "fixed_damage": 0,
           "effect": "This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them."
         },
@@ -23194,7 +23194,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Skill",
+          "title": "Skill Dive",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Pokémon."
         }
@@ -23217,7 +23217,7 @@
       "attacks": [
         {
           "energy_required": ["Grass", "Grass"],
-          "title": "Sniping",
+          "title": "Sniping Arrow",
           "fixed_damage": 0,
           "effect": "This attack does 70 damage to 1 of your opponent's Pokémon."
         }
@@ -24480,7 +24480,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Superpowered",
+          "title": "Superpowered Hug",
           "fixed_damage": 0,
           "effect": "Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out."
         }
@@ -25318,7 +25318,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Primal",
+          "title": "Primal Wingbeat",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck."
         }
@@ -25833,7 +25833,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water"],
-          "title": "Ice",
+          "title": "Ice Blade",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         }
@@ -26256,7 +26256,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic", "Psychic"],
-          "title": "Try to",
+          "title": "Try to Imitate",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
         }
@@ -26491,7 +26491,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Playful",
+          "title": "Playful Knockdown",
           "fixed_damage": 0,
           "effect": "Discard all Pokémon Tools from your opponent's Active Pokémon."
         }
@@ -27097,7 +27097,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water"],
-          "title": "Ice",
+          "title": "Ice Blade",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         }
@@ -28632,7 +28632,7 @@
       "attacks": [
         {
           "energy_required": ["Fire", "Colorless"],
-          "title": "Spurt",
+          "title": "Spurt Fire",
           "fixed_damage": 0,
           "effect": "1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -28655,7 +28655,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Toasty",
+          "title": "Toasty Toss",
           "fixed_damage": 0,
           "effect": "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -29167,7 +29167,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Find a",
+          "title": "Find a Friend",
           "fixed_damage": 0,
           "effect": "Put a random Pokémon from your deck into your hand."
         }
@@ -29446,7 +29446,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Crackly",
+          "title": "Crackly Toss",
           "fixed_damage": 0,
           "effect": "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -29537,8 +29537,8 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
-          "title": "Zappy",
+          "energy_required": [],
+          "title": "Zappy Shot",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to 1 of your opponent's Benched Pokémon."
         }
@@ -29652,7 +29652,7 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Shivery Wave",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage for each Energy attached to your opponent's Active Pokémon."
@@ -29698,8 +29698,8 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
-          "title": "Twinkly",
+          "energy_required": [],
+          "title": "Twinkly Call",
           "fixed_damage": 0,
           "effect": "Put a random Pokémon from your deck into your hand."
         }
@@ -30262,9 +30262,9 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Slappy Knuckle",
-          "fixed_damage": 2,
+          "fixed_damage": 20,
           "effect": null
         }
       ],
@@ -30493,7 +30493,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Bind own",
+          "title": "Bind Down",
           "fixed_damage": 40,
           "effect": "During your opponent's next turn, the Defending Pokémon can't retreat."
         }
@@ -30706,7 +30706,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Leap",
+          "title": "Leap Over",
           "fixed_damage": 0,
           "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
         }
@@ -31028,7 +31028,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Find a",
+          "title": "Find a Friend",
           "fixed_damage": 0,
           "effect": "Put a random Pokémon from your deck into your hand."
         }
@@ -31287,7 +31287,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Honey",
+          "title": "Honey Snack",
           "fixed_damage": 0,
           "effect": "Heal 20 damage from this Pokémon."
         }
@@ -31627,7 +31627,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Toasty",
+          "title": "Toasty Toss",
           "fixed_damage": 0,
           "effect": "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -31742,7 +31742,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Crackly",
+          "title": "Crackly Toss",
           "fixed_damage": 0,
           "effect": "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -32677,7 +32677,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Leap",
+          "title": "Leap Out",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -32892,7 +32892,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Call for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Nidoran♂ from your deck onto your Bench."
         }
@@ -33076,7 +33076,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Find a",
+          "title": "Find a Friend",
           "fixed_damage": 0,
           "effect": "Put a random Pokémon from your deck into your hand."
         }
@@ -33806,7 +33806,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Leap",
+          "title": "Leap Out",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -33855,7 +33855,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Splashy",
+          "title": "Splashy Toss",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -33878,7 +33878,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water"],
-          "title": "Ice",
+          "title": "Ice Blade",
           "fixed_damage": 0,
           "effect": "This attack does 40 damage to 1 of your opponent's Pokémon."
         }
@@ -34091,7 +34091,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "Cursed",
+          "title": "Cursed Prose",
           "fixed_damage": 0,
           "effect": "At the end of your opponent's next turn, do 90 damage to the Defending Pokémon."
         }
@@ -34540,7 +34540,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Mental",
+          "title": "Mental Surge",
           "fixed_damage": 0,
           "effect": "This attack does 20 damage to each of your opponent's Pokémon."
         }
@@ -34655,7 +34655,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Stretch",
+          "title": "Stretch Tongue",
           "fixed_damage": 0,
           "effect": "This attack does 30 damage to 1 of your opponent's Pokémon."
         }
@@ -34678,7 +34678,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless", "Colorless"],
-          "title": "Stretch",
+          "title": "Stretch Tongue",
           "fixed_damage": 0,
           "effect": "This attack does 60 damage to 1 of your opponent's Pokémon."
         }
@@ -34700,9 +34700,9 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
+          "energy_required": [],
           "title": "Sleepy Lullaby",
-          "fixed_damage": 1,
+          "fixed_damage": 10,
           "effect": "Your opponent's Active Pokémon is now Asleep."
         }
       ],
@@ -34797,8 +34797,8 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
-          "title": "Squishy",
+          "energy_required": [],
+          "title": "Squishy Healing",
           "fixed_damage": 0,
           "effect": "Heal 50 damage from 1 of your Benched Pokémon."
         }
@@ -35063,8 +35063,8 @@
       "ability": null,
       "attacks": [
         {
-          "energy_required": ["Colorless"],
-          "title": "Squishy",
+          "energy_required": [],
+          "title": "Squishy Healing",
           "fixed_damage": 0,
           "effect": "Heal 50 damage from 1 of your Benched Pokémon."
         }
@@ -35506,7 +35506,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Sprinkle ater",
+          "title": "Sprinkle Water",
           "fixed_damage": 20,
           "effect": null
         }
@@ -35650,7 +35650,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Linear",
+          "title": "Linear Attack",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         },
@@ -35702,7 +35702,7 @@
       "attacks": [
         {
           "energy_required": [],
-          "title": "Splashy",
+          "title": "Splashy Toss",
           "fixed_damage": 0,
           "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
         }
@@ -36612,7 +36612,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Skill",
+          "title": "Skill Dive",
           "fixed_damage": 0,
           "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
         }
@@ -36635,7 +36635,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Skill",
+          "title": "Skill Dive",
           "fixed_damage": 0,
           "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
         }
@@ -36704,7 +36704,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Pierce the",
+          "title": "Pierce the Pain",
           "fixed_damage": 0,
           "effect": "This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them."
         },
@@ -36877,7 +36877,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Cry for",
+          "title": "Cry for Help",
           "fixed_damage": 0,
           "effect": "Put 1 random [G] Pokémon from your deck into your hand."
         }
@@ -36900,7 +36900,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Cry for",
+          "title": "Cry for Help",
           "fixed_damage": 0,
           "effect": "Put 1 random [G] Pokémon from your deck into your hand."
         }
@@ -37997,7 +37997,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Leap",
+          "title": "Leap Out",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -38020,7 +38020,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Leap",
+          "title": "Leap Out",
           "fixed_damage": 0,
           "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
         }
@@ -38300,7 +38300,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Oceanic",
+          "title": "Oceanic Gift",
           "fixed_damage": 0,
           "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
         }
@@ -38323,7 +38323,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Oceanic",
+          "title": "Oceanic Gift",
           "fixed_damage": 0,
           "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
         }
@@ -38634,7 +38634,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Call for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench."
         }
@@ -38657,7 +38657,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Call for",
+          "title": "Call for Family",
           "fixed_damage": 0,
           "effect": "Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench."
         }
@@ -38703,7 +38703,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Spring",
+          "title": "Spring Out",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random. Do 30 damage to it."
         }
@@ -38726,7 +38726,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Spring",
+          "title": "Spring Out",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random. Do 30 damage to it."
         }
@@ -38749,7 +38749,7 @@
       "attacks": [
         {
           "energy_required": ["Water", "Water", "Water"],
-          "title": "Pop Out",
+          "title": "Pop Out Throughout",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it."
         }
@@ -40717,7 +40717,7 @@
       "attacks": [
         {
           "energy_required": ["Fighting"],
-          "title": "Linear",
+          "title": "Linear Attack",
           "fixed_damage": 0,
           "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
         },
@@ -44676,7 +44676,7 @@
       "attacks": [
         {
           "energy_required": ["Fire", "Fire", "Colorless"],
-          "title": "Volcanic",
+          "title": "Volcanic Ash",
           "fixed_damage": 0,
           "effect": "Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon."
         }
@@ -44909,7 +44909,7 @@
       "attacks": [
         {
           "energy_required": ["Psychic"],
-          "title": "Confuse",
+          "title": "Confuse Ray",
           "fixed_damage": 0,
           "effect": "Your opponent's Active Pokémon is now Confused."
         }
@@ -45076,7 +45076,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless", "Colorless"],
-          "title": "Iron",
+          "title": "Iron Defense",
           "fixed_damage": 0,
           "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks."
         }
@@ -45148,7 +45148,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Oceanic",
+          "title": "Oceanic Gift",
           "fixed_damage": 0,
           "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
         }
@@ -45251,7 +45251,7 @@
       "attacks": [
         {
           "energy_required": ["Grass"],
-          "title": "Cry for",
+          "title": "Cry for Help",
           "fixed_damage": 0,
           "effect": "Put 1 random [G] Pokémon from your deck into your hand."
         }
@@ -45274,7 +45274,7 @@
       "attacks": [
         {
           "energy_required": ["Water"],
-          "title": "Attack the ound",
+          "title": "Attack the Wound",
           "fixed_damage": 0,
           "effect": "If your opponent's Active Pokémon has damage on it, this attack does 60 more damage."
         }
@@ -45346,7 +45346,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Poison",
+          "title": "Poison Sting",
           "fixed_damage": 0,
           "effect": "Your opponent's Active Pokémon is now Poisoned."
         }
@@ -45438,7 +45438,7 @@
       "attacks": [
         {
           "energy_required": ["Colorless"],
-          "title": "Growth",
+          "title": "Growth Spurt",
           "fixed_damage": 0,
           "effect": "Take a [G] Energy from your Energy Zone and attach it to this Pokémon."
         }
@@ -45540,7 +45540,7 @@
             "Colorless",
             "Colorless"
           ],
-          "title": "Draco",
+          "title": "Draco Meteor",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it."
         }
@@ -45568,7 +45568,7 @@
             "Colorless",
             "Colorless"
           ],
-          "title": "Draco",
+          "title": "Draco Meteor",
           "fixed_damage": 0,
           "effect": "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it."
         }
@@ -45729,7 +45729,7 @@
       "attacks": [
         {
           "energy_required": ["Darkness"],
-          "title": "Poison",
+          "title": "Poison Gas",
           "fixed_damage": 0,
           "effect": "Your opponent's Active Pokémon is now Poisoned."
         }
