@@ -33,6 +33,7 @@ pub struct App {
     pub scroll_offset: u16,
     pub player_hand_scroll: usize,
     pub opponent_hand_scroll: usize,
+    pub lock_actions_center: bool,
 }
 
 impl App {
@@ -96,6 +97,7 @@ impl App {
             scroll_offset: 0,
             player_hand_scroll: 0,
             opponent_hand_scroll: 0,
+            lock_actions_center: false,
         })
     }
 
@@ -129,6 +131,10 @@ impl App {
                 *current_index -= 1;
             }
         }
+    }
+
+    pub fn toggle_lock_actions_center(&mut self) {
+        self.lock_actions_center = !self.lock_actions_center;
     }
 
     pub fn scroll_page_up(&mut self) {
