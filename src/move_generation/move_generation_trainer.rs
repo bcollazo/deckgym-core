@@ -50,17 +50,34 @@ pub fn trainer_move_generation_implementation(
     match trainer_id {
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
-        CardId::A1219Erika | CardId::A1266Erika => can_play_erika(state, trainer_card),
-        CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
-        CardId::A2a072Irida | CardId::A2a087Irida => can_play_irida(state, trainer_card),
-        CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => {
-            can_play_lillie(state, trainer_card)
+        CardId::A1219Erika | CardId::A1266Erika | CardId::A4b328Erika | CardId::A4b329Erika => {
+            can_play_erika(state, trainer_card)
         }
+        CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
+        CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
+            can_play_irida(state, trainer_card)
+        }
+        CardId::A3155Lillie
+        | CardId::A3197Lillie
+        | CardId::A3209Lillie
+        | CardId::A4b348Lillie
+        | CardId::A4b349Lillie
+        | CardId::A4b374Lillie => can_play_lillie(state, trainer_card),
         CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
-        CardId::A1225Sabrina | CardId::A1272Sabrina => can_play_sabrina(state, trainer_card),
-        CardId::A2150Cyrus | CardId::A2190Cyrus => can_play_cyrus(state, trainer_card),
-        CardId::A2155Mars | CardId::A2195Mars => can_play_trainer(state, trainer_card),
-        CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
+        CardId::A1225Sabrina
+        | CardId::A1272Sabrina
+        | CardId::A4b338Sabrina
+        | CardId::A4b339Sabrina => can_play_sabrina(state, trainer_card),
+        CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
+            can_play_cyrus(state, trainer_card)
+        }
+        CardId::A2155Mars | CardId::A2195Mars | CardId::A4b344Mars | CardId::A4b345Mars => {
+            can_play_trainer(state, trainer_card)
+        }
+        CardId::A3144RareCandy
+        | CardId::A4b314RareCandy
+        | CardId::A4b315RareCandy
+        | CardId::A4b379RareCandy => can_play_rare_candy(state, trainer_card),
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
             can_play_pokemon_center_lady(state, trainer_card)
         }
@@ -98,6 +115,8 @@ pub fn trainer_move_generation_implementation(
         | CardId::A1a065MythicalSlab
         | CardId::A1a068Leaf
         | CardId::A1a082Leaf
+        | CardId::A4b346Leaf
+        | CardId::A4b347Leaf
         | CardId::A2b071Red
         | CardId::A2b090Red
         | CardId::A4b352Red

@@ -41,13 +41,22 @@ pub fn forecast_trainer_action(
         CardId::PA007ProfessorsResearch | CardId::A4b373ProfessorsResearch => {
             doutcome(professor_oak_effect)
         }
-        CardId::A1219Erika | CardId::A1266Erika => doutcome(erika_effect),
+        CardId::A1219Erika | CardId::A1266Erika | CardId::A4b328Erika | CardId::A4b329Erika => {
+            doutcome(erika_effect)
+        }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
-        CardId::A2a072Irida | CardId::A2a087Irida => doutcome(irida_effect),
+        CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
+            doutcome(irida_effect)
+        }
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
             doutcome(pokemon_center_lady_effect)
         }
-        CardId::A3155Lillie | CardId::A3197Lillie | CardId::A3209Lillie => doutcome(lillie_effect),
+        CardId::A3155Lillie
+        | CardId::A3197Lillie
+        | CardId::A3209Lillie
+        | CardId::A4b348Lillie
+        | CardId::A4b349Lillie
+        | CardId::A4b374Lillie => doutcome(lillie_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni
         | CardId::A1270Giovanni
@@ -56,17 +65,29 @@ pub fn forecast_trainer_action(
         CardId::A2b071Red | CardId::A2b090Red | CardId::A4b352Red | CardId::A4b353Red => {
             doutcome(red_effect)
         }
-        CardId::A1225Sabrina | CardId::A1272Sabrina => doutcome(sabrina_effect),
+        CardId::A1225Sabrina
+        | CardId::A1272Sabrina
+        | CardId::A4b338Sabrina
+        | CardId::A4b339Sabrina => doutcome(sabrina_effect),
         CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
-        CardId::A1a068Leaf | CardId::A1a082Leaf => doutcome(leaf_effect),
+        CardId::A1a068Leaf | CardId::A1a082Leaf | CardId::A4b346Leaf | CardId::A4b347Leaf => {
+            doutcome(leaf_effect)
+        }
         CardId::A2147GiantCape
         | CardId::A2148RockyHelmet
         | CardId::A3146PoisonBarb
         | CardId::A3147LeafCape
         | CardId::A4a067InflatableBoat => doutcome(attach_tool),
-        CardId::A2150Cyrus | CardId::A2190Cyrus => doutcome(cyrus_effect),
-        CardId::A2155Mars | CardId::A2195Mars => doutcome(mars_effect),
-        CardId::A3144RareCandy => doutcome(rare_candy_effect),
+        CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
+            doutcome(cyrus_effect)
+        }
+        CardId::A2155Mars | CardId::A2195Mars | CardId::A4b344Mars | CardId::A4b345Mars => {
+            doutcome(mars_effect)
+        }
+        CardId::A3144RareCandy
+        | CardId::A4b314RareCandy
+        | CardId::A4b315RareCandy
+        | CardId::A4b379RareCandy => doutcome(rare_candy_effect),
         CardId::A3a064Repel => doutcome(repel_effect),
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
