@@ -124,7 +124,36 @@ impl App {
                 turn_history,
                 ..
             } => {
-                // TODO: Implement turn boundary calculation for interactive mode
+                // Even if there are no recorded actions yet, we should at least
+                // expose the initial turn header so "jump" can move the battle
+                // log to the start of a turn in interactive mode.
+                let mut current_turn: u8 = if !turn_history.is_empty() {
+                    turn_history[0]
+                } else {
+                    // No actions yet - use the game's current turn number as the initial header
+                    self.get_state().turn_count
+                };
+
+                // Initial turn header
+                boundaries.push(line_count);
+                line_count += 1;
+
+                // For each recorded action add its line and detect turn changes
+                for i in 0..action_history.len() {
+                    // Each action occupies a single line
+                    line_count += 1;
+
+                    // If next action has different turn, add header boundary
+                    if i + 1 < turn_history.len() {
+                        let next_turn = turn_history[i + 1];
+                        if next_turn != current_turn {
+                            line_count += 1; // empty line before header
+                            boundaries.push(line_count);
+                            line_count += 1; // header line
+                            current_turn = next_turn;
+                        }
+                    }
+                }
             }
             AppMode::Replay {
                 states, actions, current_index, ..
@@ -156,11 +185,6 @@ impl App {
                             current_turn = next_turn;
                         }
                     }
-                }
-                
-                // Check if cursor is at the end (after all actions)
-                if *current_index == actions.len() {
-                    line_count += 1;
                 }
             }
         }
@@ -241,7 +265,23 @@ impl App {
                     }
                 }
                 AppMode::Interactive { .. } => {
-                    // TODO: Implement turn jump for interactive mode
+                    // In interactive mode we don't have a precomputed states vector,
+                    // but we can still move the battle log view to the next/previous
+                    // turn header. Compute turn boundaries and adjust the scroll
+                    // offset similarly to the non-center-lock branch.
+                    let boundaries = self.calculate_turn_boundaries();
+                    if boundaries.is_empty() {
+                        return;
+                    }
+
+                    let current_line = self.scroll_offset as usize;
+                    if forward {
+                        if let Some(&next_line) = boundaries.iter().find(|&&line| line > current_line) {
+                            self.scroll_offset = next_line as u16;
+                        }
+                    } else if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
+                        self.scroll_offset = prev_line as u16;
+                    }
                 }
             }
         } else {
