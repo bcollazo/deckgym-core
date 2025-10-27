@@ -202,6 +202,12 @@ fn forecast_effect_attack(
         AttackId::A1117AlakazamPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 60, 30)
         }
+        AttackId::A1126MrMimeBarrierAttack => damage_and_card_effect_attack(
+            0,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A1127JynxPsychic => damage_based_on_opponent_energy(acting_player, state, 30, 20),
         AttackId::A1128MewtwoPowerBlast => {
             self_energy_discard_attack(index, vec![EnergyType::Psychic])
@@ -254,17 +260,35 @@ fn forecast_effect_attack(
             damage_chance_status_attack(10, 0.5, StatusCondition::Paralyzed)
         }
         AttackId::A1a041MankeyFocusFist => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
+        AttackId::A1a045GolemGuardPress => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 30 },
+        ),
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
         AttackId::A2049PalkiaDimensionalStorm => palkia_dimensional_storm(state),
         AttackId::A2050ManaphyOceanic => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2073DrifloonExpand => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A2084GliscorAcrobatics => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
         }
         AttackId::A2098SneaselDoubleScratch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A2117BronzongGuardPress => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A2118ProbopassTripleNose => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
         }
@@ -278,6 +302,12 @@ fn forecast_effect_attack(
         AttackId::A2a001HeracrossSingleHornThrow => {
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
         }
+        AttackId::A2a057ProbopassExDefensiveUnit => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
@@ -298,6 +328,12 @@ fn forecast_effect_attack(
         }
         AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
+        AttackId::A3043CloysterGuardPress => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -320,6 +356,12 @@ fn forecast_effect_attack(
         AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
         }
+        AttackId::A3a053StakatakaBrassRock => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A3a060TypeNullQuickBlow => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
         }
@@ -368,9 +410,21 @@ fn forecast_effect_attack(
         }
         AttackId::A4077CleffaTwinkly => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
+        AttackId::A4104PupitarGuardPress => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 30 },
+        ),
         AttackId::A4105BinacleDualChop => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
+        AttackId::A4124SkarmoryExSteelWing => damage_and_card_effect_attack(
+            index,
+            state.current_player,
+            1,
+            CardEffect::ReducedDamage { amount: 20 },
+        ),
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4146UrsaringSwingAround => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])

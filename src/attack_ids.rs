@@ -52,6 +52,7 @@ pub enum AttackId {
     A1112PincurchinThunderShock,
     A1115AbraTeleport,
     A1117AlakazamPsychic,
+    A1126MrMimeBarrierAttack,
     A1127JynxPsychic,
     A1128MewtwoPowerBlast,
     A1129MewtwoExPsydrive,
@@ -79,6 +80,7 @@ pub enum AttackId {
     A1a021LumineonAqua,
     A1a030DedenneThunderShock,
     A1a041MankeyFocusFist,
+    A1a045GolemGuardPress,
     A1a061EeveeContinuousSteps,
     A3b055EeveeCollect,
     A2023MagmarStoke,
@@ -86,13 +88,16 @@ pub enum AttackId {
     A2049PalkiaDimensionalStorm,
     A2050ManaphyOceanic,
     A2056ElectabuzzCharge,
+    A2073DrifloonExpand,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
+    A2117BronzongGuardPress,
     A2118ProbopassTripleNose,
     A2119DialgaExMetallicTurbo,
     A2131AmbipomDoubleHit,
     A2141ChatotFuryAttack,
     A2a001HeracrossSingleHornThrow,
+    A2a057ProbopassExDefensiveUnit,
     A2a071ArceusExUltimateForce,
     A2b001WeedleMultiply,
     A2b002KakunaStringShot,
@@ -108,6 +113,7 @@ pub enum AttackId {
     A3020TsareenaThreeKickCombo,
     A3040AlolanVulpixCallForth,
     A3041AlolanNinetalesBlizzard,
+    A3043CloysterGuardPress,
     A3071SpoinkPsycharge,
     A3116ToxapexSpikeCannon,
     A3a003RowletFuryAttack,
@@ -118,6 +124,7 @@ pub enum AttackId {
     A3a044Poipole2Step,
     A3a045NagaedelElectroHouse,
     A3a047AlolanDugtrioExTripletHeadbutt,
+    A3a053StakatakaBrassRock,
     A3a060TypeNullQuickBlow,
     A3a061SilvallyBraveBuddies,
     A3a062CelesteelaMoombahton,
@@ -136,7 +143,9 @@ pub enum AttackId {
     A4066PichuCrackly,
     A4077CleffaTwinkly,
     A4102HitmontopPiercingSpin,
+    A4104PupitarGuardPress,
     A4105BinacleDualChop,
+    A4124SkarmoryExSteelWing,
     A4134EeveeFindAFriend,
     A4146UrsaringSwingAround,
     A4149LugiaExElementalBlast,
@@ -205,6 +214,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 112", 0), AttackId::A1112PincurchinThunderShock);
         m.insert(("A1 115", 0), AttackId::A1115AbraTeleport);
         m.insert(("A1 117", 0), AttackId::A1117AlakazamPsychic);
+        m.insert(("A1 126", 0), AttackId::A1126MrMimeBarrierAttack);
         m.insert(("A1 127", 0), AttackId::A1127JynxPsychic);
         m.insert(("A1 128", 0), AttackId::A1128MewtwoPowerBlast);
         m.insert(("A1 129", 1), AttackId::A1129MewtwoExPsydrive);
@@ -249,6 +259,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 284", 1), AttackId::A1036CharizardExCrimsonStorm);
         m.insert(("A1 285", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 286", 1), AttackId::A1129MewtwoExPsydrive);
+
         // A1a
         m.insert(("A1a 001", 0), AttackId::A1a001ExeggcuteGrowth);
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
@@ -258,6 +269,7 @@ lazy_static::lazy_static! {
         m.insert(("A1a 026", 0), AttackId::A1a026RaichuGigashock);
         m.insert(("A1a 030", 0), AttackId::A1a030DedenneThunderShock);
         m.insert(("A1a 041", 0), AttackId::A1a041MankeyFocusFist);
+        m.insert(("A1a 045", 0), AttackId::A1a045GolemGuardPress);
         m.insert(("A1a 061", 0), AttackId::A1a061EeveeContinuousSteps);
         // Full Arts A1a
         m.insert(("A1a 073", 0), AttackId::A1a030DedenneThunderShock);
@@ -270,8 +282,10 @@ lazy_static::lazy_static! {
         m.insert(("A2 049", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 053", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
+        m.insert(("A2 073", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A2 117", 0), AttackId::A2117BronzongGuardPress);
         m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
         m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
         m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
@@ -280,6 +294,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 206", 1), AttackId::A2049PalkiaDimensionalStorm);
         m.insert(("A2 050", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("A2 162", 0), AttackId::A2050ManaphyOceanic);
+        m.insert(("A2 165", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 119", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
@@ -287,8 +302,11 @@ lazy_static::lazy_static! {
 
         // A2a
         m.insert(("A2a 001", 0), AttackId::A2a001HeracrossSingleHornThrow);
+        m.insert(("A2a 057", 0), AttackId::A2a057ProbopassExDefensiveUnit);
         m.insert(("A2a 071", 0), AttackId::A2a071ArceusExUltimateForce);
+        m.insert(("A2a 085", 0), AttackId::A2a057ProbopassExDefensiveUnit);
         m.insert(("A2a 086", 0), AttackId::A2a071ArceusExUltimateForce);
+        m.insert(("A2a 094", 0), AttackId::A2a057ProbopassExDefensiveUnit);
         m.insert(("A2a 095", 0), AttackId::A2a071ArceusExUltimateForce);
         m.insert(("A2a 096", 0), AttackId::A2a071ArceusExUltimateForce);
 
@@ -320,6 +338,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 020", 0), AttackId::A3020TsareenaThreeKickCombo);
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
+        m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -341,6 +360,7 @@ lazy_static::lazy_static! {
         m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
         m.insert(("A3a 045", 0), AttackId::A3a045NagaedelElectroHouse);
         m.insert(("A3a 047", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
+        m.insert(("A3a 053", 0), AttackId::A3a053StakatakaBrassRock);
         m.insert(("A3a 060", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A3a 061", 0), AttackId::A3a061SilvallyBraveBuddies);
         m.insert(("A3a 062", 0), AttackId::A3a062CelesteelaMoombahton);
@@ -383,11 +403,15 @@ lazy_static::lazy_static! {
         m.insert(("A4 171", 0), AttackId::A4066PichuCrackly);
         m.insert(("A4 077", 0), AttackId::A4077CleffaTwinkly);
         m.insert(("A4 102", 0), AttackId::A4102HitmontopPiercingSpin);
+        m.insert(("A4 104", 0), AttackId::A4104PupitarGuardPress);
+        m.insert(("A4 124", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 134", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 149", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4 186", 0), AttackId::A4021ShuckleExTripleSlap);
+        m.insert(("A4 194", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 195", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4 202", 0), AttackId::A4021ShuckleExTripleSlap);
+        m.insert(("A4 209", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 211", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
@@ -416,11 +440,15 @@ lazy_static::lazy_static! {
         m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 138", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 139", 1), AttackId::A1104ZapdosExThunderingHurricane);
+        m.insert(("A4b 182", 0), AttackId::A3086CosmoemStiffen);
+        m.insert(("A4b 183", 0), AttackId::A3086CosmoemStiffen);
         m.insert(("A4b 196", 0), AttackId::A1153MarowakExBonemerang);
         m.insert(("A4b 242", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 243", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 248", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A4b 251", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
+        m.insert(("A4b 252", 0), AttackId::A4124SkarmoryExSteelWing);
+        m.insert(("A4b 253", 0), AttackId::A2a057ProbopassExDefensiveUnit);
         m.insert(("A4b 271", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A4b 289", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
