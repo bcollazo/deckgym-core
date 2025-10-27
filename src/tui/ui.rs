@@ -26,7 +26,7 @@ pub fn ui(f: &mut Frame, app: &App) {
     // Center: game area with battle mat, hand areas, and footer (no separate header)
 
     // Adjust footer size based on mode - interactive mode needs more space for action list
-    let footer_height = if is_interactive { 15 } else { 6 };
+    let footer_height = if is_interactive { 16 } else { 6 };
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
@@ -376,14 +376,6 @@ pub fn ui(f: &mut Frame, app: &App) {
         ];
 
         if is_human_turn {
-            // Show numbered actions for human player
-            let action_strings: Vec<String> = actions
-                .iter()
-                .take(9) // Limit to first 9 actions (1-9 keys)
-                .enumerate()
-                .map(|(i, a)| format!("{}. {:?}", i + 1, a.action))
-                .collect();
-
             lines.push(Line::from("Controls: ESC/q=quit, 1-9=select action, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
             lines.push(Line::from(vec![Span::styled(
                 "YOUR TURN - Select Action:",
@@ -392,11 +384,22 @@ pub fn ui(f: &mut Frame, app: &App) {
                     .add_modifier(Modifier::BOLD),
             )]));
 
-            if action_strings.is_empty() {
+            if actions.is_empty() {
                 lines.push(Line::from("No actions available"));
             } else {
-                for action in action_strings {
-                    lines.push(Line::from(action));
+                // Display up to 9 actions (limited by numeric keys 1-9)
+                for (i, action) in actions.iter().take(9).enumerate() {
+                    lines.push(Line::from(vec![Span::styled(
+                        format!("{}. {:?}", i + 1, action.action),
+                        Style::default().fg(Color::White),
+                    )]));
+                }
+                         
+                if actions.len() > 9 {
+                    lines.push(Line::from(vec![Span::styled(
+                        format!("... and {} more actions", actions.len() - 9),
+                        Style::default().fg(Color::DarkGray),
+                    )]));
                 }
             }
 
