@@ -238,16 +238,16 @@ impl App {
                         // Find a state with different turn number
                         let mut target_turn = None;
                         if forward {
-                            for i in (*current_index + 1)..states.len() {
-                                if states[i].turn_count != current_turn {
-                                    target_turn = Some(states[i].turn_count);
+                            for state in states.iter().skip(*current_index + 1) {
+                                if state.turn_count != current_turn {
+                                    target_turn = Some(state.turn_count);
                                     break;
                                 }
                             }
                         } else {
-                            for i in (0..*current_index).rev() {
-                                if states[i].turn_count != current_turn {
-                                    target_turn = Some(states[i].turn_count);
+                            for state in states.iter().take(*current_index).rev() {
+                                if state.turn_count != current_turn {
+                                    target_turn = Some(state.turn_count);
                                     break;
                                 }
                             }
@@ -255,8 +255,8 @@ impl App {
                         
                         // If we found a different turn, find the FIRST state of that turn
                         if let Some(turn) = target_turn {
-                            for i in 0..states.len() {
-                                if states[i].turn_count == turn {
+                            for (i, state) in states.iter().enumerate() {
+                                if state.turn_count == turn {
                                     *current_index = i;
                                     return;
                                 }
@@ -293,10 +293,8 @@ impl App {
                 if let Some(&next_line) = boundaries.iter().find(|&&line| line > current_line) {
                     self.scroll_offset = next_line as u16;
                 }
-            } else {
-                if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
-                    self.scroll_offset = prev_line as u16;
-                }
+            } else if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
+                self.scroll_offset = prev_line as u16;
             }
         }
     }
