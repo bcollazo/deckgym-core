@@ -156,7 +156,10 @@ impl App {
                 }
             }
             AppMode::Replay {
-                states, actions, current_index, ..
+                states,
+                actions,
+                current_index,
+                ..
             } => {
                 if states.is_empty() {
                     return boundaries;
@@ -171,7 +174,7 @@ impl App {
                     if i == *current_index && i < actions.len() {
                         line_count += 1; // Cursor marker ">>> CURRENT <<<"
                     }
-                    
+
                     // Each action takes exactly 1 line
                     line_count += 1;
 
@@ -234,7 +237,7 @@ impl App {
 
                     if valid_range {
                         let current_turn = states[*current_index].turn_count;
-                        
+
                         // Find a state with different turn number
                         let mut target_turn = None;
                         if forward {
@@ -252,7 +255,7 @@ impl App {
                                 }
                             }
                         }
-                        
+
                         // If we found a different turn, find the FIRST state of that turn
                         if let Some(turn) = target_turn {
                             for (i, state) in states.iter().enumerate() {
@@ -276,10 +279,14 @@ impl App {
 
                     let current_line = self.scroll_offset as usize;
                     if forward {
-                        if let Some(&next_line) = boundaries.iter().find(|&&line| line > current_line) {
+                        if let Some(&next_line) =
+                            boundaries.iter().find(|&&line| line > current_line)
+                        {
                             self.scroll_offset = next_line as u16;
                         }
-                    } else if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
+                    } else if let Some(&prev_line) =
+                        boundaries.iter().rev().find(|&&line| line < current_line)
+                    {
                         self.scroll_offset = prev_line as u16;
                     }
                 }
@@ -288,12 +295,14 @@ impl App {
             // Center lock off: just scroll the battle log to next/previous turn header
             let boundaries = self.calculate_turn_boundaries();
             let current_line = self.scroll_offset as usize;
-            
+
             if forward {
                 if let Some(&next_line) = boundaries.iter().find(|&&line| line > current_line) {
                     self.scroll_offset = next_line as u16;
                 }
-            } else if let Some(&prev_line) = boundaries.iter().rev().find(|&&line| line < current_line) {
+            } else if let Some(&prev_line) =
+                boundaries.iter().rev().find(|&&line| line < current_line)
+            {
                 self.scroll_offset = prev_line as u16;
             }
         }

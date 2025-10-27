@@ -394,7 +394,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                         Style::default().fg(Color::White),
                     )]));
                 }
-                         
+
                 if actions.len() > 9 {
                     lines.push(Line::from(vec![Span::styled(
                         format!("... and {} more actions", actions.len() - 9),
@@ -402,7 +402,6 @@ pub fn ui(f: &mut Frame, app: &App) {
                     )]));
                 }
             }
-
         } else {
             // AI turn - show waiting message
             lines.push(Line::from("Controls: ESC/q=quit, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
