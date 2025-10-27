@@ -24,14 +24,17 @@ pub fn ui(f: &mut Frame, app: &App) {
         .split(f.area());
 
     // Center: game area with battle mat, hand areas, and footer (no separate header)
+
+    // Adjust footer size based on mode - interactive mode needs more space for action list
+    let footer_height = if is_interactive { 15 } else { 6 };
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
-                Constraint::Length(3), // Opponent's hand (reduced height)
-                Constraint::Min(0),    // Battle mat
-                Constraint::Length(5), // Player's hand
-                Constraint::Length(6), // Footer (includes header info, reduced size)
+                Constraint::Length(3),             // Opponent's hand (reduced height)
+                Constraint::Min(0),                // Battle mat
+                Constraint::Length(5),             // Player's hand
+                Constraint::Length(footer_height), // Footer (larger in interactive mode for actions)
             ]
             .as_ref(),
         )
@@ -381,12 +384,6 @@ pub fn ui(f: &mut Frame, app: &App) {
                 .map(|(i, a)| format!("{}. {:?}", i + 1, a.action))
                 .collect();
 
-            let actions_text = if action_strings.is_empty() {
-                "No actions available".to_string()
-            } else {
-                action_strings.join(" | ")
-            };
-
             lines.push(Line::from("Controls: ESC/q=quit, 1-9=select action, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
             lines.push(Line::from(vec![Span::styled(
                 "YOUR TURN - Select Action:",
@@ -394,7 +391,15 @@ pub fn ui(f: &mut Frame, app: &App) {
                     .fg(Color::LightYellow)
                     .add_modifier(Modifier::BOLD),
             )]));
-            lines.push(Line::from(actions_text));
+
+            if action_strings.is_empty() {
+                lines.push(Line::from("No actions available"));
+            } else {
+                for action in action_strings {
+                    lines.push(Line::from(action));
+                }
+            }
+
         } else {
             // AI turn - show waiting message
             lines.push(Line::from("Controls: ESC/q=quit, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
