@@ -6,22 +6,13 @@ use log::debug;
 use crate::{
     actions::SimpleAction,
     effects::{CardEffect, TurnEffect},
-    models::{Card, EnergyType, PlayedCard, TrainerCard, BASIC_STAGE},
+    models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
     tool_ids::ToolId,
     AbilityId, State,
 };
 
-// Fossils
-const FOSSIL_CARD_NAMES: [&str; 5] = [
-    "Helix Fossil",
-    "Dome Fossil",
-    "Old Amber",
-    "Skull Fossil",
-    "Armor Fossil",
-];
-
 fn is_fossil(trainer_card: &TrainerCard) -> bool {
-    FOSSIL_CARD_NAMES.contains(&trainer_card.name.as_str())
+    trainer_card.trainer_card_type == TrainerType::Fossil
 }
 
 // Ultra Beasts

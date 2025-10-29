@@ -466,7 +466,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Stomp".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -487,7 +487,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Tropical Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -550,7 +550,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Double Horn".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 2 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -956,7 +956,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Fire,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Flamethrower".to_string(),
                     fixed_damage: 110,
-                    effect: Some("Discard 1 [R] Energy from this Pokémon.".to_string()),
+                    effect: Some("Discard a [R] Energy from this Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Water),
@@ -1171,7 +1171,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -1198,7 +1198,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Bazooka".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -1471,7 +1471,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "KO Crab".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. If both of them are heads, this attack does 80 more damage.".to_string()),
                 },
             ],
@@ -1681,7 +1681,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has at least 3 extra [W] Energy attached, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -1939,7 +1939,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
                     title: "Second Strike".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -2044,7 +2044,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
@@ -2081,7 +2081,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Magnemite".to_string()),
             hp: 80,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -2149,7 +2149,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thunder Punch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.".to_string()),
                 },
             ],
@@ -2170,7 +2170,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
                     title: "Pin Missile".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip 4 coins. This attack does 40 damage for each heads.".to_string()),
                 },
             ],
@@ -2218,7 +2218,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thundering Hurricane".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -2365,7 +2365,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Quick Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -2491,7 +2491,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -2701,7 +2701,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -2807,7 +2807,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Kirlia".to_string()),
             hp: 110,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take 1  Energy from your Energy Zone and attach it to the  Pokémon in the Active Spot.".to_string() }),
+            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -2896,7 +2896,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Double Lariat".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip 2 coins. This attack does 100 damage for each heads.".to_string()),
                 },
             ],
@@ -3022,7 +3022,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Fight Back".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -3253,7 +3253,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. This attack does 80 damage for each heads.".to_string()),
                 },
             ],
@@ -3568,7 +3568,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Lovestrike".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 50 more damage for each of your Benched Nidoking.".to_string()),
                 },
             ],
@@ -3715,7 +3715,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -3842,7 +3842,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,],
                     title: "Amass".to_string(),
                     fixed_damage: 0,
-                    effect: Some("Take 1 [M] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
+                    effect: Some("Take a [M] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -3887,7 +3887,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
@@ -3908,7 +3908,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
@@ -3929,7 +3929,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
@@ -3983,7 +3983,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pidgeotto".to_string()),
             hp: 130,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -4157,7 +4157,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Pay Day".to_string(),
                     fixed_damage: 10,
-                    effect: Some("Draw 1 card.".to_string()),
+                    effect: Some("Draw a card.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
@@ -4261,7 +4261,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Continuous Lick".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip a coin until you get tails. This attack does 60 damage for each heads.".to_string()),
                 },
             ],
@@ -4303,7 +4303,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Dizzy Punch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip 2 coins. This attack does 30 damage for each heads.".to_string()),
                 },
             ],
@@ -4451,7 +4451,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Primal Wingbeat".to_string(),
                     fixed_damage: 0,
-                    effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck.".to_string()),
+                    effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -4513,7 +4513,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Do the Wave".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
@@ -4570,7 +4570,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A1217DomeFossil => Card::Trainer(TrainerCard {
             id: "A1 217".to_string(),
@@ -4578,7 +4578,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A1218OldAmber => Card::Trainer(TrainerCard {
             id: "A1 218".to_string(),
@@ -4586,7 +4586,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A1219Erika => Card::Trainer(TrainerCard {
             id: "A1 219".to_string(),
@@ -4599,7 +4599,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A1220Misty => Card::Trainer(TrainerCard {
             id: "A1 220".to_string(),
             name: "Misty".to_string(),
-            effect: "Choose 1 of your [W] Pokémon, and flip a coin until you get tails. For each heads, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string(),
+            effect: "Choose 1 of your [W] Pokémon, and flip a coin until you get tails. For each heads, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -4706,7 +4706,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Double Horn".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 2 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -4811,7 +4811,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has at least 3 extra [W] Energy attached, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -4853,7 +4853,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -4937,7 +4937,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Lovestrike".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 50 more damage for each of your Benched Nidoking.".to_string()),
                 },
             ],
@@ -5025,7 +5025,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
@@ -5037,7 +5037,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pidgeotto".to_string()),
             hp: 130,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -5064,7 +5064,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Pay Day".to_string(),
                     fixed_damage: 10,
-                    effect: Some("Draw 1 card.".to_string()),
+                    effect: Some("Draw a card.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
@@ -5195,7 +5195,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Tropical Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -5297,7 +5297,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Bazooka".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -5366,7 +5366,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
@@ -5393,7 +5393,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thundering Hurricane".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -5483,7 +5483,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. This attack does 80 damage for each heads.".to_string()),
                 },
             ],
@@ -5524,7 +5524,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A1267Misty => Card::Trainer(TrainerCard {
             id: "A1 267".to_string(),
             name: "Misty".to_string(),
-            effect: "Choose 1 of your [W] Pokémon, and flip a coin until you get tails. For each heads, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string(),
+            effect: "Choose 1 of your [W] Pokémon, and flip a coin until you get tails. For each heads, take a [W] Energy from your Energy Zone and attach it to that Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -5649,7 +5649,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thundering Hurricane".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -5760,7 +5760,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
@@ -5841,7 +5841,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
         }),
         CardId::A1285PikachuEx => Card::Pokemon(PokemonCard {
@@ -5856,13 +5856,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
         }),
         CardId::A1286MewtwoEx => Card::Pokemon(PokemonCard {
@@ -5889,7 +5889,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Genetic Apex (A1)".to_string(),
         }),
         CardId::A1a001Exeggcute => Card::Pokemon(PokemonCard {
@@ -5925,7 +5925,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -5946,7 +5946,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Powerful Bloom".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -6004,7 +6004,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Servine".to_string()),
             hp: 110,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each  Energy attached to your  Pokémon provides 2  Energy. This effect doesn't stack.".to_string() }),
+            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -6072,7 +6072,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Energy Whip".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has at least 3 extra [G] Energy attached, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -6093,7 +6093,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,],
                     title: "Stomp".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -6114,7 +6114,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Colorless,],
                     title: "Rising Lunge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -6198,7 +6198,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -6277,7 +6277,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a  Energy from 1 of your Benched  Pokémon to your Active  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -6408,7 +6408,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 10 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
@@ -6624,7 +6624,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Mind Jack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 20 more damage for each of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
@@ -6835,7 +6835,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Guard Press".to_string(),
                     fixed_damage: 120,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −30 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -30 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
@@ -6876,7 +6876,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Revenge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -7044,7 +7044,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -7069,7 +7069,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
             booster_pack: "Mythical Island (A1a)".to_string(),
@@ -7128,7 +7128,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scattering Cyclone".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
@@ -7149,8 +7149,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Fighting Tackle".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 80  more damage.".to_string()),
+                    fixed_damage: 40,
+                    effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
@@ -7170,7 +7170,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Continuous Steps".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin until you get tails. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -7206,7 +7206,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Mythical Island (A1a)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A1a064PokemonFlute => Card::Trainer(TrainerCard {
             id: "A1a 064".to_string(),
@@ -7235,7 +7235,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A1a067Blue => Card::Trainer(TrainerCard {
             id: "A1a 067".to_string(),
             name: "Blue".to_string(),
-            effect: "During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your Pokémon take -10 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Mythical Island (A1a)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -7260,7 +7260,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -7276,7 +7276,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Servine".to_string()),
             hp: 110,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each  Energy attached to your  Pokémon provides 2  Energy. This effect doesn't stack.".to_string() }),
+            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -7302,7 +7302,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -7318,7 +7318,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a  Energy from 1 of your Benched  Pokémon to your Active  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -7365,7 +7365,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Revenge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -7386,7 +7386,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Powerful Bloom".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -7476,7 +7476,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scattering Cyclone".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
@@ -7496,7 +7496,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A1a081Blue => Card::Trainer(TrainerCard {
             id: "A1a 081".to_string(),
             name: "Blue".to_string(),
-            effect: "During your opponent's next turn, all of your Pokémon take −10 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your Pokémon take -10 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Mythical Island (A1a)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -7569,7 +7569,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Powerful Bloom".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -7602,7 +7602,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Mythical Island (A1a)".to_string(),
         }),
         CardId::A2001Oddish => Card::Pokemon(PokemonCard {
@@ -7932,7 +7932,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Leaf Cutter".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -7995,7 +7995,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,EnergyType::Colorless,],
                     title: "Flog".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -8226,7 +8226,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Colorless,],
                     title: "Heat Breath".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -8263,7 +8263,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Swinub".to_string()),
             hp: 110,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes −20 damage from attacks from  or  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes -20 damage from attacks from [R] or [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
@@ -8284,7 +8284,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Piloswine".to_string()),
             hp: 160,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes −30 damage from attacks from  or  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -8415,7 +8415,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Jet Screw".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -8520,7 +8520,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Ice Shard".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If your opponent's Active Pokémon is a [F] Pokémon, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -8799,7 +8799,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Exciting Voltage".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 2 extra [L] Energy attached, this attack does 80 more damage.".to_string()),
                 },
             ],
@@ -8883,7 +8883,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Sparking Gadget".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -8904,7 +8904,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Assault Laser".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -9136,7 +9136,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Expand".to_string(),
                     fixed_damage: 10,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -9366,7 +9366,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Acrobatics".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 more damage for each heads.".to_string()),
                 },
             ],
@@ -9424,7 +9424,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 120,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Exoskeleton".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Exoskeleton".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
@@ -9529,7 +9529,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Riolu".to_string()),
             hp: 100,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your  Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your [F] Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
@@ -9597,7 +9597,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Energized Blade".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -9660,7 +9660,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Double Scratch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -9681,7 +9681,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Scratching Nails".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -9828,7 +9828,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Cross Poison".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.".to_string()),
                 },
             ],
@@ -9849,7 +9849,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Group Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -9870,7 +9870,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Group Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.".to_string()),
                 },
             ],
@@ -9907,7 +9907,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -9933,7 +9933,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,],
                     title: "Metal Arms".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -9991,7 +9991,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Shieldon".to_string()),
             hp: 160,
             energy_type: EnergyType::Metal,
-            ability: Some(Ability { title: "Guarded Grill".to_string(), effect: "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes −100 damage from that attack.".to_string() }),
+            ability: Some(Ability { title: "Guarded Grill".to_string(), effect: "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -100 damage from that attack.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
@@ -10017,7 +10017,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Iron Head".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin until you get tails. This attack does 30 more damage for each heads.".to_string()),
                 },
             ],
@@ -10060,7 +10060,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Guard Press".to_string(),
                     fixed_damage: 60,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -10080,7 +10080,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Triple Nose".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip 3 coins. This attack does 50 more damage for each heads.".to_string()),
                 },
             ],
@@ -10153,7 +10153,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
@@ -10174,7 +10174,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
@@ -10195,7 +10195,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
@@ -10233,7 +10233,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Licking Fury".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
@@ -10254,7 +10254,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -10318,7 +10318,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Buggy Beam".to_string(),
                     fixed_damage: 80,
-                    effect: Some("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G],[R],[W],[L],[P],[F],[D], or [M].".to_string()),
+                    effect: Some("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
@@ -10359,7 +10359,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Double Hit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip 2 coins. This attack does 40 damage for each heads.".to_string()),
                 },
             ],
@@ -10569,7 +10569,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Fury Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 3 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -10611,7 +10611,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Raging Hammer".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("This attack does more damage equal to the damage this Pokémon has on it.".to_string()),
                 },
             ],
@@ -10626,7 +10626,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A2145ArmorFossil => Card::Trainer(TrainerCard {
             id: "A2 145".to_string(),
@@ -10634,7 +10634,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
-            trainer_card_type: TrainerType::Item,
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A2146PokemonCommunication => Card::Trainer(TrainerCard {
             id: "A2 146".to_string(),
@@ -10770,7 +10770,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,EnergyType::Colorless,],
                     title: "Flog".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -10807,7 +10807,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Piloswine".to_string()),
             hp: 160,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes −30 damage from attacks from  or  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -10896,7 +10896,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Assault Laser".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -10918,7 +10918,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Expand".to_string(),
                     fixed_damage: 10,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -11017,7 +11017,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Riolu".to_string()),
             hp: 100,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your  Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your [F] Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
@@ -11085,7 +11085,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Group Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -11131,7 +11131,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
@@ -11211,7 +11211,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Raging Hammer".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("This attack does more damage equal to the damage this Pokémon has on it.".to_string()),
                 },
             ],
@@ -11301,7 +11301,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Sparking Gadget".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -11343,7 +11343,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Energized Blade".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -11364,7 +11364,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Scratching Nails".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -11380,7 +11380,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -11433,7 +11433,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Licking Fury".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
@@ -11544,7 +11544,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Sparking Gadget".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -11586,7 +11586,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Energized Blade".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -11607,7 +11607,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Scratching Nails".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -11623,7 +11623,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -11649,7 +11649,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Licking Fury".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
@@ -11736,7 +11736,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
         }),
         CardId::A2207DialgaEx => Card::Pokemon(PokemonCard {
@@ -11763,7 +11763,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Space-Time Smackdown (A2)".to_string(),
         }),
         CardId::A2a001Heracross => Card::Pokemon(PokemonCard {
@@ -11778,7 +11778,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Single-Horn Throw".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 2 coins. If both of them are heads, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -11962,7 +11962,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a  Energy from your Energy Zone and attach it to 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
@@ -12029,8 +12029,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
-                    title: "Ragin’ Mad Strike".to_string(),
-                    fixed_damage: 0,
+                    title: "Ragin' Mad Strike".to_string(),
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -12114,7 +12114,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Thrash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 60 more damage. If tails, this Pokémon also does 20 damage to itself.".to_string()),
                 },
             ],
@@ -12193,7 +12193,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Snover".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Vigor Link".to_string(), effect: "If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less  Energy.".to_string() }),
+            ability: Some(Ability { title: "Vigor Link".to_string(), effect: "If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
@@ -12240,7 +12240,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
                     title: "Zone Smash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip a coin. If heads, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -12298,7 +12298,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pikachu".to_string()),
             hp: 90,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes -30 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
@@ -12388,7 +12388,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Moonblast".to_string(),
                     fixed_damage: 60,
-                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −30 damage.".to_string()),
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -30 damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
@@ -12513,7 +12513,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Fighting Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -12913,7 +12913,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Magneton".to_string()),
             hp: 140,
             energy_type: EnergyType::Metal,
-            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes -30 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
@@ -12939,7 +12939,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Iron Beam Breaker".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a [M] Pokémon, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -12961,7 +12961,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Defensive Unit".to_string(),
                     fixed_damage: 90,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -13002,7 +13002,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -13048,7 +13048,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Discard 2 random Energy from this Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Triumphant Light (A2a)".to_string(),
@@ -13207,7 +13207,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokemon's Retreat Cost is 1 less.".to_string() }),
+            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -13254,7 +13254,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
@@ -13290,7 +13290,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A2a075Adaman => Card::Trainer(TrainerCard {
             id: "A2a 075".to_string(),
             name: "Adaman".to_string(),
-            effect: "During your opponent's next turn, all of your [M] Pokémon take −20 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your [M] Pokémon take -20 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Triumphant Light (A2a)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -13370,7 +13370,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Fighting Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -13407,7 +13407,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokemon's Retreat Cost is 1 less.".to_string() }),
+            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -13428,7 +13428,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a  Energy from your Energy Zone and attach it to 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
@@ -13503,7 +13503,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Defensive Unit".to_string(),
                     fixed_damage: 90,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -13523,7 +13523,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
@@ -13559,7 +13559,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A2a090Adaman => Card::Trainer(TrainerCard {
             id: "A2a 090".to_string(),
             name: "Adaman".to_string(),
-            effect: "During your opponent's next turn, all of your [M] Pokémon take −20 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your [M] Pokémon take -20 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Triumphant Light (A2a)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -13571,7 +13571,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a  Energy from your Energy Zone and attach it to 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
@@ -13646,7 +13646,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Defensive Unit".to_string(),
                     fixed_damage: 90,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -13666,7 +13666,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
@@ -13687,13 +13687,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Triumphant Light (A2a)".to_string(),
         }),
         CardId::A2b001Weedle => Card::Pokemon(PokemonCard {
@@ -13771,7 +13771,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Guillotine Rush".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
@@ -13834,7 +13834,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Fighting Claws".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -14197,7 +14197,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Tumbling Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -14365,7 +14365,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Juggling".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 4 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -14423,7 +14423,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 150,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
+            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -14491,7 +14491,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Pummel".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -14512,7 +14512,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Power Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -14617,7 +14617,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Double Kick".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 2 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -14701,7 +14701,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -14806,7 +14806,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Tenacious Hammer".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -14827,7 +14827,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Terrific Thumping".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 80 more damage.".to_string()),
                 },
             ],
@@ -14890,7 +14890,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scintillating Surfing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -15174,7 +15174,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Fighting Claws".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.".to_string()),
                 },
             ],
@@ -15258,7 +15258,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scintillating Surfing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -15385,7 +15385,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 150,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
+            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -15432,7 +15432,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -15453,7 +15453,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Terrific Thumping".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 80 more damage.".to_string()),
                 },
             ],
@@ -15548,7 +15548,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -15569,7 +15569,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Terrific Thumping".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 80 more damage.".to_string()),
                 },
             ],
@@ -15606,7 +15606,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 150,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
+            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -15638,7 +15638,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b098Kakuna => Card::Pokemon(PokemonCard {
@@ -15659,7 +15659,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b099Charmander => Card::Pokemon(PokemonCard {
@@ -15680,7 +15680,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b100Charmeleon => Card::Pokemon(PokemonCard {
@@ -15701,7 +15701,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b101Wiglett => Card::Pokemon(PokemonCard {
@@ -15722,7 +15722,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b102Dondozo => Card::Pokemon(PokemonCard {
@@ -15743,7 +15743,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b103Pachirisu => Card::Pokemon(PokemonCard {
@@ -15764,7 +15764,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b104Riolu => Card::Pokemon(PokemonCard {
@@ -15785,7 +15785,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b105Varoom => Card::Pokemon(PokemonCard {
@@ -15806,7 +15806,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b106Revavroom => Card::Pokemon(PokemonCard {
@@ -15827,7 +15827,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b107BeedrillEx => Card::Pokemon(PokemonCard {
@@ -15848,7 +15848,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b108CharizardEx => Card::Pokemon(PokemonCard {
@@ -15875,7 +15875,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b109WugtrioEx => Card::Pokemon(PokemonCard {
@@ -15896,7 +15896,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b110LucarioEx => Card::Pokemon(PokemonCard {
@@ -15917,14 +15917,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
         }),
         CardId::A2b111PokeBall => Card::Trainer(TrainerCard {
             id: "A2b 111".to_string(),
             name: "Poké Ball".to_string(),
-            effect: "Put 1 random Basic Pokemon from your deck into your hand.".to_string(),
-            rarity: "Crown Rare".to_string(),
+            effect: "Put a random Basic Pokémon from your deck into your hand.".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Shining Revelry (A2b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
@@ -15982,7 +15982,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -16324,7 +16324,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Double Spin".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip 2 coins. This attack does 30 damage for each heads.".to_string()),
                 },
             ],
@@ -16345,7 +16345,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Three Kick Combo".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 3 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -16387,7 +16387,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,EnergyType::Grass,],
                     title: "First Impression".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -16492,7 +16492,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Burning Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.".to_string()),
                 },
             ],
@@ -16624,7 +16624,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Scar-Charged Smash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -16835,7 +16835,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Guard Press".to_string(),
                     fixed_damage: 50,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -16934,7 +16934,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Brionne".to_string()),
             hp: 140,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Melodious Healing".to_string(), effect: "Once during your turn, you may heal 30 damage from each of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Melodious Healing".to_string(), effect: "Once during your turn, you may heal 30 damage from each of your [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
@@ -17002,8 +17002,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
                     title: "School Storm".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi or Wishiwashi ex.".to_string()),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -17044,8 +17044,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Dangerous Claws".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("If your opponent's Active Pokémon is a Basic Pokemon, this attack does 60 more damage.".to_string()),
+                    fixed_damage: 60,
+                    effect: Some("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -17149,7 +17149,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -17338,7 +17338,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
                     title: "Electrosmash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -17548,7 +17548,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Spiteful Dance".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -17606,7 +17606,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Flower Shield".to_string(), effect: "Each of your Pokémon that has any  Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.".to_string() }),
+            ability: Some(Ability { title: "Flower Shield".to_string(), effect: "Each of your Pokémon that has any [P] Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
@@ -17738,7 +17738,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Stiffen".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −50 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -50 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
@@ -17753,7 +17753,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -18052,7 +18052,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Blood Fang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -18110,7 +18110,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 130,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all  Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all [F] Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
@@ -18215,7 +18215,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Alolan Meowth".to_string()),
             hp: 100,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Fur Coat".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Fur Coat".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
@@ -18283,7 +18283,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Unseen Claw".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is affected by a Special Condition, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -18367,7 +18367,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Spike Cannon".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 4 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -18409,7 +18409,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Iron Head".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("Flip a coin until you get tails. This attack does 70 damage for each heads.".to_string()),
                 },
             ],
@@ -18514,7 +18514,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Silver Cannon".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -18535,11 +18535,11 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Berserk".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If any of your Benched Pokémon have damage on them, this attack does 50 more damage.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
@@ -18560,7 +18560,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
@@ -18581,7 +18581,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
@@ -18602,7 +18602,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("During your opponent's next turn, this Pokémon takes +30 damage from attacks.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
@@ -18619,7 +18619,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Rising Lunge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin. If heads, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -18703,7 +18703,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Justified Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a [D] Pokémon, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -18870,7 +18870,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
-                    title: "Primate’s Trap".to_string(),
+                    title: "Primate's Trap".to_string(),
                     fixed_damage: 40,
                     effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.".to_string()),
                 },
@@ -19008,7 +19008,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A3155Lillie => Card::Trainer(TrainerCard {
             id: "A3 155".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -19067,7 +19067,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Three Kick Combo".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 3 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
@@ -19109,7 +19109,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Burning Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.".to_string()),
                 },
             ],
@@ -19272,7 +19272,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Flower Shield".to_string(), effect: "Each of your Pokémon that has any  Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.".to_string() }),
+            ability: Some(Ability { title: "Flower Shield".to_string(), effect: "Each of your Pokémon that has any [P] Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
@@ -19424,7 +19424,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Silver Cannon".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -19445,11 +19445,11 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Berserk".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If any of your Benched Pokémon have damage on them, this attack does 50 more damage.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
@@ -19583,7 +19583,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Scar-Charged Smash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -19625,8 +19625,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
                     title: "School Storm".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi or Wishiwashi ex.".to_string()),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -19646,7 +19646,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -19662,7 +19662,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -19683,7 +19683,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 130,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all  Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all [F] Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
@@ -19798,7 +19798,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A3197Lillie => Card::Trainer(TrainerCard {
             id: "A3 197".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -19869,7 +19869,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Scar-Charged Smash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -19911,8 +19911,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
                     title: "School Storm".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi or Wishiwashi ex.".to_string()),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -19932,7 +19932,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -19948,7 +19948,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -19969,7 +19969,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 130,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all  Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all [F] Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
@@ -20036,7 +20036,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A3209Lillie => Card::Trainer(TrainerCard {
             id: "A3 209".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "☆☆☆".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -20059,7 +20059,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3211Ivysaur => Card::Pokemon(PokemonCard {
@@ -20080,7 +20080,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3212Venusaur => Card::Pokemon(PokemonCard {
@@ -20101,7 +20101,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3213Exeggcute => Card::Pokemon(PokemonCard {
@@ -20122,7 +20122,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3214Exeggutor => Card::Pokemon(PokemonCard {
@@ -20137,13 +20137,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3215Squirtle => Card::Pokemon(PokemonCard {
@@ -20164,7 +20164,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3216Wartortle => Card::Pokemon(PokemonCard {
@@ -20185,7 +20185,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3217Blastoise => Card::Pokemon(PokemonCard {
@@ -20200,13 +20200,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3218Staryu => Card::Pokemon(PokemonCard {
@@ -20227,7 +20227,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3219Starmie => Card::Pokemon(PokemonCard {
@@ -20248,7 +20248,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3220Gastly => Card::Pokemon(PokemonCard {
@@ -20269,7 +20269,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3221Haunter => Card::Pokemon(PokemonCard {
@@ -20290,7 +20290,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3222Gengar => Card::Pokemon(PokemonCard {
@@ -20311,7 +20311,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3223Machop => Card::Pokemon(PokemonCard {
@@ -20332,7 +20332,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3224Machoke => Card::Pokemon(PokemonCard {
@@ -20353,7 +20353,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3225Machamp => Card::Pokemon(PokemonCard {
@@ -20368,13 +20368,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Power Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 50 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3226Cubone => Card::Pokemon(PokemonCard {
@@ -20395,7 +20395,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3227Marowak => Card::Pokemon(PokemonCard {
@@ -20416,7 +20416,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3228Jigglypuff => Card::Pokemon(PokemonCard {
@@ -20437,7 +20437,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3229Wigglytuff => Card::Pokemon(PokemonCard {
@@ -20458,7 +20458,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3230VenusaurEx => Card::Pokemon(PokemonCard {
@@ -20485,7 +20485,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3231ExeggutorEx => Card::Pokemon(PokemonCard {
@@ -20500,13 +20500,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Tropical Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3232BlastoiseEx => Card::Pokemon(PokemonCard {
@@ -20527,13 +20527,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Bazooka".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3233StarmieEx => Card::Pokemon(PokemonCard {
@@ -20554,7 +20554,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3234GengarEx => Card::Pokemon(PokemonCard {
@@ -20575,7 +20575,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3235MachampEx => Card::Pokemon(PokemonCard {
@@ -20596,7 +20596,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3236MarowakEx => Card::Pokemon(PokemonCard {
@@ -20611,13 +20611,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. This attack does 80 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3237WigglytuffEx => Card::Pokemon(PokemonCard {
@@ -20638,7 +20638,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3238LunalaEx => Card::Pokemon(PokemonCard {
@@ -20648,7 +20648,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -20659,7 +20659,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3239SolgaleoEx => Card::Pokemon(PokemonCard {
@@ -20680,7 +20680,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Celestial Guardians (A3)".to_string(),
         }),
         CardId::A3a001Petilil => Card::Pokemon(PokemonCard {
@@ -20737,7 +20737,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Fury Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip 3 coins. This attack does 10 damage for each heads.".to_string()),
                 },
             ],
@@ -20990,7 +20990,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Luxio".to_string()),
             hp: 130,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Intimidating Fang".to_string(), effect: "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon do −20 damage.".to_string() }),
+            ability: Some(Ability { title: "Intimidating Fang".to_string(), effect: "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon do -20 damage.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
@@ -21122,7 +21122,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
@@ -21274,7 +21274,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Trip Over".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -21399,8 +21399,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
-                    title: "Let’s Throw".to_string(),
-                    fixed_damage: 0,
+                    title: "Let's Throw".to_string(),
+                    fixed_damage: 40,
                     effect: Some("If Passimian is on your Bench, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -21616,7 +21616,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "2-Step".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -21679,7 +21679,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
                     title: "Triplet Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads.".to_string()),
                 },
             ],
@@ -21806,7 +21806,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
                     title: "Brass Rock".to_string(),
                     fixed_damage: 40,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -21863,7 +21863,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Herdier".to_string()),
             hp: 140,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Guard Dog Visage".to_string(), effect: "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1  more.".to_string() }),
+            ability: Some(Ability { title: "Guard Dog Visage".to_string(), effect: "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1 [C] more.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -21952,7 +21952,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Blow".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -21973,7 +21973,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Brave Buddies".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -22006,7 +22006,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A3a063BeastWall => Card::Trainer(TrainerCard {
             id: "A3a 063".to_string(),
             name: "Beast Wall".to_string(),
-            effect: "You can use this card only if your opponent hasn't gotten any points.During your opponent's next turn, all of your Ultra Beasts take −20 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "You can use this card only if your opponent hasn't gotten any points.During your opponent's next turn, all of your Ultra Beasts take -20 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
             trainer_card_type: TrainerType::Item,
@@ -22071,7 +22071,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Fury Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip 3 coins. This attack does 10 damage for each heads.".to_string()),
                 },
             ],
@@ -22155,7 +22155,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Brave Buddies".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -22299,7 +22299,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
                     title: "Triplet Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads.".to_string()),
                 },
             ],
@@ -22419,7 +22419,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
                     title: "Triplet Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads.".to_string()),
                 },
             ],
@@ -22473,7 +22473,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a090Arcanine => Card::Pokemon(PokemonCard {
@@ -22494,7 +22494,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a091Froakie => Card::Pokemon(PokemonCard {
@@ -22515,7 +22515,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a092Frogadier => Card::Pokemon(PokemonCard {
@@ -22536,7 +22536,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a093Greninja => Card::Pokemon(PokemonCard {
@@ -22557,7 +22557,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a094Jynx => Card::Pokemon(PokemonCard {
@@ -22572,13 +22572,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a095Pidgey => Card::Pokemon(PokemonCard {
@@ -22599,7 +22599,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a096Pidgeotto => Card::Pokemon(PokemonCard {
@@ -22620,7 +22620,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a097Pidgeot => Card::Pokemon(PokemonCard {
@@ -22630,7 +22630,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pidgeotto".to_string()),
             hp: 130,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            ability: Some(Ability { title: "Drive Off".to_string(), effect: "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -22641,7 +22641,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a098Aerodactyl => Card::Pokemon(PokemonCard {
@@ -22657,12 +22657,12 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Primal Wingbeat".to_string(),
                     fixed_damage: 0,
-                    effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon back into their deck.".to_string()),
+                    effect: Some("Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a099CelebiEx => Card::Pokemon(PokemonCard {
@@ -22677,13 +22677,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Powerful Bloom".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a100ArcanineEx => Card::Pokemon(PokemonCard {
@@ -22704,7 +22704,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a101AerodactylEx => Card::Pokemon(PokemonCard {
@@ -22725,7 +22725,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a102PidgeotEx => Card::Pokemon(PokemonCard {
@@ -22740,13 +22740,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scattering Cyclone".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3a103Nihilego => Card::Pokemon(PokemonCard {
@@ -22767,7 +22767,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Extradimensional Crisis (A3a)".to_string(),
         }),
         CardId::A3b001Tropius => Card::Pokemon(PokemonCard {
@@ -22803,7 +22803,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Leaf Blast".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 20 more damage for each [G] Energy attached to this Pokémon.".to_string()),
                 },
             ],
@@ -22908,7 +22908,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -22945,7 +22945,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 150,
             energy_type: EnergyType::Fire,
-            ability: Some(Ability { title: "Ability Combust".to_string(), effect: "Once during your turn, you may attach a  Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Combust".to_string(), effect: "Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
@@ -23034,7 +23034,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Darkest Lariat".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip 2 coins. This attack does 100 damage for each heads.".to_string()),
                 },
             ],
@@ -23139,7 +23139,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -23160,7 +23160,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -23181,7 +23181,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
                     title: "Double Spin".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. This attack does 80 damage for each heads.".to_string()),
                 },
             ],
@@ -23265,7 +23265,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
                 Attack {
@@ -23292,7 +23292,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
                     title: "Beginning Bolt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon evolved during this turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -23355,7 +23355,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Energy Crush".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.".to_string()),
                 },
             ],
@@ -23418,7 +23418,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -23439,7 +23439,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -23460,7 +23460,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Evoharmony".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("This attack does 30 more damage for each Evolution Pokémon on your Bench.".to_string()),
                 },
             ],
@@ -23476,7 +23476,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Ability Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
+            ability: Some(Ability { title: "Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
@@ -23523,7 +23523,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -23544,7 +23544,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Overload".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.".to_string()),
                 },
             ],
@@ -23842,7 +23842,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -23863,7 +23863,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -23884,7 +23884,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -23905,7 +23905,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Flip a coin. If tails, this attack does nothing. If heads, your opponent's Active Pokémon is now Paralyzed.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -23938,7 +23938,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Veevee ’volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -23959,7 +23959,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 160,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
+            ability: Some(Ability { title: "Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -23985,7 +23985,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Double Hit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -24001,7 +24001,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Aipom".to_string()),
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Catching Tail".to_string(), effect: "Once during your turn, you may put a random Pokémon Tool card from your deck into your hand.".to_string() }),
+            ability: Some(Ability { title: "Catching Tail".to_string(), effect: "Once during your turn, you may put a random Pokémon Tool card from your deck into your hand.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -24048,7 +24048,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Do the Wave".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
@@ -24132,7 +24132,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Enhanced Fang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -24144,7 +24144,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A3b066EeveeBag => Card::Trainer(TrainerCard {
             id: "A3b 066".to_string(),
             name: "Eevee Bag".to_string(),
-            effect: "Choose 1:① During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.② Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
+            effect: "Choose 1:During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
             trainer_card_type: TrainerType::Item,
@@ -24185,7 +24185,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Leaf Blast".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 20 more damage for each [G] Energy attached to this Pokémon.".to_string()),
                 },
             ],
@@ -24269,7 +24269,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
                     title: "Beginning Bolt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon evolved during this turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -24290,7 +24290,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Energy Crush".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.".to_string()),
                 },
             ],
@@ -24311,7 +24311,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Evoharmony".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("This attack does 30 more damage for each Evolution Pokémon on your Bench.".to_string()),
                 },
             ],
@@ -24369,7 +24369,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 150,
             energy_type: EnergyType::Fire,
-            ability: Some(Ability { title: "Ability Combust".to_string(), effect: "Once during your turn, you may attach a  Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Combust".to_string(), effect: "Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
@@ -24395,7 +24395,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
                 Attack {
@@ -24417,7 +24417,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Ability Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
+            ability: Some(Ability { title: "Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
@@ -24447,7 +24447,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -24459,7 +24459,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Veevee ’volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -24480,7 +24480,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 160,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
+            ability: Some(Ability { title: "Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -24517,7 +24517,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 150,
             energy_type: EnergyType::Fire,
-            ability: Some(Ability { title: "Ability Combust".to_string(), effect: "Once during your turn, you may attach a  Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Combust".to_string(), effect: "Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
@@ -24543,7 +24543,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
                 Attack {
@@ -24565,7 +24565,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Ability Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
+            ability: Some(Ability { title: "Happy Ribbon".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
@@ -24595,7 +24595,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
@@ -24607,7 +24607,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 160,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
+            ability: Some(Ability { title: "Full-Mouth Manner".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -24628,7 +24628,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Ability Veevee ’volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -24654,13 +24654,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Guillotine Rush".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b094Lapras => Card::Pokemon(PokemonCard {
@@ -24675,13 +24675,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has at least 3 extra [W] Energy attached, this attack does 70 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b095Voltorb => Card::Pokemon(PokemonCard {
@@ -24702,7 +24702,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b096Electrode => Card::Pokemon(PokemonCard {
@@ -24723,7 +24723,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b097Ralts => Card::Pokemon(PokemonCard {
@@ -24744,7 +24744,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b098Kirlia => Card::Pokemon(PokemonCard {
@@ -24765,7 +24765,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b099Gardevoir => Card::Pokemon(PokemonCard {
@@ -24775,7 +24775,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Kirlia".to_string()),
             hp: 110,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Ability Psy Shadow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to the  Pokémon in the Active Spot.".to_string() }),
+            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -24786,7 +24786,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b100Ekans => Card::Pokemon(PokemonCard {
@@ -24807,7 +24807,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b101Arbok => Card::Pokemon(PokemonCard {
@@ -24828,7 +24828,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b102Farfetchd => Card::Pokemon(PokemonCard {
@@ -24849,7 +24849,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b103MoltresEx => Card::Pokemon(PokemonCard {
@@ -24876,7 +24876,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b104ArticunoEx => Card::Pokemon(PokemonCard {
@@ -24903,7 +24903,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b105ZapdosEx => Card::Pokemon(PokemonCard {
@@ -24924,13 +24924,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thundering Hurricane".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b106GalladeEx => Card::Pokemon(PokemonCard {
@@ -24945,20 +24945,20 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Energized Blade".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
         }),
         CardId::A3b107EeveeBag => Card::Trainer(TrainerCard {
             id: "A3b 107".to_string(),
             name: "Eevee Bag".to_string(),
-            effect: "Choose 1:① During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.② Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
-            rarity: "Crown Rare".to_string(),
+            effect: "Choose 1:During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Eevee Grove (A3b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
@@ -25016,7 +25016,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Petal Dance".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused.".to_string()),
                 },
             ],
@@ -25058,7 +25058,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,EnergyType::Colorless,],
                     title: "Grass Knot".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.".to_string()),
                 },
             ],
@@ -25389,12 +25389,12 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 120,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Triple Slap".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 3 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -25415,7 +25415,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Single Lunge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has no damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -25431,12 +25431,12 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 50,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less  Energy.".to_string() }),
+            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less [G] Energy.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -25629,7 +25629,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -25730,7 +25730,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
                     title: "Roasting Heat".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon is Burned, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -25898,7 +25898,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Wild Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("You may discard any number of your Benched [W] Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.".to_string()),
                 },
             ],
@@ -25998,7 +25998,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Marill".to_string()),
             hp: 110,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes −30 damage from attacks from  or  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thick Fat".to_string(), effect: "This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -26193,7 +26193,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Cure Stream".to_string(),
                     fixed_damage: 70,
-                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
@@ -26343,7 +26343,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -26402,7 +26402,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thunder Punch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.".to_string()),
                 },
             ],
@@ -26427,7 +26427,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("This attack does 20 damage to 1 of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -26507,7 +26507,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
@@ -26528,11 +26528,11 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![],
                     title: "Shivery Wave".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -26574,7 +26574,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -26592,7 +26592,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Charm".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
@@ -26712,7 +26712,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 60,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "GUARD".to_string(), effect: "This Ability works if you have any Unown in play with an Ability other than GUARD. All of your Pokémon take −10 damage from attacks from your opponent's Pokémon.".to_string() }),
+            ability: Some(Ability { title: "GUARD".to_string(), effect: "This Ability works if you have any Unown in play with an Ability other than GUARD. All of your Pokémon take -10 damage from attacks from your opponent's Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -26759,7 +26759,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Reply Strongly".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -27053,7 +27053,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Gigantic Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -27078,7 +27078,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -27138,7 +27138,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Guard Press".to_string(),
                     fixed_damage: 20,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −30 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -30 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
@@ -27158,7 +27158,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Dual Chop".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip 2 coins. This attack does 30 damage for each heads.".to_string()),
                 },
             ],
@@ -27447,7 +27447,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pupitar".to_string()),
             hp: 160,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Energy Plunder".to_string(), effect: "Once during your turn, you may move all  Energy from each of your Pokémon to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Energy Plunder".to_string(), effect: "Once during your turn, you may move all [D] Energy from each of your Pokémon to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -27536,7 +27536,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Gale Thrust".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -27558,7 +27558,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Steel Wing".to_string(),
                     fixed_damage: 70,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -27683,7 +27683,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Peck Bugs".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon is a [G] Pokémon, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -27725,7 +27725,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Energy Blow".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 more damage for each Energy attached to this Pokémon.".to_string()),
                 },
             ],
@@ -27746,7 +27746,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Cross-Cut".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -28019,7 +28019,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Swing Around".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 2 coins. This attack does 20 more damage for each heads.".to_string()),
                 },
             ],
@@ -28040,7 +28040,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Enhanced Horns".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -28103,7 +28103,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Continuous Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("Flip a coin until you get tails. This attack does 70 damage for each heads.".to_string()),
                 },
             ],
@@ -28131,7 +28131,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A4153SteelApron => Card::Trainer(TrainerCard {
             id: "A4 153".to_string(),
             name: "Steel Apron".to_string(),
-            effect: "The [M] Pokémon this card is attached to takes −10 damage from attacks from your opponent's Pokémon, recovers from all Special Conditions, and can't be affected by any Special Conditions.".to_string(),
+            effect: "The [M] Pokémon this card is attached to takes -10 damage from attacks from your opponent's Pokémon, recovers from all Special Conditions, and can't be affected by any Special Conditions.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
             trainer_card_type: TrainerType::Tool,
@@ -28187,7 +28187,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A4160Jasmine => Card::Trainer(TrainerCard {
             id: "A4 160".to_string(),
             name: "Jasmine".to_string(),
-            effect: "During your opponent's next turn, all of your Steelix and Skarmory ex take −50 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your Steelix and Skarmory ex take -50 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -28233,7 +28233,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Petal Dance".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused.".to_string()),
                 },
             ],
@@ -28254,7 +28254,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Single Lunge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has no damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -28300,7 +28300,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "☆".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -28405,7 +28405,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "☆".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
@@ -28422,7 +28422,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thunder Punch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.".to_string()),
                 },
             ],
@@ -28444,7 +28444,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Charm".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
@@ -28485,7 +28485,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Reply Strongly".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -28564,7 +28564,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pupitar".to_string()),
             hp: 160,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Energy Plunder".to_string(), effect: "Once during your turn, you may move all  Energy from each of your Pokémon to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Energy Plunder".to_string(), effect: "Once during your turn, you may move all [D] Energy from each of your Pokémon to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -28590,7 +28590,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Gale Thrust".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -28653,7 +28653,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Enhanced Horns".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -28695,7 +28695,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Energy Blow".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 more damage for each Energy attached to this Pokémon.".to_string()),
                 },
             ],
@@ -28711,12 +28711,12 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 120,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Triple Slap".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 3 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -28821,7 +28821,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Gigantic Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -28885,7 +28885,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Steel Wing".to_string(),
                     fixed_damage: 70,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -28949,7 +28949,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
         CardId::A4200Jasmine => Card::Trainer(TrainerCard {
             id: "A4 200".to_string(),
             name: "Jasmine".to_string(),
-            effect: "During your opponent's next turn, all of your Steelix and Skarmory ex take −50 damage from attacks from your opponent's Pokémon.".to_string(),
+            effect: "During your opponent's next turn, all of your Steelix and Skarmory ex take -50 damage from attacks from your opponent's Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
             trainer_card_type: TrainerType::Supporter,
@@ -28969,12 +28969,12 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 120,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Triple Slap".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 3 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
@@ -29058,7 +29058,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Gigantic Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -29122,7 +29122,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Steel Wing".to_string(),
                     fixed_damage: 70,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -29190,7 +29190,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4213Flareon => Card::Pokemon(PokemonCard {
@@ -29211,7 +29211,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4214Magikarp => Card::Pokemon(PokemonCard {
@@ -29232,7 +29232,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4215Gyarados => Card::Pokemon(PokemonCard {
@@ -29247,13 +29247,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Wild Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("You may discard any number of your Benched [W] Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4216Vaporeon => Card::Pokemon(PokemonCard {
@@ -29274,7 +29274,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4217Magnemite => Card::Pokemon(PokemonCard {
@@ -29295,7 +29295,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4218Magneton => Card::Pokemon(PokemonCard {
@@ -29305,7 +29305,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Magnemite".to_string()),
             hp: 80,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -29316,7 +29316,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4219Jolteon => Card::Pokemon(PokemonCard {
@@ -29331,13 +29331,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,],
                     title: "Beginning Bolt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon evolved during this turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4220Misdreavus => Card::Pokemon(PokemonCard {
@@ -29358,7 +29358,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4221Mankey => Card::Pokemon(PokemonCard {
@@ -29379,7 +29379,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4222Primeape => Card::Pokemon(PokemonCard {
@@ -29394,13 +29394,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Fight Back".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4223NidoranF => Card::Pokemon(PokemonCard {
@@ -29421,7 +29421,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4224Nidorina => Card::Pokemon(PokemonCard {
@@ -29442,7 +29442,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4225Nidoqueen => Card::Pokemon(PokemonCard {
@@ -29457,13 +29457,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Lovestrike".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 50 more damage for each of your Benched Nidoking.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4226NidoranM => Card::Pokemon(PokemonCard {
@@ -29484,7 +29484,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4227Nidorino => Card::Pokemon(PokemonCard {
@@ -29505,7 +29505,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4228Nidoking => Card::Pokemon(PokemonCard {
@@ -29526,7 +29526,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4229Sneasel => Card::Pokemon(PokemonCard {
@@ -29547,7 +29547,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4230Lickitung => Card::Pokemon(PokemonCard {
@@ -29568,7 +29568,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4231Eevee => Card::Pokemon(PokemonCard {
@@ -29589,7 +29589,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4232YanmegaEx => Card::Pokemon(PokemonCard {
@@ -29610,7 +29610,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4233LeafeonEx => Card::Pokemon(PokemonCard {
@@ -29620,7 +29620,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a  Energy from your Energy Zone and attach it to 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
@@ -29631,7 +29631,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4234GyaradosEx => Card::Pokemon(PokemonCard {
@@ -29652,7 +29652,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4235GlaceonEx => Card::Pokemon(PokemonCard {
@@ -29673,7 +29673,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4236PachirisuEx => Card::Pokemon(PokemonCard {
@@ -29688,13 +29688,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Sparking Gadget".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4237MismagiusEx => Card::Pokemon(PokemonCard {
@@ -29715,7 +29715,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4238WeavileEx => Card::Pokemon(PokemonCard {
@@ -29730,13 +29730,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Scratching Nails".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4239LickilickyEx => Card::Pokemon(PokemonCard {
@@ -29751,13 +29751,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Licking Fury".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4240HoOhEx => Card::Pokemon(PokemonCard {
@@ -29778,7 +29778,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4241LugiaEx => Card::Pokemon(PokemonCard {
@@ -29799,7 +29799,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Wisdom of Sea and Sky (A4)".to_string(),
         }),
         CardId::A4a001Hoppip => Card::Pokemon(PokemonCard {
@@ -29898,7 +29898,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Trip Over".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -30003,7 +30003,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
                     title: "Blazing Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -30171,7 +30171,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Litter".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.".to_string()),
                 },
             ],
@@ -30213,7 +30213,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Crystal Waltz".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).".to_string()),
                 },
             ],
@@ -30250,7 +30250,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Feebas".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Healing Ripples".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Healing Ripples".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
@@ -30280,7 +30280,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
@@ -30549,7 +30549,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Crossing Flights".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If Latios is on your Bench, this attack does 20 more damage.".to_string()),
                 },
             ],
@@ -30654,7 +30654,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Cliff Crumbler".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Discard the top card of your deck. If that card is a [F] Pokémon, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -30675,7 +30675,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Hydro Knuckle".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -30712,7 +30712,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Phanpy".to_string()),
             hp: 120,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Exoskeleton".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Exoskeleton".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
@@ -30780,7 +30780,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Stone Edge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin. If heads, this attack does 50 more damage.".to_string()),
                 },
             ],
@@ -30801,7 +30801,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
                     title: "Fateful Fang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If your opponent's Active Pokémon is Zangoose, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -30948,11 +30948,11 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Dragon Arcana".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
@@ -31036,7 +31036,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
@@ -31120,7 +31120,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Heal 50 damage from 1 of your Benched Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
@@ -31179,7 +31179,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Attack".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
@@ -31235,7 +31235,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Feebas".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Healing Ripples".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Healing Ripples".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
@@ -31349,7 +31349,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Heal 50 damage from 1 of your Benched Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
             rarity: "☆".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
@@ -31387,7 +31387,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
                     title: "Blazing Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -31408,7 +31408,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Crystal Waltz".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).".to_string()),
                 },
             ],
@@ -31450,7 +31450,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Hydro Knuckle".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -31516,7 +31516,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
                     title: "Blazing Beatdown".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
@@ -31558,7 +31558,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Hydro Knuckle".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
             ],
@@ -31579,7 +31579,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,],
                     title: "Crystal Waltz".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).".to_string()),
                 },
             ],
@@ -31606,7 +31606,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a092Monferno => Card::Pokemon(PokemonCard {
@@ -31627,7 +31627,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a093Psyduck => Card::Pokemon(PokemonCard {
@@ -31648,7 +31648,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a094Golduck => Card::Pokemon(PokemonCard {
@@ -31669,7 +31669,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a095Krabby => Card::Pokemon(PokemonCard {
@@ -31690,7 +31690,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a096Kingler => Card::Pokemon(PokemonCard {
@@ -31705,13 +31705,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "KO Crab".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. If both of them are heads, this attack does 80 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a097Pyukumuku => Card::Pokemon(PokemonCard {
@@ -31732,7 +31732,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a098Gible => Card::Pokemon(PokemonCard {
@@ -31753,7 +31753,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a099Gabite => Card::Pokemon(PokemonCard {
@@ -31774,7 +31774,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a100PaldeanWooper => Card::Pokemon(PokemonCard {
@@ -31795,7 +31795,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆".to_string(),
+            rarity: "*".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a101InfernapeEx => Card::Pokemon(PokemonCard {
@@ -31816,7 +31816,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a102MewEx => Card::Pokemon(PokemonCard {
@@ -31843,7 +31843,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a103GarchompEx => Card::Pokemon(PokemonCard {
@@ -31870,7 +31870,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a104PaldeanClodsireEx => Card::Pokemon(PokemonCard {
@@ -31885,13 +31885,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
+            rarity: "**".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4a105Mantyke => Card::Pokemon(PokemonCard {
@@ -31910,9 +31910,9 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![],
-            rarity: "Crown Rare".to_string(),
+            rarity: "♛".to_string(),
             booster_pack: "Secluded Springs (A4a)".to_string(),
         }),
         CardId::A4b001Bulbasaur => Card::Pokemon(PokemonCard {
@@ -31934,7 +31934,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b002Bulbasaur => Card::Pokemon(PokemonCard {
             id: "A4b 002".to_string(),
@@ -31955,7 +31955,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b003Ivysaur => Card::Pokemon(PokemonCard {
             id: "A4b 003".to_string(),
@@ -31976,7 +31976,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b004Ivysaur => Card::Pokemon(PokemonCard {
             id: "A4b 004".to_string(),
@@ -31997,7 +31997,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b005VenusaurEx => Card::Pokemon(PokemonCard {
             id: "A4b 005".to_string(),
@@ -32024,7 +32024,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b006Weedle => Card::Pokemon(PokemonCard {
             id: "A4b 006".to_string(),
@@ -32045,7 +32045,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b007Weedle => Card::Pokemon(PokemonCard {
             id: "A4b 007".to_string(),
@@ -32066,7 +32066,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b008Kakuna => Card::Pokemon(PokemonCard {
             id: "A4b 008".to_string(),
@@ -32087,7 +32087,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b009Kakuna => Card::Pokemon(PokemonCard {
             id: "A4b 009".to_string(),
@@ -32108,7 +32108,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b010BeedrillEx => Card::Pokemon(PokemonCard {
             id: "A4b 010".to_string(),
@@ -32129,7 +32129,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b011Exeggcute => Card::Pokemon(PokemonCard {
             id: "A4b 011".to_string(),
@@ -32150,7 +32150,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b012Exeggcute => Card::Pokemon(PokemonCard {
             id: "A4b 012".to_string(),
@@ -32171,7 +32171,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b013ExeggutorEx => Card::Pokemon(PokemonCard {
             id: "A4b 013".to_string(),
@@ -32185,14 +32185,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Tropical Swing".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("Flip a coin. If heads, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b014Hoppip => Card::Pokemon(PokemonCard {
             id: "A4b 014".to_string(),
@@ -32213,7 +32213,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b015Hoppip => Card::Pokemon(PokemonCard {
             id: "A4b 015".to_string(),
@@ -32234,7 +32234,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b016Skiploom => Card::Pokemon(PokemonCard {
             id: "A4b 016".to_string(),
@@ -32255,7 +32255,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b017Skiploom => Card::Pokemon(PokemonCard {
             id: "A4b 017".to_string(),
@@ -32276,7 +32276,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b018Jumpluff => Card::Pokemon(PokemonCard {
             id: "A4b 018".to_string(),
@@ -32297,7 +32297,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b019Jumpluff => Card::Pokemon(PokemonCard {
             id: "A4b 019".to_string(),
@@ -32318,7 +32318,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b020Yanma => Card::Pokemon(PokemonCard {
             id: "A4b 020".to_string(),
@@ -32339,7 +32339,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b021Yanma => Card::Pokemon(PokemonCard {
             id: "A4b 021".to_string(),
@@ -32360,7 +32360,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b022YanmegaEx => Card::Pokemon(PokemonCard {
             id: "A4b 022".to_string(),
@@ -32381,7 +32381,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b023ShuckleEx => Card::Pokemon(PokemonCard {
             id: "A4b 023".to_string(),
@@ -32390,19 +32390,19 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 120,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes −20 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Solid Shell".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Triple Slap".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 3 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b024CelebiEx => Card::Pokemon(PokemonCard {
             id: "A4b 024".to_string(),
@@ -32416,14 +32416,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
                     title: "Powerful Bloom".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b025Cherubi => Card::Pokemon(PokemonCard {
             id: "A4b 025".to_string(),
@@ -32432,19 +32432,19 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 50,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less  Energy.".to_string() }),
+            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less [G] Energy.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b026Cherubi => Card::Pokemon(PokemonCard {
             id: "A4b 026".to_string(),
@@ -32453,19 +32453,19 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 50,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less  Energy.".to_string() }),
+            ability: Some(Ability { title: "En-fruits-iastic".to_string(), effect: "If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less [G] Energy.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b027Cherrim => Card::Pokemon(PokemonCard {
             id: "A4b 027".to_string(),
@@ -32486,7 +32486,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b028Cherrim => Card::Pokemon(PokemonCard {
             id: "A4b 028".to_string(),
@@ -32507,7 +32507,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b029LeafeonEx => Card::Pokemon(PokemonCard {
             id: "A4b 029".to_string(),
@@ -32516,7 +32516,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 140,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a  Energy from your Energy Zone and attach it to 1 of your  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Forest Breath".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,],
@@ -32528,7 +32528,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b030Shaymin => Card::Pokemon(PokemonCard {
             id: "A4b 030".to_string(),
@@ -32549,7 +32549,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b031Shaymin => Card::Pokemon(PokemonCard {
             id: "A4b 031".to_string(),
@@ -32570,7 +32570,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b032Snivy => Card::Pokemon(PokemonCard {
             id: "A4b 032".to_string(),
@@ -32591,7 +32591,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b033Snivy => Card::Pokemon(PokemonCard {
             id: "A4b 033".to_string(),
@@ -32612,7 +32612,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b034Servine => Card::Pokemon(PokemonCard {
             id: "A4b 034".to_string(),
@@ -32633,7 +32633,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b035Servine => Card::Pokemon(PokemonCard {
             id: "A4b 035".to_string(),
@@ -32654,7 +32654,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b036Serperior => Card::Pokemon(PokemonCard {
             id: "A4b 036".to_string(),
@@ -32663,7 +32663,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Servine".to_string()),
             hp: 110,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each  Energy attached to your  Pokémon provides 2  Energy. This effect doesn't stack.".to_string() }),
+            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -32675,7 +32675,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b037Serperior => Card::Pokemon(PokemonCard {
             id: "A4b 037".to_string(),
@@ -32684,7 +32684,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Servine".to_string()),
             hp: 110,
             energy_type: EnergyType::Grass,
-            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each  Energy attached to your  Pokémon provides 2  Energy. This effect doesn't stack.".to_string() }),
+            ability: Some(Ability { title: "Jungle Totem".to_string(), effect: "Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -32696,7 +32696,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b038Rowlet => Card::Pokemon(PokemonCard {
             id: "A4b 038".to_string(),
@@ -32717,7 +32717,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b039Rowlet => Card::Pokemon(PokemonCard {
             id: "A4b 039".to_string(),
@@ -32738,7 +32738,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b040Dartrix => Card::Pokemon(PokemonCard {
             id: "A4b 040".to_string(),
@@ -32759,7 +32759,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b041Dartrix => Card::Pokemon(PokemonCard {
             id: "A4b 041".to_string(),
@@ -32780,7 +32780,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b042DecidueyeEx => Card::Pokemon(PokemonCard {
             id: "A4b 042".to_string(),
@@ -32807,7 +32807,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b043DhelmiseEx => Card::Pokemon(PokemonCard {
             id: "A4b 043".to_string(),
@@ -32828,7 +32828,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b044BuzzwoleEx => Card::Pokemon(PokemonCard {
             id: "A4b 044".to_string(),
@@ -32855,7 +32855,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b045Pheromosa => Card::Pokemon(PokemonCard {
             id: "A4b 045".to_string(),
@@ -32876,7 +32876,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b046Pheromosa => Card::Pokemon(PokemonCard {
             id: "A4b 046".to_string(),
@@ -32897,7 +32897,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b047Kartana => Card::Pokemon(PokemonCard {
             id: "A4b 047".to_string(),
@@ -32918,7 +32918,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b048Kartana => Card::Pokemon(PokemonCard {
             id: "A4b 048".to_string(),
@@ -32939,7 +32939,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b049Sprigatito => Card::Pokemon(PokemonCard {
             id: "A4b 049".to_string(),
@@ -32960,7 +32960,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b050Sprigatito => Card::Pokemon(PokemonCard {
             id: "A4b 050".to_string(),
@@ -32981,7 +32981,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b051Floragato => Card::Pokemon(PokemonCard {
             id: "A4b 051".to_string(),
@@ -33002,7 +33002,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b052Floragato => Card::Pokemon(PokemonCard {
             id: "A4b 052".to_string(),
@@ -33023,7 +33023,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b053Meowscarada => Card::Pokemon(PokemonCard {
             id: "A4b 053".to_string(),
@@ -33037,14 +33037,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Fighting Claws".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b054Meowscarada => Card::Pokemon(PokemonCard {
             id: "A4b 054".to_string(),
@@ -33058,14 +33058,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
                     title: "Fighting Claws".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b055Charmander => Card::Pokemon(PokemonCard {
             id: "A4b 055".to_string(),
@@ -33086,7 +33086,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b056Charmander => Card::Pokemon(PokemonCard {
             id: "A4b 056".to_string(),
@@ -33107,7 +33107,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b057Charmeleon => Card::Pokemon(PokemonCard {
             id: "A4b 057".to_string(),
@@ -33128,7 +33128,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b058Charmeleon => Card::Pokemon(PokemonCard {
             id: "A4b 058".to_string(),
@@ -33149,7 +33149,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b059CharizardEx => Card::Pokemon(PokemonCard {
             id: "A4b 059".to_string(),
@@ -33176,7 +33176,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b060CharizardEx => Card::Pokemon(PokemonCard {
             id: "A4b 060".to_string(),
@@ -33203,7 +33203,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b061Growlithe => Card::Pokemon(PokemonCard {
             id: "A4b 061".to_string(),
@@ -33224,7 +33224,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b062Growlithe => Card::Pokemon(PokemonCard {
             id: "A4b 062".to_string(),
@@ -33245,7 +33245,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b063ArcanineEx => Card::Pokemon(PokemonCard {
             id: "A4b 063".to_string(),
@@ -33266,7 +33266,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b064Flareon => Card::Pokemon(PokemonCard {
             id: "A4b 064".to_string(),
@@ -33287,7 +33287,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b065Flareon => Card::Pokemon(PokemonCard {
             id: "A4b 065".to_string(),
@@ -33308,7 +33308,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b066FlareonEx => Card::Pokemon(PokemonCard {
             id: "A4b 066".to_string(),
@@ -33317,7 +33317,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 150,
             energy_type: EnergyType::Fire,
-            ability: Some(Ability { title: "Combust".to_string(), effect: "Once during your turn, you may attach a  Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Combust".to_string(), effect: "Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
@@ -33329,7 +33329,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b067MoltresEx => Card::Pokemon(PokemonCard {
             id: "A4b 067".to_string(),
@@ -33356,7 +33356,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b068HoOhEx => Card::Pokemon(PokemonCard {
             id: "A4b 068".to_string(),
@@ -33377,7 +33377,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b069Torkoal => Card::Pokemon(PokemonCard {
             id: "A4b 069".to_string(),
@@ -33398,7 +33398,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b070Torkoal => Card::Pokemon(PokemonCard {
             id: "A4b 070".to_string(),
@@ -33419,7 +33419,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b071Chimchar => Card::Pokemon(PokemonCard {
             id: "A4b 071".to_string(),
@@ -33440,7 +33440,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b072Chimchar => Card::Pokemon(PokemonCard {
             id: "A4b 072".to_string(),
@@ -33461,7 +33461,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b073Monferno => Card::Pokemon(PokemonCard {
             id: "A4b 073".to_string(),
@@ -33482,7 +33482,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b074Monferno => Card::Pokemon(PokemonCard {
             id: "A4b 074".to_string(),
@@ -33503,7 +33503,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b075InfernapeEx => Card::Pokemon(PokemonCard {
             id: "A4b 075".to_string(),
@@ -33524,7 +33524,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b076Heatran => Card::Pokemon(PokemonCard {
             id: "A4b 076".to_string(),
@@ -33537,15 +33537,15 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
-                    title: "Ragin’ Mad Strike".to_string(),
-                    fixed_damage: 0,
+                    title: "Ragin' Mad Strike".to_string(),
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b077Heatran => Card::Pokemon(PokemonCard {
             id: "A4b 077".to_string(),
@@ -33558,15 +33558,15 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
-                    title: "Ragin’ Mad Strike".to_string(),
-                    fixed_damage: 0,
+                    title: "Ragin' Mad Strike".to_string(),
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b078Litten => Card::Pokemon(PokemonCard {
             id: "A4b 078".to_string(),
@@ -33587,7 +33587,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b079Litten => Card::Pokemon(PokemonCard {
             id: "A4b 079".to_string(),
@@ -33608,7 +33608,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b080Torracat => Card::Pokemon(PokemonCard {
             id: "A4b 080".to_string(),
@@ -33629,7 +33629,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b081Torracat => Card::Pokemon(PokemonCard {
             id: "A4b 081".to_string(),
@@ -33650,7 +33650,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b082IncineroarEx => Card::Pokemon(PokemonCard {
             id: "A4b 082".to_string(),
@@ -33670,14 +33670,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
                     title: "Scar-Charged Smash".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b083Squirtle => Card::Pokemon(PokemonCard {
             id: "A4b 083".to_string(),
@@ -33698,7 +33698,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b084Squirtle => Card::Pokemon(PokemonCard {
             id: "A4b 084".to_string(),
@@ -33719,7 +33719,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b085Wartortle => Card::Pokemon(PokemonCard {
             id: "A4b 085".to_string(),
@@ -33740,7 +33740,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b086Wartortle => Card::Pokemon(PokemonCard {
             id: "A4b 086".to_string(),
@@ -33761,7 +33761,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b087BlastoiseEx => Card::Pokemon(PokemonCard {
             id: "A4b 087".to_string(),
@@ -33781,14 +33781,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Bazooka".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b088Horsea => Card::Pokemon(PokemonCard {
             id: "A4b 088".to_string(),
@@ -33809,7 +33809,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b089Horsea => Card::Pokemon(PokemonCard {
             id: "A4b 089".to_string(),
@@ -33830,7 +33830,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b090Seadra => Card::Pokemon(PokemonCard {
             id: "A4b 090".to_string(),
@@ -33851,7 +33851,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b091Seadra => Card::Pokemon(PokemonCard {
             id: "A4b 091".to_string(),
@@ -33872,7 +33872,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b092KingdraEx => Card::Pokemon(PokemonCard {
             id: "A4b 092".to_string(),
@@ -33893,7 +33893,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b093Staryu => Card::Pokemon(PokemonCard {
             id: "A4b 093".to_string(),
@@ -33914,7 +33914,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b094Staryu => Card::Pokemon(PokemonCard {
             id: "A4b 094".to_string(),
@@ -33935,7 +33935,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b095StarmieEx => Card::Pokemon(PokemonCard {
             id: "A4b 095".to_string(),
@@ -33956,7 +33956,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b096Magikarp => Card::Pokemon(PokemonCard {
             id: "A4b 096".to_string(),
@@ -33977,7 +33977,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b097Magikarp => Card::Pokemon(PokemonCard {
             id: "A4b 097".to_string(),
@@ -33998,7 +33998,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b098GyaradosEx => Card::Pokemon(PokemonCard {
             id: "A4b 098".to_string(),
@@ -34019,7 +34019,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b099Vaporeon => Card::Pokemon(PokemonCard {
             id: "A4b 099".to_string(),
@@ -34028,7 +34028,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a  Energy from 1 of your Benched  Pokémon to your Active  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -34040,7 +34040,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b100Vaporeon => Card::Pokemon(PokemonCard {
             id: "A4b 100".to_string(),
@@ -34049,7 +34049,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Eevee".to_string()),
             hp: 120,
             energy_type: EnergyType::Water,
-            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a  Energy from 1 of your Benched  Pokémon to your Active  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Wash Out".to_string(), effect: "As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
@@ -34061,7 +34061,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b101ArticunoEx => Card::Pokemon(PokemonCard {
             id: "A4b 101".to_string(),
@@ -34088,7 +34088,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b102Corphish => Card::Pokemon(PokemonCard {
             id: "A4b 102".to_string(),
@@ -34109,7 +34109,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b103Corphish => Card::Pokemon(PokemonCard {
             id: "A4b 103".to_string(),
@@ -34130,7 +34130,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b104Crawdaunt => Card::Pokemon(PokemonCard {
             id: "A4b 104".to_string(),
@@ -34151,7 +34151,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b105Crawdaunt => Card::Pokemon(PokemonCard {
             id: "A4b 105".to_string(),
@@ -34172,7 +34172,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b106GlaceonEx => Card::Pokemon(PokemonCard {
             id: "A4b 106".to_string(),
@@ -34193,7 +34193,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b107PalkiaEx => Card::Pokemon(PokemonCard {
             id: "A4b 107".to_string(),
@@ -34220,7 +34220,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b108Manaphy => Card::Pokemon(PokemonCard {
             id: "A4b 108".to_string(),
@@ -34241,7 +34241,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b109Manaphy => Card::Pokemon(PokemonCard {
             id: "A4b 109".to_string(),
@@ -34262,7 +34262,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b110Froakie => Card::Pokemon(PokemonCard {
             id: "A4b 110".to_string(),
@@ -34283,7 +34283,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b111Froakie => Card::Pokemon(PokemonCard {
             id: "A4b 111".to_string(),
@@ -34304,7 +34304,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b112Frogadier => Card::Pokemon(PokemonCard {
             id: "A4b 112".to_string(),
@@ -34325,7 +34325,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b113Frogadier => Card::Pokemon(PokemonCard {
             id: "A4b 113".to_string(),
@@ -34346,7 +34346,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b114Greninja => Card::Pokemon(PokemonCard {
             id: "A4b 114".to_string(),
@@ -34367,7 +34367,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b115Greninja => Card::Pokemon(PokemonCard {
             id: "A4b 115".to_string(),
@@ -34388,7 +34388,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b116Popplio => Card::Pokemon(PokemonCard {
             id: "A4b 116".to_string(),
@@ -34409,7 +34409,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b117Popplio => Card::Pokemon(PokemonCard {
             id: "A4b 117".to_string(),
@@ -34430,7 +34430,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b118Brionne => Card::Pokemon(PokemonCard {
             id: "A4b 118".to_string(),
@@ -34451,7 +34451,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b119Brionne => Card::Pokemon(PokemonCard {
             id: "A4b 119".to_string(),
@@ -34472,7 +34472,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b120PrimarinaEx => Card::Pokemon(PokemonCard {
             id: "A4b 120".to_string(),
@@ -34486,7 +34486,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.".to_string()),
                 },
                 Attack {
@@ -34499,7 +34499,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b121CrabominableEx => Card::Pokemon(PokemonCard {
             id: "A4b 121".to_string(),
@@ -34520,7 +34520,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b122Wishiwashi => Card::Pokemon(PokemonCard {
             id: "A4b 122".to_string(),
@@ -34541,7 +34541,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b123Wishiwashi => Card::Pokemon(PokemonCard {
             id: "A4b 123".to_string(),
@@ -34562,7 +34562,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b124WishiwashiEx => Card::Pokemon(PokemonCard {
             id: "A4b 124".to_string(),
@@ -34576,14 +34576,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
                     title: "School Storm".to_string(),
-                    fixed_damage: 0,
-                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi or Wishiwashi ex.".to_string()),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b125Wiglett => Card::Pokemon(PokemonCard {
             id: "A4b 125".to_string(),
@@ -34604,7 +34604,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b126Wiglett => Card::Pokemon(PokemonCard {
             id: "A4b 126".to_string(),
@@ -34625,7 +34625,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b127WugtrioEx => Card::Pokemon(PokemonCard {
             id: "A4b 127".to_string(),
@@ -34646,7 +34646,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b128Pikachu => Card::Pokemon(PokemonCard {
             id: "A4b 128".to_string(),
@@ -34667,7 +34667,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b129Pikachu => Card::Pokemon(PokemonCard {
             id: "A4b 129".to_string(),
@@ -34688,7 +34688,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b130AlolanRaichuEx => Card::Pokemon(PokemonCard {
             id: "A4b 130".to_string(),
@@ -34702,14 +34702,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b131PikachuEx => Card::Pokemon(PokemonCard {
             id: "A4b 131".to_string(),
@@ -34723,14 +34723,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b132PikachuEx => Card::Pokemon(PokemonCard {
             id: "A4b 132".to_string(),
@@ -34751,7 +34751,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b133Magnemite => Card::Pokemon(PokemonCard {
             id: "A4b 133".to_string(),
@@ -34772,7 +34772,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b134Magnemite => Card::Pokemon(PokemonCard {
             id: "A4b 134".to_string(),
@@ -34793,7 +34793,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b135Magneton => Card::Pokemon(PokemonCard {
             id: "A4b 135".to_string(),
@@ -34802,7 +34802,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Magnemite".to_string()),
             hp: 80,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -34814,7 +34814,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b136Magneton => Card::Pokemon(PokemonCard {
             id: "A4b 136".to_string(),
@@ -34823,7 +34823,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Magnemite".to_string()),
             hp: 80,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Volt Charge".to_string(), effect: "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -34835,7 +34835,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b137Magnezone => Card::Pokemon(PokemonCard {
             id: "A4b 137".to_string(),
@@ -34856,7 +34856,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b138Magnezone => Card::Pokemon(PokemonCard {
             id: "A4b 138".to_string(),
@@ -34877,7 +34877,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b139ZapdosEx => Card::Pokemon(PokemonCard {
             id: "A4b 139".to_string(),
@@ -34897,14 +34897,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Thundering Hurricane".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b140Chinchou => Card::Pokemon(PokemonCard {
             id: "A4b 140".to_string(),
@@ -34925,7 +34925,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b141Chinchou => Card::Pokemon(PokemonCard {
             id: "A4b 141".to_string(),
@@ -34946,7 +34946,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b142LanturnEx => Card::Pokemon(PokemonCard {
             id: "A4b 142".to_string(),
@@ -34967,7 +34967,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b143Pachirisu => Card::Pokemon(PokemonCard {
             id: "A4b 143".to_string(),
@@ -34988,7 +34988,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b144Pachirisu => Card::Pokemon(PokemonCard {
             id: "A4b 144".to_string(),
@@ -35009,7 +35009,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b145PachirisuEx => Card::Pokemon(PokemonCard {
             id: "A4b 145".to_string(),
@@ -35023,14 +35023,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Sparking Gadget".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b146Oricorio => Card::Pokemon(PokemonCard {
             id: "A4b 146".to_string(),
@@ -35051,7 +35051,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b147Oricorio => Card::Pokemon(PokemonCard {
             id: "A4b 147".to_string(),
@@ -35072,7 +35072,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b148TapuKokoEx => Card::Pokemon(PokemonCard {
             id: "A4b 148".to_string(),
@@ -35099,7 +35099,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b149Zeraora => Card::Pokemon(PokemonCard {
             id: "A4b 149".to_string(),
@@ -35108,7 +35108,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
@@ -35120,7 +35120,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b150Zeraora => Card::Pokemon(PokemonCard {
             id: "A4b 150".to_string(),
@@ -35129,7 +35129,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a  Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
@@ -35141,7 +35141,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b151Gastly => Card::Pokemon(PokemonCard {
             id: "A4b 151".to_string(),
@@ -35162,7 +35162,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b152Gastly => Card::Pokemon(PokemonCard {
             id: "A4b 152".to_string(),
@@ -35183,7 +35183,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b153Haunter => Card::Pokemon(PokemonCard {
             id: "A4b 153".to_string(),
@@ -35204,7 +35204,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b154Haunter => Card::Pokemon(PokemonCard {
             id: "A4b 154".to_string(),
@@ -35225,7 +35225,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b155GengarEx => Card::Pokemon(PokemonCard {
             id: "A4b 155".to_string(),
@@ -35246,7 +35246,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b156Jynx => Card::Pokemon(PokemonCard {
             id: "A4b 156".to_string(),
@@ -35260,14 +35260,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b157Jynx => Card::Pokemon(PokemonCard {
             id: "A4b 157".to_string(),
@@ -35281,14 +35281,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
                     title: "Psychic".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b158MewtwoEx => Card::Pokemon(PokemonCard {
             id: "A4b 158".to_string(),
@@ -35315,7 +35315,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b159MewEx => Card::Pokemon(PokemonCard {
             id: "A4b 159".to_string(),
@@ -35342,7 +35342,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b160EspeonEx => Card::Pokemon(PokemonCard {
             id: "A4b 160".to_string(),
@@ -35363,7 +35363,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b161Misdreavus => Card::Pokemon(PokemonCard {
             id: "A4b 161".to_string(),
@@ -35384,7 +35384,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b162Misdreavus => Card::Pokemon(PokemonCard {
             id: "A4b 162".to_string(),
@@ -35405,7 +35405,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b163MismagiusEx => Card::Pokemon(PokemonCard {
             id: "A4b 163".to_string(),
@@ -35426,7 +35426,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b164Ralts => Card::Pokemon(PokemonCard {
             id: "A4b 164".to_string(),
@@ -35447,7 +35447,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b165Ralts => Card::Pokemon(PokemonCard {
             id: "A4b 165".to_string(),
@@ -35468,7 +35468,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b166Kirlia => Card::Pokemon(PokemonCard {
             id: "A4b 166".to_string(),
@@ -35489,7 +35489,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b167Kirlia => Card::Pokemon(PokemonCard {
             id: "A4b 167".to_string(),
@@ -35510,7 +35510,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b168Gardevoir => Card::Pokemon(PokemonCard {
             id: "A4b 168".to_string(),
@@ -35519,7 +35519,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Kirlia".to_string()),
             hp: 110,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take 1  Energy from your Energy Zone and attach it to the  Pokémon in the Active Spot.".to_string() }),
+            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -35531,7 +35531,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b169Gardevoir => Card::Pokemon(PokemonCard {
             id: "A4b 169".to_string(),
@@ -35540,7 +35540,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Kirlia".to_string()),
             hp: 110,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take 1  Energy from your Energy Zone and attach it to the  Pokémon in the Active Spot.".to_string() }),
+            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -35552,7 +35552,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b170Giratina => Card::Pokemon(PokemonCard {
             id: "A4b 170".to_string(),
@@ -35573,7 +35573,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b171Giratina => Card::Pokemon(PokemonCard {
             id: "A4b 171".to_string(),
@@ -35594,7 +35594,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b172GiratinaEx => Card::Pokemon(PokemonCard {
             id: "A4b 172".to_string(),
@@ -35603,7 +35603,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 150,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
+            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -35615,7 +35615,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b173Swirlix => Card::Pokemon(PokemonCard {
             id: "A4b 173".to_string(),
@@ -35629,14 +35629,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b174Swirlix => Card::Pokemon(PokemonCard {
             id: "A4b 174".to_string(),
@@ -35650,14 +35650,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b175Slurpuff => Card::Pokemon(PokemonCard {
             id: "A4b 175".to_string(),
@@ -35671,14 +35671,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b176Slurpuff => Card::Pokemon(PokemonCard {
             id: "A4b 176".to_string(),
@@ -35692,14 +35692,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b177SylveonEx => Card::Pokemon(PokemonCard {
             id: "A4b 177".to_string(),
@@ -35720,7 +35720,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b178Oricorio => Card::Pokemon(PokemonCard {
             id: "A4b 178".to_string(),
@@ -35734,14 +35734,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Spiteful Dance".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b179Oricorio => Card::Pokemon(PokemonCard {
             id: "A4b 179".to_string(),
@@ -35755,14 +35755,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Psychic,],
                     title: "Spiteful Dance".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b180Cosmog => Card::Pokemon(PokemonCard {
             id: "A4b 180".to_string(),
@@ -35783,7 +35783,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b181Cosmog => Card::Pokemon(PokemonCard {
             id: "A4b 181".to_string(),
@@ -35804,7 +35804,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b182Cosmoem => Card::Pokemon(PokemonCard {
             id: "A4b 182".to_string(),
@@ -35819,13 +35819,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Stiffen".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −50 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -50 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b183Cosmoem => Card::Pokemon(PokemonCard {
             id: "A4b 183".to_string(),
@@ -35840,13 +35840,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Stiffen".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −50 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -50 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b184LunalaEx => Card::Pokemon(PokemonCard {
             id: "A4b 184".to_string(),
@@ -35855,7 +35855,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -35867,7 +35867,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b185Milcery => Card::Pokemon(PokemonCard {
             id: "A4b 185".to_string(),
@@ -35881,14 +35881,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b186Milcery => Card::Pokemon(PokemonCard {
             id: "A4b 186".to_string(),
@@ -35902,14 +35902,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b187Alcremie => Card::Pokemon(PokemonCard {
             id: "A4b 187".to_string(),
@@ -35923,14 +35923,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Overload".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b188Alcremie => Card::Pokemon(PokemonCard {
             id: "A4b 188".to_string(),
@@ -35944,14 +35944,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Sweets Overload".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b189Machop => Card::Pokemon(PokemonCard {
             id: "A4b 189".to_string(),
@@ -35972,7 +35972,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b190Machop => Card::Pokemon(PokemonCard {
             id: "A4b 190".to_string(),
@@ -35993,7 +35993,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b191Machoke => Card::Pokemon(PokemonCard {
             id: "A4b 191".to_string(),
@@ -36014,7 +36014,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b192Machoke => Card::Pokemon(PokemonCard {
             id: "A4b 192".to_string(),
@@ -36035,7 +36035,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b193MachampEx => Card::Pokemon(PokemonCard {
             id: "A4b 193".to_string(),
@@ -36056,7 +36056,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b194Cubone => Card::Pokemon(PokemonCard {
             id: "A4b 194".to_string(),
@@ -36077,7 +36077,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b195Cubone => Card::Pokemon(PokemonCard {
             id: "A4b 195".to_string(),
@@ -36098,7 +36098,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b196MarowakEx => Card::Pokemon(PokemonCard {
             id: "A4b 196".to_string(),
@@ -36112,14 +36112,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Bonemerang".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip 2 coins. This attack does 80 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b197AerodactylEx => Card::Pokemon(PokemonCard {
             id: "A4b 197".to_string(),
@@ -36140,7 +36140,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b198Sudowoodo => Card::Pokemon(PokemonCard {
             id: "A4b 198".to_string(),
@@ -36154,14 +36154,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Fighting Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b199Sudowoodo => Card::Pokemon(PokemonCard {
             id: "A4b 199".to_string(),
@@ -36175,14 +36175,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Fighting Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b200Phanpy => Card::Pokemon(PokemonCard {
             id: "A4b 200".to_string(),
@@ -36203,7 +36203,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b201Phanpy => Card::Pokemon(PokemonCard {
             id: "A4b 201".to_string(),
@@ -36224,7 +36224,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b202DonphanEx => Card::Pokemon(PokemonCard {
             id: "A4b 202".to_string(),
@@ -36238,14 +36238,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,],
                     title: "Gigantic Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b203Nosepass => Card::Pokemon(PokemonCard {
             id: "A4b 203".to_string(),
@@ -36266,7 +36266,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b204Nosepass => Card::Pokemon(PokemonCard {
             id: "A4b 204".to_string(),
@@ -36287,7 +36287,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b205Gible => Card::Pokemon(PokemonCard {
             id: "A4b 205".to_string(),
@@ -36308,7 +36308,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b206Gible => Card::Pokemon(PokemonCard {
             id: "A4b 206".to_string(),
@@ -36329,7 +36329,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b207Gabite => Card::Pokemon(PokemonCard {
             id: "A4b 207".to_string(),
@@ -36350,7 +36350,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b208Gabite => Card::Pokemon(PokemonCard {
             id: "A4b 208".to_string(),
@@ -36371,7 +36371,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b209GarchompEx => Card::Pokemon(PokemonCard {
             id: "A4b 209".to_string(),
@@ -36398,7 +36398,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b210Riolu => Card::Pokemon(PokemonCard {
             id: "A4b 210".to_string(),
@@ -36419,7 +36419,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b211Riolu => Card::Pokemon(PokemonCard {
             id: "A4b 211".to_string(),
@@ -36440,7 +36440,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b212Lucario => Card::Pokemon(PokemonCard {
             id: "A4b 212".to_string(),
@@ -36449,7 +36449,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Riolu".to_string()),
             hp: 100,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your  Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your [F] Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
@@ -36461,7 +36461,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b213Lucario => Card::Pokemon(PokemonCard {
             id: "A4b 213".to_string(),
@@ -36470,7 +36470,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Riolu".to_string()),
             hp: 100,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your  Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Fighting Coach".to_string(), effect: "Attacks used by your [F] Pokémon do +20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
@@ -36482,7 +36482,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b214LucarioEx => Card::Pokemon(PokemonCard {
             id: "A4b 214".to_string(),
@@ -36503,7 +36503,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b215GalladeEx => Card::Pokemon(PokemonCard {
             id: "A4b 215".to_string(),
@@ -36517,14 +36517,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Energized Blade".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b216Drilbur => Card::Pokemon(PokemonCard {
             id: "A4b 216".to_string(),
@@ -36545,7 +36545,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b217Drilbur => Card::Pokemon(PokemonCard {
             id: "A4b 217".to_string(),
@@ -36566,7 +36566,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b218Crabrawler => Card::Pokemon(PokemonCard {
             id: "A4b 218".to_string(),
@@ -36587,7 +36587,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b219Crabrawler => Card::Pokemon(PokemonCard {
             id: "A4b 219".to_string(),
@@ -36608,7 +36608,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b220Rockruff => Card::Pokemon(PokemonCard {
             id: "A4b 220".to_string(),
@@ -36629,7 +36629,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b221Rockruff => Card::Pokemon(PokemonCard {
             id: "A4b 221".to_string(),
@@ -36650,7 +36650,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b222LycanrocEx => Card::Pokemon(PokemonCard {
             id: "A4b 222".to_string(),
@@ -36671,7 +36671,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b223PassimianEx => Card::Pokemon(PokemonCard {
             id: "A4b 223".to_string(),
@@ -36680,7 +36680,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 130,
             energy_type: EnergyType::Fighting,
-            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all  Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Offload Pass".to_string(), effect: "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all [F] Energy from this Pokémon to 1 of your Benched Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
@@ -36692,7 +36692,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b224Marshadow => Card::Pokemon(PokemonCard {
             id: "A4b 224".to_string(),
@@ -36706,14 +36706,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Revenge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b225Marshadow => Card::Pokemon(PokemonCard {
             id: "A4b 225".to_string(),
@@ -36727,14 +36727,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,],
                     title: "Revenge".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b226Zubat => Card::Pokemon(PokemonCard {
             id: "A4b 226".to_string(),
@@ -36755,7 +36755,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b227Zubat => Card::Pokemon(PokemonCard {
             id: "A4b 227".to_string(),
@@ -36776,7 +36776,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b228Golbat => Card::Pokemon(PokemonCard {
             id: "A4b 228".to_string(),
@@ -36797,7 +36797,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b229Golbat => Card::Pokemon(PokemonCard {
             id: "A4b 229".to_string(),
@@ -36818,7 +36818,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b230Crobat => Card::Pokemon(PokemonCard {
             id: "A4b 230".to_string(),
@@ -36839,7 +36839,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b231Crobat => Card::Pokemon(PokemonCard {
             id: "A4b 231".to_string(),
@@ -36860,7 +36860,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b232CrobatEx => Card::Pokemon(PokemonCard {
             id: "A4b 232".to_string(),
@@ -36881,7 +36881,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b233AlolanGrimer => Card::Pokemon(PokemonCard {
             id: "A4b 233".to_string(),
@@ -36902,7 +36902,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b234AlolanGrimer => Card::Pokemon(PokemonCard {
             id: "A4b 234".to_string(),
@@ -36923,7 +36923,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b235AlolanMukEx => Card::Pokemon(PokemonCard {
             id: "A4b 235".to_string(),
@@ -36944,7 +36944,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b236PaldeanWooper => Card::Pokemon(PokemonCard {
             id: "A4b 236".to_string(),
@@ -36965,7 +36965,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b237PaldeanWooper => Card::Pokemon(PokemonCard {
             id: "A4b 237".to_string(),
@@ -36986,7 +36986,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b238PaldeanClodsireEx => Card::Pokemon(PokemonCard {
             id: "A4b 238".to_string(),
@@ -37000,14 +37000,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
                     title: "Venoshock".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b239Umbreon => Card::Pokemon(PokemonCard {
             id: "A4b 239".to_string(),
@@ -37028,7 +37028,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b240Umbreon => Card::Pokemon(PokemonCard {
             id: "A4b 240".to_string(),
@@ -37049,7 +37049,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b241UmbreonEx => Card::Pokemon(PokemonCard {
             id: "A4b 241".to_string(),
@@ -37070,7 +37070,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b242Sneasel => Card::Pokemon(PokemonCard {
             id: "A4b 242".to_string(),
@@ -37084,14 +37084,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Double Scratch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b243Sneasel => Card::Pokemon(PokemonCard {
             id: "A4b 243".to_string(),
@@ -37105,14 +37105,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Double Scratch".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b244WeavileEx => Card::Pokemon(PokemonCard {
             id: "A4b 244".to_string(),
@@ -37126,14 +37126,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Darkness,],
                     title: "Scratching Nails".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b245DarkraiEx => Card::Pokemon(PokemonCard {
             id: "A4b 245".to_string(),
@@ -37142,7 +37142,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -37154,7 +37154,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b246Nihilego => Card::Pokemon(PokemonCard {
             id: "A4b 246".to_string(),
@@ -37175,7 +37175,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b247Nihilego => Card::Pokemon(PokemonCard {
             id: "A4b 247".to_string(),
@@ -37196,7 +37196,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b248GuzzlordEx => Card::Pokemon(PokemonCard {
             id: "A4b 248".to_string(),
@@ -37223,7 +37223,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b249AlolanDiglett => Card::Pokemon(PokemonCard {
             id: "A4b 249".to_string(),
@@ -37244,7 +37244,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b250AlolanDiglett => Card::Pokemon(PokemonCard {
             id: "A4b 250".to_string(),
@@ -37265,7 +37265,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b251AlolanDugtrioEx => Card::Pokemon(PokemonCard {
             id: "A4b 251".to_string(),
@@ -37279,14 +37279,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
                     title: "Triplet Headbutt".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 60,
                     effect: Some("Flip 3 coins. This attack does 60 damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b252SkarmoryEx => Card::Pokemon(PokemonCard {
             id: "A4b 252".to_string(),
@@ -37301,13 +37301,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Steel Wing".to_string(),
                     fixed_damage: 70,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b253ProbopassEx => Card::Pokemon(PokemonCard {
             id: "A4b 253".to_string(),
@@ -37322,13 +37322,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Defensive Unit".to_string(),
                     fixed_damage: 90,
-                    effect: Some("During your opponent's next turn, this Pokémon takes −20 damage from attacks.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b254DialgaEx => Card::Pokemon(PokemonCard {
             id: "A4b 254".to_string(),
@@ -37355,7 +37355,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b255Excadrill => Card::Pokemon(PokemonCard {
             id: "A4b 255".to_string(),
@@ -37376,7 +37376,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b256Excadrill => Card::Pokemon(PokemonCard {
             id: "A4b 256".to_string(),
@@ -37397,7 +37397,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b257Klefki => Card::Pokemon(PokemonCard {
             id: "A4b 257".to_string(),
@@ -37418,7 +37418,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b258Klefki => Card::Pokemon(PokemonCard {
             id: "A4b 258".to_string(),
@@ -37439,7 +37439,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b259SolgaleoEx => Card::Pokemon(PokemonCard {
             id: "A4b 259".to_string(),
@@ -37460,7 +37460,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b260Magearna => Card::Pokemon(PokemonCard {
             id: "A4b 260".to_string(),
@@ -37474,14 +37474,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Silver Cannon".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b261Magearna => Card::Pokemon(PokemonCard {
             id: "A4b 261".to_string(),
@@ -37495,14 +37495,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Silver Cannon".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b262Tinkatink => Card::Pokemon(PokemonCard {
             id: "A4b 262".to_string(),
@@ -37523,7 +37523,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b263Tinkatink => Card::Pokemon(PokemonCard {
             id: "A4b 263".to_string(),
@@ -37544,7 +37544,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b264Tinkatuff => Card::Pokemon(PokemonCard {
             id: "A4b 264".to_string(),
@@ -37558,14 +37558,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Tenacious Hammer".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b265Tinkatuff => Card::Pokemon(PokemonCard {
             id: "A4b 265".to_string(),
@@ -37579,14 +37579,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
                     title: "Tenacious Hammer".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b266TinkatonEx => Card::Pokemon(PokemonCard {
             id: "A4b 266".to_string(),
@@ -37600,14 +37600,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
                     title: "Terrific Thumping".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("Flip a coin. If heads, this attack does 80 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b267Dratini => Card::Pokemon(PokemonCard {
             id: "A4b 267".to_string(),
@@ -37625,10 +37625,10 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b268Dratini => Card::Pokemon(PokemonCard {
             id: "A4b 268".to_string(),
@@ -37646,10 +37646,10 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b269Dragonair => Card::Pokemon(PokemonCard {
             id: "A4b 269".to_string(),
@@ -37667,10 +37667,10 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b270Dragonair => Card::Pokemon(PokemonCard {
             id: "A4b 270".to_string(),
@@ -37688,10 +37688,10 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: None,
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b271DragoniteEx => Card::Pokemon(PokemonCard {
             id: "A4b 271".to_string(),
@@ -37709,10 +37709,10 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
                 },
             ],
-            weakness: Some(EnergyType::Colorless),
+            weakness: None,
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b272Pidgey => Card::Pokemon(PokemonCard {
             id: "A4b 272".to_string(),
@@ -37733,7 +37733,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b273Pidgey => Card::Pokemon(PokemonCard {
             id: "A4b 273".to_string(),
@@ -37754,7 +37754,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b274Pidgeotto => Card::Pokemon(PokemonCard {
             id: "A4b 274".to_string(),
@@ -37775,7 +37775,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b275Pidgeotto => Card::Pokemon(PokemonCard {
             id: "A4b 275".to_string(),
@@ -37796,7 +37796,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b276PidgeotEx => Card::Pokemon(PokemonCard {
             id: "A4b 276".to_string(),
@@ -37810,14 +37810,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Scattering Cyclone".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("This attack does 20 more damage for each of your opponent's Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b277Jigglypuff => Card::Pokemon(PokemonCard {
             id: "A4b 277".to_string(),
@@ -37838,7 +37838,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b278Jigglypuff => Card::Pokemon(PokemonCard {
             id: "A4b 278".to_string(),
@@ -37859,7 +37859,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b279WigglytuffEx => Card::Pokemon(PokemonCard {
             id: "A4b 279".to_string(),
@@ -37880,7 +37880,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b280Farfetchd => Card::Pokemon(PokemonCard {
             id: "A4b 280".to_string(),
@@ -37901,7 +37901,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b281Farfetchd => Card::Pokemon(PokemonCard {
             id: "A4b 281".to_string(),
@@ -37922,7 +37922,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b282Lickitung => Card::Pokemon(PokemonCard {
             id: "A4b 282".to_string(),
@@ -37943,7 +37943,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b283Lickitung => Card::Pokemon(PokemonCard {
             id: "A4b 283".to_string(),
@@ -37964,7 +37964,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b284LickilickyEx => Card::Pokemon(PokemonCard {
             id: "A4b 284".to_string(),
@@ -37978,14 +37978,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Licking Fury".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 100,
                     effect: Some("Flip a coin until you get tails. This attack does 40 more damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b285Eevee => Card::Pokemon(PokemonCard {
             id: "A4b 285".to_string(),
@@ -38006,7 +38006,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b286Eevee => Card::Pokemon(PokemonCard {
             id: "A4b 286".to_string(),
@@ -38027,7 +38027,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b287EeveeEx => Card::Pokemon(PokemonCard {
             id: "A4b 287".to_string(),
@@ -38036,7 +38036,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Veevee ’volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -38048,7 +38048,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b288SnorlaxEx => Card::Pokemon(PokemonCard {
             id: "A4b 288".to_string(),
@@ -38069,7 +38069,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b289LugiaEx => Card::Pokemon(PokemonCard {
             id: "A4b 289".to_string(),
@@ -38090,7 +38090,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b290Skitty => Card::Pokemon(PokemonCard {
             id: "A4b 290".to_string(),
@@ -38111,7 +38111,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b291Skitty => Card::Pokemon(PokemonCard {
             id: "A4b 291".to_string(),
@@ -38132,7 +38132,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b292Delcatty => Card::Pokemon(PokemonCard {
             id: "A4b 292".to_string(),
@@ -38153,7 +38153,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b293Delcatty => Card::Pokemon(PokemonCard {
             id: "A4b 293".to_string(),
@@ -38174,7 +38174,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b294Bidoof => Card::Pokemon(PokemonCard {
             id: "A4b 294".to_string(),
@@ -38195,7 +38195,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b295Bidoof => Card::Pokemon(PokemonCard {
             id: "A4b 295".to_string(),
@@ -38216,7 +38216,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b296BibarelEx => Card::Pokemon(PokemonCard {
             id: "A4b 296".to_string(),
@@ -38237,7 +38237,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b297Shaymin => Card::Pokemon(PokemonCard {
             id: "A4b 297".to_string(),
@@ -38246,7 +38246,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokemon's Retreat Cost is 1 less.".to_string() }),
+            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -38258,7 +38258,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b298Shaymin => Card::Pokemon(PokemonCard {
             id: "A4b 298".to_string(),
@@ -38267,7 +38267,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokemon's Retreat Cost is 1 less.".to_string() }),
+            ability: Some(Ability { title: "Sky Support".to_string(), effect: "As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
@@ -38279,7 +38279,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b299ArceusEx => Card::Pokemon(PokemonCard {
             id: "A4b 299".to_string(),
@@ -38293,14 +38293,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b300TypeNull => Card::Pokemon(PokemonCard {
             id: "A4b 300".to_string(),
@@ -38314,14 +38314,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Blow".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b301TypeNull => Card::Pokemon(PokemonCard {
             id: "A4b 301".to_string(),
@@ -38335,14 +38335,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Quick Blow".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b302Silvally => Card::Pokemon(PokemonCard {
             id: "A4b 302".to_string(),
@@ -38356,14 +38356,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Brave Buddies".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b303Silvally => Card::Pokemon(PokemonCard {
             id: "A4b 303".to_string(),
@@ -38377,14 +38377,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Brave Buddies".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 50,
                     effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b304Celesteela => Card::Pokemon(PokemonCard {
             id: "A4b 304".to_string(),
@@ -38405,7 +38405,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b305Celesteela => Card::Pokemon(PokemonCard {
             id: "A4b 305".to_string(),
@@ -38426,7 +38426,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b306Cyclizar => Card::Pokemon(PokemonCard {
             id: "A4b 306".to_string(),
@@ -38447,7 +38447,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b307Cyclizar => Card::Pokemon(PokemonCard {
             id: "A4b 307".to_string(),
@@ -38468,22 +38468,22 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b308EeveeBag => Card::Trainer(TrainerCard {
             id: "A4b 308".to_string(),
             name: "Eevee Bag".to_string(),
-            effect: "Choose 1:① During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.② Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
+            effect: "Choose 1:During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b309EeveeBag => Card::Trainer(TrainerCard {
             id: "A4b 309".to_string(),
             name: "Eevee Bag".to_string(),
-            effect: "Choose 1:① During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.② Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
+            effect: "Choose 1:During this turn, attacks used by your Pokémon that evolve from Eevee do +10 damage to your opponent's Active Pokémon.Heal 20 damage from each of your Pokémon that evolves from Eevee.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b310ElementalSwitch => Card::Trainer(TrainerCard {
@@ -38491,7 +38491,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Elemental Switch".to_string(),
             effect: "Move a [R], [W], or [L] Energy from 1 of your Benched Pokémon to your Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b311ElementalSwitch => Card::Trainer(TrainerCard {
@@ -38499,7 +38499,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Elemental Switch".to_string(),
             effect: "Move a [R], [W], or [L] Energy from 1 of your Benched Pokémon to your Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b312OldAmber => Card::Trainer(TrainerCard {
@@ -38507,23 +38507,23 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Old Amber".to_string(),
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
-            trainer_card_type: TrainerType::Item,
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A4b313OldAmber => Card::Trainer(TrainerCard {
             id: "A4b 313".to_string(),
             name: "Old Amber".to_string(),
             effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
             rarity: "◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
-            trainer_card_type: TrainerType::Item,
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
+            trainer_card_type: TrainerType::Fossil,
         }),
         CardId::A4b314RareCandy => Card::Trainer(TrainerCard {
             id: "A4b 314".to_string(),
             name: "Rare Candy".to_string(),
             effect: "Choose 1 of your Basic Pokémon in play. If you have a Stage 2 card in your hand that evolves from that Pokémon, put that card onto the Basic Pokémon to evolve it, skipping the Stage 1. You can't use this card during your first turn or on a Basic Pokémon that was put into play this turn.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b315RareCandy => Card::Trainer(TrainerCard {
@@ -38531,7 +38531,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Rare Candy".to_string(),
             effect: "Choose 1 of your Basic Pokémon in play. If you have a Stage 2 card in your hand that evolves from that Pokémon, put that card onto the Basic Pokémon to evolve it, skipping the Stage 1. You can't use this card during your first turn or on a Basic Pokémon that was put into play this turn.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b316PokemonCommunication => Card::Trainer(TrainerCard {
@@ -38539,7 +38539,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Pokémon Communication".to_string(),
             effect: "Choose a Pokémon in your hand and switch it with a random Pokémon in your deck.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b317PokemonCommunication => Card::Trainer(TrainerCard {
@@ -38547,7 +38547,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Pokémon Communication".to_string(),
             effect: "Choose a Pokémon in your hand and switch it with a random Pokémon in your deck.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::A4b318ElectricalCord => Card::Trainer(TrainerCard {
@@ -38555,7 +38555,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Electrical Cord".to_string(),
             effect: "If the [L] Pokémon this card is attached to is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move 2 [L] Energy from that Pokémon and attach 1 Energy each to 2 of your Benched Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b319ElectricalCord => Card::Trainer(TrainerCard {
@@ -38563,7 +38563,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Electrical Cord".to_string(),
             effect: "If the [L] Pokémon this card is attached to is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move 2 [L] Energy from that Pokémon and attach 1 Energy each to 2 of your Benched Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b320GiantCape => Card::Trainer(TrainerCard {
@@ -38571,7 +38571,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Giant Cape".to_string(),
             effect: "The Pokémon this card is attached to gets +20 HP.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b321GiantCape => Card::Trainer(TrainerCard {
@@ -38579,7 +38579,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Giant Cape".to_string(),
             effect: "The Pokémon this card is attached to gets +20 HP.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b322RockyHelmet => Card::Trainer(TrainerCard {
@@ -38587,7 +38587,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Rocky Helmet".to_string(),
             effect: "If the Pokémon this card is attached to is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 20 damage to the Attacking Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b323RockyHelmet => Card::Trainer(TrainerCard {
@@ -38595,7 +38595,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Rocky Helmet".to_string(),
             effect: "If the Pokémon this card is attached to is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 20 damage to the Attacking Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b324LeafCape => Card::Trainer(TrainerCard {
@@ -38603,7 +38603,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Leaf Cape".to_string(),
             effect: "The [G] Pokémon this card is attached to gets +30 HP.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b325LeafCape => Card::Trainer(TrainerCard {
@@ -38611,7 +38611,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Leaf Cape".to_string(),
             effect: "The [G] Pokémon this card is attached to gets +30 HP.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Tool,
         }),
         CardId::A4b326Cyrus => Card::Trainer(TrainerCard {
@@ -38619,7 +38619,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Cyrus".to_string(),
             effect: "Switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b327Cyrus => Card::Trainer(TrainerCard {
@@ -38627,7 +38627,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Cyrus".to_string(),
             effect: "Switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b328Erika => Card::Trainer(TrainerCard {
@@ -38635,7 +38635,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Erika".to_string(),
             effect: "Heal 50 damage from 1 of your [G] Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b329Erika => Card::Trainer(TrainerCard {
@@ -38643,7 +38643,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Erika".to_string(),
             effect: "Heal 50 damage from 1 of your [G] Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b330Irida => Card::Trainer(TrainerCard {
@@ -38651,7 +38651,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Irida".to_string(),
             effect: "Heal 40 damage from each of your Pokémon that has any [W] Energy attached.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b331Irida => Card::Trainer(TrainerCard {
@@ -38659,7 +38659,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Irida".to_string(),
             effect: "Heal 40 damage from each of your Pokémon that has any [W] Energy attached.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b332Lyra => Card::Trainer(TrainerCard {
@@ -38667,7 +38667,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Lyra".to_string(),
             effect: "Switch your Active Pokémon that has damage on it with 1 of your Benched Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b333Lyra => Card::Trainer(TrainerCard {
@@ -38675,7 +38675,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Lyra".to_string(),
             effect: "Switch your Active Pokémon that has damage on it with 1 of your Benched Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b334Giovanni => Card::Trainer(TrainerCard {
@@ -38683,7 +38683,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Giovanni".to_string(),
             effect: "During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b335Giovanni => Card::Trainer(TrainerCard {
@@ -38691,7 +38691,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Giovanni".to_string(),
             effect: "During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b336Silver => Card::Trainer(TrainerCard {
@@ -38699,7 +38699,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Silver".to_string(),
             effect: "Your opponent reveals their hand. Choose a Supporter card you find there and shuffle it into your opponent's deck.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b337Silver => Card::Trainer(TrainerCard {
@@ -38707,7 +38707,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Silver".to_string(),
             effect: "Your opponent reveals their hand. Choose a Supporter card you find there and shuffle it into your opponent's deck.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b338Sabrina => Card::Trainer(TrainerCard {
@@ -38715,7 +38715,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Sabrina".to_string(),
             effect: "Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b339Sabrina => Card::Trainer(TrainerCard {
@@ -38723,7 +38723,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Sabrina".to_string(),
             effect: "Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b340Iono => Card::Trainer(TrainerCard {
@@ -38731,7 +38731,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Iono".to_string(),
             effect: "Each player shuffles the cards in their hand into their deck, then draws that many cards.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b341Iono => Card::Trainer(TrainerCard {
@@ -38739,7 +38739,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Iono".to_string(),
             effect: "Each player shuffles the cards in their hand into their deck, then draws that many cards.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b342Dawn => Card::Trainer(TrainerCard {
@@ -38747,7 +38747,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Dawn".to_string(),
             effect: "Move an Energy from 1 of your Benched Pokémon to your Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b343Dawn => Card::Trainer(TrainerCard {
@@ -38755,7 +38755,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Dawn".to_string(),
             effect: "Move an Energy from 1 of your Benched Pokémon to your Active Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b344Mars => Card::Trainer(TrainerCard {
@@ -38763,7 +38763,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Mars".to_string(),
             effect: "Your opponent shuffles their hand into their deck and draws a card for each of their remaining points needed to win.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b345Mars => Card::Trainer(TrainerCard {
@@ -38771,7 +38771,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Mars".to_string(),
             effect: "Your opponent shuffles their hand into their deck and draws a card for each of their remaining points needed to win.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b346Leaf => Card::Trainer(TrainerCard {
@@ -38779,7 +38779,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Leaf".to_string(),
             effect: "During this turn, the Retreat Cost of your Active Pokémon is 2 less.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b347Leaf => Card::Trainer(TrainerCard {
@@ -38787,23 +38787,23 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Leaf".to_string(),
             effect: "During this turn, the Retreat Cost of your Active Pokémon is 2 less.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b348Lillie => Card::Trainer(TrainerCard {
             id: "A4b 348".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b349Lillie => Card::Trainer(TrainerCard {
             id: "A4b 349".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b350Lusamine => Card::Trainer(TrainerCard {
@@ -38811,7 +38811,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Lusamine".to_string(),
             effect: "You can use this card only if your opponent has gotten at least 1 point.Choose 1 of your Ultra Beasts. Attach 2 random Energy from your discard pile to that Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b351Lusamine => Card::Trainer(TrainerCard {
@@ -38819,7 +38819,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Lusamine".to_string(),
             effect: "You can use this card only if your opponent has gotten at least 1 point.Choose 1 of your Ultra Beasts. Attach 2 random Energy from your discard pile to that Pokémon.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b352Red => Card::Trainer(TrainerCard {
@@ -38827,7 +38827,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Red".to_string(),
             effect: "During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b353Red => Card::Trainer(TrainerCard {
@@ -38835,7 +38835,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Red".to_string(),
             effect: "During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.".to_string(),
             rarity: "◊◊".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b354Floragato => Card::Pokemon(PokemonCard {
@@ -38857,7 +38857,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b355Crawdaunt => Card::Pokemon(PokemonCard {
             id: "A4b 355".to_string(),
@@ -38878,7 +38878,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b356Greninja => Card::Pokemon(PokemonCard {
             id: "A4b 356".to_string(),
@@ -38899,7 +38899,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b357Gardevoir => Card::Pokemon(PokemonCard {
             id: "A4b 357".to_string(),
@@ -38908,7 +38908,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Kirlia".to_string()),
             hp: 110,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take 1  Energy from your Energy Zone and attach it to the  Pokémon in the Active Spot.".to_string() }),
+            ability: Some(Ability { title: "Psy Shadow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -38920,7 +38920,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b358Slurpuff => Card::Pokemon(PokemonCard {
             id: "A4b 358".to_string(),
@@ -38934,14 +38934,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Sweets Relay".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b359Farfetchd => Card::Pokemon(PokemonCard {
             id: "A4b 359".to_string(),
@@ -38962,7 +38962,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b360BuzzwoleEx => Card::Pokemon(PokemonCard {
             id: "A4b 360".to_string(),
@@ -38989,7 +38989,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b361CharizardEx => Card::Pokemon(PokemonCard {
             id: "A4b 361".to_string(),
@@ -39016,7 +39016,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b362HoOhEx => Card::Pokemon(PokemonCard {
             id: "A4b 362".to_string(),
@@ -39037,7 +39037,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b363PalkiaEx => Card::Pokemon(PokemonCard {
             id: "A4b 363".to_string(),
@@ -39064,7 +39064,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b364PikachuEx => Card::Pokemon(PokemonCard {
             id: "A4b 364".to_string(),
@@ -39078,14 +39078,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b365MewtwoEx => Card::Pokemon(PokemonCard {
             id: "A4b 365".to_string(),
@@ -39112,7 +39112,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b366MewEx => Card::Pokemon(PokemonCard {
             id: "A4b 366".to_string(),
@@ -39139,7 +39139,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b367LunalaEx => Card::Pokemon(PokemonCard {
             id: "A4b 367".to_string(),
@@ -39148,7 +39148,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Cosmoem".to_string()),
             hp: 180,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all  Energy from 1 of your Benched  Pokémon to your Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Psychic Connect".to_string(), effect: "Once during your turn, you may move all [P] Energy from 1 of your Benched [P] Pokémon to your Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
@@ -39160,7 +39160,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b368DialgaEx => Card::Pokemon(PokemonCard {
             id: "A4b 368".to_string(),
@@ -39187,7 +39187,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b369SolgaleoEx => Card::Pokemon(PokemonCard {
             id: "A4b 369".to_string(),
@@ -39208,7 +39208,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b370EeveeEx => Card::Pokemon(PokemonCard {
             id: "A4b 370".to_string(),
@@ -39217,7 +39217,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Veevee ’volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,],
@@ -39229,7 +39229,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b371LugiaEx => Card::Pokemon(PokemonCard {
             id: "A4b 371".to_string(),
@@ -39250,7 +39250,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b372ArceusEx => Card::Pokemon(PokemonCard {
             id: "A4b 372".to_string(),
@@ -39264,29 +39264,29 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Ultimate Force".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("This attack does 20 more damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b373ProfessorsResearch => Card::Trainer(TrainerCard {
             id: "A4b 373".to_string(),
             name: "Professor's Research".to_string(),
             effect: "Draw 2 cards.".to_string(),
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b374Lillie => Card::Trainer(TrainerCard {
             id: "A4b 374".to_string(),
             name: "Lillie".to_string(),
-            effect: "Heal 60 damage from 1 of your Stage 2 Pokemon.".to_string(),
+            effect: "Heal 60 damage from 1 of your Stage 2 Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b375Lusamine => Card::Trainer(TrainerCard {
@@ -39294,7 +39294,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             name: "Lusamine".to_string(),
             effect: "You can use this card only if your opponent has gotten at least 1 point.Choose 1 of your Ultra Beasts. Attach 2 random Energy from your discard pile to that Pokémon.".to_string(),
             rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::A4b376PikachuEx => Card::Pokemon(PokemonCard {
@@ -39309,14 +39309,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Circle Circuit".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched [L] Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "☆☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b377GiratinaEx => Card::Pokemon(PokemonCard {
             id: "A4b 377".to_string(),
@@ -39325,7 +39325,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 150,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a  Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
+            ability: Some(Ability { title: "Broken-Space Bellow".to_string(), effect: "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -39336,8 +39336,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            rarity: "**".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b378DarkraiEx => Card::Pokemon(PokemonCard {
             id: "A4b 378".to_string(),
@@ -39346,7 +39346,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -39357,79 +39357,79 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "☆☆".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            rarity: "**".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
         }),
         CardId::A4b379RareCandy => Card::Trainer(TrainerCard {
             id: "A4b 379".to_string(),
             name: "Rare Candy".to_string(),
             effect: "Choose 1 of your Basic Pokémon in play. If you have a Stage 2 card in your hand that evolves from that Pokémon, put that card onto the Basic Pokémon to evolve it, skipping the Stage 1. You can't use this card during your first turn or on a Basic Pokémon that was put into play this turn.".to_string(),
-            rarity: "Crown Rare".to_string(),
-            booster_pack: "Deluxe Pack: ex".to_string(),
+            rarity: "♛".to_string(),
+            booster_pack: "Deluxe Pack: ex (A4b)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA001Potion => Card::Trainer(TrainerCard {
             id: "P-A 001".to_string(),
             name: "Potion".to_string(),
             effect: "Heal 20 damage from 1 of your Pokémon.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA002XSpeed => Card::Trainer(TrainerCard {
             id: "P-A 002".to_string(),
             name: "X Speed".to_string(),
             effect: "During this turn, the Retreat Cost of your Active Pokémon is 1 less.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA003HandScope => Card::Trainer(TrainerCard {
             id: "P-A 003".to_string(),
             name: "Hand Scope".to_string(),
             effect: "Your opponent reveals their hand.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA004PokedEx => Card::Trainer(TrainerCard {
             id: "P-A 004".to_string(),
             name: "Pokédex".to_string(),
             effect: "Look at the top 3 cards of your deck.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA005PokeBall => Card::Trainer(TrainerCard {
             id: "P-A 005".to_string(),
             name: "Poké Ball".to_string(),
-            effect: "Put 1 random Basic Pokemon from your deck into your hand.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            effect: "Put a random Basic Pokémon from your deck into your hand.".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA006RedCard => Card::Trainer(TrainerCard {
             id: "P-A 006".to_string(),
             name: "Red Card".to_string(),
             effect: "Your opponent shuffles their hand into their deck and draws 3 cards.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA007ProfessorsResearch => Card::Trainer(TrainerCard {
             id: "P-A 007".to_string(),
             name: "Professor's Research".to_string(),
             effect: "Draw 2 cards.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Supporter,
         }),
         CardId::PA008PokedEx => Card::Trainer(TrainerCard {
             id: "P-A 008".to_string(),
             name: "Pokédex".to_string(),
             effect: "Look at the top 3 cards of your deck.".to_string(),
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
             trainer_card_type: TrainerType::Item,
         }),
         CardId::PA009Pikachu => Card::Pokemon(PokemonCard {
@@ -39450,8 +39450,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA010Mewtwo => Card::Pokemon(PokemonCard {
             id: "P-A 010".to_string(),
@@ -39471,8 +39471,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA011Chansey => Card::Pokemon(PokemonCard {
             id: "P-A 011".to_string(),
@@ -39492,8 +39492,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA012Meowth => Card::Pokemon(PokemonCard {
             id: "P-A 012".to_string(),
@@ -39508,13 +39508,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Pay Day".to_string(),
                     fixed_damage: 10,
-                    effect: Some("Draw 1 card.".to_string()),
+                    effect: Some("Draw a card.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA013Butterfree => Card::Pokemon(PokemonCard {
             id: "P-A 013".to_string(),
@@ -39534,8 +39534,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA014LaprasEx => Card::Pokemon(PokemonCard {
             id: "P-A 014".to_string(),
@@ -39555,8 +39555,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA015Pikachu => Card::Pokemon(PokemonCard {
             id: "P-A 015".to_string(),
@@ -39576,8 +39576,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA016Clefairy => Card::Pokemon(PokemonCard {
             id: "P-A 016".to_string(),
@@ -39597,8 +39597,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA017Mankey => Card::Pokemon(PokemonCard {
             id: "P-A 017".to_string(),
@@ -39618,8 +39618,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA018Venusaur => Card::Pokemon(PokemonCard {
             id: "P-A 018".to_string(),
@@ -39639,8 +39639,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA019Greninja => Card::Pokemon(PokemonCard {
             id: "P-A 019".to_string(),
@@ -39660,8 +39660,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA020Haunter => Card::Pokemon(PokemonCard {
             id: "P-A 020".to_string(),
@@ -39681,8 +39681,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA021Onix => Card::Pokemon(PokemonCard {
             id: "P-A 021".to_string(),
@@ -39702,15 +39702,15 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA022Jigglypuff => Card::Pokemon(PokemonCard {
             id: "P-A 022".to_string(),
             name: "Jigglypuff".to_string(),
             stage: 0,
             evolves_from: None,
-            hp: 60,
+            hp: 50,
             energy_type: EnergyType::Colorless,
             ability: None,
             attacks: vec![
@@ -39723,8 +39723,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA023Bulbasaur => Card::Pokemon(PokemonCard {
             id: "P-A 023".to_string(),
@@ -39744,8 +39744,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA024Magnemite => Card::Pokemon(PokemonCard {
             id: "P-A 024".to_string(),
@@ -39765,8 +39765,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA025MoltresEx => Card::Pokemon(PokemonCard {
             id: "P-A 025".to_string(),
@@ -39792,8 +39792,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA026Pikachu => Card::Pokemon(PokemonCard {
             id: "P-A 026".to_string(),
@@ -39813,8 +39813,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA027Snivy => Card::Pokemon(PokemonCard {
             id: "P-A 027".to_string(),
@@ -39834,8 +39834,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA028Volcarona => Card::Pokemon(PokemonCard {
             id: "P-A 028".to_string(),
@@ -39855,8 +39855,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA029Blastoise => Card::Pokemon(PokemonCard {
             id: "P-A 029".to_string(),
@@ -39870,14 +39870,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
                     title: "Hydro Pump".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 80,
                     effect: Some("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA030Eevee => Card::Pokemon(PokemonCard {
             id: "P-A 030".to_string(),
@@ -39892,13 +39892,13 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                     energy_required: vec![EnergyType::Colorless,],
                     title: "Growl".to_string(),
                     fixed_damage: 0,
-                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do −20 damage.".to_string()),
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA031Cinccino => Card::Pokemon(PokemonCard {
             id: "P-A 031".to_string(),
@@ -39912,14 +39912,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Do the Wave".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 30,
                     effect: Some("This attack does 30 damage for each of your Benched Pokémon.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA032Charmander => Card::Pokemon(PokemonCard {
             id: "P-A 032".to_string(),
@@ -39939,8 +39939,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA033Squirtle => Card::Pokemon(PokemonCard {
             id: "P-A 033".to_string(),
@@ -39960,8 +39960,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA034Piplup => Card::Pokemon(PokemonCard {
             id: "P-A 034".to_string(),
@@ -39981,8 +39981,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA035Turtwig => Card::Pokemon(PokemonCard {
             id: "P-A 035".to_string(),
@@ -40002,8 +40002,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA036Electivire => Card::Pokemon(PokemonCard {
             id: "P-A 036".to_string(),
@@ -40017,14 +40017,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
                     title: "Exciting Voltage".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 40,
                     effect: Some("If this Pokémon has at least 2 extra [L] Energy attached, this attack does 80 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA037CresseliaEx => Card::Pokemon(PokemonCard {
             id: "P-A 037".to_string(),
@@ -40033,7 +40033,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Psychic,
-            ability: Some(Ability { title: "Lunar Plumage".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Lunar Plumage".to_string(), effect: "Whenever you attach a [P] Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
@@ -40044,8 +40044,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA038Misdreavus => Card::Pokemon(PokemonCard {
             id: "P-A 038".to_string(),
@@ -40065,8 +40065,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA039Skarmory => Card::Pokemon(PokemonCard {
             id: "P-A 039".to_string(),
@@ -40080,14 +40080,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Metal,],
                     title: "Metal Arms".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 20,
                     effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA040Chimchar => Card::Pokemon(PokemonCard {
             id: "P-A 040".to_string(),
@@ -40107,8 +40107,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Water),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA041Togepi => Card::Pokemon(PokemonCard {
             id: "P-A 041".to_string(),
@@ -40128,8 +40128,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA042DarkraiEx => Card::Pokemon(PokemonCard {
             id: "P-A 042".to_string(),
@@ -40138,7 +40138,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: None,
             hp: 140,
             energy_type: EnergyType::Darkness,
-            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a  Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Nightmare Aura".to_string(), effect: "Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
@@ -40149,8 +40149,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA043Cherrim => Card::Pokemon(PokemonCard {
             id: "P-A 043".to_string(),
@@ -40170,8 +40170,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA044Raichu => Card::Pokemon(PokemonCard {
             id: "P-A 044".to_string(),
@@ -40180,7 +40180,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Pikachu".to_string()),
             hp: 90,
             energy_type: EnergyType::Lightning,
-            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes −30 damage from attacks.".to_string() }),
+            ability: Some(Ability { title: "Resilience Link".to_string(), effect: "If you have Arceus or Arceus ex in play, this Pokémon takes -30 damage from attacks.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
@@ -40191,8 +40191,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA045Nosepass => Card::Pokemon(PokemonCard {
             id: "P-A 045".to_string(),
@@ -40212,8 +40212,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA046Gible => Card::Pokemon(PokemonCard {
             id: "P-A 046".to_string(),
@@ -40233,8 +40233,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA047Staraptor => Card::Pokemon(PokemonCard {
             id: "P-A 047".to_string(),
@@ -40243,7 +40243,7 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             evolves_from: Some("Staravia".to_string()),
             hp: 140,
             energy_type: EnergyType::Colorless,
-            ability: Some(Ability { title: "Defensive Whirlwind".to_string(), effect: "This Pokémon takes −30 damage from attacks from  Pokémon.".to_string() }),
+            ability: Some(Ability { title: "Defensive Whirlwind".to_string(), effect: "This Pokémon takes -30 damage from attacks from [F] Pokémon.".to_string() }),
             attacks: vec![
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
@@ -40254,8 +40254,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA048Manaphy => Card::Pokemon(PokemonCard {
             id: "P-A 048".to_string(),
@@ -40275,8 +40275,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA049Snorlax => Card::Pokemon(PokemonCard {
             id: "P-A 049".to_string(),
@@ -40296,8 +40296,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA050MewtwoEx => Card::Pokemon(PokemonCard {
             id: "P-A 050".to_string(),
@@ -40323,8 +40323,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "**".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA051Cyclizar => Card::Pokemon(PokemonCard {
             id: "P-A 051".to_string(),
@@ -40344,8 +40344,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "*".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA052Sprigatito => Card::Pokemon(PokemonCard {
             id: "P-A 052".to_string(),
@@ -40365,8 +40365,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA053Floatzel => Card::Pokemon(PokemonCard {
             id: "P-A 053".to_string(),
@@ -40380,14 +40380,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Water,],
                     title: "Attack the Wound".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 10,
                     effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA054Pawmot => Card::Pokemon(PokemonCard {
             id: "P-A 054".to_string(),
@@ -40407,8 +40407,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA055Machamp => Card::Pokemon(PokemonCard {
             id: "P-A 055".to_string(),
@@ -40422,14 +40422,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
                     title: "Power Press".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 50 more damage.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA056Ekans => Card::Pokemon(PokemonCard {
             id: "P-A 056".to_string(),
@@ -40449,8 +40449,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA057Bidoof => Card::Pokemon(PokemonCard {
             id: "P-A 057".to_string(),
@@ -40470,8 +40470,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA058Pachirisu => Card::Pokemon(PokemonCard {
             id: "P-A 058".to_string(),
@@ -40491,8 +40491,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA059Riolu => Card::Pokemon(PokemonCard {
             id: "P-A 059".to_string(),
@@ -40512,8 +40512,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA060Exeggcute => Card::Pokemon(PokemonCard {
             id: "P-A 060".to_string(),
@@ -40533,8 +40533,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA061Froakie => Card::Pokemon(PokemonCard {
             id: "P-A 061".to_string(),
@@ -40554,8 +40554,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA062Farfetchd => Card::Pokemon(PokemonCard {
             id: "P-A 062".to_string(),
@@ -40575,8 +40575,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA063Rayquaza => Card::Pokemon(PokemonCard {
             id: "P-A 063".to_string(),
@@ -40590,14 +40590,14 @@ pub fn get_card_by_enum(id: CardId) -> Card {
                 Attack {
                     energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Spiral Rush".to_string(),
-                    fixed_damage: 0,
+                    fixed_damage: 70,
                     effect: Some("Flip a coin until you get tails. This attack does 30 more damage for each heads.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA064RayquazaEx => Card::Pokemon(PokemonCard {
             id: "P-A 064".to_string(),
@@ -40617,8 +40617,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA065RayquazaEx => Card::Pokemon(PokemonCard {
             id: "P-A 065".to_string(),
@@ -40638,8 +40638,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA066Mimikyu => Card::Pokemon(PokemonCard {
             id: "P-A 066".to_string(),
@@ -40659,8 +40659,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA067Cosmog => Card::Pokemon(PokemonCard {
             id: "P-A 067".to_string(),
@@ -40680,8 +40680,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Darkness),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA068Lycanroc => Card::Pokemon(PokemonCard {
             id: "P-A 068".to_string(),
@@ -40701,8 +40701,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Grass),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA069AlolanExeggutor => Card::Pokemon(PokemonCard {
             id: "P-A 069".to_string(),
@@ -40722,8 +40722,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fire),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA070AlolanNinetales => Card::Pokemon(PokemonCard {
             id: "P-A 070".to_string(),
@@ -40743,8 +40743,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Metal),
             retreat_cost: vec![EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA071Crabrawler => Card::Pokemon(PokemonCard {
             id: "P-A 071".to_string(),
@@ -40764,8 +40764,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Psychic),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA072AlolanGrimer => Card::Pokemon(PokemonCard {
             id: "P-A 072".to_string(),
@@ -40785,8 +40785,8 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Fighting),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
         CardId::PA073Toucannon => Card::Pokemon(PokemonCard {
             id: "P-A 073".to_string(),
@@ -40806,8 +40806,944 @@ pub fn get_card_by_enum(id: CardId) -> Card {
             ],
             weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
-            rarity: "".to_string(),
-            booster_pack: "Promo-A".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA074Zeraora => Card::Pokemon(PokemonCard {
+            id: "P-A 074".to_string(),
+            name: "Zeraora".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Thunderclap Flash".to_string(), effect: "At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Lightning Claw".to_string(),
+                    fixed_damage: 50,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA075Kartana => Card::Pokemon(PokemonCard {
+            id: "P-A 075".to_string(),
+            name: "Kartana".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Thrash Metal".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA076Blacephalon => Card::Pokemon(PokemonCard {
+            id: "P-A 076".to_string(),
+            name: "Blacephalon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
+                    title: "Beat Punk".to_string(),
+                    fixed_damage: 130,
+                    effect: Some("This Pokémon also does 70 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA077Xurkitree => Card::Pokemon(PokemonCard {
+            id: "P-A 077".to_string(),
+            name: "Xurkitree".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Electronica".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA078DawnWingsNecrozma => Card::Pokemon(PokemonCard {
+            id: "P-A 078".to_string(),
+            name: "Dawn Wings Necrozma".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Psychobilly".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("This Pokémon also does 30 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA079DuskManeNecrozma => Card::Pokemon(PokemonCard {
+            id: "P-A 079".to_string(),
+            name: "Dusk Mane Necrozma".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Black Metal".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("Discard a [M] Energy from this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA080Stakataka => Card::Pokemon(PokemonCard {
+            id: "P-A 080".to_string(),
+            name: "Stakataka".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Colorless,],
+                    title: "Brass Rock".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA081UltraNecrozmaEx => Card::Pokemon(PokemonCard {
+            id: "P-A 081".to_string(),
+            name: "Ultra Necrozma ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Photon Claw".to_string(),
+                    fixed_damage: 60,
+                    effect: None,
+                },
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Metal,EnergyType::Metal,],
+                    title: "Shoegaze".to_string(),
+                    fixed_damage: 120,
+                    effect: Some("Discard the top 5 cards of each player's deck.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA082Poipole => Card::Pokemon(PokemonCard {
+            id: "P-A 082".to_string(),
+            name: "Poipole".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "2-Step".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Flip 2 coins. This attack does 20 damage for each heads.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA083Stufful => Card::Pokemon(PokemonCard {
+            id: "P-A 083".to_string(),
+            name: "Stufful".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Ram".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA084TapuKokoEx => Card::Pokemon(PokemonCard {
+            id: "P-A 084".to_string(),
+            name: "Tapu Koko ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Plasma Hurricane".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Take a [L] Energy from your Energy Zone and attach it to this Pokémon.".to_string()),
+                },
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Mach Bolt".to_string(),
+                    fixed_damage: 90,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA085Vanillite => Card::Pokemon(PokemonCard {
+            id: "P-A 085".to_string(),
+            name: "Vanillite".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Sweets Relay".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA086Jolteon => Card::Pokemon(PokemonCard {
+            id: "P-A 086".to_string(),
+            name: "Jolteon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Beginning Bolt".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If this Pokémon evolved during this turn, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA087Alcremie => Card::Pokemon(PokemonCard {
+            id: "P-A 087".to_string(),
+            name: "Alcremie".to_string(),
+            stage: 1,
+            evolves_from: Some("Milcery".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Sweets Overload".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA088Dragonair => Card::Pokemon(PokemonCard {
+            id: "P-A 088".to_string(),
+            name: "Dragonair".to_string(),
+            stage: 1,
+            evolves_from: Some("Dratini".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Shed Skin".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Heal 30 damage from this Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA089Audino => Card::Pokemon(PokemonCard {
+            id: "P-A 089".to_string(),
+            name: "Audino".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Drain Slap".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("Heal 10 damage from this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA090Togedemaru => Card::Pokemon(PokemonCard {
+            id: "P-A 090".to_string(),
+            name: "Togedemaru".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
+                    title: "Bristling Spikes".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("During your opponent's next turn, if this Pokémon is damaged by an attack, do 30 damage to the Attacking Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA091Greedent => Card::Pokemon(PokemonCard {
+            id: "P-A 091".to_string(),
+            name: "Greedent".to_string(),
+            stage: 1,
+            evolves_from: Some("Skwovet".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Enhanced Fang".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA092Eevee => Card::Pokemon(PokemonCard {
+            id: "P-A 092".to_string(),
+            name: "Eevee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Tackle".to_string(),
+                    fixed_damage: 20,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA093Cleffa => Card::Pokemon(PokemonCard {
+            id: "P-A 093".to_string(),
+            name: "Cleffa".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![],
+                    title: "Twinkly Call".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Put a random Pokémon from your deck into your hand.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA094Horsea => Card::Pokemon(PokemonCard {
+            id: "P-A 094".to_string(),
+            name: "Horsea".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Water Arrow".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("This attack does 10 damage to 1 of your opponent's Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA095Chinchou => Card::Pokemon(PokemonCard {
+            id: "P-A 095".to_string(),
+            name: "Chinchou".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Luring Glow".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA096Houndoom => Card::Pokemon(PokemonCard {
+            id: "P-A 096".to_string(),
+            name: "Houndoom".to_string(),
+            stage: 1,
+            evolves_from: Some("Houndour".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Diving Swipe".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Discard a random card from your opponent's hand.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA097Kangaskhan => Card::Pokemon(PokemonCard {
+            id: "P-A 097".to_string(),
+            name: "Kangaskhan".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Cross-Cut".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA098BlisseyEx => Card::Pokemon(PokemonCard {
+            id: "P-A 098".to_string(),
+            name: "Blissey ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Chansey".to_string()),
+            hp: 180,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Happy Punch".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("Flip a coin. If heads, heal 60 damage from this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA099Marill => Card::Pokemon(PokemonCard {
+            id: "P-A 099".to_string(),
+            name: "Marill".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Tackle".to_string(),
+                    fixed_damage: 10,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA100Weavile => Card::Pokemon(PokemonCard {
+            id: "P-A 100".to_string(),
+            name: "Weavile".to_string(),
+            stage: 1,
+            evolves_from: Some("Sneasel".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Slash".to_string(),
+                    fixed_damage: 50,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA101Latias => Card::Pokemon(PokemonCard {
+            id: "P-A 101".to_string(),
+            name: "Latias".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,],
+                    title: "Crossing Flights".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If Latios is on your Bench, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA102Tropius => Card::Pokemon(PokemonCard {
+            id: "P-A 102".to_string(),
+            name: "Tropius".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Double Smash".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("Flip 2 coins. This attack does 40 damage for each heads.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA103Poliwag => Card::Pokemon(PokemonCard {
+            id: "P-A 103".to_string(),
+            name: "Poliwag".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Surprise Attack".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA104Milotic => Card::Pokemon(PokemonCard {
+            id: "P-A 104".to_string(),
+            name: "Milotic".to_string(),
+            stage: 1,
+            evolves_from: Some("Feebas".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Healing Ripples".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your [W] Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
+                    title: "Aqua Edge".to_string(),
+                    fixed_damage: 60,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA105Zorua => Card::Pokemon(PokemonCard {
+            id: "P-A 105".to_string(),
+            name: "Zorua".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Ram".to_string(),
+                    fixed_damage: 20,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA106Zoroark => Card::Pokemon(PokemonCard {
+            id: "P-A 106".to_string(),
+            name: "Zoroark".to_string(),
+            stage: 1,
+            evolves_from: Some("Zorua".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Illusive Trickery".to_string(), effect: "If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Night Daze".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA107Miltank => Card::Pokemon(PokemonCard {
+            id: "P-A 107".to_string(),
+            name: "Miltank".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Rolling Frenzy".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("Until this Pokémon leaves the Active Spot, this Pokémon's Rolling Frenzy attack does +30 damage. This effect stacks.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA108Phanpy => Card::Pokemon(PokemonCard {
+            id: "P-A 108".to_string(),
+            name: "Phanpy".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,],
+                    title: "Flail".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA109EeveeEx => Card::Pokemon(PokemonCard {
+            id: "P-A 109".to_string(),
+            name: "Eevee ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Veevee 'volve".to_string(), effect: "This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Bite".to_string(),
+                    fixed_damage: 30,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA110EnteiEx => Card::Pokemon(PokemonCard {
+            id: "P-A 110".to_string(),
+            name: "Entei ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Fire,
+            ability: Some(Ability { title: "Legendary Pulse".to_string(), effect: "At the end of your turn, if this Pokémon is in the Active Spot, draw a card.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
+                    title: "Blazing Beatdown".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA111Pikachu => Card::Pokemon(PokemonCard {
+            id: "P-A 111".to_string(),
+            name: "Pikachu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Quick Attack".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA112RaichuEx => Card::Pokemon(PokemonCard {
+            id: "P-A 112".to_string(),
+            name: "Raichu ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Volt Tackle".to_string(),
+                    fixed_damage: 130,
+                    effect: Some("This Pokémon also does 30 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA113Mimikyu => Card::Pokemon(PokemonCard {
+            id: "P-A 113".to_string(),
+            name: "Mimikyu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Try to Imitate".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA114Machamp => Card::Pokemon(PokemonCard {
+            id: "P-A 114".to_string(),
+            name: "Machamp".to_string(),
+            stage: 2,
+            evolves_from: Some("Machoke".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "Hurricane Punch".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Flip 4 coins. This attack does 50 damage for each heads.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA115Regigigas => Card::Pokemon(PokemonCard {
+            id: "P-A 115".to_string(),
+            name: "Regigigas".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Raging Hammer".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("This attack does more damage equal to the damage this Pokémon has on it.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA116Shaymin => Card::Pokemon(PokemonCard {
+            id: "P-A 116".to_string(),
+            name: "Shaymin".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Fragrant Flower Garden".to_string(), effect: "Once during your turn, you may heal 10 damage from each of your Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Colorless,],
+                    title: "Flop".to_string(),
+                    fixed_damage: 30,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
+        }),
+        CardId::PA117Absol => Card::Pokemon(PokemonCard {
+            id: "P-A 117".to_string(),
+            name: "Absol".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Leap Over".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("This attack does 30 damage to 1 of your opponent's Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo A (P-A)".to_string(),
         }),
     }
 }

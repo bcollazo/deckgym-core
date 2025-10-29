@@ -2040,6 +2040,50 @@ pub enum CardId {
     PA071Crabrawler,
     PA072AlolanGrimer,
     PA073Toucannon,
+    PA074Zeraora,
+    PA075Kartana,
+    PA076Blacephalon,
+    PA077Xurkitree,
+    PA078DawnWingsNecrozma,
+    PA079DuskManeNecrozma,
+    PA080Stakataka,
+    PA081UltraNecrozmaEx,
+    PA082Poipole,
+    PA083Stufful,
+    PA084TapuKokoEx,
+    PA085Vanillite,
+    PA086Jolteon,
+    PA087Alcremie,
+    PA088Dragonair,
+    PA089Audino,
+    PA090Togedemaru,
+    PA091Greedent,
+    PA092Eevee,
+    PA093Cleffa,
+    PA094Horsea,
+    PA095Chinchou,
+    PA096Houndoom,
+    PA097Kangaskhan,
+    PA098BlisseyEx,
+    PA099Marill,
+    PA100Weavile,
+    PA101Latias,
+    PA102Tropius,
+    PA103Poliwag,
+    PA104Milotic,
+    PA105Zorua,
+    PA106Zoroark,
+    PA107Miltank,
+    PA108Phanpy,
+    PA109EeveeEx,
+    PA110EnteiEx,
+    PA111Pikachu,
+    PA112RaichuEx,
+    PA113Mimikyu,
+    PA114Machamp,
+    PA115Regigigas,
+    PA116Shaymin,
+    PA117Absol,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -4077,6 +4121,50 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-A 071", CardId::PA071Crabrawler);
     map.insert("P-A 072", CardId::PA072AlolanGrimer);
     map.insert("P-A 073", CardId::PA073Toucannon);
+    map.insert("P-A 074", CardId::PA074Zeraora);
+    map.insert("P-A 075", CardId::PA075Kartana);
+    map.insert("P-A 076", CardId::PA076Blacephalon);
+    map.insert("P-A 077", CardId::PA077Xurkitree);
+    map.insert("P-A 078", CardId::PA078DawnWingsNecrozma);
+    map.insert("P-A 079", CardId::PA079DuskManeNecrozma);
+    map.insert("P-A 080", CardId::PA080Stakataka);
+    map.insert("P-A 081", CardId::PA081UltraNecrozmaEx);
+    map.insert("P-A 082", CardId::PA082Poipole);
+    map.insert("P-A 083", CardId::PA083Stufful);
+    map.insert("P-A 084", CardId::PA084TapuKokoEx);
+    map.insert("P-A 085", CardId::PA085Vanillite);
+    map.insert("P-A 086", CardId::PA086Jolteon);
+    map.insert("P-A 087", CardId::PA087Alcremie);
+    map.insert("P-A 088", CardId::PA088Dragonair);
+    map.insert("P-A 089", CardId::PA089Audino);
+    map.insert("P-A 090", CardId::PA090Togedemaru);
+    map.insert("P-A 091", CardId::PA091Greedent);
+    map.insert("P-A 092", CardId::PA092Eevee);
+    map.insert("P-A 093", CardId::PA093Cleffa);
+    map.insert("P-A 094", CardId::PA094Horsea);
+    map.insert("P-A 095", CardId::PA095Chinchou);
+    map.insert("P-A 096", CardId::PA096Houndoom);
+    map.insert("P-A 097", CardId::PA097Kangaskhan);
+    map.insert("P-A 098", CardId::PA098BlisseyEx);
+    map.insert("P-A 099", CardId::PA099Marill);
+    map.insert("P-A 100", CardId::PA100Weavile);
+    map.insert("P-A 101", CardId::PA101Latias);
+    map.insert("P-A 102", CardId::PA102Tropius);
+    map.insert("P-A 103", CardId::PA103Poliwag);
+    map.insert("P-A 104", CardId::PA104Milotic);
+    map.insert("P-A 105", CardId::PA105Zorua);
+    map.insert("P-A 106", CardId::PA106Zoroark);
+    map.insert("P-A 107", CardId::PA107Miltank);
+    map.insert("P-A 108", CardId::PA108Phanpy);
+    map.insert("P-A 109", CardId::PA109EeveeEx);
+    map.insert("P-A 110", CardId::PA110EnteiEx);
+    map.insert("P-A 111", CardId::PA111Pikachu);
+    map.insert("P-A 112", CardId::PA112RaichuEx);
+    map.insert("P-A 113", CardId::PA113Mimikyu);
+    map.insert("P-A 114", CardId::PA114Machamp);
+    map.insert("P-A 115", CardId::PA115Regigigas);
+    map.insert("P-A 116", CardId::PA116Shaymin);
+    map.insert("P-A 117", CardId::PA117Absol);
     map
 });
 

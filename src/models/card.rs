@@ -88,6 +88,7 @@ pub enum TrainerType {
     Supporter,
     Item,
     Tool,
+    Fossil,
 }
 
 /// Represents the data of a single trainer card.
