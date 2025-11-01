@@ -1,6 +1,6 @@
 use clap::Parser;
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -87,24 +87,26 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
 
         if crossterm::event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
-                    // Numeric keys for action selection (1-9)
-                    KeyCode::Char(c @ '1'..='9') => {
-                        let index = (c as usize) - ('1' as usize);
-                        app.handle_action_selection(index);
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
+                        // Numeric keys for action selection (1-9)
+                        KeyCode::Char(c @ '1'..='9') => {
+                            let index = (c as usize) - ('1' as usize);
+                            app.handle_action_selection(index);
+                        }
+                        // Replay mode controls
+                        KeyCode::Down => app.next_state(),
+                        KeyCode::Up => app.prev_state(),
+                        KeyCode::Char('w') => app.jump_to_prev_turn(),
+                        KeyCode::Char('s') => app.jump_to_next_turn(),
+                        KeyCode::Left => app.scroll_player_hand_left(),
+                        KeyCode::Right => app.scroll_player_hand_right(),
+                        KeyCode::Char('c') => app.toggle_lock_actions_center(),
+                        KeyCode::Char('A') => app.scroll_opponent_hand_left(),
+                        KeyCode::Char('D') => app.scroll_opponent_hand_right(),
+                        _ => {}
                     }
-                    // Replay mode controls
-                    KeyCode::Down => app.next_state(),
-                    KeyCode::Up => app.prev_state(),
-                    KeyCode::Char('w') => app.jump_to_prev_turn(),
-                    KeyCode::Char('s') => app.jump_to_next_turn(),
-                    KeyCode::Left => app.scroll_player_hand_left(),
-                    KeyCode::Right => app.scroll_player_hand_right(),
-                    KeyCode::Char('c') => app.toggle_lock_actions_center(),
-                    KeyCode::Char('A') => app.scroll_opponent_hand_left(),
-                    KeyCode::Char('D') => app.scroll_opponent_hand_right(),
-                    _ => {}
                 }
             }
         }
