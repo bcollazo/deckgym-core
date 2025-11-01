@@ -1,0 +1,51 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "TUI replay mode",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=tui",
+                    "--features=tui"
+                ],
+                "filter": {
+                    "name": "tui",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "example_decks/venusaur-exeggutor.txt",
+                "example_decks/weezing-arbok.txt",
+                "--players",
+                "e,e"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "TUI interactive mode",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=tui",
+                    "--features=tui"
+                ],
+                "filter": {
+                    "name": "tui",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "example_decks/venusaur-exeggutor.txt",
+                "example_decks/weezing-arbok.txt",
+                "--players",
+                "e,h"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

@@ -24,14 +24,17 @@ pub fn ui(f: &mut Frame, app: &App) {
         .split(f.area());
 
     // Center: game area with battle mat, hand areas, and footer (no separate header)
+
+    // Adjust footer size based on mode - interactive mode needs more space for action list
+    let footer_height = if is_interactive { 16 } else { 6 };
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
-                Constraint::Length(3), // Opponent's hand (reduced height)
-                Constraint::Min(0),    // Battle mat
-                Constraint::Length(5), // Player's hand
-                Constraint::Length(6), // Footer (includes header info, reduced size)
+                Constraint::Length(3),             // Opponent's hand (reduced height)
+                Constraint::Min(0),                // Battle mat
+                Constraint::Length(5),             // Player's hand
+                Constraint::Length(footer_height), // Footer (larger in interactive mode for actions)
             ]
             .as_ref(),
         )
@@ -373,31 +376,35 @@ pub fn ui(f: &mut Frame, app: &App) {
         ];
 
         if is_human_turn {
-            // Show numbered actions for human player
-            let action_strings: Vec<String> = actions
-                .iter()
-                .take(9) // Limit to first 9 actions (1-9 keys)
-                .enumerate()
-                .map(|(i, a)| format!("{}. {:?}", i + 1, a.action))
-                .collect();
-
-            let actions_text = if action_strings.is_empty() {
-                "No actions available".to_string()
-            } else {
-                action_strings.join(" | ")
-            };
-
-            lines.push(Line::from("Controls: ESC/q=quit, 1-9=select action, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"));
+            lines.push(Line::from("Controls: ESC/q=quit, 1-9=select action, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
             lines.push(Line::from(vec![Span::styled(
                 "YOUR TURN - Select Action:",
                 Style::default()
                     .fg(Color::LightYellow)
                     .add_modifier(Modifier::BOLD),
             )]));
-            lines.push(Line::from(actions_text));
+
+            if actions.is_empty() {
+                lines.push(Line::from("No actions available"));
+            } else {
+                // Display up to 9 actions (limited by numeric keys 1-9)
+                for (i, action) in actions.iter().take(9).enumerate() {
+                    lines.push(Line::from(vec![Span::styled(
+                        format!("{}. {:?}", i + 1, action.action),
+                        Style::default().fg(Color::White),
+                    )]));
+                }
+
+                if actions.len() > 9 {
+                    lines.push(Line::from(vec![Span::styled(
+                        format!("... and {} more actions", actions.len() - 9),
+                        Style::default().fg(Color::DarkGray),
+                    )]));
+                }
+            }
         } else {
             // AI turn - show waiting message
-            lines.push(Line::from("Controls: ESC/q=quit, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand"));
+            lines.push(Line::from("Controls: ESC/q=quit, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand"));
             lines.push(Line::from(vec![Span::styled(
                 "AI TURN - Waiting for opponent...",
                 Style::default().fg(Color::Yellow),
@@ -425,7 +432,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             Line::from(vec![
                 Span::styled("P2 Discard: ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
             ]).spans.into_iter().chain(p2_discard_line.spans.into_iter()).collect::<Vec<_>>().into(),
-            Line::from("Controls: ESC/q=quit, Up/Down=navigate states, W/S=scroll log, Left/Right=scroll player hand, A/D=scroll opp hand, C=toggle center"),
+            Line::from("Controls: ESC/q=quit, Up/Down=navigate states, W/S=jump turn, Left/Right=scroll player hand, A/D=scroll opp hand, C=toggle center"),
             Line::from(format!("Current Player: P{}", actor + 1)),
             Line::from(format!("Possible Actions: {}", actions_text)),
         ]
@@ -438,6 +445,7 @@ pub fn ui(f: &mut Frame, app: &App) {
 
     // Left side: Battle log panel with actions
     let mut log_lines = Vec::new();
+    let mut turn_log_lines = Vec::new(); // Track line numbers where turn headers appear
     let actions = app.get_actions();
 
     // Track where the "CURRENT" marker is placed in the log_lines vector
@@ -449,6 +457,7 @@ pub fn ui(f: &mut Frame, app: &App) {
         let mut current_turn: u8 = 0;
 
         // Initial header
+        turn_log_lines.push(log_lines.len());
         log_lines.push(Line::from(vec![Span::styled(
             "━━━ Setup Phase ━━━",
             Style::default()
@@ -470,6 +479,7 @@ pub fn ui(f: &mut Frame, app: &App) {
                 if action_turn != current_turn {
                     current_turn = action_turn;
                     log_lines.push(Line::from(""));
+                    turn_log_lines.push(log_lines.len());
                     let header = if current_turn == 0 {
                         "━━━ Setup Phase ━━━".to_string()
                     } else {
@@ -502,6 +512,7 @@ pub fn ui(f: &mut Frame, app: &App) {
         // Show current turn header at the end if it's different
         if state.turn_count != current_turn {
             log_lines.push(Line::from(""));
+            turn_log_lines.push(log_lines.len());
             let header = if state.turn_count == 0 {
                 "━━━ Setup Phase ━━━".to_string()
             } else {
@@ -529,6 +540,7 @@ pub fn ui(f: &mut Frame, app: &App) {
             };
 
             // Add initial turn header
+            turn_log_lines.push(log_lines.len());
             let header = if current_turn == 0 {
                 "━━━ Setup Phase ━━━".to_string()
             } else {
@@ -580,6 +592,7 @@ pub fn ui(f: &mut Frame, app: &App) {
 
                     if next_turn != current_turn && i + 1 < actions.len() {
                         log_lines.push(Line::from(""));
+                        turn_log_lines.push(log_lines.len());
                         let header = if next_turn == 0 {
                             "━━━ Setup Phase ━━━".to_string()
                         } else {
