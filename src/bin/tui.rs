@@ -87,7 +87,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
 
         if crossterm::event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
-                // if key.kind == KeyEventKind::Press {
+                if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
                         // Numeric keys for action selection (1-9)
@@ -107,7 +107,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Result<(
                         KeyCode::Char('D') => app.scroll_opponent_hand_right(),
                         _ => {}
                     }
-                // }
+                }
             }
         }
 
