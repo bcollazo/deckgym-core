@@ -97,7 +97,7 @@ impl App {
             scroll_offset: 0,
             player_hand_scroll: 0,
             opponent_hand_scroll: 0,
-            lock_actions_center: false,
+            lock_actions_center: true,
         })
     }
 
