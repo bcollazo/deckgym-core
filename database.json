@@ -44136,6 +44136,7539 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B1 001",
+      "name": "Pinsir",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "X-Scissor",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 002",
+      "name": "Mega Pinsir ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Critical Scissors",
+          "fixed_damage": 80,
+          "effect": "Flip a coin. If heads, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 003",
+      "name": "Wurmple",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 004",
+      "name": "Silcoon",
+      "stage": 1,
+      "evolves_from": "Wurmple",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Harden",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 005",
+      "name": "Beautifly",
+      "stage": 2,
+      "evolves_from": "Silcoon",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Skill Dive",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 006",
+      "name": "Cascoon",
+      "stage": 1,
+      "evolves_from": "Wurmple",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Harden",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 007",
+      "name": "Dustox",
+      "stage": 2,
+      "evolves_from": "Cascoon",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Select Powder",
+          "fixed_damage": 60,
+          "effect": "Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 008",
+      "name": "Seedot",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Rollout",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 009",
+      "name": "Nuzleaf",
+      "stage": 1,
+      "evolves_from": "Seedot",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Gentle Slap",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 010",
+      "name": "Shiftry",
+      "stage": 2,
+      "evolves_from": "Nuzleaf",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Nipping Cyclone",
+          "fixed_damage": 70,
+          "effect": "Discard a random card from your opponent's hand."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 011",
+      "name": "Shroomish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 012",
+      "name": "Breloom",
+      "stage": 1,
+      "evolves_from": "Shroomish",
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Seed Bomb",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 013",
+      "name": "Pansage",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Beat",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 014",
+      "name": "Simisage",
+      "stage": 1,
+      "evolves_from": "Pansage",
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Fury Swipes",
+          "fixed_damage": 40,
+          "effect": "Flip 3 coins. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 015",
+      "name": "Cottonee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Razor Leaf",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 016",
+      "name": "Whimsicott ex",
+      "stage": 1,
+      "evolves_from": "Cottonee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Grass Knot",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 017",
+      "name": "Petilil",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flop",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 018",
+      "name": "Lilligant",
+      "stage": 1,
+      "evolves_from": "Petilil",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Toughness Aroma",
+        "effect": "Each of your [G] Pokémon gets +20 HP."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 019",
+      "name": "Maractus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Dazzle Dance",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 020",
+      "name": "Virizion",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Sacred Sword",
+          "fixed_damage": 110,
+          "effect": "During your next turn, this Pokémon can't use Sacred Sword."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 021",
+      "name": "Skiddo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Razor Leaf",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 022",
+      "name": "Gogoat",
+      "stage": 1,
+      "evolves_from": "Skiddo",
+      "hp": 120,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Double-Edge",
+          "fixed_damage": 100,
+          "effect": "This Pokémon also does 20 damage to itself."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 023",
+      "name": "Phantump",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Branch Poke",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 024",
+      "name": "Trevenant",
+      "stage": 1,
+      "evolves_from": "Phantump",
+      "hp": 110,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Horn Leech",
+          "fixed_damage": 60,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 025",
+      "name": "Grookey",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Beat",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 026",
+      "name": "Thwackey",
+      "stage": 1,
+      "evolves_from": "Grookey",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Hammer In",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 027",
+      "name": "Rillaboom",
+      "stage": 2,
+      "evolves_from": "Thwackey",
+      "hp": 150,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Captivating Rhythm",
+        "effect": "Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Grass", "Colorless"],
+          "title": "Drum Rush",
+          "fixed_damage": 120,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 028",
+      "name": "Growlithe",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Dig Claws",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 029",
+      "name": "Arcanine",
+      "stage": 1,
+      "evolves_from": "Growlithe",
+      "hp": 120,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Fire Fang",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 030",
+      "name": "Ponyta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Combustion",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 031",
+      "name": "Rapidash ex",
+      "stage": 1,
+      "evolves_from": "Ponyta",
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Sprinting Flare",
+          "fixed_damage": 110,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 032",
+      "name": "Ho-Oh",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless", "Colorless"],
+          "title": "Blessed Burn",
+          "fixed_damage": 100,
+          "effect": "Heal 30 damage from each of your Benched Basic Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 033",
+      "name": "Torchic",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Peck",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 034",
+      "name": "Combusken",
+      "stage": 1,
+      "evolves_from": "Torchic",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "High Jump Kick",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 035",
+      "name": "Blaziken",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Blaze Kick",
+          "fixed_damage": 100,
+          "effect": "Discard a [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 036",
+      "name": "Mega Blaziken ex",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Mega Burning",
+          "fixed_damage": 120,
+          "effect": "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 037",
+      "name": "Pansear",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Beat",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 038",
+      "name": "Simisear",
+      "stage": 1,
+      "evolves_from": "Pansear",
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "Fury Swipes",
+          "fixed_damage": 40,
+          "effect": "Flip 3 coins. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 039",
+      "name": "Darumaka",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Reckless Charge",
+          "fixed_damage": 50,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 040",
+      "name": "Darmanitan",
+      "stage": 1,
+      "evolves_from": "Darumaka",
+      "hp": 130,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Darmani-Hands",
+          "fixed_damage": 80,
+          "effect": "Flip 2 coins. This attack does 30 more damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 041",
+      "name": "Litwick",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Flare",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 042",
+      "name": "Lampent",
+      "stage": 1,
+      "evolves_from": "Litwick",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Will-O-Wisp",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 043",
+      "name": "Chandelure",
+      "stage": 2,
+      "evolves_from": "Lampent",
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": {
+        "title": "Slow Sear",
+        "effect": "Once during your turn, you may discard the top card of your opponent's deck."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Heat Blast",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 044",
+      "name": "Heatmor",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Tongue Whip",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 045",
+      "name": "Litleo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Live Coal",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 046",
+      "name": "Pyroar",
+      "stage": 1,
+      "evolves_from": "Litleo",
+      "hp": 130,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Fire Blast",
+          "fixed_damage": 130,
+          "effect": "Discard 2 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 047",
+      "name": "Turtonator",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Shell Trap",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, if this Pokémon is damaged by an attack, do 20 damage to the Attacking Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 048",
+      "name": "Psyduck",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Rain Splash",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 049",
+      "name": "Golduck",
+      "stage": 1,
+      "evolves_from": "Psyduck",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 050",
+      "name": "Magikarp",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Waterfall Evolution",
+          "fixed_damage": 0,
+          "effect": "Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 051",
+      "name": "Gyarados",
+      "stage": 1,
+      "evolves_from": "Magikarp",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Hammering Tail",
+          "fixed_damage": 100,
+          "effect": "Discard the top card of your opponent's deck."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 052",
+      "name": "Mega Gyarados ex",
+      "stage": 1,
+      "evolves_from": "Magikarp",
+      "hp": 210,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Mega Blaster",
+          "fixed_damage": 140,
+          "effect": "Discard the top 3 cards of your opponent's deck."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 053",
+      "name": "Lotad",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 054",
+      "name": "Lombre",
+      "stage": 1,
+      "evolves_from": "Lotad",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Gentle Slap",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 055",
+      "name": "Ludicolo",
+      "stage": 2,
+      "evolves_from": "Lombre",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Rhythmic Steps",
+          "fixed_damage": 60,
+          "effect": "If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 056",
+      "name": "Wailmer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Surf",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 057",
+      "name": "Wailord",
+      "stage": 1,
+      "evolves_from": "Wailmer",
+      "hp": 200,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [
+            "Colorless",
+            "Colorless",
+            "Colorless",
+            "Colorless"
+          ],
+          "title": "Whale Pump",
+          "fixed_damage": 60,
+          "effect": "This attack does 10 more damage for each [W] Energy attached to this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 058",
+      "name": "Corphish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 059",
+      "name": "Crawdaunt",
+      "stage": 1,
+      "evolves_from": "Corphish",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Guillotine",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 060",
+      "name": "Luvdisc",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Paired Tackle",
+          "fixed_damage": 30,
+          "effect": "If you have exactly 2, 4, or 6 cards in your hand, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 061",
+      "name": "Panpour",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Beat",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 062",
+      "name": "Simipour",
+      "stage": 1,
+      "evolves_from": "Panpour",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Fury Swipes",
+          "fixed_damage": 40,
+          "effect": "Flip 3 coins. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 063",
+      "name": "Tympole",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Mud-Slap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 064",
+      "name": "Palpitoad",
+      "stage": 1,
+      "evolves_from": "Tympole",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Hyper Voice",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 065",
+      "name": "Seismitoad",
+      "stage": 2,
+      "evolves_from": "Palpitoad",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Split Spiral Punch",
+          "fixed_damage": 90,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 066",
+      "name": "Tirtouga",
+      "stage": 1,
+      "evolves_from": "Cover Fossil",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Shell Attack",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 067",
+      "name": "Carracosta",
+      "stage": 2,
+      "evolves_from": "Tirtouga",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Blocking Shell",
+          "fixed_damage": 100,
+          "effect": "Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 068",
+      "name": "Frillish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 069",
+      "name": "Jellicent",
+      "stage": 1,
+      "evolves_from": "Frillish",
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Bouncy Body",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Surf",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 070",
+      "name": "Keldeo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Sacred Sword",
+          "fixed_damage": 110,
+          "effect": "During your next turn, this Pokémon can't use Sacred Sword."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 071",
+      "name": "Froakie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Drip",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 072",
+      "name": "Frogadier",
+      "stage": 1,
+      "evolves_from": "Froakie",
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Bounce",
+          "fixed_damage": 40,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 073",
+      "name": "Greninja ex",
+      "stage": 2,
+      "evolves_from": "Frogadier",
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Shifting Stream",
+        "effect": "Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 074",
+      "name": "Bergmite",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Icicle",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 075",
+      "name": "Avalugg",
+      "stage": 1,
+      "evolves_from": "Bergmite",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Frost Barrier",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 076",
+      "name": "Chewtle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 077",
+      "name": "Drednaw",
+      "stage": 1,
+      "evolves_from": "Chewtle",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Jaw Lock",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, the Defending Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 078",
+      "name": "Arrokuda",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Peck",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 079",
+      "name": "Barraskewda",
+      "stage": 1,
+      "evolves_from": "Arrokuda",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Double-Edge",
+          "fixed_damage": 80,
+          "effect": "This Pokémon also does 20 damage to itself."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 080",
+      "name": "Eiscue",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Ice Face",
+        "effect": "If this Pokémon has full HP, it takes -40 damage from attacks from your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Ram",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 081",
+      "name": "Jolteon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Electromagnetic Wall",
+        "effect": "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 082",
+      "name": "Mareep",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Rear Kick",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 083",
+      "name": "Flaaffy",
+      "stage": 1,
+      "evolves_from": "Mareep",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Electric Punch",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 084",
+      "name": "Ampharos",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Zapping Bullet",
+          "fixed_damage": 90,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 085",
+      "name": "Mega Ampharos ex",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 210,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Lightning Lancer",
+          "fixed_damage": 100,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 086",
+      "name": "Shinx",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flop",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 087",
+      "name": "Luxio",
+      "stage": 1,
+      "evolves_from": "Shinx",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Bite",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 088",
+      "name": "Luxray",
+      "stage": 2,
+      "evolves_from": "Luxio",
+      "hp": 130,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Flash Impact",
+          "fixed_damage": 110,
+          "effect": "This attack also does 20 damage to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 089",
+      "name": "Pachirisu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Attack the Wound",
+          "fixed_damage": 30,
+          "effect": "If your opponent's Active Pokémon has damage on it, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 090",
+      "name": "Blitzle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Tiny Charge",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 091",
+      "name": "Zebstrika",
+      "stage": 1,
+      "evolves_from": "Blitzle",
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Electric Ball",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 092",
+      "name": "Joltik",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Attach",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": [],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 093",
+      "name": "Galvantula",
+      "stage": 1,
+      "evolves_from": "Joltik",
+      "hp": 80,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electro Ball",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": [],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 094",
+      "name": "Dedenne",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Electric Nibbling",
+          "fixed_damage": 20,
+          "effect": "Discard a [L] Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 095",
+      "name": "Yamper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Roar",
+          "fixed_damage": 0,
+          "effect": "Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 096",
+      "name": "Boltund",
+      "stage": 1,
+      "evolves_from": "Yamper",
+      "hp": 110,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Zap Kick",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 097",
+      "name": "Natu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Peck",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 098",
+      "name": "Xatu",
+      "stage": 1,
+      "evolves_from": "Natu",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless", "Colorless"],
+          "title": "Zen Headbutt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 099",
+      "name": "Misdreavus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Double Spin",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 100",
+      "name": "Mismagius",
+      "stage": 1,
+      "evolves_from": "Misdreavus",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Spooky Shot",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 101",
+      "name": "Sableye",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Dirty Throw",
+          "fixed_damage": 70,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 102",
+      "name": "Mega Altaria ex",
+      "stage": 1,
+      "evolves_from": "Swablu",
+      "hp": 190,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Mega Harmony",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 103",
+      "name": "Duskull",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Ambush",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 104",
+      "name": "Dusclops",
+      "stage": 1,
+      "evolves_from": "Duskull",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Will-O-Wisp",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 105",
+      "name": "Dusknoir",
+      "stage": 2,
+      "evolves_from": "Dusclops",
+      "hp": 150,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Fade into Darkness",
+        "effect": "When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Hammer In",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 106",
+      "name": "Jirachi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Star Drop",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 107",
+      "name": "Drifloon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Wind Blast",
+          "fixed_damage": 0,
+          "effect": "This attack does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 108",
+      "name": "Drifblim",
+      "stage": 1,
+      "evolves_from": "Drifloon",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Balloon Barrage",
+          "fixed_damage": 20,
+          "effect": "This attack does 20 more damage for each Energy attached to this Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 109",
+      "name": "Chingling",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Jingly Noise",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, they can't play any Item cards from their hand."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 110",
+      "name": "Yamask",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Mumble",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 111",
+      "name": "Cofagrigus",
+      "stage": 1,
+      "evolves_from": "Yamask",
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Soul Shot",
+          "fixed_damage": 120,
+          "effect": "Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 112",
+      "name": "Gothita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Stampede",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 113",
+      "name": "Gothorita",
+      "stage": 1,
+      "evolves_from": "Gothita",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Slap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 114",
+      "name": "Gothitelle",
+      "stage": 2,
+      "evolves_from": "Gothorita",
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Stellar Cradle",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, if they attach Energy from their Energy Zone to the Defending Pokémon, that Pokémon will be Asleep."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 115",
+      "name": "Spritzee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Fairy Wind",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 116",
+      "name": "Aromatisse",
+      "stage": 1,
+      "evolves_from": "Spritzee",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Confounding Cologne",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 117",
+      "name": "Swirlix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Cotton Guard",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 118",
+      "name": "Slurpuff",
+      "stage": 1,
+      "evolves_from": "Swirlix",
+      "hp": 110,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Draining Kiss",
+          "fixed_damage": 50,
+          "effect": "Heal 30 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 119",
+      "name": "Carbink",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Guard Press",
+          "fixed_damage": 30,
+          "effect": "During your opponent's next turn, this Pokémon takes -30 damage from attacks."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 120",
+      "name": "Klefki",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Dismantling Keys",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Hook",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 121",
+      "name": "Indeedee ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Watch Over",
+        "effect": "Once during your turn, you may heal 20 damage from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 122",
+      "name": "Sandshrew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Sand Spray",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 123",
+      "name": "Sandslash",
+      "stage": 1,
+      "evolves_from": "Sandshrew",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Cut",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 124",
+      "name": "Hitmonchan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Quick Straight",
+          "fixed_damage": 50,
+          "effect": "This attack's damage isn't affected by Weakness."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 125",
+      "name": "Sudowoodo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Fight Back",
+          "fixed_damage": 30,
+          "effect": "If this Pokémon has damage on it, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 126",
+      "name": "Makuhita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Lunge Out",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 127",
+      "name": "Hariyama",
+      "stage": 1,
+      "evolves_from": "Makuhita",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Colorless"],
+          "title": "Slapping Knockdown",
+          "fixed_damage": 110,
+          "effect": "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 128",
+      "name": "Hippopotas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Mud Shot",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 129",
+      "name": "Hippowdon",
+      "stage": 1,
+      "evolves_from": "Hippopotas",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Crashing Fangs",
+          "fixed_damage": 100,
+          "effect": "Flip a coin. If tails, during your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 130",
+      "name": "Sandile",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 131",
+      "name": "Krokorok",
+      "stage": 1,
+      "evolves_from": "Sandile",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Bite",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 132",
+      "name": "Krookodile",
+      "stage": 2,
+      "evolves_from": "Krokorok",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Chomp Chomp Bite",
+          "fixed_damage": 90,
+          "effect": "Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 133",
+      "name": "Archen",
+      "stage": 1,
+      "evolves_from": "Plume Fossil",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Rock Throw",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 134",
+      "name": "Archeops",
+      "stage": 2,
+      "evolves_from": "Archen",
+      "hp": 140,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Wild Spin",
+          "fixed_damage": 0,
+          "effect": "This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 135",
+      "name": "Golett",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Stampede",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 136",
+      "name": "Golurk",
+      "stage": 1,
+      "evolves_from": "Golett",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Heavy Rocket",
+          "fixed_damage": 60,
+          "effect": "Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 137",
+      "name": "Terrakion",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Sacred Sword",
+          "fixed_damage": 110,
+          "effect": "During your next turn, this Pokémon can't use Sacred Sword."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 138",
+      "name": "Pancham",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Punch",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 139",
+      "name": "Crabrawler",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Knuckle Punch",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 140",
+      "name": "Crabominable",
+      "stage": 1,
+      "evolves_from": "Crabrawler",
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Last-Chance Punch",
+          "fixed_damage": 30,
+          "effect": "If this Pokémon's remaining HP is 30 or less, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 141",
+      "name": "Stufful",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Magnum Punch",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 142",
+      "name": "Bewear",
+      "stage": 1,
+      "evolves_from": "Stufful",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Heavy Impact",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 143",
+      "name": "Sandygast",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Sand Attack",
+          "fixed_damage": 20,
+          "effect": "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 144",
+      "name": "Palossand",
+      "stage": 1,
+      "evolves_from": "Sandygast",
+      "hp": 140,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Life Sucker",
+          "fixed_damage": 70,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 145",
+      "name": "Rolycoly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 146",
+      "name": "Carkol",
+      "stage": 1,
+      "evolves_from": "Rolycoly",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Heat Crash",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 147",
+      "name": "Coalossal",
+      "stage": 2,
+      "evolves_from": "Carkol",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Coal Drop",
+          "fixed_damage": 100,
+          "effect": "If your opponent's Active Pokémon is a [G] Pokémon, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 148",
+      "name": "Murkrow",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Glide",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 149",
+      "name": "Honchkrow",
+      "stage": 1,
+      "evolves_from": "Murkrow",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Evil Admonition",
+          "fixed_damage": 40,
+          "effect": "This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 150",
+      "name": "Absol",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Ominous Claw",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 151",
+      "name": "Mega Absol ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Claw",
+          "fixed_damage": 80,
+          "effect": "Your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 152",
+      "name": "Skorupi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Bug Bite",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 153",
+      "name": "Drapion",
+      "stage": 1,
+      "evolves_from": "Skorupi",
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Stun Poison",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 154",
+      "name": "Darkrai",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Shadow Cage",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, the Defending Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 155",
+      "name": "Deino",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Headbutt",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 156",
+      "name": "Zweilous",
+      "stage": 1,
+      "evolves_from": "Deino",
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Fang",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 157",
+      "name": "Hydreigon",
+      "stage": 2,
+      "evolves_from": "Zweilous",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Roar in Unison",
+        "effect": "Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Hyper Ray",
+          "fixed_damage": 130,
+          "effect": "Discard all Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 158",
+      "name": "Pangoro",
+      "stage": 1,
+      "evolves_from": "Pancham",
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Overdrive Smash",
+          "fixed_damage": 30,
+          "effect": "During your next turn, this Pokémon's Overdrive Smash attack does +30 damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 159",
+      "name": "Skrelp",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Razor Fin",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 160",
+      "name": "Dragalge ex",
+      "stage": 1,
+      "evolves_from": "Skrelp",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Poison Point",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 161",
+      "name": "Mareanie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Poison Sting",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 162",
+      "name": "Toxapex",
+      "stage": 1,
+      "evolves_from": "Mareanie",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Venoshock",
+          "fixed_damage": 50,
+          "effect": "If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 163",
+      "name": "Impidimp",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Bite",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 164",
+      "name": "Morgrem",
+      "stage": 1,
+      "evolves_from": "Impidimp",
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "False Surrender",
+          "fixed_damage": 50,
+          "effect": "This attack's damage isn't affected by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 165",
+      "name": "Grimmsnarl",
+      "stage": 2,
+      "evolves_from": "Morgrem",
+      "hp": 160,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Wrack Down",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 166",
+      "name": "Ferroseed",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 167",
+      "name": "Ferrothorn",
+      "stage": 1,
+      "evolves_from": "Ferroseed",
+      "hp": 110,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Guard Press",
+          "fixed_damage": 50,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 168",
+      "name": "Durant",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Bite Together",
+          "fixed_damage": 40,
+          "effect": "If Durant is on your Bench, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 169",
+      "name": "Cobalion",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Sacred Sword",
+          "fixed_damage": 110,
+          "effect": "During your next turn, this Pokémon can't use Sacred Sword."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 170",
+      "name": "Honedge",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Pierce",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 171",
+      "name": "Doublade",
+      "stage": 1,
+      "evolves_from": "Honedge",
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Slash",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 172",
+      "name": "Aegislash",
+      "stage": 2,
+      "evolves_from": "Doublade",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Cursed Metal",
+        "effect": "Attacks used by your [P] Pokémon and [M] Pokémon do +30 damage to your opponent's Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless", "Colorless"],
+          "title": "Slicing Blade",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 173",
+      "name": "Meltan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Beam",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 174",
+      "name": "Melmetal ex",
+      "stage": 1,
+      "evolves_from": "Meltan",
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 80,
+          "effect": null
+        },
+        {
+          "energy_required": ["Metal", "Metal", "Metal", "Colorless"],
+          "title": "Metal Arms",
+          "fixed_damage": 100,
+          "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 175",
+      "name": "Corviknight",
+      "stage": 2,
+      "evolves_from": "Corvisquire",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Iron Wings",
+          "fixed_damage": 100,
+          "effect": "Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 176",
+      "name": "Druddigon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Water", "Colorless", "Colorless"],
+          "title": "Giga Claw",
+          "fixed_damage": 120,
+          "effect": "Flip 2 coins. If both of them are tails, this attack does nothing."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 177",
+      "name": "Goomy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Sticky Membrane",
+        "effect": "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1 [C] more."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Psychic"],
+          "title": "Ram",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 178",
+      "name": "Sliggoo",
+      "stage": 1,
+      "evolves_from": "Goomy",
+      "hp": 90,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Psychic"],
+          "title": "Gentle Slap",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 179",
+      "name": "Goodra",
+      "stage": 2,
+      "evolves_from": "Sliggoo",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Psychic", "Colorless"],
+          "title": "Spiral Drain",
+          "fixed_damage": 100,
+          "effect": "Heal 40 damage from this Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 180",
+      "name": "Pidgey",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Peck",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 181",
+      "name": "Pidgeotto",
+      "stage": 1,
+      "evolves_from": "Pidgey",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Wing",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 182",
+      "name": "Pidgeot",
+      "stage": 2,
+      "evolves_from": "Pidgeotto",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Twister",
+          "fixed_damage": 80,
+          "effect": "Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 183",
+      "name": "Tauros ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wild Tackle",
+          "fixed_damage": 90,
+          "effect": "Flip a coin. If tails, this Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 184",
+      "name": "Eevee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Boosted Evolution",
+        "effect": "As long as this Pokémon is in the Active Spot, it can evolve during your first turn or the turn you play it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 185",
+      "name": "Aipom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tail Smash",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 186",
+      "name": "Ambipom",
+      "stage": 1,
+      "evolves_from": "Aipom",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Excited Tail",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 187",
+      "name": "Miltank",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Body Slam",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 188",
+      "name": "Zigzagoon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 189",
+      "name": "Linoone",
+      "stage": 1,
+      "evolves_from": "Zigzagoon",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Jet Headbutt",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 190",
+      "name": "Whismur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Pound",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 191",
+      "name": "Loudred",
+      "stage": 1,
+      "evolves_from": "Whismur",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Hyper Voice",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 192",
+      "name": "Exploud",
+      "stage": 2,
+      "evolves_from": "Loudred",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Booming Roar",
+          "fixed_damage": 90,
+          "effect": "During your opponent's next turn, they can't play any Item cards from their hand."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 193",
+      "name": "Skitty",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Play Rough",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 194",
+      "name": "Delcatty",
+      "stage": 1,
+      "evolves_from": "Skitty",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Search for Friends",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put a Supporter card from your discard pile into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Cat Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 195",
+      "name": "Spinda",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Dizzying Headbutt",
+          "fixed_damage": 30,
+          "effect": "Both Active Pokémon are now Confused."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 196",
+      "name": "Swablu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Sing",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 197",
+      "name": "Altaria",
+      "stage": 1,
+      "evolves_from": "Swablu",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Do the Wave",
+          "fixed_damage": 20,
+          "effect": "This attack does 20 more damage for each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 198",
+      "name": "Chatot",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sleepy Song",
+          "fixed_damage": 30,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 199",
+      "name": "Patrat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Bite",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 200",
+      "name": "Watchog",
+      "stage": 1,
+      "evolves_from": "Patrat",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Biting Fang",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 201",
+      "name": "Lillipup",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Collect",
+          "fixed_damage": 0,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 202",
+      "name": "Herdier",
+      "stage": 1,
+      "evolves_from": "Lillipup",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Headbutt Bounce",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 203",
+      "name": "Stoutland",
+      "stage": 2,
+      "evolves_from": "Herdier",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Dangerous Bite",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 204",
+      "name": "Rufflet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wing Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 205",
+      "name": "Braviary",
+      "stage": 1,
+      "evolves_from": "Rufflet",
+      "hp": 120,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Slash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 206",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sharp Fang",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 207",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sharp Fang",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 208",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sharp Fang",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 209",
+      "name": "Rookidee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 210",
+      "name": "Corvisquire",
+      "stage": 1,
+      "evolves_from": "Rookidee",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Drill Peck",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 211",
+      "name": "Wooloo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Continuous Tumble",
+          "fixed_damage": 40,
+          "effect": "Flip a coin until you get tails. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 212",
+      "name": "Dubwool",
+      "stage": 1,
+      "evolves_from": "Wooloo",
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Boundless Power",
+          "fixed_damage": 100,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 213",
+      "trainer_card_type": "Item",
+      "name": "Prank Spinner",
+      "effect": "A card from among both player's hands is chosen at random, revealed to the other player, and shuffled into its owner's deck.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 214",
+      "trainer_card_type": "Fossil",
+      "name": "Plume Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 215",
+      "trainer_card_type": "Item",
+      "name": "Hitting Hammer",
+      "effect": "Flip 2 coins. If both of them are heads, discard a random Energy from your opponent's Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 216",
+      "trainer_card_type": "Fossil",
+      "name": "Cover Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 217",
+      "trainer_card_type": "Item",
+      "name": "Flame Patch",
+      "effect": "Attach a [R] Energy from your discard pile to your Active [R] Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 218",
+      "trainer_card_type": "Tool",
+      "name": "Sitrus Berry",
+      "effect": "At the end of each turn, if the Pokémon this card is attached to has half of its maximum HP or less remaining, heal 30 damage from it. If you do, discard this card.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 219",
+      "trainer_card_type": "Tool",
+      "name": "Heavy Helmet",
+      "effect": "If the Pokémon this card is attached to has a Retreat Cost of 3 or more, it takes -20 damage from attacks from your opponent's Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 220",
+      "trainer_card_type": "Tool",
+      "name": "Lucky Mittens",
+      "effect": "Whenever your opponent's Pokémon is Knocked Out by damage from an attack used by the Pokémon this card is attached to, draw a card.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 221",
+      "trainer_card_type": "Supporter",
+      "name": "Marlon",
+      "effect": "Heal 70 damage from 1 of your Carracosta or Jellicent.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 222",
+      "trainer_card_type": "Supporter",
+      "name": "Hala",
+      "effect": "During your opponent's next turn, if your Hariyama or Crabominable would be Knocked Out by damage from an attack, it is not Knocked Out and its remaining HP becomes 10.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 223",
+      "trainer_card_type": "Supporter",
+      "name": "May",
+      "effect": "Put 2 random Pokémon from your deck into your hand. For each Pokémon you put into your hand in this way, choose a Pokémon to shuffle from your hand into your deck.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 224",
+      "trainer_card_type": "Supporter",
+      "name": "Fantina",
+      "effect": "Take a [P] Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 225",
+      "trainer_card_type": "Supporter",
+      "name": "Copycat",
+      "effect": "Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 226",
+      "trainer_card_type": "Supporter",
+      "name": "Lisia",
+      "effect": "Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 227",
+      "name": "Beautifly",
+      "stage": 2,
+      "evolves_from": "Silcoon",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Skill Dive",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 228",
+      "name": "Skiddo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Razor Leaf",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 229",
+      "name": "Rillaboom",
+      "stage": 2,
+      "evolves_from": "Thwackey",
+      "hp": 150,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Captivating Rhythm",
+        "effect": "Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Grass", "Colorless"],
+          "title": "Drum Rush",
+          "fixed_damage": 120,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 230",
+      "name": "Growlithe",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Dig Claws",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 231",
+      "name": "Chandelure",
+      "stage": 2,
+      "evolves_from": "Lampent",
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": {
+        "title": "Slow Sear",
+        "effect": "Once during your turn, you may discard the top card of your opponent's deck."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Heat Blast",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 232",
+      "name": "Magikarp",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Waterfall Evolution",
+          "fixed_damage": 0,
+          "effect": "Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 233",
+      "name": "Ludicolo",
+      "stage": 2,
+      "evolves_from": "Lombre",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Rhythmic Steps",
+          "fixed_damage": 60,
+          "effect": "If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 234",
+      "name": "Jellicent",
+      "stage": 1,
+      "evolves_from": "Frillish",
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Bouncy Body",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Surf",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 235",
+      "name": "Keldeo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Sacred Sword",
+          "fixed_damage": 110,
+          "effect": "During your next turn, this Pokémon can't use Sacred Sword."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 236",
+      "name": "Eiscue",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Ice Face",
+        "effect": "If this Pokémon has full HP, it takes -40 damage from attacks from your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Ram",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 237",
+      "name": "Luxray",
+      "stage": 2,
+      "evolves_from": "Luxio",
+      "hp": 130,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Flash Impact",
+          "fixed_damage": 110,
+          "effect": "This attack also does 20 damage to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": [],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 238",
+      "name": "Cofagrigus",
+      "stage": 1,
+      "evolves_from": "Yamask",
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Soul Shot",
+          "fixed_damage": 120,
+          "effect": "Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 239",
+      "name": "Gothita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Stampede",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 240",
+      "name": "Makuhita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Lunge Out",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 241",
+      "name": "Hippowdon",
+      "stage": 1,
+      "evolves_from": "Hippopotas",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Crashing Fangs",
+          "fixed_damage": 100,
+          "effect": "Flip a coin. If tails, during your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 242",
+      "name": "Archeops",
+      "stage": 2,
+      "evolves_from": "Archen",
+      "hp": 140,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Wild Spin",
+          "fixed_damage": 0,
+          "effect": "This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 243",
+      "name": "Pancham",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Punch",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 244",
+      "name": "Honchkrow",
+      "stage": 1,
+      "evolves_from": "Murkrow",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Evil Admonition",
+          "fixed_damage": 40,
+          "effect": "This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 245",
+      "name": "Hydreigon",
+      "stage": 2,
+      "evolves_from": "Zweilous",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Roar in Unison",
+        "effect": "Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Hyper Ray",
+          "fixed_damage": 130,
+          "effect": "Discard all Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 246",
+      "name": "Corviknight",
+      "stage": 2,
+      "evolves_from": "Corvisquire",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Iron Wings",
+          "fixed_damage": 100,
+          "effect": "Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 247",
+      "name": "Goomy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Sticky Membrane",
+        "effect": "As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon cost 1 [C] more."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Psychic"],
+          "title": "Ram",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 248",
+      "name": "Delcatty",
+      "stage": 1,
+      "evolves_from": "Skitty",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Search for Friends",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put a Supporter card from your discard pile into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Cat Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 249",
+      "name": "Stoutland",
+      "stage": 2,
+      "evolves_from": "Herdier",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Dangerous Bite",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 250",
+      "name": "Rufflet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wing Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 251",
+      "name": "Mega Pinsir ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Critical Scissors",
+          "fixed_damage": 80,
+          "effect": "Flip a coin. If heads, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 252",
+      "name": "Whimsicott ex",
+      "stage": 1,
+      "evolves_from": "Cottonee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Grass Knot",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 253",
+      "name": "Rapidash ex",
+      "stage": 1,
+      "evolves_from": "Ponyta",
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Sprinting Flare",
+          "fixed_damage": 110,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 254",
+      "name": "Mega Blaziken ex",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Mega Burning",
+          "fixed_damage": 120,
+          "effect": "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 255",
+      "name": "Mega Gyarados ex",
+      "stage": 1,
+      "evolves_from": "Magikarp",
+      "hp": 210,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Mega Blaster",
+          "fixed_damage": 140,
+          "effect": "Discard the top 3 cards of your opponent's deck."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 256",
+      "name": "Greninja ex",
+      "stage": 2,
+      "evolves_from": "Frogadier",
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Shifting Stream",
+        "effect": "Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 257",
+      "name": "Jolteon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Electromagnetic Wall",
+        "effect": "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 258",
+      "name": "Mega Ampharos ex",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 210,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Lightning Lancer",
+          "fixed_damage": 100,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 259",
+      "name": "Mega Altaria ex",
+      "stage": 1,
+      "evolves_from": "Swablu",
+      "hp": 190,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Mega Harmony",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 260",
+      "name": "Indeedee ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Watch Over",
+        "effect": "Once during your turn, you may heal 20 damage from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 261",
+      "name": "Hitmonchan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Quick Straight",
+          "fixed_damage": 50,
+          "effect": "This attack's damage isn't affected by Weakness."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 262",
+      "name": "Mega Absol ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Claw",
+          "fixed_damage": 80,
+          "effect": "Your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 263",
+      "name": "Dragalge ex",
+      "stage": 1,
+      "evolves_from": "Skrelp",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Poison Point",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 264",
+      "name": "Melmetal ex",
+      "stage": 1,
+      "evolves_from": "Meltan",
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 80,
+          "effect": null
+        },
+        {
+          "energy_required": ["Metal", "Metal", "Metal", "Colorless"],
+          "title": "Metal Arms",
+          "fixed_damage": 100,
+          "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 265",
+      "name": "Tauros ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wild Tackle",
+          "fixed_damage": 90,
+          "effect": "Flip a coin. If tails, this Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 266",
+      "trainer_card_type": "Supporter",
+      "name": "Marlon",
+      "effect": "Heal 70 damage from 1 of your Carracosta or Jellicent.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 267",
+      "trainer_card_type": "Supporter",
+      "name": "Hala",
+      "effect": "During your opponent's next turn, if your Hariyama or Crabominable would be Knocked Out by damage from an attack, it is not Knocked Out and its remaining HP becomes 10.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 268",
+      "trainer_card_type": "Supporter",
+      "name": "May",
+      "effect": "Put 2 random Pokémon from your deck into your hand. For each Pokémon you put into your hand in this way, choose a Pokémon to shuffle from your hand into your deck.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 269",
+      "trainer_card_type": "Supporter",
+      "name": "Fantina",
+      "effect": "Take a [P] Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 270",
+      "trainer_card_type": "Supporter",
+      "name": "Copycat",
+      "effect": "Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 271",
+      "trainer_card_type": "Supporter",
+      "name": "Lisia",
+      "effect": "Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.",
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 272",
+      "name": "Mega Pinsir ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Critical Scissors",
+          "fixed_damage": 80,
+          "effect": "Flip a coin. If heads, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 273",
+      "name": "Whimsicott ex",
+      "stage": 1,
+      "evolves_from": "Cottonee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Grass Knot",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 274",
+      "name": "Rapidash ex",
+      "stage": 1,
+      "evolves_from": "Ponyta",
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Sprinting Flare",
+          "fixed_damage": 110,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 275",
+      "name": "Greninja ex",
+      "stage": 2,
+      "evolves_from": "Frogadier",
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Shifting Stream",
+        "effect": "Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 276",
+      "name": "Jolteon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Electromagnetic Wall",
+        "effect": "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 277",
+      "name": "Mega Ampharos ex",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 210,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Lightning Lancer",
+          "fixed_damage": 100,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 278",
+      "name": "Indeedee ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Watch Over",
+        "effect": "Once during your turn, you may heal 20 damage from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 279",
+      "name": "Hitmonchan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Quick Straight",
+          "fixed_damage": 50,
+          "effect": "This attack's damage isn't affected by Weakness."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 280",
+      "name": "Mega Absol ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Claw",
+          "fixed_damage": 80,
+          "effect": "Your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 281",
+      "name": "Dragalge ex",
+      "stage": 1,
+      "evolves_from": "Skrelp",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Poison Point",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 282",
+      "name": "Melmetal ex",
+      "stage": 1,
+      "evolves_from": "Meltan",
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 80,
+          "effect": null
+        },
+        {
+          "energy_required": ["Metal", "Metal", "Metal", "Colorless"],
+          "title": "Metal Arms",
+          "fixed_damage": 100,
+          "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 283",
+      "name": "Tauros ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wild Tackle",
+          "fixed_damage": 90,
+          "effect": "Flip a coin. If tails, this Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 284",
+      "name": "Mega Blaziken ex",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Mega Burning",
+          "fixed_damage": 120,
+          "effect": "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 285",
+      "name": "Mega Gyarados ex",
+      "stage": 1,
+      "evolves_from": "Magikarp",
+      "hp": 210,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Mega Blaster",
+          "fixed_damage": 140,
+          "effect": "Discard the top 3 cards of your opponent's deck."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 286",
+      "name": "Mega Altaria ex",
+      "stage": 1,
+      "evolves_from": "Swablu",
+      "hp": 190,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Mega Harmony",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 287",
+      "name": "Bellsprout",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Vine Whip",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 288",
+      "name": "Weepinbell",
+      "stage": 1,
+      "evolves_from": "Bellsprout",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Razor Leaf",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 289",
+      "name": "Victreebel",
+      "stage": 2,
+      "evolves_from": "Weepinbell",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Fragrance Trap",
+        "effect": "If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Vine Whip",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 290",
+      "name": "Rowlet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Skill Dive",
+          "fixed_damage": 0,
+          "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 291",
+      "name": "Dartrix",
+      "stage": 1,
+      "evolves_from": "Rowlet",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Skill Dive",
+          "fixed_damage": 0,
+          "effect": "This attack does 20 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 292",
+      "name": "Moltres",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless", "Colorless"],
+          "title": "Sky Attack",
+          "fixed_damage": 130,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 293",
+      "name": "Litten",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Heat Tackle",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 294",
+      "name": "Torracat",
+      "stage": 1,
+      "evolves_from": "Litten",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Heat Tackle",
+          "fixed_damage": 40,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 295",
+      "name": "Poliwag",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Call for Family",
+          "fixed_damage": 0,
+          "effect": "Put 1 random Poliwag from your deck onto your Bench."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 296",
+      "name": "Poliwhirl",
+      "stage": 1,
+      "evolves_from": "Poliwag",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Knuckle Punch",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 297",
+      "name": "Poliwrath",
+      "stage": 2,
+      "evolves_from": "Poliwhirl",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Counterattack",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 20 damage to the Attacking Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless", "Colorless"],
+          "title": "Mega Punch",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 298",
+      "name": "Articuno",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Ice Beam",
+          "fixed_damage": 60,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 299",
+      "name": "Manaphy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Oceanic Gift",
+          "fixed_damage": 0,
+          "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 300",
+      "name": "Popplio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Sing",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 301",
+      "name": "Brionne",
+      "stage": 1,
+      "evolves_from": "Popplio",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Water Gun",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 302",
+      "name": "Zapdos",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Raging Thunder",
+          "fixed_damage": 100,
+          "effect": "This attack also does 30 damage to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 303",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Safeguard",
+        "effect": "Prevent all damage done to this Pokémon by attacks from your opponent's Pokémon ex."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Zzzap",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 304",
+      "name": "Zeraora",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Thunderclap Flash",
+        "effect": "At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Lightning Claw",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 305",
+      "name": "Drowzee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Mumble",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 306",
+      "name": "Hypno",
+      "stage": 1,
+      "evolves_from": "Drowzee",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Sleep Pendulum",
+        "effect": "Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Psypunch",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 307",
+      "name": "Geodude",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 308",
+      "name": "Graveler",
+      "stage": 1,
+      "evolves_from": "Geodude",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Lunge Out",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 309",
+      "name": "Golem",
+      "stage": 2,
+      "evolves_from": "Graveler",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Colorless"],
+          "title": "Guard Press",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes -30 damage from attacks."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 310",
+      "name": "Rockruff",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Signs of Evolution",
+          "fixed_damage": 0,
+          "effect": "Put a random card that evolves from Rockruff from your deck into your hand."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 311",
+      "name": "Alolan Diglett",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Headbutt",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 312",
+      "name": "Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Pay Day",
+          "fixed_damage": 10,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 313",
+      "name": "Persian",
+      "stage": 1,
+      "evolves_from": "Meowth",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Shadow Claw",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, discard a random card from your opponent's hand."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 314",
+      "name": "Doduo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Peck",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 315",
+      "name": "Dodrio",
+      "stage": 1,
+      "evolves_from": "Doduo",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Drill Peck",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": [],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 316",
+      "name": "Bidoof",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Super Fang",
+          "fixed_damage": 0,
+          "effect": "Halve your opponent's Active Pokémon's remaining HP, rounded down."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 317",
+      "name": "Decidueye ex",
+      "stage": 2,
+      "evolves_from": "Dartrix",
+      "hp": 170,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Pierce the Pain",
+          "fixed_damage": 0,
+          "effect": "This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them."
+        },
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Razor Leaf",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 318",
+      "name": "Incineroar ex",
+      "stage": 2,
+      "evolves_from": "Torracat",
+      "hp": 180,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Fire Fang",
+          "fixed_damage": 30,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        },
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Scar-Charged Smash",
+          "fixed_damage": 80,
+          "effect": "If this Pokémon has damage on it, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 319",
+      "name": "Palkia ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Slash",
+          "fixed_damage": 30,
+          "effect": null
+        },
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Dimensional Storm",
+          "fixed_damage": 150,
+          "effect": "Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 320",
+      "name": "Primarina ex",
+      "stage": 2,
+      "evolves_from": "Brionne",
+      "hp": 180,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Hydro Pump",
+          "fixed_damage": 40,
+          "effect": "If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage."
+        },
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Sparkling Aria",
+          "fixed_damage": 100,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 321",
+      "name": "Pikachu ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Thunderbolt",
+          "fixed_damage": 150,
+          "effect": "Discard all Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 322",
+      "name": "Tapu Koko ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Plasma Hurricane",
+          "fixed_damage": 20,
+          "effect": "Take a [L] Energy from your Energy Zone and attach it to this Pokémon."
+        },
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Mach Bolt",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 323",
+      "name": "Lycanroc ex",
+      "stage": 1,
+      "evolves_from": "Rockruff",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Lycanfang",
+          "fixed_damage": 130,
+          "effect": "Discard a [F] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 324",
+      "name": "Passimian ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": {
+        "title": "Offload Pass",
+        "effect": "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, move all [F] Energy from this Pokémon to 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Seismic Toss",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 325",
+      "name": "Alolan Dugtrio ex",
+      "stage": 1,
+      "evolves_from": "Alolan Diglett",
+      "hp": 130,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Triplet Headbutt",
+          "fixed_damage": 60,
+          "effect": "Flip 3 coins. This attack does 60 damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 326",
+      "name": "Dialga ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Metallic Turbo",
+          "fixed_damage": 30,
+          "effect": "Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+        },
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Heavy Impact",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 327",
+      "name": "Bibarel ex",
+      "stage": 1,
+      "evolves_from": "Bidoof",
+      "hp": 160,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [
+            "Colorless",
+            "Colorless",
+            "Colorless",
+            "Colorless"
+          ],
+          "title": "Carefree Press",
+          "fixed_damage": 100,
+          "effect": "Heal 30 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 328",
+      "name": "Arceus ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fabled Luster",
+        "effect": "This Pokémon can't be affected by any Special Conditions."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Ultimate Force",
+          "fixed_damage": 70,
+          "effect": "This attack does 20 more damage for each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 329",
+      "name": "Lilligant",
+      "stage": 1,
+      "evolves_from": "Petilil",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Toughness Aroma",
+        "effect": "Each of your [G] Pokémon gets +20 HP."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1 330",
+      "name": "Klefki",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Dismantling Keys",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Hook",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1 331",
+      "trainer_card_type": "Item",
+      "name": "Flame Patch",
+      "effect": "Attach a [R] Energy from your discard pile to your Active [R] Pokémon.",
+      "rarity": "♛",
+      "booster_pack": "Mega Rising (B1)"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
