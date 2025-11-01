@@ -3,7 +3,9 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::SimpleAction,
-    hooks::{get_counterattack_damage, modify_damage, on_end_turn, should_poison_attacker},
+    hooks::{
+        get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
+    },
     models::Card,
     state::GameOutcome,
     State,
@@ -229,18 +231,22 @@ pub(crate) fn handle_damage(
 
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
-        let ko_pokemon = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
-            .as_mut()
-            .expect("Pokemon should be there if knocked out");
+        // Call knockout hook (e.g., for Electrical Cord)
+        on_knockout(state, ko_receiver, ko_pokemon_idx, is_from_active_attack);
 
         // Award points
-        let ko_initiator = (ko_receiver + 1) % 2;
-        let points_won = if ko_pokemon.card.is_ex() { 2 } else { 1 };
-        state.points[ko_initiator] += points_won;
-        debug!(
-            "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
-            ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
-        );
+        {
+            let ko_pokemon = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+                .as_ref()
+                .expect("Pokemon should be there if knocked out");
+            let ko_initiator = (ko_receiver + 1) % 2;
+            let points_won = if ko_pokemon.card.is_ex() { 2 } else { 1 };
+            state.points[ko_initiator] += points_won;
+            debug!(
+                "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
+                ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
+            );
+        }
 
         state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }

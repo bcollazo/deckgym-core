@@ -113,7 +113,12 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
             card.total_hp += 30;
         }
         // Many tools do nothing on attach
-        ToolId::A2148RockyHelmet | ToolId::A3146PoisonBarb | ToolId::A4a067InflatableBoat => {}
+        ToolId::A2148RockyHelmet
+        | ToolId::A3146PoisonBarb
+        | ToolId::A3a065ElectricalCord
+        | ToolId::A4a067InflatableBoat
+        | ToolId::A4b318ElectricalCord
+        | ToolId::A4b319ElectricalCord => {}
     }
 }
 
@@ -348,6 +353,75 @@ pub(crate) fn energy_missing(
         .saturating_sub(effective_attached.len());
     energy_missing.extend(vec![EnergyType::Colorless; colorless_missing]);
     energy_missing
+}
+
+/// Called when a Pokémon is knocked out
+/// This is called before the Pokémon is discarded from play
+pub(crate) fn on_knockout(
+    state: &mut State,
+    knocked_out_player: usize,
+    knocked_out_idx: usize,
+    is_from_active_attack: bool,
+) {
+    let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+        .as_ref()
+        .expect("Pokemon should be there if knocked out");
+
+    // Handle Electrical Cord
+    if matches!(
+        knocked_out_pokemon.attached_tool,
+        Some(ToolId::A3a065ElectricalCord)
+            | Some(ToolId::A4b318ElectricalCord)
+            | Some(ToolId::A4b319ElectricalCord)
+    ) {
+        // Only triggers if knocked out in active spot from an active attack
+        if knocked_out_idx != 0 || !is_from_active_attack {
+            return;
+        }
+
+        // Collect up to 2 Lightning energies from the knocked out Pokemon
+        let mut lightning_energies = vec![];
+        let knocked_out_pokemon_mut = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+            .as_mut()
+            .expect("Pokemon should be there if knocked out");
+        for _ in 0..2 {
+            if let Some(pos) = knocked_out_pokemon_mut
+                .attached_energy
+                .iter()
+                .position(|e| *e == EnergyType::Lightning)
+            {
+                // Remove from pokemon so it doesn't end up in discard pile
+                lightning_energies.push(knocked_out_pokemon_mut.attached_energy.swap_remove(pos));
+            }
+        }
+        if lightning_energies.is_empty() {
+            return;
+        }
+
+        // Distribute energies to benched Pokemon (1 each to up to 2 Pokemon)
+        debug!(
+            "Electrical Cord: Moving {} Lightning Energy from knocked out Pokemon",
+            lightning_energies.len()
+        );
+        // Collect just the indices to avoid borrow checker issues
+        let bench_indices: Vec<_> = state
+            .enumerate_bench_pokemon(knocked_out_player)
+            .map(|(idx, _)| idx)
+            .collect();
+        for (i, energy) in lightning_energies.into_iter().enumerate() {
+            if i < bench_indices.len() {
+                let bench_idx = bench_indices[i];
+                if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut()
+                {
+                    pokemon.attached_energy.push(energy);
+                    debug!(
+                        "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
+                        bench_idx
+                    );
+                }
+            }
+        }
+    }
 }
 
 // Test Colorless is wildcard when counting energy

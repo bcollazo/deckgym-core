@@ -41,6 +41,9 @@ pub(crate) fn tool_id_to_name(tool_id: ToolId) -> &'static str {
         ToolId::A2148RockyHelmet => "Rocky Helmet",
         ToolId::A3146PoisonBarb => "Poison Barb",
         ToolId::A3147LeafCape => "Leaf Cape",
+        ToolId::A3a065ElectricalCord
+        | ToolId::A4b318ElectricalCord
+        | ToolId::A4b319ElectricalCord => "Electrical Cord",
         ToolId::A4a067InflatableBoat => "Inflatable Boat",
     }
 }

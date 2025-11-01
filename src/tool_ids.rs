@@ -13,7 +13,10 @@ pub enum ToolId {
     A2148RockyHelmet,
     A3146PoisonBarb,
     A3147LeafCape,
+    A3a065ElectricalCord,
     A4a067InflatableBoat,
+    A4b318ElectricalCord,
+    A4b319ElectricalCord,
 }
 
 lazy_static::lazy_static! {
@@ -23,7 +26,10 @@ lazy_static::lazy_static! {
         m.insert("A2 148", ToolId::A2148RockyHelmet);
         m.insert("A3 146", ToolId::A3146PoisonBarb);
         m.insert("A3 147", ToolId::A3147LeafCape);
+        m.insert("A3a 065", ToolId::A3a065ElectricalCord);
         m.insert("A4a 067", ToolId::A4a067InflatableBoat);
+        m.insert("A4b 318", ToolId::A4b318ElectricalCord);
+        m.insert("A4b 319", ToolId::A4b319ElectricalCord);
         m
     };
 }
@@ -39,6 +45,12 @@ impl ToolId {
             ToolId::A3147LeafCape => {
                 // Leaf Cape can only be attached to Grass pokemon
                 pokemon.card.get_type() == Some(EnergyType::Grass)
+            }
+            ToolId::A3a065ElectricalCord
+            | ToolId::A4b318ElectricalCord
+            | ToolId::A4b319ElectricalCord => {
+                // Electrical Cord can only be attached to Lightning pokemon
+                pokemon.card.get_type() == Some(EnergyType::Lightning)
             }
             ToolId::A4a067InflatableBoat => {
                 // Inflatable Boat can only be attached to Water pokemon
