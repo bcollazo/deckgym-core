@@ -1,4 +1,5 @@
 use env_logger::{Builder, Env};
+use indicatif::{ProgressBar, ProgressStyle};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
 use std::io::Write;
@@ -47,6 +48,17 @@ impl Simulation {
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
         self.event_handler.on_simulation_start();
         let mut outcomes = vec![];
+
+        // Create progress bar
+        let pb = ProgressBar::new(self.num_simulations as u64);
+        pb.set_style(
+            ProgressStyle::with_template(
+                "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
+            )
+            .unwrap()
+            .progress_chars("#>-"),
+        );
+
         for _ in 1..=self.num_simulations {
             let players = create_players(
                 self.deck_a.clone(),
@@ -65,11 +77,13 @@ impl Simulation {
             // done with the game, should be dropped now
 
             self.event_handler.on_game_end(game_id, clone, outcome);
-
             outcomes.push(outcome);
-        }
-        self.event_handler.on_simulation_end();
 
+            pb.inc(1);
+        }
+
+        pb.finish_with_message("Simulation complete.");
+        self.event_handler.on_simulation_end();
         outcomes
     }
 }

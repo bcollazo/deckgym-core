@@ -25,6 +25,7 @@ strum = "0.27"
 strum_macros = "0.27"
 ratatui = { version = "0.28", optional = true }
 crossterm = { version = "0.28", optional = true }
+indicatif = "0.17"
 
 [features]
 default = []
