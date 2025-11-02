@@ -13,7 +13,7 @@ use crate::{actions::Action, state::GameOutcome, State};
 /// Simulations are run in parallel. One instance of SimulationEventHandler will be created
 /// on the main thread, plus one per game created. These n+1 instances will be merged
 /// into one at the end of the simulation by chaining `merge` calls.
-pub trait SimulationEventHandler: any::Any {
+pub trait SimulationEventHandler: any::Any + Send {
     // Simulation Methods (these will be called on the "main" instance in the main thread)
     // Per-thread instances will NOT have these called
     fn on_simulation_end(&mut self) {}

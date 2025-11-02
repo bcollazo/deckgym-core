@@ -1,6 +1,8 @@
 use env_logger::{Builder, Env};
+use indicatif::{ProgressBar, ProgressStyle};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
+use rayon::prelude::*;
 use std::io::Write;
 use uuid::Uuid;
 
@@ -20,6 +22,8 @@ pub struct Simulation {
     num_simulations: u32,
     seed: Option<u64>,
     handler_factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
+    parallel: bool,
+    num_threads: Option<usize>,
 }
 
 impl Simulation {
@@ -29,6 +33,8 @@ impl Simulation {
         player_codes: Vec<PlayerCode>,
         num_simulations: u32,
         seed: Option<u64>,
+        parallel: bool,
+        num_threads: Option<usize>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let deck_a = Deck::from_file(deck_a_path)?;
         let deck_b = Deck::from_file(deck_b_path)?;
@@ -40,6 +46,8 @@ impl Simulation {
             num_simulations,
             seed,
             handler_factories: vec![],
+            parallel,
+            num_threads,
         })
     }
 
@@ -49,6 +57,14 @@ impl Simulation {
     }
 
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
+        // Configure rayon thread pool if specified
+        if let Some(num_threads) = self.num_threads {
+            rayon::ThreadPoolBuilder::new()
+                .num_threads(num_threads)
+                .build_global()
+                .ok(); // Ignore error if pool is already initialized
+        }
+
         // Top-level event handler
         let mut main_event_handler = CompositeSimulationEventHandler::new(
             self.handler_factories
@@ -57,9 +73,18 @@ impl Simulation {
                 .collect(),
         );
 
-        let mut thread_event_handlers = vec![];
-        let mut outcomes = vec![];
-        for _ in 1..=self.num_simulations {
+        // Create progress bar
+        let pb = ProgressBar::new(self.num_simulations as u64);
+        pb.set_style(
+            ProgressStyle::with_template(
+                "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
+            )
+            .expect("Failed to set progress bar template")
+            .progress_chars("#>-"),
+        );
+
+        // Closure to run a single simulation
+        let run_single_simulation = |_| {
             // Make a thread-local event handler for this simulation
             let mut event_handler = CompositeSimulationEventHandler::new(
                 self.handler_factories
@@ -77,7 +102,7 @@ impl Simulation {
             let game_id = Uuid::new_v4();
             event_handler.on_game_start(game_id);
 
-            // Give the self.event_handler a mutable reference to the Game
+            // Give the event_handler a mutable reference to the Game
             let mut game =
                 Game::new_with_event_handlers(game_id, players, seed, &mut event_handler);
             let outcome = game.play();
@@ -86,9 +111,27 @@ impl Simulation {
 
             event_handler.on_game_end(game_id, clone, outcome);
 
-            outcomes.push(outcome);
-            thread_event_handlers.push(event_handler);
-        }
+            pb.inc(1);
+            (outcome, event_handler)
+        };
+
+        // Run simulations either in parallel or sequentially
+        let results: Vec<(Option<GameOutcome>, CompositeSimulationEventHandler)> = if self.parallel
+        {
+            (0..self.num_simulations)
+                .into_par_iter()
+                .map(run_single_simulation)
+                .collect()
+        } else {
+            (0..self.num_simulations)
+                .map(run_single_simulation)
+                .collect()
+        };
+
+        pb.finish_with_message("Simulation complete!");
+
+        // Split outcomes and event handlers
+        let (outcomes, thread_event_handlers): (Vec<_>, Vec<_>) = results.into_iter().unzip();
 
         // Merge all thread-local event handlers into the main one
         for handler in thread_event_handlers.iter() {
@@ -107,15 +150,21 @@ pub fn simulate(
     players: Option<Vec<PlayerCode>>,
     num_simulations: u32,
     seed: Option<u64>,
+    parallel: bool,
+    num_threads: Option<usize>,
 ) {
     let player_codes = fill_code_array(players);
 
     warn!(
-        "Running {} games with players:",
+        "Running {} games with players{}:",
         num_simulations.to_formatted_string(&Locale::en),
+        if parallel { " (parallel)" } else { "" }
     );
     warn!("\tPlayer 0: {:?}({})", player_codes[0], deck_a_path);
     warn!("\tPlayer 1: {:?}({})", player_codes[1], deck_b_path);
+    if let Some(threads) = num_threads {
+        warn!("\tThreads: {}", threads);
+    }
 
     let mut simulation = Simulation::new(
         deck_a_path,
@@ -123,6 +172,8 @@ pub fn simulate(
         player_codes,
         num_simulations,
         seed,
+        parallel,
+        num_threads,
     )
     .expect("Failed to create simulation");
     simulation = simulation.register::<StatsCollector>();

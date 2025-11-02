@@ -36,6 +36,14 @@ enum Commands {
         #[arg(short, long)]
         seed: Option<u64>,
 
+        /// Run simulations in parallel
+        #[arg(short, long, default_value_t = false)]
+        parallel: bool,
+
+        /// Number of threads to use (defaults to number of CPU cores if not specified)
+        #[arg(short = 'j', long)]
+        threads: Option<usize>,
+
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
@@ -82,13 +90,15 @@ fn main() {
             players,
             num,
             seed,
+            parallel,
+            threads,
             verbose,
         } => {
             initialize_logger(verbose);
 
             warn!("Welcome to {} simulation!", "deckgym".blue().bold());
 
-            simulate(&deck_a, &deck_b, players, num, seed);
+            simulate(&deck_a, &deck_b, players, num, seed, parallel, threads);
         }
         Commands::Optimize {
             incomplete_deck,
