@@ -22,6 +22,7 @@ pub struct PlayedCard {
     pub poisoned: bool,
     pub paralyzed: bool,
     pub asleep: bool,
+    pub burned: bool,
     pub cards_behind: Vec<Card>,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
@@ -50,6 +51,7 @@ impl PlayedCard {
             poisoned: false,
             paralyzed: false,
             asleep: false,
+            burned: false,
             effects: vec![],
         }
     }
@@ -134,6 +136,7 @@ impl PlayedCard {
         self.poisoned = false;
         self.paralyzed = false;
         self.asleep = false;
+        self.burned = false;
         self.effects.clear();
     }
 
@@ -141,6 +144,7 @@ impl PlayedCard {
         self.poisoned = false;
         self.paralyzed = false;
         self.asleep = false;
+        self.burned = false;
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {

@@ -445,7 +445,21 @@ fn forecast_effect_attack(
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
+        AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
     }
+}
+
+/// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
+fn mega_burning_attack() -> (Probabilities, Mutations) {
+    index_active_damage_doutcome(0, move |_, state, action| {
+        // Discard one Fire energy
+        state.discard_from_active(action.actor, &[EnergyType::Fire]);
+
+        // Apply burned status
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.get_active_mut(opponent);
+        opponent_active.burned = true;
+    })
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each

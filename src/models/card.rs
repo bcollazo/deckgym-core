@@ -222,6 +222,7 @@ pub enum StatusCondition {
     Poisoned,
     Paralyzed,
     Asleep,
+    Burned,
 }
 
 impl fmt::Display for Card {

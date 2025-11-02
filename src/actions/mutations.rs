@@ -136,6 +136,7 @@ pub(crate) fn build_status_effect(status: StatusCondition) -> FnMutation {
                 StatusCondition::Asleep => opponent_active.asleep = true,
                 StatusCondition::Paralyzed => opponent_active.paralyzed = true,
                 StatusCondition::Poisoned => opponent_active.poisoned = true,
+                StatusCondition::Burned => opponent_active.burned = true,
             }
         }
     })
