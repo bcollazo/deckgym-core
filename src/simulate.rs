@@ -46,12 +46,8 @@ impl Simulation {
         })
     }
 
-    pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
-        self.event_handler.on_simulation_start();
-        let mut outcomes = vec![];
-
-        // Create progress bar
-        let pb = ProgressBar::new(self.num_simulations as u64);
+    pub fn create_progress_bar(num_simulations: u32) -> ProgressBar {
+        let pb = ProgressBar::new(num_simulations as u64);
         pb.set_style(
             ProgressStyle::with_template(
                 "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
@@ -59,6 +55,13 @@ impl Simulation {
             .unwrap()
             .progress_chars("#>-"),
         );
+        pb
+    }
+
+    pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
+        self.event_handler.on_simulation_start();
+        let mut outcomes = vec![];
+        let pb = Self::create_progress_bar(self.num_simulations);
 
         for _ in 1..=self.num_simulations {
             let players = create_players(
@@ -83,23 +86,14 @@ impl Simulation {
             pb.inc(1);
         }
 
-        pb.finish_with_message("Simulation complete.");
+        pb.finish();
         self.event_handler.on_simulation_end(false);
         outcomes
     }
 
     pub fn run_parallel(&mut self) -> Vec<Option<GameOutcome>> {
         self.event_handler.on_simulation_start();
-
-        // Create progress bar
-        let pb = ProgressBar::new(self.num_simulations as u64);
-        pb.set_style(
-            ProgressStyle::with_template(
-                "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
-            )
-            .unwrap()
-            .progress_chars("#>-"),
-        );
+        let pb = Self::create_progress_bar(self.num_simulations);
 
         // Capture immutable things that can be shared safely
         let deck_a = self.deck_a.clone();
@@ -135,7 +129,7 @@ impl Simulation {
                 .on_game_end(*game_id, state.clone(), *outcome);
         }
 
-        pb.finish_with_message("Simulation complete.");
+        pb.finish();
         self.event_handler.on_simulation_end(true);
 
         // Extract only outcomes
