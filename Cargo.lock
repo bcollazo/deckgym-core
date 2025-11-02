@@ -477,6 +477,7 @@ dependencies = [
  "pyo3",
  "rand",
  "ratatui",
+ "rayon",
  "serde",
  "serde_json",
  "strum 0.27.2",
@@ -689,6 +690,7 @@ dependencies = [
  "console",
  "number_prefix",
  "portable-atomic",
+ "rayon",
  "unicode-width 0.2.2",
  "web-time",
 ]

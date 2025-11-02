@@ -1,7 +1,8 @@
 use env_logger::{Builder, Env};
-use indicatif::{ProgressBar, ProgressStyle};
+use indicatif::{ParallelProgressIterator, ProgressBar, ProgressStyle};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
+use rayon::prelude::*;
 use std::io::Write;
 use uuid::Uuid;
 
@@ -83,8 +84,62 @@ impl Simulation {
         }
 
         pb.finish_with_message("Simulation complete.");
-        self.event_handler.on_simulation_end();
+        self.event_handler.on_simulation_end(false);
         outcomes
+    }
+
+    pub fn run_parallel(&mut self) -> Vec<Option<GameOutcome>> {
+        self.event_handler.on_simulation_start();
+
+        // Create progress bar
+        let pb = ProgressBar::new(self.num_simulations as u64);
+        pb.set_style(
+            ProgressStyle::with_template(
+                "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
+            )
+            .unwrap()
+            .progress_chars("#>-"),
+        );
+
+        // Capture immutable things that can be shared safely
+        let deck_a = self.deck_a.clone();
+        let deck_b = self.deck_b.clone();
+        let player_codes = self.player_codes.clone();
+        let seed = self.seed;
+        // Note: self.event_handler cannot be shared safely across threads
+        // because it mutates internal state, so we’ll collect results first,
+        // then report them in sequence.
+
+        let outcomes: Vec<_> = (1..=self.num_simulations)
+            .into_par_iter() // rayon parallel iterator
+            .progress_with(pb.clone()) // progress bar integration
+            .map(|_| {
+                let players = create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
+                let seed = seed.unwrap_or(rand::random::<u64>());
+                let game_id = Uuid::new_v4();
+
+                // Run simulation fully isolated
+                let mut local_handler = CompositeSimulationEventHandler::new();
+                let mut game =
+                    Game::new_with_event_handlers(game_id, players, seed, &mut local_handler);
+                let outcome = game.play();
+                let state = game.get_state_clone();
+
+                (game_id, state, outcome)
+            })
+            .collect();
+
+        // Now sequentially feed results to the event handler
+        for (game_id, state, outcome) in outcomes.iter() {
+            self.event_handler
+                .on_game_end(*game_id, state.clone(), *outcome);
+        }
+
+        pb.finish_with_message("Simulation complete.");
+        self.event_handler.on_simulation_end(true);
+
+        // Extract only outcomes
+        outcomes.into_iter().map(|(_, _, o)| o).collect()
     }
 }
 
@@ -95,6 +150,7 @@ pub fn simulate(
     players: Option<Vec<PlayerCode>>,
     num_simulations: u32,
     seed: Option<u64>,
+    parallel: bool,
 ) {
     let player_codes = fill_code_array(players);
 
@@ -117,7 +173,12 @@ pub fn simulate(
         composite_handler,
     )
     .expect("Failed to create simulation");
-    simulation.run();
+
+    if parallel {
+        simulation.run_parallel();
+    } else {
+        simulation.run();
+    }
 }
 
 // Set up the logger according to the given verbosity.

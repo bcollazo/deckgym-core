@@ -20,7 +20,7 @@ pub trait SimulationEventHandler {
     }
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
 
-    fn on_simulation_end(&mut self) {}
+    fn on_simulation_end(&mut self, _parallel: bool) {}
 }
 
 // A general implementation of the SimulationEventHandler to compose multiple
@@ -84,9 +84,9 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
-    fn on_simulation_end(&mut self) {
+    fn on_simulation_end(&mut self, parallel: bool) {
         for handler in self.handlers.iter_mut() {
-            handler.on_simulation_end();
+            handler.on_simulation_end(parallel);
         }
     }
 }
@@ -170,7 +170,7 @@ impl SimulationEventHandler for StatsCollector {
         }
     }
 
-    fn on_simulation_end(&mut self) {
+    fn on_simulation_end(&mut self, parallel: bool) {
         let duration = self.start.elapsed(); // Measure elapsed time
         let avg_time_per_game = duration.as_secs_f64() / self.num_games as f64;
         let avg_duration = Duration::from_secs_f64(avg_time_per_game);
@@ -182,24 +182,28 @@ impl SimulationEventHandler for StatsCollector {
             .sum::<u32>() as f32
             / self.num_games as f32;
 
-        let avg_plys_per_game =
-            self.plys_per_game.iter().sum::<u32>() as f32 / self.num_games as f32;
-
-        let avg_degrees_per_ply = if self.total_degrees.is_empty() {
-            0.0
-        } else {
-            self.total_degrees.iter().sum::<u32>() as f32 / self.total_degrees.len() as f32
-        };
-
         warn!(
             "Ran {} simulations in {} ({} per game)!",
             self.num_games.to_formatted_string(&Locale::en),
             humantime::format_duration(duration),
             humantime::format_duration(avg_duration)
         );
+
         warn!("Average number of turns per game: {avg_turns_per_game:.2}");
-        warn!("Average number of plys per game: {avg_plys_per_game:.2}");
-        warn!("Average number of degrees per ply: {avg_degrees_per_ply:.2}");
+
+        if !parallel {
+            let avg_plys_per_game =
+                self.plys_per_game.iter().sum::<u32>() as f32 / self.num_games as f32;
+
+            let avg_degrees_per_ply = if self.total_degrees.is_empty() {
+                0.0
+            } else {
+                self.total_degrees.iter().sum::<u32>() as f32 / self.total_degrees.len() as f32
+            };
+
+            warn!("Average number of plys per game: {avg_plys_per_game:.2}");
+            warn!("Average number of degrees per ply: {avg_degrees_per_ply:.2}");
+        }
 
         let player_a_win_rate = self.player_a_wins as f32 / self.num_games as f32;
         let player_b_win_rate = self.player_b_wins as f32 / self.num_games as f32;
