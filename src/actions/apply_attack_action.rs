@@ -458,7 +458,7 @@ fn mega_burning_attack() -> (Probabilities, Mutations) {
         // Apply burned status
         let opponent = (action.actor + 1) % 2;
         let opponent_active = state.get_active_mut(opponent);
-        opponent_active.burned = true;
+        opponent_active.apply_status_condition(StatusCondition::Burned);
     })
 }
 
