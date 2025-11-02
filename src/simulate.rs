@@ -85,8 +85,8 @@ impl Simulation {
         }
 
         // Merge all thread-local event handlers into the main one
-        for handler in thread_event_handlers {
-            main_event_handler.reduce(&handler);
+        for handler in thread_event_handlers.iter() {
+            main_event_handler.merge(handler);
         }
         main_event_handler.on_simulation_end();
 
