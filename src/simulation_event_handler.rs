@@ -12,11 +12,10 @@ use crate::{actions::Action, state::GameOutcome, State};
 /// Trait to listen to simulation events
 /// Simulations are run in parallel. One instance of SimulationEventHandler will be created
 /// on the main thread, plus one per game created. These n+1 instances will be merged
-/// into one at the end of the simulation by chaining `reduce` calls.
+/// into one at the end of the simulation by chaining `merge` calls.
 pub trait SimulationEventHandler: any::Any {
     // Simulation Methods (these will be called on the "main" instance in the main thread)
     // Per-thread instances will NOT have these called
-    // fn on_simulation_start(&mut self) {}
     fn on_simulation_end(&mut self) {}
     fn merge(&mut self, _other: &dyn SimulationEventHandler);
 

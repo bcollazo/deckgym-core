@@ -19,7 +19,7 @@ pub struct Simulation {
     player_codes: Vec<PlayerCode>,
     num_simulations: u32,
     seed: Option<u64>,
-    factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
+    handler_factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
 }
 
 impl Simulation {
@@ -39,19 +39,22 @@ impl Simulation {
             player_codes,
             num_simulations,
             seed,
-            factories: vec![],
+            handler_factories: vec![],
         })
     }
 
     fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
-        self.factories.push(|| Box::new(T::default()));
+        self.handler_factories.push(|| Box::new(T::default()));
         self
     }
 
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
         // Top-level event handler
         let mut main_event_handler = CompositeSimulationEventHandler::new(
-            self.factories.iter().map(|factory| factory()).collect(),
+            self.handler_factories
+                .iter()
+                .map(|factory| factory())
+                .collect(),
         );
 
         let mut thread_event_handlers = vec![];
@@ -59,7 +62,10 @@ impl Simulation {
         for _ in 1..=self.num_simulations {
             // Make a thread-local event handler for this simulation
             let mut event_handler = CompositeSimulationEventHandler::new(
-                self.factories.iter().map(|factory| factory()).collect(),
+                self.handler_factories
+                    .iter()
+                    .map(|factory| factory())
+                    .collect(),
             );
 
             let players = create_players(
@@ -69,7 +75,7 @@ impl Simulation {
             );
             let seed = self.seed.unwrap_or(rand::random::<u64>());
             let game_id = Uuid::new_v4();
-            event_handler.on_game_start(game_id); // should be composite (for-all), but on thread instance
+            event_handler.on_game_start(game_id);
 
             // Give the self.event_handler a mutable reference to the Game
             let mut game =
