@@ -158,6 +158,25 @@ impl Card {
         }
     }
 
+    pub(crate) fn is_mega(&self) -> bool {
+        // A pokemon is Mega if the name starts with "Mega "
+        match self {
+            Card::Pokemon(pokemon_card) => pokemon_card.name.starts_with("Mega "),
+            _ => false,
+        }
+    }
+
+    pub(crate) fn get_knockout_points(&self) -> u8 {
+        // Mega pokemon are worth 3 points, ex pokemon are worth 2, regular pokemon are worth 1
+        if self.is_mega() {
+            3
+        } else if self.is_ex() {
+            2
+        } else {
+            1
+        }
+    }
+
     pub(crate) fn get_ability(&self) -> Option<Ability> {
         match self {
             Card::Pokemon(pokemon_card) => pokemon_card.ability.clone(),

@@ -240,7 +240,7 @@ pub(crate) fn handle_damage(
                 .as_ref()
                 .expect("Pokemon should be there if knocked out");
             let ko_initiator = (ko_receiver + 1) % 2;
-            let points_won = if ko_pokemon.card.is_ex() { 2 } else { 1 };
+            let points_won = ko_pokemon.card.get_knockout_points();
             state.points[ko_initiator] += points_won;
             debug!(
                 "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
