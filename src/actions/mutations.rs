@@ -1,7 +1,6 @@
-use log::trace;
 use rand::rngs::StdRng;
 
-use crate::{card_ids::CardId, models::StatusCondition, State};
+use crate::{models::StatusCondition, State};
 
 use super::{
     apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
@@ -117,26 +116,7 @@ pub(crate) fn build_status_effect(status: StatusCondition) -> FnMutation {
         move |_, state: &mut State, action: &Action| {
             let opponent = (action.actor + 1) % 2;
             let opponent_active = state.get_active_mut(opponent);
-
-            // Arceus Ex avoids status effects
-            let string_id = opponent_active.get_id();
-            let arceus_ids = [
-                CardId::A2a071ArceusEx,
-                CardId::A2a086ArceusEx,
-                CardId::A2a095ArceusEx,
-                CardId::A2a096ArceusEx,
-            ];
-            let card_id = CardId::from_card_id(&string_id).unwrap();
-            if arceus_ids.contains(&card_id) {
-                trace!("Arceus Ex avoids status effect");
-                return;
-            }
-
-            match status {
-                StatusCondition::Asleep => opponent_active.asleep = true,
-                StatusCondition::Paralyzed => opponent_active.paralyzed = true,
-                StatusCondition::Poisoned => opponent_active.poisoned = true,
-            }
+            opponent_active.apply_status_condition(status);
         }
     })
 }

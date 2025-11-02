@@ -1,9 +1,11 @@
 use core::fmt;
+use log::debug;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    card_ids::CardId,
     effects::CardEffect,
-    models::{Attack, Card, EnergyType},
+    models::{Attack, Card, EnergyType, StatusCondition},
     tool_ids::ToolId,
     AbilityId, State,
 };
@@ -22,6 +24,7 @@ pub struct PlayedCard {
     pub poisoned: bool,
     pub paralyzed: bool,
     pub asleep: bool,
+    pub burned: bool,
     pub cards_behind: Vec<Card>,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
@@ -50,6 +53,7 @@ impl PlayedCard {
             poisoned: false,
             paralyzed: false,
             asleep: false,
+            burned: false,
             effects: vec![],
         }
     }
@@ -134,6 +138,7 @@ impl PlayedCard {
         self.poisoned = false;
         self.paralyzed = false;
         self.asleep = false;
+        self.burned = false;
         self.effects.clear();
     }
 
@@ -141,6 +146,31 @@ impl PlayedCard {
         self.poisoned = false;
         self.paralyzed = false;
         self.asleep = false;
+        self.burned = false;
+    }
+
+    /// Apply a status condition to this Pokémon, respecting Arceus ex immunity
+    pub(crate) fn apply_status_condition(&mut self, status: StatusCondition) {
+        // Arceus Ex avoids status effects
+        let string_id = self.get_id();
+        let arceus_ids = [
+            CardId::A2a071ArceusEx,
+            CardId::A2a086ArceusEx,
+            CardId::A2a095ArceusEx,
+            CardId::A2a096ArceusEx,
+        ];
+        let card_id = CardId::from_card_id(&string_id).unwrap();
+        if arceus_ids.contains(&card_id) {
+            debug!("Arceus Ex avoids status effect");
+            return;
+        }
+
+        match status {
+            StatusCondition::Asleep => self.asleep = true,
+            StatusCondition::Paralyzed => self.paralyzed = true,
+            StatusCondition::Poisoned => self.poisoned = true,
+            StatusCondition::Burned => self.burned = true,
+        }
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {

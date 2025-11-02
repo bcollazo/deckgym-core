@@ -158,6 +158,7 @@ pub enum AttackId {
     PA052SprigatitoCryForHelp,
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
+    B1036MegaBlazikenExMegaBurning,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -459,6 +460,11 @@ lazy_static::lazy_static! {
         m.insert(("A4b 305", 0), AttackId::A3a062CelesteelaMoombahton);
         m.insert(("A4b 360", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 371", 0), AttackId::A4149LugiaExElementalBlast);
+
+        // B1
+        m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
