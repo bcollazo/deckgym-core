@@ -19,7 +19,7 @@ pub struct Simulation {
     player_codes: Vec<PlayerCode>,
     num_simulations: u32,
     seed: Option<u64>,
-    event_handler: CompositeSimulationEventHandler,
+    factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
 }
 
 impl Simulation {
@@ -29,7 +29,6 @@ impl Simulation {
         player_codes: Vec<PlayerCode>,
         num_simulations: u32,
         seed: Option<u64>,
-        event_handler: CompositeSimulationEventHandler,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let deck_a = Deck::from_file(deck_a_path)?;
         let deck_b = Deck::from_file(deck_b_path)?;
@@ -40,14 +39,29 @@ impl Simulation {
             player_codes,
             num_simulations,
             seed,
-            event_handler,
+            factories: vec![],
         })
     }
 
+    fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
+        self.factories.push(|| Box::new(T::default()));
+        self
+    }
+
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
-        self.event_handler.on_simulation_start();
+        // Top-level event handler
+        let mut main_event_handler = CompositeSimulationEventHandler::new(
+            self.factories.iter().map(|factory| factory()).collect(),
+        );
+
+        let mut thread_event_handlers = vec![];
         let mut outcomes = vec![];
         for _ in 1..=self.num_simulations {
+            // Make a thread-local event handler for this simulation
+            let mut event_handler = CompositeSimulationEventHandler::new(
+                self.factories.iter().map(|factory| factory()).collect(),
+            );
+
             let players = create_players(
                 self.deck_a.clone(),
                 self.deck_b.clone(),
@@ -55,20 +69,26 @@ impl Simulation {
             );
             let seed = self.seed.unwrap_or(rand::random::<u64>());
             let game_id = Uuid::new_v4();
-            self.event_handler.on_game_start(game_id);
+            event_handler.on_game_start(game_id); // should be composite (for-all), but on thread instance
 
             // Give the self.event_handler a mutable reference to the Game
             let mut game =
-                Game::new_with_event_handlers(game_id, players, seed, &mut self.event_handler);
+                Game::new_with_event_handlers(game_id, players, seed, &mut event_handler);
             let outcome = game.play();
             let clone = game.get_state_clone();
             // done with the game, should be dropped now
 
-            self.event_handler.on_game_end(game_id, clone, outcome);
+            event_handler.on_game_end(game_id, clone, outcome);
 
             outcomes.push(outcome);
+            thread_event_handlers.push(event_handler);
         }
-        self.event_handler.on_simulation_end();
+
+        // Merge all thread-local event handlers into the main one
+        for handler in thread_event_handlers {
+            main_event_handler.reduce(&handler);
+        }
+        main_event_handler.on_simulation_end();
 
         outcomes
     }
@@ -91,18 +111,15 @@ pub fn simulate(
     warn!("\tPlayer 0: {:?}({})", player_codes[0], deck_a_path);
     warn!("\tPlayer 1: {:?}({})", player_codes[1], deck_b_path);
 
-    let stats_collector = Box::new(StatsCollector::new());
-    let mut composite_handler = CompositeSimulationEventHandler::new();
-    composite_handler.add_handler(stats_collector);
     let mut simulation = Simulation::new(
         deck_a_path,
         deck_b_path,
         player_codes,
         num_simulations,
         seed,
-        composite_handler,
     )
     .expect("Failed to create simulation");
+    simulation = simulation.register::<StatsCollector>();
     simulation.run();
 }
 

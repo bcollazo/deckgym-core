@@ -5,9 +5,22 @@ use uuid::Uuid;
 
 use crate::{actions::Action, state::GameOutcome, State};
 
+/// Trait to listen to simulation events
+/// Simulations are run in parallel. One instance of SimulationEventHandler will be created
+/// on the main thread, plus one per game created. These n+1 instances will be merged
+/// into one at the end of the simulation by chaining `reduce` calls.
 pub trait SimulationEventHandler {
-    fn on_simulation_start(&mut self) {}
+    // Simulation Methods (these will be called on the "main" instance in the main thread)
+    // Per-thread instances will NOT have these called
+    // fn on_simulation_start(&mut self) {}
+    fn on_simulation_end(&mut self) {}
+    fn reduce(&mut self, _other: &Self)
+    where
+        Self: Sized,
+    {
+    }
 
+    // Game Methods (these will be called on per-thread instances of SimulationEventHandler)
     fn on_game_start(&mut self, _game_id: Uuid) {}
     fn on_action(
         &mut self,
@@ -19,8 +32,6 @@ pub trait SimulationEventHandler {
     ) {
     }
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
-
-    fn on_simulation_end(&mut self) {}
 }
 
 // A general implementation of the SimulationEventHandler to compose multiple
@@ -28,31 +39,13 @@ pub struct CompositeSimulationEventHandler {
     handlers: Vec<Box<dyn SimulationEventHandler>>,
 }
 
-impl Default for CompositeSimulationEventHandler {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl CompositeSimulationEventHandler {
-    pub fn new() -> Self {
-        Self {
-            handlers: Vec::new(),
-        }
-    }
-
-    pub fn add_handler(&mut self, handler: Box<dyn SimulationEventHandler>) {
-        self.handlers.push(handler);
+    pub fn new(handlers: Vec<Box<dyn SimulationEventHandler>>) -> Self {
+        Self { handlers }
     }
 }
 
 impl SimulationEventHandler for CompositeSimulationEventHandler {
-    fn on_simulation_start(&mut self) {
-        for handler in self.handlers.iter_mut() {
-            handler.on_simulation_start();
-        }
-    }
-
     fn on_game_start(&mut self, game_id: Uuid) {
         for handler in self.handlers.iter_mut() {
             handler.on_game_start(game_id);
@@ -94,6 +87,7 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
 // Example: Statistics collector
 pub struct StatsCollector {
     start: Instant,
+    end: Instant,
     num_games: u32,
 
     degrees_per_ply: Vec<u32>,
@@ -116,6 +110,7 @@ impl StatsCollector {
     pub fn new() -> Self {
         Self {
             start: Instant::now(),
+            end: Instant::now(),
             num_games: 0,
             degrees_per_ply: vec![],
             player_a_wins: 0,
@@ -129,11 +124,8 @@ impl StatsCollector {
 }
 
 impl SimulationEventHandler for StatsCollector {
-    fn on_simulation_start(&mut self) {
-        self.start = Instant::now(); // Start the timer
-    }
-
     fn on_game_start(&mut self, _game_id: Uuid) {
+        self.start = self.start.min(Instant::now()); // minimum ever seen
         self.degrees_per_ply.clear();
     }
 
@@ -151,6 +143,7 @@ impl SimulationEventHandler for StatsCollector {
     fn on_game_end(&mut self, game_id: Uuid, state: State, outcome: Option<GameOutcome>) {
         info!("Simulation {game_id}: Winner is {outcome:?}");
 
+        self.end = self.end.max(Instant::now()); // maximum ever seen
         self.num_games += 1;
         self.turns_per_game.push(state.turn_count);
         self.plys_per_game.push(self.degrees_per_ply.len() as u32);
@@ -170,8 +163,23 @@ impl SimulationEventHandler for StatsCollector {
         }
     }
 
+    fn reduce(&mut self, other: &Self)
+    where
+        Self: Sized,
+    {
+        self.start = self.start.min(other.start);
+        self.end = self.end.max(other.end);
+        self.num_games += other.num_games;
+        self.turns_per_game.extend(other.turns_per_game.iter());
+        self.plys_per_game.extend(other.plys_per_game.iter());
+        self.total_degrees.extend(other.total_degrees.iter());
+        self.player_a_wins += other.player_a_wins;
+        self.player_b_wins += other.player_b_wins;
+        self.ties += other.ties;
+    }
+
     fn on_simulation_end(&mut self) {
-        let duration = self.start.elapsed(); // Measure elapsed time
+        let duration = self.end.duration_since(self.start);
         let avg_time_per_game = duration.as_secs_f64() / self.num_games as f64;
         let avg_duration = Duration::from_secs_f64(avg_time_per_game);
 
