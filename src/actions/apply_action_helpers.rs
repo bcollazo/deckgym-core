@@ -143,9 +143,6 @@ fn apply_pokemon_checkup(
 
     // Burn always deals 20 damage, then coin flip for healing
     for (i, (player, in_play_idx)) in burns_to_handle.iter().enumerate() {
-        // Deal burn damage
-        handle_damage(mutated_state, *player, &[(20, *in_play_idx)], false);
-
         // Check if pokemon heals from burn (coin flip result)
         let heals_from_burn = outcome[num_sleeps + i];
         if heals_from_burn {
@@ -155,6 +152,9 @@ fn apply_pokemon_checkup(
             pokemon.burned = false;
             debug!("{player}'s Pokemon {in_play_idx} healed from burn");
         }
+
+        // Deal burn damage
+        handle_damage(mutated_state, *player, &[(20, *in_play_idx)], false);
     }
 
     // Advance turn

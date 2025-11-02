@@ -1,51 +1,68 @@
 {
-    "version": "0.1.0",
-    "configurations": [
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "TUI replay mode",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=tui",
-                    "--features=tui"
-                ],
-                "filter": {
-                    "name": "tui",
-                    "kind": "bin"
-                }
-            },
-            "args": [
-                "example_decks/venusaur-exeggutor.txt",
-                "example_decks/weezing-arbok.txt",
-                "--players",
-                "e,e"
-            ],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "TUI interactive mode",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=tui",
-                    "--features=tui"
-                ],
-                "filter": {
-                    "name": "tui",
-                    "kind": "bin"
-                }
-            },
-            "args": [
-                "example_decks/venusaur-exeggutor.txt",
-                "example_decks/weezing-arbok.txt",
-                "--players",
-                "e,h"
-            ],
-            "cwd": "${workspaceFolder}"
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "TUI replay mode",
+      "cargo": {
+        "args": ["build", "--bin=tui", "--features=tui"],
+        "filter": {
+          "name": "tui",
+          "kind": "bin"
         }
-    ]
+      },
+      "args": [
+        "example_decks/venusaur-exeggutor.txt",
+        "example_decks/weezing-arbok.txt",
+        "--players",
+        "e,e"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "TUI interactive mode",
+      "cargo": {
+        "args": ["build", "--bin=tui", "--features=tui"],
+        "filter": {
+          "name": "tui",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "example_decks/venusaur-exeggutor.txt",
+        "example_decks/weezing-arbok.txt",
+        "--players",
+        "e,h"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Simulate (with seed)",
+      "cargo": {
+        "args": ["build"],
+        "filter": {
+          "name": "deckgym",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "simulate",
+        "example_decks/venusaur-exeggutor.txt",
+        "example_decks/baby-mega-blaziken.txt",
+        "--num",
+        "1",
+        "--players",
+        "e,e",
+        "--seed",
+        "10208089616628633601",
+        "-vvvv"
+      ],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
 }
