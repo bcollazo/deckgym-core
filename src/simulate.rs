@@ -74,14 +74,7 @@ impl Simulation {
         );
 
         // Create progress bar
-        let pb = ProgressBar::new(self.num_simulations as u64);
-        pb.set_style(
-            ProgressStyle::with_template(
-                "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
-            )
-            .expect("Failed to set progress bar template")
-            .progress_chars("#>-"),
-        );
+        let pb = create_progress_bar(self.num_simulations as u64);
 
         // Closure to run a single simulation
         let run_single_simulation = |_| {
@@ -178,6 +171,20 @@ pub fn simulate(
     .expect("Failed to create simulation");
     simulation = simulation.register::<StatsCollector>();
     simulation.run();
+}
+
+/// Creates a styled progress bar with consistent styling across the codebase
+pub fn create_progress_bar(total: u64) -> ProgressBar {
+    let pb = ProgressBar::new(total);
+    pb.set_style(
+        ProgressStyle::with_template(
+            "[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta})",
+        )
+        .expect("Failed to set progress bar template")
+        .progress_chars("#>-"),
+    );
+    pb.enable_steady_tick(std::time::Duration::from_millis(100));
+    pb
 }
 
 // Set up the logger according to the given verbosity.
