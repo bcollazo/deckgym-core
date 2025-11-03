@@ -1,4 +1,3 @@
 # Coding Guidelines
 
-## Imports
-- Always place imports at the top of the file, not inside functions or methods
+Read all *.md files in the repository (including in hidden folders) before starting any task.

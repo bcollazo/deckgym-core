@@ -340,6 +340,8 @@ lazy_static::lazy_static! {
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
+        m.insert(("A3 217", 0), AttackId::A1055BlastoiseHydroPump);
+        m.insert(("A3 232", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -433,6 +435,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 087", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A4b 066", 0), AttackId::A3b009FlareonExFireSpin);
@@ -468,6 +471,7 @@ lazy_static::lazy_static! {
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
+        m.insert(("P-A 029", 0), AttackId::A1055BlastoiseHydroPump);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanic);
