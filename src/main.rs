@@ -1,5 +1,6 @@
 use clap::{ArgAction, Parser, Subcommand};
 use colored::Colorize;
+use deckgym::optimize::{ParallelConfig, SimulationConfig};
 use deckgym::players::{parse_player_code, PlayerCode};
 use deckgym::simulate::initialize_logger;
 use deckgym::{cli_optimize, simulate};
@@ -36,6 +37,14 @@ enum Commands {
         #[arg(short, long)]
         seed: Option<u64>,
 
+        /// Run simulations in parallel
+        #[arg(short, long, default_value_t = false)]
+        parallel: bool,
+
+        /// Number of threads to use (defaults to number of CPU cores if not specified)
+        #[arg(short = 'j', long)]
+        threads: Option<usize>,
+
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
@@ -65,6 +74,14 @@ enum Commands {
         #[arg(short, long)]
         seed: Option<u64>,
 
+        /// Run simulations in parallel
+        #[arg(short, long, default_value_t = false)]
+        parallel: bool,
+
+        /// Number of threads to use (defaults to number of CPU cores if not specified)
+        #[arg(short = 'j', long)]
+        threads: Option<usize>,
+
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
@@ -82,13 +99,15 @@ fn main() {
             players,
             num,
             seed,
+            parallel,
+            threads,
             verbose,
         } => {
             initialize_logger(verbose);
 
             warn!("Welcome to {} simulation!", "deckgym".blue().bold());
 
-            simulate(&deck_a, &deck_b, players, num, seed);
+            simulate(&deck_a, &deck_b, players, num, seed, parallel, threads);
         }
         Commands::Optimize {
             incomplete_deck,
@@ -97,19 +116,30 @@ fn main() {
             num,
             players,
             seed,
+            parallel,
+            threads,
             verbose,
         } => {
             initialize_logger(verbose);
 
             warn!("Welcome to {} optimizer!", "deckgym".blue().bold());
 
+            let sim_config = SimulationConfig {
+                num_games: num,
+                players,
+                seed,
+            };
+            let parallel_config = ParallelConfig {
+                enabled: parallel,
+                num_threads: threads,
+            };
+
             cli_optimize(
                 &incomplete_deck,
                 &candidate_cards,
                 &enemy_decks_folder,
-                num,
-                players,
-                seed,
+                sim_config,
+                parallel_config,
             );
         }
     }

@@ -1,24 +1,40 @@
-use std::{fs, time::Duration};
+use std::fs;
 
 use log::warn;
 use num_format::{Locale, ToFormattedString};
+use rayon::prelude::*;
 
 use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     players::{create_players, fill_code_array, PlayerCode},
+    simulate::create_progress_bar,
     state::GameOutcome,
     Deck, Game,
 };
+
+/// Configuration for running simulations
+#[derive(Clone)]
+pub struct SimulationConfig {
+    pub num_games: u32,
+    pub players: Option<Vec<PlayerCode>>,
+    pub seed: Option<u64>,
+}
+
+/// Configuration for parallelism
+#[derive(Clone, Default)]
+pub struct ParallelConfig {
+    pub enabled: bool,
+    pub num_threads: Option<usize>,
+}
 
 /// Optimizes a deck by simulating games with different combinations of candidate cards.
 pub fn cli_optimize(
     incomplete_deck_path: &str,
     candidate_cards_str: &str,
     enemy_decks_folder: &str,
-    num: u32,
-    players: Option<Vec<PlayerCode>>,
-    seed: Option<u64>,
+    sim_config: SimulationConfig,
+    parallel_config: ParallelConfig,
 ) {
     let incomplete_deck =
         Deck::from_file(incomplete_deck_path).expect("Failed to parse incomplete deck file");
@@ -65,9 +81,8 @@ pub fn cli_optimize(
         &incomplete_deck,
         &candidate_cards,
         &enemy_valid_decks,
-        num,
-        players,
-        seed,
+        sim_config,
+        parallel_config,
         None::<fn(usize, usize, &[CardId], f32)>,
     );
 }
@@ -76,9 +91,8 @@ pub fn optimize<F>(
     incomplete_deck: &Deck,
     candidate_cards: &[String],
     enemy_decks: &[Deck],
-    num: u32,
-    players: Option<Vec<PlayerCode>>,
-    seed: Option<u64>,
+    sim_config: SimulationConfig,
+    parallel_config: ParallelConfig,
     progress_callback: Option<F>,
 ) -> Vec<(Vec<CardId>, f32)>
 where
@@ -108,10 +122,6 @@ where
     // This generates all ways to choose missing_count cards from the candidate list
     // (automatically deduplicated)
     let unique_combinations = generate_combinations(&candidate_card_ids, missing_count);
-    warn!(
-        "Generated {} unique combinations.",
-        unique_combinations.len()
-    );
 
     // Filter to only valid combinations by checking deck validity
     let combinations: Vec<Vec<CardId>> = unique_combinations
@@ -127,36 +137,34 @@ where
         .collect();
 
     warn!(
-        "Generated {} valid combinations to complete the deck.",
+        "Valid combinations ({}): {combinations:?}",
         combinations.len()
     );
-    warn!("Valid combinations: {combinations:?}");
-
-    // Estimate the time it will take to run all simulations
-    let player_codes = fill_code_array(players.clone());
-    let total_games = combinations.len() as u64 * num as u64 * enemy_decks.len() as u64;
-    let time_per_game = estimate_time_per_game(&player_codes);
-    let total_time = time_per_game.mul_f64(total_games as f64);
-
     warn!(
-        "Estimated time: {} ({} combinations × {} enemy decks × {} games per deck)",
-        humantime::format_duration(total_time),
+        "Games to Play: {} combinations × {} enemy decks × {} games per deck",
         combinations.len(),
         enemy_decks.len(),
-        num
-    );
-    warn!(
-        "Time estimation: {} per game ({} non-R players, {} R players)",
-        humantime::format_duration(time_per_game),
-        count_player_types(&player_codes, false),
-        count_player_types(&player_codes, true)
+        sim_config.num_games
     );
 
+    // Configure rayon thread pool if specified
+    if let Some(num_threads) = parallel_config.num_threads {
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(num_threads)
+            .build_global()
+            .ok(); // Ignore error if pool is already initialized
+    }
+
     // For every valid combination, complete the deck and simulate games.
-    let mut best_win_percent = 0.0;
-    let mut best_combination = None;
-    let mut results = Vec::new();
     let total_combinations = combinations.len();
+    let mut results = Vec::new();
+
+    // Create progress bar for total games (not combinations)
+    let total_games =
+        (combinations.len() * enemy_decks.len() * sim_config.num_games as usize) as u64;
+    let pb = create_progress_bar(total_games);
+    pb.tick(); // Ensure progress bar is drawn immediately
+
     for comb in &combinations {
         // Create a completed deck by cloning the incomplete one and adding the candidate cards.
         let mut completed_deck = incomplete_deck.clone();
@@ -165,49 +173,99 @@ where
             completed_deck.cards.push(card);
         }
         if !completed_deck.is_valid() {
-            warn!(
-                "Completed deck is invalid. Num cards: {}, num basics: {}",
-                completed_deck.cards.len(),
-                completed_deck.cards.iter().filter(|x| x.is_basic()).count()
-            );
+            pb.suspend(|| {
+                warn!(
+                    "Completed deck is invalid. Num cards: {}, num basics: {}",
+                    completed_deck.cards.len(),
+                    completed_deck.cards.iter().filter(|x| x.is_basic()).count()
+                );
+            });
             continue;
         }
 
-        // Simulate games for each enemy deck.
-        let mut total_wins = 0;
-        let mut total_games = 0;
-        for enemy_deck in enemy_decks {
-            for _ in 0..num {
-                let players = create_players(
-                    completed_deck.clone(),
-                    enemy_deck.clone(),
-                    fill_code_array(players.clone()),
-                );
-                let seed = seed.unwrap_or(rand::random::<u64>());
-                let mut game = Game::new(players, seed);
-                let outcome = game.play();
+        // Generate all games to simulate for this combination
+        let games_to_simulate: Vec<(Deck, Deck, Vec<PlayerCode>)> = enemy_decks
+            .iter()
+            .flat_map(|enemy_deck| {
+                let deck_clone = completed_deck.clone();
+                let players_clone = sim_config.players.clone();
+                (0..sim_config.num_games).map(move |_| {
+                    (
+                        deck_clone.clone(),
+                        enemy_deck.clone(),
+                        fill_code_array(players_clone.clone()),
+                    )
+                })
+            })
+            .collect();
 
-                // Assume that if outcome is a win and the first player (our deck) wins, it counts as a win.
-                if let Some(GameOutcome::Win(winner)) = outcome {
-                    if winner == 0 {
-                        total_wins += 1;
+        // Run games either in parallel or sequentially
+        let wins: usize = if parallel_config.enabled {
+            games_to_simulate
+                .par_iter()
+                .map(|(deck_a, deck_b, player_codes)| {
+                    let players =
+                        create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
+                    let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
+                    let mut game = Game::new(players, seed);
+                    let outcome = game.play();
+
+                    pb.inc(1);
+
+                    // Count as win if first player (our deck) wins
+                    if let Some(GameOutcome::Win(winner)) = outcome {
+                        if winner == 0 {
+                            return 1;
+                        }
                     }
-                }
-                total_games += 1;
-            }
-        }
+                    0
+                })
+                .sum()
+        } else {
+            games_to_simulate
+                .iter()
+                .map(|(deck_a, deck_b, player_codes)| {
+                    let players =
+                        create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
+                    let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
+                    let mut game = Game::new(players, seed);
+                    let outcome = game.play();
 
-        let win_percent = (total_wins as f32 / total_games as f32) * 100.0;
+                    pb.inc(1);
+
+                    // Count as win if first player (our deck) wins
+                    if let Some(GameOutcome::Win(winner)) = outcome {
+                        if winner == 0 {
+                            return 1;
+                        }
+                    }
+                    0
+                })
+                .sum()
+        };
+
+        let total_games = games_to_simulate.len();
+        let win_percent = (wins as f32 / total_games as f32) * 100.0;
         results.push((comb.clone(), win_percent));
-        warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
+
+        pb.suspend(|| {
+            warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
+        });
 
         // Report progress via callback
         if let Some(ref callback) = progress_callback {
             callback(results.len(), total_combinations, comb, win_percent);
         }
+    }
 
-        if win_percent > best_win_percent {
-            best_win_percent = win_percent;
+    pb.finish_with_message("Optimization complete!");
+
+    // Find the best combination
+    let mut best_win_percent = 0.0;
+    let mut best_combination = None;
+    for (comb, win_percent) in &results {
+        if *win_percent > best_win_percent {
+            best_win_percent = *win_percent;
             best_combination = Some(comb.clone());
         }
     }
@@ -247,32 +305,6 @@ fn robustly_parse_card_id_string(orig: &str) -> CardId {
     let id = format!("{prefix} {padded_number}");
     CardId::from_card_id(id.as_str())
         .unwrap_or_else(|| panic!("Invalid card ID '{}' in candidate cards", orig))
-}
-
-/// Estimates time per game based on player types
-fn estimate_time_per_game(player_codes: &[PlayerCode]) -> Duration {
-    let non_r_count = count_player_types(player_codes, false) as u64;
-    let r_count = count_player_types(player_codes, true) as u64;
-
-    // 300ms per non-R player, 15ms per R player
-    let non_r_time = Duration::from_millis(non_r_count * 300);
-    let r_time = Duration::from_millis(r_count * 15);
-
-    non_r_time.checked_add(r_time).unwrap_or(non_r_time)
-}
-
-/// Counts the number of players of a specific type (R or non-R)
-fn count_player_types(player_codes: &[PlayerCode], is_r: bool) -> usize {
-    player_codes
-        .iter()
-        .filter(|&code| {
-            if is_r {
-                matches!(code, PlayerCode::R)
-            } else {
-                !matches!(code, PlayerCode::R)
-            }
-        })
-        .count()
 }
 
 /// Deduplicates combinations by creating canonical representations based on card counts.
@@ -357,16 +389,21 @@ mod tests {
 ]        .iter()
         .map(|s| Deck::from_string(s).unwrap())
         .collect();
-        let num = 1;
-        let players = Some(vec![PlayerCode::R, PlayerCode::R]);
-        let seed: Option<u64> = None;
+        let sim_config = SimulationConfig {
+            num_games: 1,
+            players: Some(vec![PlayerCode::R, PlayerCode::R]),
+            seed: None,
+        };
+        let parallel_config = ParallelConfig {
+            enabled: false,
+            num_threads: None,
+        };
         let results = optimize(
             &incomplete_deck,
             &candidate_cards,
             &enemy_decks,
-            num,
-            players,
-            seed,
+            sim_config,
+            parallel_config,
             None::<fn(usize, usize, &[CardId], f32)>,
         );
         assert!(!results.is_empty());

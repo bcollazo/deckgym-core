@@ -19,6 +19,8 @@ indexmap = "2.7.0"
 num-format = "0.4.4"
 humantime = "2.1.0"
 uuid = { version = "1.17.0", features = ["v4", "js"] }
+indicatif = "0.18.2"
+rayon = "1.10"
 csv = { version = "1.3.1", optional = true }
 pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
 strum = "0.27"
