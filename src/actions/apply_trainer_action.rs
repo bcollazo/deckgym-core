@@ -116,6 +116,7 @@ pub fn forecast_trainer_action(
         | CardId::A3b107EeveeBag
         | CardId::A4b308EeveeBag
         | CardId::A4b309EeveeBag => doutcome(eevee_bag_effect),
+        CardId::B1217FlamePatch | CardId::B1331FlamePatch => doutcome(flame_patch_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -515,4 +516,21 @@ fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         SimpleAction::HealAllEeveeEvolutions,
     ];
     state.move_generation_stack.push((action.actor, choices));
+}
+
+fn flame_patch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+
+    // Find and remove a Fire energy from discard pile
+    if let Some(fire_idx) = state.discard_energies[player]
+        .iter()
+        .position(|energy| *energy == EnergyType::Fire)
+    {
+        state.discard_energies[player].remove(fire_idx);
+
+        // Attach it to the active Pokemon
+        if let Some(active_pokemon) = state.in_play_pokemon[player][0].as_mut() {
+            active_pokemon.attached_energy.push(EnergyType::Fire);
+        }
+    }
 }

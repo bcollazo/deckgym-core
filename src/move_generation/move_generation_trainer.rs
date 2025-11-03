@@ -125,6 +125,9 @@ pub fn trainer_move_generation_implementation(
         | CardId::A3b107EeveeBag
         | CardId::A4b308EeveeBag
         | CardId::A4b309EeveeBag => can_play_eevee_bag(state, trainer_card),
+        CardId::B1217FlamePatch | CardId::B1331FlamePatch => {
+            can_play_flame_patch(state, trainer_card)
+        }
         _ => None,
     }
 }
@@ -432,6 +435,26 @@ fn can_play_eevee_bag(state: &State, trainer_card: &TrainerCard) -> Option<Vec<S
         .enumerate_in_play_pokemon(state.current_player)
         .any(|(_, pokemon)| pokemon.evolved_from("Eevee"));
     if has_eevee_evolution {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Flame Patch can be played (requires active Fire pokemon and Fire energy in discard)
+fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let active_pokemon = state.maybe_get_active(player);
+
+    // Check if active pokemon exists and is Fire type
+    let active_is_fire = active_pokemon
+        .map(|p| p.get_energy_type() == Some(EnergyType::Fire))
+        .unwrap_or(false);
+
+    // Check if there's at least 1 Fire energy in discard pile
+    let has_fire_energy_in_discard = state.discard_energies[player].contains(&EnergyType::Fire);
+
+    if active_is_fire && has_fire_energy_in_discard {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
