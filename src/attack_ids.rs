@@ -158,7 +158,10 @@ pub enum AttackId {
     PA052SprigatitoCryForHelp,
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
+    B1002MegaPinsirExCriticalScissors,
     B1036MegaBlazikenExMegaBurning,
+    B1052MegaGyaradosExMegaBlaster,
+    B1102MegaAltariaExMegaHarmony,
     B1151MegaAbsolExDarknessClaw,
 }
 
@@ -466,12 +469,21 @@ lazy_static::lazy_static! {
         m.insert(("A4b 371", 0), AttackId::A4149LugiaExElementalBlast);
 
         // B1
+        m.insert(("B1 002", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
+        m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
+        m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 255", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
+        m.insert(("B1 259", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 262", 0), AttackId::B1151MegaAbsolExDarknessClaw);
+        m.insert(("B1 272", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 280", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
+        m.insert(("B1 286", 0), AttackId::B1102MegaAltariaExMegaHarmony);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);

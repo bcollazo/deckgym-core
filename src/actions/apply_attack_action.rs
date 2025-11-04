@@ -445,7 +445,14 @@ fn forecast_effect_attack(
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
+        AttackId::B1002MegaPinsirExCriticalScissors => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
+        }
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
+        AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
+        AttackId::B1102MegaAltariaExMegaHarmony => {
+            bench_count_attack(acting_player, state, 40, 30, None)
+        }
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
 }
@@ -803,6 +810,24 @@ fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilitie
             let energy_count = active.attached_energy.len();
             let rand_idx = rng.gen_range(0..energy_count);
             active.attached_energy.remove(rand_idx);
+        }
+    })
+}
+
+/// For attacks that deal damage and discard cards from the top of opponent's deck
+fn damage_and_discard_opponent_deck(
+    damage: u32,
+    discard_count: usize,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+
+        for _ in 0..discard_count {
+            if let Some(card) = state.decks[opponent].draw() {
+                state.discard_piles[opponent].push(card);
+            } else {
+                break; // No more cards to discard
+            }
         }
     })
 }
