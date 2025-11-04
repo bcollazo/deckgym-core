@@ -117,6 +117,10 @@ pub fn forecast_trainer_action(
         | CardId::A4b308EeveeBag
         | CardId::A4b309EeveeBag => doutcome(eevee_bag_effect),
         CardId::B1217FlamePatch | CardId::B1331FlamePatch => doutcome(flame_patch_effect),
+        CardId::B1225Copycat | CardId::B1270Copycat => doutcome(copycat_effect),
+        CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
+            doutcome(iono_effect)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -532,5 +536,61 @@ fn flame_patch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         if let Some(active_pokemon) = state.in_play_pokemon[player][0].as_mut() {
             active_pokemon.attached_energy.push(EnergyType::Fire);
         }
+    }
+}
+
+fn copycat_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.
+    let player = action.actor;
+    let opponent = (player + 1) % 2;
+
+    // Count opponent's hand size before shuffling
+    let opponent_hand_size = state.hands[opponent].len();
+
+    debug!(
+        "Copycat: Shuffling hand into deck and drawing {} cards (opponent's hand size)",
+        opponent_hand_size
+    );
+
+    // Shuffle player's hand into their deck
+    state.decks[player].cards.append(&mut state.hands[player]);
+    state.decks[player].shuffle(false, rng);
+
+    // Draw cards equal to opponent's hand size
+    for _ in 0..opponent_hand_size {
+        state.maybe_draw_card(player);
+    }
+}
+
+fn iono_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Each player shuffles the cards in their hand into their deck, then draws that many cards.
+    let player = action.actor;
+    let opponent = (player + 1) % 2;
+
+    // Count each player's hand size before shuffling
+    let player_hand_size = state.hands[player].len();
+    let opponent_hand_size = state.hands[opponent].len();
+
+    debug!(
+        "Iono: Player {} shuffling {} cards, opponent shuffling {} cards",
+        player, player_hand_size, opponent_hand_size
+    );
+
+    // Shuffle player's hand into their deck
+    state.decks[player].cards.append(&mut state.hands[player]);
+    state.decks[player].shuffle(false, rng);
+
+    // Shuffle opponent's hand into their deck
+    state.decks[opponent]
+        .cards
+        .append(&mut state.hands[opponent]);
+    state.decks[opponent].shuffle(false, rng);
+
+    // Each player draws the same number of cards they had
+    for _ in 0..player_hand_size {
+        state.maybe_draw_card(player);
+    }
+    for _ in 0..opponent_hand_size {
+        state.maybe_draw_card(opponent);
     }
 }

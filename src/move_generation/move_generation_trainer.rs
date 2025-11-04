@@ -128,6 +128,10 @@ pub fn trainer_move_generation_implementation(
         CardId::B1217FlamePatch | CardId::B1331FlamePatch => {
             can_play_flame_patch(state, trainer_card)
         }
+        CardId::B1225Copycat | CardId::B1270Copycat => can_play_trainer(state, trainer_card),
+        CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
+            can_play_trainer(state, trainer_card)
+        }
         _ => None,
     }
 }
