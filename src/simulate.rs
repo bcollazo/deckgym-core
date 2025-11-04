@@ -2,7 +2,6 @@ use env_logger::{Builder, Env};
 use indicatif::{ProgressBar, ProgressStyle};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
-use rayon::prelude::*;
 use std::io::Write;
 use uuid::Uuid;
 
@@ -23,6 +22,7 @@ pub struct Simulation {
     seed: Option<u64>,
     handler_factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
     parallel: bool,
+    #[cfg_attr(not(feature = "parallel"), allow(dead_code))]
     num_threads: Option<usize>,
 }
 
@@ -57,12 +57,12 @@ impl Simulation {
     }
 
     pub fn run(&mut self) -> Vec<Option<GameOutcome>> {
-        // Configure rayon thread pool if specified
-        if let Some(num_threads) = self.num_threads {
-            rayon::ThreadPoolBuilder::new()
-                .num_threads(num_threads)
-                .build_global()
-                .ok(); // Ignore error if pool is already initialized
+        // Check if parallel mode is requested without the feature
+        #[cfg(not(feature = "parallel"))]
+        if self.parallel {
+            eprintln!("Error: --parallel flag requires the 'parallel' feature to be enabled.");
+            eprintln!("Please rebuild with: cargo build --features parallel");
+            std::process::exit(1);
         }
 
         // Top-level event handler
@@ -109,17 +109,33 @@ impl Simulation {
         };
 
         // Run simulations either in parallel or sequentially
-        let results: Vec<(Option<GameOutcome>, CompositeSimulationEventHandler)> = if self.parallel
-        {
-            (0..self.num_simulations)
-                .into_par_iter()
-                .map(run_single_simulation)
-                .collect()
-        } else {
+        let run_sequential = || {
             (0..self.num_simulations)
                 .map(run_single_simulation)
                 .collect()
         };
+
+        #[cfg(feature = "parallel")]
+        let results: Vec<(Option<GameOutcome>, CompositeSimulationEventHandler)> = {
+            use rayon::prelude::*;
+            if let Some(num_threads) = self.num_threads {
+                rayon::ThreadPoolBuilder::new()
+                    .num_threads(num_threads)
+                    .build_global()
+                    .ok(); // Ignore error if pool is already initialized
+            }
+            if self.parallel {
+                (0..self.num_simulations)
+                    .into_par_iter()
+                    .map(run_single_simulation)
+                    .collect()
+            } else {
+                run_sequential()
+            }
+        };
+
+        #[cfg(not(feature = "parallel"))]
+        let results: Vec<(Option<GameOutcome>, CompositeSimulationEventHandler)> = run_sequential();
 
         pb.finish_with_message("Simulation complete!");
 

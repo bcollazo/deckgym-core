@@ -2,7 +2,6 @@ use std::fs;
 
 use log::warn;
 use num_format::{Locale, ToFormattedString};
-use rayon::prelude::*;
 
 use crate::{
     card_ids::CardId,
@@ -147,12 +146,12 @@ where
         sim_config.num_games
     );
 
-    // Configure rayon thread pool if specified
-    if let Some(num_threads) = parallel_config.num_threads {
-        rayon::ThreadPoolBuilder::new()
-            .num_threads(num_threads)
-            .build_global()
-            .ok(); // Ignore error if pool is already initialized
+    // Check if parallel mode is requested without the feature
+    #[cfg(not(feature = "parallel"))]
+    if parallel_config.enabled {
+        eprintln!("Error: --parallel flag requires the 'parallel' feature to be enabled.");
+        eprintln!("Please rebuild with: cargo build --features parallel");
+        std::process::exit(1);
     }
 
     // For every valid combination, complete the deck and simulate games.
@@ -200,28 +199,7 @@ where
             .collect();
 
         // Run games either in parallel or sequentially
-        let wins: usize = if parallel_config.enabled {
-            games_to_simulate
-                .par_iter()
-                .map(|(deck_a, deck_b, player_codes)| {
-                    let players =
-                        create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
-                    let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
-                    let mut game = Game::new(players, seed);
-                    let outcome = game.play();
-
-                    pb.inc(1);
-
-                    // Count as win if first player (our deck) wins
-                    if let Some(GameOutcome::Win(winner)) = outcome {
-                        if winner == 0 {
-                            return 1;
-                        }
-                    }
-                    0
-                })
-                .sum()
-        } else {
+        let run_sequential = || {
             games_to_simulate
                 .iter()
                 .map(|(deck_a, deck_b, player_codes)| {
@@ -243,6 +221,44 @@ where
                 })
                 .sum()
         };
+
+        #[cfg(feature = "parallel")]
+        let wins: usize = {
+            use rayon::prelude::*;
+            if let Some(num_threads) = parallel_config.num_threads {
+                rayon::ThreadPoolBuilder::new()
+                    .num_threads(num_threads)
+                    .build_global()
+                    .ok(); // Ignore error if pool is already initialized
+            }
+            if parallel_config.enabled {
+                games_to_simulate
+                    .par_iter()
+                    .map(|(deck_a, deck_b, player_codes)| {
+                        let players =
+                            create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
+                        let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
+                        let mut game = Game::new(players, seed);
+                        let outcome = game.play();
+
+                        pb.inc(1);
+
+                        // Count as win if first player (our deck) wins
+                        if let Some(GameOutcome::Win(winner)) = outcome {
+                            if winner == 0 {
+                                return 1;
+                            }
+                        }
+                        0
+                    })
+                    .sum()
+            } else {
+                run_sequential()
+            }
+        };
+
+        #[cfg(not(feature = "parallel"))]
+        let wins: usize = run_sequential();
 
         let total_games = games_to_simulate.len();
         let win_percent = (wins as f32 / total_games as f32) * 100.0;
