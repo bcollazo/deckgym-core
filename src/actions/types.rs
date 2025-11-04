@@ -75,6 +75,10 @@ pub enum SimpleAction {
     ShuffleOpponentSupporter {
         supporter_card: Card,
     },
+    /// Mega Absol Ex: discard a specific Supporter from opponent's hand
+    DiscardOpponentSupporter {
+        supporter_card: Card,
+    },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
         in_play_idx: usize,
@@ -153,6 +157,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")
+            }
+            SimpleAction::DiscardOpponentSupporter { supporter_card } => {
+                write!(f, "DiscardOpponentSupporter({supporter_card})")
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,

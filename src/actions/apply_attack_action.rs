@@ -446,6 +446,7 @@ fn forecast_effect_attack(
             bench_count_attack(acting_player, state, 0, 30, None)
         }
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
+        AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
 }
 
@@ -1129,6 +1130,26 @@ fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
     } else {
         active_damage_doutcome(50)
     }
+}
+
+/// For Mega Absol ex's Darkness Claw: Deals 80 damage and lets player discard a Supporter from opponent's hand
+fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(80, move |_, state, _action| {
+        let opponent = (acting_player + 1) % 2;
+        let possible_discards: Vec<SimpleAction> = state.hands[opponent]
+            .iter()
+            .filter(|card| card.is_support())
+            .map(|card| SimpleAction::DiscardOpponentSupporter {
+                supporter_card: card.clone(),
+            })
+            .collect();
+
+        if !possible_discards.is_empty() {
+            state
+                .move_generation_stack
+                .push((acting_player, possible_discards));
+        }
+    })
 }
 
 #[cfg(test)]

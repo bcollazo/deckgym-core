@@ -159,6 +159,7 @@ pub enum AttackId {
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
     B1036MegaBlazikenExMegaBurning,
+    B1151MegaAbsolExDarknessClaw,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -466,7 +467,10 @@ lazy_static::lazy_static! {
 
         // B1
         m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 262", 0), AttackId::B1151MegaAbsolExDarknessClaw);
+        m.insert(("B1 280", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
 
         // Promo

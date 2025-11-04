@@ -63,6 +63,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
         }
+        SimpleAction::DiscardOpponentSupporter { supporter_card } => {
+            forecast_discard_opponent_supporter(action.actor, supporter_card)
+        }
         SimpleAction::AttachFromDiscard {
             in_play_idx,
             num_random_energies,
@@ -382,6 +385,24 @@ fn forecast_shuffle_opponent_supporter(
             state.decks[opponent].shuffle(false, rng);
             debug!(
                 "Silver: Shuffled {:?} from opponent's hand into their deck",
+                supporter_clone
+            );
+        })],
+    )
+}
+
+fn forecast_discard_opponent_supporter(
+    acting_player: usize,
+    supporter_card: &Card,
+) -> (Probabilities, Mutations) {
+    let supporter_clone = supporter_card.clone();
+    (
+        vec![1.0],
+        vec![Box::new(move |_rng, state, _action| {
+            let opponent = (acting_player + 1) % 2;
+            state.discard_card_from_hand(opponent, &supporter_clone);
+            debug!(
+                "Mega Absol Ex: Discarded {:?} from opponent's hand",
                 supporter_clone
             );
         })],
