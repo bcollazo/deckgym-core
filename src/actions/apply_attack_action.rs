@@ -1,7 +1,8 @@
 use log::trace;
-use rand::Rng;
+use rand::{rngs::StdRng, Rng};
 
 use crate::{
+    actions::{apply_action_helpers::handle_damage, mutations::doutcome},
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
     hooks::get_stage,
@@ -450,6 +451,7 @@ fn forecast_effect_attack(
         }
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
+        AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
@@ -1175,6 +1177,51 @@ fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities,
                 .push((acting_player, possible_discards));
         }
     })
+}
+
+fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
+    // 1 of your opponent's Benched Pokémon is chosen at random 3 times.
+    // For each time a Pokémon was chosen, also do 20 damage to it.
+    doutcome(|rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let targets: Vec<(u32, usize)> = generate_random_spread_indices(rng, state, true, 3)
+            .into_iter()
+            .map(|idx| (20, idx))
+            .chain(std::iter::once((100, 0))) // Add active Pokémon directly
+            .collect();
+
+        handle_damage(state, opponent, &targets, true);
+    })
+}
+
+fn generate_random_spread_indices(
+    rng: &mut StdRng,
+    state: &State,
+    bench_only: bool,
+    count: usize,
+) -> Vec<usize> {
+    let opponent = (state.current_player + 1) % 2;
+    let mut targets = vec![];
+    for _ in 0..count {
+        let possible_indices: Vec<usize> = if bench_only {
+            state
+                .enumerate_bench_pokemon(opponent)
+                .map(|(idx, _)| idx)
+                .collect()
+        } else {
+            state
+                .enumerate_in_play_pokemon(opponent)
+                .map(|(idx, _)| idx)
+                .collect()
+        };
+        if possible_indices.is_empty() {
+            continue;
+        }
+
+        let rand_idx = rng.gen_range(0..possible_indices.len());
+        targets.push(possible_indices[rand_idx]);
+    }
+    targets
 }
 
 #[cfg(test)]
