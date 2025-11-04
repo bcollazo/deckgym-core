@@ -28,6 +28,49 @@ pub struct ParallelConfig {
     pub num_threads: Option<usize>,
 }
 
+/// Callbacks for optimization progress tracking
+pub struct OptimizationCallbacks<F, G>
+where
+    F: Fn(usize, usize, &[CardId], f32),
+    G: Fn() + Sync,
+{
+    pub on_combination_complete: Option<F>,
+    pub on_game_complete: Option<G>,
+}
+
+impl<F, G> Default for OptimizationCallbacks<F, G>
+where
+    F: Fn(usize, usize, &[CardId], f32),
+    G: Fn() + Sync,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<F, G> OptimizationCallbacks<F, G>
+where
+    F: Fn(usize, usize, &[CardId], f32),
+    G: Fn() + Sync,
+{
+    pub fn new() -> Self {
+        Self {
+            on_combination_complete: None,
+            on_game_complete: None,
+        }
+    }
+
+    pub fn with_combination_callback(mut self, callback: F) -> Self {
+        self.on_combination_complete = Some(callback);
+        self
+    }
+
+    pub fn with_game_callback(mut self, callback: G) -> Self {
+        self.on_game_complete = Some(callback);
+        self
+    }
+}
+
 /// Optimizes a deck by simulating games with different combinations of candidate cards.
 pub fn cli_optimize(
     incomplete_deck_path: &str,
@@ -77,26 +120,46 @@ pub fn cli_optimize(
             .collect::<Vec<_>>()
     );
 
+    // Create progress bar for total games (not combinations)
+    let candidate_card_ids: Vec<CardId> = candidate_cards
+        .iter()
+        .map(|s| robustly_parse_card_id_string(s))
+        .collect();
+    let missing_count = 20 - incomplete_deck.cards.len();
+    let combinations_count =
+        count_valid_combinations(&incomplete_deck, &candidate_card_ids, missing_count);
+    let total_games =
+        (combinations_count * enemy_valid_decks.len() * sim_config.num_games as usize) as u64;
+    let pb = create_progress_bar(total_games);
+    pb.tick(); // Ensure progress bar is drawn immediately
+
+    type NeverCalled = fn(usize, usize, &[CardId], f32);
+    let callbacks: OptimizationCallbacks<NeverCalled, _> =
+        OptimizationCallbacks::new().with_game_callback(|| pb.inc(1));
+
     optimize(
         &incomplete_deck,
         &candidate_cards,
         &enemy_valid_decks,
         sim_config,
         parallel_config,
-        None::<fn(usize, usize, &[CardId], f32)>,
+        Some(callbacks),
     );
+
+    pb.finish_with_message("Optimization complete!");
 }
 
-pub fn optimize<F>(
+pub fn optimize<F, G>(
     incomplete_deck: &Deck,
     candidate_cards: &[String],
     enemy_decks: &[Deck],
     sim_config: SimulationConfig,
     parallel_config: ParallelConfig,
-    progress_callback: Option<F>,
+    callbacks: Option<OptimizationCallbacks<F, G>>,
 ) -> Vec<(Vec<CardId>, f32)>
 where
     F: Fn(usize, usize, &[CardId], f32),
+    G: Fn() + Sync,
 {
     if enemy_decks.is_empty() {
         warn!("No valid enemy decks provided. Optimization cannot proceed.");
@@ -118,23 +181,9 @@ where
         return Vec::new();
     }
 
-    // Generate all unique k-combinations where k = missing_count
-    // This generates all ways to choose missing_count cards from the candidate list
-    // (automatically deduplicated)
-    let unique_combinations = generate_combinations(&candidate_card_ids, missing_count);
-
-    // Filter to only valid combinations by checking deck validity
-    let combinations: Vec<Vec<CardId>> = unique_combinations
-        .into_iter()
-        .filter(|comb| {
-            let mut test_deck = incomplete_deck.clone();
-            for card_id in comb {
-                let card = get_card_by_enum(*card_id);
-                test_deck.cards.push(card);
-            }
-            test_deck.is_valid()
-        })
-        .collect();
+    // Generate all valid combinations for the incomplete deck
+    let combinations =
+        generate_valid_combinations(incomplete_deck, &candidate_card_ids, missing_count);
 
     warn!(
         "Valid combinations ({}): {combinations:?}",
@@ -156,14 +205,7 @@ where
     }
 
     // For every valid combination, complete the deck and simulate games.
-    let total_combinations = combinations.len();
     let mut results = Vec::new();
-
-    // Create progress bar for total games (not combinations)
-    let total_games =
-        (combinations.len() * enemy_decks.len() * sim_config.num_games as usize) as u64;
-    let pb = create_progress_bar(total_games);
-    pb.tick(); // Ensure progress bar is drawn immediately
 
     for comb in &combinations {
         // Create a completed deck by cloning the incomplete one and adding the candidate cards.
@@ -173,13 +215,11 @@ where
             completed_deck.cards.push(card);
         }
         if !completed_deck.is_valid() {
-            pb.suspend(|| {
-                warn!(
-                    "Completed deck is invalid. Num cards: {}, num basics: {}",
-                    completed_deck.cards.len(),
-                    completed_deck.cards.iter().filter(|x| x.is_basic()).count()
-                );
-            });
+            warn!(
+                "Completed deck is invalid. Num cards: {}, num basics: {}",
+                completed_deck.cards.len(),
+                completed_deck.cards.iter().filter(|x| x.is_basic()).count()
+            );
             continue;
         }
 
@@ -199,6 +239,11 @@ where
             })
             .collect();
 
+        // Extract the game callback to avoid capturing the entire callbacks struct in parallel closures
+        let game_callback = callbacks
+            .as_ref()
+            .and_then(|cbs| cbs.on_game_complete.as_ref());
+
         // Run games either in parallel or sequentially
         let wins: usize = if parallel_config.enabled {
             games_to_simulate
@@ -210,7 +255,9 @@ where
                     let mut game = Game::new(players, seed);
                     let outcome = game.play();
 
-                    pb.inc(1);
+                    if let Some(callback) = game_callback {
+                        callback();
+                    }
 
                     // Count as win if first player (our deck) wins
                     if let Some(GameOutcome::Win(winner)) = outcome {
@@ -231,7 +278,9 @@ where
                     let mut game = Game::new(players, seed);
                     let outcome = game.play();
 
-                    pb.inc(1);
+                    if let Some(callback) = game_callback {
+                        callback();
+                    }
 
                     // Count as win if first player (our deck) wins
                     if let Some(GameOutcome::Win(winner)) = outcome {
@@ -248,17 +297,16 @@ where
         let win_percent = (wins as f32 / total_games as f32) * 100.0;
         results.push((comb.clone(), win_percent));
 
-        pb.suspend(|| {
-            warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
-        });
+        warn!("Combination {comb:?} win percentage: {win_percent:.2}%");
 
         // Report progress via callback
-        if let Some(ref callback) = progress_callback {
-            callback(results.len(), total_combinations, comb, win_percent);
+        if let Some(ref cbs) = callbacks {
+            if let Some(ref callback) = cbs.on_combination_complete {
+                let total_combinations = combinations.len();
+                callback(results.len(), total_combinations, comb, win_percent);
+            }
         }
     }
-
-    pb.finish_with_message("Optimization complete!");
 
     // Find the best combination
     let mut best_win_percent = 0.0;
@@ -326,6 +374,37 @@ pub fn deduplicate_combinations(combinations: Vec<Vec<CardId>>) -> Vec<Vec<CardI
             seen.insert(canonical)
         })
         .collect()
+}
+
+/// Generates all valid combinations for the incomplete deck.
+/// Returns a vector of card combinations that result in valid decks when added.
+pub fn generate_valid_combinations(
+    incomplete_deck: &Deck,
+    candidates: &[CardId],
+    missing_count: usize,
+) -> Vec<Vec<CardId>> {
+    let combinations = generate_combinations(candidates, missing_count);
+    combinations
+        .into_iter()
+        .filter(|comb| {
+            let mut test_deck = incomplete_deck.clone();
+            for card_id in comb {
+                let card = get_card_by_enum(*card_id);
+                test_deck.cards.push(card);
+            }
+            test_deck.is_valid()
+        })
+        .collect()
+}
+
+/// Counts how many valid combinations will be generated.
+/// This is useful for setting up progress bars before running the optimization.
+fn count_valid_combinations(
+    incomplete_deck: &Deck,
+    candidates: &[CardId],
+    missing_count: usize,
+) -> usize {
+    generate_valid_combinations(incomplete_deck, candidates, missing_count).len()
 }
 
 /// Generates all unique k-combinations from the candidate cards.
@@ -404,7 +483,7 @@ mod tests {
             &enemy_decks,
             sim_config,
             parallel_config,
-            None::<fn(usize, usize, &[CardId], f32)>,
+            None::<OptimizationCallbacks<fn(usize, usize, &[CardId], f32), fn()>>,
         );
         assert!(!results.is_empty());
     }
