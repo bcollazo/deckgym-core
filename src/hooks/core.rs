@@ -168,6 +168,25 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                 vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
             ));
         }
+        if ability_id == AbilityId::A4a022MiloticHealingRipples {
+            // Healing Ripples: heal 60 damage from 1 of your [W] Pokémon
+            let possible_moves: Vec<SimpleAction> = state
+                .enumerate_in_play_pokemon(actor)
+                .filter(|(_, pokemon)| {
+                    pokemon.is_damaged() && pokemon.get_energy_type() == Some(EnergyType::Water)
+                })
+                .map(|(in_play_idx, _)| SimpleAction::Heal {
+                    in_play_idx,
+                    amount: 60,
+                    cure_status: false,
+                })
+                .chain(std::iter::once(SimpleAction::Noop))
+                .collect();
+
+            if possible_moves.len() > 1 {
+                state.move_generation_stack.push((actor, possible_moves));
+            }
+        }
     }
 }
 
