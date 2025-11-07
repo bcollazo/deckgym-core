@@ -118,7 +118,8 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
         | ToolId::A3a065ElectricalCord
         | ToolId::A4a067InflatableBoat
         | ToolId::A4b318ElectricalCord
-        | ToolId::A4b319ElectricalCord => {}
+        | ToolId::A4b319ElectricalCord
+        | ToolId::B1219HeavyHelmet => {}
     }
 }
 
@@ -244,6 +245,20 @@ pub(crate) fn can_play_support(state: &State) -> bool {
     !state.has_played_support && !has_modifiers
 }
 
+fn get_heavy_helmet_reduction(state: &State, opponent: usize) -> u32 {
+    if let Some(tool_id) = state.get_active(opponent).attached_tool {
+        if tool_id == ToolId::B1219HeavyHelmet {
+            if let Card::Pokemon(pokemon_card) = &state.get_active(opponent).card {
+                if pokemon_card.retreat_cost.len() >= 3 {
+                    debug!("Heavy Helmet: Reducing damage by 20");
+                    return 20;
+                }
+            }
+        }
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
@@ -306,6 +321,10 @@ pub(crate) fn modify_damage(
             })
             .sum::<u32>();
 
+        // Heavy Helmet damage reduction
+        // TODO: Does this apply even if on bench?
+        let heavy_helmet_reduction = get_heavy_helmet_reduction(state, opponent);
+
         // Weakness Modifier
         let mut weakness_modifier = 0;
         let receiving = state.get_active(opponent);
@@ -321,14 +340,15 @@ pub(crate) fn modify_damage(
         }
 
         debug!(
-            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
+            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}",
             base_damage,
             weakness_modifier,
             increased_turn_effect_modifiers,
-            reduced_card_effect_modifiers
+            reduced_card_effect_modifiers,
+            heavy_helmet_reduction
         );
         (base_damage + weakness_modifier + increased_turn_effect_modifiers)
-            .saturating_sub(reduced_card_effect_modifiers)
+            .saturating_sub(reduced_card_effect_modifiers + heavy_helmet_reduction)
     } else {
         debug!("Damage is to benched Pokémon or not from active attack");
         base_damage // modifiers only apply to active Pokémon

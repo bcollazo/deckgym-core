@@ -17,6 +17,7 @@ pub enum ToolId {
     A4a067InflatableBoat,
     A4b318ElectricalCord,
     A4b319ElectricalCord,
+    B1219HeavyHelmet,
 }
 
 lazy_static::lazy_static! {
@@ -30,6 +31,7 @@ lazy_static::lazy_static! {
         m.insert("A4a 067", ToolId::A4a067InflatableBoat);
         m.insert("A4b 318", ToolId::A4b318ElectricalCord);
         m.insert("A4b 319", ToolId::A4b319ElectricalCord);
+        m.insert("B1 219", ToolId::B1219HeavyHelmet);
         m
     };
 }
@@ -57,7 +59,10 @@ impl ToolId {
                 pokemon.card.get_type() == Some(EnergyType::Water)
             }
             // Most tools can be attached to any pokemon
-            ToolId::A2147GiantCape | ToolId::A2148RockyHelmet | ToolId::A3146PoisonBarb => true,
+            ToolId::A2147GiantCape
+            | ToolId::A2148RockyHelmet
+            | ToolId::A3146PoisonBarb
+            | ToolId::B1219HeavyHelmet => true,
         }
     }
 
