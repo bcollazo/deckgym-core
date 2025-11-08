@@ -398,6 +398,7 @@ fn forecast_effect_attack(
         AttackId::A3b013IncineroarDarkestLariat => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
         }
+        AttackId::A3b014SalanditEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3b020VanilluxeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }

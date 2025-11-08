@@ -137,6 +137,7 @@ pub enum AttackId {
     A3b009FlareonExFireSpin,
     A3b010TorkoalFlamethrower,
     A3b013IncineroarDarkestLariat,
+    A3b014SalanditEmber,
     A3b020VanilluxeDoubleSpin,
     A3b053DragoniteExGigaImpact,
     A3b058AipomDoubleHit,
@@ -398,6 +399,7 @@ lazy_static::lazy_static! {
         m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A3b 010", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A3b 013", 0), AttackId::A3b013IncineroarDarkestLariat);
+        m.insert(("A3b 014", 0), AttackId::A3b014SalanditEmber);
         m.insert(("A3b 020", 0), AttackId::A3b020VanilluxeDoubleSpin);
         m.insert(("A3b 053", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
