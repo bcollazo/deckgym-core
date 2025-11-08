@@ -217,9 +217,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 071", 0), AttackId::A1071SeadraWaterArrow);
         m.insert(("A1 073", 0), AttackId::A1073SeakingHornHazard);
         m.insert(("A1 078", 0), AttackId::A1078GyaradosHyperBeam);
-        m.insert(("A1 233", 0), AttackId::A1078GyaradosHyperBeam); // Full art version
         m.insert(("A1 079", 0), AttackId::A1079LaprasHydroPump);
-        m.insert(("A1 234", 0), AttackId::A1079LaprasHydroPump); // Full art version
         m.insert(("A1 080", 0), AttackId::A1080VaporeonBubbleDrain);
         m.insert(("A1 083", 0), AttackId::A1083ArticunoIceBeam);
         m.insert(("A1 084", 1), AttackId::A1084ArticunoExBlizzard);
@@ -260,6 +258,8 @@ lazy_static::lazy_static! {
         // Full Arts A1
         m.insert(("A1 229", 0), AttackId::A1026PinsirDoubleHorn);
         m.insert(("A1 230", 0), AttackId::A1033CharmanderEmber);
+        m.insert(("A1 233", 0), AttackId::A1078GyaradosHyperBeam);
+        m.insert(("A1 234", 0), AttackId::A1079LaprasHydroPump);
         m.insert(("A1 241", 0), AttackId::A1171NidokingPoisonHorn);
         m.insert(("A1 246", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 251", 1), AttackId::A1004VenusaurExGiantBloom);
