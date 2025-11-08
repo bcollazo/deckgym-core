@@ -148,9 +148,11 @@ fn forecast_effect_attack(
         AttackId::A1052CentiskorchFireBlast => {
             self_energy_discard_attack(0, vec![EnergyType::Fire])
         }
-        AttackId::A1055BlastoiseHydroPump => hydro_pump_attack(acting_player, state, 80, 5, 60),
+        AttackId::A1055BlastoiseHydroPump => {
+            extra_energy_attack(acting_player, state, EnergyType::Water, 80, 5, 60)
+        }
         AttackId::A1056BlastoiseExHydroBazooka => {
-            hydro_pump_attack(acting_player, state, 100, 5, 60)
+            extra_energy_attack(acting_player, state, EnergyType::Water, 100, 5, 60)
         }
         AttackId::A1057PsyduckHeadache => {
             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
@@ -166,7 +168,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 0])
         }
         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
-        AttackId::A1079LaprasHydroPump => hydro_pump_attack(acting_player, state, 20, 4, 70),
+        AttackId::A1079LaprasHydroPump => {
+            extra_energy_attack(acting_player, state, EnergyType::Water, 20, 4, 70)
+        }
         AttackId::A1080VaporeonBubbleDrain => self_heal_attack(30, 0),
         AttackId::A1083ArticunoIceBeam => {
             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
@@ -434,6 +438,9 @@ fn forecast_effect_attack(
             0,
             vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
         ),
+        AttackId::A4a010EnteiExBlazingBeatdown => {
+            extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
+        }
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
@@ -886,28 +893,29 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
     })
 }
 
-// If this Pokemon has at least 2 extra Water Energy attached, this attack does 60 more damage.
-/// For water Pokémon with Hydro Pump attack that deals more damage with extra energy
-fn hydro_pump_attack(
+/// Generic attack that deals bonus damage if the Pokémon has enough energy of a specific type attached.
+/// Used by attacks like Hydro Pump, Hydro Bazooka, and Blazing Beatdown.
+fn extra_energy_attack(
     acting_player: usize,
     state: &State,
+    energy_type: EnergyType,
     base_damage: u32,
-    energy_threshold: usize, // Minimum total water energy needed for bonus damage
+    energy_threshold: usize, // Minimum total energy of specified type needed for bonus damage
     bonus_damage: u32,       // Extra damage when threshold is met
 ) -> (Probabilities, Mutations) {
     let pokemon = state.in_play_pokemon[acting_player][0]
         .as_ref()
         .expect("Active Pokemon should be there if attacking");
 
-    // Count total water energy
-    let water_energy_count = pokemon
+    // Count total energy of the specified type
+    let energy_count = pokemon
         .attached_energy
         .iter()
-        .filter(|&energy| *energy == EnergyType::Water)
+        .filter(|&energy| *energy == energy_type)
         .count();
 
     // Check if we meet or exceed the energy threshold
-    if water_energy_count >= energy_threshold {
+    if energy_count >= energy_threshold {
         active_damage_doutcome(base_damage + bonus_damage)
     } else {
         active_damage_doutcome(base_damage)
