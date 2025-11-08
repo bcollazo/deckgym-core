@@ -127,7 +127,7 @@ fn forecast_effect_attack(
         }
         AttackId::A1029PetililBlot => self_heal_attack(10, index),
         AttackId::A1030LilligantLeafSupply => energy_bench_attack(0, 1, EnergyType::Grass),
-        AttackId::A1031Skiddo => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40]),
+        AttackId::A1031SkiddoSurpriseAttack => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40]),
         AttackId::A1033CharmanderEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A1035CharizardFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
@@ -240,7 +240,7 @@ fn forecast_effect_attack(
         AttackId::A1174GrimerPoisonGas => damage_status_attack(10, StatusCondition::Poisoned),
         AttackId::A1178MawileCrunch => mawile_crunch(),
         AttackId::A1181MeltanAmass => self_charge_active_attack(0, EnergyType::Metal, 1),
-        AttackId::A1195WigglytuffSleepySong => damage_status_attack(80, StatusCondition::Asleep),
+        AttackId::A1195WigglytuffExSleepySong => damage_status_attack(80, StatusCondition::Asleep),
         AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
         AttackId::A1203KangaskhanDizzyPunch => {
@@ -335,7 +335,7 @@ fn forecast_effect_attack(
         AttackId::A3020TsareenaThreeKickCombo => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
         }
-        AttackId::A3040AlolanVulpixCallForth => self_charge_active_attack(0, EnergyType::Water, 1),
+        AttackId::A3040AlolanVulpixCallForthCold => self_charge_active_attack(0, EnergyType::Water, 1),
         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
         AttackId::A3043CloysterGuardPress => damage_and_card_effect_attack(
             index,

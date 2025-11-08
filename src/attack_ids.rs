@@ -15,7 +15,7 @@ pub enum AttackId {
     A1026PinsirDoubleHorn,
     A1029PetililBlot,
     A1030LilligantLeafSupply,
-    A1031Skiddo,
+    A1031SkiddoSurpriseAttack,
     A1033CharmanderEmber,
     A1035CharizardFireSpin,
     A1036CharizardExCrimsonStorm,
@@ -67,7 +67,7 @@ pub enum AttackId {
     A1174GrimerPoisonGas,
     A1178MawileCrunch,
     A1181MeltanAmass,
-    A1195WigglytuffSleepySong,
+    A1195WigglytuffExSleepySong,
     A1196MeowthPayDay,
     A1201LickitungContinuousLick,
     A1203KangaskhanDizzyPunch,
@@ -113,7 +113,7 @@ pub enum AttackId {
     A3019SteeneeDoubleSpin,
     A3020TsareenaThreeKickCombo,
     A3037TurtonatorFireSpin,
-    A3040AlolanVulpixCallForth,
+    A3040AlolanVulpixCallForthCold,
     A3041AlolanNinetalesBlizzard,
     A3043CloysterGuardPress,
     A3071SpoinkPsycharge,
@@ -198,7 +198,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 026", 0), AttackId::A1026PinsirDoubleHorn);
         m.insert(("A1 029", 0), AttackId::A1029PetililBlot);
         m.insert(("A1 030", 0), AttackId::A1030LilligantLeafSupply);
-        m.insert(("A1 031", 0), AttackId::A1031Skiddo);
+        m.insert(("A1 031", 0), AttackId::A1031SkiddoSurpriseAttack);
         m.insert(("A1 033", 0), AttackId::A1033CharmanderEmber);
         m.insert(("A1 035", 0), AttackId::A1035CharizardFireSpin);
         m.insert(("A1 036", 1), AttackId::A1036CharizardExCrimsonStorm);
@@ -252,7 +252,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 174", 0), AttackId::A1174GrimerPoisonGas);
         m.insert(("A1 178", 0), AttackId::A1178MawileCrunch);
         m.insert(("A1 181", 0), AttackId::A1181MeltanAmass);
-        m.insert(("A1 195", 0), AttackId::A1195WigglytuffSleepySong);
+        m.insert(("A1 195", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A1 196", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 201", 0), AttackId::A1201LickitungContinuousLick);
         m.insert(("A1 203", 0), AttackId::A1203KangaskhanDizzyPunch);
@@ -272,10 +272,10 @@ lazy_static::lazy_static! {
         m.insert(("A1 260", 1), AttackId::A1104ZapdosExThunderingHurricane);
         m.insert(("A1 262", 1), AttackId::A1129MewtwoExPsydrive);
         m.insert(("A1 264", 0), AttackId::A1153MarowakExBonemerang);
-        m.insert(("A1 265", 0), AttackId::A1195WigglytuffSleepySong);
+        m.insert(("A1 265", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A1 274", 0), AttackId::A1047MoltresExInfernoDance);
         m.insert(("A1 276", 1), AttackId::A1104ZapdosExThunderingHurricane);
-        m.insert(("A1 279", 0), AttackId::A1195WigglytuffSleepySong);
+        m.insert(("A1 279", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A1 280", 1), AttackId::A1036CharizardExCrimsonStorm);
         m.insert(("A1 281", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 282", 1), AttackId::A1129MewtwoExPsydrive);
@@ -361,7 +361,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 019", 0), AttackId::A3019SteeneeDoubleSpin);
         m.insert(("A3 020", 0), AttackId::A3020TsareenaThreeKickCombo);
         m.insert(("A3 037", 0), AttackId::A3037TurtonatorFireSpin);
-        m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
+        m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForthCold);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
         m.insert(("A3 217", 0), AttackId::A1055BlastoiseHydroPump);
