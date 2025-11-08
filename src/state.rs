@@ -115,6 +115,11 @@ impl State {
         self.discard_piles[current_player].push(card.clone());
     }
 
+    /// Returns an iterator over supporter cards in a player's hand
+    pub(crate) fn iter_hand_supporters(&self, player: usize) -> impl Iterator<Item = &Card> {
+        self.hands[player].iter().filter(|card| card.is_support())
+    }
+
     pub(crate) fn maybe_draw_card(&mut self, player: usize) {
         if let Some(card) = self.decks[player].draw() {
             self.hands[player].push(card.clone());

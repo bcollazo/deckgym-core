@@ -148,9 +148,11 @@ fn forecast_effect_attack(
         AttackId::A1052CentiskorchFireBlast => {
             self_energy_discard_attack(0, vec![EnergyType::Fire])
         }
-        AttackId::A1055BlastoiseHydroPump => hydro_pump_attack(acting_player, state, 80, 5, 60),
+        AttackId::A1055BlastoiseHydroPump => {
+            extra_energy_attack(acting_player, state, EnergyType::Water, 80, 5, 60)
+        }
         AttackId::A1056BlastoiseExHydroBazooka => {
-            hydro_pump_attack(acting_player, state, 100, 5, 60)
+            extra_energy_attack(acting_player, state, EnergyType::Water, 100, 5, 60)
         }
         AttackId::A1057PsyduckHeadache => {
             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
@@ -166,7 +168,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 0])
         }
         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
-        AttackId::A1079LaprasHydroPump => hydro_pump_attack(acting_player, state, 20, 4, 70),
+        AttackId::A1079LaprasHydroPump => {
+            extra_energy_attack(acting_player, state, EnergyType::Water, 20, 4, 70)
+        }
         AttackId::A1080VaporeonBubbleDrain => self_heal_attack(30, 0),
         AttackId::A1083ArticunoIceBeam => {
             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
@@ -442,6 +446,9 @@ fn forecast_effect_attack(
             0,
             vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
         ),
+        AttackId::A4a010EnteiExBlazingBeatdown => {
+            extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
+        }
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
@@ -454,12 +461,15 @@ fn forecast_effect_attack(
         AttackId::PA079DuskManeNecrozmaBlackMetal => {
             self_energy_discard_attack(0, vec![EnergyType::Metal])
         }
+        AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
+        AttackId::A4120AbsolLeapOver => direct_damage(30, true),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
         AttackId::B1002MegaPinsirExCriticalScissors => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
+        AttackId::B1031RapidashExSprintingFlare => active_then_choice_bench_attack(110, 20),
         AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
@@ -467,6 +477,7 @@ fn forecast_effect_attack(
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
+        AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
 }
@@ -894,28 +905,29 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
     })
 }
 
-// If this Pokemon has at least 2 extra Water Energy attached, this attack does 60 more damage.
-/// For water Pokémon with Hydro Pump attack that deals more damage with extra energy
-fn hydro_pump_attack(
+/// Generic attack that deals bonus damage if the Pokémon has enough energy of a specific type attached.
+/// Used by attacks like Hydro Pump, Hydro Bazooka, and Blazing Beatdown.
+fn extra_energy_attack(
     acting_player: usize,
     state: &State,
+    energy_type: EnergyType,
     base_damage: u32,
-    energy_threshold: usize, // Minimum total water energy needed for bonus damage
+    energy_threshold: usize, // Minimum total energy of specified type needed for bonus damage
     bonus_damage: u32,       // Extra damage when threshold is met
 ) -> (Probabilities, Mutations) {
     let pokemon = state.in_play_pokemon[acting_player][0]
         .as_ref()
         .expect("Active Pokemon should be there if attacking");
 
-    // Count total water energy
-    let water_energy_count = pokemon
+    // Count total energy of the specified type
+    let energy_count = pokemon
         .attached_energy
         .iter()
-        .filter(|&energy| *energy == EnergyType::Water)
+        .filter(|&energy| *energy == energy_type)
         .count();
 
     // Check if we meet or exceed the energy threshold
-    if water_energy_count >= energy_threshold {
+    if energy_count >= energy_threshold {
         active_damage_doutcome(base_damage + bonus_damage)
     } else {
         active_damage_doutcome(base_damage)
@@ -1171,13 +1183,51 @@ fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
     }
 }
 
+/// For Absol's Unseen Claw (A3 112): Deals 20 damage, +60 if opponent's Active has a Special Condition
+fn unseen_claw_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let damage = if opponent_active.has_status_condition() {
+        80 // 20 + 60
+    } else {
+        20
+    };
+    active_damage_doutcome(damage)
+}
+
+/// For Absol's Ominous Claw (B1 150): Deals 50 damage, flip coin, if heads discard a Supporter from opponent's hand
+fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
+    // 50% chance for heads (discard supporter), 50% for tails (just damage)
+    let probabilities = vec![0.5, 0.5];
+    let mutations: Mutations = vec![
+        // Heads: damage + discard supporter
+        active_damage_effect_mutation(50, move |_, state, _action| {
+            let opponent = (acting_player + 1) % 2;
+            let possible_discards: Vec<SimpleAction> = state
+                .iter_hand_supporters(opponent)
+                .map(|card| SimpleAction::DiscardOpponentSupporter {
+                    supporter_card: card.clone(),
+                })
+                .collect();
+
+            if !possible_discards.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((acting_player, possible_discards));
+            }
+        }),
+        // Tails: just damage
+        active_damage_mutation(50),
+    ];
+    (probabilities, mutations)
+}
+
 /// For Mega Absol ex's Darkness Claw: Deals 80 damage and lets player discard a Supporter from opponent's hand
 fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(80, move |_, state, _action| {
         let opponent = (acting_player + 1) % 2;
-        let possible_discards: Vec<SimpleAction> = state.hands[opponent]
-            .iter()
-            .filter(|card| card.is_support())
+        let possible_discards: Vec<SimpleAction> = state
+            .iter_hand_supporters(opponent)
             .map(|card| SimpleAction::DiscardOpponentSupporter {
                 supporter_card: card.clone(),
             })

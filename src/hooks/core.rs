@@ -175,7 +175,8 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     // Check if active Pokémon has an end-of-turn ability
     let active = state.get_active(player_ending_turn);
     if let Some(ability_id) = AbilityId::from_pokemon_id(&active.card.get_id()[..]) {
-        if ability_id == AbilityId::A4a020SuicuneExLegendaryPulse
+        if ability_id == AbilityId::A4a010EnteiExLegendaryPulse
+            || ability_id == AbilityId::A4a020SuicuneExLegendaryPulse
             || ability_id == AbilityId::A4a025RaikouExLegendaryPulse
         {
             // At the end of your turn, if this Pokémon is in the Active Spot, draw a card.
