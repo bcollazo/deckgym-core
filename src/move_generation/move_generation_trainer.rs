@@ -132,6 +132,8 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
             can_play_trainer(state, trainer_card)
         }
+        CardId::B1223May | CardId::B1268May => can_play_trainer(state, trainer_card),
+        CardId::B1226Lisia | CardId::B1271Lisia => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }
