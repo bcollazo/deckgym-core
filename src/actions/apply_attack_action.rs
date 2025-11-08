@@ -127,7 +127,9 @@ fn forecast_effect_attack(
         }
         AttackId::A1029PetililBlot => self_heal_attack(10, index),
         AttackId::A1030LilligantLeafSupply => energy_bench_attack(0, 1, EnergyType::Grass),
-        AttackId::A1031SkiddoSurpriseAttack => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40]),
+        AttackId::A1031SkiddoSurpriseAttack => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40])
+        }
         AttackId::A1033CharmanderEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A1035CharizardFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
@@ -255,7 +257,7 @@ fn forecast_effect_attack(
         | AttackId::A4214MagikarpLeapOut
         | AttackId::A4a021FeebasLeapOut
         | AttackId::A4b096MagikarpLeapOut => teleport_attack(),
-        AttackId::A1a021LumineonAqua => direct_damage(50, true),
+        AttackId::A1a021LumineonAquaLiner => direct_damage(50, true),
         AttackId::A1a026RaichuGigashock => {
             let opponent = (state.current_player + 1) % 2;
             let targets: Vec<(u32, usize)> = state
@@ -277,8 +279,8 @@ fn forecast_effect_attack(
         ),
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
-        AttackId::A2049PalkiaDimensionalStorm => palkia_dimensional_storm(state),
-        AttackId::A2050ManaphyOceanic => manaphy_oceanic(acting_player),
+        AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
+        AttackId::A2050ManaphyOceanicGift => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
         AttackId::A2073DrifloonExpand => damage_and_card_effect_attack(
             index,
@@ -320,7 +322,7 @@ fn forecast_effect_attack(
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
-        AttackId::A2035PiplupHeal | AttackId::PA034PiplupHeal => self_heal_attack(20, index),
+        AttackId::A2035PiplupNap | AttackId::PA034PiplupNap => self_heal_attack(20, index),
         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -335,7 +337,9 @@ fn forecast_effect_attack(
         AttackId::A3020TsareenaThreeKickCombo => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
         }
-        AttackId::A3040AlolanVulpixCallForthCold => self_charge_active_attack(0, EnergyType::Water, 1),
+        AttackId::A3040AlolanVulpixCallForthCold => {
+            self_charge_active_attack(0, EnergyType::Water, 1)
+        }
         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
         AttackId::A3043CloysterGuardPress => damage_and_card_effect_attack(
             index,
@@ -364,7 +368,9 @@ fn forecast_effect_attack(
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A3a045NagaedelElectroHouse => damage_status_attack(40, StatusCondition::Poisoned),
+        AttackId::A3a045NaganadelElectroHouse => {
+            damage_status_attack(40, StatusCondition::Poisoned)
+        }
         AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
         }
@@ -381,7 +387,7 @@ fn forecast_effect_attack(
         AttackId::A3a062CelesteelaMoombahton => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
         }
-        AttackId::A1a001ExeggcuteGrowth | AttackId::PA060ExeggcuteGrowth => {
+        AttackId::A1a001ExeggcuteGrowthSpurt | AttackId::PA060ExeggcuteGrowthSpurt => {
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
@@ -419,13 +425,13 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
         }
         AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(),
-        AttackId::A4032MagbyToasty => {
+        AttackId::A4032MagbyToastyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
-        AttackId::A4066PichuCrackly => {
+        AttackId::A4066PichuCracklyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
-        AttackId::A4077CleffaTwinkly => pokemon_search_outcomes(acting_player, state, false),
+        AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
         AttackId::A4104PupitarGuardPress => damage_and_card_effect_attack(
             index,
@@ -453,7 +459,7 @@ fn forecast_effect_attack(
         AttackId::A4a010EnteiExBlazingBeatdown => {
             extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
         }
-        AttackId::A4a023MantykeSplashy => {
+        AttackId::A4a023MantykeSplashyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
@@ -461,7 +467,7 @@ fn forecast_effect_attack(
         AttackId::A2053MagnezoneThunderBlast => {
             self_energy_discard_attack(0, vec![EnergyType::Lightning])
         }
-        AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
+        AttackId::PA072AlolanGrimerPoisonGas => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::PA079DuskManeNecrozmaBlackMetal => {
             self_energy_discard_attack(0, vec![EnergyType::Metal])
         }
