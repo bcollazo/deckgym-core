@@ -440,6 +440,8 @@ lazy_static::lazy_static! {
         m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
+        m.insert(("A4b 055", 0), AttackId::A1033CharmanderEmber);
+        m.insert(("A4b 056", 0), AttackId::A1033CharmanderEmber);
         m.insert(("A4b 087", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);
@@ -493,6 +495,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 029", 0), AttackId::A1055BlastoiseHydroPump);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
+        m.insert(("P-A 032", 0), AttackId::A1033CharmanderEmber);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupHeal);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanic);
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
