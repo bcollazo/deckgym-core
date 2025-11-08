@@ -158,11 +158,14 @@ pub enum AttackId {
     PA052SprigatitoCryForHelp,
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
+    A3112AbsolUnseenClaw,
+    A4120AbsolLeapOver,
     B1002MegaPinsirExCriticalScissors,
     B1036MegaBlazikenExMegaBurning,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
     B1102MegaAltariaExMegaHarmony,
+    B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
 }
 
@@ -350,6 +353,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
+        m.insert(("A3 112", 0), AttackId::A3112AbsolUnseenClaw);
         m.insert(("A3 116", 0), AttackId::A3116ToxapexSpikeCannon);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 158", 0), AttackId::A3020TsareenaThreeKickCombo);
@@ -405,6 +409,7 @@ lazy_static::lazy_static! {
         m.insert(("A4 026", 0), AttackId::A4026NinetalesScorchingBreath);
         m.insert(("A4 032", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 105", 0), AttackId::A4105BinacleDualChop);
+        m.insert(("A4 120", 0), AttackId::A4120AbsolLeapOver);
         m.insert(("A4 146", 0), AttackId::A4146UrsaringSwingAround);
         m.insert(("A4 166", 0), AttackId::A4032MagbyToasty);
         m.insert(("A4 066", 0), AttackId::A4066PichuCrackly);
@@ -475,6 +480,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
@@ -500,6 +506,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
+        m.insert(("P-A 117", 0), AttackId::A4120AbsolLeapOver);
 
 
         m
