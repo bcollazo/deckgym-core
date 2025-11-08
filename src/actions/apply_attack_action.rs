@@ -374,6 +374,7 @@ fn forecast_effect_attack(
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
+        AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
             0,

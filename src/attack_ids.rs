@@ -111,6 +111,7 @@ pub enum AttackId {
     A2b044FlamigoDoubleKick,
     A3019SteeneeDoubleSpin,
     A3020TsareenaThreeKickCombo,
+    A3037TurtonatorFireSpin,
     A3040AlolanVulpixCallForth,
     A3041AlolanNinetalesBlizzard,
     A3043CloysterGuardPress,
@@ -342,6 +343,7 @@ lazy_static::lazy_static! {
         // A3
         m.insert(("A3 019", 0), AttackId::A3019SteeneeDoubleSpin);
         m.insert(("A3 020", 0), AttackId::A3020TsareenaThreeKickCombo);
+        m.insert(("A3 037", 0), AttackId::A3037TurtonatorFireSpin);
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForth);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
@@ -353,6 +355,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 116", 0), AttackId::A3116ToxapexSpikeCannon);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 158", 0), AttackId::A3020TsareenaThreeKickCombo);
+        m.insert(("A3 161", 0), AttackId::A3037TurtonatorFireSpin);
         m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 207", 0), AttackId::A3122SolgaleoExSolBreaker);
