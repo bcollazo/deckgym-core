@@ -434,6 +434,7 @@ fn forecast_effect_attack(
             0,
             vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
         ),
+        AttackId::A4a010EnteiExBlazingBeatdown => blazing_beatdown_attack(acting_player, state),
         AttackId::A4a023MantykeSplashy => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
@@ -884,6 +885,28 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::DrawCard { amount: 1 }]));
     })
+}
+
+// If this Pokemon has at least 2 extra Fire Energy attached, this attack does 60 more damage.
+/// For Entei Ex's Blazing Beatdown attack
+fn blazing_beatdown_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let pokemon = state.in_play_pokemon[acting_player][0]
+        .as_ref()
+        .expect("Active Pokemon should be there if attacking");
+
+    // Count total fire energy
+    let fire_energy_count = pokemon
+        .attached_energy
+        .iter()
+        .filter(|&energy| *energy == EnergyType::Fire)
+        .count();
+
+    // Attack costs 2 Fire Energy, so we need at least 4 Fire Energy (2 cost + 2 extra) for bonus
+    if fire_energy_count >= 4 {
+        active_damage_doutcome(120) // 60 base + 60 bonus
+    } else {
+        active_damage_doutcome(60) // base damage
+    }
 }
 
 // If this Pokemon has at least 2 extra Water Energy attached, this attack does 60 more damage.
