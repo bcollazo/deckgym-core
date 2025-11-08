@@ -163,6 +163,7 @@ pub enum AttackId {
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
     B1002MegaPinsirExCriticalScissors,
+    B1035BlazikenBlazeKick,
     B1036MegaBlazikenExMegaBurning,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
@@ -487,6 +488,7 @@ lazy_static::lazy_static! {
 
         // B1
         m.insert(("B1 002", 0), AttackId::B1002MegaPinsirExCriticalScissors);
+        m.insert(("B1 035", 0), AttackId::B1035BlazikenBlazeKick);
         m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);

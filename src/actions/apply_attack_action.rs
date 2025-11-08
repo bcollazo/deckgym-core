@@ -457,6 +457,7 @@ fn forecast_effect_attack(
         AttackId::B1002MegaPinsirExCriticalScissors => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
+        AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
