@@ -57,6 +57,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a020SuicuneExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
+        AbilityId::A4a022MiloticHealingRipples => {
+            panic!("Healing Ripples is triggered on evolve")
+        }
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }

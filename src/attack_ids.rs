@@ -76,6 +76,7 @@ pub enum AttackId {
     A1a003CelebiExPowerfulBloom,
     A1a010PonytaStomp,
     A1a011RapidashRisingLunge,
+    A1a017MagikarpLeapOut,
     A1a026RaichuGigashock,
     A1a021LumineonAqua,
     A1a030DedenneThunderShock,
@@ -153,10 +154,13 @@ pub enum AttackId {
     A4134EeveeFindAFriend,
     A4146UrsaringSwingAround,
     A4149LugiaExElementalBlast,
+    A4214MagikarpLeapOut,
     A4a010EnteiExBlazingBeatdown,
     A4a020SuicuneExCrystalWaltz,
+    A4a021FeebasLeapOut,
     A4a023MantykeSplashy,
     A4a025RaikouExVoltaicBullet,
+    A4b096MagikarpLeapOut,
     A2053MagnezoneThunderBlast,
     A3112AbsolUnseenClaw,
     A4120AbsolLeapOver,
@@ -164,11 +168,13 @@ pub enum AttackId {
     B1031RapidashExSprintingFlare,
     B1035BlazikenBlazeKick,
     B1036MegaBlazikenExMegaBurning,
+    B1050MagikarpWaterfallEvolution,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
     B1102MegaAltariaExMegaHarmony,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
+    B1232MagikarpWaterfallEvolution,
     PA031CinccinoDoTheWave,
     PA034PiplupHeal,
     PA052SprigatitoCryForHelp,
@@ -282,6 +288,7 @@ lazy_static::lazy_static! {
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 010", 0), AttackId::A1a010PonytaStomp);
         m.insert(("A1a 011", 0), AttackId::A1a011RapidashRisingLunge);
+        m.insert(("A1a 017", 0), AttackId::A1a017MagikarpLeapOut);
         m.insert(("A1a 021", 0), AttackId::A1a021LumineonAqua);
         m.insert(("A1a 026", 0), AttackId::A1a026RaichuGigashock);
         m.insert(("A1a 030", 0), AttackId::A1a030DedenneThunderShock);
@@ -441,12 +448,16 @@ lazy_static::lazy_static! {
         m.insert(("A4 202", 0), AttackId::A4021ShuckleExTripleSlap);
         m.insert(("A4 209", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 211", 0), AttackId::A4149LugiaExElementalBlast);
+        m.insert(("A4 214", 0), AttackId::A4214MagikarpLeapOut);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
 
         // A4a
         m.insert(("A4a 010", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 020", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 021", 0), AttackId::A4a021FeebasLeapOut);
         m.insert(("A4a 023", 0), AttackId::A4a023MantykeSplashy);
         m.insert(("A4a 025", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 079", 0), AttackId::A4a010EnteiExBlazingBeatdown);
@@ -461,6 +472,8 @@ lazy_static::lazy_static! {
         // A4b
         m.insert(("A4b 023", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
+        m.insert(("A4b 096", 0), AttackId::A4b096MagikarpLeapOut);
+        m.insert(("A4b 097", 0), AttackId::A4b096MagikarpLeapOut);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 055", 0), AttackId::A1033CharmanderEmber);
@@ -502,11 +515,13 @@ lazy_static::lazy_static! {
         m.insert(("B1 031", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 035", 0), AttackId::B1035BlazikenBlazeKick);
         m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 050", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
+        m.insert(("B1 232", 0), AttackId::B1232MagikarpWaterfallEvolution);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 253", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);

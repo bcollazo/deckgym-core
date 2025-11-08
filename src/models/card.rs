@@ -209,7 +209,7 @@ impl Card {
         }
     }
 
-    pub(crate) fn as_trainer(&self) -> TrainerCard {
+    pub fn as_trainer(&self) -> TrainerCard {
         match self {
             Card::Trainer(trainer_card) => trainer_card.clone(),
             _ => panic!("Card is not a Trainer"),

@@ -118,7 +118,8 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
         | ToolId::A3a065ElectricalCord
         | ToolId::A4a067InflatableBoat
         | ToolId::A4b318ElectricalCord
-        | ToolId::A4b319ElectricalCord => {}
+        | ToolId::A4b319ElectricalCord
+        | ToolId::B1219HeavyHelmet => {}
     }
 }
 
@@ -167,6 +168,25 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                 actor,
                 vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
             ));
+        }
+        if ability_id == AbilityId::A4a022MiloticHealingRipples {
+            // Healing Ripples: heal 60 damage from 1 of your [W] Pokémon
+            let possible_moves: Vec<SimpleAction> = state
+                .enumerate_in_play_pokemon(actor)
+                .filter(|(_, pokemon)| {
+                    pokemon.is_damaged() && pokemon.get_energy_type() == Some(EnergyType::Water)
+                })
+                .map(|(in_play_idx, _)| SimpleAction::Heal {
+                    in_play_idx,
+                    amount: 60,
+                    cure_status: false,
+                })
+                .chain(std::iter::once(SimpleAction::Noop))
+                .collect();
+
+            if possible_moves.len() > 1 {
+                state.move_generation_stack.push((actor, possible_moves));
+            }
         }
     }
 }
@@ -224,6 +244,20 @@ pub(crate) fn can_play_support(state: &State) -> bool {
         .any(|x| matches!(x, TurnEffect::NoSupportCards));
 
     !state.has_played_support && !has_modifiers
+}
+
+fn get_heavy_helmet_reduction(state: &State, opponent: usize) -> u32 {
+    if let Some(tool_id) = state.get_active(opponent).attached_tool {
+        if tool_id == ToolId::B1219HeavyHelmet {
+            if let Card::Pokemon(pokemon_card) = &state.get_active(opponent).card {
+                if pokemon_card.retreat_cost.len() >= 3 {
+                    debug!("Heavy Helmet: Reducing damage by 20");
+                    return 20;
+                }
+            }
+        }
+    }
+    0
 }
 
 // TODO: Confirm is_from_attack and goes to enemy active
@@ -288,6 +322,10 @@ pub(crate) fn modify_damage(
             })
             .sum::<u32>();
 
+        // Heavy Helmet damage reduction
+        // TODO: Does this apply even if on bench?
+        let heavy_helmet_reduction = get_heavy_helmet_reduction(state, opponent);
+
         // Weakness Modifier
         let mut weakness_modifier = 0;
         let receiving = state.get_active(opponent);
@@ -303,14 +341,15 @@ pub(crate) fn modify_damage(
         }
 
         debug!(
-            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}",
+            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}",
             base_damage,
             weakness_modifier,
             increased_turn_effect_modifiers,
-            reduced_card_effect_modifiers
+            reduced_card_effect_modifiers,
+            heavy_helmet_reduction
         );
         (base_damage + weakness_modifier + increased_turn_effect_modifiers)
-            .saturating_sub(reduced_card_effect_modifiers)
+            .saturating_sub(reduced_card_effect_modifiers + heavy_helmet_reduction)
     } else {
         debug!("Damage is to benched Pokémon or not from active attack");
         base_damage // modifiers only apply to active Pokémon

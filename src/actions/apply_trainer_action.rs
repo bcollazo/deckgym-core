@@ -6,10 +6,14 @@ use rand::rngs::StdRng;
 use crate::{
     actions::{
         mutations::doutcome,
-        shared_mutations::{gladion_search_outcomes, pokemon_search_outcomes},
+        shared_mutations::{
+            gladion_search_outcomes, pokemon_search_outcomes,
+            pokemon_search_outcomes_with_filter_multiple,
+        },
     },
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
+    combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard},
@@ -80,7 +84,8 @@ pub fn forecast_trainer_action(
         | CardId::A3a065ElectricalCord
         | CardId::A4a067InflatableBoat
         | CardId::A4b318ElectricalCord
-        | CardId::A4b319ElectricalCord => doutcome(attach_tool),
+        | CardId::A4b319ElectricalCord
+        | CardId::B1219HeavyHelmet => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
         }
@@ -121,6 +126,8 @@ pub fn forecast_trainer_action(
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
             doutcome(iono_effect)
         }
+        CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
+        CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -593,4 +600,82 @@ fn iono_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     for _ in 0..opponent_hand_size {
         state.maybe_draw_card(opponent);
     }
+}
+
+pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 2 random Pokémon from your deck into your hand.
+    // For each Pokémon you put into your hand in this way, choose a Pokémon to shuffle from your hand into your deck.
+    let deck_pokemon: Vec<Card> = state.iter_deck_pokemon(acting_player).cloned().collect();
+    let num_pokemon = deck_pokemon.len();
+    if num_pokemon == 0 {
+        // No Pokemon in deck, just shuffle
+        return doutcome(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    // For drawing 2 Pokemon, we need to generate all possible pairs
+    // Each outcome draws 2 different Pokemon (or fewer if not enough in deck)
+    let num_to_draw = min(2, num_pokemon);
+    if num_to_draw == 1 {
+        // Only 1 Pokemon in deck - simple case
+        let probabilities = vec![1.0];
+        let mut outcomes: Mutations = vec![];
+        outcomes.push(Box::new(move |_rng, state, action| {
+            let pokemon = state
+                .iter_deck_pokemon(action.actor)
+                .next()
+                .cloned()
+                .expect("Pokemon should be in deck");
+            state.transfer_card_from_deck_to_hand(action.actor, &pokemon);
+            // Queue shuffling that Pokemon back into deck
+            state.move_generation_stack.push((
+                action.actor,
+                vec![SimpleAction::ShufflePokemonIntoDeck {
+                    hand_pokemon: vec![pokemon],
+                }],
+            ));
+        }));
+        return (probabilities, outcomes);
+    }
+
+    // Drawing 2 Pokemon - generate all possible unordered combinations
+    let draw_combinations = generate_combinations(&deck_pokemon, num_to_draw);
+    let num_outcomes = draw_combinations.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+    for combo in draw_combinations {
+        outcomes.push(Box::new(move |_rng, state, action| {
+            // Transfer each Pokemon from the combination to hand
+            for pokemon in &combo {
+                state.transfer_card_from_deck_to_hand(action.actor, pokemon);
+            }
+
+            // Generate all possible 2-combinations of Pokemon in hand to shuffle back
+            let hand_pokemon: Vec<Card> = state.iter_hand_pokemon(action.actor).cloned().collect();
+            let combinations = generate_combinations(&hand_pokemon, num_to_draw);
+            let shuffle_choices: Vec<SimpleAction> = combinations
+                .into_iter()
+                .map(|combo| SimpleAction::ShufflePokemonIntoDeck {
+                    hand_pokemon: combo,
+                })
+                .collect();
+            state
+                .move_generation_stack
+                .push((action.actor, shuffle_choices));
+        }));
+    }
+
+    (probabilities, outcomes)
+}
+
+fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+        if let Card::Pokemon(pokemon_card) = card {
+            pokemon_card.stage == 0 && pokemon_card.hp <= 50
+        } else {
+            false
+        }
+    })
 }
