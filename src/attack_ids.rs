@@ -164,10 +164,12 @@ pub enum AttackId {
     PA072AlolanGrimerPoison,
     B1002MegaPinsirExCriticalScissors,
     B1036MegaBlazikenExMegaBurning,
+    B1050MagikarpWaterfallEvolution,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
     B1102MegaAltariaExMegaHarmony,
     B1151MegaAbsolExDarknessClaw,
+    B1232MagikarpWaterfallEvolution,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -481,10 +483,12 @@ lazy_static::lazy_static! {
         // B1
         m.insert(("B1 002", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 036", 0), AttackId::B1036MegaBlazikenExMegaBurning);
+        m.insert(("B1 050", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
+        m.insert(("B1 232", 0), AttackId::B1232MagikarpWaterfallEvolution);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
         m.insert(("B1 255", 0), AttackId::B1052MegaGyaradosExMegaBlaster);

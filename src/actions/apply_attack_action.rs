@@ -2,11 +2,11 @@ use log::trace;
 use rand::{rngs::StdRng, Rng};
 
 use crate::{
-    actions::{apply_action_helpers::handle_damage, mutations::doutcome},
+    actions::{apply_action_helpers::handle_damage, apply_evolve, mutations::doutcome},
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
-    hooks::get_stage,
-    models::{EnergyType, StatusCondition},
+    hooks::{can_evolve_into, get_stage},
+    models::{Card, EnergyType, StatusCondition},
     State,
 };
 
@@ -454,6 +454,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
+        AttackId::B1050MagikarpWaterfallEvolution | AttackId::B1232MagikarpWaterfallEvolution => {
+            waterfall_evolution(acting_player, state)
+        }
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
         AttackId::B1102MegaAltariaExMegaHarmony => {
@@ -474,6 +477,44 @@ fn mega_burning_attack() -> (Probabilities, Mutations) {
         let opponent_active = state.get_active_mut(opponent);
         opponent_active.apply_status_condition(StatusCondition::Burned);
     })
+}
+
+/// For Magikarp's Waterfall Evolution: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
+fn waterfall_evolution(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let active_pokemon = state.get_active(acting_player);
+
+    // Find all cards in deck that can evolve from the active Pokemon
+    let evolution_cards: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| can_evolve_into(card, active_pokemon))
+        .cloned()
+        .collect();
+    if evolution_cards.is_empty() {
+        // No evolution cards in deck, just shuffle
+        return doutcome(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    // Generate outcomes for each possible evolution card
+    let num_evolution_cards = evolution_cards.len();
+    let probabilities = vec![1.0 / (num_evolution_cards as f64); num_evolution_cards];
+    let mut outcomes: Mutations = vec![];
+    for evolution_card in evolution_cards {
+        outcomes.push(Box::new(move |rng, state, action| {
+            // Transfer the evolution card from deck to hand
+            state.transfer_card_from_deck_to_hand(action.actor, &evolution_card);
+
+            // Evolve the active Pokemon (position 0) using the centralized logic
+            apply_evolve(action.actor, state, &evolution_card, 0);
+
+            // Shuffle the deck
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+
+    (probabilities, outcomes)
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each

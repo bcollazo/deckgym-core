@@ -267,7 +267,12 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
 
 // We will replace the PlayedCard, but taking into account the attached energy
 //  and the remaining HP.
-fn apply_evolve(acting_player: usize, state: &mut State, to_card: &Card, position: usize) {
+pub(crate) fn apply_evolve(
+    acting_player: usize,
+    state: &mut State,
+    to_card: &Card,
+    position: usize,
+) {
     // This removes status conditions
     let mut played_card = to_playable_card(to_card, true);
 
