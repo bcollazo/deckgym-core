@@ -60,6 +60,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::CommunicatePokemon { hand_pokemon } => {
             forecast_pokemon_communication(action.actor, state, hand_pokemon)
         }
+        SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
+            forecast_shuffle_pokemon_into_deck(action.actor, hand_pokemon)
+        }
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
         }
@@ -296,11 +299,7 @@ fn forecast_pokemon_communication(
     state: &State,
     hand_pokemon: &Card,
 ) -> (Probabilities, Mutations) {
-    let deck_pokemon: Vec<_> = state.decks[acting_player]
-        .cards
-        .iter()
-        .filter(|card| matches!(card, Card::Pokemon(_)))
-        .collect();
+    let deck_pokemon: Vec<_> = state.iter_deck_pokemon(acting_player).collect();
 
     let num_deck_pokemon = deck_pokemon.len();
     if num_deck_pokemon == 0 {
@@ -320,36 +319,17 @@ fn forecast_pokemon_communication(
         let hand_pokemon_clone = hand_pokemon.clone();
         outcomes.push(Box::new(move |rng, state, action| {
             // Get the i-th Pokemon from deck
-            let deck_pokemon_card = state.decks[action.actor]
-                .cards
-                .iter()
-                .filter(|card| matches!(card, Card::Pokemon(_)))
+            let deck_pokemon_card = state
+                .iter_deck_pokemon(action.actor)
                 .nth(i)
                 .cloned()
                 .expect("Deck Pokemon should exist");
 
             // Perform the swap
-            // 1. Remove hand Pokemon from hand
-            if let Some(pos) = state.hands[action.actor]
-                .iter()
-                .position(|c| c == &hand_pokemon_clone)
-            {
-                state.hands[action.actor].remove(pos);
-            }
-            // 2. Add deck Pokemon to hand
-            state.hands[action.actor].push(deck_pokemon_card.clone());
-            // 3. Remove deck Pokemon from deck
-            if let Some(pos) = state.decks[action.actor]
-                .cards
-                .iter()
-                .position(|c| c == &deck_pokemon_card)
-            {
-                state.decks[action.actor].cards.remove(pos);
-            }
-            // 4. Add hand Pokemon to deck
-            state.decks[action.actor]
-                .cards
-                .push(hand_pokemon_clone.clone());
+            // 1. Transfer hand Pokemon to deck
+            state.transfer_card_from_hand_to_deck(action.actor, &hand_pokemon_clone);
+            // 2. Transfer deck Pokemon to hand
+            state.transfer_card_from_deck_to_hand(action.actor, &deck_pokemon_card);
             // 5. Shuffle deck
             state.decks[action.actor].shuffle(false, rng);
 
@@ -363,6 +343,23 @@ fn forecast_pokemon_communication(
     (probabilities, outcomes)
 }
 
+fn forecast_shuffle_pokemon_into_deck(
+    acting_player: usize,
+    hand_pokemon: &[Card],
+) -> (Probabilities, Mutations) {
+    let pokemon_list = hand_pokemon.to_vec();
+    (
+        vec![1.0],
+        vec![Box::new(move |rng, state, _action| {
+            for pokemon in &pokemon_list {
+                state.transfer_card_from_hand_to_deck(acting_player, pokemon);
+            }
+            state.decks[acting_player].shuffle(false, rng);
+            debug!("May: Shuffled {:?} from hand into deck", pokemon_list);
+        })],
+    )
+}
+
 fn forecast_shuffle_opponent_supporter(
     acting_player: usize,
     supporter_card: &Card,
@@ -372,16 +369,7 @@ fn forecast_shuffle_opponent_supporter(
         vec![1.0],
         vec![Box::new(move |rng, state, _action| {
             let opponent = (acting_player + 1) % 2;
-            // Remove Supporter from opponent's hand
-            if let Some(pos) = state.hands[opponent]
-                .iter()
-                .position(|c| c == &supporter_clone)
-            {
-                state.hands[opponent].remove(pos);
-            }
-            // Add Supporter to opponent's deck
-            state.decks[opponent].cards.push(supporter_clone.clone());
-            // Shuffle opponent's deck
+            state.transfer_card_from_hand_to_deck(opponent, &supporter_clone);
             state.decks[opponent].shuffle(false, rng);
             debug!(
                 "Silver: Shuffled {:?} from opponent's hand into their deck",

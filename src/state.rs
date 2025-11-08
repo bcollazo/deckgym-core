@@ -45,7 +45,7 @@ pub struct State {
 }
 
 impl State {
-    pub(crate) fn new(deck_a: &Deck, deck_b: &Deck) -> Self {
+    pub fn new(deck_a: &Deck, deck_b: &Deck) -> Self {
         Self {
             winner: None,
             points: [0, 0],
@@ -128,6 +128,40 @@ impl State {
         } else {
             debug!("Player {} cannot draw a card, deck is empty", player + 1);
         }
+    }
+
+    pub(crate) fn transfer_card_from_deck_to_hand(&mut self, player: usize, card: &Card) {
+        // Remove from deck and add to hand
+        let pos = self.decks[player]
+            .cards
+            .iter()
+            .position(|c| c == card)
+            .expect("Card must exist in deck to transfer to hand");
+        self.decks[player].cards.remove(pos);
+        self.hands[player].push(card.clone());
+    }
+
+    pub(crate) fn transfer_card_from_hand_to_deck(&mut self, player: usize, card: &Card) {
+        // Remove from hand and add to deck
+        let pos = self.hands[player]
+            .iter()
+            .position(|c| c == card)
+            .expect("Card must exist in hand to transfer to deck");
+        self.hands[player].remove(pos);
+        self.decks[player].cards.push(card.clone());
+    }
+
+    pub(crate) fn iter_deck_pokemon(&self, player: usize) -> impl Iterator<Item = &Card> {
+        self.decks[player]
+            .cards
+            .iter()
+            .filter(|card| matches!(card, Card::Pokemon(_)))
+    }
+
+    pub fn iter_hand_pokemon(&self, player: usize) -> impl Iterator<Item = &Card> {
+        self.hands[player]
+            .iter()
+            .filter(|card| matches!(card, Card::Pokemon(_)))
     }
 
     pub(crate) fn generate_energy(&mut self) {

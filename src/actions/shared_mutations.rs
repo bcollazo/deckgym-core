@@ -1,10 +1,12 @@
 use log::debug;
+use std::cmp::min;
 
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
         mutations::doutcome,
     },
+    combinatorics::generate_combinations,
     hooks::to_playable_card,
     models::{Card, EnergyType},
     State,
@@ -55,48 +57,55 @@ fn pokemon_search_outcomes_with_filter<F>(
 where
     F: Fn(&&Card) -> bool + Clone + 'static,
 {
-    let num_pokemon_in_deck = state.decks[acting_player]
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, card_filter)
+}
+
+/// Draw up to `num_to_draw` Pokemon from deck that match the filter, using unordered combinations
+pub(crate) fn pokemon_search_outcomes_with_filter_multiple<F>(
+    acting_player: usize,
+    state: &State,
+    num_to_draw: usize,
+    card_filter: F,
+) -> (Probabilities, Mutations)
+where
+    F: Fn(&&Card) -> bool + Clone + 'static,
+{
+    let eligible_pokemon: Vec<Card> = state.decks[acting_player]
         .cards
         .iter()
         .filter(|c| card_filter(c))
-        .count();
+        .cloned()
+        .collect();
 
-    if num_pokemon_in_deck == 0 {
-        doutcome(|rng, state, action| {
-            // If there are no Pokemon in the deck, just shuffle it
+    let num_eligible = eligible_pokemon.len();
+
+    if num_eligible == 0 {
+        // No eligible Pokemon in deck, just shuffle
+        return doutcome(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
-        })
-    } else {
-        let probabilities = vec![1.0 / (num_pokemon_in_deck as f64); num_pokemon_in_deck];
-        let mut outcomes: Mutations = vec![];
-
-        for i in 0..num_pokemon_in_deck {
-            let filter = card_filter.clone();
-            outcomes.push(Box::new(move |rng, state, action| {
-                let card = state.decks[action.actor]
-                    .cards
-                    .iter()
-                    .filter(|c| filter(c))
-                    .nth(i)
-                    .cloned()
-                    .expect("Card should be in deck");
-
-                // Put 1 random Pokemon from your deck into your hand.
-                let deck = &mut state.decks[action.actor];
-                debug!("Fetched {card:?} from deck for player {}", action.actor);
-                // Add it to hand and remove one of it from deck
-                state.hands[action.actor].push(card.clone());
-                if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
-                    deck.cards.remove(pos);
-                } else {
-                    panic!("Card should be in deck");
-                }
-
-                deck.shuffle(false, rng);
-            }));
-        }
-        (probabilities, outcomes)
+        });
     }
+
+    let actual_draw_count = min(num_to_draw, num_eligible);
+
+    // Generate all possible unordered combinations
+    let draw_combinations = generate_combinations(&eligible_pokemon, actual_draw_count);
+    let num_outcomes = draw_combinations.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for combo in draw_combinations {
+        outcomes.push(Box::new(move |rng, state, action| {
+            // Transfer each Pokemon from the combination to hand
+            for pokemon in &combo {
+                state.transfer_card_from_deck_to_hand(action.actor, pokemon);
+            }
+
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+
+    (probabilities, outcomes)
 }
 
 pub(crate) fn search_and_bench_by_name(

@@ -71,6 +71,10 @@ pub enum SimpleAction {
     CommunicatePokemon {
         hand_pokemon: Card,
     },
+    /// May: shuffle specific Pokemon from hand into your deck (no replacement)
+    ShufflePokemonIntoDeck {
+        hand_pokemon: Vec<Card>,
+    },
     /// Silver: shuffle a specific Supporter from opponent's hand into their deck
     ShuffleOpponentSupporter {
         supporter_card: Card,
@@ -154,6 +158,9 @@ impl fmt::Display for SimpleAction {
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
             SimpleAction::CommunicatePokemon { hand_pokemon } => {
                 write!(f, "CommunicatePokemon({hand_pokemon})")
+            }
+            SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
+                write!(f, "ShufflePokemonIntoDeck({:?})", hand_pokemon)
             }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")
