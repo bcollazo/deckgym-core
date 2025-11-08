@@ -1182,9 +1182,8 @@ fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, 
         // Heads: damage + discard supporter
         active_damage_effect_mutation(50, move |_, state, _action| {
             let opponent = (acting_player + 1) % 2;
-            let possible_discards: Vec<SimpleAction> = state.hands[opponent]
-                .iter()
-                .filter(|card| card.is_support())
+            let possible_discards: Vec<SimpleAction> = state
+                .iter_hand_supporters(opponent)
                 .map(|card| SimpleAction::DiscardOpponentSupporter {
                     supporter_card: card.clone(),
                 })
@@ -1206,9 +1205,8 @@ fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, 
 fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(80, move |_, state, _action| {
         let opponent = (acting_player + 1) % 2;
-        let possible_discards: Vec<SimpleAction> = state.hands[opponent]
-            .iter()
-            .filter(|card| card.is_support())
+        let possible_discards: Vec<SimpleAction> = state
+            .iter_hand_supporters(opponent)
             .map(|card| SimpleAction::DiscardOpponentSupporter {
                 supporter_card: card.clone(),
             })
