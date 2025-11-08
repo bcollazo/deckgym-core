@@ -443,6 +443,8 @@ fn forecast_effect_attack(
             self_energy_discard_attack(0, vec![EnergyType::Lightning])
         }
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
+        AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
+        AttackId::A4120AbsolLeapOver => direct_damage(30, true),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
             bench_count_attack(acting_player, state, 0, 30, None)
         }
@@ -455,6 +457,7 @@ fn forecast_effect_attack(
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
+        AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
 }
@@ -1157,6 +1160,46 @@ fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
     } else {
         active_damage_doutcome(50)
     }
+}
+
+/// For Absol's Unseen Claw (A3 112): Deals 20 damage, +60 if opponent's Active has a Special Condition
+fn unseen_claw_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let opponent = (acting_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let damage = if opponent_active.has_status_condition() {
+        80 // 20 + 60
+    } else {
+        20
+    };
+    active_damage_doutcome(damage)
+}
+
+/// For Absol's Ominous Claw (B1 150): Deals 50 damage, flip coin, if heads discard a Supporter from opponent's hand
+fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
+    // 50% chance for heads (discard supporter), 50% for tails (just damage)
+    let probabilities = vec![0.5, 0.5];
+    let mutations: Mutations = vec![
+        // Heads: damage + discard supporter
+        active_damage_effect_mutation(50, move |_, state, _action| {
+            let opponent = (acting_player + 1) % 2;
+            let possible_discards: Vec<SimpleAction> = state.hands[opponent]
+                .iter()
+                .filter(|card| card.is_support())
+                .map(|card| SimpleAction::DiscardOpponentSupporter {
+                    supporter_card: card.clone(),
+                })
+                .collect();
+
+            if !possible_discards.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((acting_player, possible_discards));
+            }
+        }),
+        // Tails: just damage
+        active_damage_mutation(50),
+    ];
+    (probabilities, mutations)
 }
 
 /// For Mega Absol ex's Darkness Claw: Deals 80 damage and lets player discard a Supporter from opponent's hand
