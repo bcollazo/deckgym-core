@@ -353,6 +353,9 @@ fn forecast_effect_attack(
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
         }
+        AttackId::A3a033LycanrocExLycanfang => {
+            self_energy_discard_attack(0, vec![EnergyType::Fighting])
+        }
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
@@ -378,6 +381,7 @@ fn forecast_effect_attack(
             self_charge_active_attack(0, EnergyType::Grass, 1)
         }
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
+        AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
             0,
@@ -392,9 +396,13 @@ fn forecast_effect_attack(
         AttackId::A3b009FlareonExFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
         }
+        AttackId::A3b010TorkoalFlamethrower => {
+            self_energy_discard_attack(0, vec![EnergyType::Fire])
+        }
         AttackId::A3b013IncineroarDarkestLariat => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
         }
+        AttackId::A3b014SalanditEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3b020VanilluxeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }
@@ -450,6 +458,9 @@ fn forecast_effect_attack(
             self_energy_discard_attack(0, vec![EnergyType::Lightning])
         }
         AttackId::PA072AlolanGrimerPoison => damage_status_attack(0, StatusCondition::Poisoned),
+        AttackId::PA079DuskManeNecrozmaBlackMetal => {
+            self_energy_discard_attack(0, vec![EnergyType::Metal])
+        }
         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
         AttackId::A4120AbsolLeapOver => direct_damage(30, true),
         AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
@@ -459,6 +470,7 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
         AttackId::B1031RapidashExSprintingFlare => active_then_choice_bench_attack(110, 20),
+        AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
