@@ -135,6 +135,7 @@ pub enum AttackId {
     A3122SolgaleoExSolBreaker,
     A3a094JynxPsychic,
     A3b009FlareonExFireSpin,
+    A3b010TorkoalFlamethrower,
     A3b013IncineroarDarkestLariat,
     A3b020VanilluxeDoubleSpin,
     A3b053DragoniteExGigaImpact,
@@ -395,6 +396,7 @@ lazy_static::lazy_static! {
 
         // A3b
         m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
+        m.insert(("A3b 010", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A3b 013", 0), AttackId::A3b013IncineroarDarkestLariat);
         m.insert(("A3b 020", 0), AttackId::A3b020VanilluxeDoubleSpin);
         m.insert(("A3b 053", 0), AttackId::A3b053DragoniteExGigaImpact);
@@ -449,6 +451,8 @@ lazy_static::lazy_static! {
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 055", 0), AttackId::A1033CharmanderEmber);
         m.insert(("A4b 056", 0), AttackId::A1033CharmanderEmber);
+        m.insert(("A4b 069", 0), AttackId::A3b010TorkoalFlamethrower);
+        m.insert(("A4b 070", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A4b 087", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);

@@ -392,6 +392,9 @@ fn forecast_effect_attack(
         AttackId::A3b009FlareonExFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
         }
+        AttackId::A3b010TorkoalFlamethrower => {
+            self_energy_discard_attack(0, vec![EnergyType::Fire])
+        }
         AttackId::A3b013IncineroarDarkestLariat => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
         }
