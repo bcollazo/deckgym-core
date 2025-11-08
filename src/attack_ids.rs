@@ -162,6 +162,7 @@ pub enum AttackId {
     PA052SprigatitoCryForHelp,
     PA060ExeggcuteGrowth,
     PA072AlolanGrimerPoison,
+    PA079DuskManeNecrozmaBlackMetal,
     B1002MegaPinsirExCriticalScissors,
     B1035BlazikenBlazeKick,
     B1036MegaBlazikenExMegaBurning,
@@ -520,6 +521,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoison);
+        m.insert(("P-A 079", 0), AttackId::PA079DuskManeNecrozmaBlackMetal);
 
 
         m
