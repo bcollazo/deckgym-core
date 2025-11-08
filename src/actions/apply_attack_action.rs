@@ -349,6 +349,9 @@ fn forecast_effect_attack(
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_attack(20, EnergyType::Lightning, 1)
         }
+        AttackId::A3a033LycanrocExLycanfang => {
+            self_energy_discard_attack(0, vec![EnergyType::Fighting])
+        }
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])

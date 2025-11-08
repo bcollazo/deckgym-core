@@ -121,6 +121,7 @@ pub enum AttackId {
     A3a006BuzzwoleExBigBeat,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
+    A3a033LycanrocExLycanfang,
     A3a043GuzzlordExGrindcore,
     A3a044Poipole2Step,
     A3a045NagaedelElectroHouse,
@@ -367,6 +368,7 @@ lazy_static::lazy_static! {
         m.insert(("A3a 006", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 033", 0), AttackId::A3a033LycanrocExLycanfang);
         m.insert(("A3a 043", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A3a 044", 0), AttackId::A3a044Poipole2Step);
         m.insert(("A3a 045", 0), AttackId::A3a045NagaedelElectroHouse);
@@ -381,9 +383,11 @@ lazy_static::lazy_static! {
         m.insert(("A3a 075", 0), AttackId::A3a062CelesteelaMoombahton);
         m.insert(("A3a 076", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 077", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 078", 0), AttackId::A3a033LycanrocExLycanfang);
         m.insert(("A3a 079", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A3a 080", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
         m.insert(("A3a 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("A3a 085", 0), AttackId::A3a033LycanrocExLycanfang);
         m.insert(("A3a 086", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A3a 087", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
         m.insert(("A3a 088", 1), AttackId::A3a006BuzzwoleExBigBeat);
@@ -457,6 +461,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 182", 0), AttackId::A3086CosmoemStiffen);
         m.insert(("A4b 183", 0), AttackId::A3086CosmoemStiffen);
         m.insert(("A4b 196", 0), AttackId::A1153MarowakExBonemerang);
+        m.insert(("A4b 222", 0), AttackId::A3a033LycanrocExLycanfang);
         m.insert(("A4b 242", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 243", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A4b 248", 0), AttackId::A3a043GuzzlordExGrindcore);
@@ -493,6 +498,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
         m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 286", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 323", 0), AttackId::A3a033LycanrocExLycanfang);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
