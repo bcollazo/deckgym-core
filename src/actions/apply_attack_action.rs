@@ -476,9 +476,7 @@ fn forecast_effect_attack(
         AttackId::B1031RapidashExSprintingFlare => active_then_choice_bench_attack(110, 20),
         AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
-        AttackId::B1050MagikarpWaterfallEvolution | AttackId::B1232MagikarpWaterfallEvolution => {
-            waterfall_evolution(acting_player, state)
-        }
+        AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
         AttackId::B1102MegaAltariaExMegaHarmony => {

@@ -171,7 +171,6 @@ pub enum AttackId {
     B1102MegaAltariaExMegaHarmony,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
-    B1232MagikarpWaterfallEvolution,
     PA031CinccinoDoTheWave,
     PA034PiplupNap,
     PA052SprigatitoCryForHelp,
@@ -576,7 +575,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
-        m.insert(("B1 232", 0), AttackId::B1232MagikarpWaterfallEvolution);
+        m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 253", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
