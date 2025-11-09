@@ -461,6 +461,10 @@ lazy_static::lazy_static! {
         m.insert(("A4 209", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 211", 0), AttackId::A4149LugiaExElementalBlast);
         m.insert(("A4 214", 0), AttackId::A1a017MagikarpLeapOut);
+        m.insert(("A4 216", 0), AttackId::A1080VaporeonBubbleDrain);
+        m.insert(("A4 221", 0), AttackId::A1a041MankeyFocusFist);
+        m.insert(("A4 222", 0), AttackId::A1142PrimeapeFightBack);
+        m.insert(("A4 228", 0), AttackId::A1171NidokingPoisonHorn);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
 
@@ -476,10 +480,18 @@ lazy_static::lazy_static! {
         m.insert(("A4a 087", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 088", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
+        m.insert(("A4a 093", 0), AttackId::A1057PsyduckHeadache);
         m.insert(("A4a 096", 0), AttackId::A1069KinglerKOCrab);
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashyToss);
 
         // A4b
+        m.insert(("A4b 005", 1), AttackId::A1004VenusaurExGiantBloom);
+        m.insert(("A4b 006", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A4b 007", 0), AttackId::A2b001WeedleMultiply);
+        m.insert(("A4b 008", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A4b 009", 0), AttackId::A2b002KakunaStringShot);
+        m.insert(("A4b 010", 0), AttackId::A2b003BeedrillExCrushingSpear);
+        m.insert(("A4b 013", 0), AttackId::A1023ExeggutorExTropicalSwing);
         m.insert(("A4b 023", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
