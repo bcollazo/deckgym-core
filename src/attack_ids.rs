@@ -375,12 +375,17 @@ lazy_static::lazy_static! {
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 158", 0), AttackId::A3020TsareenaThreeKickCombo);
         m.insert(("A3 161", 0), AttackId::A3037TurtonatorFireSpin);
+        m.insert(("A3 162", 0), AttackId::A3040AlolanVulpixCallForthCold);
         m.insert(("A3 171", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 207", 0), AttackId::A3122SolgaleoExSolBreaker);
+        m.insert(("A3 212", 0), AttackId::A1003VenusaurMegaDrain);
         m.insert(("A3 217", 0), AttackId::A1055BlastoiseHydroPump);
+        m.insert(("A3 230", 1), AttackId::A1004VenusaurExGiantBloom);
+        m.insert(("A3 231", 0), AttackId::A1023ExeggutorExTropicalSwing);
         m.insert(("A3 232", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A3 236", 0), AttackId::A1153MarowakExBonemerang);
+        m.insert(("A3 237", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A3 239", 0), AttackId::A3122SolgaleoExSolBreaker);
 
         // A3a
@@ -411,6 +416,7 @@ lazy_static::lazy_static! {
         m.insert(("A3a 086", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A3a 087", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
         m.insert(("A3a 088", 1), AttackId::A3a006BuzzwoleExBigBeat);
+        m.insert(("A3a 090", 0), AttackId::A1040ArcanineHeatTackle);
         m.insert(("A3a 094", 0), AttackId::A3a094JynxPsychic);
 
         // A3b
