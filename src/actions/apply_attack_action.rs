@@ -182,6 +182,7 @@ fn forecast_effect_attack(
         AttackId::A1093FrosmothPowderSnow => damage_status_attack(40, StatusCondition::Asleep),
         AttackId::A1095RaichuThunderbolt => thunderbolt_attack(140),
         AttackId::A2b022PikachuExThunderbolt => thunderbolt_attack(150),
+        AttackId::A2b031AlakazamPsychicSuppression => alakazam_psychic_suppression(state),
         AttackId::A1096PikachuExCircleCircuit => {
             bench_count_attack(acting_player, state, 0, 30, Some(EnergyType::Lightning))
         }
@@ -328,6 +329,9 @@ fn forecast_effect_attack(
         AttackId::A2b044FlamigoDoubleKick => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
         }
+        AttackId::A3002AlolanExeggutorTropicalHammer => {
+            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
+        }
         AttackId::A3019SteeneeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
@@ -385,6 +389,9 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
         }
         AttackId::A1a001ExeggcuteGrowthSpurt => self_charge_active_attack(0, EnergyType::Grass, 1),
+        AttackId::A1a002ExeggutorPsychic => {
+            damage_based_on_opponent_energy(acting_player, state, 80, 20)
+        }
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3085CosmogTeleport => teleport_attack(),
@@ -1081,6 +1088,19 @@ fn alolan_ninetales_blizzard(state: &State) -> (Probabilities, Mutations) {
         .collect();
     // Active Pokémon is always index 0
     targets.push((60, 0));
+    damage_effect_doutcome(targets, |_, _, _| {})
+}
+
+fn alakazam_psychic_suppression(state: &State) -> (Probabilities, Mutations) {
+    // Psychic Suppression: 80 to active, 20 to each opponent's benched Pokémon that has energy
+    let opponent = (state.current_player + 1) % 2;
+    let mut targets: Vec<(u32, usize)> = state
+        .enumerate_bench_pokemon(opponent)
+        .filter(|(_, pokemon)| !pokemon.attached_energy.is_empty())
+        .map(|(idx, _)| (20, idx))
+        .collect();
+    // Active Pokémon is always index 0
+    targets.push((80, 0));
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 

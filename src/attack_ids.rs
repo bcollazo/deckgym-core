@@ -73,6 +73,7 @@ pub enum AttackId {
     A1203KangaskhanDizzyPunch,
     A1213CinccinoDoTheWave,
     A1a001ExeggcuteGrowthSpurt,
+    A1a002ExeggutorPsychic,
     A1a003CelebiExPowerfulBloom,
     A1a010PonytaStomp,
     A1a011RapidashRisingLunge,
@@ -107,9 +108,11 @@ pub enum AttackId {
     A2b007MeowscaradaFightingClaws,
     A2b010CharizardExStoke,
     A2b022PikachuExThunderbolt,
+    A2b031AlakazamPsychicSuppression,
     A2b032MrMimeJuggling,
     A2b035GiratinaExChaoticImpact,
     A2b044FlamigoDoubleKick,
+    A3002AlolanExeggutorTropicalHammer,
     A3019SteeneeDoubleSpin,
     A3020TsareenaThreeKickCombo,
     A3037TurtonatorFireSpin,
@@ -280,6 +283,7 @@ lazy_static::lazy_static! {
 
         // A1a
         m.insert(("A1a 001", 0), AttackId::A1a001ExeggcuteGrowthSpurt);
+        m.insert(("A1a 002", 0), AttackId::A1a002ExeggutorPsychic);
         m.insert(("A1a 003", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 010", 0), AttackId::A1a010PonytaStomp);
         m.insert(("A1a 011", 0), AttackId::A1a011RapidashRisingLunge);
@@ -291,6 +295,7 @@ lazy_static::lazy_static! {
         m.insert(("A1a 045", 0), AttackId::A1a045GolemGuardPress);
         m.insert(("A1a 061", 0), AttackId::A1a061EeveeContinuousSteps);
         // Full Arts A1a
+        m.insert(("A1a 069", 0), AttackId::A1a002ExeggutorPsychic);
         m.insert(("A1a 073", 0), AttackId::A1a030DedenneThunderShock);
         m.insert(("A1a 075", 0), AttackId::A1a003CelebiExPowerfulBloom);
         m.insert(("A1a 085", 0), AttackId::A1a003CelebiExPowerfulBloom);
@@ -337,6 +342,7 @@ lazy_static::lazy_static! {
         m.insert(("A2b 007", 0), AttackId::A2b007MeowscaradaFightingClaws);
         m.insert(("A2b 010", 0), AttackId::A2b010CharizardExStoke);
         m.insert(("A2b 022", 0), AttackId::A2b022PikachuExThunderbolt);
+        m.insert(("A2b 031", 0), AttackId::A2b031AlakazamPsychicSuppression);
         m.insert(("A2b 032", 0), AttackId::A2b032MrMimeJuggling);
         m.insert(("A2b 035", 0), AttackId::A2b035GiratinaExChaoticImpact);
         m.insert(("A2b 044", 0), AttackId::A2b044FlamigoDoubleKick);
@@ -353,6 +359,7 @@ lazy_static::lazy_static! {
         m.insert(("A2b 108", 0), AttackId::A2b010CharizardExStoke);
 
         // A3
+        m.insert(("A3 002", 0), AttackId::A3002AlolanExeggutorTropicalHammer);
         m.insert(("A3 019", 0), AttackId::A3019SteeneeDoubleSpin);
         m.insert(("A3 020", 0), AttackId::A3020TsareenaThreeKickCombo);
         m.insert(("A3 037", 0), AttackId::A3037TurtonatorFireSpin);
@@ -365,6 +372,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 112", 0), AttackId::A3112AbsolUnseenClaw);
         m.insert(("A3 116", 0), AttackId::A3116ToxapexSpikeCannon);
         m.insert(("A3 122", 0), AttackId::A3122SolgaleoExSolBreaker);
+        m.insert(("A3 156", 0), AttackId::A3002AlolanExeggutorTropicalHammer);
         m.insert(("A3 158", 0), AttackId::A3020TsareenaThreeKickCombo);
         m.insert(("A3 161", 0), AttackId::A3037TurtonatorFireSpin);
         m.insert(("A3 162", 0), AttackId::A3040AlolanVulpixCallForthCold);
@@ -372,6 +380,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 189", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 207", 0), AttackId::A3122SolgaleoExSolBreaker);
         m.insert(("A3 212", 0), AttackId::A1003VenusaurMegaDrain);
+        m.insert(("A3 214", 0), AttackId::A1a002ExeggutorPsychic);
         m.insert(("A3 217", 0), AttackId::A1055BlastoiseHydroPump);
         m.insert(("A3 230", 1), AttackId::A1004VenusaurExGiantBloom);
         m.insert(("A3 231", 0), AttackId::A1023ExeggutorExTropicalSwing);
@@ -614,6 +623,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 052", 0), AttackId::A2b005SprigatitoCryForHelp);
         m.insert(("P-A 060", 0), AttackId::A1a001ExeggcuteGrowthSpurt);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
+        m.insert(("P-A 069", 0), AttackId::A3002AlolanExeggutorTropicalHammer);
         m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoisonGas);
         m.insert(("P-A 079", 0), AttackId::PA079DuskManeNecrozmaBlackMetal);
