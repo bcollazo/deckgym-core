@@ -279,6 +279,7 @@ fn forecast_effect_attack(
         AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         AttackId::A2050ManaphyOceanicGift => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
         AttackId::A2073DrifloonExpand => damage_and_card_effect_attack(
             index,
             state.current_player,
@@ -475,6 +476,7 @@ fn forecast_effect_attack(
         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
+        AttackId::B1088LuxrayFlashImpact => active_damage_then_self_bench_damage(110, 20),
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
@@ -849,6 +851,31 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
     })
 }
 
+/// Luxray's Volt Bolt: Discard all Lightning energy, then do 120 damage to 1 opponent's Pokémon
+fn luxray_volt_bolt() -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        // Discard all Lightning energy from the attacking Pokémon
+        let active = state.get_active_mut(action.actor);
+        active
+            .attached_energy
+            .retain(|e| *e != EnergyType::Lightning);
+
+        // Create choices for which opponent's Pokémon to damage
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
+            choices.push(SimpleAction::ApplyDamage {
+                target_player: opponent,
+                targets: vec![(120, in_play_idx)],
+                is_from_active_attack: true,
+            });
+        }
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
 /// Discard energy from the active (attacking) Pokémon.
 fn self_energy_discard_attack(
     attack_index: usize,
@@ -927,6 +954,26 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.apply_damage(self_damage);
+    })
+}
+
+/// For attacks that deal damage to opponent's active and then damage one of your own benched Pokémon
+fn active_damage_then_self_bench_damage(
+    damage: u32,
+    bench_damage: u32,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
+            choices.push(SimpleAction::ApplyDamage {
+                target_player: action.actor,
+                targets: vec![(bench_damage, in_play_idx)],
+                is_from_active_attack: false,
+            });
+        }
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
     })
 }
 

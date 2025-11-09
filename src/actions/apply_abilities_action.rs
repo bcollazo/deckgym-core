@@ -42,6 +42,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A3066OricoricSafeguard => panic!("Safeguard is a passive ability"),
         AbilityId::A3122SolgaleoExRisingRoad => doutcome_from_mutation(rising_road(in_play_idx)),
         AbilityId::A3141KomalaComatose => panic!("Comatose is a passive ability"),
+        AbilityId::A3a015LuxrayIntimidatingFang => panic!("Intimidating Fang is a passive ability"),
         AbilityId::A3a021ZeraoraThunderclapFlash => {
             panic!("Thunderclap Flash is a passive ability")
         }
