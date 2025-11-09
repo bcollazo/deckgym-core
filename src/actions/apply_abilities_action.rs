@@ -30,6 +30,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A1020VictreebelFragranceTrap => doutcome(victreebel_ability),
         AbilityId::A1089GreninjaWaterShuriken => doutcome(greninja_shuriken),
         AbilityId::A1098MagnetonVoltCharge => doutcome_from_mutation(charge_magneton(in_play_idx)),
+        AbilityId::A1123GengarExShadowySpellbind => {
+            panic!("Shadowy Spellbind is a passive ability")
+        }
         AbilityId::A1177Weezing => doutcome(weezing_ability),
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),

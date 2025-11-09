@@ -6,6 +6,7 @@ pub enum AbilityId {
     A1020VictreebelFragranceTrap,
     A1089GreninjaWaterShuriken,
     A1098MagnetonVoltCharge,
+    A1123GengarExShadowySpellbind,
     A1177Weezing,
     A1007Butterfree,
     A1132Gardevoir,
@@ -38,8 +39,11 @@ lazy_static::lazy_static! {
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("A1 089", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
+        m.insert("A1 123", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 177", AbilityId::A1177Weezing);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
+        m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
+        m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
         m.insert("A1a 070", AbilityId::A1a006SerperiorJungleTotem);
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
@@ -58,6 +62,7 @@ lazy_static::lazy_static! {
         m.insert("A3 066", AbilityId::A3066OricoricSafeguard);
         m.insert("A3 122", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 141", AbilityId::A3141KomalaComatose);
+        m.insert("A3 234", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A3 165", AbilityId::A3066OricoricSafeguard);
         m.insert("A3 179", AbilityId::A3141KomalaComatose);
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
@@ -97,6 +102,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 146", AbilityId::A3066OricoricSafeguard);
+        m.insert("A4b 155", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A4b 147", AbilityId::A3066OricoricSafeguard);
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
