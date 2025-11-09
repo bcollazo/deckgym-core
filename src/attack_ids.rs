@@ -434,6 +434,10 @@ lazy_static::lazy_static! {
         m.insert(("A3b 082", 0), AttackId::A3b053DragoniteExGigaImpact);
         m.insert(("A3b 087", 0), AttackId::A3b009FlareonExFireSpin);
         m.insert(("A3b 090", 0), AttackId::A3b053DragoniteExGigaImpact);
+        m.insert(("A3b 094", 0), AttackId::A1079LaprasHydroPump);
+        m.insert(("A3b 101", 0), AttackId::A1165ArbokCorner);
+        m.insert(("A3b 103", 0), AttackId::A1047MoltresExInfernoDance);
+        m.insert(("A3b 104", 1), AttackId::A1084ArticunoExBlizzard);
         m.insert(("A3b 105", 1), AttackId::A1104ZapdosExThunderingHurricane);
 
         // A4
