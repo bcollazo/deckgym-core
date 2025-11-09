@@ -1069,23 +1069,17 @@ fn discard_all_energy_of_type_attack(
     energy_type: EnergyType,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        // Collect energy to discard first
-        let to_discard: Vec<EnergyType> = {
-            let active = state.get_active(action.actor);
-            active
-                .attached_energy
-                .iter()
-                .filter(|&&e| e == energy_type)
-                .copied()
-                .collect()
-        };
+        // Collect all energy of the specified type from the active Pokémon
+        let to_discard: Vec<EnergyType> = state
+            .get_active(action.actor)
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == energy_type)
+            .copied()
+            .collect();
 
-        // Add to discard pile
-        state.discard_energies[action.actor].extend(to_discard.iter().cloned());
-
-        // Remove from active Pokémon
-        let active = state.get_active_mut(action.actor);
-        active.attached_energy.retain(|&e| e != energy_type);
+        // Use the state method to properly discard energies
+        state.discard_from_active(action.actor, &to_discard);
     })
 }
 
