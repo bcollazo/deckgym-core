@@ -236,14 +236,21 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     }
 }
 
-// TODO: Implement Gengars ability that disallow playing support cards.
 pub(crate) fn can_play_support(state: &State) -> bool {
     let has_modifiers = state
         .get_current_turn_effects()
         .iter()
         .any(|x| matches!(x, TurnEffect::NoSupportCards));
 
-    !state.has_played_support && !has_modifiers
+    // Check if opponent has Gengar ex with Shadowy Spellbind in active spot
+    let opponent = (state.current_player + 1) % 2;
+    let blocked_by_gengar = state.in_play_pokemon[opponent][0]
+        .as_ref()
+        .and_then(|opponent_active| AbilityId::from_pokemon_id(&opponent_active.get_id()))
+        .map(|id| id == AbilityId::A1123GengarExShadowySpellbind)
+        .unwrap_or(false);
+
+    !state.has_played_support && !has_modifiers && !blocked_by_gengar
 }
 
 fn get_heavy_helmet_reduction(state: &State, opponent: usize) -> u32 {

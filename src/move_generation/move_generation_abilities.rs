@@ -33,6 +33,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1020VictreebelFragranceTrap => is_active && !card.ability_used,
         AbilityId::A1089GreninjaWaterShuriken => !card.ability_used,
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
+        AbilityId::A1123GengarExShadowySpellbind => false,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
