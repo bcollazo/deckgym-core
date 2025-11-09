@@ -590,7 +590,19 @@ lazy_static::lazy_static! {
         m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
         m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 286", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 292", 0), AttackId::A1046MoltresSkyAttack);
+        m.insert(("B1 298", 0), AttackId::A1083ArticunoIceBeam);
+        m.insert(("B1 299", 0), AttackId::A2050ManaphyOceanicGift);
+        m.insert(("B1 302", 0), AttackId::A1103ZapdosRagingThunder);
+        m.insert(("B1 309", 0), AttackId::A1a045GolemGuardPress);
+        m.insert(("B1 312", 0), AttackId::A1196MeowthPayDay);
+        m.insert(("B1 319", 1), AttackId::A2049PalkiaExDimensionalStorm);
+        m.insert(("B1 321", 0), AttackId::A2b022PikachuExThunderbolt);
+        m.insert(("B1 322", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("B1 323", 0), AttackId::A3a033LycanrocExLycanfang);
+        m.insert(("B1 325", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
+        m.insert(("B1 326", 0), AttackId::A2119DialgaExMetallicTurbo);
+        m.insert(("B1 328", 0), AttackId::A2a071ArceusExUltimateForce);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
