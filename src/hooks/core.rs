@@ -293,6 +293,50 @@ pub(crate) fn modify_damage(
         }
     }
 
+    // Calculate damage reduction from defending Pokémon's abilities
+    let mut ability_damage_reduction = 0;
+    if receiving_idx == 0 && is_from_active_attack {
+        if let Some(defending_pokemon) = receiving_pokemon {
+            if let Some(ability_id) =
+                AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..])
+            {
+                match ability_id {
+                    // Shell Armor: This Pokémon takes -10 damage from attacks
+                    AbilityId::A1067CloysterShellArmor => {
+                        debug!("Shell Armor: Reducing damage by 10");
+                        ability_damage_reduction = 10;
+                    }
+                    // Thick Fat: This Pokémon takes -20 damage from attacks from Fire or Water Pokémon
+                    AbilityId::A2032PiloswineThickFat => {
+                        if active.get_energy_type() == Some(EnergyType::Fire)
+                            || active.get_energy_type() == Some(EnergyType::Water)
+                        {
+                            debug!("Thick Fat (Piloswine): Reducing damage by 20 from Fire/Water attack");
+                            ability_damage_reduction = 20;
+                        }
+                    }
+                    // Thick Fat: This Pokémon takes -30 damage from attacks from Fire or Water Pokémon
+                    AbilityId::A2033MamoswineThickFat => {
+                        if active.get_energy_type() == Some(EnergyType::Fire)
+                            || active.get_energy_type() == Some(EnergyType::Water)
+                        {
+                            debug!("Thick Fat (Mamoswine): Reducing damage by 30 from Fire/Water attack");
+                            ability_damage_reduction = 30;
+                        }
+                    }
+                    // TODO: Guarded Grill (Bastiodon): "If any damage is done to this Pokémon by attacks,
+                    // flip a coin. If heads, this Pokémon takes -100 damage from that attack."
+                    // This requires RNG access and probabilistic handling at the forecast level,
+                    // which is not supported in the current modify_damage architecture.
+                    AbilityId::A2114BastiodonGuardedGrill => {
+                        // Not implemented: requires coin flip support
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
     if receiving_idx == 0 && is_from_active_attack {
         // Modifiers by effect (like Giovanni, Red, Eevee Bag)
         let increased_turn_effect_modifiers = state
@@ -341,15 +385,17 @@ pub(crate) fn modify_damage(
         }
 
         debug!(
-            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}",
+            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, AbilityReduction: {}",
             base_damage,
             weakness_modifier,
             increased_turn_effect_modifiers,
             reduced_card_effect_modifiers,
-            heavy_helmet_reduction
+            heavy_helmet_reduction,
+            ability_damage_reduction
         );
-        (base_damage + weakness_modifier + increased_turn_effect_modifiers)
-            .saturating_sub(reduced_card_effect_modifiers + heavy_helmet_reduction)
+        (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
+            reduced_card_effect_modifiers + heavy_helmet_reduction + ability_damage_reduction,
+        )
     } else {
         debug!("Damage is to benched Pokémon or not from active attack");
         base_damage // modifiers only apply to active Pokémon

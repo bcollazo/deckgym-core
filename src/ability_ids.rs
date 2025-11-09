@@ -6,13 +6,17 @@ pub enum AbilityId {
     A1020VictreebelFragranceTrap,
     A1089GreninjaWaterShuriken,
     A1098MagnetonVoltCharge,
+    A1067CloysterShellArmor,
     A1177Weezing,
     A1007Butterfree,
     A1132Gardevoir,
     A1a006SerperiorJungleTotem,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2032PiloswineThickFat,
+    A2033MamoswineThickFat,
     A2110DarkraiExNightmareAura,
+    A2114BastiodonGuardedGrill,
     A2b035GiratinaExBrokenSpaceBellow,
     A3066OricoricSafeguard,
     A3122SolgaleoExRisingRoad,
@@ -36,6 +40,7 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
         m.insert("A1 007", AbilityId::A1007Butterfree);
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
+        m.insert("A1 067", AbilityId::A1067CloysterShellArmor);
         m.insert("A1 089", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 177", AbilityId::A1177Weezing);
@@ -49,7 +54,11 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 032", AbilityId::A2032PiloswineThickFat);
+        m.insert("A2 033", AbilityId::A2033MamoswineThickFat);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A2 114", AbilityId::A2114BastiodonGuardedGrill);
+        m.insert("A2 160", AbilityId::A2033MamoswineThickFat);
         m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 202", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2b 035", AbilityId::A2b035GiratinaExBrokenSpaceBellow);

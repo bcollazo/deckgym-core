@@ -31,11 +31,15 @@ pub(crate) fn forecast_ability(
         AbilityId::A1089GreninjaWaterShuriken => doutcome(greninja_shuriken),
         AbilityId::A1098MagnetonVoltCharge => doutcome_from_mutation(charge_magneton(in_play_idx)),
         AbilityId::A1177Weezing => doutcome(weezing_ability),
+        AbilityId::A1067CloysterShellArmor => panic!("Shell Armor is a passive ability"),
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2032PiloswineThickFat => panic!("Thick Fat is a passive ability"),
+        AbilityId::A2033MamoswineThickFat => panic!("Thick Fat is a passive ability"),
         AbilityId::A2110DarkraiExNightmareAura => panic!("Darkrai ex's ability is passive"),
+        AbilityId::A2114BastiodonGuardedGrill => panic!("Guarded Grill is a passive ability"),
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => {
             doutcome_from_mutation(charge_giratina_and_end_turn(in_play_idx))
         }
