@@ -260,6 +260,7 @@ lazy_static::lazy_static! {
         m.insert(("A1 230", 0), AttackId::A1033CharmanderEmber);
         m.insert(("A1 233", 0), AttackId::A1078GyaradosHyperBeam);
         m.insert(("A1 234", 0), AttackId::A1079LaprasHydroPump);
+        m.insert(("A1 236", 0), AttackId::A1117AlakazamPsychic);
         m.insert(("A1 241", 0), AttackId::A1171NidokingPoisonHorn);
         m.insert(("A1 246", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 251", 1), AttackId::A1004VenusaurExGiantBloom);
@@ -268,12 +269,14 @@ lazy_static::lazy_static! {
         m.insert(("A1 254", 0), AttackId::A1041ArcanineExInfernoOnrush);
         m.insert(("A1 255", 0), AttackId::A1047MoltresExInfernoDance);
         m.insert(("A1 256", 1), AttackId::A1056BlastoiseExHydroBazooka);
+        m.insert(("A1 258", 1), AttackId::A1084ArticunoExBlizzard);
         m.insert(("A1 259", 0), AttackId::A1096PikachuExCircleCircuit);
         m.insert(("A1 260", 1), AttackId::A1104ZapdosExThunderingHurricane);
         m.insert(("A1 262", 1), AttackId::A1129MewtwoExPsydrive);
         m.insert(("A1 264", 0), AttackId::A1153MarowakExBonemerang);
         m.insert(("A1 265", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A1 274", 0), AttackId::A1047MoltresExInfernoDance);
+        m.insert(("A1 275", 1), AttackId::A1084ArticunoExBlizzard);
         m.insert(("A1 276", 1), AttackId::A1104ZapdosExThunderingHurricane);
         m.insert(("A1 279", 0), AttackId::A1195WigglytuffExSleepySong);
         m.insert(("A1 280", 1), AttackId::A1036CharizardExCrimsonStorm);
