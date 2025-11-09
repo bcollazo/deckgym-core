@@ -276,6 +276,9 @@ fn forecast_effect_attack(
         ),
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
+        AttackId::A2029InfernapeExFlareBlitz => {
+            discard_all_energy_of_type_attack(140, EnergyType::Fire)
+        }
         AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         AttackId::A2050ManaphyOceanicGift => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
@@ -1057,6 +1060,32 @@ fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
+    })
+}
+
+/// For attacks that discard all energy of a specific type after dealing damage.
+fn discard_all_energy_of_type_attack(
+    damage: u32,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        // Collect energy to discard first
+        let to_discard: Vec<EnergyType> = {
+            let active = state.get_active(action.actor);
+            active
+                .attached_energy
+                .iter()
+                .filter(|&&e| e == energy_type)
+                .copied()
+                .collect()
+        };
+
+        // Add to discard pile
+        state.discard_energies[action.actor].extend(to_discard.iter().cloned());
+
+        // Remove from active Pokémon
+        let active = state.get_active_mut(action.actor);
+        active.attached_energy.retain(|&e| e != energy_type);
     })
 }
 
