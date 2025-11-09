@@ -171,10 +171,6 @@ pub enum AttackId {
     B1102MegaAltariaExMegaHarmony,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
-    PA031CinccinoDoTheWave,
-    PA034PiplupNap,
-    PA052SprigatitoCryForHelp,
-    PA060ExeggcuteGrowthSpurt,
     PA072AlolanGrimerPoisonGas,
     PA079DuskManeNecrozmaBlackMetal,
 }
@@ -610,13 +606,13 @@ lazy_static::lazy_static! {
         m.insert(("P-A 018", 0), AttackId::A1003VenusaurMegaDrain);
         m.insert(("P-A 025", 0), AttackId::A1047MoltresExInfernoDance);
         m.insert(("P-A 029", 0), AttackId::A1055BlastoiseHydroPump);
-        m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
+        m.insert(("P-A 031", 0), AttackId::A1213CinccinoDoTheWave);
         m.insert(("P-A 032", 0), AttackId::A1033CharmanderEmber);
-        m.insert(("P-A 034", 0), AttackId::PA034PiplupNap);
+        m.insert(("P-A 034", 0), AttackId::A2035PiplupNap);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("P-A 050", 1), AttackId::A1129MewtwoExPsydrive);
-        m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
-        m.insert(("P-A 060", 0), AttackId::PA060ExeggcuteGrowthSpurt);
+        m.insert(("P-A 052", 0), AttackId::A2b005SprigatitoCryForHelp);
+        m.insert(("P-A 060", 0), AttackId::A1a001ExeggcuteGrowthSpurt);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoisonGas);

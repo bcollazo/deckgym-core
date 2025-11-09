@@ -109,7 +109,7 @@ fn forecast_effect_attack(
             damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)
         }
         AttackId::A2b003BeedrillExCrushingSpear => damage_and_discard_energy(80, 1),
-        AttackId::A2b005SprigatitoCryForHelp | AttackId::PA052SprigatitoCryForHelp => {
+        AttackId::A2b005SprigatitoCryForHelp => {
             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
         }
         AttackId::A2b007MeowscaradaFightingClaws => {
@@ -319,7 +319,7 @@ fn forecast_effect_attack(
         AttackId::A2a071ArceusExUltimateForce => {
             bench_count_attack(acting_player, state, 70, 20, None)
         }
-        AttackId::A2035PiplupNap | AttackId::PA034PiplupNap => self_heal_attack(20, index),
+        AttackId::A2035PiplupNap => self_heal_attack(20, index),
         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -384,9 +384,7 @@ fn forecast_effect_attack(
         AttackId::A3a062CelesteelaMoombahton => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
         }
-        AttackId::A1a001ExeggcuteGrowthSpurt | AttackId::PA060ExeggcuteGrowthSpurt => {
-            self_charge_active_attack(0, EnergyType::Grass, 1)
-        }
+        AttackId::A1a001ExeggcuteGrowthSpurt => self_charge_active_attack(0, EnergyType::Grass, 1),
         AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
         AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3085CosmogTeleport => teleport_attack(),
@@ -467,9 +465,7 @@ fn forecast_effect_attack(
         }
         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
         AttackId::A4120AbsolLeapOver => direct_damage(30, true),
-        AttackId::A1213CinccinoDoTheWave | AttackId::PA031CinccinoDoTheWave => {
-            bench_count_attack(acting_player, state, 0, 30, None)
-        }
+        AttackId::A1213CinccinoDoTheWave => bench_count_attack(acting_player, state, 0, 30, None),
         AttackId::B1002MegaPinsirExCriticalScissors => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
