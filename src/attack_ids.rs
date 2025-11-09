@@ -156,13 +156,11 @@ pub enum AttackId {
     A4134EeveeFindAFriend,
     A4146UrsaringSwingAround,
     A4149LugiaExElementalBlast,
-    A4214MagikarpLeapOut,
     A4a010EnteiExBlazingBeatdown,
     A4a020SuicuneExCrystalWaltz,
     A4a021FeebasLeapOut,
     A4a023MantykeSplashyToss,
     A4a025RaikouExVoltaicBullet,
-    A4b096MagikarpLeapOut,
     B1002MegaPinsirExCriticalScissors,
     B1031RapidashExSprintingFlare,
     B1035BlazikenBlazeKick,
@@ -462,7 +460,7 @@ lazy_static::lazy_static! {
         m.insert(("A4 202", 0), AttackId::A4021ShuckleExTripleSlap);
         m.insert(("A4 209", 0), AttackId::A4124SkarmoryExSteelWing);
         m.insert(("A4 211", 0), AttackId::A4149LugiaExElementalBlast);
-        m.insert(("A4 214", 0), AttackId::A4214MagikarpLeapOut);
+        m.insert(("A4 214", 0), AttackId::A1a017MagikarpLeapOut);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
 
@@ -493,8 +491,8 @@ lazy_static::lazy_static! {
         m.insert(("A4b 069", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A4b 070", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A4b 087", 1), AttackId::A1056BlastoiseExHydroBazooka);
-        m.insert(("A4b 096", 0), AttackId::A4b096MagikarpLeapOut);
-        m.insert(("A4b 097", 0), AttackId::A4b096MagikarpLeapOut);
+        m.insert(("A4b 096", 0), AttackId::A1a017MagikarpLeapOut);
+        m.insert(("A4b 097", 0), AttackId::A1a017MagikarpLeapOut);
         m.insert(("A4b 108", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A4b 109", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);
