@@ -605,18 +605,26 @@ lazy_static::lazy_static! {
         m.insert(("B1 328", 0), AttackId::A2a071ArceusExUltimateForce);
 
         // Promo
+        m.insert(("P-A 010", 0), AttackId::A1128MewtwoPowerBlast);
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
+        m.insert(("P-A 018", 0), AttackId::A1003VenusaurMegaDrain);
+        m.insert(("P-A 025", 0), AttackId::A1047MoltresExInfernoDance);
         m.insert(("P-A 029", 0), AttackId::A1055BlastoiseHydroPump);
         m.insert(("P-A 031", 0), AttackId::PA031CinccinoDoTheWave);
         m.insert(("P-A 032", 0), AttackId::A1033CharmanderEmber);
         m.insert(("P-A 034", 0), AttackId::PA034PiplupNap);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanicGift);
+        m.insert(("P-A 050", 1), AttackId::A1129MewtwoExPsydrive);
         m.insert(("P-A 052", 0), AttackId::PA052SprigatitoCryForHelp);
         m.insert(("P-A 060", 0), AttackId::PA060ExeggcuteGrowthSpurt);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
         m.insert(("P-A 070", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("P-A 072", 0), AttackId::PA072AlolanGrimerPoisonGas);
         m.insert(("P-A 079", 0), AttackId::PA079DuskManeNecrozmaBlackMetal);
+        m.insert(("P-A 080", 0), AttackId::A3a053StakatakaBrassRock);
+        m.insert(("P-A 082", 0), AttackId::A3a044Poipole2Step);
+        m.insert(("P-A 084", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
+        m.insert(("P-A 093", 0), AttackId::A4077CleffaTwinklyCall);
         m.insert(("P-A 110", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("P-A 117", 0), AttackId::A4120AbsolLeapOver);
 
