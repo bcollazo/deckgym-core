@@ -400,9 +400,6 @@ fn forecast_effect_attack(
             CardEffect::ReducedDamage { amount: 50 },
         ),
         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
-        AttackId::A3a094JynxPsychic => {
-            damage_based_on_opponent_energy(acting_player, state, 30, 20)
-        }
         AttackId::A3b009FlareonExFireSpin => {
             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
         }
