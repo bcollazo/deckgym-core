@@ -135,7 +135,6 @@ pub enum AttackId {
     A3a060TypeNullQuickBlow,
     A3a061SilvallyBraveBuddies,
     A3a062CelesteelaMoombahton,
-    A3a094JynxPsychic,
     A3b009FlareonExFireSpin,
     A3b010TorkoalFlamethrower,
     A3b013IncineroarDarkestLariat,
@@ -418,6 +417,8 @@ lazy_static::lazy_static! {
         m.insert(("A3a 088", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 090", 0), AttackId::A1040ArcanineHeatTackle);
         m.insert(("A3a 094", 0), AttackId::A1127JynxPsychic);
+        m.insert(("A3a 099", 0), AttackId::A1a003CelebiExPowerfulBloom);
+        m.insert(("A3a 100", 0), AttackId::A1041ArcanineExInfernoOnrush);
 
         // A3b
         m.insert(("A3b 009", 0), AttackId::A3b009FlareonExFireSpin);
