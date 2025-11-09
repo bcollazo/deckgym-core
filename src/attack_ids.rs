@@ -492,7 +492,6 @@ lazy_static::lazy_static! {
         m.insert(("A4b 009", 0), AttackId::A2b002KakunaStringShot);
         m.insert(("A4b 010", 0), AttackId::A2b003BeedrillExCrushingSpear);
         m.insert(("A4b 013", 0), AttackId::A1023ExeggutorExTropicalSwing);
-        m.insert(("A4b 023", 0), AttackId::A4134EeveeFindAFriend);
         m.insert(("A4b 044", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A4b 045", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A4b 046", 0), AttackId::A3a007PheromosaJumpBlues);
