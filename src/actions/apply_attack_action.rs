@@ -253,7 +253,7 @@ fn forecast_effect_attack(
         AttackId::A1a011RapidashRisingLunge => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
         }
-        AttackId::A1a017MagikarpLeapOut | A4a021FeebasLeapOut => teleport_attack(),
+        AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
         AttackId::A1a021LumineonAquaLiner => direct_damage(50, true),
         AttackId::A1a026RaichuGigashock => {
             let opponent = (state.current_player + 1) % 2;
