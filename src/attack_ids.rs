@@ -85,6 +85,7 @@ pub enum AttackId {
     A1a045GolemGuardPress,
     A1a061EeveeContinuousSteps,
     A2023MagmarStoke,
+    A2029InfernapeExFlareBlitz,
     A2035PiplupNap,
     A2049PalkiaExDimensionalStorm,
     A2050ManaphyOceanicGift,
@@ -303,6 +304,7 @@ lazy_static::lazy_static! {
 
         // A2
         m.insert(("A2 023", 0), AttackId::A2023MagmarStoke);
+        m.insert(("A2 029", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A2 035", 0), AttackId::A2035PiplupNap);
         m.insert(("A2 049", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A2 050", 0), AttackId::A2050ManaphyOceanicGift);
@@ -319,8 +321,10 @@ lazy_static::lazy_static! {
         m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
         m.insert(("A2 162", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A2 165", 0), AttackId::A2073DrifloonExpand);
+        m.insert(("A2 181", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
+        m.insert(("A2 197", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaExDimensionalStorm);
@@ -483,6 +487,7 @@ lazy_static::lazy_static! {
         m.insert(("A4a 079", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 081", 0), AttackId::A4a025RaikouExVoltaicBullet);
+        m.insert(("A4a 101", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A4a 087", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 088", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
@@ -516,6 +521,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 067", 0), AttackId::A1047MoltresExInfernoDance);
         m.insert(("A4b 069", 0), AttackId::A3b010TorkoalFlamethrower);
         m.insert(("A4b 070", 0), AttackId::A3b010TorkoalFlamethrower);
+        m.insert(("A4b 075", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A4b 087", 1), AttackId::A1056BlastoiseExHydroBazooka);
         m.insert(("A4b 096", 0), AttackId::A1a017MagikarpLeapOut);
         m.insert(("A4b 097", 0), AttackId::A1a017MagikarpLeapOut);
