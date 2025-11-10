@@ -500,6 +500,7 @@ fn forecast_effect_attack(
         }
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
+        AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
     }
 }
 

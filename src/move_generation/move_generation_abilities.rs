@@ -61,6 +61,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
+        AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
     }
 }
 
