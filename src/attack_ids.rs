@@ -93,6 +93,7 @@ pub enum AttackId {
     A2073DrifloonExpand,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
+    A2111SkarmoryMetalArms,
     A2117BronzongGuardPress,
     A2118ProbopassTripleNose,
     A2119DialgaExMetallicTurbo,
@@ -310,6 +311,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 073", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
+        m.insert(("A2 111", 0), AttackId::A2111SkarmoryMetalArms);
         m.insert(("A2 117", 0), AttackId::A2117BronzongGuardPress);
         m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
         m.insert(("A2 119", 0), AttackId::A2119DialgaExMetallicTurbo);
@@ -618,6 +620,7 @@ lazy_static::lazy_static! {
         m.insert(("P-A 031", 0), AttackId::A1213CinccinoDoTheWave);
         m.insert(("P-A 032", 0), AttackId::A1033CharmanderEmber);
         m.insert(("P-A 034", 0), AttackId::A2035PiplupNap);
+        m.insert(("P-A 039", 0), AttackId::A2111SkarmoryMetalArms);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("P-A 050", 1), AttackId::A1129MewtwoExPsydrive);
         m.insert(("P-A 052", 0), AttackId::A2b005SprigatitoCryForHelp);

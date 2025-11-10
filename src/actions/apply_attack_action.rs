@@ -292,6 +292,9 @@ fn forecast_effect_attack(
         AttackId::A2098SneaselDoubleScratch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A2111SkarmoryMetalArms => {
+            extra_damage_if_tool_attached(acting_player, state, 20, 30)
+        }
         AttackId::A2117BronzongGuardPress => damage_and_card_effect_attack(
             index,
             state.current_player,
@@ -1170,6 +1173,21 @@ fn extra_damage_if_opponent_is_ex(
     let opponent = (acting_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = if opponent_active.card.is_ex() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_tool_attached(
+    acting_player: usize,
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let active = state.get_active(acting_player);
+    let damage = if active.has_tool_attached() {
         base_damage + extra_damage
     } else {
         base_damage
