@@ -279,6 +279,9 @@ fn forecast_effect_attack(
         AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         AttackId::A2050ManaphyOceanicGift => manaphy_oceanic(acting_player),
         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2061PachirisuExSparkingGadget => {
+            extra_damage_if_tool_attached(acting_player, state, 40, 40)
+        }
         AttackId::A2073DrifloonExpand => damage_and_card_effect_attack(
             index,
             state.current_player,

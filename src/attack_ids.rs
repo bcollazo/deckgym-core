@@ -89,6 +89,7 @@ pub enum AttackId {
     A2050ManaphyOceanicGift,
     A2053MagnezoneThunderBlast,
     A2056ElectabuzzCharge,
+    A2061PachirisuExSparkingGadget,
     A2073DrifloonExpand,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
@@ -303,6 +304,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 050", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A2 053", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
+        m.insert(("A2 061", 0), AttackId::A2061PachirisuExSparkingGadget);
         m.insert(("A2 073", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
@@ -315,7 +317,9 @@ lazy_static::lazy_static! {
         m.insert(("A2 162", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A2 165", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaExDimensionalStorm);
+        m.insert(("A2 183", 0), AttackId::A2061PachirisuExSparkingGadget);
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
+        m.insert(("A2 198", 0), AttackId::A2061PachirisuExSparkingGadget);
         m.insert(("A2 204", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A2 205", 0), AttackId::A2119DialgaExMetallicTurbo);
         m.insert(("A2 206", 1), AttackId::A2049PalkiaExDimensionalStorm);
@@ -463,6 +467,7 @@ lazy_static::lazy_static! {
         m.insert(("A4 222", 0), AttackId::A1142PrimeapeFightBack);
         m.insert(("A4 228", 0), AttackId::A1171NidokingPoisonHorn);
         m.insert(("A4 231", 0), AttackId::A4134EeveeFindAFriend);
+        m.insert(("A4 236", 0), AttackId::A2061PachirisuExSparkingGadget);
         m.insert(("A4 241", 0), AttackId::A4149LugiaExElementalBlast);
 
         // A4a
@@ -519,6 +524,7 @@ lazy_static::lazy_static! {
         m.insert(("A4b 137", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 138", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A4b 139", 1), AttackId::A1104ZapdosExThunderingHurricane);
+        m.insert(("A4b 145", 0), AttackId::A2061PachirisuExSparkingGadget);
         m.insert(("A4b 148", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("A4b 156", 0), AttackId::A1127JynxPsychic);
         m.insert(("A4b 157", 0), AttackId::A1127JynxPsychic);
