@@ -260,6 +260,26 @@ fn get_heavy_helmet_reduction(state: &State, opponent: usize) -> u32 {
     0
 }
 
+fn get_intimidating_fang_reduction(
+    state: &State,
+    opponent: usize,
+    receiving_idx: usize,
+    is_from_active_attack: bool,
+) -> u32 {
+    if receiving_idx != 0 || !is_from_active_attack {
+        return 0;
+    }
+    if let Some(defending_pokemon) = &state.in_play_pokemon[opponent][0] {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
+            if ability_id == AbilityId::A3a015LuxrayIntimidatingFang {
+                debug!("Intimidating Fang: Reducing opponent's attack damage by 20");
+                return 20;
+            }
+        }
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
@@ -293,24 +313,9 @@ pub(crate) fn modify_damage(
         }
     }
 
-    // Check for Intimidating Fang ability (reduces opponent's attack damage by 20)
-    let intimidating_fang_reduction = if let Some(defending_pokemon) = receiving_pokemon {
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
-            if ability_id == AbilityId::A3a015LuxrayIntimidatingFang
-                && is_from_active_attack
-                && receiving_idx == 0
-            {
-                debug!("Intimidating Fang: Reducing opponent's attack damage by 20");
-                20
-            } else {
-                0
-            }
-        } else {
-            0
-        }
-    } else {
-        0
-    };
+    // Intimidating Fang ability damage reduction
+    let intimidating_fang_reduction =
+        get_intimidating_fang_reduction(state, opponent, receiving_idx, is_from_active_attack);
 
     if receiving_idx == 0 && is_from_active_attack {
         // Modifiers by effect (like Giovanni, Red, Eevee Bag)
