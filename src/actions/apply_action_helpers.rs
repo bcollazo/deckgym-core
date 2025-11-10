@@ -138,7 +138,13 @@ fn apply_pokemon_checkup(
 
     // Poison always deals 10 damage
     for (player, in_play_idx) in poisons_to_handle {
-        handle_damage(mutated_state, player, &[(10, in_play_idx)], false);
+        let attacking_ref = (player, in_play_idx); // present it as self-damage
+        handle_damage(
+            mutated_state,
+            attacking_ref,
+            &[(10, player, in_play_idx)],
+            false,
+        );
     }
 
     // Burn always deals 20 damage, then coin flip for healing
@@ -154,7 +160,13 @@ fn apply_pokemon_checkup(
         }
 
         // Deal burn damage
-        handle_damage(mutated_state, *player, &[(20, *in_play_idx)], false);
+        let attacking_ref = (*player, *in_play_idx); // present it as self-damage
+        handle_damage(
+            mutated_state,
+            attacking_ref,
+            &[(20, *player, *in_play_idx)],
+            false,
+        );
     }
 
     // Advance turn
@@ -178,30 +190,25 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
 ///  queues up promotion actions if any K.O.s happen.
 pub(crate) fn handle_damage(
     state: &mut State,
-    target_player: usize,
-    targets: &[(u32, usize)], // damage, in_play_idx
+    attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
     is_from_active_attack: bool,
 ) {
-    let attacking_player = (target_player + 1) % 2;
+    let attacking_player = attacking_ref.0;
     let mut knockouts: Vec<(usize, usize)> = vec![];
 
     // Modify to apply any multipliers (e.g. Oricorio, Giovanni, etc...)
     let modified_targets = targets
         .iter()
-        .map(|(damage, target_pokemon_idx)| {
-            let modified_damage = modify_damage(
-                state,
-                attacking_player,
-                *damage,
-                *target_pokemon_idx,
-                is_from_active_attack,
-            );
-            (modified_damage, *target_pokemon_idx)
+        .map(|target_ref| {
+            let modified_damage =
+                modify_damage(state, attacking_ref, *target_ref, is_from_active_attack);
+            (modified_damage, target_ref.1, target_ref.2)
         })
-        .collect::<Vec<(u32, usize)>>();
+        .collect::<Vec<(u32, usize, usize)>>();
 
     // Handle each target individually
-    for (damage, target_pokemon_idx) in modified_targets {
+    for (damage, target_player, target_pokemon_idx) in modified_targets {
         if damage == 0 {
             continue;
         }
@@ -285,15 +292,16 @@ pub(crate) fn handle_damage(
     }
 
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
-    if state.points[attacking_player] >= 3 && state.points[target_player] >= 3 {
+    // Note even attacking player can lose by counterattack K.O.
+    if state.points[0] >= 3 && state.points[1] >= 3 {
         debug!("Both players have 3 points, it's a tie");
         state.winner = Some(GameOutcome::Tie);
         return;
-    } else if state.points[attacking_player] >= 3 {
-        state.winner = Some(GameOutcome::Win(attacking_player));
-        return; // attacking player could lose by attacking into a RockyHelmet e.g.
-    } else if state.points[target_player] >= 3 {
-        state.winner = Some(GameOutcome::Win(target_player));
+    } else if state.points[0] >= 3 {
+        state.winner = Some(GameOutcome::Win(0));
+        return;
+    } else if state.points[1] >= 3 {
+        state.winner = Some(GameOutcome::Win(1));
         return;
     }
 

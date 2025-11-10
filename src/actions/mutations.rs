@@ -60,7 +60,12 @@ where
             let attack = active.card.get_attacks()[attack_index].clone();
             let damage = attack.fixed_damage;
             let target_player = (action.actor + 1) % 2;
-            handle_damage(state, target_player, &[(damage, 0)], true);
+            handle_damage(
+                state,
+                (action.actor, 0),
+                &[(damage, target_player, 0)],
+                true,
+            );
         })],
     )
 }
@@ -104,8 +109,12 @@ where
     Box::new({
         move |rng, state, action| {
             additional_effect(rng, state, action);
-            let target_player = (action.actor + 1) % 2;
-            handle_damage(state, target_player, &targets, true);
+            let opponent = (action.actor + 1) % 2;
+            let targets: Vec<(u32, usize, usize)> = targets
+                .iter()
+                .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
+                .collect();
+            handle_damage(state, (action.actor, 0), &targets, true);
         }
     })
 }
