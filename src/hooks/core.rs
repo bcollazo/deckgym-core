@@ -267,6 +267,26 @@ fn get_heavy_helmet_reduction(state: &State, opponent: usize) -> u32 {
     0
 }
 
+fn get_intimidating_fang_reduction(
+    state: &State,
+    opponent: usize,
+    receiving_idx: usize,
+    is_from_active_attack: bool,
+) -> u32 {
+    if receiving_idx != 0 || !is_from_active_attack {
+        return 0;
+    }
+    if let Some(defending_pokemon) = &state.in_play_pokemon[opponent][0] {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&defending_pokemon.card.get_id()[..]) {
+            if ability_id == AbilityId::A3a015LuxrayIntimidatingFang {
+                debug!("Intimidating Fang: Reducing opponent's attack damage by 20");
+                return 20;
+            }
+        }
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
@@ -299,6 +319,10 @@ pub(crate) fn modify_damage(
             }
         }
     }
+
+    // Intimidating Fang ability damage reduction
+    let intimidating_fang_reduction =
+        get_intimidating_fang_reduction(state, opponent, receiving_idx, is_from_active_attack);
 
     if receiving_idx == 0 && is_from_active_attack {
         // Modifiers by effect (like Giovanni, Red, Eevee Bag)
@@ -348,15 +372,17 @@ pub(crate) fn modify_damage(
         }
 
         debug!(
-            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}",
+            "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
             base_damage,
             weakness_modifier,
             increased_turn_effect_modifiers,
             reduced_card_effect_modifiers,
-            heavy_helmet_reduction
+            heavy_helmet_reduction,
+            intimidating_fang_reduction
         );
-        (base_damage + weakness_modifier + increased_turn_effect_modifiers)
-            .saturating_sub(reduced_card_effect_modifiers + heavy_helmet_reduction)
+        (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
+            reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
+        )
     } else {
         debug!("Damage is to benched Pokémon or not from active attack");
         base_damage // modifiers only apply to active Pokémon

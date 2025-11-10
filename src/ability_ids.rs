@@ -18,6 +18,7 @@ pub enum AbilityId {
     A3066OricoricSafeguard,
     A3122SolgaleoExRisingRoad,
     A3141KomalaComatose,
+    A3a015LuxrayIntimidatingFang,
     A3a021ZeraoraThunderclapFlash,
     A3a027ShiinoticIlluminate,
     A3a062CelesteelaUltraThrusters,
@@ -68,6 +69,7 @@ lazy_static::lazy_static! {
         m.insert("A3 189", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 207", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A3 239", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("A3a 015", AbilityId::A3a015LuxrayIntimidatingFang);
         m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
         m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);

@@ -91,6 +91,7 @@ pub enum AttackId {
     A2050ManaphyOceanicGift,
     A2053MagnezoneThunderBlast,
     A2056ElectabuzzCharge,
+    A2060LuxrayVoltBolt,
     A2073DrifloonExpand,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
@@ -173,6 +174,7 @@ pub enum AttackId {
     B1050MagikarpWaterfallEvolution,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
+    B1088LuxrayFlashImpact,
     B1102MegaAltariaExMegaHarmony,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
@@ -310,6 +312,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 050", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A2 053", 0), AttackId::A2053MagnezoneThunderBlast);
         m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
+        m.insert(("A2 060", 0), AttackId::A2060LuxrayVoltBolt);
         m.insert(("A2 073", 0), AttackId::A2073DrifloonExpand);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
@@ -585,10 +588,12 @@ lazy_static::lazy_static! {
         m.insert(("B1 050", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
+        m.insert(("B1 088", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
+        m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 253", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
