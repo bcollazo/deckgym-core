@@ -248,66 +248,38 @@ fn print_implementation_ids(
         }
     }
 
-    // Generate unique effect variant names
-    let mut unique_effects: IndexMap<String, String> = IndexMap::new();
-    let mut effect_counter = 0;
-
-    for (effect_text, _) in effect_to_attacks.iter() {
-        let effect_variant = format!("Effect{}", effect_counter);
-        unique_effects.insert(effect_text.clone(), effect_variant);
-        effect_counter += 1;
-    }
-
     // Print the generated file
     println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
     println!();
-    println!("use std::collections::HashMap;");
+    println!("use std::collections::HashSet;");
     println!("use std::sync::LazyLock;");
     println!();
-
-    // Print AttackEffect enum with NotImplemented variant
-    println!("#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]");
-    println!("pub enum AttackEffect {{");
-    println!("    NotImplemented,");
-    for (_, effect_variant) in unique_effects.iter() {
-        println!("    {effect_variant},");
-    }
-    println!("}}");
+    println!("// Type aliases matching those in actions::apply_action_helpers");
+    println!("pub type Probabilities = Vec<f64>;");
+    println!("pub type Mutations = Vec<Box<dyn FnOnce(&mut rand::rngs::StdRng, &mut crate::State, &crate::actions::Action)>>;");
+    println!("pub type AttackEffect = Option<(Probabilities, Mutations)>;");
     println!();
 
-    // Print map from effect text to AttackEffect
-    println!("static EFFECT_TEXT_MAP: LazyLock<HashMap<&'static str, AttackEffect>> = LazyLock::new(|| {{");
-    println!("    let mut map = HashMap::new();");
-    for (effect_text, effect_variant) in unique_effects.iter() {
+    // Print set of known effect texts
+    println!("static KNOWN_EFFECTS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {{");
+    println!("    let mut set = HashSet::new();");
+    for (effect_text, _) in effect_to_attacks.iter() {
         let escaped_text = effect_text.replace("\\", "\\\\").replace("\"", "\\\"");
-        println!("    map.insert(\"{escaped_text}\", AttackEffect::{effect_variant});");
+        println!("    set.insert(\"{escaped_text}\");");
     }
-    println!("    map");
+    println!("    set");
     println!("}});");
     println!();
 
-    // Print helper functions
-    println!("impl AttackEffect {{");
-    println!("    /// Get the AttackEffect for a given effect text");
-    println!("    pub fn from_effect_text(effect_text: &str) -> Self {{");
-    println!("        EFFECT_TEXT_MAP.get(effect_text).copied().unwrap_or(AttackEffect::NotImplemented)");
+    // Print helper function that returns None for now
+    println!("/// Get the implementation for a given attack effect text.");
+    println!("/// Returns None if the effect is not yet implemented.");
+    println!("/// All effects currently return None - implementations to be added later.");
+    println!("pub fn get_effect_implementation(effect_text: &str) -> AttackEffect {{");
+    println!("    if KNOWN_EFFECTS.contains(effect_text) {{");
+    println!("        None // TODO: Return actual implementation");
+    println!("    }} else {{");
+    println!("        None");
     println!("    }}");
     println!("}}");
-    println!();
-
-    // Print statistics as comments
-    println!("// Statistics:");
-    println!("// Total unique effect texts: {}", unique_effects.len());
-    println!();
-    println!("// Effect groupings (attacks with same effect text):");
-    for (effect_text, attacks) in effect_to_attacks.iter() {
-        if attacks.len() > 1 {
-            let effect_variant = unique_effects.get(effect_text).unwrap();
-            println!("// {} - {} attacks with this effect:", effect_variant, attacks.len());
-            let escaped_text = effect_text.replace("\\", "\\\\").replace("\"", "\\\"");
-            println!("//   Effect: \"{}\"", escaped_text);
-            println!("//   Attacks: {}", attacks.join(", "));
-            println!("//");
-        }
-    }
 }
