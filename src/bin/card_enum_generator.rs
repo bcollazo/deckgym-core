@@ -1,8 +1,4 @@
-use std::{
-    collections::HashSet,
-    fs::File,
-    io::{BufRead, BufReader, Read},
-};
+use std::{fs::File, io::Read};
 
 use clap::Parser;
 
@@ -232,180 +228,85 @@ fn to_rust_energy_vec(energy_types: &Vec<EnergyType>) -> String {
     result
 }
 
-fn read_existing_attack_ids() -> HashSet<String> {
-    let mut existing_ids = HashSet::new();
-
-    if let Ok(file) = File::open("./src/attack_ids.rs") {
-        let reader = BufReader::new(file);
-        let mut in_enum = false;
-
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                let trimmed = line.trim();
-
-                // Detect start of enum
-                if trimmed.starts_with("pub enum AttackId") {
-                    in_enum = true;
-                    continue;
-                }
-
-                // Detect end of enum
-                if in_enum && trimmed == "}" {
-                    break;
-                }
-
-                // Extract enum variant names
-                if in_enum && !trimmed.is_empty() && !trimmed.starts_with("//") {
-                    if let Some(variant) = trimmed.strip_suffix(',') {
-                        existing_ids.insert(variant.to_string());
-                    }
-                }
-            }
-        }
-    }
-
-    existing_ids
-}
-
 fn print_implementation_ids(
     card_map: &IndexMap<String, Card>,
     _id_to_enum: &IndexMap<String, String>,
 ) {
-    // Read attack_ids.rs to get the list of existing AttackIds
-    let existing_attack_ids = read_existing_attack_ids();
+    // Collect all unique effect texts
+    let mut effect_to_attacks: IndexMap<String, Vec<String>> = IndexMap::new();
 
-    // Collect all attacks with their effect texts
-    let mut effect_to_attacks: IndexMap<String, Vec<(String, usize, String)>> = IndexMap::new();
-    let mut attack_to_effect: Vec<(String, usize, Option<String>)> = Vec::new();
-
-    for (enum_name, card) in card_map.iter() {
+    for (_enum_name, card) in card_map.iter() {
         if let Card::Pokemon(pokemon_card) = card {
-            for (attack_idx, attack) in pokemon_card.attacks.iter().enumerate() {
-                let effect_text = attack.effect.clone().unwrap_or_else(|| "None".to_string());
-
-                // Store for effect grouping
-                effect_to_attacks
-                    .entry(effect_text.clone())
-                    .or_insert_with(Vec::new)
-                    .push((
-                        enum_name.clone(),
-                        attack_idx,
-                        attack.title.clone(),
-                    ));
-
-                // Store for attack mapping
-                attack_to_effect.push((
-                    enum_name.clone(),
-                    attack_idx,
-                    attack.effect.clone(),
-                ));
+            for attack in pokemon_card.attacks.iter() {
+                if let Some(effect_text) = &attack.effect {
+                    effect_to_attacks
+                        .entry(effect_text.clone())
+                        .or_insert_with(Vec::new)
+                        .push(attack.title.clone());
+                }
             }
         }
     }
 
-    // Generate unique effect IDs by normalizing effect text
+    // Generate unique effect variant names
     let mut unique_effects: IndexMap<String, String> = IndexMap::new();
     let mut effect_counter = 0;
 
     for (effect_text, _) in effect_to_attacks.iter() {
-        if effect_text == "None" {
-            unique_effects.insert(effect_text.clone(), "NoEffect".to_string());
-        } else {
-            let effect_id = format!("Effect{}", effect_counter);
-            unique_effects.insert(effect_text.clone(), effect_id);
-            effect_counter += 1;
-        }
+        let effect_variant = format!("Effect{}", effect_counter);
+        unique_effects.insert(effect_text.clone(), effect_variant);
+        effect_counter += 1;
     }
 
     // Print the generated file
     println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
     println!();
-    println!("use crate::attack_ids::AttackId;");
     println!("use std::collections::HashMap;");
     println!("use std::sync::LazyLock;");
     println!();
 
-    // Print effect text enum
+    // Print AttackEffect enum with NotImplemented variant
     println!("#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]");
-    println!("pub enum EffectId {{");
-    for (_, effect_id) in unique_effects.iter() {
-        println!("    {effect_id},");
-    }
-    println!("}}");
-    println!();
-
-    // Print implementation status enum
-    println!("#[derive(Debug, Clone, Copy, PartialEq, Eq)]");
-    println!("pub enum ImplementationStatus {{");
-    println!("    Implemented,");
+    println!("pub enum AttackEffect {{");
     println!("    NotImplemented,");
+    for (_, effect_variant) in unique_effects.iter() {
+        println!("    {effect_variant},");
+    }
     println!("}}");
     println!();
 
-    // Print map from AttackId to EffectId
-    println!("static ATTACK_EFFECT_MAP: LazyLock<HashMap<AttackId, EffectId>> = LazyLock::new(|| {{");
+    // Print map from effect text to AttackEffect
+    println!("static EFFECT_TEXT_MAP: LazyLock<HashMap<&'static str, AttackEffect>> = LazyLock::new(|| {{");
     println!("    let mut map = HashMap::new();");
-
-    for (enum_name, _attack_idx, effect_opt) in attack_to_effect.iter() {
-        // Only generate mappings for attacks that have effects AND exist in attack_ids.rs
-        if let Some(effect_text) = effect_opt {
-            if existing_attack_ids.contains(enum_name) {
-                if let Some(effect_id) = unique_effects.get(effect_text.as_str()) {
-                    println!("    map.insert(AttackId::{enum_name}, EffectId::{effect_id});");
-                }
-            }
-        }
-    }
-
-    println!("    map");
-    println!("}});");
-    println!();
-
-    // Print map from EffectId to effect text (for documentation)
-    println!("static EFFECT_DESCRIPTIONS: LazyLock<HashMap<EffectId, &'static str>> = LazyLock::new(|| {{");
-    println!("    let mut map = HashMap::new();");
-    for (effect_text, effect_id) in unique_effects.iter() {
+    for (effect_text, effect_variant) in unique_effects.iter() {
         let escaped_text = effect_text.replace("\\", "\\\\").replace("\"", "\\\"");
-        println!("    map.insert(EffectId::{effect_id}, \"{escaped_text}\");");
+        println!("    map.insert(\"{escaped_text}\", AttackEffect::{effect_variant});");
     }
     println!("    map");
     println!("}});");
     println!();
 
     // Print helper functions
-    println!("impl EffectId {{");
-    println!("    /// Get the effect ID for a given attack");
-    println!("    pub fn from_attack(attack_id: AttackId) -> Option<Self> {{");
-    println!("        ATTACK_EFFECT_MAP.get(&attack_id).copied()");
-    println!("    }}");
-    println!();
-    println!("    /// Get the description text for this effect");
-    println!("    pub fn description(&self) -> &'static str {{");
-    println!("        EFFECT_DESCRIPTIONS.get(self).copied().unwrap_or(\"Unknown effect\")");
-    println!("    }}");
-    println!();
-    println!("    /// Check if this effect has an implementation");
-    println!("    pub fn implementation_status(&self) -> ImplementationStatus {{");
-    println!("        // TODO: This should be generated based on actual implementations in apply_attack_action.rs");
-    println!("        // For now, returning NotImplemented for all");
-    println!("        ImplementationStatus::NotImplemented");
+    println!("impl AttackEffect {{");
+    println!("    /// Get the AttackEffect for a given effect text");
+    println!("    pub fn from_effect_text(effect_text: &str) -> Self {{");
+    println!("        EFFECT_TEXT_MAP.get(effect_text).copied().unwrap_or(AttackEffect::NotImplemented)");
     println!("    }}");
     println!("}}");
     println!();
 
     // Print statistics as comments
     println!("// Statistics:");
-    println!("// Total unique effects: {}", unique_effects.len());
-    println!("// Total attacks: {}", attack_to_effect.len());
+    println!("// Total unique effect texts: {}", unique_effects.len());
     println!();
     println!("// Effect groupings (attacks with same effect text):");
     for (effect_text, attacks) in effect_to_attacks.iter() {
         if attacks.len() > 1 {
-            let effect_id = unique_effects.get(effect_text).unwrap();
-            println!("// {} - {} attacks:", effect_id, attacks.len());
-            for (enum_name, _attack_idx, title) in attacks.iter() {
-                println!("//   - AttackId::{} ({})", enum_name, title);
-            }
+            let effect_variant = unique_effects.get(effect_text).unwrap();
+            println!("// {} - {} attacks with this effect:", effect_variant, attacks.len());
+            let escaped_text = effect_text.replace("\\", "\\\\").replace("\"", "\\\"");
+            println!("//   Effect: \"{}\"", escaped_text);
+            println!("//   Attacks: {}", attacks.join(", "));
             println!("//");
         }
     }
