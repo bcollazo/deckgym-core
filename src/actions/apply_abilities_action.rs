@@ -63,6 +63,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
+        AbilityId::B1157HydreigonRoarInUnison => {
+            doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
+        }
     }
 }
 
@@ -186,6 +189,20 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
         state
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::EndTurn]));
+    })
+}
+
+fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
+    Box::new(move |_, state, action| {
+        // Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.
+        debug!(
+            "Hydreigon's Roar in Unison: Attaching 2 Darkness Energy and dealing 30 damage to self"
+        );
+        let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there");
+        pokemon.attach_energy(&EnergyType::Darkness, 2);
+        pokemon.apply_damage(30);
     })
 }
 
