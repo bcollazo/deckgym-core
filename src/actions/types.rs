@@ -58,8 +58,8 @@ pub enum SimpleAction {
         cure_status: bool,
     },
     ApplyDamage {
-        target_player: usize,
-        targets: Vec<(u32, usize)>, // Vec of (damage, in_play_idx)
+        attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
+        targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
         is_from_active_attack: bool,
     },
     /// Switch the in_play_idx pokemon with the active pokemon.
@@ -141,18 +141,21 @@ impl fmt::Display for SimpleAction {
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
             SimpleAction::ApplyDamage {
-                target_player,
+                attacking_ref,
                 targets,
                 is_from_active_attack,
             } => {
                 let targets_str = targets
                     .iter()
-                    .map(|(damage, in_play_idx)| format!("({damage}, {in_play_idx})"))
+                    .map(|(damage, target_player, in_play_idx)| {
+                        format!("({damage}, {target_player}, {in_play_idx})")
+                    })
                     .collect::<Vec<_>>()
                     .join(", ");
                 write!(
                     f,
-                    "ApplyDamage(player:{target_player}, targets:[{targets_str}], from_active:{is_from_active_attack})"
+                    "ApplyDamage(attacker:{:?}, targets:[{}], from_active:{})",
+                    attacking_ref, targets_str, is_from_active_attack
                 )
             }
             SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),

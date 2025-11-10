@@ -2,7 +2,12 @@ use log::trace;
 use rand::{rngs::StdRng, Rng};
 
 use crate::{
-    actions::{apply_action_helpers::handle_damage, apply_evolve, mutations::doutcome},
+    actions::{
+        apply_action_helpers::handle_damage,
+        apply_evolve,
+        mutations::{doutcome, doutcome_from_mutation},
+        Action,
+    },
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, get_stage},
@@ -191,7 +196,7 @@ fn forecast_effect_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 40, 80, 120, 160],
         ),
-        AttackId::A1103ZapdosRagingThunder => self_benched_damage(30, index),
+        AttackId::A1103ZapdosRagingThunder => self_benched_damage(100, 30),
         AttackId::A1104ZapdosExThunderingHurricane => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 50, 100, 150, 200],
@@ -399,7 +404,7 @@ fn forecast_effect_attack(
         AttackId::A1a002ExeggutorPsychic => {
             damage_based_on_opponent_energy(acting_player, state, 80, 20)
         }
-        AttackId::A3a007PheromosaJumpBlues => active_then_choice_bench_attack(20, 20),
+        AttackId::A3a007PheromosaJumpBlues => active_and_choice_bench_attack(20, 20),
         AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
@@ -438,7 +443,7 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
         AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
-        AttackId::A4102HitmontopPiercingSpin => active_then_choice_bench_attack(20, 20),
+        AttackId::A4102HitmontopPiercingSpin => active_and_choice_bench_attack(20, 20),
         AttackId::A4104PupitarGuardPress => damage_and_card_effect_attack(
             index,
             state.current_player,
@@ -469,7 +474,7 @@ fn forecast_effect_attack(
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
-        AttackId::A4a025RaikouExVoltaicBullet => active_then_choice_bench_attack(60, 10),
+        AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
         AttackId::A2053MagnezoneThunderBlast => {
             self_energy_discard_attack(0, vec![EnergyType::Lightning])
         }
@@ -483,27 +488,13 @@ fn forecast_effect_attack(
         AttackId::B1002MegaPinsirExCriticalScissors => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
         }
-        AttackId::B1031RapidashExSprintingFlare => active_then_choice_bench_attack(110, 20),
+        AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
         AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
-        AttackId::B1088LuxrayFlashImpact => {
-            active_damage_effect_doutcome(110, move |_, state, action| {
-                let mut choices = Vec::new();
-                for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-                    choices.push(SimpleAction::ApplyDamage {
-                        target_player: action.actor,
-                        targets: vec![(20, in_play_idx)],
-                        is_from_active_attack: false,
-                    });
-                }
-                if !choices.is_empty() {
-                    state.move_generation_stack.push((action.actor, choices));
-                }
-            })
-        }
+        AttackId::B1088LuxrayFlashImpact => self_benched_damage(110, 20),
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
@@ -798,43 +789,48 @@ fn all_bench_count_attack(
     active_damage_doutcome(damage_per * total_bench_count)
 }
 
-/// Used for attacks that can go directly to one of your own benched Pokémon.
-fn self_benched_damage(damage: u32, attack_index: usize) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(attack_index, move |_, state, action| {
-        let mut choices = Vec::new();
-        for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-            choices.push(SimpleAction::ApplyDamage {
-                target_player: action.actor,
-                targets: vec![(damage, in_play_idx)],
-                is_from_active_attack: true,
-            });
-        }
-        if choices.is_empty() {
-            return;
-        }
-        state.move_generation_stack.push((action.actor, choices));
-    })
+/// Used for attacks that damage both enemy's active and one of their benched Pokémon.
+fn self_benched_damage(active_damage: u32, self_bench_damage: u32) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(
+        move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let opponent = (action.actor + 1) % 2;
+            let choices: Vec<_> = state
+                .enumerate_bench_pokemon(action.actor)
+                .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![
+                        (active_damage, opponent, 0),
+                        (self_bench_damage, action.actor, in_play_idx),
+                    ],
+                    is_from_active_attack: true,
+                })
+                .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        },
+    ))
 }
 
-fn active_then_choice_bench_attack(
+fn active_and_choice_bench_attack(
     active_damage: u32,
     bench_damage: u32,
 ) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(active_damage, move |_, state, action| {
-        let opponent = (action.actor + 1) % 2;
-        let mut choices = Vec::new();
-        for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-            choices.push(SimpleAction::ApplyDamage {
-                target_player: opponent,
-                targets: vec![(bench_damage, in_play_idx)],
-                is_from_active_attack: true,
-            });
-        }
-        if choices.is_empty() {
-            return;
-        }
-        state.move_generation_stack.push((action.actor, choices));
-    })
+    doutcome_from_mutation(Box::new(
+        move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let opponent = (action.actor + 1) % 2;
+            let choices: Vec<_> = state
+                .enumerate_bench_pokemon(opponent)
+                .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![
+                        (active_damage, opponent, 0),
+                        (bench_damage, opponent, in_play_idx),
+                    ],
+                    is_from_active_attack: true,
+                })
+                .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        },
+    ))
 }
 
 fn self_charge_active_attack(
@@ -857,16 +853,16 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
         if bench_only {
             for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
-                    target_player: opponent,
-                    targets: vec![(damage, in_play_idx)],
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![(damage, opponent, in_play_idx)],
                     is_from_active_attack: true,
                 });
             }
         } else {
             for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
-                    target_player: opponent,
-                    targets: vec![(damage, in_play_idx)],
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![(damage, opponent, in_play_idx)],
                     is_from_active_attack: true,
                 });
             }
@@ -896,8 +892,8 @@ fn luxray_volt_bolt() -> (Probabilities, Mutations) {
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
-                target_player: opponent,
-                targets: vec![(120, in_play_idx)],
+                attacking_ref: (action.actor, 0),
+                targets: vec![(120, opponent, in_play_idx)],
                 is_from_active_attack: true,
             });
         }
@@ -1391,13 +1387,14 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
     // For each time a Pokémon was chosen, also do 20 damage to it.
     doutcome(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize)> = generate_random_spread_indices(rng, state, true, 3)
+        let targets: Vec<(u32, usize, usize)> = generate_random_spread_indices(rng, state, true, 3)
             .into_iter()
-            .map(|idx| (20, idx))
-            .chain(std::iter::once((100, 0))) // Add active Pokémon directly
+            .map(|idx| (20, opponent, idx))
+            .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
             .collect();
 
-        handle_damage(state, opponent, &targets, true);
+        let attacking_ref = (action.actor, 0);
+        handle_damage(state, attacking_ref, &targets, true);
     })
 }
 

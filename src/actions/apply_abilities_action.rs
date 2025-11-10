@@ -1,3 +1,5 @@
+use core::panic;
+
 use log::debug;
 use rand::rngs::StdRng;
 
@@ -51,7 +53,7 @@ pub(crate) fn forecast_ability(
         }
         AbilityId::A3a027ShiinoticIlluminate => pokemon_search_outcomes(action.actor, state, false),
         AbilityId::A3a062CelesteelaUltraThrusters => doutcome(celesteela_ultra_thrusters),
-        AbilityId::A3b009FlareonExCombust => doutcome_from_mutation(combust(in_play_idx)),
+        AbilityId::A3b009FlareonExCombust => doutcome(combust),
         AbilityId::A3b034SylveonExHappyRibbon => panic!("Happy Ribbon cant be used on demand"),
         AbilityId::A3b056EeveeExVeeveeVolve => panic!("Veevee 'volve is a passive ability"),
         AbilityId::A4083EspeonExPsychicHealing => doutcome(espeon_ex_ability),
@@ -152,12 +154,19 @@ fn leafon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
 fn greninja_shuriken(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.
     debug!("Greninja's ability: Dealing 20 damage to 1 opponent's Pokemon");
+    let SimpleAction::UseAbility {
+        in_play_idx: attacking_idx,
+    } = action.action
+    else {
+        panic!("Greninja's ability should be triggered by UseAbility action");
+    };
+
     let opponent = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_in_play_pokemon(opponent)
         .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
-            target_player: opponent,
-            targets: vec![(20, in_play_idx)],
+            attacking_ref: (action.actor, attacking_idx),
+            targets: vec![(20, opponent, in_play_idx)],
             is_from_active_attack: false,
         })
         .collect::<Vec<_>>();
@@ -210,25 +219,31 @@ fn espeon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
         .push((action.actor, possible_moves));
 }
 
-fn combust(in_play_idx: usize) -> Mutation {
-    Box::new(move |_, state, action| {
-        // Once during your turn, you may attach a Fire Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.
-        debug!("Flareon ex's Combust: Attaching 1 Fire Energy and dealing 20 damage to itself");
+fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may attach a Fire Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.
+    debug!("Flareon ex's Combust: Attaching 1 Fire Energy and dealing 20 damage to itself");
+    let SimpleAction::UseAbility { in_play_idx } = action.action else {
+        panic!("Flareon ex's ability should be triggered by UseAbility action");
+    };
 
-        // Remove Fire Energy from discard pile
-        let fire_position = state.discard_energies[action.actor]
-            .iter()
-            .position(|e| *e == EnergyType::Fire)
-            .expect("Should have Fire Energy in discard pile");
-        state.discard_energies[action.actor].swap_remove(fire_position);
+    // Remove Fire Energy from discard pile
+    let fire_position = state.discard_energies[action.actor]
+        .iter()
+        .position(|e| *e == EnergyType::Fire)
+        .expect("Should have Fire Energy in discard pile");
+    state.discard_energies[action.actor].swap_remove(fire_position);
 
-        // Attach the Fire Energy to Flareon EX
-        let flareon = state.in_play_pokemon[action.actor][in_play_idx]
-            .as_mut()
-            .expect("Flareon ex should be there");
-        flareon.attach_energy(&EnergyType::Fire, 1);
+    // Attach the Fire Energy to Flareon EX
+    let flareon = state.in_play_pokemon[action.actor][in_play_idx]
+        .as_mut()
+        .expect("Flareon ex should be there");
+    flareon.attach_energy(&EnergyType::Fire, 1);
 
-        // Deal 20 damage to Flareon EX using handle_damage
-        handle_damage(state, action.actor, &[(20, in_play_idx)], false);
-    })
+    // Deal 20 damage to Flareon EX using handle_damage
+    handle_damage(
+        state,
+        (action.actor, in_play_idx),
+        &[(20, action.actor, in_play_idx)],
+        false,
+    );
 }
