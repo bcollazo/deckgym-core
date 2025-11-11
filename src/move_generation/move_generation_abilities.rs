@@ -61,6 +61,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
+        AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
     }
 }
@@ -76,4 +77,18 @@ fn can_use_celesteela_ultra_thrusters(state: &State, card: &PlayedCard) -> bool 
     state
         .enumerate_bench_pokemon(state.current_player)
         .any(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
+}
+
+fn can_use_greninja_shifting_stream(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    let active = state.get_active(state.current_player);
+    if active.get_energy_type() != Some(EnergyType::Water) {
+        return false;
+    }
+    state
+        .enumerate_bench_pokemon(state.current_player)
+        .next()
+        .is_some()
 }

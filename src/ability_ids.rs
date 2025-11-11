@@ -30,6 +30,7 @@ pub enum AbilityId {
     A4a020SuicuneExLegendaryPulse,
     A4a022MiloticHealingRipples,
     A4a025RaikouExLegendaryPulse,
+    B1073GreninjaExShiftingStream,
     B1157HydreigonRoarInUnison,
 }
 
@@ -116,8 +117,11 @@ lazy_static::lazy_static! {
         m.insert("A4b 305", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("B1 073", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
+        m.insert("B1 256", AbilityId::B1073GreninjaExShiftingStream);
+        m.insert("B1 275", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("P-A 019", AbilityId::A1089GreninjaWaterShuriken);
