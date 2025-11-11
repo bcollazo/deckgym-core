@@ -191,6 +191,13 @@ impl Card {
         }
     }
 
+    pub(crate) fn is_item(&self) -> bool {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Item,
+            _ => false,
+        }
+    }
+
     pub(crate) fn get_type(&self) -> Option<EnergyType> {
         match self {
             Card::Pokemon(pokemon_card) => Some(pokemon_card.energy_type),

@@ -2,7 +2,7 @@ use crate::{
     actions::SimpleAction,
     card_ids::CardId,
     card_logic::can_rare_candy_evolve,
-    hooks::{can_play_support, get_stage, is_ultra_beast},
+    hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
     State,
@@ -30,6 +30,9 @@ pub fn generate_possible_trainer_actions(
     }
     if trainer_card.trainer_card_type == TrainerType::Supporter && !can_play_support(state) {
         return cannot_play_trainer(); // dont even check which type it is
+    }
+    if trainer_card.trainer_card_type == TrainerType::Item && !can_play_item(state) {
+        return cannot_play_trainer(); // cant play item cards
     }
 
     trainer_move_generation_implementation(state, trainer_card)

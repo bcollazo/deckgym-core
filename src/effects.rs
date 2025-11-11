@@ -13,6 +13,7 @@ pub enum CardEffect {
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TurnEffect {
     NoSupportCards,
+    NoItemCards,
     ReducedRetreatCost { amount: u8 },
     IncreasedDamage { amount: u32 },
     IncreasedDamageAgainstEx { amount: u32 },

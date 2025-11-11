@@ -498,6 +498,9 @@ fn forecast_effect_attack(
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
+        AttackId::B1109ChinglingJinglyNoise => {
+            damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
+        }
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
