@@ -69,6 +69,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
+        AbilityId::B1073GreninjaExShiftingStream => doutcome(greninja_ex_shifting_stream),
     }
 }
 
@@ -132,6 +133,17 @@ fn celesteela_ultra_thrusters(_: &mut StdRng, state: &mut State, action: &Action
     if choices.is_empty() {
         return;
     }
+    state.move_generation_stack.push((acting_player, choices));
+}
+
+fn greninja_ex_shifting_stream(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.
+    debug!("Greninja ex's Shifting Stream: Switching active Water Pokemon with a benched Pokemon");
+    let acting_player = action.actor;
+    let choices = state
+        .enumerate_bench_pokemon(acting_player)
+        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .collect::<Vec<_>>();
     state.move_generation_stack.push((acting_player, choices));
 }
 
