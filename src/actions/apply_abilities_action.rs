@@ -215,7 +215,14 @@ fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
             .as_mut()
             .expect("Pokemon should be there");
         pokemon.attach_energy(&EnergyType::Darkness, 2);
-        pokemon.apply_damage(30);
+
+        // Use handle_damage to properly trigger KO checks
+        handle_damage(
+            state,
+            (action.actor, in_play_idx),
+            &[(30, action.actor, in_play_idx)],
+            false,
+        );
     })
 }
 
