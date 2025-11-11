@@ -176,6 +176,7 @@ pub enum AttackId {
     B1085MegaAmpharosExLightningLancer,
     B1088LuxrayFlashImpact,
     B1102MegaAltariaExMegaHarmony,
+    B1109ChinglingJinglyNoise,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
     PA072AlolanGrimerPoisonGas,
@@ -590,6 +591,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 088", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 109", 0), AttackId::B1109ChinglingJinglyNoise);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);

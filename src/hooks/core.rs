@@ -253,6 +253,15 @@ pub(crate) fn can_play_support(state: &State) -> bool {
     !state.has_played_support && !has_modifiers && !blocked_by_gengar
 }
 
+pub(crate) fn can_play_item(state: &State) -> bool {
+    let has_modifiers = state
+        .get_current_turn_effects()
+        .iter()
+        .any(|x| matches!(x, TurnEffect::NoItemCards));
+
+    !has_modifiers
+}
+
 fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize, usize)) -> u32 {
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
