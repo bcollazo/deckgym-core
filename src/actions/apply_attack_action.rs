@@ -344,6 +344,7 @@ fn forecast_effect_attack(
         AttackId::A3002AlolanExeggutorTropicalHammer => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
         }
+        AttackId::A3010RowletSkillDive => direct_damage(10, false),
         AttackId::A3012DecidueyeExPierceThePain => direct_damage_if_damaged(100),
         AttackId::A3019SteeneeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
@@ -369,6 +370,7 @@ fn forecast_effect_attack(
         AttackId::A3a003RowletFuryAttack => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
         }
+        AttackId::A3a004DartrixSkillDive => direct_damage(20, false),
         AttackId::A3a005DecidueyeSnipingArrow => direct_damage(70, false),
         AttackId::A3a006BuzzwoleExBigBeat => {
             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
