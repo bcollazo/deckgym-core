@@ -368,6 +368,7 @@ fn forecast_effect_attack(
         AttackId::A3a003RowletFuryAttack => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
         }
+        AttackId::A3a004DartrixSkillDive => direct_damage(20, false),
         AttackId::A3a006BuzzwoleExBigBeat => {
             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
         }
