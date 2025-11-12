@@ -130,6 +130,7 @@ pub enum AttackId {
     A3116ToxapexSpikeCannon,
     A3122SolgaleoExSolBreaker,
     A3a003RowletFuryAttack,
+    A3a004DartrixSkillDive,
     A3a006BuzzwoleExBigBeat,
     A3a007PheromosaJumpBlues,
     A3a019TapuKokoExPlasmaHurricane,
@@ -404,6 +405,7 @@ lazy_static::lazy_static! {
 
         // A3a
         m.insert(("A3a 003", 0), AttackId::A3a003RowletFuryAttack);
+        m.insert(("A3a 004", 0), AttackId::A3a004DartrixSkillDive);
         m.insert(("A3a 006", 1), AttackId::A3a006BuzzwoleExBigBeat);
         m.insert(("A3a 007", 0), AttackId::A3a007PheromosaJumpBlues);
         m.insert(("A3a 019", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
@@ -603,6 +605,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 245", 0), AttackId::B1157HydreigonHyperRay);
+        m.insert(("B1 291", 0), AttackId::A3a004DartrixSkillDive);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 253", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
