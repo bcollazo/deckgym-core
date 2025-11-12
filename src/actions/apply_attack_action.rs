@@ -344,6 +344,7 @@ fn forecast_effect_attack(
         AttackId::A3002AlolanExeggutorTropicalHammer => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
         }
+        AttackId::A3010RowletSkillDive => direct_damage(10, false),
         AttackId::A3019SteeneeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
