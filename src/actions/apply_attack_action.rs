@@ -344,6 +344,7 @@ fn forecast_effect_attack(
         AttackId::A3002AlolanExeggutorTropicalHammer => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
         }
+        AttackId::A3012DecidueyeExPierceThePain => direct_damage_if_damaged(100),
         AttackId::A3019SteeneeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
@@ -368,6 +369,7 @@ fn forecast_effect_attack(
         AttackId::A3a003RowletFuryAttack => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
         }
+        AttackId::A3a005DecidueyeSnipingArrow => direct_damage(70, false),
         AttackId::A3a006BuzzwoleExBigBeat => {
             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
         }
@@ -873,6 +875,29 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
         }
         if choices.is_empty() {
             return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+        }
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+/// For attacks that can target opponent's Pokémon that have damage on them.
+/// e.g. Decidueye ex's Pierce the Pain
+fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
+            // Only add as a target if the Pokémon has damage (remaining_hp < total_hp)
+            if pokemon.remaining_hp < pokemon.total_hp {
+                choices.push(SimpleAction::ApplyDamage {
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![(damage, opponent, in_play_idx)],
+                    is_from_active_attack: true,
+                });
+            }
+        }
+        if choices.is_empty() {
+            return; // No valid targets - no damage applied
         }
         state.move_generation_stack.push((action.actor, choices));
     })
