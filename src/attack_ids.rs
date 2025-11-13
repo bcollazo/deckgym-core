@@ -502,12 +502,12 @@ lazy_static::lazy_static! {
         m.insert(("A4a 079", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 080", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 081", 0), AttackId::A4a025RaikouExVoltaicBullet);
-        m.insert(("A4a 101", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A4a 087", 0), AttackId::A4a010EnteiExBlazingBeatdown);
         m.insert(("A4a 088", 0), AttackId::A4a025RaikouExVoltaicBullet);
         m.insert(("A4a 090", 0), AttackId::A4a020SuicuneExCrystalWaltz);
         m.insert(("A4a 093", 0), AttackId::A1057PsyduckHeadache);
         m.insert(("A4a 096", 0), AttackId::A1069KinglerKOCrab);
+        m.insert(("A4a 101", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A4a 105", 0), AttackId::A4a023MantykeSplashyToss);
 
         // A4b
@@ -612,7 +612,6 @@ lazy_static::lazy_static! {
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 245", 0), AttackId::B1157HydreigonHyperRay);
-        m.insert(("B1 291", 0), AttackId::A3a004DartrixSkillDive);
         m.insert(("B1 251", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 253", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 254", 0), AttackId::B1036MegaBlazikenExMegaBurning);
@@ -628,6 +627,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 286", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 290", 0), AttackId::A3010RowletSkillDive);
+        m.insert(("B1 291", 0), AttackId::A3a004DartrixSkillDive);
         m.insert(("B1 292", 0), AttackId::A1046MoltresSkyAttack);
         m.insert(("B1 298", 0), AttackId::A1083ArticunoIceBeam);
         m.insert(("B1 299", 0), AttackId::A2050ManaphyOceanicGift);
