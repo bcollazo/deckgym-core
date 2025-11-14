@@ -362,6 +362,12 @@ fn forecast_effect_attack(
             1,
             CardEffect::ReducedDamage { amount: 20 },
         ),
+        AttackId::A3070SableyeCorner => damage_and_card_effect_attack(
+            index,
+            (state.current_player + 1) % 2,
+            1,
+            CardEffect::NoRetreat,
+        ),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -499,15 +505,18 @@ fn forecast_effect_attack(
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
         AttackId::B1088LuxrayFlashImpact => self_benched_damage(110, 20),
+        AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
+        AttackId::B1106JirachiStarDrop => direct_damage(30, true),
         AttackId::B1109ChinglingJinglyNoise => {
             damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
         }
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
+        AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
     }
 }
 
@@ -1411,6 +1420,32 @@ fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities,
                 .push((acting_player, possible_discards));
         }
     })
+}
+
+/// For Sableye's Dirty Throw (B1 101): Discard a card from hand to deal 70 damage. If can't discard, attack does nothing.
+fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Check if player has any cards in hand
+    if state.hands[acting_player].is_empty() {
+        // No cards in hand, attack does nothing (no damage)
+        doutcome(|_, _, _| {
+            // Do nothing
+        })
+    } else {
+        // Player has cards in hand, create choices to discard each card
+        // After discarding, the DiscardOwnCard action will deal the damage
+        doutcome_from_mutation(Box::new(move |_, state, action| {
+            let possible_discards: Vec<SimpleAction> = state.hands[action.actor]
+                .iter()
+                .map(|card| SimpleAction::DiscardOwnCard { card: card.clone() })
+                .collect();
+
+            if !possible_discards.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, possible_discards));
+            }
+        }))
+    }
 }
 
 fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
