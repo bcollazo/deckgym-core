@@ -124,6 +124,7 @@ pub enum AttackId {
     A3040AlolanVulpixCallForthCold,
     A3041AlolanNinetalesBlizzard,
     A3043CloysterGuardPress,
+    A3070SableyeCorner,
     A3071SpoinkPsycharge,
     A3085CosmogTeleport,
     A3086CosmoemStiffen,
@@ -179,11 +180,14 @@ pub enum AttackId {
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
     B1088LuxrayFlashImpact,
+    B1101SableyeDirtyThrow,
     B1102MegaAltariaExMegaHarmony,
+    B1106JirachiStarDrop,
     B1109ChinglingJinglyNoise,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
     B1157HydreigonHyperRay,
+    B1196SwabluSing,
     PA072AlolanGrimerPoisonGas,
     PA079DuskManeNecrozmaBlackMetal,
 }
@@ -383,6 +387,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForthCold);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
+        m.insert(("A3 070", 0), AttackId::A3070SableyeCorner);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);
         m.insert(("A3 086", 0), AttackId::A3086CosmoemStiffen);
@@ -604,11 +609,14 @@ lazy_static::lazy_static! {
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 088", 0), AttackId::B1088LuxrayFlashImpact);
+        m.insert(("B1 101", 0), AttackId::B1101SableyeDirtyThrow);
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 106", 0), AttackId::B1106JirachiStarDrop);
         m.insert(("B1 109", 0), AttackId::B1109ChinglingJinglyNoise);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 157", 0), AttackId::B1157HydreigonHyperRay);
+        m.insert(("B1 196", 0), AttackId::B1196SwabluSing);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 245", 0), AttackId::B1157HydreigonHyperRay);
