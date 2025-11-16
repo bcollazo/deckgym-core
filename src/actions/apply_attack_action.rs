@@ -1427,13 +1427,10 @@ fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mu
     // Check if player has any cards in hand
     if state.hands[acting_player].is_empty() {
         // No cards in hand, attack does nothing (no damage)
-        doutcome(|_, _, _| {
-            // Do nothing
-        })
+        active_damage_doutcome(0)
     } else {
-        // Player has cards in hand, create choices to discard each card
-        // After discarding, the DiscardOwnCard action will deal the damage
-        doutcome_from_mutation(Box::new(move |_, state, action| {
+        // Player has cards in hand, deal 70 damage and queue discard decision
+        active_damage_effect_doutcome(70, move |_, state, action| {
             let possible_discards: Vec<SimpleAction> = state.hands[action.actor]
                 .iter()
                 .map(|card| SimpleAction::DiscardOwnCard { card: card.clone() })
@@ -1444,7 +1441,7 @@ fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mu
                     .move_generation_stack
                     .push((action.actor, possible_discards));
             }
-        }))
+        })
     }
 }
 
