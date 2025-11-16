@@ -206,6 +206,12 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 vec![SimpleAction::DrawCard { amount: 1 }],
             ));
         }
+        if ability_id == AbilityId::A3b057SnorlaxExFullMouthManner {
+            // At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.
+            debug!("Full-Mouth Manner: Healing 20 damage from active");
+            let active = state.get_active_mut(player_ending_turn);
+            active.heal(20);
+        }
     }
 
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)

@@ -329,6 +329,9 @@ fn forecast_effect_attack(
         AttackId::A2a001HeracrossSingleHornThrow => {
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
         }
+        AttackId::A2a063SnorlaxCollapse => {
+            damage_and_self_status_attack(100, StatusCondition::Asleep)
+        }
         AttackId::A2a057ProbopassExDefensiveUnit => damage_and_card_effect_attack(
             index,
             state.current_player,
@@ -453,6 +456,9 @@ fn forecast_effect_attack(
         }
         AttackId::A3b053DragoniteExGigaImpact => giga_impact_attack(),
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
+        AttackId::A3b057SnorlaxExFlopDownPunch => {
+            damage_and_self_status_attack(130, StatusCondition::Asleep)
+        }
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
@@ -1049,6 +1055,17 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
 /// For attacks that deal damage and apply a status effect (e.g. Wigglituff Ex)
 fn damage_status_attack(damage: u32, status: StatusCondition) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, build_status_effect(status))
+}
+
+/// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
+fn damage_and_self_status_attack(
+    damage: u32,
+    status: StatusCondition,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.apply_status_condition(status);
+    })
 }
 
 /// For cards like "Meowth Pay Day" that draw a card and deal damage.
