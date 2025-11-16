@@ -69,6 +69,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::DiscardOpponentSupporter { supporter_card } => {
             forecast_discard_opponent_supporter(action.actor, supporter_card)
         }
+        SimpleAction::DiscardOwnCard { card } => {
+            forecast_discard_own_card(action.actor, card)
+        }
         SimpleAction::AttachFromDiscard {
             in_play_idx,
             num_random_energies,
@@ -397,6 +400,20 @@ fn forecast_discard_opponent_supporter(
             debug!(
                 "Mega Absol Ex: Discarded {:?} from opponent's hand",
                 supporter_clone
+            );
+        })],
+    )
+}
+
+fn forecast_discard_own_card(acting_player: usize, card: &Card) -> (Probabilities, Mutations) {
+    let card_clone = card.clone();
+    (
+        vec![1.0],
+        vec![Box::new(move |_rng, state, _action| {
+            state.discard_card_from_hand(acting_player, &card_clone);
+            debug!(
+                "Sableye's Dirty Throw: Discarded {:?} from hand",
+                card_clone
             );
         })],
     )
