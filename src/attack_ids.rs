@@ -130,6 +130,7 @@ pub enum AttackId {
     A3040AlolanVulpixCallForthCold,
     A3041AlolanNinetalesBlizzard,
     A3043CloysterGuardPress,
+    A3061AlolanGolemSuperZapCannon,
     A3070SableyeCorner,
     A3071SpoinkPsycharge,
     A3085CosmogTeleport,
@@ -409,6 +410,7 @@ lazy_static::lazy_static! {
         m.insert(("A3 040", 0), AttackId::A3040AlolanVulpixCallForthCold);
         m.insert(("A3 041", 0), AttackId::A3041AlolanNinetalesBlizzard);
         m.insert(("A3 043", 0), AttackId::A3043CloysterGuardPress);
+        m.insert(("A3 061", 0), AttackId::A3061AlolanGolemSuperZapCannon);
         m.insert(("A3 070", 0), AttackId::A3070SableyeCorner);
         m.insert(("A3 071", 0), AttackId::A3071SpoinkPsycharge);
         m.insert(("A3 085", 0), AttackId::A3085CosmogTeleport);

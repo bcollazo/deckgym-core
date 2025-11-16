@@ -372,6 +372,9 @@ fn forecast_effect_attack(
             1,
             CardEffect::ReducedDamage { amount: 20 },
         ),
+        AttackId::A3061AlolanGolemSuperZapCannon => {
+            self_energy_discard_attack(0, vec![EnergyType::Lightning, EnergyType::Lightning])
+        }
         AttackId::A3070SableyeCorner => damage_and_card_effect_attack(
             index,
             (state.current_player + 1) % 2,
