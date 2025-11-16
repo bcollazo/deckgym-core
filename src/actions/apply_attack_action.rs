@@ -259,6 +259,7 @@ fn forecast_effect_attack(
         AttackId::A1a011RapidashRisingLunge => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
         }
+        AttackId::A1a016SalazzlePoisonClaws => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
         AttackId::A1a021LumineonAquaLiner => direct_damage(50, true),
         AttackId::A1a026RaichuGigashock => {
@@ -280,7 +281,11 @@ fn forecast_effect_attack(
             1,
             CardEffect::ReducedDamage { amount: 30 },
         ),
+        AttackId::A1a054WhirlipedePoisonSting => {
+            damage_status_attack(20, StatusCondition::Poisoned)
+        }
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
+        AttackId::A2009RoseradePoisonousWhip => damage_status_attack(50, StatusCondition::Poisoned),
         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
         AttackId::A2029InfernapeExFlareBlitz => {
             discard_all_energy_of_type_attack(140, EnergyType::Fire)
@@ -301,6 +306,7 @@ fn forecast_effect_attack(
         AttackId::A2098SneaselDoubleScratch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A2103SkuntankPoisonGas => damage_status_attack(50, StatusCondition::Poisoned),
         AttackId::A2111SkarmoryMetalArms => {
             extra_damage_if_tool_attached(acting_player, state, 20, 30)
         }
@@ -341,6 +347,10 @@ fn forecast_effect_attack(
         AttackId::A2b044FlamigoDoubleKick => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
         }
+        AttackId::A2b046ArbokVenomousFang => damage_status_attack(70, StatusCondition::Poisoned),
+        AttackId::A2b047PaldeanWooperPoisonJab => {
+            damage_status_attack(10, StatusCondition::Poisoned)
+        }
         AttackId::A3002AlolanExeggutorTropicalHammer => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
         }
@@ -369,6 +379,9 @@ fn forecast_effect_attack(
             CardEffect::NoRetreat,
         ),
         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
+        AttackId::A3114GarbodorSuperPoisonBreath => {
+            damage_status_attack(70, StatusCondition::Poisoned)
+        }
         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
@@ -387,6 +400,7 @@ fn forecast_effect_attack(
         AttackId::A3a033LycanrocExLycanfang => {
             self_energy_discard_attack(0, vec![EnergyType::Fighting])
         }
+        AttackId::A3a042NihilegoNewWave => damage_status_attack(30, StatusCondition::Poisoned),
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
@@ -442,6 +456,7 @@ fn forecast_effect_attack(
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
+        AttackId::A4001OddishPoisonPowder => damage_status_attack(10, StatusCondition::Poisoned),
         AttackId::A4021ShuckleExTripleSlap => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
         }
@@ -449,6 +464,7 @@ fn forecast_effect_attack(
         AttackId::A4032MagbyToastyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
+        AttackId::A4053QwilfishPoisonSting => damage_status_attack(20, StatusCondition::Poisoned),
         AttackId::A4066PichuCracklyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
         }
@@ -463,6 +479,9 @@ fn forecast_effect_attack(
         AttackId::A4105BinacleDualChop => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
+        AttackId::A4107ZubatVenomousFang => damage_status_attack(10, StatusCondition::Poisoned),
+        AttackId::A4108GolbatVenomousFang => damage_status_attack(20, StatusCondition::Poisoned),
+        AttackId::A4109CrobatExVenomousSlash => damage_status_attack(70, StatusCondition::Poisoned),
         AttackId::A4124SkarmoryExSteelWing => damage_and_card_effect_attack(
             index,
             state.current_player,
@@ -480,6 +499,7 @@ fn forecast_effect_attack(
         AttackId::A4a010EnteiExBlazingBeatdown => {
             extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
         }
+        AttackId::A4a015TentacoolPoisonSting => damage_status_attack(20, StatusCondition::Poisoned),
         AttackId::A4a023MantykeSplashyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
         }
@@ -509,14 +529,16 @@ fn forecast_effect_attack(
         AttackId::B1102MegaAltariaExMegaHarmony => {
             bench_count_attack(acting_player, state, 40, 30, None)
         }
-        AttackId::B1106JirachiStarDrop => direct_damage(30, true),
+        AttackId::B1106JirachiStarDrop => direct_damage(30, false),
         AttackId::B1109ChinglingJinglyNoise => {
             damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
         }
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
+        AttackId::B1161MareaniePoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
         AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
+        AttackId::PA056EkansPoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
     }
 }
 
