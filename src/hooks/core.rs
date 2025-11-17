@@ -419,6 +419,29 @@ pub(crate) fn modify_damage(
     )
 }
 
+// Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
+pub(crate) fn get_attack_cost(
+    base_cost: &[EnergyType],
+    state: &State,
+    attacking_player: usize,
+) -> Vec<EnergyType> {
+    use crate::ability_ids::AbilityId;
+    let mut modified_cost = base_cost.to_vec();
+
+    // Check if opponent has Goomy with Sticky Membrane in the active spot
+    let opponent = (attacking_player + 1) % 2;
+    if let Some(opponent_active) = &state.in_play_pokemon[opponent][0] {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&opponent_active.get_id()[..]) {
+            if ability_id == AbilityId::B1177GoomyStickyMembrane {
+                // Add 1 Colorless energy to the attack cost
+                modified_cost.push(EnergyType::Colorless);
+            }
+        }
+    }
+
+    modified_cost
+}
+
 // Check if attached satisfies cost (considering Colorless and Serperior's ability)
 pub(crate) fn contains_energy(
     pokemon: &PlayedCard,

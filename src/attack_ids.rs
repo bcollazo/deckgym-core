@@ -201,6 +201,8 @@ pub enum AttackId {
     B1102MegaAltariaExMegaHarmony,
     B1106JirachiStarDrop,
     B1109ChinglingJinglyNoise,
+    B1121IndeedeeExPsychic,
+    B1179GoodraSpiralDrain,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
     B1157HydreigonHyperRay,
@@ -662,10 +664,12 @@ lazy_static::lazy_static! {
         m.insert(("B1 102", 0), AttackId::B1102MegaAltariaExMegaHarmony);
         m.insert(("B1 106", 0), AttackId::B1106JirachiStarDrop);
         m.insert(("B1 109", 0), AttackId::B1109ChinglingJinglyNoise);
+        m.insert(("B1 121", 0), AttackId::B1121IndeedeeExPsychic);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 157", 0), AttackId::B1157HydreigonHyperRay);
         m.insert(("B1 161", 0), AttackId::B1161MareaniePoisonSting);
+        m.insert(("B1 179", 0), AttackId::B1179GoodraSpiralDrain);
         m.insert(("B1 196", 0), AttackId::B1196SwabluSing);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
@@ -676,10 +680,12 @@ lazy_static::lazy_static! {
         m.insert(("B1 255", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 258", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 259", 0), AttackId::B1102MegaAltariaExMegaHarmony);
+        m.insert(("B1 260", 0), AttackId::B1121IndeedeeExPsychic);
         m.insert(("B1 262", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 272", 0), AttackId::B1002MegaPinsirExCriticalScissors);
         m.insert(("B1 274", 0), AttackId::B1031RapidashExSprintingFlare);
         m.insert(("B1 277", 0), AttackId::B1085MegaAmpharosExLightningLancer);
+        m.insert(("B1 278", 0), AttackId::B1121IndeedeeExPsychic);
         m.insert(("B1 280", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 284", 0), AttackId::B1036MegaBlazikenExMegaBurning);
         m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);

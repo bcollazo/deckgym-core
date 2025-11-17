@@ -542,10 +542,14 @@ fn forecast_effect_attack(
         AttackId::B1109ChinglingJinglyNoise => {
             damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
         }
+        AttackId::B1121IndeedeeExPsychic => {
+            damage_based_on_opponent_energy(acting_player, state, 30, 30)
+        }
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
         AttackId::B1161MareaniePoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
+        AttackId::B1179GoodraSpiralDrain => self_heal_attack(40, 0),
         AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
         AttackId::PA056EkansPoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
     }

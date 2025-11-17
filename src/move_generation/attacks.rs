@@ -1,5 +1,9 @@
 use crate::{
-    actions::SimpleAction, attack_ids::AttackId, effects::CardEffect, hooks::contains_energy, State,
+    actions::SimpleAction,
+    attack_ids::AttackId,
+    effects::CardEffect,
+    hooks::{contains_energy, get_attack_cost},
+    State,
 };
 
 pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
@@ -25,12 +29,8 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
 
         let pokemon_id = active_pokemon.get_id();
         for (i, attack) in active_pokemon.get_attacks().iter().enumerate() {
-            if contains_energy(
-                active_pokemon,
-                &attack.energy_required,
-                state,
-                current_player,
-            ) {
+            let modified_cost = get_attack_cost(&attack.energy_required, state, current_player);
+            if contains_energy(active_pokemon, &modified_cost, state, current_player) {
                 let attack_is_restricted = AttackId::from_pokemon_index(&pokemon_id[..], i)
                     .map(|attack_id| restricted_attacks.contains(&attack_id))
                     .unwrap_or(false);

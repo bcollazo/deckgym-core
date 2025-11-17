@@ -73,9 +73,11 @@ pub(crate) fn forecast_ability(
             panic!("Legendary Pulse is triggered at end of turn")
         }
         AbilityId::B1073GreninjaExShiftingStream => doutcome(greninja_ex_shifting_stream),
+        AbilityId::B1121IndeedeeExWatchOver => doutcome(indeedee_ex_watch_over),
         AbilityId::B1157HydreigonRoarInUnison => {
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
         }
+        AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
     }
 }
 
@@ -285,4 +287,11 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
         &[(20, action.actor, in_play_idx)],
         false,
     );
+}
+
+fn indeedee_ex_watch_over(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may heal 20 damage from your Active Pokémon.
+    debug!("Indeedee ex's Watch Over: Healing 20 damage from Active Pokemon");
+    let active = state.get_active_mut(action.actor);
+    active.heal(20);
 }

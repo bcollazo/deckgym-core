@@ -10,6 +10,7 @@ pub(crate) use core::can_play_item;
 pub(crate) use core::can_play_support;
 pub(crate) use core::contains_energy;
 pub(crate) use core::energy_missing;
+pub(crate) use core::get_attack_cost;
 pub(crate) use core::get_stage;
 pub(crate) use core::is_ultra_beast;
 pub(crate) use core::modify_damage;
