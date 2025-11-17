@@ -290,7 +290,7 @@ pub(crate) fn apply_evolve(
         let damage_taken = from_pokemon.total_hp - from_pokemon.remaining_hp;
         played_card.remaining_hp -= damage_taken;
         played_card.attached_energy = from_pokemon.attached_energy.clone();
-        played_card.attached_tool = from_pokemon.attached_tool.clone();
+        played_card.attached_tool = from_pokemon.attached_tool;
         played_card.cards_behind = from_pokemon.cards_behind.clone();
         played_card.cards_behind.push(from_pokemon.card.clone());
         state.in_play_pokemon[acting_player][position] = Some(played_card);
