@@ -1513,7 +1513,8 @@ fn magcargo_spurt_fire() -> (Probabilities, Mutations) {
     // For each time a Pokémon was chosen, do 50 damage to it.
     doutcome(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let mut targets: Vec<(u32, usize, usize)> = vec![];
+        let mut damage_map: std::collections::HashMap<(usize, usize), u32> =
+            std::collections::HashMap::new();
 
         for _ in 0..3 {
             let mut possible_targets: Vec<(usize, usize)> = state
@@ -1534,8 +1535,13 @@ fn magcargo_spurt_fire() -> (Probabilities, Mutations) {
 
             let rand_idx = rng.gen_range(0..possible_targets.len());
             let (target_player, target_idx) = possible_targets[rand_idx];
-            targets.push((50, target_player, target_idx));
+            *damage_map.entry((target_player, target_idx)).or_insert(0) += 50;
         }
+
+        let targets: Vec<(u32, usize, usize)> = damage_map
+            .into_iter()
+            .map(|((player, idx), dmg)| (dmg, player, idx))
+            .collect();
 
         let attacking_ref = (action.actor, 0);
         handle_damage(state, attacking_ref, &targets, true);
