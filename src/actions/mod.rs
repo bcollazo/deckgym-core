@@ -3,6 +3,7 @@ mod apply_action;
 mod apply_action_helpers;
 mod apply_attack_action;
 mod apply_trainer_action;
+mod attack_implementations;
 mod mutations;
 mod shared_mutations;
 mod types;
