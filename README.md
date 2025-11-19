@@ -38,6 +38,59 @@ cargo run --bin tui --features tui -- example_decks/venusaur-exeggutor.txt examp
 - **Shift+A/Shift+D**: Scroll through opponent's hand cards
 - **Q/Esc**: Quit
 
+## Data Export
+
+The simulator can export (state, action) pairs during gameplay for machine learning and data analysis applications. This feature outputs portable JSON files that are easy to consume from any programming language.
+
+### Usage
+
+Use the `--data-output` flag to specify an output folder:
+
+```bash
+cargo run -- simulate example_decks/fire.txt example_decks/flareon.txt \
+  -n 1000 \
+  --players r,r \
+  --data-output ./exported_data
+```
+
+### Output Structure
+
+The data is organized as:
+```
+exported_data/
+├── <game_id_1>/
+│   ├── ply_0000.json
+│   ├── ply_0001.json
+│   └── ...
+├── <game_id_2>/
+│   ├── ply_0000.json
+│   └── ...
+└── ...
+```
+
+Each JSON file contains:
+- `game_id`: UUID of the game
+- `ply`: Sequential decision point number
+- `actor`: Which player (0 or 1) made the decision
+- `state`: Complete game state (hands, decks, in-play Pokemon, etc.)
+- `playable_actions`: All available actions at this decision point
+- `chosen_action`: The action that was actually taken
+
+### Processing the Data
+
+A Python example is included to demonstrate data loading and feature extraction:
+
+```bash
+python examples/load_exported_data.py ./exported_data
+```
+
+The JSON format makes it easy to:
+- Train policy networks (predict actions from states)
+- Train value networks (estimate win probability)
+- Perform imitation learning
+- Build custom machine learning models
+- Analyze gameplay patterns and statistics
+
 ## Contributing
 
 New to Open Source? See [CONTRIBUTING.md](./CONTRIBUTING.md).

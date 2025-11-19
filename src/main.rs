@@ -48,6 +48,10 @@ enum Commands {
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
+
+        /// Output folder for exporting (state, action) pairs in JSON format
+        #[arg(long)]
+        data_output: Option<String>,
     },
     /// Optimize an incomplete deck against enemy decks
     Optimize {
@@ -102,12 +106,25 @@ fn main() {
             parallel,
             threads,
             verbose,
+            data_output,
         } => {
             initialize_logger(verbose);
 
             warn!("Welcome to {} simulation!", "deckgym".blue().bold());
 
-            simulate(&deck_a, &deck_b, players, num, seed, parallel, threads);
+            let sim_config = SimulationConfig {
+                num_games: num,
+                players,
+                seed,
+                data_output,
+            };
+
+            let parallel_config = ParallelConfig {
+                enabled: parallel,
+                num_threads: threads,
+            };
+
+            simulate(&deck_a, &deck_b, sim_config, parallel_config);
         }
         Commands::Optimize {
             incomplete_deck,
@@ -128,6 +145,7 @@ fn main() {
                 num_games: num,
                 players,
                 seed,
+                data_output: None,
             };
             let parallel_config = ParallelConfig {
                 enabled: parallel,
