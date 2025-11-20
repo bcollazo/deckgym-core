@@ -22,12 +22,12 @@ fn main() {
     let num_simulations = 1_000;
     let deck_a_path = "example_decks/mewtwoex.txt";
     let deck_b_path = "example_decks/mewtwoex.txt"; // Same deck (mirror match)
-    let player_codes = vec![PlayerCode::R, PlayerCode::R]; // Random players
+    let player_codes = vec![PlayerCode::ET, PlayerCode::ET]; // Expert-Trained players
 
     println!("========================================");
     println!("Deck Statistics Analysis");
     println!("========================================");
-    println!("Running {} games of R vs R", num_simulations);
+    println!("Running {} games of ET vs ET", num_simulations);
     println!("Deck: {}", deck_a_path);
     println!("========================================\n");
 
