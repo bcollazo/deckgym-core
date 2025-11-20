@@ -525,7 +525,11 @@ pub(crate) fn forecast_attack(
 //     }
 // }
 
-fn celebi_powerful_bloom(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+pub(crate) fn celebi_powerful_bloom(
+    acting_player: usize,
+    state: &State,
+    _: usize,
+) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(acting_player);
     let total_energy = active_pokemon.attached_energy.len();
 
@@ -1712,7 +1716,7 @@ mod test {
         active.attached_energy.push(EnergyType::Grass);
         active.attached_energy.push(EnergyType::Fire);
 
-        let (probabilities, _mutations) = celebi_powerful_bloom(0, &state);
+        let (probabilities, _mutations) = celebi_powerful_bloom(0, &state, 0);
 
         // Should have 3 outcomes (0, 1, 2 heads)
         assert_eq!(probabilities.len(), 3);
@@ -1725,7 +1729,7 @@ mod test {
         // Test with no energy attached
         let mut state_no_energy = State::default();
         state_no_energy.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
-        let (probabilities_no_energy, _) = celebi_powerful_bloom(0, &state_no_energy);
+        let (probabilities_no_energy, _) = celebi_powerful_bloom(0, &state_no_energy, 0);
 
         // Should have 1 outcome (0 damage)
         assert_eq!(probabilities_no_energy.len(), 1);

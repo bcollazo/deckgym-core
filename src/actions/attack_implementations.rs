@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
-        apply_attack_action::waterfall_evolution,
+        apply_attack_action::{celebi_powerful_bloom, waterfall_evolution},
     },
     State,
 };
@@ -132,7 +132,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Flip 4 coins. This attack does 40 damage for each heads.", todo_implementation);
         // map.insert("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
         // map.insert("Flip 4 coins. This attack does 50 damage for each heads.", todo_implementation);
-        // map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", todo_implementation);
+        map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", celebi_powerful_bloom);
         // map.insert("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.", todo_implementation);
         // map.insert("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.", todo_implementation);
         // map.insert("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.", todo_implementation);
