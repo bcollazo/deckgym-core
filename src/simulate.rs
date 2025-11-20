@@ -51,7 +51,7 @@ impl Simulation {
         })
     }
 
-    fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
+    pub fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
         self.handler_factories.push(|| Box::new(T::default()));
         self
     }
