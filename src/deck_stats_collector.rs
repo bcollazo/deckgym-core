@@ -18,9 +18,13 @@ pub struct DeckStatsCollector {
     // Per-game tracking (cleared on game start)
     current_game_pokemon_mat_turns: HashMap<String, u8>,
     current_game_damage_dealt: [u32; 2],
-    current_game_energy_attached: [u32; 2],
-    current_game_cards_drawn: [u32; 2],
+    current_game_total_energy_on_field: u32,
+    current_game_total_cards_in_hands: u32,
     current_game_deck_out_turn: [Option<u8>; 2],
+
+    // Accumulators for per-game totals
+    current_game_energy_attached: u32,
+    current_game_cards_drawn: u32,
 
     // Aggregate statistics across all games
     // Turn when deck became empty (deck out)
@@ -66,9 +70,11 @@ impl DeckStatsCollector {
             num_games: 0,
             current_game_pokemon_mat_turns: HashMap::new(),
             current_game_damage_dealt: [0, 0],
-            current_game_energy_attached: [0, 0],
-            current_game_cards_drawn: [0, 0],
+            current_game_total_energy_on_field: 0,
+            current_game_total_cards_in_hands: 0,
             current_game_deck_out_turn: [None, None],
+            current_game_energy_attached: 0,
+            current_game_cards_drawn: 0,
             deck_out_turns: Vec::new(),
             pokemon_mat_appearances: HashMap::new(),
             total_damage_per_player: [0, 0],
@@ -80,6 +86,26 @@ impl DeckStatsCollector {
             prizes_per_game: Vec::new(),
             damage_per_game: Vec::new(),
         }
+    }
+
+    fn count_energy_on_field(&self, state: &State) -> u32 {
+        let mut total = 0u32;
+        for player in 0..2 {
+            for slot in &state.in_play_pokemon[player] {
+                if let Some(pokemon) = slot {
+                    total += pokemon.attached_energy.len() as u32;
+                }
+            }
+        }
+        total
+    }
+
+    fn count_cards_drawn_from_decks(&self, state: &State) -> u32 {
+        // Calculate cards drawn by comparing initial deck size to current deck size
+        let initial_deck_size: u32 = 20; // Standard Pokemon TCG Pocket deck size
+        let cards_remaining = (state.decks[0].cards.len() + state.decks[1].cards.len()) as u32;
+        let total_initial = initial_deck_size * 2;
+        total_initial.saturating_sub(cards_remaining)
     }
 
     fn track_pokemon_on_mat(&mut self, state: &State) {
@@ -128,50 +154,54 @@ impl SimulationEventHandler for DeckStatsCollector {
         // Reset per-game tracking
         self.current_game_pokemon_mat_turns.clear();
         self.current_game_damage_dealt = [0, 0];
-        self.current_game_energy_attached = [0, 0];
-        self.current_game_cards_drawn = [0, 0];
+        self.current_game_total_energy_on_field = 0;
+        self.current_game_total_cards_in_hands = 0; // Will be set on first snapshot
         self.current_game_deck_out_turn = [None, None];
+        self.current_game_energy_attached = 0;
+        self.current_game_cards_drawn = 0;
     }
 
     fn on_action(
         &mut self,
         _game_id: Uuid,
         state_before_action: &State,
-        actor: usize,
+        _actor: usize,
         _playable_actions: &[Action],
         action: &Action,
     ) {
-        // Track various statistics based on action type
-        match &action.action {
-            SimpleAction::DrawCard { amount } => {
-                self.current_game_cards_drawn[actor] += *amount as u32;
-            }
-            SimpleAction::Place(card, _idx) => {
-                if let Card::Pokemon(_) = card {
-                    let pokemon_name = card.get_name();
-                    // Track first Pokemon played in the game
-                    if self.current_game_pokemon_mat_turns.is_empty() {
-                        *self.first_pokemon_played.entry(pokemon_name).or_insert(0) += 1;
-                    }
+        // Track first Pokemon played
+        if let SimpleAction::Place(card, _idx) = &action.action {
+            if let Card::Pokemon(_) = card {
+                let pokemon_name = card.get_name();
+                if self.current_game_pokemon_mat_turns.is_empty() {
+                    *self.first_pokemon_played.entry(pokemon_name).or_insert(0) += 1;
                 }
             }
-            SimpleAction::Attach { attachments, .. } => {
-                // Track energy attachments
-                let total_energy: u32 = attachments.iter().map(|(amount, _, _)| amount).sum();
-                self.current_game_energy_attached[actor] += total_energy;
-            }
-            SimpleAction::Attack(_) => {
-                // Damage tracking would require state comparison after action is applied
-                // For now we estimate based on game outcome (prizes = KOs)
-            }
-            _ => {}
         }
 
-        // After action tracking (we need to simulate applying the action to get new state)
-        // For now, we'll do most tracking in on_game_end and on_action with current state
+        // Take snapshot at end of turn to capture all state changes
+        if matches!(action.action, SimpleAction::EndTurn) {
+            // Count current state
+            let current_energy = self.count_energy_on_field(state_before_action);
+            let current_cards_drawn = self.count_cards_drawn_from_decks(state_before_action);
+
+            // Energy delta since last turn
+            let energy_delta = current_energy.saturating_sub(self.current_game_total_energy_on_field);
+            self.current_game_energy_attached += energy_delta;
+
+            // Cards drawn is absolute from deck size
+            self.current_game_cards_drawn = current_cards_drawn;
+
+            // Update tracking for next turn
+            self.current_game_total_energy_on_field = current_energy;
+
+            // Track other per-turn stats
+            self.track_bench_size(state_before_action);
+        }
+
+        // Always track these
         self.track_pokemon_on_mat(state_before_action);
         self.track_deck_out(state_before_action);
-        self.track_bench_size(state_before_action);
     }
 
     fn on_game_end(&mut self, _game_id: Uuid, state: State, _outcome: Option<GameOutcome>) {
@@ -209,15 +239,11 @@ impl SimulationEventHandler for DeckStatsCollector {
                 .push(turn);
         }
 
-        // Record energy attached (sum across both players for now)
-        let total_energy_attached =
-            self.current_game_energy_attached[0] + self.current_game_energy_attached[1];
-        self.energy_attached_per_game.push(total_energy_attached);
-
-        // Record cards drawn
-        let total_cards_drawn =
-            self.current_game_cards_drawn[0] + self.current_game_cards_drawn[1];
-        self.cards_drawn_per_game.push(total_cards_drawn);
+        // Record energy attached and cards drawn
+        self.energy_attached_per_game
+            .push(self.current_game_energy_attached);
+        self.cards_drawn_per_game
+            .push(self.current_game_cards_drawn);
 
         // Record prizes
         let total_prizes = state.points[0] + state.points[1];
