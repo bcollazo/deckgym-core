@@ -4,6 +4,9 @@ pub enum Mechanic {
     SelfHeal {
         amount: u32,
     },
+    DeckSearchByEnergy {
+        energy_type: EnergyType,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

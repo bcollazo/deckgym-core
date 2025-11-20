@@ -27,12 +27,11 @@ pub(crate) fn pokemon_search_outcomes(
 }
 
 pub(crate) fn pokemon_search_outcomes_by_type(
-    acting_player: usize,
     state: &State,
     basic_only: bool,
     energy_type: EnergyType,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+    pokemon_search_outcomes_with_filter(state.current_player, state, move |card: &&Card| {
         let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check

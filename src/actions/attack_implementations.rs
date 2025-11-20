@@ -258,7 +258,12 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Put 1 random Poliwag from your deck onto your Bench.", todo_implementation);
     // map.insert("Put 1 random Weedle from your deck onto your Bench.", todo_implementation);
     // map.insert("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put 1 random [G] Pokémon from your deck into your hand.", todo_implementation);
+    map.insert(
+        "Put 1 random [G] Pokémon from your deck into your hand.",
+        Mechanic::DeckSearchByEnergy {
+            energy_type: EnergyType::Grass,
+        },
+    );
     // map.insert("Put a random Pokémon from your deck into your hand.", todo_implementation);
     map.insert("Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", Mechanic::MagikarpWaterfallEvolution);
     // map.insert("Put a random card that evolves from Rockruff from your deck into your hand.", todo_implementation);

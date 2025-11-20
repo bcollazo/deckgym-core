@@ -46,11 +46,8 @@ pub(crate) fn forecast_attack(
     let Some(effect_text) = &attack.effect else {
         return active_damage_doutcome(attack.fixed_damage);
     };
-    // Use the new map. If there is an entry per attack.effect, then use that as key.
-    // Take function and use it here.
     let mechanic = ATTACK_EFFECT_MAP.get(&effect_text[..]);
     let Some(mechanic) = mechanic else {
-        // return forecast_effect_attack(acting_player, state, index);
         panic!(
             "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
             effect_text, attack, active.card
@@ -58,18 +55,6 @@ pub(crate) fn forecast_attack(
     };
     forecast_effect_attack(state, &attack, mechanic)
 }
-
-//     let attack_id = {
-//         let active = state.get_active(acting_player);
-//         AttackId::from_pokemon_index(&active.get_id()[..], index).unwrap_or_else(|| {
-//             panic!(
-//                 "Attack not found for Pokemon: {:?} {:?} {:?}",
-//                 active.card,
-//                 active.card.get_attacks(),
-//                 index
-//             )
-//         })
-//     };
 
 // Handles attacks that have effects.
 fn forecast_effect_attack(
@@ -97,14 +82,12 @@ fn forecast_effect_attack(
             state,
             attack,
         ),
+        Mechanic::DeckSearchByEnergy { energy_type } => {
+            pokemon_search_outcomes_by_type(state, false, *energy_type)
+        }
     }
 }
 //     match attack_id {
-//         AttackId::A1003VenusaurMegaDrain => self_heal_attack(30, index),
-//         AttackId::A1004VenusaurExGiantBloom => self_heal_attack(30, index),
-//         AttackId::A1005CaterpieFindAFriend => {
-//             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
-//         }
 //         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
 //         AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
 //         AttackId::A2b002KakunaStringShot => {
