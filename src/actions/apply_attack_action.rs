@@ -6,10 +6,10 @@ use crate::{
         apply_action_helpers::handle_damage,
         apply_evolve,
         attack_implementations::ATTACK_EFFECT_MAP,
+        attacks::Mechanic,
         mutations::{doutcome, doutcome_from_mutation},
         Action,
     },
-    attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, get_stage},
     models::{Attack, Card, EnergyType, PlayedCard, StatusCondition},
@@ -33,12 +33,6 @@ use super::{
     SimpleAction,
 };
 
-/// A function that computes the outcome of an attack effect.
-/// Takes the acting player, current game state, and attack index.
-/// Returns the probability distribution and corresponding mutations.
-pub type Implementation =
-    Box<dyn Fn(usize, &State, &Attack) -> (Probabilities, Mutations) + Send + Sync>;
-
 // This is a reducer of all actions relating to attacks.
 pub(crate) fn forecast_attack(
     acting_player: usize,
@@ -54,23 +48,17 @@ pub(crate) fn forecast_attack(
     };
     // Use the new map. If there is an entry per attack.effect, then use that as key.
     // Take function and use it here.
-    let potential_implementation = ATTACK_EFFECT_MAP.get(&effect_text[..]);
-    let Some(implementation_fn) = potential_implementation else {
+    let mechanic = ATTACK_EFFECT_MAP.get(&effect_text[..]);
+    let Some(mechanic) = mechanic else {
         // return forecast_effect_attack(acting_player, state, index);
         panic!(
             "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
             effect_text, attack, active.card
         );
     };
-    implementation_fn(acting_player, state, &attack)
+    forecast_effect_attack(state, &attack, mechanic)
 }
 
-/// Handles attacks that have effects.
-// fn forecast_effect_attack(
-//     acting_player: usize,
-//     state: &State,
-//     index: usize,
-// ) -> (Probabilities, Mutations) {
 //     let attack_id = {
 //         let active = state.get_active(acting_player);
 //         AttackId::from_pokemon_index(&active.get_id()[..], index).unwrap_or_else(|| {
@@ -82,6 +70,35 @@ pub(crate) fn forecast_attack(
 //             )
 //         })
 //     };
+
+// Handles attacks that have effects.
+fn forecast_effect_attack(
+    state: &State,
+    attack: &Attack,
+    mechanic: &Mechanic,
+) -> (Probabilities, Mutations) {
+    match mechanic {
+        Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
+        Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
+        Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
+        Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
+        Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
+        Mechanic::MoltresExInfernoDance => moltres_inferno_dance(),
+        Mechanic::MagikarpWaterfallEvolution => waterfall_evolution(state),
+        Mechanic::ChargeBenchGrass {
+            amount,
+            energy_type,
+        } => energy_bench_attack(
+            *amount,
+            *energy_type,
+            Some(Box::new(|p: &PlayedCard| {
+                p.card.get_type() == Some(EnergyType::Grass)
+            })),
+            state,
+            attack,
+        ),
+    }
+}
 //     match attack_id {
 //         AttackId::A1003VenusaurMegaDrain => self_heal_attack(30, index),
 //         AttackId::A1004VenusaurExGiantBloom => self_heal_attack(30, index),
@@ -535,12 +552,8 @@ pub(crate) fn forecast_attack(
 //     }
 // }
 
-pub(crate) fn celebi_powerful_bloom(
-    acting_player: usize,
-    state: &State,
-    _: &Attack,
-) -> (Probabilities, Mutations) {
-    let active_pokemon = state.get_active(acting_player);
+pub(crate) fn celebi_powerful_bloom(state: &State) -> (Probabilities, Mutations) {
+    let active_pokemon = state.get_active(state.current_player);
     let total_energy = active_pokemon.attached_energy.len();
 
     if total_energy == 0 {
@@ -581,11 +594,7 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-pub(crate) fn mega_burning_attack(
-    _: usize,
-    _: &State,
-    attack: &Attack,
-) -> (Probabilities, Mutations) {
+pub(crate) fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         // Discard one Fire energy
         state.discard_from_active(action.actor, &[EnergyType::Fire]);
@@ -598,15 +607,11 @@ pub(crate) fn mega_burning_attack(
 }
 
 /// For Magikarp's Waterfall Evolution: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
-pub(crate) fn waterfall_evolution(
-    acting_player: usize,
-    state: &State,
-    _: &Attack,
-) -> (Probabilities, Mutations) {
-    let active_pokemon = state.get_active(acting_player);
+pub(crate) fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
+    let active_pokemon = state.get_active(state.current_player);
 
     // Find all cards in deck that can evolve from the active Pokemon
-    let evolution_cards: Vec<Card> = state.decks[acting_player]
+    let evolution_cards: Vec<Card> = state.decks[state.current_player]
         .cards
         .iter()
         .filter(|card| can_evolve_into(card, active_pokemon))
@@ -640,19 +645,14 @@ pub(crate) fn waterfall_evolution(
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
-pub(crate) fn manaphy_oceanic(
-    acting_player: usize,
-    _: &State,
-    _: &Attack,
-) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(0, move |_, state, _| {
+pub(crate) fn manaphy_oceanic() -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, action| {
         let benched_pokemon: Vec<usize> = state
-            .enumerate_bench_pokemon(acting_player)
+            .enumerate_bench_pokemon(action.actor)
             .map(|(idx, _)| idx)
             .collect();
 
         let mut choices = Vec::new();
-
         if benched_pokemon.len() == 1 {
             // Only 1 benched Pokémon, can only choose that one
             choices.push(SimpleAction::Attach {
@@ -674,18 +674,13 @@ pub(crate) fn manaphy_oceanic(
                 }
             }
         }
-
         if !choices.is_empty() {
-            state.move_generation_stack.push((acting_player, choices));
+            state.move_generation_stack.push((action.actor, choices));
         }
     })
 }
 
-pub(crate) fn palkia_dimensional_storm(
-    _: usize,
-    state: &State,
-    _: &Attack,
-) -> (Probabilities, Mutations) {
+pub(crate) fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
     let targets: Vec<(u32, usize)> = state
@@ -698,7 +693,7 @@ pub(crate) fn palkia_dimensional_storm(
     })
 }
 
-pub(crate) fn moltres_inferno_dance(_: usize, _: &State, _: &Attack) -> (Probabilities, Mutations) {
+pub(crate) fn moltres_inferno_dance() -> (Probabilities, Mutations) {
     let probabilities = vec![0.125, 0.375, 0.375, 0.125]; // 0,1,2,3 heads
     let mutations = probabilities
         .iter()
@@ -796,29 +791,34 @@ fn generate_distributions(
 }
 
 /// Deal damage and attach energy to a pokemon of choice in the bench.
-pub(crate) fn energy_bench_attack<F>(
+pub(crate) fn energy_bench_attack(
     amount: u32,
     energy: EnergyType,
-    bench_card_filter: F,
-) -> Implementation
-where
-    F: Fn(&PlayedCard) -> bool + 'static + Send + Sync + Copy,
-{
-    Box::new(move |_: usize, _: &State, attack: &Attack| {
-        active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
-            let choices = state
-                .enumerate_bench_pokemon(action.actor)
-                .filter(|(_, played_card)| bench_card_filter(played_card))
-                .map(|(in_play_idx, _)| SimpleAction::Attach {
-                    attachments: vec![(amount, energy, in_play_idx)],
-                    is_turn_energy: false,
-                })
-                .collect::<Vec<_>>();
-            if choices.is_empty() {
-                return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+    bench_card_filter: Option<Box<dyn Fn(&PlayedCard) -> bool>>,
+    state: &State,
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    let choices = state
+        .enumerate_bench_pokemon(state.current_player)
+        .filter(|(_, played_card)| {
+            if let Some(ref filter) = bench_card_filter {
+                filter(played_card)
+            } else {
+                true
             }
-            state.move_generation_stack.push((action.actor, choices));
         })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(amount, energy, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        if choices.is_empty() {
+            return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+        }
+        state
+            .move_generation_stack
+            .push((action.actor, choices.clone()));
     })
 }
 
@@ -1196,12 +1196,12 @@ fn flip_until_tails_attack(damage_per_heads: u32) -> (Probabilities, Mutations) 
     probabilistic_damage_attack(probabilities, damages)
 }
 
-// fn self_heal_attack(heal: u32, index: usize) -> (Probabilities, Mutations) {
-//     index_active_damage_doutcome(index, move |_, state, action| {
-//         let active = state.get_active_mut(action.actor);
-//         active.heal(heal);
-//     })
-// }
+fn self_heal_attack(heal: u32, attack: &Attack) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.heal(heal);
+    })
+}
 
 // fn damage_and_turn_effect_attack(
 //     index: usize,
@@ -1738,14 +1738,13 @@ mod test {
 
         // Set up a Pokemon in the active position
         let celebi = get_card_by_enum(CardId::A1a003CelebiEx);
-        let attack = &celebi.get_attacks()[0];
         state.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
 
         let active = state.get_active_mut(0);
         active.attached_energy.push(EnergyType::Grass);
         active.attached_energy.push(EnergyType::Fire);
 
-        let (probabilities, _mutations) = celebi_powerful_bloom(0, &state, attack);
+        let (probabilities, _mutations) = celebi_powerful_bloom(&state);
 
         // Should have 3 outcomes (0, 1, 2 heads)
         assert_eq!(probabilities.len(), 3);
@@ -1758,7 +1757,7 @@ mod test {
         // Test with no energy attached
         let mut state_no_energy = State::default();
         state_no_energy.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
-        let (probabilities_no_energy, _) = celebi_powerful_bloom(0, &state_no_energy, attack);
+        let (probabilities_no_energy, _) = celebi_powerful_bloom(&state_no_energy);
 
         // Should have 1 outcome (0 damage)
         assert_eq!(probabilities_no_energy.len(), 1);

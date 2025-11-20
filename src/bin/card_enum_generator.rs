@@ -250,19 +250,11 @@ fn print_attack_map(card_map: &IndexMap<String, Card>) {
     println!("use std::collections::HashMap;");
     println!("use std::sync::LazyLock;");
     println!();
-    println!("use crate::{{");
-    println!("    actions::apply_action_helpers::{{Mutations, Probabilities}},");
-    println!("    State,");
-    println!("}};");
+    println!("use crate::{{actions::attacks::Mechanic, models::EnergyType}};");
     println!();
-    println!("/// A function that computes the outcome of an attack effect.");
-    println!("/// Takes the acting player, current game state, and attack index.");
-    println!("/// Returns the probability distribution and corresponding mutations.");
-    println!("pub type Implementation = fn(acting_player: usize, state: &State, index: usize) -> (Probabilities, Mutations);");
-    println!();
-    println!("/// Map from attack effect text to its implementation.");
-    println!("pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = LazyLock::new(|| {{");
-    println!("    let mut map: HashMap<&'static str, Implementation> = HashMap::new();");
+    println!("/// Map from attack effect text to its Mechanic.");
+    println!("pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {{");
+    println!("    let mut map: HashMap<&'static str, Mechanic> = HashMap::new();");
 
     // Sort effect texts alphabetically
     let mut sorted_effects: Vec<&String> = effect_texts.keys().collect();
