@@ -5,18 +5,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::{
-    actions::{
-        apply_action_helpers::{Mutations, Probabilities},
-        apply_attack_action::{celebi_powerful_bloom, mega_burning_attack, waterfall_evolution},
+    actions::apply_attack_action::{
+        celebi_powerful_bloom, energy_bench_attack, manaphy_oceanic, mega_burning_attack,
+        moltres_inferno_dance, palkia_dimensional_storm, waterfall_evolution, Implementation,
     },
-    State,
+    models::{EnergyType, PlayedCard},
 };
-
-/// A function that computes the outcome of an attack effect.
-/// Takes the acting player, current game state, and attack index.
-/// Returns the probability distribution and corresponding mutations.
-pub type Implementation =
-    fn(acting_player: usize, state: &State, index: usize) -> (Probabilities, Mutations);
 
 /// Map from attack effect text to its implementation.
 pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = LazyLock::new(
@@ -38,7 +32,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
         // map.insert("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.", todo_implementation);
         // map.insert("Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
-        // map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", todo_implementation);
+        map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", Box::new(manaphy_oceanic));
         // map.insert("Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.", todo_implementation);
         // map.insert("Discard 2 [L] Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
@@ -47,8 +41,8 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon.", todo_implementation);
         // map.insert("Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.", todo_implementation);
         // map.insert("Discard 2 random Energy from this Pokémon.", todo_implementation);
-        // map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
-        map.insert("Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.", mega_burning_attack);
+        map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", Box::new(palkia_dimensional_storm));
+        map.insert("Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.", Box::new(mega_burning_attack));
         // map.insert("Discard a [F] Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard a [L] Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard a [L] Energy from your opponent's Active Pokémon.", todo_implementation);
@@ -120,7 +114,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.", todo_implementation);
         // map.insert("Flip 2 coins. This attack does 80 damage for each heads.", todo_implementation);
         // map.insert("Flip 3 coins. For each heads, a card is chosen at random from your opponent's hand. Your opponent reveals that card and shuffles it into their deck.", todo_implementation);
-        // map.insert("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.", todo_implementation);
+        map.insert("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.", Box::new(moltres_inferno_dance));
         // map.insert("Flip 3 coins. This attack does 10 damage for each heads.", todo_implementation);
         // map.insert("Flip 3 coins. This attack does 20 damage for each heads.", todo_implementation);
         // map.insert("Flip 3 coins. This attack does 40 damage for each heads.", todo_implementation);
@@ -132,7 +126,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Flip 4 coins. This attack does 40 damage for each heads.", todo_implementation);
         // map.insert("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
         // map.insert("Flip 4 coins. This attack does 50 damage for each heads.", todo_implementation);
-        map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", celebi_powerful_bloom);
+        map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", Box::new(celebi_powerful_bloom));
         // map.insert("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.", todo_implementation);
         // map.insert("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.", todo_implementation);
         // map.insert("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.", todo_implementation);
@@ -258,7 +252,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.", todo_implementation);
         // map.insert("Put 1 random [G] Pokémon from your deck into your hand.", todo_implementation);
         // map.insert("Put a random Pokémon from your deck into your hand.", todo_implementation);
-        map.insert("Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", waterfall_evolution);
+        map.insert("Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", Box::new(waterfall_evolution));
         // map.insert("Put a random card that evolves from Rockruff from your deck into your hand.", todo_implementation);
         // map.insert("Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck.", todo_implementation);
         // map.insert("Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.", todo_implementation);
@@ -268,7 +262,9 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
         // map.insert("Take 3 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
         // map.insert("Take a [C] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
-        // map.insert("Take a [G] Energy from your Energy Zone and attach it to 1 of your Benched [G] Pokémon.", todo_implementation);
+        map.insert("Take a [G] Energy from your Energy Zone and attach it to 1 of your Benched [G] Pokémon.", Box::new(energy_bench_attack(1, EnergyType::Grass, move |card: &PlayedCard| {
+    card.get_energy_type() == Some(EnergyType::Grass)
+            })));
         // map.insert("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
         // map.insert("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
         // map.insert("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched [L] Pokémon.", todo_implementation);

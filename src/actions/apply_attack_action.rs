@@ -12,22 +12,32 @@ use crate::{
     attack_ids::AttackId,
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, get_stage},
-    models::{Card, EnergyType, StatusCondition},
+    models::{Attack, Card, EnergyType, PlayedCard, StatusCondition},
     State,
 };
 
 use super::{
     apply_action_helpers::{Mutations, Probabilities},
     mutations::{
-        active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
-        active_damage_mutation, build_status_effect, damage_effect_doutcome,
-        index_active_damage_doutcome,
+        active_damage_doutcome,
+        active_damage_effect_doutcome,
+        active_damage_effect_mutation,
+        active_damage_mutation,
+        build_status_effect,
+        damage_effect_doutcome,
+        // index_active_damage_doutcome,
     },
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
     },
     SimpleAction,
 };
+
+/// A function that computes the outcome of an attack effect.
+/// Takes the acting player, current game state, and attack index.
+/// Returns the probability distribution and corresponding mutations.
+pub type Implementation =
+    Box<dyn Fn(usize, &State, &Attack) -> (Probabilities, Mutations) + Send + Sync>;
 
 // This is a reducer of all actions relating to attacks.
 pub(crate) fn forecast_attack(
@@ -52,7 +62,7 @@ pub(crate) fn forecast_attack(
             effect_text, attack, active.card
         );
     };
-    implementation_fn(acting_player, state, index)
+    implementation_fn(acting_player, state, &attack)
 }
 
 /// Handles attacks that have effects.
@@ -528,7 +538,7 @@ pub(crate) fn forecast_attack(
 pub(crate) fn celebi_powerful_bloom(
     acting_player: usize,
     state: &State,
-    _: usize,
+    _: &Attack,
 ) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(acting_player);
     let total_energy = active_pokemon.attached_energy.len();
@@ -571,8 +581,12 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-pub(crate) fn mega_burning_attack(_: usize, _: &State, _: usize) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(0, move |_, state, action| {
+pub(crate) fn mega_burning_attack(
+    _: usize,
+    _: &State,
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         // Discard one Fire energy
         state.discard_from_active(action.actor, &[EnergyType::Fire]);
 
@@ -587,7 +601,7 @@ pub(crate) fn mega_burning_attack(_: usize, _: &State, _: usize) -> (Probabiliti
 pub(crate) fn waterfall_evolution(
     acting_player: usize,
     state: &State,
-    _: usize,
+    _: &Attack,
 ) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(acting_player);
 
@@ -626,7 +640,11 @@ pub(crate) fn waterfall_evolution(
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
-fn manaphy_oceanic(acting_player: usize) -> (Probabilities, Mutations) {
+pub(crate) fn manaphy_oceanic(
+    acting_player: usize,
+    _: &State,
+    _: &Attack,
+) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, _| {
         let benched_pokemon: Vec<usize> = state
             .enumerate_bench_pokemon(acting_player)
@@ -663,7 +681,11 @@ fn manaphy_oceanic(acting_player: usize) -> (Probabilities, Mutations) {
     })
 }
 
-fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
+pub(crate) fn palkia_dimensional_storm(
+    _: usize,
+    state: &State,
+    _: &Attack,
+) -> (Probabilities, Mutations) {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
     let targets: Vec<(u32, usize)> = state
@@ -676,7 +698,7 @@ fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
     })
 }
 
-fn moltres_inferno_dance() -> (Probabilities, Mutations) {
+pub(crate) fn moltres_inferno_dance(_: usize, _: &State, _: &Attack) -> (Probabilities, Mutations) {
     let probabilities = vec![0.125, 0.375, 0.375, 0.125]; // 0,1,2,3 heads
     let mutations = probabilities
         .iter()
@@ -774,23 +796,29 @@ fn generate_distributions(
 }
 
 /// Deal damage and attach energy to a pokemon of choice in the bench.
-fn energy_bench_attack(
-    attack_index: usize,
+pub(crate) fn energy_bench_attack<F>(
     amount: u32,
     energy: EnergyType,
-) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(attack_index, move |_, state, action| {
-        let mut choices = Vec::new();
-        for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-            choices.push(SimpleAction::Attach {
-                attachments: vec![(amount, energy, in_play_idx)],
-                is_turn_energy: false,
-            });
-        }
-        if choices.is_empty() {
-            return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
-        }
-        state.move_generation_stack.push((action.actor, choices));
+    bench_card_filter: F,
+) -> Implementation
+where
+    F: Fn(&PlayedCard) -> bool + 'static + Send + Sync + Copy,
+{
+    Box::new(move |_: usize, _: &State, attack: &Attack| {
+        active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+            let choices = state
+                .enumerate_bench_pokemon(action.actor)
+                .filter(|(_, played_card)| bench_card_filter(played_card))
+                .map(|(in_play_idx, _)| SimpleAction::Attach {
+                    attachments: vec![(amount, energy, in_play_idx)],
+                    is_turn_energy: false,
+                })
+                .collect::<Vec<_>>();
+            if choices.is_empty() {
+                return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+            }
+            state.move_generation_stack.push((action.actor, choices));
+        })
     })
 }
 
@@ -998,14 +1026,14 @@ fn luxray_volt_bolt() -> (Probabilities, Mutations) {
 }
 
 /// Discard energy from the active (attacking) Pokémon.
-fn self_energy_discard_attack(
-    attack_index: usize,
-    to_discard: Vec<EnergyType>,
-) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(attack_index, move |_, state, action| {
-        state.discard_from_active(action.actor, &to_discard);
-    })
-}
+// fn self_energy_discard_attack(
+//     attack_index: usize,
+//     to_discard: Vec<EnergyType>,
+// ) -> (Probabilities, Mutations) {
+//     index_active_damage_doutcome(attack_index, move |_, state, action| {
+//         state.discard_from_active(action.actor, &to_discard);
+//     })
+// }
 
 /// For attacks that deal damage and discard random energy from opponent's active Pokémon
 fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilities, Mutations) {
@@ -1168,48 +1196,48 @@ fn flip_until_tails_attack(damage_per_heads: u32) -> (Probabilities, Mutations) 
     probabilistic_damage_attack(probabilities, damages)
 }
 
-fn self_heal_attack(heal: u32, index: usize) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(index, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.heal(heal);
-    })
-}
+// fn self_heal_attack(heal: u32, index: usize) -> (Probabilities, Mutations) {
+//     index_active_damage_doutcome(index, move |_, state, action| {
+//         let active = state.get_active_mut(action.actor);
+//         active.heal(heal);
+//     })
+// }
 
-fn damage_and_turn_effect_attack(
-    index: usize,
-    effect_duration: u8,
-    effect: TurnEffect,
-) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(index, move |_, state, _| {
-        state.add_turn_effect(effect, effect_duration);
-    })
-}
+// fn damage_and_turn_effect_attack(
+//     index: usize,
+//     effect_duration: u8,
+//     effect: TurnEffect,
+// ) -> (Probabilities, Mutations) {
+//     index_active_damage_doutcome(index, move |_, state, _| {
+//         state.add_turn_effect(effect, effect_duration);
+//     })
+// }
 
-fn damage_and_card_effect_attack(
-    index: usize,
-    player: usize,
-    effect_duration: u8,
-    effect: CardEffect,
-) -> (Probabilities, Mutations) {
-    index_active_damage_doutcome(index, move |_, state, _| {
-        state
-            .get_active_mut(player)
-            .add_effect(effect, effect_duration);
-    })
-}
+// fn damage_and_card_effect_attack(
+//     index: usize,
+//     player: usize,
+//     effect_duration: u8,
+//     effect: CardEffect,
+// ) -> (Probabilities, Mutations) {
+//     index_active_damage_doutcome(index, move |_, state, _| {
+//         state
+//             .get_active_mut(player)
+//             .add_effect(effect, effect_duration);
+//     })
+// }
 
-fn cannot_use_attack_next_turn(
-    index: usize,
-    acting_player: usize,
-    attack_id: AttackId,
-) -> (Probabilities, Mutations) {
-    damage_and_card_effect_attack(
-        index,
-        acting_player,
-        2,
-        CardEffect::CannotUseAttack(attack_id),
-    )
-}
+// fn cannot_use_attack_next_turn(
+//     index: usize,
+//     acting_player: usize,
+//     attack_id: AttackId,
+// ) -> (Probabilities, Mutations) {
+//     damage_and_card_effect_attack(
+//         index,
+//         acting_player,
+//         2,
+//         CardEffect::CannotUseAttack(attack_id),
+//     )
+// }
 
 /// For Thunderbolt attacks that discard all energy after dealing damage.
 fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
@@ -1710,13 +1738,14 @@ mod test {
 
         // Set up a Pokemon in the active position
         let celebi = get_card_by_enum(CardId::A1a003CelebiEx);
+        let attack = &celebi.get_attacks()[0];
         state.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
 
         let active = state.get_active_mut(0);
         active.attached_energy.push(EnergyType::Grass);
         active.attached_energy.push(EnergyType::Fire);
 
-        let (probabilities, _mutations) = celebi_powerful_bloom(0, &state, 0);
+        let (probabilities, _mutations) = celebi_powerful_bloom(0, &state, attack);
 
         // Should have 3 outcomes (0, 1, 2 heads)
         assert_eq!(probabilities.len(), 3);
@@ -1729,7 +1758,7 @@ mod test {
         // Test with no energy attached
         let mut state_no_energy = State::default();
         state_no_energy.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
-        let (probabilities_no_energy, _) = celebi_powerful_bloom(0, &state_no_energy, 0);
+        let (probabilities_no_energy, _) = celebi_powerful_bloom(0, &state_no_energy, attack);
 
         // Should have 1 outcome (0 damage)
         assert_eq!(probabilities_no_energy.len(), 1);
