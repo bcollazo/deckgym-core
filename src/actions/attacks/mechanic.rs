@@ -1,4 +1,4 @@
-use crate::models::EnergyType;
+use crate::models::{EnergyType, StatusCondition};
 
 pub enum Mechanic {
     SelfHeal {
@@ -6,6 +6,9 @@ pub enum Mechanic {
     },
     DeckSearchByEnergy {
         energy_type: EnergyType,
+    },
+    InflictStatusCondition {
+        condition: StatusCondition,
     },
     // Fairly unique mechanics
     ManaphyOceanicGift,

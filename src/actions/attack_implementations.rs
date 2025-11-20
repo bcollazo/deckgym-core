@@ -4,7 +4,10 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use crate::{actions::attacks::Mechanic, models::EnergyType};
+use crate::{
+    actions::attacks::Mechanic,
+    models::{EnergyType, StatusCondition},
+};
 
 /// Map from attack effect text to its implementation.
 pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
@@ -366,11 +369,26 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Your opponent reveals their hand.", todo_implementation);
     // map.insert("Your opponent reveals their hand. Choose a Supporter card you find there and discard it.", todo_implementation);
     // map.insert("Your opponent reveals their hand. Choose a card you find there and shuffle it into your opponent's deck.", todo_implementation);
-    // map.insert("Your opponent's Active Pokémon is now Asleep.", todo_implementation);
-    // map.insert("Your opponent's Active Pokémon is now Burned.", todo_implementation);
+    map.insert(
+        "Your opponent's Active Pokémon is now Asleep.",
+        Mechanic::InflictStatusCondition {
+            condition: StatusCondition::Asleep,
+        },
+    );
+    map.insert(
+        "Your opponent's Active Pokémon is now Burned.",
+        Mechanic::InflictStatusCondition {
+            condition: StatusCondition::Burned,
+        },
+    );
     // map.insert("Your opponent's Active Pokémon is now Confused.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned and Burned.", todo_implementation);
-    // map.insert("Your opponent's Active Pokémon is now Poisoned.", todo_implementation);
+    map.insert(
+        "Your opponent's Active Pokémon is now Poisoned.",
+        Mechanic::InflictStatusCondition {
+            condition: StatusCondition::Poisoned,
+        },
+    );
     // map.insert("Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.", todo_implementation);
     map
 });

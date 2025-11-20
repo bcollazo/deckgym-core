@@ -85,6 +85,7 @@ fn forecast_effect_attack(
         Mechanic::DeckSearchByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
+        Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
     }
 }
 //     match attack_id {
@@ -1090,8 +1091,8 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
 }
 
 /// For attacks that deal damage and apply a status effect (e.g. Wigglituff Ex)
-fn damage_status_attack(damage: u32, status: StatusCondition) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(damage, build_status_effect(status))
+fn damage_status_attack(status: StatusCondition, attack: &Attack) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, build_status_effect(status))
 }
 
 /// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
