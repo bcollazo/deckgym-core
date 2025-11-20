@@ -242,7 +242,10 @@ fn print_attack_map(card_map: &IndexMap<String, Card>) {
         }
     }
 
-    println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
+    println!(
+        "// This code is initially generated from the database.json by card_enum_generator.rs."
+    );
+    println!("// but needs to be manually filled in with actual implementations.");
     println!();
     println!("use std::collections::HashMap;");
     println!("use std::sync::LazyLock;");
@@ -259,7 +262,7 @@ fn print_attack_map(card_map: &IndexMap<String, Card>) {
     println!();
     println!("/// Map from attack effect text to its implementation.");
     println!("pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = LazyLock::new(|| {{");
-    println!("    let mut map = HashMap::new();");
+    println!("    let mut map: HashMap<&'static str, Implementation> = HashMap::new();");
 
     // Sort effect texts alphabetically
     let mut sorted_effects: Vec<&String> = effect_texts.keys().collect();

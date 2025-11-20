@@ -1,4 +1,5 @@
-// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.
+// This code is initially generated from the database.json by card_enum_generator.rs.
+// but needs to be manually filled in with actual implementations.
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
