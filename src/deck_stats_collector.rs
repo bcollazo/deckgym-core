@@ -349,7 +349,11 @@ impl SimulationEventHandler for DeckStatsCollector {
         if !self.cards_drawn_per_game.is_empty() {
             let avg_cards_drawn = self.cards_drawn_per_game.iter().sum::<u32>() as f32
                 / self.cards_drawn_per_game.len() as f32;
-            warn!("\nAverage Cards Drawn per Game: {:.2}", avg_cards_drawn);
+            warn!(
+                "\nAverage Cards Drawn per Game: {:.2} total ({:.2} per player)",
+                avg_cards_drawn,
+                avg_cards_drawn / 2.0
+            );
         }
 
         // Energy attached statistics
@@ -357,8 +361,9 @@ impl SimulationEventHandler for DeckStatsCollector {
             let avg_energy_attached = self.energy_attached_per_game.iter().sum::<u32>() as f32
                 / self.energy_attached_per_game.len() as f32;
             warn!(
-                "Average Energy Attached per Game: {:.2}",
-                avg_energy_attached
+                "Average Energy Attached per Game: {:.2} total ({:.2} per player)",
+                avg_energy_attached,
+                avg_energy_attached / 2.0
             );
         }
 
