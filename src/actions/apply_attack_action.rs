@@ -571,7 +571,7 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-fn mega_burning_attack() -> (Probabilities, Mutations) {
+pub(crate) fn mega_burning_attack(_: usize, _: &State, _: usize) -> (Probabilities, Mutations) {
     index_active_damage_doutcome(0, move |_, state, action| {
         // Discard one Fire energy
         state.discard_from_active(action.actor, &[EnergyType::Fire]);

@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
-        apply_attack_action::{celebi_powerful_bloom, waterfall_evolution},
+        apply_attack_action::{celebi_powerful_bloom, mega_burning_attack, waterfall_evolution},
     },
     State,
 };
@@ -48,7 +48,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Implementation>> = 
         // map.insert("Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.", todo_implementation);
         // map.insert("Discard 2 random Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
-        // map.insert("Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.", todo_implementation);
+        map.insert("Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.", mega_burning_attack);
         // map.insert("Discard a [F] Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard a [L] Energy from this Pokémon.", todo_implementation);
         // map.insert("Discard a [L] Energy from your opponent's Active Pokémon.", todo_implementation);
