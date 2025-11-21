@@ -32,6 +32,9 @@ pub enum Mechanic {
         num_coins: usize,
     },
     CoinFlipNoEffect,
+    SelfDiscardEnergy {
+        energies: Vec<EnergyType>,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

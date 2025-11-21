@@ -30,10 +30,25 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
     map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", Mechanic::ManaphyOceanicGift);
     // map.insert("Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.", todo_implementation);
-    // map.insert("Discard 2 [L] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard 2 [L] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Lightning, EnergyType::Lightning],
+        },
+    );
     // map.insert("Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
-    // map.insert("Discard 2 [P] Energy from this Pokémon.", todo_implementation);
-    // map.insert("Discard 2 [R] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard 2 [P] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Psychic, EnergyType::Psychic],
+        },
+    );
+    map.insert(
+        "Discard 2 [R] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fire, EnergyType::Fire],
+        },
+    );
     // map.insert("Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon.", todo_implementation);
     // map.insert("Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.", todo_implementation);
     // map.insert("Discard 2 random Energy from this Pokémon.", todo_implementation);
@@ -42,12 +57,37 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.",
         Mechanic::MegaBlazikenExMegaBurningAttack,
     );
-    // map.insert("Discard a [F] Energy from this Pokémon.", todo_implementation);
-    // map.insert("Discard a [L] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a [F] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fighting],
+        },
+    );
+    map.insert(
+        "Discard a [L] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Lightning],
+        },
+    );
     // map.insert("Discard a [L] Energy from your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("Discard a [M] Energy from this Pokémon.", todo_implementation);
-    // map.insert("Discard a [R] Energy from this Pokémon.", todo_implementation);
-    // map.insert("Discard a [R], [W], and [L] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a [M] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Metal],
+        },
+    );
+    map.insert(
+        "Discard a [R] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fire],
+        },
+    );
+    map.insert(
+        "Discard a [R], [W], and [L] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
+        },
+    );
     // map.insert("Discard a card from your hand. If you can't, this attack does nothing.", todo_implementation);
     // map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", todo_implementation);
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);

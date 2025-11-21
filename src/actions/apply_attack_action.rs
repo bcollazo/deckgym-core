@@ -112,30 +112,13 @@ fn forecast_effect_attack(
             attack,
         ),
         Mechanic::CoinFlipNoEffect => coinflip_no_effect(attack.fixed_damage),
+        Mechanic::SelfDiscardEnergy { energies } => {
+            self_energy_discard_attack(attack.fixed_damage, energies.clone())
+        }
     }
 }
 
 //     match attack_id {
-//         AttackId::A1033CharmanderEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
-//         AttackId::A1035CharizardFireSpin => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
-//         }
-//         AttackId::A1036CharizardExCrimsonStorm => {
-//             self_energy_discard_attack(1, vec![EnergyType::Fire, EnergyType::Fire])
-//         }
-//         AttackId::A1038NinetalesFlamethrower => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fire])
-//         }
-//         AttackId::A1040ArcanineHeatTackle => self_damage_attack(100, 20),
-//         AttackId::A1041ArcanineExInfernoOnrush => self_damage_attack(120, 20),
-//         AttackId::A1045FlareonFlamethrower => self_energy_discard_attack(0, vec![EnergyType::Fire]),
-//         AttackId::A1046MoltresSkyAttack => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 130])
-//         }
-//         AttackId::A1047MoltresExInfernoDance => moltres_inferno_dance(),
-//         AttackId::A1052CentiskorchFireBlast => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fire])
-//         }
 //         AttackId::A1055BlastoiseHydroPump => {
 //             extra_energy_attack(acting_player, state, EnergyType::Water, 80, 5, 60)
 //         }
@@ -144,9 +127,6 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::A1057PsyduckHeadache => {
 //             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
-//         }
-//         AttackId::A1063TentacruelPoisonTentacles => {
-//             damage_status_attack(50, StatusCondition::Poisoned)
 //         }
 //         AttackId::A1069KinglerKOCrab => {
 //             probabilistic_damage_attack(vec![0.25, 0.75], vec![160, 80])
@@ -159,13 +139,11 @@ fn forecast_effect_attack(
 //         AttackId::A1079LaprasHydroPump => {
 //             extra_energy_attack(acting_player, state, EnergyType::Water, 20, 4, 70)
 //         }
-//         AttackId::A1080VaporeonBubbleDrain => self_heal_attack(30, 0),
 //         AttackId::A1083ArticunoIceBeam => {
 //             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
 //         }
 //         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
-//         AttackId::A1093FrosmothPowderSnow => damage_status_attack(40, StatusCondition::Asleep),
 //         AttackId::A1095RaichuThunderbolt => thunderbolt_attack(140),
 //         AttackId::A2b022PikachuExThunderbolt => thunderbolt_attack(150),
 //         AttackId::A2b031AlakazamPsychicSuppression => alakazam_psychic_suppression(state),
@@ -203,12 +181,6 @@ fn forecast_effect_attack(
 //             CardEffect::ReducedDamage { amount: 20 },
 //         ),
 //         AttackId::A1127JynxPsychic => damage_based_on_opponent_energy(acting_player, state, 30, 20),
-//         AttackId::A1128MewtwoPowerBlast => {
-//             self_energy_discard_attack(index, vec![EnergyType::Psychic])
-//         }
-//         AttackId::A1129MewtwoExPsydrive => {
-//             self_energy_discard_attack(index, vec![EnergyType::Psychic, EnergyType::Psychic])
-//         }
 //         AttackId::A1136GolurkDoubleLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
 //         }
@@ -225,11 +197,8 @@ fn forecast_effect_attack(
 //             1,
 //             CardEffect::NoRetreat,
 //         ),
-//         AttackId::A1171NidokingPoisonHorn => damage_status_attack(90, StatusCondition::Poisoned),
-//         AttackId::A1174GrimerPoisonGas => damage_status_attack(10, StatusCondition::Poisoned),
 //         AttackId::A1178MawileCrunch => mawile_crunch(),
 //         AttackId::A1181MeltanAmass => self_charge_active_attack(0, EnergyType::Metal, 1),
-//         AttackId::A1195WigglytuffExSleepySong => damage_status_attack(80, StatusCondition::Asleep),
 //         AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
 //         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
 //         AttackId::A1203KangaskhanDizzyPunch => {
@@ -240,7 +209,6 @@ fn forecast_effect_attack(
 //         AttackId::A1a011RapidashRisingLunge => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
 //         }
-//         AttackId::A1a016SalazzlePoisonClaws => damage_status_attack(30, StatusCondition::Poisoned),
 //         AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
 //         AttackId::A1a021LumineonAquaLiner => direct_damage(50, true),
 //         AttackId::A1a026RaichuGigashock => {
@@ -262,11 +230,7 @@ fn forecast_effect_attack(
 //             1,
 //             CardEffect::ReducedDamage { amount: 30 },
 //         ),
-//         AttackId::A1a054WhirlipedePoisonSting => {
-//             damage_status_attack(20, StatusCondition::Poisoned)
-//         }
 //         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
-//         AttackId::A2009RoseradePoisonousWhip => damage_status_attack(50, StatusCondition::Poisoned),
 //         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
 //         AttackId::A2029InfernapeExFlareBlitz => {
 //             discard_all_energy_of_type_attack(140, EnergyType::Fire)
@@ -287,7 +251,6 @@ fn forecast_effect_attack(
 //         AttackId::A2098SneaselDoubleScratch => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
 //         }
-//         AttackId::A2103SkuntankPoisonGas => damage_status_attack(50, StatusCondition::Poisoned),
 //         AttackId::A2111SkarmoryMetalArms => {
 //             extra_damage_if_tool_attached(acting_player, state, 20, 30)
 //         }
@@ -322,7 +285,6 @@ fn forecast_effect_attack(
 //         AttackId::A2a071ArceusExUltimateForce => {
 //             bench_count_attack(acting_player, state, 70, 20, None)
 //         }
-//         AttackId::A2035PiplupNap => self_heal_attack(20, index),
 //         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
 //         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -330,10 +292,6 @@ fn forecast_effect_attack(
 //         ),
 //         AttackId::A2b044FlamigoDoubleKick => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
-//         }
-//         AttackId::A2b046ArbokVenomousFang => damage_status_attack(70, StatusCondition::Poisoned),
-//         AttackId::A2b047PaldeanWooperPoisonJab => {
-//             damage_status_attack(10, StatusCondition::Poisoned)
 //         }
 //         AttackId::A3002AlolanExeggutorTropicalHammer => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
@@ -356,9 +314,6 @@ fn forecast_effect_attack(
 //             1,
 //             CardEffect::ReducedDamage { amount: 20 },
 //         ),
-//         AttackId::A3061AlolanGolemSuperZapCannon => {
-//             self_energy_discard_attack(0, vec![EnergyType::Lightning, EnergyType::Lightning])
-//         }
 //         AttackId::A3070SableyeCorner => damage_and_card_effect_attack(
 //             index,
 //             (state.current_player + 1) % 2,
@@ -366,9 +321,6 @@ fn forecast_effect_attack(
 //             CardEffect::NoRetreat,
 //         ),
 //         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
-//         AttackId::A3114GarbodorSuperPoisonBreath => {
-//             damage_status_attack(70, StatusCondition::Poisoned)
-//         }
 //         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
 //             vec![0, 20, 40, 60, 80],
@@ -384,16 +336,9 @@ fn forecast_effect_attack(
 //         AttackId::A3a019TapuKokoExPlasmaHurricane => {
 //             self_charge_active_attack(20, EnergyType::Lightning, 1)
 //         }
-//         AttackId::A3a033LycanrocExLycanfang => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fighting])
-//         }
-//         AttackId::A3a042NihilegoNewWave => damage_status_attack(30, StatusCondition::Poisoned),
 //         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
 //         AttackId::A3a044Poipole2Step => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
-//         }
-//         AttackId::A3a045NaganadelElectroHouse => {
-//             damage_status_attack(40, StatusCondition::Poisoned)
 //         }
 //         AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
@@ -416,7 +361,6 @@ fn forecast_effect_attack(
 //             damage_based_on_opponent_energy(acting_player, state, 80, 20)
 //         }
 //         AttackId::A3a007PheromosaJumpBlues => active_and_choice_bench_attack(20, 20),
-//         AttackId::A3037TurtonatorFireSpin => self_energy_discard_attack(0, vec![EnergyType::Fire]),
 //         AttackId::A3085CosmogTeleport => teleport_attack(),
 //         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
 //             0,
@@ -425,16 +369,9 @@ fn forecast_effect_attack(
 //             CardEffect::ReducedDamage { amount: 50 },
 //         ),
 //         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
-//         AttackId::A3b009FlareonExFireSpin => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
-//         }
-//         AttackId::A3b010TorkoalFlamethrower => {
-//             self_energy_discard_attack(0, vec![EnergyType::Fire])
-//         }
 //         AttackId::A3b013IncineroarDarkestLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
 //         }
-//         AttackId::A3b014SalanditEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
 //         AttackId::A3b020VanilluxeDoubleSpin => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
 //         }
@@ -446,7 +383,6 @@ fn forecast_effect_attack(
 //         AttackId::A3b058AipomDoubleHit => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
 //         }
-//         AttackId::A4001OddishPoisonPowder => damage_status_attack(10, StatusCondition::Poisoned),
 //         AttackId::A4021ShuckleExTripleSlap => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
 //         }
@@ -454,7 +390,6 @@ fn forecast_effect_attack(
 //         AttackId::A4032MagbyToastyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
 //         }
-//         AttackId::A4053QwilfishPoisonSting => damage_status_attack(20, StatusCondition::Poisoned),
 //         AttackId::A4066PichuCracklyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
 //         }
@@ -469,9 +404,6 @@ fn forecast_effect_attack(
 //         AttackId::A4105BinacleDualChop => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
 //         }
-//         AttackId::A4107ZubatVenomousFang => damage_status_attack(10, StatusCondition::Poisoned),
-//         AttackId::A4108GolbatVenomousFang => damage_status_attack(20, StatusCondition::Poisoned),
-//         AttackId::A4109CrobatExVenomousSlash => damage_status_attack(70, StatusCondition::Poisoned),
 //         AttackId::A4124SkarmoryExSteelWing => damage_and_card_effect_attack(
 //             index,
 //             state.current_player,
@@ -482,26 +414,14 @@ fn forecast_effect_attack(
 //         AttackId::A4146UrsaringSwingAround => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
 //         }
-//         AttackId::A4149LugiaExElementalBlast => self_energy_discard_attack(
-//             0,
-//             vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
-//         ),
 //         AttackId::A4a010EnteiExBlazingBeatdown => {
 //             extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
 //         }
-//         AttackId::A4a015TentacoolPoisonSting => damage_status_attack(20, StatusCondition::Poisoned),
 //         AttackId::A4a023MantykeSplashyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
 //         }
 //         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
 //         AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
-//         AttackId::A2053MagnezoneThunderBlast => {
-//             self_energy_discard_attack(0, vec![EnergyType::Lightning])
-//         }
-//         AttackId::PA072AlolanGrimerPoisonGas => damage_status_attack(0, StatusCondition::Poisoned),
-//         AttackId::PA079DuskManeNecrozmaBlackMetal => {
-//             self_energy_discard_attack(0, vec![EnergyType::Metal])
-//         }
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
 //         AttackId::A4120AbsolLeapOver => direct_damage(30, true),
 //         AttackId::A1213CinccinoDoTheWave => bench_count_attack(acting_player, state, 0, 30, None),
@@ -509,7 +429,6 @@ fn forecast_effect_attack(
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
 //         }
 //         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
-//         AttackId::B1035BlazikenBlazeKick => self_energy_discard_attack(0, vec![EnergyType::Fire]),
 //         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
 //         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
 //         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
@@ -528,11 +447,7 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
 //         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
-//         AttackId::B1161MareaniePoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
 //         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
-//         AttackId::B1179GoodraSpiralDrain => self_heal_attack(40, 0),
-//         AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
-//         AttackId::PA056EkansPoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
 //     }
 // }
 
@@ -1043,14 +958,14 @@ fn luxray_volt_bolt() -> (Probabilities, Mutations) {
 }
 
 /// Discard energy from the active (attacking) Pokémon.
-// fn self_energy_discard_attack(
-//     attack_index: usize,
-//     to_discard: Vec<EnergyType>,
-// ) -> (Probabilities, Mutations) {
-//     index_active_damage_doutcome(attack_index, move |_, state, action| {
-//         state.discard_from_active(action.actor, &to_discard);
-//     })
-// }
+fn self_energy_discard_attack(
+    fixed_damage: u32,
+    to_discard: Vec<EnergyType>,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
+        state.discard_from_active(action.actor, &to_discard);
+    })
+}
 
 /// For attacks that deal damage and discard random energy from opponent's active Pokémon
 fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilities, Mutations) {
