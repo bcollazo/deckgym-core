@@ -93,15 +93,12 @@ fn forecast_effect_attack(
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
+        Mechanic::ExtraDamageIfEx { extra_damage } => {
+            extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 //     match attack_id {
-//         AttackId::A2b005SprigatitoCryForHelp => {
-//             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
-//         }
-//         AttackId::A2b007MeowscaradaFightingClaws => {
-//             extra_damage_if_opponent_is_ex(acting_player, state, 60, 70)
-//         }
 //         AttackId::A2b035GiratinaExChaoticImpact => self_damage_attack(130, 20),
 //         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
 //         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
@@ -1347,12 +1344,11 @@ fn damage_based_on_opponent_energy(
 }
 
 fn extra_damage_if_opponent_is_ex(
-    acting_player: usize,
     state: &State,
     base_damage: u32,
     extra_damage: u32,
 ) -> (Probabilities, Mutations) {
-    let opponent = (acting_player + 1) % 2;
+    let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = if opponent_active.card.is_ex() {
         base_damage + extra_damage

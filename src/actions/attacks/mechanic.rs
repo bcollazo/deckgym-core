@@ -17,6 +17,9 @@ pub enum Mechanic {
         condition: StatusCondition,
     },
     DiscardEnergyFromOpponentActive,
+    ExtraDamageIfEx {
+        extra_damage: u32,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

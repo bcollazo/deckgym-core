@@ -249,9 +249,18 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("If your opponent's Active Pokémon is Zangoose, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfEx { extra_damage: 30 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfEx { extra_damage: 70 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage.",
+        Mechanic::ExtraDamageIfEx { extra_damage: 80 },
+    );
     // map.insert("If your opponent's Active Pokémon is a [D] Pokémon, this attack does 30 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a [F] Pokémon, this attack does 30 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a [G] Pokémon, this attack does 40 more damage.", todo_implementation);
