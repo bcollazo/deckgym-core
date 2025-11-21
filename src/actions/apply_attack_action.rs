@@ -1497,10 +1497,20 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
     // For each time a Pokémon was chosen, also do 20 damage to it.
     doutcome(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> = generate_random_spread_indices(rng, state, true, 3)
+        let mut damage_map: std::collections::HashMap<(usize, usize), u32> =
+            std::collections::HashMap::new();
+
+        // Start with 100 damage to the active Pokémon
+        damage_map.insert((opponent, 0), 100);
+
+        let random_indices = generate_random_spread_indices(rng, state, true, 3);
+        for idx in random_indices {
+            *damage_map.entry((opponent, idx)).or_insert(0) += 20;
+        }
+
+        let targets: Vec<(u32, usize, usize)> = damage_map
             .into_iter()
-            .map(|idx| (20, opponent, idx))
-            .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
+            .map(|((player, idx), dmg)| (dmg, player, idx))
             .collect();
 
         let attacking_ref = (action.actor, 0);
@@ -1790,6 +1800,36 @@ mod test {
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_mega_ampharos_lightning_lancer() {
+        let mut rng = StdRng::seed_from_u64(2);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let attacker = get_card_by_enum(CardId::B1085MegaAmpharosEx);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+
+        let p1_active = get_card_by_enum(CardId::A1026Pinsir);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&p1_active, false));
+
+        let p1_benched_1 = get_card_by_enum(CardId::A4a023Mantyke);
+        state.in_play_pokemon[1][1] = Some(to_playable_card(&p1_benched_1, false));
+        let p1_benched_2 = get_card_by_enum(CardId::A4a023Mantyke);
+        state.in_play_pokemon[1][2] = Some(to_playable_card(&p1_benched_2, false));
+
+        let (_, mut lazy_mutations) = mega_ampharos_lightning_lancer();
+        lazy_mutations.remove(0)(&mut rng, &mut state, &action);
+
+        // Two pokemon should be knocked out, remaining is one Mantyke
+        assert!(state.in_play_pokemon[1][0].is_none()); // Pinsir knocked out
+        assert!(state.in_play_pokemon[1][1].is_none()); // One Mantyke knocked out
+        assert_eq!(state.in_play_pokemon[1][2].as_ref().unwrap().remaining_hp, 30); // Second Mantyke untouched
     }
 
     #[test]
