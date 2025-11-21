@@ -119,6 +119,10 @@ fn forecast_effect_attack(
             required_extra_energy,
             extra_damage,
         } => extra_energy_attack(state, attack, required_extra_energy.clone(), *extra_damage),
+        Mechanic::ExtraDamageIfBothHeads { extra_damage } => probabilistic_damage_attack(
+            vec![0.25, 0.75],
+            vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
+        ),
     }
 }
 
@@ -126,17 +130,8 @@ fn forecast_effect_attack(
 //         AttackId::A1057PsyduckHeadache => {
 //             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
 //         }
-//         AttackId::A1069KinglerKOCrab => {
-//             probabilistic_damage_attack(vec![0.25, 0.75], vec![160, 80])
-//         }
 //         AttackId::A1071SeadraWaterArrow => direct_damage(50, false),
-//         AttackId::A1073SeakingHornHazard => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 0])
-//         }
 //         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
-//         AttackId::A1083ArticunoIceBeam => {
-//             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
-//         }
 //         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
 //         AttackId::A1095RaichuThunderbolt => thunderbolt_attack(140),
@@ -156,14 +151,8 @@ fn forecast_effect_attack(
 //             vec![0, 50, 100, 150, 200],
 //         ),
 //         AttackId::A1106ZebstrikaThunderSpear => direct_damage(30, false),
-//         AttackId::A1109EelektrossThunderFang => {
-//             damage_chance_status_attack(80, 0.5, StatusCondition::Paralyzed)
-//         }
 //         AttackId::A1111HelioliskQuickAttack => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 80])
-//         }
-//         AttackId::A1112PincurchinThunderShock => {
-//             damage_chance_status_attack(30, 0.5, StatusCondition::Paralyzed)
 //         }
 //         AttackId::A1115AbraTeleport => teleport_attack(),
 //         AttackId::A1117AlakazamPsychic => {
@@ -214,9 +203,6 @@ fn forecast_effect_attack(
 //                 .chain(std::iter::once((60, 0)))
 //                 .collect();
 //             damage_effect_doutcome(targets, |_, _, _| {})
-//         }
-//         AttackId::A1a030DedenneThunderShock => {
-//             damage_chance_status_attack(10, 0.5, StatusCondition::Paralyzed)
 //         }
 //         AttackId::A1a041MankeyFocusFist => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
 //         AttackId::A1a045GolemGuardPress => damage_and_card_effect_attack(
@@ -417,9 +403,6 @@ fn forecast_effect_attack(
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
 //         AttackId::A4120AbsolLeapOver => direct_damage(30, true),
 //         AttackId::A1213CinccinoDoTheWave => bench_count_attack(acting_player, state, 0, 30, None),
-//         AttackId::B1002MegaPinsirExCriticalScissors => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 150])
-//         }
 //         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
 //         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
 //         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),

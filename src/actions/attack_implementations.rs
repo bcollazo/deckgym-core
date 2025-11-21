@@ -141,8 +141,14 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("During your opponent's next turn, this Pokémon takes -30 damage from attacks.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
     // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
-    // map.insert("Flip 2 coins. If both of them are heads, this attack does 70 more damage.", todo_implementation);
-    // map.insert("Flip 2 coins. If both of them are heads, this attack does 80 more damage.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. If both of them are heads, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfBothHeads { extra_damage: 70 },
+    );
+    map.insert(
+        "Flip 2 coins. If both of them are heads, this attack does 80 more damage.",
+        Mechanic::ExtraDamageIfBothHeads { extra_damage: 80 },
+    );
     // map.insert("Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.", todo_implementation);
     // map.insert("Flip 2 coins. If both of them are tails, this attack does nothing.", todo_implementation);
     map.insert(

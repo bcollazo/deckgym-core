@@ -39,6 +39,9 @@ pub enum Mechanic {
         required_extra_energy: Vec<EnergyType>,
         extra_damage: u32,
     },
+    ExtraDamageIfBothHeads {
+        extra_damage: u32,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
