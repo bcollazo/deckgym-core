@@ -186,7 +186,6 @@ fn forecast_effect_attack(
 //         AttackId::A1203KangaskhanDizzyPunch => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
 //         }
-//         AttackId::A1a003CelebiExPowerfulBloom => celebi_powerful_bloom(acting_player, state),
 //         AttackId::A1a010PonytaStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![10, 40]),
 //         AttackId::A1a011RapidashRisingLunge => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
@@ -201,7 +200,6 @@ fn forecast_effect_attack(
 //                 .collect();
 //             damage_effect_doutcome(targets, |_, _, _| {})
 //         }
-//         AttackId::A1a041MankeyFocusFist => probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]),
 //         AttackId::A1a045GolemGuardPress => damage_and_card_effect_attack(
 //             index,
 //             state.current_player,
