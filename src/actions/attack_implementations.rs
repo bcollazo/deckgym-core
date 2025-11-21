@@ -256,14 +256,34 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Move all Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
     // map.insert("Put 1 random Basic Pokémon from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put 1 random Koffing from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put 1 random Nidoran♂ from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put 1 random Poliwag from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put 1 random Weedle from your deck onto your Bench.", todo_implementation);
+    map.insert(
+        "Put 1 random Koffing from your deck onto your Bench.",
+        Mechanic::SearchToBenchByName {
+            name: "Koffing".to_string(),
+        },
+    );
+    map.insert(
+        "Put 1 random Nidoran♂ from your deck onto your Bench.",
+        Mechanic::SearchToBenchByName {
+            name: "Nidoran♂".to_string(),
+        },
+    );
+    map.insert(
+        "Put 1 random Poliwag from your deck onto your Bench.",
+        Mechanic::SearchToBenchByName {
+            name: "Poliwag".to_string(),
+        },
+    );
+    map.insert(
+        "Put 1 random Weedle from your deck onto your Bench.",
+        Mechanic::SearchToBenchByName {
+            name: "Weedle".to_string(),
+        },
+    );
     // map.insert("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.", todo_implementation);
     map.insert(
         "Put 1 random [G] Pokémon from your deck into your hand.",
-        Mechanic::DeckSearchByEnergy {
+        Mechanic::SearchToHandByEnergy {
             energy_type: EnergyType::Grass,
         },
     );

@@ -82,14 +82,14 @@ fn forecast_effect_attack(
             state,
             attack,
         ),
-        Mechanic::DeckSearchByEnergy { energy_type } => {
+        Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
+        Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
         Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
     }
 }
 //     match attack_id {
-//         AttackId::A1013VileplumeSoothingScent => damage_status_attack(80, StatusCondition::Asleep),
 //         AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
 //         AttackId::A2b002KakunaStringShot => {
 //             damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)

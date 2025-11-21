@@ -4,8 +4,11 @@ pub enum Mechanic {
     SelfHeal {
         amount: u32,
     },
-    DeckSearchByEnergy {
+    SearchToHandByEnergy {
         energy_type: EnergyType,
+    },
+    SearchToBenchByName {
+        name: String,
     },
     InflictStatusCondition {
         condition: StatusCondition,

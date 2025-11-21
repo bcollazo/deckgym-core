@@ -108,11 +108,10 @@ where
 }
 
 pub(crate) fn search_and_bench_by_name(
-    acting_player: usize,
     state: &State,
-    card_name: &'static str,
+    card_name: String,
 ) -> (Probabilities, Mutations) {
-    let num_cards_in_deck = state.decks[acting_player]
+    let num_cards_in_deck = state.decks[state.current_player]
         .cards
         .iter()
         .filter(|c| c.get_name() == card_name)
@@ -130,12 +129,12 @@ pub(crate) fn search_and_bench_by_name(
         let mut outcomes: Mutations = vec![];
 
         for i in 0..num_cards_in_deck {
+            let card_name = card_name.clone();
             outcomes.push(Box::new(move |rng, state, action| {
                 // Check if there's bench space first
                 let bench_space = state.in_play_pokemon[action.actor]
                     .iter()
                     .position(|x| x.is_none());
-
                 if bench_space.is_none() {
                     debug!("No bench space available, shuffling deck without placing card");
                     state.decks[action.actor].shuffle(false, rng);
