@@ -26,6 +26,11 @@ pub enum Mechanic {
     CoinFlipExtraDamage {
         extra_damage: u32,
     },
+    ExtraDamageForEachHeads {
+        include_fixed_damage: bool,
+        damage_per_head: u32,
+        num_coins: usize,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

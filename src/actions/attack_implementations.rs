@@ -105,29 +105,148 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Flip 2 coins. If both of them are heads, this attack does 80 more damage.", todo_implementation);
     // map.insert("Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.", todo_implementation);
     // map.insert("Flip 2 coins. If both of them are tails, this attack does nothing.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 100 damage for each heads.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 20 damage for each heads.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 20 more damage for each heads.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 30 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. This attack does 100 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 100,
+            num_coins: 2,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 20 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 20,
+            num_coins: 2,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 20 more damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: true,
+            damage_per_head: 20,
+            num_coins: 2,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 30 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 30,
+            num_coins: 2,
+        },
+    );
     // map.insert("Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 30 more damage for each heads.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 40 damage for each heads.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 50 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. This attack does 30 more damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: true,
+            damage_per_head: 30,
+            num_coins: 2,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 40 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 40,
+            num_coins: 2,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 50 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 50,
+            num_coins: 2,
+        },
+    );
     // map.insert("Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.", todo_implementation);
-    // map.insert("Flip 2 coins. This attack does 80 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. This attack does 80 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 80,
+            num_coins: 2,
+        },
+    );
     // map.insert("Flip 3 coins. For each heads, a card is chosen at random from your opponent's hand. Your opponent reveals that card and shuffles it into their deck.", todo_implementation);
     map.insert("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.", Mechanic::MoltresExInfernoDance);
-    // map.insert("Flip 3 coins. This attack does 10 damage for each heads.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack does 20 damage for each heads.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack does 40 damage for each heads.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack does 50 damage for each heads.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack does 50 more damage for each heads.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack does 60 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 3 coins. This attack does 10 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 10,
+            num_coins: 3,
+        },
+    );
+    map.insert(
+        "Flip 3 coins. This attack does 20 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 20,
+            num_coins: 3,
+        },
+    );
+    map.insert(
+        "Flip 3 coins. This attack does 40 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 40,
+            num_coins: 3,
+        },
+    );
+    map.insert(
+        "Flip 3 coins. This attack does 50 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 50,
+            num_coins: 3,
+        },
+    );
+    map.insert(
+        "Flip 3 coins. This attack does 50 more damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: true,
+            damage_per_head: 50,
+            num_coins: 3,
+        },
+    );
+    map.insert(
+        "Flip 3 coins. This attack does 60 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 60,
+            num_coins: 3,
+        },
+    );
     // map.insert("Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused.", todo_implementation);
-    // map.insert("Flip 4 coins. This attack does 20 damage for each heads.", todo_implementation);
-    // map.insert("Flip 4 coins. This attack does 40 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 4 coins. This attack does 20 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 20,
+            num_coins: 4,
+        },
+    );
+    map.insert(
+        "Flip 4 coins. This attack does 40 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 40,
+            num_coins: 4,
+        },
+    );
     // map.insert("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
-    // map.insert("Flip 4 coins. This attack does 50 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip 4 coins. This attack does 50 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 50,
+            num_coins: 4,
+        },
+    );
     map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", Mechanic::CelebiExPowerfulBloom);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.", todo_implementation);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.", todo_implementation);

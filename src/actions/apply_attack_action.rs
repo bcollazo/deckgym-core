@@ -101,8 +101,19 @@ fn forecast_effect_attack(
             vec![0.5, 0.5],
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
         ),
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage,
+            damage_per_head,
+            num_coins,
+        } => damage_for_each_heads_attack(
+            *include_fixed_damage,
+            *damage_per_head,
+            *num_coins,
+            attack,
+        ),
     }
 }
+
 //     match attack_id {
 //         AttackId::A1026PinsirDoubleHorn => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
@@ -766,6 +777,35 @@ fn generate_distributions(
         );
     }
     current[start_idx] = 0;
+}
+
+fn damage_for_each_heads_attack(
+    include_fixed_damage: bool,
+    damage_per_head: u32,
+    num_coins: usize,
+    attack: &Attack,
+) -> (
+    Vec<f64>,
+    Vec<Box<dyn FnOnce(&mut StdRng, &mut State, &Action)>>,
+) {
+    let mut probabilities: Vec<f64> = vec![];
+    let mut damages: Vec<u32> = vec![];
+    let fixed_damage = if include_fixed_damage {
+        attack.fixed_damage
+    } else {
+        0
+    };
+
+    for heads_count in 0..=num_coins {
+        let tails_count = num_coins - heads_count;
+        let probability = (0.5f64).powi(heads_count as i32)
+            * (0.5f64).powi(tails_count as i32)
+            * binomial_coefficient(num_coins, heads_count) as f64;
+        probabilities.push(probability);
+        damages.push(fixed_damage + damage_per_head * heads_count as u32);
+    }
+
+    probabilistic_damage_attack(probabilities, damages)
 }
 
 /// Deal damage and attach energy to a pokemon of choice in the bench.
