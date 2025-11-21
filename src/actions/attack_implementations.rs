@@ -604,7 +604,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack also does 30 damage to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack also does 30 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 10 damage for each of your Benched [L] Pokémon.", todo_implementation);
-    // map.insert("This attack does 10 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 10 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 10,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does 10 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 10 more damage for each [W] Energy attached to this Pokémon.", todo_implementation);
     // map.insert("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
@@ -612,9 +618,21 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage for each of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 20,
+            bench_only: true,
+        },
+    );
     // map.insert("This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 20,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each Energy attached to this Pokémon.", todo_implementation);
@@ -624,22 +642,58 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 20 more damage for each of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 30 damage for each of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 30 damage for each of your Benched [L] Pokémon.", todo_implementation);
-    // map.insert("This attack does 30 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 30 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 30 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 30,
+            bench_only: true,
+        },
+    );
+    map.insert(
+        "This attack does 30 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 30,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 30 more damage for each Evolution Pokémon on your Bench.", todo_implementation);
     // map.insert("This attack does 30 more damage for each of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.", todo_implementation);
-    // map.insert("This attack does 40 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 40 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 40,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.", todo_implementation);
     // map.insert("This attack does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 50 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 50 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 50,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does 50 more damage for each of your Benched Nidoking.", todo_implementation);
-    // map.insert("This attack does 60 damage to 1 of your opponent's Pokémon.", todo_implementation);
-    // map.insert("This attack does 70 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 60 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 60,
+            bench_only: false,
+        },
+    );
+    map.insert(
+        "This attack does 70 damage to 1 of your opponent's Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 70,
+            bench_only: false,
+        },
+    );
     // map.insert("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.", todo_implementation);
     // map.insert("This attack does more damage equal to the damage this Pokémon has on it.", todo_implementation);
     // map.insert("This attack's damage isn't affected by Weakness.", todo_implementation);

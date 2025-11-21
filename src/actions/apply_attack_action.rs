@@ -123,6 +123,7 @@ fn forecast_effect_attack(
             vec![0.25, 0.75],
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
         ),
+        Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
     }
 }
 
@@ -130,7 +131,6 @@ fn forecast_effect_attack(
 //         AttackId::A1057PsyduckHeadache => {
 //             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
 //         }
-//         AttackId::A1071SeadraWaterArrow => direct_damage(50, false),
 //         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
 //         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
@@ -150,7 +150,6 @@ fn forecast_effect_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
 //             vec![0, 50, 100, 150, 200],
 //         ),
-//         AttackId::A1106ZebstrikaThunderSpear => direct_damage(30, false),
 //         AttackId::A1111HelioliskQuickAttack => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 80])
 //         }
@@ -173,7 +172,6 @@ fn forecast_effect_attack(
 //         AttackId::A1153MarowakExBonemerang => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
 //         }
-//         AttackId::A1154HitmonleeStretchKick => direct_damage(30, true),
 //         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
 //         AttackId::A1165ArbokCorner => damage_and_card_effect_attack(
 //             index,
@@ -194,7 +192,6 @@ fn forecast_effect_attack(
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
 //         }
 //         AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
-//         AttackId::A1a021LumineonAquaLiner => direct_damage(50, true),
 //         AttackId::A1a026RaichuGigashock => {
 //             let opponent = (state.current_player + 1) % 2;
 //             let targets: Vec<(u32, usize)> = state
@@ -277,7 +274,6 @@ fn forecast_effect_attack(
 //         AttackId::A3002AlolanExeggutorTropicalHammer => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
 //         }
-//         AttackId::A3010RowletSkillDive => direct_damage(10, false),
 //         AttackId::A3012DecidueyeExPierceThePain => direct_damage_if_damaged(100),
 //         AttackId::A3019SteeneeDoubleSpin => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
@@ -309,8 +305,6 @@ fn forecast_effect_attack(
 //         AttackId::A3a003RowletFuryAttack => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
 //         }
-//         AttackId::A3a004DartrixSkillDive => direct_damage(20, false),
-//         AttackId::A3a005DecidueyeSnipingArrow => direct_damage(70, false),
 //         AttackId::A3a006BuzzwoleExBigBeat => {
 //             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
 //         }
@@ -401,7 +395,6 @@ fn forecast_effect_attack(
 //         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
 //         AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
-//         AttackId::A4120AbsolLeapOver => direct_damage(30, true),
 //         AttackId::A1213CinccinoDoTheWave => bench_count_attack(acting_player, state, 0, 30, None),
 //         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
 //         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
@@ -413,7 +406,6 @@ fn forecast_effect_attack(
 //         AttackId::B1102MegaAltariaExMegaHarmony => {
 //             bench_count_attack(acting_player, state, 40, 30, None)
 //         }
-//         AttackId::B1106JirachiStarDrop => direct_damage(30, false),
 //         AttackId::B1109ChinglingJinglyNoise => {
 //             damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
 //         }

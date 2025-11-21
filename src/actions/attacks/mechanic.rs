@@ -42,6 +42,10 @@ pub enum Mechanic {
     ExtraDamageIfBothHeads {
         extra_damage: u32,
     },
+    DirectDamage {
+        damage: u32,
+        bench_only: bool,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
