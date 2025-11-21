@@ -111,16 +111,11 @@ fn forecast_effect_attack(
             *num_coins,
             attack,
         ),
+        Mechanic::CoinFlipNoEffect => coinflip_no_effect(attack.fixed_damage),
     }
 }
 
 //     match attack_id {
-//         AttackId::A1026PinsirDoubleHorn => {
-//             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
-//         }
-//         AttackId::A1031SkiddoSurpriseAttack => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40])
-//         }
 //         AttackId::A1033CharmanderEmber => self_energy_discard_attack(0, vec![EnergyType::Fire]),
 //         AttackId::A1035CharizardFireSpin => {
 //             self_energy_discard_attack(0, vec![EnergyType::Fire, EnergyType::Fire])
@@ -541,7 +536,11 @@ fn forecast_effect_attack(
 //     }
 // }
 
-pub(crate) fn celebi_powerful_bloom(state: &State) -> (Probabilities, Mutations) {
+fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {
+    probabilistic_damage_attack(vec![0.5, 0.5], vec![fixed_damage, 0])
+}
+
+fn celebi_powerful_bloom(state: &State) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(state.current_player);
     let total_energy = active_pokemon.attached_energy.len();
 
@@ -583,7 +582,7 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-pub(crate) fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
+fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         // Discard one Fire energy
         state.discard_from_active(action.actor, &[EnergyType::Fire]);
@@ -596,7 +595,7 @@ pub(crate) fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations)
 }
 
 /// For Magikarp's Waterfall Evolution: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
-pub(crate) fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
+fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
     let active_pokemon = state.get_active(state.current_player);
 
     // Find all cards in deck that can evolve from the active Pokemon
@@ -634,7 +633,7 @@ pub(crate) fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
-pub(crate) fn manaphy_oceanic() -> (Probabilities, Mutations) {
+fn manaphy_oceanic() -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let benched_pokemon: Vec<usize> = state
             .enumerate_bench_pokemon(action.actor)
@@ -669,7 +668,7 @@ pub(crate) fn manaphy_oceanic() -> (Probabilities, Mutations) {
     })
 }
 
-pub(crate) fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
+fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
     let targets: Vec<(u32, usize)> = state
@@ -682,7 +681,7 @@ pub(crate) fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutatio
     })
 }
 
-pub(crate) fn moltres_inferno_dance() -> (Probabilities, Mutations) {
+fn moltres_inferno_dance() -> (Probabilities, Mutations) {
     let probabilities = vec![0.125, 0.375, 0.375, 0.125]; // 0,1,2,3 heads
     let mutations = probabilities
         .iter()

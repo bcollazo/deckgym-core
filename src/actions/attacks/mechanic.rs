@@ -31,6 +31,7 @@ pub enum Mechanic {
         damage_per_head: u32,
         num_coins: usize,
     },
+    CoinFlipNoEffect,
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
