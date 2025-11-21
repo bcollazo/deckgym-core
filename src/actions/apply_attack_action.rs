@@ -1503,7 +1503,9 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
         // Start with 100 damage to the active Pokémon
         damage_map.insert((opponent, 0), 100);
 
-        let random_indices = generate_random_spread_indices(rng, state, true, 3);
+        let random_indices = generate_random_spread_indices(rng, state, true, 3, false)
+            .into_iter()
+            .map(|(_, idx)| idx);
         for idx in random_indices {
             *damage_map.entry((opponent, idx)).or_insert(0) += 20;
         }
@@ -1522,30 +1524,12 @@ fn magcargo_spurt_fire() -> (Probabilities, Mutations) {
     // 1 other Pokémon (either yours or your opponent's) is chosen at random 3 times.
     // For each time a Pokémon was chosen, do 50 damage to it.
     doutcome(|rng, state, action| {
-        let opponent = (action.actor + 1) % 2;
         let mut damage_map: std::collections::HashMap<(usize, usize), u32> =
             std::collections::HashMap::new();
 
-        for _ in 0..3 {
-            let mut possible_targets: Vec<(usize, usize)> = state
-                .enumerate_in_play_pokemon(action.actor)
-                .filter(|(idx, _)| *idx != 0)
-                .map(|(idx, _)| (action.actor, idx))
-                .collect();
-
-            possible_targets.extend(
-                state
-                    .enumerate_in_play_pokemon(opponent)
-                    .map(|(idx, _)| (opponent, idx)),
-            );
-
-            if possible_targets.is_empty() {
-                continue;
-            }
-
-            let rand_idx = rng.gen_range(0..possible_targets.len());
-            let (target_player, target_idx) = possible_targets[rand_idx];
-            *damage_map.entry((target_player, target_idx)).or_insert(0) += 50;
+        let random_targets = generate_random_spread_indices(rng, state, false, 3, true);
+        for (player, idx) in random_targets {
+            *damage_map.entry((player, idx)).or_insert(0) += 50;
         }
 
         let targets: Vec<(u32, usize, usize)> = damage_map
@@ -1563,27 +1547,43 @@ fn generate_random_spread_indices(
     state: &State,
     bench_only: bool,
     count: usize,
-) -> Vec<usize> {
-    let opponent = (state.current_player + 1) % 2;
+    target_all: bool,
+) -> Vec<(usize, usize)> {
     let mut targets = vec![];
-    for _ in 0..count {
-        let possible_indices: Vec<usize> = if bench_only {
-            state
-                .enumerate_bench_pokemon(opponent)
-                .map(|(idx, _)| idx)
-                .collect()
-        } else {
+    let opponent = (state.current_player + 1) % 2;
+
+    let possible_targets: Vec<(usize, usize)> = if target_all {
+        let mut all_possible = state
+            .enumerate_in_play_pokemon(state.current_player)
+            .filter(|(idx, _)| *idx != 0) // Exclude attacker
+            .map(|(idx, _)| (state.current_player, idx))
+            .collect::<Vec<_>>();
+
+        all_possible.extend(
             state
                 .enumerate_in_play_pokemon(opponent)
-                .map(|(idx, _)| idx)
-                .collect()
-        };
-        if possible_indices.is_empty() {
-            continue;
-        }
+                .map(|(idx, _)| (opponent, idx)),
+        );
+        all_possible
+    } else if bench_only {
+        state
+            .enumerate_bench_pokemon(opponent)
+            .map(|(idx, _)| (opponent, idx))
+            .collect()
+    } else {
+        state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(idx, _)| (opponent, idx))
+            .collect()
+    };
 
-        let rand_idx = rng.gen_range(0..possible_indices.len());
-        targets.push(possible_indices[rand_idx]);
+    if possible_targets.is_empty() {
+        return targets;
+    }
+
+    for _ in 0..count {
+        let rand_idx = rng.gen_range(0..possible_targets.len());
+        targets.push(possible_targets[rand_idx]);
     }
     targets
 }
@@ -1829,7 +1829,10 @@ mod test {
         // Two pokemon should be knocked out, remaining is one Mantyke
         assert!(state.in_play_pokemon[1][0].is_none()); // Pinsir knocked out
         assert!(state.in_play_pokemon[1][1].is_none()); // One Mantyke knocked out
-        assert_eq!(state.in_play_pokemon[1][2].as_ref().unwrap().remaining_hp, 30); // Second Mantyke untouched
+        assert_eq!(
+            state.in_play_pokemon[1][2].as_ref().unwrap().remaining_hp,
+            30
+        ); // Second Mantyke untouched
     }
 
     #[test]
