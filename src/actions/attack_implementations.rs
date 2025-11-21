@@ -398,14 +398,54 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.", todo_implementation);
     // map.insert("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 2 extra [L] Energy attached, this attack does 80 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 3 extra [G] Energy attached, this attack does 70 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 3 extra [W] Energy attached, this attack does 70 more damage.", todo_implementation);
+    map.insert("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Water],
+            extra_damage: 40,
+        },
+    );
+    map.insert("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 50 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Fighting, EnergyType::Fighting],
+            extra_damage: 50,
+        },
+    );
+    map.insert("If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Fighting, EnergyType::Fighting],
+            extra_damage: 60,
+        },
+    );
+    map.insert("If this Pokémon has at least 2 extra [L] Energy attached, this attack does 80 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Lightning, EnergyType::Lightning],
+            extra_damage: 80,
+        },
+    );
+    map.insert("If this Pokémon has at least 2 extra [R] Energy attached, this attack does 60 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Fire, EnergyType::Fire],
+            extra_damage: 60,
+        },
+    );
+    map.insert("If this Pokémon has at least 2 extra [W] Energy attached, this attack does 60 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Water, EnergyType::Water],
+            extra_damage: 60,
+        },
+    );
+    map.insert("If this Pokémon has at least 3 extra [G] Energy attached, this attack does 70 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Grass],
+            extra_damage: 70,
+        },
+    );
+    map.insert("If this Pokémon has at least 3 extra [W] Energy attached, this attack does 70 more damage.", 
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
+            extra_damage: 70,
+        },
+    );
     // map.insert("If this Pokémon has damage on it, this attack can be used for 1 [L] Energy.", todo_implementation);
     // map.insert("If this Pokémon has damage on it, this attack does 40 more damage.", todo_implementation);
     // map.insert("If this Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);

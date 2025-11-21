@@ -35,6 +35,10 @@ pub enum Mechanic {
     SelfDiscardEnergy {
         energies: Vec<EnergyType>,
     },
+    ExtraDamageIfExtraEnergy {
+        required_extra_energy: Vec<EnergyType>,
+        extra_damage: u32,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

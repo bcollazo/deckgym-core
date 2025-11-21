@@ -11,7 +11,7 @@ use crate::{
         Action,
     },
     effects::{CardEffect, TurnEffect},
-    hooks::{can_evolve_into, get_stage},
+    hooks::{can_evolve_into, contains_energy, get_stage},
     models::{Attack, Card, EnergyType, PlayedCard, StatusCondition},
     State,
 };
@@ -115,16 +115,14 @@ fn forecast_effect_attack(
         Mechanic::SelfDiscardEnergy { energies } => {
             self_energy_discard_attack(attack.fixed_damage, energies.clone())
         }
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy,
+            extra_damage,
+        } => extra_energy_attack(state, attack, required_extra_energy.clone(), *extra_damage),
     }
 }
 
 //     match attack_id {
-//         AttackId::A1055BlastoiseHydroPump => {
-//             extra_energy_attack(acting_player, state, EnergyType::Water, 80, 5, 60)
-//         }
-//         AttackId::A1056BlastoiseExHydroBazooka => {
-//             extra_energy_attack(acting_player, state, EnergyType::Water, 100, 5, 60)
-//         }
 //         AttackId::A1057PsyduckHeadache => {
 //             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
 //         }
@@ -136,9 +134,6 @@ fn forecast_effect_attack(
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![80, 0])
 //         }
 //         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
-//         AttackId::A1079LaprasHydroPump => {
-//             extra_energy_attack(acting_player, state, EnergyType::Water, 20, 4, 70)
-//         }
 //         AttackId::A1083ArticunoIceBeam => {
 //             damage_chance_status_attack(60, 0.5, StatusCondition::Paralyzed)
 //         }
@@ -413,9 +408,6 @@ fn forecast_effect_attack(
 //         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
 //         AttackId::A4146UrsaringSwingAround => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
-//         }
-//         AttackId::A4a010EnteiExBlazingBeatdown => {
-//             extra_energy_attack(acting_player, state, EnergyType::Fire, 60, 4, 60)
 //         }
 //         AttackId::A4a023MantykeSplashyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
@@ -1066,29 +1058,31 @@ fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
 /// Generic attack that deals bonus damage if the Pokémon has enough energy of a specific type attached.
 /// Used by attacks like Hydro Pump, Hydro Bazooka, and Blazing Beatdown.
 fn extra_energy_attack(
-    acting_player: usize,
     state: &State,
-    energy_type: EnergyType,
-    base_damage: u32,
-    energy_threshold: usize, // Minimum total energy of specified type needed for bonus damage
-    bonus_damage: u32,       // Extra damage when threshold is met
+    attack: &Attack,
+    required_extra_energy: Vec<EnergyType>,
+    extra_damage: u32,
 ) -> (Probabilities, Mutations) {
-    let pokemon = state.in_play_pokemon[acting_player][0]
+    let pokemon = state.in_play_pokemon[state.current_player][0]
         .as_ref()
         .expect("Active Pokemon should be there if attacking");
 
-    // Count total energy of the specified type
-    let energy_count = pokemon
-        .attached_energy
+    // Use the contains_energy hook to consider
+    let cost_with_extra_energy = attack
+        .energy_required
         .iter()
-        .filter(|&energy| *energy == energy_type)
-        .count();
-
-    // Check if we meet or exceed the energy threshold
-    if energy_count >= energy_threshold {
-        active_damage_doutcome(base_damage + bonus_damage)
+        .cloned()
+        .chain(required_extra_energy.iter().cloned())
+        .collect::<Vec<EnergyType>>();
+    if contains_energy(
+        pokemon,
+        &cost_with_extra_energy,
+        state,
+        state.current_player,
+    ) {
+        active_damage_doutcome(attack.fixed_damage + extra_damage)
     } else {
-        active_damage_doutcome(base_damage)
+        active_damage_doutcome(attack.fixed_damage)
     }
 }
 
