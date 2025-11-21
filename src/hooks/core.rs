@@ -388,9 +388,8 @@ pub(crate) fn modify_damage(
     };
 
     // Weakness Modifier
-    let weakness_modifier = if !is_active_to_active {
-        0
-    } else {
+    let mut weakness_modifier = 0;
+    if is_active_to_active {
         let receiving = state.get_active(target_player);
         if let Card::Pokemon(pokemon_card) = &receiving.card {
             if pokemon_card.weakness == attacking_pokemon.card.get_type() {
@@ -399,11 +398,10 @@ pub(crate) fn modify_damage(
                     pokemon_card,
                     attacking_pokemon.card.get_type()
                 );
-                return 20;
+                weakness_modifier = 20;
             }
         }
-        0
-    };
+    }
 
     debug!(
         "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
