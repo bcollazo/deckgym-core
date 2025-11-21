@@ -20,6 +20,9 @@ pub enum Mechanic {
     ExtraDamageIfEx {
         extra_damage: u32,
     },
+    SelfDamage {
+        amount: u32,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

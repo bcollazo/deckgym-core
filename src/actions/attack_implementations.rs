@@ -335,12 +335,30 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.", todo_implementation);
     // map.insert("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
     // map.insert("Take a [W] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
-    // map.insert("This Pokémon also does 10 damage to itself.", todo_implementation);
-    // map.insert("This Pokémon also does 20 damage to itself.", todo_implementation);
-    // map.insert("This Pokémon also does 30 damage to itself.", todo_implementation);
-    // map.insert("This Pokémon also does 40 damage to itself.", todo_implementation);
-    // map.insert("This Pokémon also does 50 damage to itself.", todo_implementation);
-    // map.insert("This Pokémon also does 70 damage to itself.", todo_implementation);
+    map.insert(
+        "This Pokémon also does 10 damage to itself.",
+        Mechanic::SelfDamage { amount: 10 },
+    );
+    map.insert(
+        "This Pokémon also does 20 damage to itself.",
+        Mechanic::SelfDamage { amount: 20 },
+    );
+    map.insert(
+        "This Pokémon also does 30 damage to itself.",
+        Mechanic::SelfDamage { amount: 30 },
+    );
+    map.insert(
+        "This Pokémon also does 40 damage to itself.",
+        Mechanic::SelfDamage { amount: 40 },
+    );
+    map.insert(
+        "This Pokémon also does 50 damage to itself.",
+        Mechanic::SelfDamage { amount: 50 },
+    );
+    map.insert(
+        "This Pokémon also does 70 damage to itself.",
+        Mechanic::SelfDamage { amount: 70 },
+    );
     // map.insert("This Pokémon is now Asleep.", todo_implementation);
     // map.insert("This Pokémon is now Asleep. Heal 30 damage from it.", todo_implementation);
     // map.insert("This Pokémon is now Confused.", todo_implementation);

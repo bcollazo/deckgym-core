@@ -96,10 +96,10 @@ fn forecast_effect_attack(
         Mechanic::ExtraDamageIfEx { extra_damage } => {
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::SelfDamage { amount } => self_damage_attack(attack.fixed_damage, *amount),
     }
 }
 //     match attack_id {
-//         AttackId::A2b035GiratinaExChaoticImpact => self_damage_attack(130, 20),
 //         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
 //         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
 //         AttackId::A1023ExeggutorExTropicalSwing => {
