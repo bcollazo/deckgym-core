@@ -23,6 +23,9 @@ pub enum Mechanic {
     SelfDamage {
         amount: u32,
     },
+    CoinFlipExtraDamage {
+        extra_damage: u32,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

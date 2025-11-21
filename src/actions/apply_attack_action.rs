@@ -97,20 +97,16 @@ fn forecast_effect_attack(
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
         Mechanic::SelfDamage { amount } => self_damage_attack(attack.fixed_damage, *amount),
+        Mechanic::CoinFlipExtraDamage { extra_damage } => probabilistic_damage_attack(
+            vec![0.5, 0.5],
+            vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
+        ),
     }
 }
 //     match attack_id {
-//         AttackId::A1017VenomothPoisonPowder => damage_status_attack(30, StatusCondition::Poisoned),
-//         AttackId::A1022ExeggutorStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![30, 60]),
-//         AttackId::A1023ExeggutorExTropicalSwing => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 80])
-//         }
-//         AttackId::A1024TangelaAbsorb => self_heal_attack(10, index),
 //         AttackId::A1026PinsirDoubleHorn => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
 //         }
-//         AttackId::A1029PetililBlot => self_heal_attack(10, index),
-//         AttackId::A1030LilligantLeafSupply => energy_bench_attack(0, 1, EnergyType::Grass),
 //         AttackId::A1031SkiddoSurpriseAttack => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 40])
 //         }

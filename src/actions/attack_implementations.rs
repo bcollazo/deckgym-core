@@ -148,15 +148,36 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Flip a coin. If heads, put your opponent's Active Pokémon into their hand.", todo_implementation);
     // map.insert("Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.", todo_implementation);
     // map.insert("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 20 more damage.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 30 more damage.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 40 more damage.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, this attack does 20 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 20 },
+    );
+    map.insert(
+        "Flip a coin. If heads, this attack does 30 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 30 },
+    );
+    map.insert(
+        "Flip a coin. If heads, this attack does 40 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 40 },
+    );
     // map.insert("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 50 more damage.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, this attack does 50 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 50 },
+    );
+    map.insert(
+        "Flip a coin. If heads, this attack does 60 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 60 },
+    );
     // map.insert("Flip a coin. If heads, this attack does 60 more damage. If tails, this Pokémon also does 20 damage to itself.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 70 more damage.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack does 80 more damage.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, this attack does 70 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 70 },
+    );
+    map.insert(
+        "Flip a coin. If heads, this attack does 80 more damage.",
+        Mechanic::CoinFlipExtraDamage { extra_damage: 80 },
+    );
     // map.insert("Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.", todo_implementation);
