@@ -52,7 +52,10 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", todo_implementation);
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);
     // map.insert("Discard a random Energy from this Pokémon.", todo_implementation);
-    // map.insert("Discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a random Energy from your opponent's Active Pokémon.",
+        Mechanic::DiscardEnergyFromOpponentActive,
+    );
     // map.insert("Discard a random Item card from your opponent's hand.", todo_implementation);
     // map.insert("Discard a random Pokémon Tool card from your opponent's hand.", todo_implementation);
     // map.insert("Discard a random card from your opponent's hand.", todo_implementation);
@@ -159,7 +162,12 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Burned.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Confused.", todo_implementation);
-    // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",
+        Mechanic::ChanceStatusAttack {
+            condition: StatusCondition::Paralyzed,
+        },
+    );
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed. If tails, your opponent's Active Pokémon is now Confused.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.", todo_implementation);

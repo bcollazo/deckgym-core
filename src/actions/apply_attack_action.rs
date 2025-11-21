@@ -87,14 +87,15 @@ fn forecast_effect_attack(
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
         Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
+        Mechanic::ChanceStatusAttack { condition } => {
+            damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
+        }
+        Mechanic::DiscardEnergyFromOpponentActive => {
+            damage_and_discard_energy(attack.fixed_damage, 1)
+        }
     }
 }
 //     match attack_id {
-//         AttackId::A2b001WeedleMultiply => search_and_bench_by_name(acting_player, state, "Weedle"),
-//         AttackId::A2b002KakunaStringShot => {
-//             damage_chance_status_attack(20, 0.5, StatusCondition::Paralyzed)
-//         }
-//         AttackId::A2b003BeedrillExCrushingSpear => damage_and_discard_energy(80, 1),
 //         AttackId::A2b005SprigatitoCryForHelp => {
 //             pokemon_search_outcomes_by_type(acting_player, state, false, EnergyType::Grass)
 //         }

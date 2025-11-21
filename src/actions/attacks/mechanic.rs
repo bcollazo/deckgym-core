@@ -13,6 +13,10 @@ pub enum Mechanic {
     InflictStatusCondition {
         condition: StatusCondition,
     },
+    ChanceStatusAttack {
+        condition: StatusCondition,
+    },
+    DiscardEnergyFromOpponentActive,
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
