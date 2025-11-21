@@ -11,6 +11,7 @@ use crate::{
     hooks::{get_retreat_cost, on_attach_energy, on_attach_tool, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     state::State,
+    tool_ids::ToolId,
 };
 
 use super::{
@@ -102,98 +103,111 @@ fn forecast_deterministic_action() -> (Probabilities, Mutations) {
 
 fn apply_deterministic_action(state: &mut State, action: &Action) {
     match &action.action {
-        SimpleAction::DrawCard { .. } => {
-            state.maybe_draw_card(action.actor);
-        }
+        SimpleAction::DrawCard { .. } => state.maybe_draw_card(action.actor),
         SimpleAction::Attach {
             attachments,
             is_turn_energy,
-        } => {
-            for (amount, energy, in_play_idx) in attachments {
-                state.in_play_pokemon[action.actor][*in_play_idx]
-                    .as_mut()
-                    .expect("Pokemon should be there if attaching energy to it")
-                    .attached_energy
-                    .extend(std::iter::repeat_n(*energy, *amount as usize));
-                // Call hook for each energy attached
-                for _ in 0..*amount {
-                    on_attach_energy(state, action.actor, *in_play_idx, *energy, *is_turn_energy);
-                }
-            }
-            if *is_turn_energy {
-                state.current_energy = None;
-            }
-        }
+        } => apply_attach_energy(state, action.actor, attachments, *is_turn_energy),
         SimpleAction::AttachTool {
             in_play_idx,
             tool_id,
-        } => {
-            state.in_play_pokemon[action.actor][*in_play_idx]
-                .as_mut()
-                .expect("Pokemon should be there if attaching tool to it")
-                .attached_tool = Some(*tool_id);
-            on_attach_tool(state, action.actor, *in_play_idx, *tool_id);
-        }
+        } => apply_attach_tool(state, action.actor, *in_play_idx, *tool_id),
         SimpleAction::MoveEnergy {
             from_in_play_idx,
             to_in_play_idx,
             energy,
-        } => {
-            let actor_board = &mut state.in_play_pokemon[action.actor];
-            let mut removed = false;
-            if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
-                if let Some(pos) = from_card.attached_energy.iter().position(|e| e == energy) {
-                    from_card.attached_energy.swap_remove(pos);
-                    removed = true;
-                }
-            }
-            if removed {
-                if let Some(to_card) = actor_board[*to_in_play_idx].as_mut() {
-                    to_card.attached_energy.push(*energy);
-                } else if let Some(from_card) = actor_board[*from_in_play_idx].as_mut() {
-                    // Put energy back if destination vanished (should not normally happen)
-                    from_card.attached_energy.push(*energy);
-                }
-            }
-        }
-        SimpleAction::Place(card, index) => {
-            let played_card = to_playable_card(card, true);
-            state.in_play_pokemon[action.actor][*index] = Some(played_card);
-            state.remove_card_from_hand(action.actor, card);
-        }
-        SimpleAction::Evolve(card, position) => {
-            apply_evolve(action.actor, state, card, *position);
-        }
+        } => apply_move_energy(
+            state,
+            action.actor,
+            *from_in_play_idx,
+            *to_in_play_idx,
+            *energy,
+        ),
+        SimpleAction::Place(card, index) => apply_place_card(state, action.actor, card, *index),
+        SimpleAction::Evolve(card, position) => apply_evolve(action.actor, state, card, *position),
         SimpleAction::Activate { in_play_idx } => {
-            apply_retreat(action.actor, state, *in_play_idx, true);
+            apply_retreat(action.actor, state, *in_play_idx, true)
         }
-        SimpleAction::Retreat(position) => {
-            apply_retreat(action.actor, state, *position, false);
-        }
+        SimpleAction::Retreat(position) => apply_retreat(action.actor, state, *position, false),
         SimpleAction::ApplyDamage {
             attacking_ref,
             targets,
             is_from_active_attack,
-        } => {
-            handle_damage(state, *attacking_ref, targets, *is_from_active_attack);
-        }
+        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack),
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,
             amount,
             cure_status,
-        } => {
-            apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status);
-        }
-        SimpleAction::ApplyEeveeBagDamageBoost => {
-            apply_eevee_bag_damage_boost(state);
-        }
+        } => apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status),
+        SimpleAction::ApplyEeveeBagDamageBoost => apply_eevee_bag_damage_boost(state),
         SimpleAction::HealAllEeveeEvolutions => {
-            apply_heal_all_eevee_evolutions(action.actor, state);
+            apply_heal_all_eevee_evolutions(action.actor, state)
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
+}
+
+fn apply_attach_energy(
+    state: &mut State,
+    actor: usize,
+    attachments: &[(u32, EnergyType, usize)],
+    is_turn_energy: bool,
+) {
+    for (amount, energy, in_play_idx) in attachments {
+        state.in_play_pokemon[actor][*in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if attaching energy to it")
+            .attached_energy
+            .extend(std::iter::repeat_n(*energy, *amount as usize));
+        // Call hook for each energy attached
+        for _ in 0..*amount {
+            on_attach_energy(state, actor, *in_play_idx, *energy, is_turn_energy);
+        }
+    }
+    if is_turn_energy {
+        state.current_energy = None;
+    }
+}
+
+fn apply_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
+    state.in_play_pokemon[actor][in_play_idx]
+        .as_mut()
+        .expect("Pokemon should be there if attaching tool to it")
+        .attached_tool = Some(tool_id);
+    on_attach_tool(state, actor, in_play_idx, tool_id);
+}
+
+fn apply_move_energy(
+    state: &mut State,
+    actor: usize,
+    from_idx: usize,
+    to_idx: usize,
+    energy: EnergyType,
+) {
+    let actor_board = &mut state.in_play_pokemon[actor];
+    let mut removed = false;
+    if let Some(from_card) = actor_board[from_idx].as_mut() {
+        if let Some(pos) = from_card.attached_energy.iter().position(|e| e == &energy) {
+            from_card.attached_energy.swap_remove(pos);
+            removed = true;
+        }
+    }
+    if removed {
+        if let Some(to_card) = actor_board[to_idx].as_mut() {
+            to_card.attached_energy.push(energy);
+        } else if let Some(from_card) = actor_board[from_idx].as_mut() {
+            // Put energy back if destination vanished (should not normally happen)
+            from_card.attached_energy.push(energy);
+        }
+    }
+}
+
+fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) {
+    let played_card = to_playable_card(card, true);
+    state.in_play_pokemon[actor][index] = Some(played_card);
+    state.remove_card_from_hand(actor, card);
 }
 
 fn apply_healing(
