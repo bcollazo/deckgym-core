@@ -2,7 +2,7 @@
 name = "deckgym"
 version = "0.1.0"
 edition = "2021"
-default-run = "deckgym"
+default-run = "deckgym-cli"
 description = "A high-performance Rust library for simulating Pokémon TCG Pocket games."
 
 [dependencies]
@@ -50,6 +50,10 @@ name = "card_lookup_benchmark"
 harness = false
 
 [[bin]]
+name = "deckgym-cli"
+path = "src/main.rs"
+
+[[bin]]
 name = "tui"
 path = "src/bin/tui.rs"
 required-features = ["tui"]
@@ -57,3 +61,4 @@ required-features = ["tui"]
 [[example]]
 name = "sylveon_deck_draw_speed"
 required-features = ["csv-export"]
+
