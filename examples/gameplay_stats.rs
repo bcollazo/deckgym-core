@@ -107,18 +107,21 @@ fn print_stats(stats: &deckgym::gameplay_stats_collector::AggregatedStats) {
     }
     warn!("");
 
-    // 5. Attack Usage Statistics (show first 5 cards)
+    // 5. Attack Usage Statistics (show first 5 attacks)
     warn!("--- Attack Usage Statistics ---");
     for player in 0..2 {
         let player_attacks = &stats.attacks_used[player];
         warn!(
-            "Player {}: {} unique cards used attacks",
+            "Player {}: {} unique attacks used",
             player,
             player_attacks.len()
         );
 
-        for (card_id, avg_turn) in player_attacks.iter().take(5) {
-            warn!("  {}: avg turn {:.1}", card_id, avg_turn);
+        for ((card_id, attack_idx), avg_turn) in player_attacks.iter().take(5) {
+            warn!(
+                "  {} (attack {}): avg turn {:.1}",
+                card_id, attack_idx, avg_turn
+            );
         }
     }
 }
