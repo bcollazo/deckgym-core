@@ -77,6 +77,14 @@ pub struct GameplayStatsCollector {
     /// Format: game_id -> player -> card_id -> turn
     first_attack_used: HashMap<Uuid, PerPlayerData<HashMap<String, u32>>>,
 
+    /// Turn number when each game ended
+    /// Format: game_id -> turn
+    game_end_turn: HashMap<Uuid, u32>,
+
+    /// Game outcome for each game
+    /// Format: game_id -> outcome
+    game_outcomes: HashMap<Uuid, Option<GameOutcome>>,
+
     // Aggregated statistics across all games
     // Format: player -> turn -> [hand_sizes across all games]
     /// Hand sizes at the end of each turn, aggregated across all games
@@ -103,6 +111,8 @@ impl GameplayStatsCollector {
             deck_empty_turn: HashMap::new(),
             first_card_on_mat: HashMap::new(),
             first_attack_used: HashMap::new(),
+            game_end_turn: HashMap::new(),
+            game_outcomes: HashMap::new(),
             hand_sizes: PerPlayerData::default_new(),
 
             cards_seen_this_game: PerPlayerData::default_new(),
@@ -204,7 +214,49 @@ impl GameplayStatsCollector {
         );
         warn!("");
 
-        // 1. Deck Empty Statistics
+        // 1. Game Ending Statistics
+        warn!("--- Game Ending Statistics ---");
+        let end_turns: Vec<u32> = self.game_end_turn.values().copied().collect();
+        if !end_turns.is_empty() {
+            let avg = end_turns.iter().sum::<u32>() as f64 / end_turns.len() as f64;
+            let min = *end_turns.iter().min().unwrap();
+            let max = *end_turns.iter().max().unwrap();
+            warn!("Average game length: {:.1} turns", avg);
+            warn!("Min: {} turns, Max: {} turns", min, max);
+
+            // Count outcomes
+            let mut player_0_wins = 0;
+            let mut player_1_wins = 0;
+            let mut ties = 0;
+            for outcome in self.game_outcomes.values() {
+                match outcome {
+                    Some(GameOutcome::Win(0)) => player_0_wins += 1,
+                    Some(GameOutcome::Win(1)) => player_1_wins += 1,
+                    Some(GameOutcome::Tie) => ties += 1,
+                    _ => {}
+                }
+            }
+            warn!(
+                "Player 0 wins: {} ({}%)",
+                player_0_wins,
+                (player_0_wins as f64 / self.num_games as f64 * 100.0) as u32
+            );
+            warn!(
+                "Player 1 wins: {} ({}%)",
+                player_1_wins,
+                (player_1_wins as f64 / self.num_games as f64 * 100.0) as u32
+            );
+            if ties > 0 {
+                warn!(
+                    "Ties: {} ({}%)",
+                    ties,
+                    (ties as f64 / self.num_games as f64 * 100.0) as u32
+                );
+            }
+        }
+        warn!("");
+
+        // 2. Deck Empty Statistics
         warn!("--- Deck Empty Statistics ---");
         for player in 0..2 {
             let mut empty_turns = Vec::new();
@@ -232,7 +284,7 @@ impl GameplayStatsCollector {
         }
         warn!("");
 
-        // 2. Hand Size Statistics
+        // 3. Hand Size Statistics
         warn!("--- Hand Size Statistics (average per turn) ---");
         for player in 0..2 {
             warn!("Player {}:", player);
@@ -248,7 +300,7 @@ impl GameplayStatsCollector {
         }
         warn!("");
 
-        // 3. Cards on Mat Statistics
+        // 4. Cards on Mat Statistics
         warn!("--- Cards on Mat Statistics ---");
         for player in 0..2 {
             // Collect all unique cards seen across all games
@@ -286,7 +338,7 @@ impl GameplayStatsCollector {
         }
         warn!("");
 
-        // 4. Attack Usage Statistics
+        // 5. Attack Usage Statistics
         warn!("--- Attack Usage Statistics ---");
         for player in 0..2 {
             // Collect all unique cards that used attacks
@@ -358,7 +410,13 @@ impl SimulationEventHandler for GameplayStatsCollector {
         }
     }
 
-    fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {
+    fn on_game_end(&mut self, game_id: Uuid, state: State, result: Option<GameOutcome>) {
+        // Record the turn when this game ended
+        self.game_end_turn.insert(game_id, state.turn_count as u32);
+
+        // Record the game outcome
+        self.game_outcomes.insert(game_id, result);
+
         self.num_games += 1;
         self.current_game_id = None;
     }
@@ -381,6 +439,10 @@ impl SimulationEventHandler for GameplayStatsCollector {
                 .extend(other_collector.first_card_on_mat.clone());
             self.first_attack_used
                 .extend(other_collector.first_attack_used.clone());
+            self.game_end_turn
+                .extend(other_collector.game_end_turn.clone());
+            self.game_outcomes
+                .extend(other_collector.game_outcomes.clone());
 
             // Merge aggregated hand sizes
             for player in 0..2 {
