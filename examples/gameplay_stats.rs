@@ -10,7 +10,7 @@ use num_format::{Locale, ToFormattedString};
 /// This collector tracks:
 /// - When players run out of deck cards
 /// - First time each card appears on the mat
-/// - Hand sizes at the end of each turn
+/// - Average hand sizes across all turns
 /// - First time each card uses an attack
 ///
 /// Run with: cargo run --example gameplay_stats
@@ -66,76 +66,43 @@ fn print_stats(stats: &deckgym::gameplay_stats_collector::AggregatedStats) {
     warn!("");
 
     // 1. Game Ending Statistics
-    warn!("--- Game Ending Statistics ---");
+    warn!("--- Game Statistics ---");
     warn!("Average game length: {:.1} turns", stats.avg_game_length);
-    warn!(
-        "Player 0 wins: {} ({}%)",
-        stats.player_0_wins,
-        (stats.player_0_wins as f64 / stats.total_games as f64 * 100.0) as u32
-    );
-    warn!(
-        "Player 1 wins: {} ({}%)",
-        stats.player_1_wins,
-        (stats.player_1_wins as f64 / stats.total_games as f64 * 100.0) as u32
-    );
-    if stats.ties > 0 {
-        warn!(
-            "Ties: {} ({}%)",
-            stats.ties,
-            (stats.ties as f64 / stats.total_games as f64 * 100.0) as u32
-        );
-    }
     warn!("");
 
     // 2. Deck Empty Statistics
     warn!("--- Deck Empty Statistics ---");
     for player in 0..2 {
-        if let Some(deck_stat) = stats.deck_empty.iter().find(|s| s.player == player) {
-            warn!(
-                "Player {}: Deck empty in {} games ({}%)",
-                player,
-                deck_stat.games_empty,
-                (deck_stat.games_empty as f64 / stats.total_games as f64 * 100.0) as u32
-            );
-            warn!("  Average turn: {:.1}", deck_stat.avg_turn);
+        if let Some(avg_turn) = stats.deck_empty_avg[player] {
+            warn!("Player {}: Deck empty avg turn: {:.1}", player, avg_turn);
         } else {
             warn!("Player {}: Deck never empty", player);
         }
     }
     warn!("");
 
-    // 3. Hand Size Statistics (show first 10 turns)
-    warn!("--- Hand Size Statistics (average per turn) ---");
+    // 3. Hand Size Statistics (average across all turns)
+    warn!("--- Hand Size Statistics ---");
     for player in 0..2 {
-        warn!("Player {}:", player);
-        let player_stats: Vec<_> = stats
-            .hand_sizes
-            .iter()
-            .filter(|s| s.player == player)
-            .take(10)
-            .collect();
-        for stat in player_stats {
-            warn!("  Turn {}: {:.2} cards", stat.turn, stat.avg_size);
-        }
+        warn!(
+            "Player {}: Average hand size: {:.2} cards",
+            player, stats.hand_sizes[player]
+        );
     }
     warn!("");
 
     // 4. Cards on Mat Statistics (show first 5 cards)
     warn!("--- Cards on Mat Statistics ---");
     for player in 0..2 {
-        let player_cards: Vec<_> = stats
-            .cards_seen
-            .iter()
-            .filter(|s| s.player == player)
-            .collect();
+        let player_cards = &stats.cards_seen[player];
         warn!(
             "Player {}: {} unique cards appeared on mat",
             player,
             player_cards.len()
         );
 
-        for stat in player_cards.iter().take(5) {
-            warn!("  {}: avg turn {:.1}", stat.card_id, stat.avg_turn);
+        for (card_id, avg_turn) in player_cards.iter().take(5) {
+            warn!("  {}: avg turn {:.1}", card_id, avg_turn);
         }
     }
     warn!("");
@@ -143,19 +110,15 @@ fn print_stats(stats: &deckgym::gameplay_stats_collector::AggregatedStats) {
     // 5. Attack Usage Statistics (show first 5 cards)
     warn!("--- Attack Usage Statistics ---");
     for player in 0..2 {
-        let player_attacks: Vec<_> = stats
-            .attacks_used
-            .iter()
-            .filter(|s| s.player == player)
-            .collect();
+        let player_attacks = &stats.attacks_used[player];
         warn!(
             "Player {}: {} unique cards used attacks",
             player,
             player_attacks.len()
         );
 
-        for stat in player_attacks.iter().take(5) {
-            warn!("  {}: avg turn {:.1}", stat.card_id, stat.avg_turn);
+        for (card_id, avg_turn) in player_attacks.iter().take(5) {
+            warn!("  {}: avg turn {:.1}", card_id, avg_turn);
         }
     }
 }
