@@ -24,6 +24,7 @@ pub struct Simulation {
     handler_factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
     parallel: bool,
     num_threads: Option<usize>,
+    event_handler: Option<CompositeSimulationEventHandler>,
 }
 
 impl Simulation {
@@ -48,6 +49,7 @@ impl Simulation {
             handler_factories: vec![],
             parallel,
             num_threads,
+            event_handler: None,
         })
     }
 
@@ -132,7 +134,15 @@ impl Simulation {
         }
         main_event_handler.on_simulation_end();
 
+        // Store the merged event handler for later retrieval
+        self.event_handler = Some(main_event_handler);
+
         outcomes
+    }
+
+    /// Get a reference to a specific event handler by type after simulation has run
+    pub fn get_event_handler<T: SimulationEventHandler + 'static>(&self) -> Option<&T> {
+        self.event_handler.as_ref()?.get_handler::<T>()
     }
 }
 

@@ -42,6 +42,16 @@ impl CompositeSimulationEventHandler {
     pub fn new(handlers: Vec<Box<dyn SimulationEventHandler>>) -> Self {
         Self { handlers }
     }
+
+    /// Get a reference to a specific handler by type
+    pub fn get_handler<T: SimulationEventHandler + 'static>(&self) -> Option<&T> {
+        for handler in &self.handlers {
+            if let Some(h) = (handler.as_ref() as &dyn any::Any).downcast_ref::<T>() {
+                return Some(h);
+            }
+        }
+        None
+    }
 }
 
 impl SimulationEventHandler for CompositeSimulationEventHandler {

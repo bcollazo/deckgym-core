@@ -1,5 +1,3 @@
-use log::warn;
-use num_format::{Locale, ToFormattedString};
 use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
 
@@ -9,6 +7,67 @@ use crate::{
     state::GameOutcome,
     State,
 };
+
+/// Statistics for when a player's deck became empty
+#[derive(Debug, Clone)]
+pub struct DeckEmptyStats {
+    pub player: usize,
+    pub games_empty: usize,
+    pub total_games: usize,
+    pub avg_turn: f64,
+    pub min_turn: u32,
+    pub max_turn: u32,
+}
+
+/// Statistics for when a card first appeared on the mat
+#[derive(Debug, Clone)]
+pub struct CardSeenStats {
+    pub card_id: String,
+    pub player: usize,
+    pub games_seen: usize,
+    pub total_games: usize,
+    pub avg_turn: f64,
+}
+
+/// Statistics for when a card first used an attack
+#[derive(Debug, Clone)]
+pub struct AttackUsedStats {
+    pub card_id: String,
+    pub player: usize,
+    pub games_used: usize,
+    pub total_games: usize,
+    pub avg_turn: f64,
+}
+
+/// Statistics for game endings
+#[derive(Debug, Clone)]
+pub struct GameEndStats {
+    pub total_games: usize,
+    pub avg_length: f64,
+    pub min_length: u32,
+    pub max_length: u32,
+    pub player_0_wins: usize,
+    pub player_1_wins: usize,
+    pub ties: usize,
+}
+
+/// Statistics for hand sizes per turn
+#[derive(Debug, Clone)]
+pub struct HandSizeStats {
+    pub player: usize,
+    pub turn: u32,
+    pub avg_size: f64,
+}
+
+/// Aggregated statistics from all games
+#[derive(Debug, Clone)]
+pub struct AggregatedStats {
+    pub game_end: GameEndStats,
+    pub deck_empty: Vec<DeckEmptyStats>,
+    pub hand_sizes: Vec<HandSizeStats>,
+    pub cards_seen: Vec<CardSeenStats>,
+    pub attacks_used: Vec<AttackUsedStats>,
+}
 
 /// Simple structure for per-player data with consistent naming
 #[derive(Debug, Clone, Default)]
@@ -179,59 +238,44 @@ impl GameplayStatsCollector {
         }
     }
 
-    /// Print summary statistics
-    fn print_summary(&self) {
-        warn!("=== Gameplay Statistics Summary ===");
-        warn!(
-            "Total games: {}",
-            self.num_games.to_formatted_string(&Locale::en)
-        );
-        warn!("");
-
+    /// Compute aggregated statistics from all collected data
+    pub fn compute_stats(&self) -> AggregatedStats {
         // 1. Game Ending Statistics
-        warn!("--- Game Ending Statistics ---");
         let end_turns: Vec<u32> = self.game_end_turn.values().copied().collect();
-        if !end_turns.is_empty() {
+        let (avg_length, min_length, max_length) = if !end_turns.is_empty() {
             let avg = end_turns.iter().sum::<u32>() as f64 / end_turns.len() as f64;
             let min = *end_turns.iter().min().unwrap();
             let max = *end_turns.iter().max().unwrap();
-            warn!("Average game length: {:.1} turns", avg);
-            warn!("Min: {} turns, Max: {} turns", min, max);
+            (avg, min, max)
+        } else {
+            (0.0, 0, 0)
+        };
 
-            // Count outcomes
-            let mut player_0_wins = 0;
-            let mut player_1_wins = 0;
-            let mut ties = 0;
-            for outcome in self.game_outcome.values() {
-                match outcome {
-                    Some(GameOutcome::Win(0)) => player_0_wins += 1,
-                    Some(GameOutcome::Win(1)) => player_1_wins += 1,
-                    Some(GameOutcome::Tie) => ties += 1,
-                    _ => {}
-                }
-            }
-            warn!(
-                "Player 0 wins: {} ({}%)",
-                player_0_wins,
-                (player_0_wins as f64 / self.num_games as f64 * 100.0) as u32
-            );
-            warn!(
-                "Player 1 wins: {} ({}%)",
-                player_1_wins,
-                (player_1_wins as f64 / self.num_games as f64 * 100.0) as u32
-            );
-            if ties > 0 {
-                warn!(
-                    "Ties: {} ({}%)",
-                    ties,
-                    (ties as f64 / self.num_games as f64 * 100.0) as u32
-                );
+        // Count outcomes
+        let mut player_0_wins = 0;
+        let mut player_1_wins = 0;
+        let mut ties = 0;
+        for outcome in self.game_outcome.values() {
+            match outcome {
+                Some(GameOutcome::Win(0)) => player_0_wins += 1,
+                Some(GameOutcome::Win(1)) => player_1_wins += 1,
+                Some(GameOutcome::Tie) => ties += 1,
+                _ => {}
             }
         }
-        warn!("");
+
+        let game_end = GameEndStats {
+            total_games: self.num_games as usize,
+            avg_length,
+            min_length,
+            max_length,
+            player_0_wins,
+            player_1_wins,
+            ties,
+        };
 
         // 2. Deck Empty Statistics
-        warn!("--- Deck Empty Statistics ---");
+        let mut deck_empty = Vec::new();
         for player in 0..2 {
             let mut empty_turns = Vec::new();
             for turns in self.deck_empty_turn.values() {
@@ -244,40 +288,37 @@ impl GameplayStatsCollector {
                 let avg = empty_turns.iter().sum::<u32>() as f64 / empty_turns.len() as f64;
                 let min = *empty_turns.iter().min().unwrap();
                 let max = *empty_turns.iter().max().unwrap();
-                warn!(
-                    "Player {}: Deck empty in {}/{} games ({}%)",
+                deck_empty.push(DeckEmptyStats {
                     player,
-                    empty_turns.len(),
-                    self.num_games,
-                    (empty_turns.len() as f64 / self.num_games as f64 * 100.0) as u32
-                );
-                warn!("  Average turn: {:.1}, Min: {}, Max: {}", avg, min, max);
-            } else {
-                warn!("Player {}: Deck never empty", player);
+                    games_empty: empty_turns.len(),
+                    total_games: self.num_games as usize,
+                    avg_turn: avg,
+                    min_turn: min,
+                    max_turn: max,
+                });
             }
         }
-        warn!("");
 
         // 3. Hand Size Statistics
-        warn!("--- Hand Size Statistics (average per turn) ---");
+        let mut hand_sizes = Vec::new();
         for player in 0..2 {
-            warn!("Player {}:", player);
             let mut turns: Vec<_> = self.hand_sizes.get(player).keys().collect();
             turns.sort();
 
-            for turn in turns.iter().take(10) {
-                // Show first 10 turns
+            for &turn in turns.iter() {
                 let sizes = &self.hand_sizes.get(player)[turn];
                 let avg = sizes.iter().sum::<usize>() as f64 / sizes.len() as f64;
-                warn!("  Turn {}: {:.2} cards", turn, avg);
+                hand_sizes.push(HandSizeStats {
+                    player,
+                    turn: *turn,
+                    avg_size: avg,
+                });
             }
         }
-        warn!("");
 
         // 4. Cards on Mat Statistics
-        warn!("--- Cards on Mat Statistics ---");
+        let mut cards_seen = Vec::new();
         for player in 0..2 {
-            // Collect all unique cards seen across all games
             let mut all_cards = HashSet::new();
             for cards in self.card_first_seen.values() {
                 for card_id in cards.get(player).keys() {
@@ -285,15 +326,7 @@ impl GameplayStatsCollector {
                 }
             }
 
-            warn!(
-                "Player {}: {} unique cards appeared on mat",
-                player,
-                all_cards.len()
-            );
-
-            // Show average turn for first appearance
-            for card_id in all_cards.iter().take(5) {
-                // Show first 5 cards
+            for card_id in all_cards.iter() {
                 let mut turns = Vec::new();
                 for cards in self.card_first_seen.values() {
                     if let Some(turn) = cards.get(player).get(card_id) {
@@ -301,21 +334,19 @@ impl GameplayStatsCollector {
                     }
                 }
                 let avg = turns.iter().sum::<u32>() as f64 / turns.len() as f64;
-                warn!(
-                    "  {}: appeared in {}/{} games, avg turn {:.1}",
-                    card_id,
-                    turns.len(),
-                    self.num_games,
-                    avg
-                );
+                cards_seen.push(CardSeenStats {
+                    card_id: card_id.clone(),
+                    player,
+                    games_seen: turns.len(),
+                    total_games: self.num_games as usize,
+                    avg_turn: avg,
+                });
             }
         }
-        warn!("");
 
         // 5. Attack Usage Statistics
-        warn!("--- Attack Usage Statistics ---");
+        let mut attacks_used = Vec::new();
         for player in 0..2 {
-            // Collect all unique cards that used attacks
             let mut all_cards = HashSet::new();
             for attacks in self.attack_first_used.values() {
                 for card_id in attacks.get(player).keys() {
@@ -323,15 +354,7 @@ impl GameplayStatsCollector {
                 }
             }
 
-            warn!(
-                "Player {}: {} unique cards used attacks",
-                player,
-                all_cards.len()
-            );
-
-            // Show average turn for first attack
-            for card_id in all_cards.iter().take(5) {
-                // Show first 5 cards
+            for card_id in all_cards.iter() {
                 let mut turns = Vec::new();
                 for attacks in self.attack_first_used.values() {
                     if let Some(turn) = attacks.get(player).get(card_id) {
@@ -339,14 +362,22 @@ impl GameplayStatsCollector {
                     }
                 }
                 let avg = turns.iter().sum::<u32>() as f64 / turns.len() as f64;
-                warn!(
-                    "  {}: first attack in {}/{} games, avg turn {:.1}",
-                    card_id,
-                    turns.len(),
-                    self.num_games,
-                    avg
-                );
+                attacks_used.push(AttackUsedStats {
+                    card_id: card_id.clone(),
+                    player,
+                    games_used: turns.len(),
+                    total_games: self.num_games as usize,
+                    avg_turn: avg,
+                });
             }
+        }
+
+        AggregatedStats {
+            game_end,
+            deck_empty,
+            hand_sizes,
+            cards_seen,
+            attacks_used,
         }
     }
 }
@@ -395,9 +426,7 @@ impl SimulationEventHandler for GameplayStatsCollector {
         self.current_game_id = None;
     }
 
-    fn on_simulation_end(&mut self) {
-        self.print_summary();
-    }
+    // Statistics are computed on-demand via compute_stats()
 
     fn merge(&mut self, other: &dyn SimulationEventHandler) {
         if let Some(other_collector) =
