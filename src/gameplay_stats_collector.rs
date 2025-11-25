@@ -10,36 +10,19 @@ use crate::{
     State,
 };
 
-/// Generic structure for per-player data with parallel access patterns
+/// Simple structure for per-player data with consistent naming
 #[derive(Debug, Clone, Default)]
 struct PerPlayerData<T> {
     players: [T; 2],
 }
 
 impl<T> PerPlayerData<T> {
-    #[allow(dead_code)]
-    fn new(player_0: T, player_1: T) -> Self {
-        Self {
-            players: [player_0, player_1],
-        }
-    }
-
     fn get(&self, player: usize) -> &T {
         &self.players[player]
     }
 
     fn get_mut(&mut self, player: usize) -> &mut T {
         &mut self.players[player]
-    }
-
-    #[allow(dead_code)]
-    fn iter(&self) -> impl Iterator<Item = &T> {
-        self.players.iter()
-    }
-
-    #[allow(dead_code)]
-    fn iter_mut(&mut self) -> impl Iterator<Item = &mut T> {
-        self.players.iter_mut()
     }
 }
 
@@ -65,34 +48,29 @@ pub struct GameplayStatsCollector {
     num_games: u32,
 
     // Per-game, per-player statistics
-    // Format: game_id -> per player data
-    /// Turn number when each player's deck became empty (None if never empty)
+    /// Turn when each player's deck became empty (per game, per player)
     deck_empty_turn: HashMap<Uuid, PerPlayerData<Option<u32>>>,
 
-    /// Turn number when each card first appeared on the mat
-    /// Format: game_id -> player -> card_id -> turn
-    first_card_on_mat: HashMap<Uuid, PerPlayerData<HashMap<String, u32>>>,
+    /// Turn when each card first appeared on mat (per game, per player, per card)
+    card_first_seen: HashMap<Uuid, PerPlayerData<HashMap<String, u32>>>,
 
-    /// Turn number when each card first used an attack
-    /// Format: game_id -> player -> card_id -> turn
-    first_attack_used: HashMap<Uuid, PerPlayerData<HashMap<String, u32>>>,
+    /// Turn when each card first used attack (per game, per player, per card)
+    attack_first_used: HashMap<Uuid, PerPlayerData<HashMap<String, u32>>>,
 
-    /// Turn number when each game ended
-    /// Format: game_id -> turn
+    // Per-game statistics
+    /// Turn when each game ended (per game)
     game_end_turn: HashMap<Uuid, u32>,
 
-    /// Game outcome for each game
-    /// Format: game_id -> outcome
-    game_outcomes: HashMap<Uuid, Option<GameOutcome>>,
+    /// Outcome for each game (per game)
+    game_outcome: HashMap<Uuid, Option<GameOutcome>>,
 
     // Aggregated statistics across all games
-    // Format: player -> turn -> [hand_sizes across all games]
-    /// Hand sizes at the end of each turn, aggregated across all games
+    /// Hand sizes at end of each turn (per player, aggregated across all games)
     hand_sizes: PerPlayerData<HashMap<u32, Vec<usize>>>,
 
-    // Temporary tracking for current game (reset on game start)
-    cards_seen_this_game: PerPlayerData<HashSet<String>>,
-    attacks_used_this_game: PerPlayerData<HashSet<String>>,
+    // Temporary tracking for current game
+    seen_cards: PerPlayerData<HashSet<String>>,
+    used_attacks: PerPlayerData<HashSet<String>>,
 }
 
 impl Default for GameplayStatsCollector {
@@ -109,14 +87,14 @@ impl GameplayStatsCollector {
             num_games: 0,
 
             deck_empty_turn: HashMap::new(),
-            first_card_on_mat: HashMap::new(),
-            first_attack_used: HashMap::new(),
+            card_first_seen: HashMap::new(),
+            attack_first_used: HashMap::new(),
             game_end_turn: HashMap::new(),
-            game_outcomes: HashMap::new(),
+            game_outcome: HashMap::new(),
             hand_sizes: PerPlayerData::default_new(),
 
-            cards_seen_this_game: PerPlayerData::default_new(),
-            attacks_used_this_game: PerPlayerData::default_new(),
+            seen_cards: PerPlayerData::default_new(),
+            used_attacks: PerPlayerData::default_new(),
         }
     }
 
@@ -129,13 +107,11 @@ impl GameplayStatsCollector {
                 let card_id = played_card.card.get_id();
 
                 // Check if this is the first time we've seen this card
-                if !self.cards_seen_this_game.get(player).contains(&card_id) {
-                    self.cards_seen_this_game
-                        .get_mut(player)
-                        .insert(card_id.clone());
+                if !self.seen_cards.get(player).contains(&card_id) {
+                    self.seen_cards.get_mut(player).insert(card_id.clone());
 
                     // Record the turn this card first appeared
-                    self.first_card_on_mat
+                    self.card_first_seen
                         .entry(game_id)
                         .or_insert_with(PerPlayerData::default_new)
                         .get_mut(player)
@@ -187,15 +163,13 @@ impl GameplayStatsCollector {
                 let card_id = active_pokemon.card.get_id();
 
                 // Check if this is the first time this card used an attack
-                if !self.attacks_used_this_game.get(actor).contains(&card_id) {
-                    self.attacks_used_this_game
-                        .get_mut(actor)
-                        .insert(card_id.clone());
+                if !self.used_attacks.get(actor).contains(&card_id) {
+                    self.used_attacks.get_mut(actor).insert(card_id.clone());
 
                     let game_id = self.current_game_id.expect("No current game");
 
                     // Record the turn this card first used an attack
-                    self.first_attack_used
+                    self.attack_first_used
                         .entry(game_id)
                         .or_insert_with(PerPlayerData::default_new)
                         .get_mut(actor)
@@ -228,7 +202,7 @@ impl GameplayStatsCollector {
             let mut player_0_wins = 0;
             let mut player_1_wins = 0;
             let mut ties = 0;
-            for outcome in self.game_outcomes.values() {
+            for outcome in self.game_outcome.values() {
                 match outcome {
                     Some(GameOutcome::Win(0)) => player_0_wins += 1,
                     Some(GameOutcome::Win(1)) => player_1_wins += 1,
@@ -305,7 +279,7 @@ impl GameplayStatsCollector {
         for player in 0..2 {
             // Collect all unique cards seen across all games
             let mut all_cards = HashSet::new();
-            for cards in self.first_card_on_mat.values() {
+            for cards in self.card_first_seen.values() {
                 for card_id in cards.get(player).keys() {
                     all_cards.insert(card_id.clone());
                 }
@@ -321,7 +295,7 @@ impl GameplayStatsCollector {
             for card_id in all_cards.iter().take(5) {
                 // Show first 5 cards
                 let mut turns = Vec::new();
-                for cards in self.first_card_on_mat.values() {
+                for cards in self.card_first_seen.values() {
                     if let Some(turn) = cards.get(player).get(card_id) {
                         turns.push(*turn);
                     }
@@ -343,7 +317,7 @@ impl GameplayStatsCollector {
         for player in 0..2 {
             // Collect all unique cards that used attacks
             let mut all_cards = HashSet::new();
-            for attacks in self.first_attack_used.values() {
+            for attacks in self.attack_first_used.values() {
                 for card_id in attacks.get(player).keys() {
                     all_cards.insert(card_id.clone());
                 }
@@ -359,7 +333,7 @@ impl GameplayStatsCollector {
             for card_id in all_cards.iter().take(5) {
                 // Show first 5 cards
                 let mut turns = Vec::new();
-                for attacks in self.first_attack_used.values() {
+                for attacks in self.attack_first_used.values() {
                     if let Some(turn) = attacks.get(player).get(card_id) {
                         turns.push(*turn);
                     }
@@ -383,8 +357,8 @@ impl SimulationEventHandler for GameplayStatsCollector {
         self.current_turn = 0;
 
         // Reset per-game tracking
-        self.cards_seen_this_game = PerPlayerData::default_new();
-        self.attacks_used_this_game = PerPlayerData::default_new();
+        self.seen_cards = PerPlayerData::default_new();
+        self.used_attacks = PerPlayerData::default_new();
     }
 
     fn on_action(
@@ -415,7 +389,7 @@ impl SimulationEventHandler for GameplayStatsCollector {
         self.game_end_turn.insert(game_id, state.turn_count as u32);
 
         // Record the game outcome
-        self.game_outcomes.insert(game_id, result);
+        self.game_outcome.insert(game_id, result);
 
         self.num_games += 1;
         self.current_game_id = None;
@@ -435,14 +409,14 @@ impl SimulationEventHandler for GameplayStatsCollector {
             // Merge per-game statistics
             self.deck_empty_turn
                 .extend(other_collector.deck_empty_turn.clone());
-            self.first_card_on_mat
-                .extend(other_collector.first_card_on_mat.clone());
-            self.first_attack_used
-                .extend(other_collector.first_attack_used.clone());
+            self.card_first_seen
+                .extend(other_collector.card_first_seen.clone());
+            self.attack_first_used
+                .extend(other_collector.attack_first_used.clone());
             self.game_end_turn
                 .extend(other_collector.game_end_turn.clone());
-            self.game_outcomes
-                .extend(other_collector.game_outcomes.clone());
+            self.game_outcome
+                .extend(other_collector.game_outcome.clone());
 
             // Merge aggregated hand sizes
             for player in 0..2 {
