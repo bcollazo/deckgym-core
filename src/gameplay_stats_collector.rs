@@ -94,7 +94,7 @@ impl GameplayStatsCollector {
     /// Track cards currently on the mat
     fn track_cards_on_mat(&mut self, state: &State) {
         for player in 0..2 {
-            for played_card in state.in_play_pokemon[player].iter().flatten() {
+            for (_idx, played_card) in state.enumerate_in_play_pokemon(player) {
                 let card_id = played_card.card.get_id();
 
                 // Check if this is the first time we've seen this card in this game
@@ -158,8 +158,11 @@ impl GameplayStatsCollector {
     /// Track when a card uses an attack
     fn track_attack_used(&mut self, state: &State, actor: usize, action: &Action) {
         if let SimpleAction::Attack(attack_idx) = action.action {
-            // Get the active Pokemon that used the attack
-            if let Some(active_pokemon) = &state.in_play_pokemon[actor][0] {
+            // Get the active Pokemon that used the attack (index 0)
+            if let Some((_idx, active_pokemon)) = state
+                .enumerate_in_play_pokemon(actor)
+                .find(|(i, _)| *i == 0)
+            {
                 let card_id = active_pokemon.card.get_id();
                 let attack_key = (card_id.clone(), attack_idx as u8);
 
