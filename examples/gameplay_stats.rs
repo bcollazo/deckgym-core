@@ -18,7 +18,10 @@ fn main() {
     let num_simulations = 100;
     let deck_a_path = "example_decks/venusaur-exeggutor.txt";
     let deck_b_path = "example_decks/weezing-arbok.txt";
-    let player_codes = vec![PlayerCode::ER, PlayerCode::ER];
+    let player_codes = vec![
+        PlayerCode::E { max_depth: 2 },
+        PlayerCode::E { max_depth: 2 },
+    ];
 
     // Initialize logger with verbosity level 1
     initialize_logger(1);
