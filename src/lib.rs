@@ -9,6 +9,7 @@ pub mod database;
 pub mod deck;
 pub mod effects;
 pub mod game;
+pub mod gameplay_stats_collector;
 mod hooks;
 pub mod models;
 pub mod move_generation;
