@@ -256,6 +256,12 @@ pub fn simulate(
     simulation.run();
 
     pb.finish_with_message("Simulation complete!");
+
+    // Retrieve and print statistics
+    if let Some(collector) = simulation.get_event_handler::<StatsCollector>() {
+        let stats = collector.compute_stats();
+        print_stats(&stats);
+    }
 }
 
 /// Creates a styled progress bar with consistent styling across the codebase
@@ -270,6 +276,44 @@ pub fn create_progress_bar(total: u64) -> ProgressBar {
     );
     pb.enable_steady_tick(std::time::Duration::from_millis(100));
     pb
+}
+
+/// Print simulation statistics to the console
+fn print_stats(stats: &crate::simulation_event_handler::ComputedStats) {
+    warn!(
+        "Ran {} simulations in {} ({} per game)!",
+        stats.num_games.to_formatted_string(&Locale::en),
+        humantime::format_duration(stats.duration),
+        humantime::format_duration(stats.avg_duration)
+    );
+    warn!(
+        "Average number of turns per game: {:.2}",
+        stats.avg_turns_per_game
+    );
+    warn!(
+        "Average number of plys per game: {:.2}",
+        stats.avg_plys_per_game
+    );
+    warn!(
+        "Average number of degrees per ply: {:.2}",
+        stats.avg_degrees_per_ply
+    );
+
+    warn!(
+        "Player 0 won: {} ({:.2}%)",
+        stats.player_a_wins.to_formatted_string(&Locale::en),
+        stats.player_a_win_rate * 100.0
+    );
+    warn!(
+        "Player 1 won: {} ({:.2}%)",
+        stats.player_b_wins.to_formatted_string(&Locale::en),
+        stats.player_b_win_rate * 100.0
+    );
+    warn!(
+        "Draws: {} ({:.2}%)",
+        stats.ties.to_formatted_string(&Locale::en),
+        stats.tie_rate * 100.0
+    );
 }
 
 // Set up the logger according to the given verbosity.
