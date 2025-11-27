@@ -128,6 +128,9 @@ pub fn forecast_trainer_action(
         }
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
+        CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
+            celestic_town_elder_effect(acting_player, state)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -678,4 +681,38 @@ fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutation
             false
         }
     })
+}
+
+fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 1 random Basic Pokémon from your discard pile into your hand.
+    let basic_pokemon: Vec<Card> = state.discard_piles[acting_player]
+        .iter()
+        .filter(|card| card.is_basic())
+        .cloned()
+        .collect();
+
+    if basic_pokemon.is_empty() {
+        // No basic Pokemon in discard, nothing to do
+        return doutcome(|_, _, _| {});
+    }
+
+    // Create one outcome for each possible basic Pokemon that could be selected
+    let num_outcomes = basic_pokemon.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for pokemon in basic_pokemon {
+        outcomes.push(Box::new(move |_, state, action| {
+            // Find and remove this specific Pokemon from discard pile
+            if let Some(idx) = state.discard_piles[action.actor]
+                .iter()
+                .position(|card| card == &pokemon)
+            {
+                state.discard_piles[action.actor].remove(idx);
+                state.hands[action.actor].push(pokemon.clone());
+            }
+        }));
+    }
+
+    (probabilities, outcomes)
 }
