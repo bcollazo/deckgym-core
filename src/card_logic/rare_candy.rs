@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::sync::LazyLock;
+
 use strum::IntoEnumIterator;
 
 use crate::{
@@ -7,31 +10,64 @@ use crate::{
     models::{Card, PlayedCard},
 };
 
+/// Pre-computed lookup table: (Basic Pokemon Name, Stage 2 Pokemon Name) -> is valid Rare Candy evolution
+/// This is computed once at startup and cached for O(1) lookups.
+static RARE_CANDY_LOOKUP: LazyLock<HashMap<(String, String), bool>> = LazyLock::new(|| {
+    let mut lookup = HashMap::new();
+
+    // Build a map of Stage 1 Pokemon: name -> evolves_from
+    let mut stage1_map: HashMap<String, String> = HashMap::new();
+
+    for id in CardId::iter() {
+        let card = get_card_by_enum(id);
+        if let Card::Pokemon(pokemon_card) = card {
+            if pokemon_card.stage == 1 {
+                if let Some(evolves_from) = pokemon_card.evolves_from {
+                    stage1_map.insert(pokemon_card.name.clone(), evolves_from);
+                }
+            }
+        }
+    }
+
+    // Now iterate through all Stage 2 Pokemon and build the lookup table
+    for id in CardId::iter() {
+        let card = get_card_by_enum(id);
+        if let Card::Pokemon(stage2_pokemon) = card {
+            if stage2_pokemon.stage == 2 {
+                if let Some(stage1_name) = &stage2_pokemon.evolves_from {
+                    // Check if this Stage 1 exists and what it evolves from
+                    if let Some(basic_name) = stage1_map.get(stage1_name) {
+                        lookup.insert(
+                            (basic_name.clone(), stage2_pokemon.name.clone()),
+                            true,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    lookup
+});
+
 /// Check if a Stage 2 Pokemon can evolve from a Basic Pokemon using Rare Candy
+/// Optimized version using pre-computed lookup table - O(1) instead of O(n)
 pub fn can_rare_candy_evolve(stage2_card: &Card, basic_pokemon: &PlayedCard) -> bool {
     if let Card::Pokemon(stage2_pokemon) = stage2_card {
+        // Early validation checks
         if stage2_pokemon.stage != 2
             || get_stage(basic_pokemon) != 0
             || basic_pokemon.played_this_turn
         {
             return false;
         }
-        // Look for a Stage 1 that is middle-of-chain
-        for id in CardId::iter() {
-            let tmp = get_card_by_enum(id);
-            if let Card::Pokemon(stage1_card) = tmp {
-                if stage1_card.stage == 1
-                    && stage1_card.evolves_from == Some(basic_pokemon.get_name())
-                {
-                    // Check if the Stage 2 evolves from this Stage 1
-                    if stage2_pokemon.evolves_from == Some(stage1_card.name.clone()) {
-                        return true;
-                    }
-                }
-            }
-        }
+
+        // O(1) lookup in pre-computed table
+        let key = (basic_pokemon.get_name(), stage2_pokemon.name.clone());
+        RARE_CANDY_LOOKUP.get(&key).copied().unwrap_or(false)
+    } else {
+        false
     }
-    false
 }
 
 #[cfg(test)]
