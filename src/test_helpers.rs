@@ -1,4 +1,4 @@
-use crate::Deck;
+use crate::{models::Card, Deck};
 use lazy_static::lazy_static;
 
 // Thinking of making this public and part of production code, just like
@@ -24,4 +24,9 @@ lazy_static! {
         Deck::from_file("example_decks/venusaur-exeggutor.txt").expect("Valid Deck Format");
     pub static ref DECK_B: Deck =
         Deck::from_file("example_decks/weezing-arbok.txt").expect("Valid Deck Format");
+}
+
+/// Helper function to convert a Card to a PlayedCard for testing purposes
+pub fn to_playable_card(card: &Card, played_this_turn: bool) -> crate::models::PlayedCard {
+    crate::hooks::to_playable_card(card, played_this_turn)
 }

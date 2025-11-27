@@ -1,28 +1,21 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use deckgym::{card_ids::CardId, card_logic::can_rare_candy_evolve, database::get_card_by_enum, models::{Card, PlayedCard}};
-
-fn to_played_card(card: &Card) -> PlayedCard {
-    if let Card::Pokemon(pokemon) = card {
-        PlayedCard::new(card.clone(), pokemon.hp, pokemon.hp, vec![], false, vec![])
-    } else {
-        panic!("Not a Pokemon card")
-    }
-}
+use deckgym::{
+    card_ids::CardId, card_logic::can_rare_candy_evolve, database::get_card_by_enum,
+    test_helpers::to_playable_card,
+};
 
 fn benchmark_rare_candy_evolution_check(c: &mut Criterion) {
     // Setup: Get common evolution lines
     let venusaur = get_card_by_enum(CardId::A1003Venusaur);
     let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = to_played_card(&bulbasaur);
+    let bulbasaur_played = to_playable_card(&bulbasaur, false);
 
     let charizard = get_card_by_enum(CardId::A1035Charizard);
     let charmander = get_card_by_enum(CardId::A1033Charmander);
-    let charmander_played = to_played_card(&charmander);
+    let charmander_played = to_playable_card(&charmander, false);
 
     c.bench_function("rare_candy_valid_evolution", |b| {
-        b.iter(|| {
-            black_box(can_rare_candy_evolve(&venusaur, &bulbasaur_played))
-        })
+        b.iter(|| black_box(can_rare_candy_evolve(&venusaur, &bulbasaur_played)))
     });
 
     c.bench_function("rare_candy_invalid_evolution", |b| {

@@ -37,10 +37,7 @@ static RARE_CANDY_LOOKUP: LazyLock<HashMap<(String, String), bool>> = LazyLock::
                 if let Some(stage1_name) = &stage2_pokemon.evolves_from {
                     // Check if this Stage 1 exists and what it evolves from
                     if let Some(basic_name) = stage1_map.get(stage1_name) {
-                        lookup.insert(
-                            (basic_name.clone(), stage2_pokemon.name.clone()),
-                            true,
-                        );
+                        lookup.insert((basic_name.clone(), stage2_pokemon.name.clone()), true);
                     }
                 }
             }
