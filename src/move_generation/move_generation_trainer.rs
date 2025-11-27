@@ -137,6 +137,9 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B1223May | CardId::B1268May => can_play_trainer(state, trainer_card),
         CardId::B1226Lisia | CardId::B1271Lisia => can_play_trainer(state, trainer_card),
+        CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
+            can_play_celestic_town_elder(state, trainer_card)
+        }
         _ => None,
     }
 }
@@ -464,6 +467,22 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
     let has_fire_energy_in_discard = state.discard_energies[player].contains(&EnergyType::Fire);
 
     if active_is_fire && has_fire_energy_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Celestic Town Elder can be played (requires at least 1 Basic Pokemon in discard pile)
+fn can_play_celestic_town_elder(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let has_basic_pokemon_in_discard = state.discard_piles[player]
+        .iter()
+        .any(|card| card.is_basic());
+    if has_basic_pokemon_in_discard {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
