@@ -38,7 +38,7 @@ pub fn is_ultra_beast(pokemon_name: &str) -> bool {
     ULTRA_BEAST_NAMES.contains(&pokemon_name)
 }
 
-pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
+pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {

@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use deckgym::{
     card_ids::CardId, card_logic::can_rare_candy_evolve, database::get_card_by_enum,
-    test_helpers::to_playable_card,
+    to_playable_card,
 };
 
 fn benchmark_rare_candy_evolution_check(c: &mut Criterion) {
