@@ -15,6 +15,39 @@ use crate::{
     Deck, Game,
 };
 
+/// Callbacks for simulation progress tracking
+pub struct SimulationCallbacks<F>
+where
+    F: Fn() + Sync,
+{
+    pub on_game_complete: Option<F>,
+}
+
+impl<F> Default for SimulationCallbacks<F>
+where
+    F: Fn() + Sync,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<F> SimulationCallbacks<F>
+where
+    F: Fn() + Sync,
+{
+    pub fn new() -> Self {
+        Self {
+            on_game_complete: None,
+        }
+    }
+
+    pub fn with_game_callback(mut self, callback: F) -> Self {
+        self.on_game_complete = Some(callback);
+        self
+    }
+}
+
 pub struct Simulation {
     deck_a: Deck,
     deck_b: Deck,
@@ -25,6 +58,7 @@ pub struct Simulation {
     parallel: bool,
     num_threads: Option<usize>,
     event_handler: Option<CompositeSimulationEventHandler>,
+    callbacks: Option<SimulationCallbacks<Box<dyn Fn() + Sync>>>,
 }
 
 impl Simulation {
@@ -39,7 +73,26 @@ impl Simulation {
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let deck_a = Deck::from_file(deck_a_path)?;
         let deck_b = Deck::from_file(deck_b_path)?;
+        Simulation::new_with_decks(
+            deck_a,
+            deck_b,
+            player_codes,
+            num_simulations,
+            seed,
+            parallel,
+            num_threads,
+        )
+    }
 
+    pub fn new_with_decks(
+        deck_a: Deck,
+        deck_b: Deck,
+        player_codes: Vec<PlayerCode>,
+        num_simulations: u32,
+        seed: Option<u64>,
+        parallel: bool,
+        num_threads: Option<usize>,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         Ok(Simulation {
             deck_a,
             deck_b,
@@ -50,11 +103,20 @@ impl Simulation {
             parallel,
             num_threads,
             event_handler: None,
+            callbacks: None,
         })
     }
 
     pub fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
         self.handler_factories.push(|| Box::new(T::default()));
+        self
+    }
+
+    pub fn with_callback<F>(mut self, callback: F) -> Self
+    where
+        F: Fn() + Sync + 'static,
+    {
+        self.callbacks = Some(SimulationCallbacks::new().with_game_callback(Box::new(callback)));
         self
     }
 
@@ -75,8 +137,11 @@ impl Simulation {
                 .collect(),
         );
 
-        // Create progress bar
-        let pb = create_progress_bar(self.num_simulations as u64);
+        // Extract the game callback to avoid capturing the entire callbacks struct
+        let game_callback = self
+            .callbacks
+            .as_ref()
+            .and_then(|cbs| cbs.on_game_complete.as_ref());
 
         // Closure to run a single simulation
         let run_single_simulation = |_| {
@@ -106,7 +171,10 @@ impl Simulation {
 
             event_handler.on_game_end(game_id, clone, outcome);
 
-            pb.inc(1);
+            if let Some(callback) = game_callback {
+                callback();
+            }
+
             (outcome, event_handler)
         };
 
@@ -122,8 +190,6 @@ impl Simulation {
                 .map(run_single_simulation)
                 .collect()
         };
-
-        pb.finish_with_message("Simulation complete!");
 
         // Split outcomes and event handlers
         let (outcomes, thread_event_handlers): (Vec<_>, Vec<_>) = results.into_iter().unzip();
@@ -169,6 +235,10 @@ pub fn simulate(
         warn!("\tThreads: {}", threads);
     }
 
+    // Create progress bar
+    let pb = create_progress_bar(num_simulations as u64);
+    pb.tick(); // Ensure progress bar is drawn immediately
+
     let mut simulation = Simulation::new(
         deck_a_path,
         deck_b_path,
@@ -180,7 +250,18 @@ pub fn simulate(
     )
     .expect("Failed to create simulation");
     simulation = simulation.register::<StatsCollector>();
+
+    let pb_clone = pb.clone();
+    simulation = simulation.with_callback(move || pb_clone.inc(1));
     simulation.run();
+
+    pb.finish_with_message("Simulation complete!");
+
+    // Retrieve and print statistics
+    if let Some(collector) = simulation.get_event_handler::<StatsCollector>() {
+        let stats = collector.compute_stats();
+        print_stats(&stats);
+    }
 }
 
 /// Creates a styled progress bar with consistent styling across the codebase
@@ -195,6 +276,44 @@ pub fn create_progress_bar(total: u64) -> ProgressBar {
     );
     pb.enable_steady_tick(std::time::Duration::from_millis(100));
     pb
+}
+
+/// Print simulation statistics to the console
+fn print_stats(stats: &crate::simulation_event_handler::ComputedStats) {
+    warn!(
+        "Ran {} simulations in {} ({} per game)!",
+        stats.num_games.to_formatted_string(&Locale::en),
+        humantime::format_duration(stats.duration),
+        humantime::format_duration(stats.avg_duration)
+    );
+    warn!(
+        "Average number of turns per game: {:.2}",
+        stats.avg_turns_per_game
+    );
+    warn!(
+        "Average number of plys per game: {:.2}",
+        stats.avg_plys_per_game
+    );
+    warn!(
+        "Average number of degrees per ply: {:.2}",
+        stats.avg_degrees_per_ply
+    );
+
+    warn!(
+        "Player 0 won: {} ({:.2}%)",
+        stats.player_a_wins.to_formatted_string(&Locale::en),
+        stats.player_a_win_rate * 100.0
+    );
+    warn!(
+        "Player 1 won: {} ({:.2}%)",
+        stats.player_b_wins.to_formatted_string(&Locale::en),
+        stats.player_b_win_rate * 100.0
+    );
+    warn!(
+        "Draws: {} ({:.2}%)",
+        stats.ties.to_formatted_string(&Locale::en),
+        stats.tie_rate * 100.0
+    );
 }
 
 // Set up the logger according to the given verbosity.
