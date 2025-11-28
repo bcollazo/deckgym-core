@@ -101,7 +101,10 @@ fn forecast_effect_attack(
             vec![0.5, 0.5],
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
         ),
-        Mechanic::CoinFlipExtraDamageOrSelfDamage { extra_damage, self_damage } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
+        Mechanic::CoinFlipExtraDamageOrSelfDamage {
+            extra_damage,
+            self_damage,
+        } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
             damage_per_head,
@@ -147,6 +150,9 @@ fn forecast_effect_attack(
             *damage,
             *must_have_energy,
         ),
+        Mechanic::AlsoChoiceBenchDamage { opponent, damage } => {
+            also_choice_bench_damage(&state, *opponent, attack.fixed_damage, *damage)
+        }
         Mechanic::ExtraDamageIfHurt {
             extra_damage,
             opponent,
@@ -172,7 +178,6 @@ fn forecast_effect_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
 //             vec![0, 40, 80, 120, 160],
 //         ),
-//         AttackId::A1103ZapdosRagingThunder => self_benched_damage(100, 30),
 //         AttackId::A1104ZapdosExThunderingHurricane => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
 //             vec![0, 50, 100, 150, 200],
@@ -299,7 +304,6 @@ fn forecast_effect_attack(
 //         AttackId::A1a002ExeggutorPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 80, 20)
 //         }
-//         AttackId::A3a007PheromosaJumpBlues => active_and_choice_bench_attack(20, 20),
 //         AttackId::A3085CosmogTeleport => teleport_attack(),
 //         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
 //         AttackId::A3b013IncineroarDarkestLariat => {
@@ -325,7 +329,6 @@ fn forecast_effect_attack(
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
 //         }
 //         AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
-//         AttackId::A4102HitmontopPiercingSpin => active_and_choice_bench_attack(20, 20),
 //         AttackId::A4105BinacleDualChop => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
 //         }
@@ -336,14 +339,11 @@ fn forecast_effect_attack(
 //         AttackId::A4a023MantykeSplashyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
 //         }
-//         AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
-//         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
 //         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
 //         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
 //         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
 //         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
-//         AttackId::B1088LuxrayFlashImpact => self_benched_damage(110, 20),
 //         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
 //         AttackId::B1121IndeedeeExPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 30, 30)
@@ -720,45 +720,34 @@ fn bench_count_damage_attack(
     active_damage_doutcome(total_damage)
 }
 
-/// Used for attacks that damage both enemy's active and one of their benched Pokémon.
-fn self_benched_damage(active_damage: u32, self_bench_damage: u32) -> (Probabilities, Mutations) {
-    doutcome_from_mutation(Box::new(
-        move |_: &mut StdRng, state: &mut State, action: &Action| {
-            let opponent = (action.actor + 1) % 2;
-            let choices: Vec<_> = state
-                .enumerate_bench_pokemon(action.actor)
-                .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![
-                        (active_damage, opponent, 0),
-                        (self_bench_damage, action.actor, in_play_idx),
-                    ],
-                    is_from_active_attack: true,
-                })
-                .collect();
-            state.move_generation_stack.push((action.actor, choices));
-        },
-    ))
-}
-
-fn active_and_choice_bench_attack(
+fn also_choice_bench_damage(
+    state: &State,
+    opponent: bool,
     active_damage: u32,
     bench_damage: u32,
 ) -> (Probabilities, Mutations) {
+    let opponent_player = (state.current_player + 1) % 2;
+    let bench_target = if opponent {
+        opponent_player
+    } else {
+        state.current_player
+    };
+    let choices = state
+        .enumerate_bench_pokemon(bench_target)
+        .map(|(in_play_idx, _)| {
+            let targets = vec![
+                (active_damage, opponent_player, 0),
+                (bench_damage, bench_target, in_play_idx),
+            ];
+            SimpleAction::ApplyDamage {
+                attacking_ref: (state.current_player, 0),
+                targets,
+                is_from_active_attack: true,
+            }
+        })
+        .collect();
     doutcome_from_mutation(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
-            let opponent = (action.actor + 1) % 2;
-            let choices: Vec<_> = state
-                .enumerate_bench_pokemon(opponent)
-                .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![
-                        (active_damage, opponent, 0),
-                        (bench_damage, opponent, in_play_idx),
-                    ],
-                    is_from_active_attack: true,
-                })
-                .collect();
             state.move_generation_stack.push((action.actor, choices));
         },
     ))

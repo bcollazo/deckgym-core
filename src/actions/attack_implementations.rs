@@ -703,8 +703,20 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This Pokémon is now Asleep.", todo_implementation);
     // map.insert("This Pokémon is now Asleep. Heal 30 damage from it.", todo_implementation);
     // map.insert("This Pokémon is now Confused.", todo_implementation);
-    // map.insert("This attack also does 10 damage to 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 10 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 10 damage to 1 of your Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: false,
+            damage: 10,
+        },
+    );
+    map.insert(
+        "This attack also does 10 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: true,
+            damage: 10,
+        },
+    );
     map.insert(
         "This attack also does 10 damage to each of your Benched Pokémon.",
         Mechanic::AlsoBenchDamage {
@@ -721,9 +733,21 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
             must_have_energy: false,
         },
     );
-    // map.insert("This attack also does 20 damage to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 20 damage to 1 of your Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: false,
+            damage: 20,
+        },
+    );
     // map.insert("This attack also does 20 damage to 1 of your Pokémon.", todo_implementation);
-    // map.insert("This attack also does 20 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 20 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: true,
+            damage: 20,
+        },
+    );
     map.insert(
         "This attack also does 20 damage to each of your Benched Pokémon.",
         Mechanic::AlsoBenchDamage {
@@ -747,8 +771,20 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
             must_have_energy: false,
         },
     );
-    // map.insert("This attack also does 30 damage to 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 30 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 30 damage to 1 of your Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: false,
+            damage: 30,
+        },
+    );
+    map.insert(
+        "This attack also does 30 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::AlsoChoiceBenchDamage {
+            opponent: true,
+            damage: 30,
+        },
+    );
     map.insert(
         "This attack does 10 damage for each of your Benched [L] Pokémon.",
         Mechanic::BenchCountDamage {

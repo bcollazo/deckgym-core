@@ -86,6 +86,10 @@ pub enum Mechanic {
         damage: u32,
         must_have_energy: bool,
     },
+    AlsoChoiceBenchDamage {
+        opponent: bool,
+        damage: u32,
+    },
     ExtraDamageIfHurt {
         extra_damage: u32,
         opponent: bool,
