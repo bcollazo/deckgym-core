@@ -14,8 +14,10 @@ The codebase is in a dirty state, don't try to eliminate compilation warnings, o
   ```
 
 - Search for the effect text in the above JSON in the `attack_implementations.rs` file.
-- Uncomment the corresponding line in `attack_implementations.rs`, and either add or reuse a `Mechanic` enum. 
+- Decide if we should introduce a new Mechanic or re-use or generalize an existing one. Try to re-use existing ones first.
+- Uncomment the all the effect lines in `attack_implementations.rs` that just require different parameters on the decided Mechanic variant.
 - Implement the mechanic logic in `forecast_effect_attack` in `apply_attack_action.rs`.
-  - Reuse methods already in `apply_attack_action.rs`, and uncomment from their old usaga in the big commented out match statement.
+  - Reuse methods already in `apply_attack_action.rs`, and remove their old usage in the big commented out match statement.
   - Keep the code as a one-liner in the match statement, and implement the logic using a helper function.
 - DO NOT run `cargo fmt` or `clippy` for now, or try to cleanup unused functions for now.
+- 
