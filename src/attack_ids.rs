@@ -210,7 +210,6 @@ pub enum AttackId {
     B1161MareaniePoisonSting,
     B1196SwabluSing,
     B1197AltariaDoTheWave,
-    PA037CresseliaExPsychicFlash,
     PA056EkansPoisonSting,
     PA072AlolanGrimerPoisonGas,
     PA079DuskManeNecrozmaBlackMetal,
@@ -722,7 +721,6 @@ lazy_static::lazy_static! {
         m.insert(("P-A 031", 0), AttackId::A1213CinccinoDoTheWave);
         m.insert(("P-A 032", 0), AttackId::A1033CharmanderEmber);
         m.insert(("P-A 034", 0), AttackId::A2035PiplupNap);
-        m.insert(("P-A 037", 0), AttackId::PA037CresseliaExPsychicFlash);
         m.insert(("P-A 039", 0), AttackId::A2111SkarmoryMetalArms);
         m.insert(("P-A 048", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("P-A 049", 0), AttackId::A2a063SnorlaxCollapse);
