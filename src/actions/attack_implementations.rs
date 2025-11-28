@@ -722,7 +722,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     );
     // map.insert("This attack also does 30 damage to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack also does 30 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 10 damage for each of your Benched [L] Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 10 damage for each of your Benched [L] Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 10,
+            energy_type: Some(EnergyType::Lightning),
+        },
+    );
     map.insert(
         "This attack does 10 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {
@@ -736,7 +742,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
     // map.insert("This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 damage for each of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 damage for each of your Benched Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 20,
+            energy_type: None,
+        },
+    );
     map.insert(
         "This attack does 20 damage to 1 of your opponent's Benched Pokémon.",
         Mechanic::DirectDamage {
@@ -757,10 +769,28 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 20 more damage for each Energy attached to this Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each [G] Energy attached to this Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 more damage for each of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 more damage for each of your Benched Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 20,
+            energy_type: None,
+        },
+    );
     // map.insert("This attack does 20 more damage for each of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 30 damage for each of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack does 30 damage for each of your Benched [L] Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 30 damage for each of your Benched Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 30,
+            energy_type: None,
+        },
+    );
+    map.insert(
+        "This attack does 30 damage for each of your Benched [L] Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 30,
+            energy_type: Some(EnergyType::Lightning),
+        },
+    );
     map.insert(
         "This attack does 30 damage to 1 of your opponent's Benched Pokémon.",
         Mechanic::DirectDamage {
@@ -778,7 +808,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 30 more damage for each Evolution Pokémon on your Bench.", todo_implementation);
-    // map.insert("This attack does 30 more damage for each of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 30 more damage for each of your Benched Pokémon.",
+        Mechanic::BenchCountDamage {
+            damage_per: 30,
+            energy_type: None,
+        },
+    );
     // map.insert("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.", todo_implementation);
     map.insert(
         "This attack does 40 damage to 1 of your opponent's Pokémon.",

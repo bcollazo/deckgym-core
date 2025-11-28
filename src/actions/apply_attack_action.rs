@@ -146,17 +146,18 @@ fn forecast_effect_attack(
             *damage,
             *must_have_energy,
         ),
-        Mechanic::ExtraDamageIfHurt { extra_damage, opponent } => {
-            extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent)
-        }
+        Mechanic::ExtraDamageIfHurt {
+            extra_damage,
+            opponent,
+        } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
+        Mechanic::BenchCountDamage {
+            damage_per,
+            energy_type,
+        } => bench_count_damage_attack(state, attack.fixed_damage, *damage_per, *energy_type),
     }
 }
 
 //     match attack_id {
-//         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
-//         AttackId::A1096PikachuExCircleCircuit => {
-//             bench_count_attack(acting_player, state, 0, 30, Some(EnergyType::Lightning))
-//         }
 //         AttackId::A1101ElectabuzzThunderPunch => extra_or_self_damage_attack(40, 40, 20),
 //         AttackId::A1102JolteonPinMissile => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -179,7 +180,6 @@ fn forecast_effect_attack(
 //         AttackId::A1136GolurkDoubleLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
 //         }
-//         AttackId::A1142PrimeapeFightBack => extra_damage_if_hurt(40, 60, acting_player, state),
 //         AttackId::A1149GolemDoubleEdge => self_damage_attack(150, 50),
 //         AttackId::A1153MarowakExBonemerang => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
@@ -239,9 +239,6 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::A2a063SnorlaxCollapse => {
 //             damage_and_self_status_attack(100, StatusCondition::Asleep)
-//         }
-//         AttackId::A2a071ArceusExUltimateForce => {
-//             bench_count_attack(acting_player, state, 70, 20, None)
 //         }
 //         AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
 //         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
@@ -333,7 +330,6 @@ fn forecast_effect_attack(
 //         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
 //         AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
-//         AttackId::A1213CinccinoDoTheWave => bench_count_attack(acting_player, state, 0, 30, None),
 //         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
 //         AttackId::B1036MegaBlazikenExMegaBurning => mega_burning_attack(),
 //         AttackId::B1050MagikarpWaterfallEvolution => waterfall_evolution(acting_player, state),
@@ -341,9 +337,6 @@ fn forecast_effect_attack(
 //         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
 //         AttackId::B1088LuxrayFlashImpact => self_benched_damage(110, 20),
 //         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
-//         AttackId::B1102MegaAltariaExMegaHarmony => {
-//             bench_count_attack(acting_player, state, 40, 30, None)
-//         }
 //         AttackId::B1121IndeedeeExPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 30, 30)
 //         }
@@ -685,18 +678,16 @@ fn damage_chance_status_attack(
     (probabilities, mutations)
 }
 
-/// For attacks that do damage for each pokemon (optionally of a type) in your bench.
-///  e.g. "Pikachu Ex Circle Circuit".
-fn bench_count_attack(
-    acting_player: usize,
+/// For attacks that do damage based on benched Pokemon count (new Mechanic-based approach).
+fn bench_count_damage_attack(
     state: &State,
     base_damage: u32,
     damage_per: u32,
-    energy: Option<EnergyType>,
+    energy_type: Option<EnergyType>,
 ) -> (Probabilities, Mutations) {
     let mut bench_count = 0;
-    for (_, pokemon) in state.enumerate_bench_pokemon(acting_player) {
-        if let Some(energy) = energy {
+    for (_, pokemon) in state.enumerate_bench_pokemon(state.current_player) {
+        if let Some(energy) = energy_type {
             if pokemon.get_energy_type() == Some(energy) {
                 bench_count += 1;
             }
@@ -704,7 +695,8 @@ fn bench_count_attack(
             bench_count += 1;
         }
     }
-    active_damage_doutcome(base_damage + damage_per * bench_count)
+    let total_damage = base_damage + damage_per * bench_count;
+    active_damage_doutcome(total_damage)
 }
 
 /// For attacks that do damage for each benched Pokémon on both sides.
@@ -1122,7 +1114,12 @@ fn also_bench_damage(
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
-fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> (Probabilities, Mutations) {
+fn extra_damage_if_hurt(
+    state: &State,
+    base: u32,
+    extra: u32,
+    opponent: bool,
+) -> (Probabilities, Mutations) {
     let target = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -1410,7 +1407,7 @@ mod test {
         let some_base_pokemon = get_card_by_enum(CardId::A1001Bulbasaur);
         state.in_play_pokemon[0][1] = Some(to_playable_card(&some_base_pokemon, false));
 
-        let (_, mut lazy_mutations) = bench_count_attack(0, &state, 70, 20, None);
+        let (_, mut lazy_mutations) = bench_count_damage_attack(&state, 70, 20, None);
         lazy_mutations.remove(0)(&mut rng, &mut state, &action);
 
         assert_eq!(state.get_active(1).remaining_hp, 70);

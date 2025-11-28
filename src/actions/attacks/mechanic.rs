@@ -80,4 +80,8 @@ pub enum Mechanic {
         extra_damage: u32,
         opponent: bool,
     },
+    BenchCountDamage {
+        damage_per: u32,
+        energy_type: Option<EnergyType>,
+    },
 }
