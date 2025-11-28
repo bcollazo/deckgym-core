@@ -135,14 +135,22 @@ fn forecast_effect_attack(
             damage_and_card_effect_attack(attack.fixed_damage, *opponent, effect.clone(), *duration)
         }
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::AlsoBenchDamage {
+            opponent,
+            damage,
+            must_have_energy,
+        } => also_bench_damage(
+            state,
+            *opponent,
+            attack.fixed_damage,
+            *damage,
+            *must_have_energy,
+        ),
     }
 }
 
 //     match attack_id {
-//         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
-//         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
-//         AttackId::A2b031AlakazamPsychicSuppression => alakazam_psychic_suppression(state),
 //         AttackId::A1096PikachuExCircleCircuit => {
 //             bench_count_attack(acting_player, state, 0, 30, Some(EnergyType::Lightning))
 //         }
@@ -253,7 +261,6 @@ fn forecast_effect_attack(
 //         AttackId::A3040AlolanVulpixCallForthCold => {
 //             self_charge_active_attack(0, EnergyType::Water, 1)
 //         }
-//         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
 //         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
 //         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -292,7 +299,6 @@ fn forecast_effect_attack(
 //         AttackId::A3b020VanilluxeDoubleSpin => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
 //         }
-//         AttackId::A3b053DragoniteExGigaImpact => giga_impact_attack(),
 //         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
 //         AttackId::A3b057SnorlaxExFlopDownPunch => {
 //             damage_and_self_status_attack(130, StatusCondition::Asleep)
@@ -303,7 +309,6 @@ fn forecast_effect_attack(
 //         AttackId::A4021ShuckleExTripleSlap => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
 //         }
-//         AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(),
 //         AttackId::A4032MagbyToastyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
 //         }
@@ -1052,6 +1057,7 @@ fn damage_and_card_effect_attack(
         } else {
             action.actor
         };
+        // Are we sure pokemon is there? What if knocked out?
         state
             .get_active_mut(player)
             .add_effect(effect, effect_duration);
@@ -1086,58 +1092,31 @@ fn discard_all_energy_of_type_attack(
     })
 }
 
-fn articuno_ex_blizzard(state: &State) -> (Probabilities, Mutations) {
-    // Blizzard: 80 to active, 10 to each opponent's benched Pokémon
-    let opponent = (state.current_player + 1) % 2;
+fn also_bench_damage(
+    state: &State,
+    opponent: bool,
+    active_damage: u32,
+    bench_damage: u32,
+    must_have_energy: bool,
+) -> (Probabilities, Mutations) {
+    let player = if opponent {
+        (state.current_player + 1) % 2
+    } else {
+        state.current_player
+    };
     let mut targets: Vec<(u32, usize)> = state
-        .enumerate_bench_pokemon(opponent)
-        .map(|(idx, _)| (10, idx))
+        .enumerate_bench_pokemon(player)
+        .filter(|(_, pokemon)| {
+            if must_have_energy {
+                !pokemon.attached_energy.is_empty()
+            } else {
+                true
+            }
+        })
+        .map(|(idx, _)| (bench_damage, idx))
         .collect();
-    // Active Pokémon is always index 0
-    targets.push((80, 0));
+    targets.push((active_damage, 0)); // Active Pokémon is always index 0
     damage_effect_doutcome(targets, |_, _, _| {})
-}
-
-fn alolan_ninetales_blizzard(state: &State) -> (Probabilities, Mutations) {
-    // Blizzard: 60 to active, 20 to each opponent's benched Pokémon
-    let opponent = (state.current_player + 1) % 2;
-    let mut targets: Vec<(u32, usize)> = state
-        .enumerate_bench_pokemon(opponent)
-        .map(|(idx, _)| (20, idx))
-        .collect();
-    // Active Pokémon is always index 0
-    targets.push((60, 0));
-    damage_effect_doutcome(targets, |_, _, _| {})
-}
-
-fn alakazam_psychic_suppression(state: &State) -> (Probabilities, Mutations) {
-    // Psychic Suppression: 80 to active, 20 to each opponent's benched Pokémon that has energy
-    let opponent = (state.current_player + 1) % 2;
-    let mut targets: Vec<(u32, usize)> = state
-        .enumerate_bench_pokemon(opponent)
-        .filter(|(_, pokemon)| !pokemon.attached_energy.is_empty())
-        .map(|(idx, _)| (20, idx))
-        .collect();
-    // Active Pokémon is always index 0
-    targets.push((80, 0));
-    damage_effect_doutcome(targets, |_, _, _| {})
-}
-
-/// Scorching Breath: 120 damage, then this Pokémon can't attack next turn
-fn scorching_breath_attack() -> (Probabilities, Mutations) {
-    inner_damage_and_cant_attack_next_turn(120)
-}
-
-fn giga_impact_attack() -> (Probabilities, Mutations) {
-    inner_damage_and_cant_attack_next_turn(180)
-}
-
-fn inner_damage_and_cant_attack_next_turn(damage: u32) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(damage, move |_, state, action| {
-        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
-            active.add_effect(CardEffect::CannotAttack, 2);
-        }
-    })
 }
 
 fn extra_damage_if_hurt(

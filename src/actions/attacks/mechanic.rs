@@ -71,4 +71,9 @@ pub enum Mechanic {
         duration: u8,
     },
     SelfDiscardAllEnergy,
+    AlsoBenchDamage {
+        opponent: bool,
+        damage: u32,
+        must_have_energy: bool,
+    },
 }

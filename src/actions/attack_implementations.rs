@@ -666,14 +666,48 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This Pokémon is now Confused.", todo_implementation);
     // map.insert("This attack also does 10 damage to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack also does 10 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 10 damage to each of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 10 damage to each of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 10 damage to each of your Benched Pokémon.",
+        Mechanic::AlsoBenchDamage {
+            opponent: false,
+            damage: 10,
+            must_have_energy: false,
+        },
+    );
+    map.insert(
+        "This attack also does 10 damage to each of your opponent's Benched Pokémon.",
+        Mechanic::AlsoBenchDamage {
+            opponent: true,
+            damage: 10,
+            must_have_energy: false,
+        },
+    );
     // map.insert("This attack also does 20 damage to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack also does 20 damage to 1 of your Pokémon.", todo_implementation);
     // map.insert("This attack also does 20 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 20 damage to each of your Benched Pokémon.", todo_implementation);
-    // map.insert("This attack also does 20 damage to each of your opponent's Benched Pokémon that has any Energy attached.", todo_implementation);
-    // map.insert("This attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack also does 20 damage to each of your Benched Pokémon.",
+        Mechanic::AlsoBenchDamage {
+            opponent: false,
+            damage: 20,
+            must_have_energy: false,
+        },
+    );
+    map.insert("This attack also does 20 damage to each of your opponent's Benched Pokémon that has any Energy attached.", 
+        Mechanic::AlsoBenchDamage {
+            opponent: true,
+            damage: 20,
+            must_have_energy: true,
+        },
+    );
+    map.insert(
+        "This attack also does 20 damage to each of your opponent's Benched Pokémon.",
+        Mechanic::AlsoBenchDamage {
+            opponent: true,
+            damage: 20,
+            must_have_energy: false,
+        },
+    );
     // map.insert("This attack also does 30 damage to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("This attack also does 30 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 10 damage for each of your Benched [L] Pokémon.", todo_implementation);
