@@ -653,25 +653,55 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
     // map.insert("Switch this Pokémon with 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("Switch this Pokémon with 1 of your Benched [L] Pokémon.", todo_implementation);
-    // map.insert("Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Metal, EnergyType::Metal],
+            target_benched_type: None,
+        },
+    );
     // map.insert("Take 3 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
-    // map.insert("Take a [C] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [C] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Colorless],
+            target_benched_type: None,
+        },
+    );
     map.insert(
         "Take a [G] Energy from your Energy Zone and attach it to 1 of your Benched [G] Pokémon.",
-        Mechanic::ChargeBenchGrass {
-            amount: 1,
-            energy_type: EnergyType::Grass,
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Grass],
+            target_benched_type: Some(EnergyType::Grass),
         },
     );
     // map.insert("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
-    // map.insert("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
-    // map.insert("Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched [L] Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Lightning],
+            target_benched_type: None,
+        },
+    );
+    map.insert(
+        "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched [L] Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Lightning],
+            target_benched_type: Some(EnergyType::Lightning),
+        },
+    );
     // map.insert("Take a [L] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("Take a [M] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("Take a [P] Energy from your Energy Zone and attach it to Mesprit or Azelf.", todo_implementation);
     // map.insert("Take a [P] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
-    // map.insert("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Fire],
+            target_benched_type: None,
+        },
+    );
     // map.insert("Take a [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.", todo_implementation);
     // map.insert("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);

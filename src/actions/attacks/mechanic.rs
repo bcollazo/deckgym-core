@@ -70,9 +70,9 @@ pub enum Mechanic {
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
-    ChargeBenchGrass {
-        amount: u32,
-        energy_type: EnergyType,
+    ChargeBench {
+        energies: Vec<EnergyType>,
+        target_benched_type: Option<EnergyType>,
     },
     // End Unique mechanics
     DamageAndCardEffect {
