@@ -300,6 +300,7 @@ fn forecast_effect_attack(
             1,
             CardEffect::ReducedDamage { amount: 20 },
         ),
+        AttackId::A2079CresseliaMoonlightGain => self_heal_attack(20, 0),
         AttackId::A2084GliscorAcrobatics => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
         }
@@ -551,6 +552,7 @@ fn forecast_effect_attack(
         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
         AttackId::B1179GoodraSpiralDrain => self_heal_attack(40, 0),
         AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
+        AttackId::B1197AltariaDoTheWave => bench_count_attack(acting_player, state, 20, 20, None),
         AttackId::PA056EkansPoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
     }
 }

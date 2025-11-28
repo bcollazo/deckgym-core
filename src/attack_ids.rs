@@ -96,6 +96,7 @@ pub enum AttackId {
     A2056ElectabuzzCharge,
     A2060LuxrayVoltBolt,
     A2073DrifloonExpand,
+    A2079CresseliaMoonlightGain,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
     A2103SkuntankPoisonGas,
@@ -208,6 +209,7 @@ pub enum AttackId {
     B1157HydreigonHyperRay,
     B1161MareaniePoisonSting,
     B1196SwabluSing,
+    B1197AltariaDoTheWave,
     PA056EkansPoisonSting,
     PA072AlolanGrimerPoisonGas,
     PA079DuskManeNecrozmaBlackMetal,
@@ -348,6 +350,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 056", 0), AttackId::A2056ElectabuzzCharge);
         m.insert(("A2 060", 0), AttackId::A2060LuxrayVoltBolt);
         m.insert(("A2 073", 0), AttackId::A2073DrifloonExpand);
+        m.insert(("A2 079", 0), AttackId::A2079CresseliaMoonlightGain);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
         m.insert(("A2 103", 0), AttackId::A2103SkuntankPoisonGas);
@@ -359,6 +362,7 @@ lazy_static::lazy_static! {
         m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
         m.insert(("A2 162", 0), AttackId::A2050ManaphyOceanicGift);
         m.insert(("A2 165", 0), AttackId::A2073DrifloonExpand);
+        m.insert(("A2 168", 0), AttackId::A2079CresseliaMoonlightGain);
         m.insert(("A2 181", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A2 182", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A2 188", 0), AttackId::A2119DialgaExMetallicTurbo);
@@ -671,6 +675,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 161", 0), AttackId::B1161MareaniePoisonSting);
         m.insert(("B1 179", 0), AttackId::B1179GoodraSpiralDrain);
         m.insert(("B1 196", 0), AttackId::B1196SwabluSing);
+        m.insert(("B1 197", 0), AttackId::B1197AltariaDoTheWave);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 245", 0), AttackId::B1157HydreigonHyperRay);
