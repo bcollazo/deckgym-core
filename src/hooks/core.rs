@@ -156,6 +156,18 @@ pub(crate) fn on_attach_energy(
             let komala = state.get_active_mut(actor);
             komala.asleep = true;
         }
+
+        // Check for Cresselia ex's Lunar Plumage ability
+        if ability_id == AbilityId::PA037CresseliaExLunarPlumage
+            && energy_type == EnergyType::Psychic
+        {
+            // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
+            debug!("Cresselia ex's Lunar Plumage: Healing 20 damage");
+            let pokemon = state.in_play_pokemon[actor][in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there if attaching energy to it");
+            pokemon.heal(20);
+        }
     }
 }
 

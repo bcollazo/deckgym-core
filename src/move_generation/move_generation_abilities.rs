@@ -66,6 +66,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
         AbilityId::B1177GoomyStickyMembrane => false,
+        AbilityId::PA037CresseliaExLunarPlumage => false,
     }
 }
 
