@@ -146,8 +146,8 @@ fn forecast_effect_attack(
             *damage,
             *must_have_energy,
         ),
-        Mechanic::ExtraDamageIfHurt { extra_damage } => {
-            extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage)
+        Mechanic::ExtraDamageIfHurt { extra_damage, opponent } => {
+            extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent)
         }
     }
 }
@@ -1122,10 +1122,14 @@ fn also_bench_damage(
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
-fn extra_damage_if_hurt(state: &State, base: u32, extra: u32) -> (Probabilities, Mutations) {
-    let opponent = (state.current_player + 1) % 2;
-    let opponent_active = state.get_active(opponent);
-    if opponent_active.remaining_hp < opponent_active.total_hp {
+fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> (Probabilities, Mutations) {
+    let target = if opponent {
+        (state.current_player + 1) % 2
+    } else {
+        state.current_player
+    };
+    let target_active = state.get_active(target);
+    if target_active.remaining_hp < target_active.total_hp {
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)

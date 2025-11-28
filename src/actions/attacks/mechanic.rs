@@ -78,5 +78,6 @@ pub enum Mechanic {
     },
     ExtraDamageIfHurt {
         extra_damage: u32,
+        opponent: bool,
     },
 }

@@ -528,15 +528,15 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("If this Pokémon has damage on it, this attack can be used for 1 [L] Energy.", todo_implementation);
     map.insert(
         "If this Pokémon has damage on it, this attack does 40 more damage.",
-        Mechanic::ExtraDamageIfHurt { extra_damage: 40 },
+        Mechanic::ExtraDamageIfHurt { extra_damage: 40, opponent: false },
     );
     map.insert(
         "If this Pokémon has damage on it, this attack does 50 more damage.",
-        Mechanic::ExtraDamageIfHurt { extra_damage: 50 },
+        Mechanic::ExtraDamageIfHurt { extra_damage: 50, opponent: false },
     );
     map.insert(
         "If this Pokémon has damage on it, this attack does 60 more damage.",
-        Mechanic::ExtraDamageIfHurt { extra_damage: 60 },
+        Mechanic::ExtraDamageIfHurt { extra_damage: 60, opponent: false },
     );
     // map.insert("If this Pokémon has no damage on it, this attack does 40 more damage.", todo_implementation);
     // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.", todo_implementation);
@@ -550,7 +550,8 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 30 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.", todo_implementation);
+    map.insert("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfHurt { extra_damage: 60, opponent: true });
     // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Burned, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.", todo_implementation);
