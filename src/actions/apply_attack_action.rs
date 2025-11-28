@@ -151,10 +151,18 @@ fn forecast_effect_attack(
             opponent,
         } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
         Mechanic::BenchCountDamage {
+            include_fixed_damage,
             damage_per,
             energy_type,
             bench_side,
-        } => bench_count_damage_attack(state, attack.fixed_damage, *damage_per, *energy_type, bench_side),
+        } => bench_count_damage_attack(
+            state,
+            attack.fixed_damage,
+            *include_fixed_damage,
+            *damage_per,
+            *energy_type,
+            bench_side,
+        ),
     }
 }
 
@@ -328,7 +336,6 @@ fn forecast_effect_attack(
 //         AttackId::A4a023MantykeSplashyToss => {
 //             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
 //         }
-//         AttackId::A4a020SuicuneExCrystalWaltz => all_bench_count_attack(acting_player, state, 20),
 //         AttackId::A4a025RaikouExVoltaicBullet => active_and_choice_bench_attack(60, 10),
 //         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
 //         AttackId::B1031RapidashExSprintingFlare => active_and_choice_bench_attack(110, 20),
@@ -683,6 +690,7 @@ fn damage_chance_status_attack(
 fn bench_count_damage_attack(
     state: &State,
     base_damage: u32,
+    include_base_damage: bool,
     damage_per: u32,
     energy_type: Option<EnergyType>,
     bench_side: &BenchSide,
@@ -704,22 +712,12 @@ fn bench_count_damage_attack(
         })
         .count() as u32;
 
-    let total_damage = base_damage + damage_per * bench_count;
+    let total_damage = if include_base_damage {
+        base_damage + damage_per * bench_count
+    } else {
+        damage_per * bench_count
+    };
     active_damage_doutcome(total_damage)
-}
-
-/// For attacks that do damage for each benched Pokémon on both sides.
-///  e.g. "Suicune Ex Crystal Waltz".
-fn all_bench_count_attack(
-    acting_player: usize,
-    state: &State,
-    damage_per: u32,
-) -> (Probabilities, Mutations) {
-    let opponent = (acting_player + 1) % 2;
-    let your_bench_count = state.enumerate_bench_pokemon(acting_player).count() as u32;
-    let opponent_bench_count = state.enumerate_bench_pokemon(opponent).count() as u32;
-    let total_bench_count = your_bench_count + opponent_bench_count;
-    active_damage_doutcome(damage_per * total_bench_count)
 }
 
 /// Used for attacks that damage both enemy's active and one of their benched Pokémon.
@@ -1416,7 +1414,8 @@ mod test {
         let some_base_pokemon = get_card_by_enum(CardId::A1001Bulbasaur);
         state.in_play_pokemon[0][1] = Some(to_playable_card(&some_base_pokemon, false));
 
-        let (_, mut lazy_mutations) = bench_count_damage_attack(&state, 70, 20, None, &BenchSide::YourBench);
+        let (_, mut lazy_mutations) =
+            bench_count_damage_attack(&state, 70, true, 20, None, &BenchSide::YourBench);
         lazy_mutations.remove(0)(&mut rng, &mut state, &action);
 
         assert_eq!(state.get_active(1).remaining_hp, 70);

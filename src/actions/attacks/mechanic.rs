@@ -87,6 +87,7 @@ pub enum Mechanic {
         opponent: bool,
     },
     BenchCountDamage {
+        include_fixed_damage: bool,
         damage_per: u32,
         energy_type: Option<EnergyType>,
         bench_side: BenchSide,
