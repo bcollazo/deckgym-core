@@ -174,22 +174,10 @@ fn forecast_effect_attack(
 }
 
 //     match attack_id {
-//         AttackId::A1102JolteonPinMissile => probabilistic_damage_attack(
-//             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
-//             vec![0, 40, 80, 120, 160],
-//         ),
-//         AttackId::A1104ZapdosExThunderingHurricane => probabilistic_damage_attack(
-//             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
-//             vec![0, 50, 100, 150, 200],
-//         ),
-//         AttackId::A1111HelioliskQuickAttack => {
-//             probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 80])
-//         }
 //         AttackId::A1115AbraTeleport => teleport_attack(),
 //         AttackId::A1117AlakazamPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 60, 30)
 //         }
-
 //         AttackId::A1127JynxPsychic => damage_based_on_opponent_energy(acting_player, state, 30, 20),
 //         AttackId::A1136GolurkDoubleLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
