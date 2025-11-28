@@ -70,4 +70,5 @@ pub enum Mechanic {
         effect: CardEffect,
         duration: u8,
     },
+    SelfDiscardAllEnergy,
 }

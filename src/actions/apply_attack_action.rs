@@ -134,6 +134,7 @@ fn forecast_effect_attack(
         } => {
             damage_and_card_effect_attack(attack.fixed_damage, *opponent, effect.clone(), *duration)
         }
+        Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
     }
 }
 
@@ -141,8 +142,6 @@ fn forecast_effect_attack(
 //         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
 //         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
-//         AttackId::A1095RaichuThunderbolt => thunderbolt_attack(140),
-//         AttackId::A2b022PikachuExThunderbolt => thunderbolt_attack(150),
 //         AttackId::A2b031AlakazamPsychicSuppression => alakazam_psychic_suppression(state),
 //         AttackId::A1096PikachuExCircleCircuit => {
 //             bench_count_attack(acting_player, state, 0, 30, Some(EnergyType::Lightning))
@@ -342,7 +341,6 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
 //         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
-//         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
 //     }
 // }
 
@@ -1060,8 +1058,8 @@ fn damage_and_card_effect_attack(
     })
 }
 
-/// For Thunderbolt attacks that discard all energy after dealing damage.
-fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
+/// Discard all energy from this Pokemon
+fn damage_and_discard_all_energy(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy

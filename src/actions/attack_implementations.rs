@@ -101,7 +101,10 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Discard a random Pokémon Tool card from your opponent's hand.", todo_implementation);
     // map.insert("Discard a random card from your opponent's hand.", todo_implementation);
     // map.insert("Discard all Energy attached to this Pokémon. Your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
-    // map.insert("Discard all Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard all Energy from this Pokémon.",
+        Mechanic::SelfDiscardAllEnergy,
+    );
     // map.insert("Discard all Pokémon Tools from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Discard all [L] Energy from this Pokémon. This attack does 120 damage to 1 of your opponent's Pokémon.", todo_implementation);
     // map.insert("Discard all [R] Energy from this Pokémon.", todo_implementation);
