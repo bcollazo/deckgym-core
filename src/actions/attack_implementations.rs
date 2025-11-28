@@ -841,8 +841,19 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     );
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 more damage for each Energy attached to this Pokémon.", todo_implementation);
-    // map.insert("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 more damage for each Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerEnergy {
+            opponent: false,
+            damage_per_energy: 20,
+        },
+    );
+    map.insert("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.", 
+        Mechanic::ExtraDamagePerEnergy {
+            opponent: true,
+            damage_per_energy: 20,
+        },
+    );
     // map.insert("This attack does 20 more damage for each [G] Energy attached to this Pokémon.", todo_implementation);
     map.insert(
         "This attack does 20 more damage for each of your Benched Pokémon.",
@@ -894,7 +905,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
             bench_only: false,
         },
     );
-    // map.insert("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.",
+        Mechanic::ExtraDamagePerEnergy {
+            opponent: true,
+            damage_per_energy: 30,
+        },
+    );
     // map.insert("This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 30 more damage for each Evolution Pokémon on your Bench.", todo_implementation);
     map.insert(

@@ -19,13 +19,8 @@ use crate::{
 use super::{
     apply_action_helpers::{Mutations, Probabilities},
     mutations::{
-        active_damage_doutcome,
-        active_damage_effect_doutcome,
-        active_damage_effect_mutation,
-        active_damage_mutation,
-        build_status_effect,
-        damage_effect_doutcome,
-        // index_active_damage_doutcome,
+        active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
+        active_damage_mutation, build_status_effect, damage_effect_doutcome,
     },
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
@@ -170,15 +165,15 @@ fn forecast_effect_attack(
             *energy_type,
             bench_side,
         ),
+        Mechanic::ExtraDamagePerEnergy {
+            opponent,
+            damage_per_energy,
+        } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
     }
 }
 
 //     match attack_id {
 //         AttackId::A1115AbraTeleport => teleport_attack(),
-//         AttackId::A1117AlakazamPsychic => {
-//             damage_based_on_opponent_energy(acting_player, state, 60, 30)
-//         }
-//         AttackId::A1127JynxPsychic => damage_based_on_opponent_energy(acting_player, state, 30, 20),
 //         AttackId::A1136GolurkDoubleLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
 //         }
@@ -289,9 +284,6 @@ fn forecast_effect_attack(
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
 //         }
 //         AttackId::A1a001ExeggcuteGrowthSpurt => self_charge_active_attack(0, EnergyType::Grass, 1),
-//         AttackId::A1a002ExeggutorPsychic => {
-//             damage_based_on_opponent_energy(acting_player, state, 80, 20)
-//         }
 //         AttackId::A3085CosmogTeleport => teleport_attack(),
 //         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
 //         AttackId::A3b013IncineroarDarkestLariat => {
@@ -333,9 +325,6 @@ fn forecast_effect_attack(
 //         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
 //         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
 //         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
-//         AttackId::B1121IndeedeeExPsychic => {
-//             damage_based_on_opponent_energy(acting_player, state, 30, 30)
-//         }
 //         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
 //         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
 //     }
@@ -1117,6 +1106,26 @@ fn extra_damage_if_hurt(
     }
 }
 
+fn extra_damage_per_energy(
+    state: &State,
+    base_damage: u32,
+    opponent: bool,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let target = if opponent {
+        (state.current_player + 1) % 2
+    } else {
+        state.current_player
+    };
+    let target_active = state.get_active(target);
+    let damage = base_damage
+        + (target_active
+            .get_effective_attached_energy(state, target)
+            .len() as u32)
+            * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
 fn teleport_attack() -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let mut choices = Vec::new();
@@ -1128,18 +1137,6 @@ fn teleport_attack() -> (Probabilities, Mutations) {
         }
         state.move_generation_stack.push((action.actor, choices));
     })
-}
-
-fn damage_based_on_opponent_energy(
-    acting_player: usize,
-    state: &State,
-    base_damage: u32,
-    damage_per_energy: u32,
-) -> (Probabilities, Mutations) {
-    let opponent = (acting_player + 1) % 2;
-    let opponent_active = state.get_active(opponent);
-    let damage = base_damage + (opponent_active.attached_energy.len() as u32) * damage_per_energy;
-    active_damage_doutcome(damage)
 }
 
 fn extra_damage_if_opponent_is_ex(
