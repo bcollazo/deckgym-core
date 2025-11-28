@@ -113,10 +113,38 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.", todo_implementation);
     // map.insert("Draw a card.", todo_implementation);
     // map.insert("Draw cards until you have the same number of cards in your hand as your opponent.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon can't attack.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon can't use Big Beat.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon can't use Frenzy Plant.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon can't use Sacred Sword.", todo_implementation);
+    map.insert(
+        "During your next turn, this Pokémon can't attack.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::CannotAttack,
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon can't use Big Beat.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::CannotUseAttack("Big Beat"),
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon can't use Frenzy Plant.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::CannotUseAttack("Frenzy Plant"),
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon can't use Sacred Sword.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::CannotUseAttack("Sacred Sword"),
+            duration: 2,
+        },
+    );
     // map.insert("During your next turn, this Pokémon's Gear Spinner attack does +70 damage.", todo_implementation);
     // map.insert("During your next turn, this Pokémon's Insatiable Striking attack does +40 damage.", todo_implementation);
     // map.insert("During your next turn, this Pokémon's Overacceleration attack does +20 damage.", todo_implementation);

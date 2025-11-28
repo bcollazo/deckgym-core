@@ -175,12 +175,6 @@ fn forecast_effect_attack(
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
 //         }
 //         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
-//         AttackId::A1165ArbokCorner => damage_and_card_effect_attack(
-//             index,
-//             (state.current_player + 1) % 2,
-//             1,
-//             CardEffect::NoRetreat,
-//         ),
 //         AttackId::A1178MawileCrunch => mawile_crunch(),
 //         AttackId::A1181MeltanAmass => self_charge_active_attack(0, EnergyType::Metal, 1),
 //         AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
@@ -268,9 +262,6 @@ fn forecast_effect_attack(
 //         ),
 //         AttackId::A3a003RowletFuryAttack => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
-//         }
-//         AttackId::A3a006BuzzwoleExBigBeat => {
-//             cannot_use_attack_next_turn(index, acting_player, AttackId::A3a006BuzzwoleExBigBeat)
 //         }
 //         AttackId::A3a019TapuKokoExPlasmaHurricane => {
 //             self_charge_active_attack(20, EnergyType::Lightning, 1)
@@ -1068,19 +1059,6 @@ fn damage_and_card_effect_attack(
             .add_effect(effect, effect_duration);
     })
 }
-
-// fn cannot_use_attack_next_turn(
-//     index: usize,
-//     acting_player: usize,
-//     attack_id: AttackId,
-// ) -> (Probabilities, Mutations) {
-//     damage_and_card_effect_attack(
-//         index,
-//         acting_player,
-//         2,
-//         CardEffect::CannotUseAttack(attack_id),
-//     )
-// }
 
 /// For Thunderbolt attacks that discard all energy after dealing damage.
 fn thunderbolt_attack(damage: u32) -> (Probabilities, Mutations) {
