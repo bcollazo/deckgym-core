@@ -42,8 +42,9 @@ pub(crate) fn forecast_attack(
         return active_damage_doutcome(attack.fixed_damage);
     };
     // Try AttackId first, if not, fallback to mechanic map
-    let attack_id = AttackId::from_pokemon_index(&active.get_id()[..], index);
-    forecast_effect_attack_by_attack_id(state, attack_id).unwrap_or_else(|| {
+    if let Some(attack_id) = AttackId::from_pokemon_index(&active.get_id()[..], index) {
+        forecast_effect_attack_by_attack_id(state, attack_id)
+    } else {
         let mechanic = ATTACK_EFFECT_MAP.get(&effect_text[..]);
         let Some(mechanic) = mechanic else {
             panic!(
@@ -52,19 +53,15 @@ pub(crate) fn forecast_attack(
             );
         };
         forecast_effect_attack_by_mechanic(state, &attack, mechanic)
-    })
+    }
 }
 
 fn forecast_effect_attack_by_attack_id(
     state: &State,
-    attack_id: Option<AttackId>,
-) -> Option<(Probabilities, Mutations)> {
-    let Some(attack_id) = attack_id else {
-        return None;
-    };
-
+    attack_id: AttackId,
+) -> (Probabilities, Mutations) {
     let acting_player = state.current_player;
-    let result = match attack_id {
+    match attack_id {
         AttackId::A1115AbraTeleport => teleport_attack(),
         AttackId::A1136GolurkDoubleLariat => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
@@ -215,9 +212,7 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
-        _ => return None,
-    };
-    Some(result)
+    }
 }
 
 // Handles attacks that have effects.
@@ -237,7 +232,7 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChargeBench {
             energies,
             target_benched_type,
-        } => energy_bench_attack(energies.clone(), target_benched_type.clone(), state, attack),
+        } => energy_bench_attack(energies.clone(), *target_benched_type, state, attack),
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
@@ -285,7 +280,7 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
-            damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
+            damage_and_turn_effect_attack(attack.fixed_damage, *effect, *duration)
         }
         Mechanic::DamageAndCardEffect {
             opponent,
@@ -307,7 +302,7 @@ fn forecast_effect_attack_by_mechanic(
             *must_have_energy,
         ),
         Mechanic::AlsoChoiceBenchDamage { opponent, damage } => {
-            also_choice_bench_damage(&state, *opponent, attack.fixed_damage, *damage)
+            also_choice_bench_damage(state, *opponent, attack.fixed_damage, *damage)
         }
         Mechanic::ExtraDamageIfHurt {
             extra_damage,
@@ -580,10 +575,7 @@ fn damage_for_each_heads_attack(
     damage_per_head: u32,
     num_coins: usize,
     attack: &Attack,
-) -> (
-    Vec<f64>,
-    Vec<Box<dyn FnOnce(&mut StdRng, &mut State, &Action)>>,
-) {
+) -> (Probabilities, Mutations) {
     let mut probabilities: Vec<f64> = vec![];
     let mut damages: Vec<u32> = vec![];
     let fixed_damage = if include_fixed_damage {
@@ -686,7 +678,7 @@ fn bench_count_damage_attack(
         .iter()
         .flat_map(|&player| state.enumerate_bench_pokemon(player))
         .filter(|(_, pokemon)| {
-            energy_type.map_or(true, |energy| pokemon.get_energy_type() == Some(energy))
+            energy_type.is_none_or(|energy| pokemon.get_energy_type() == Some(energy))
         })
         .count() as u32;
 
