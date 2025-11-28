@@ -1,4 +1,5 @@
-// TODO: Probably best to generate this file from database.json via card_enum_generator.rs.
+// NOTE: This file should be treated as deprecated.
+// The new way to implement attacks is with Mechanic enum.
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
