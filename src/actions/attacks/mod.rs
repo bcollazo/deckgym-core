@@ -1,3 +1,3 @@
 mod mechanic;
 
-pub use mechanic::Mechanic;
+pub use mechanic::{BenchSide, Mechanic};

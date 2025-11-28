@@ -6,7 +6,7 @@ use crate::{
         apply_action_helpers::handle_damage,
         apply_evolve,
         attack_implementations::ATTACK_EFFECT_MAP,
-        attacks::Mechanic,
+        attacks::{BenchSide, Mechanic},
         mutations::{doutcome, doutcome_from_mutation},
         Action,
     },
@@ -153,7 +153,8 @@ fn forecast_effect_attack(
         Mechanic::BenchCountDamage {
             damage_per,
             energy_type,
-        } => bench_count_damage_attack(state, attack.fixed_damage, *damage_per, *energy_type),
+            bench_side,
+        } => bench_count_damage_attack(state, attack.fixed_damage, *damage_per, *energy_type, bench_side),
     }
 }
 
@@ -684,17 +685,25 @@ fn bench_count_damage_attack(
     base_damage: u32,
     damage_per: u32,
     energy_type: Option<EnergyType>,
+    bench_side: &BenchSide,
 ) -> (Probabilities, Mutations) {
-    let mut bench_count = 0;
-    for (_, pokemon) in state.enumerate_bench_pokemon(state.current_player) {
-        if let Some(energy) = energy_type {
-            if pokemon.get_energy_type() == Some(energy) {
-                bench_count += 1;
-            }
-        } else {
-            bench_count += 1;
-        }
-    }
+    let current_player = state.current_player;
+    let opponent = (current_player + 1) % 2;
+
+    let players = match bench_side {
+        BenchSide::YourBench => vec![current_player],
+        BenchSide::OpponentBench => vec![opponent],
+        BenchSide::BothBenches => vec![current_player, opponent],
+    };
+
+    let bench_count = players
+        .iter()
+        .flat_map(|&player| state.enumerate_bench_pokemon(player))
+        .filter(|(_, pokemon)| {
+            energy_type.map_or(true, |energy| pokemon.get_energy_type() == Some(energy))
+        })
+        .count() as u32;
+
     let total_damage = base_damage + damage_per * bench_count;
     active_damage_doutcome(total_damage)
 }
@@ -1407,7 +1416,7 @@ mod test {
         let some_base_pokemon = get_card_by_enum(CardId::A1001Bulbasaur);
         state.in_play_pokemon[0][1] = Some(to_playable_card(&some_base_pokemon, false));
 
-        let (_, mut lazy_mutations) = bench_count_damage_attack(&state, 70, 20, None);
+        let (_, mut lazy_mutations) = bench_count_damage_attack(&state, 70, 20, None, &BenchSide::YourBench);
         lazy_mutations.remove(0)(&mut rng, &mut state, &action);
 
         assert_eq!(state.get_active(1).remaining_hp, 70);

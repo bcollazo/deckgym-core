@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::{
-    actions::attacks::Mechanic,
+    actions::attacks::{BenchSide, Mechanic},
     effects::{CardEffect, TurnEffect},
     models::{EnergyType, StatusCondition},
 };
@@ -727,6 +727,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 10,
             energy_type: Some(EnergyType::Lightning),
+            bench_side: BenchSide::YourBench,
         },
     );
     map.insert(
@@ -739,7 +740,14 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("This attack does 10 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 10 more damage for each [W] Energy attached to this Pokémon.", todo_implementation);
     // map.insert("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
-    // map.insert("This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
+    map.insert(
+        "This attack does 20 damage for each Benched Pokémon (both yours and your opponent's).",
+        Mechanic::BenchCountDamage {
+            damage_per: 20,
+            energy_type: None,
+            bench_side: BenchSide::BothBenches,
+        },
+    );
     // map.insert("This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage for each Energy attached to your opponent's Active Pokémon.", todo_implementation);
     map.insert(
@@ -747,6 +755,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 20,
             energy_type: None,
+            bench_side: BenchSide::YourBench,
         },
     );
     map.insert(
@@ -774,6 +783,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 20,
             energy_type: None,
+            bench_side: BenchSide::YourBench,
         },
     );
     // map.insert("This attack does 20 more damage for each of your opponent's Benched Pokémon.", todo_implementation);
@@ -782,6 +792,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 30,
             energy_type: None,
+            bench_side: BenchSide::YourBench,
         },
     );
     map.insert(
@@ -789,6 +800,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 30,
             energy_type: Some(EnergyType::Lightning),
+            bench_side: BenchSide::YourBench,
         },
     );
     map.insert(
@@ -813,6 +825,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         Mechanic::BenchCountDamage {
             damage_per: 30,
             energy_type: None,
+            bench_side: BenchSide::YourBench,
         },
     );
     // map.insert("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.", todo_implementation);

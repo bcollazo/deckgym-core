@@ -3,6 +3,12 @@ use crate::{
     models::{EnergyType, StatusCondition},
 };
 
+pub enum BenchSide {
+    YourBench,
+    OpponentBench,
+    BothBenches,
+}
+
 pub enum Mechanic {
     SelfHeal {
         amount: u32,
@@ -83,5 +89,6 @@ pub enum Mechanic {
     BenchCountDamage {
         damage_per: u32,
         energy_type: Option<EnergyType>,
+        bench_side: BenchSide,
     },
 }
