@@ -128,7 +128,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         "During your next turn, this Pokémon can't use Big Beat.",
         Mechanic::DamageAndCardEffect {
             opponent: false,
-            effect: CardEffect::CannotUseAttack("Big Beat"),
+            effect: CardEffect::CannotUseAttack("Big Beat".to_string()),
             duration: 2,
         },
     );
@@ -136,7 +136,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         "During your next turn, this Pokémon can't use Frenzy Plant.",
         Mechanic::DamageAndCardEffect {
             opponent: false,
-            effect: CardEffect::CannotUseAttack("Frenzy Plant"),
+            effect: CardEffect::CannotUseAttack("Frenzy Plant".to_string()),
             duration: 2,
         },
     );
@@ -144,7 +144,7 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         "During your next turn, this Pokémon can't use Sacred Sword.",
         Mechanic::DamageAndCardEffect {
             opponent: false,
-            effect: CardEffect::CannotUseAttack("Sacred Sword"),
+            effect: CardEffect::CannotUseAttack("Sacred Sword".to_string()),
             duration: 2,
         },
     );
@@ -526,9 +526,18 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         },
     );
     // map.insert("If this Pokémon has damage on it, this attack can be used for 1 [L] Energy.", todo_implementation);
-    // map.insert("If this Pokémon has damage on it, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has damage on it, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has damage on it, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfHurt { extra_damage: 40 },
+    );
+    map.insert(
+        "If this Pokémon has damage on it, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfHurt { extra_damage: 50 },
+    );
+    map.insert(
+        "If this Pokémon has damage on it, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfHurt { extra_damage: 60 },
+    );
     // map.insert("If this Pokémon has no damage on it, this attack does 40 more damage.", todo_implementation);
     // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.", todo_implementation);

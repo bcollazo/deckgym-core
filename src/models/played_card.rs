@@ -131,7 +131,10 @@ impl PlayedCard {
     }
 
     pub(crate) fn get_active_effects(&self) -> Vec<CardEffect> {
-        self.effects.iter().map(|(effect, _)| *effect).collect()
+        self.effects
+            .iter()
+            .map(|(effect, _)| effect.clone())
+            .collect()
     }
 
     pub(crate) fn clear_status_and_effects(&mut self) {

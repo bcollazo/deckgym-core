@@ -76,4 +76,7 @@ pub enum Mechanic {
         damage: u32,
         must_have_energy: bool,
     },
+    ExtraDamageIfHurt {
+        extra_damage: u32,
+    },
 }

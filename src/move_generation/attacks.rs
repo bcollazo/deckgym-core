@@ -18,10 +18,10 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             return actions;
         }
 
-        let restricted_attack_names: Vec<&'static str> = active_effects
+        let restricted_attack_names: Vec<String> = active_effects
             .iter()
             .filter_map(|effect| match effect {
-                CardEffect::CannotUseAttack(attack_name) => Some(*attack_name),
+                CardEffect::CannotUseAttack(attack_name) => Some(attack_name.clone()),
                 _ => None,
             })
             .collect();

@@ -146,6 +146,9 @@ fn forecast_effect_attack(
             *damage,
             *must_have_energy,
         ),
+        Mechanic::ExtraDamageIfHurt { extra_damage } => {
+            extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 
@@ -1060,7 +1063,7 @@ fn damage_and_card_effect_attack(
         // Are we sure pokemon is there? What if knocked out?
         state
             .get_active_mut(player)
-            .add_effect(effect, effect_duration);
+            .add_effect(effect.clone(), effect_duration);
     })
 }
 
@@ -1119,13 +1122,8 @@ fn also_bench_damage(
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
-fn extra_damage_if_hurt(
-    base: u32,
-    extra: u32,
-    acting_player: usize,
-    state: &State,
-) -> (Probabilities, Mutations) {
-    let opponent = (acting_player + 1) % 2;
+fn extra_damage_if_hurt(state: &State, base: u32, extra: u32) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     if opponent_active.remaining_hp < opponent_active.total_hp {
         active_damage_doutcome(base + extra)
