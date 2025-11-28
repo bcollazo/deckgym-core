@@ -9,6 +9,7 @@ pub mod database;
 pub mod deck;
 pub mod effects;
 pub mod game;
+pub mod gameplay_stats_collector;
 mod hooks;
 pub mod models;
 pub mod move_generation;
@@ -24,10 +25,12 @@ pub use ability_ids::AbilityId;
 pub use attack_ids::AttackId;
 pub use deck::Deck;
 pub use game::Game;
+pub use hooks::to_playable_card;
 pub use move_generation::generate_possible_actions;
 pub use move_generation::generate_possible_trainer_actions;
 pub use optimize::{cli_optimize, optimize, ParallelConfig, SimulationConfig};
-pub use simulate::{simulate, Simulation};
+pub use simulate::{simulate, Simulation, SimulationCallbacks};
+pub use simulation_event_handler::ComputedStats;
 pub use state::State;
 
 #[cfg(feature = "python")]

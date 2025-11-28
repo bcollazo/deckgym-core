@@ -49,6 +49,10 @@ harness = false
 name = "card_lookup_benchmark"
 harness = false
 
+[[bench]]
+name = "rare_candy_benchmark"
+harness = false
+
 [[bin]]
 name = "tui"
 path = "src/bin/tui.rs"

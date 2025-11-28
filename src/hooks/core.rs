@@ -38,7 +38,7 @@ pub fn is_ultra_beast(pokemon_name: &str) -> bool {
     ULTRA_BEAST_NAMES.contains(&pokemon_name)
 }
 
-pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
+pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
@@ -155,6 +155,18 @@ pub(crate) fn on_attach_energy(
             debug!("Komala's Comatose: Putting Komala to sleep");
             let komala = state.get_active_mut(actor);
             komala.asleep = true;
+        }
+
+        // Check for Cresselia ex's Lunar Plumage ability
+        if ability_id == AbilityId::PA037CresseliaExLunarPlumage
+            && energy_type == EnergyType::Psychic
+        {
+            // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
+            debug!("Cresselia ex's Lunar Plumage: Healing 20 damage");
+            let pokemon = state.in_play_pokemon[actor][in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there if attaching energy to it");
+            pokemon.heal(20);
         }
     }
 }
