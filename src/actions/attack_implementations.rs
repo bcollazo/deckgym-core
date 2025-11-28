@@ -398,7 +398,10 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
         "Flip a coin. If heads, this attack does 40 more damage.",
         Mechanic::CoinFlipExtraDamage { extra_damage: 40 },
     );
-    // map.insert("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.", todo_implementation);
+    map.insert("Flip a coin. If heads, this attack does 40 more damage. If tails, this Pokémon also does 20 damage to itself.", Mechanic::CoinFlipExtraDamageOrSelfDamage {
+        extra_damage: 40,
+        self_damage: 20,
+    });
     map.insert(
         "Flip a coin. If heads, this attack does 50 more damage.",
         Mechanic::CoinFlipExtraDamage { extra_damage: 50 },

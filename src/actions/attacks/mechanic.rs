@@ -35,6 +35,10 @@ pub enum Mechanic {
     CoinFlipExtraDamage {
         extra_damage: u32,
     },
+    CoinFlipExtraDamageOrSelfDamage {
+        extra_damage: u32,
+        self_damage: u32,
+    },
     ExtraDamageForEachHeads {
         include_fixed_damage: bool,
         damage_per_head: u32,

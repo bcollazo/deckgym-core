@@ -101,6 +101,7 @@ fn forecast_effect_attack(
             vec![0.5, 0.5],
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
         ),
+        Mechanic::CoinFlipExtraDamageOrSelfDamage { extra_damage, self_damage } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
             damage_per_head,
@@ -167,7 +168,6 @@ fn forecast_effect_attack(
 }
 
 //     match attack_id {
-//         AttackId::A1101ElectabuzzThunderPunch => extra_or_self_damage_attack(40, 40, 20),
 //         AttackId::A1102JolteonPinMissile => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
 //             vec![0, 40, 80, 120, 160],
