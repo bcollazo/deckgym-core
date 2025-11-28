@@ -28,7 +28,6 @@ pub enum AttackId {
     A2060LuxrayVoltBolt,
     A2084GliscorAcrobatics,
     A2098SneaselDoubleScratch,
-    A2111SkarmoryMetalArms,
     A2118ProbopassTripleNose,
     A2131AmbipomDoubleHit,
     A2141ChatotFuryAttack,
@@ -111,7 +110,6 @@ lazy_static::lazy_static! {
         m.insert(("A2 060", 0), AttackId::A2060LuxrayVoltBolt);
         m.insert(("A2 084", 0), AttackId::A2084GliscorAcrobatics);
         m.insert(("A2 098", 0), AttackId::A2098SneaselDoubleScratch);
-        m.insert(("A2 111", 0), AttackId::A2111SkarmoryMetalArms);
         m.insert(("A2 118", 0), AttackId::A2118ProbopassTripleNose);
         m.insert(("A2 131", 0), AttackId::A2131AmbipomDoubleHit);
         m.insert(("A2 141", 0), AttackId::A2141ChatotFuryAttack);
@@ -253,7 +251,6 @@ lazy_static::lazy_static! {
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
-        m.insert(("P-A 039", 0), AttackId::A2111SkarmoryMetalArms);
         m.insert(("P-A 049", 0), AttackId::A2a063SnorlaxCollapse);
         m.insert(("P-A 060", 0), AttackId::A1a001ExeggcuteGrowthSpurt);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);

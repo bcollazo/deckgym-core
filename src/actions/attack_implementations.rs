@@ -476,9 +476,18 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.", todo_implementation);
     // map.insert("If this Pokémon evolved during this turn, this attack does 20 more damage.", todo_implementation);
     // map.insert("If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfToolAttached { extra_damage: 30 },
+    );
+    map.insert(
+        "If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfToolAttached { extra_damage: 40 },
+    );
+    map.insert(
+        "If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfToolAttached { extra_damage: 50 },
+    );
     // map.insert("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.", todo_implementation);
     map.insert("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.", 
         Mechanic::ExtraDamageIfExtraEnergy {

@@ -104,4 +104,7 @@ pub enum Mechanic {
         opponent: bool,
         damage_per_energy: u32,
     },
+    ExtraDamageIfToolAttached {
+        extra_damage: u32,
+    },
 }

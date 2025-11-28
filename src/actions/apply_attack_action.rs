@@ -106,9 +106,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A2098SneaselDoubleScratch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A2111SkarmoryMetalArms => {
-            extra_damage_if_tool_attached(acting_player, state, 20, 30)
-        }
         AttackId::A2118ProbopassTripleNose => {
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
         }
@@ -325,6 +322,9 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
+        Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
+            extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 
@@ -1148,12 +1148,11 @@ fn extra_damage_if_opponent_is_ex(
 }
 
 fn extra_damage_if_tool_attached(
-    acting_player: usize,
     state: &State,
     base_damage: u32,
     extra_damage: u32,
 ) -> (Probabilities, Mutations) {
-    let active = state.get_active(acting_player);
+    let active = state.get_active(state.current_player);
     let damage = if active.has_tool_attached() {
         base_damage + extra_damage
     } else {
