@@ -6,7 +6,7 @@ use std::sync::LazyLock;
 
 use crate::{
     actions::attacks::Mechanic,
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     models::{EnergyType, StatusCondition},
 };
 
@@ -133,8 +133,22 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 30 damage to the Attacking Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.", todo_implementation);
-    // map.insert("During your opponent's next turn, the Defending Pokémon can't attack.", todo_implementation);
-    // map.insert("During your opponent's next turn, the Defending Pokémon can't retreat.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, the Defending Pokémon can't attack.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::CannotAttack,
+            duration: 1,
+        },
+    );
+    map.insert(
+        "During your opponent's next turn, the Defending Pokémon can't retreat.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::NoRetreat,
+            duration: 1,
+        },
+    );
     map.insert(
         "During your opponent's next turn, they can't play any Item cards from their hand.",
         Mechanic::DamageAndTurnEffect {
@@ -144,9 +158,30 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     );
     // map.insert("During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes +30 damage from attacks.", todo_implementation);
-    // map.insert("During your opponent's next turn, this Pokémon takes -20 damage from attacks.", todo_implementation);
-    // map.insert("During your opponent's next turn, this Pokémon takes -30 damage from attacks.", todo_implementation);
-    // map.insert("During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes -20 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::ReducedDamage { amount: 20 },
+            duration: 1,
+        },
+    );
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes -30 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::ReducedDamage { amount: 30 },
+            duration: 1,
+        },
+    );
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes -50 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::ReducedDamage { amount: 50 },
+            duration: 1,
+        },
+    );
     // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
     map.insert(
         "Flip 2 coins. If both of them are heads, this attack does 70 more damage.",

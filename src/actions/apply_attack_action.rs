@@ -127,6 +127,13 @@ fn forecast_effect_attack(
         Mechanic::DamageAndTurnEffect { effect, duration } => {
             damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
         }
+        Mechanic::DamageAndCardEffect {
+            opponent,
+            effect,
+            duration,
+        } => {
+            damage_and_card_effect_attack(attack.fixed_damage, *opponent, effect.clone(), *duration)
+        }
     }
 }
 
@@ -157,12 +164,7 @@ fn forecast_effect_attack(
 //         AttackId::A1117AlakazamPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 60, 30)
 //         }
-//         AttackId::A1126MrMimeBarrierAttack => damage_and_card_effect_attack(
-//             0,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
+
 //         AttackId::A1127JynxPsychic => damage_based_on_opponent_energy(acting_player, state, 30, 20),
 //         AttackId::A1136GolurkDoubleLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
@@ -200,12 +202,6 @@ fn forecast_effect_attack(
 //                 .collect();
 //             damage_effect_doutcome(targets, |_, _, _| {})
 //         }
-//         AttackId::A1a045GolemGuardPress => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 30 },
-//         ),
 //         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
 //         AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
 //         AttackId::A2029InfernapeExFlareBlitz => {
@@ -215,12 +211,6 @@ fn forecast_effect_attack(
 //         AttackId::A2050ManaphyOceanicGift => manaphy_oceanic(acting_player),
 //         AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
 //         AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
-//         AttackId::A2073DrifloonExpand => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
 //         AttackId::A2084GliscorAcrobatics => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
 //         }
@@ -230,12 +220,6 @@ fn forecast_effect_attack(
 //         AttackId::A2111SkarmoryMetalArms => {
 //             extra_damage_if_tool_attached(acting_player, state, 20, 30)
 //         }
-//         AttackId::A2117BronzongGuardPress => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
 //         AttackId::A2118ProbopassTripleNose => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
 //         }
@@ -252,12 +236,6 @@ fn forecast_effect_attack(
 //         AttackId::A2a063SnorlaxCollapse => {
 //             damage_and_self_status_attack(100, StatusCondition::Asleep)
 //         }
-//         AttackId::A2a057ProbopassExDefensiveUnit => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
 //         AttackId::A2a071ArceusExUltimateForce => {
 //             bench_count_attack(acting_player, state, 70, 20, None)
 //         }
@@ -283,18 +261,6 @@ fn forecast_effect_attack(
 //             self_charge_active_attack(0, EnergyType::Water, 1)
 //         }
 //         AttackId::A3041AlolanNinetalesBlizzard => alolan_ninetales_blizzard(state),
-//         AttackId::A3043CloysterGuardPress => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
-//         AttackId::A3070SableyeCorner => damage_and_card_effect_attack(
-//             index,
-//             (state.current_player + 1) % 2,
-//             1,
-//             CardEffect::NoRetreat,
-//         ),
 //         AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
 //         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
 //             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
@@ -316,12 +282,6 @@ fn forecast_effect_attack(
 //         AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
 //             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
 //         }
-//         AttackId::A3a053StakatakaBrassRock => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
 //         AttackId::A3a060TypeNullQuickBlow => {
 //             probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
 //         }
@@ -335,12 +295,6 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::A3a007PheromosaJumpBlues => active_and_choice_bench_attack(20, 20),
 //         AttackId::A3085CosmogTeleport => teleport_attack(),
-//         AttackId::A3086CosmoemStiffen => damage_and_card_effect_attack(
-//             0,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 50 },
-//         ),
 //         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
 //         AttackId::A3b013IncineroarDarkestLariat => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
@@ -368,21 +322,9 @@ fn forecast_effect_attack(
 //         }
 //         AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
 //         AttackId::A4102HitmontopPiercingSpin => active_and_choice_bench_attack(20, 20),
-//         AttackId::A4104PupitarGuardPress => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 30 },
-//         ),
 //         AttackId::A4105BinacleDualChop => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
 //         }
-//         AttackId::A4124SkarmoryExSteelWing => damage_and_card_effect_attack(
-//             index,
-//             state.current_player,
-//             1,
-//             CardEffect::ReducedDamage { amount: 20 },
-//         ),
 //         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
 //         AttackId::A4146UrsaringSwingAround => {
 //             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
@@ -1109,18 +1051,23 @@ fn damage_and_turn_effect_attack(
     })
 }
 
-// fn damage_and_card_effect_attack(
-//     index: usize,
-//     player: usize,
-//     effect_duration: u8,
-//     effect: CardEffect,
-// ) -> (Probabilities, Mutations) {
-//     index_active_damage_doutcome(index, move |_, state, _| {
-//         state
-//             .get_active_mut(player)
-//             .add_effect(effect, effect_duration);
-//     })
-// }
+fn damage_and_card_effect_attack(
+    damage: u32,
+    opponent: bool,
+    effect: CardEffect,
+    effect_duration: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let player = if opponent {
+            (action.actor + 1) % 2
+        } else {
+            action.actor
+        };
+        state
+            .get_active_mut(player)
+            .add_effect(effect, effect_duration);
+    })
+}
 
 // fn cannot_use_attack_next_turn(
 //     index: usize,

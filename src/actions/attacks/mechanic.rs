@@ -1,5 +1,5 @@
 use crate::{
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     models::{EnergyType, StatusCondition},
 };
 
@@ -63,5 +63,11 @@ pub enum Mechanic {
     ChargeBenchGrass {
         amount: u32,
         energy_type: EnergyType,
+    },
+    // End Unique mechanics
+    DamageAndCardEffect {
+        opponent: bool,
+        effect: CardEffect,
+        duration: u8,
     },
 }
