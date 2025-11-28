@@ -551,6 +551,7 @@ fn forecast_effect_attack(
         AttackId::B1157HydreigonHyperRay => thunderbolt_attack(130),
         AttackId::B1179GoodraSpiralDrain => self_heal_attack(40, 0),
         AttackId::B1196SwabluSing => damage_status_attack(0, StatusCondition::Asleep),
+        AttackId::B1197AltariaDoTheWave => bench_count_attack(acting_player, state, 20, 20, None),
         AttackId::PA056EkansPoisonSting => damage_status_attack(0, StatusCondition::Poisoned),
     }
 }

@@ -208,6 +208,7 @@ pub enum AttackId {
     B1157HydreigonHyperRay,
     B1161MareaniePoisonSting,
     B1196SwabluSing,
+    B1197AltariaDoTheWave,
     PA056EkansPoisonSting,
     PA072AlolanGrimerPoisonGas,
     PA079DuskManeNecrozmaBlackMetal,
@@ -671,6 +672,7 @@ lazy_static::lazy_static! {
         m.insert(("B1 161", 0), AttackId::B1161MareaniePoisonSting);
         m.insert(("B1 179", 0), AttackId::B1179GoodraSpiralDrain);
         m.insert(("B1 196", 0), AttackId::B1196SwabluSing);
+        m.insert(("B1 197", 0), AttackId::B1197AltariaDoTheWave);
         m.insert(("B1 232", 0), AttackId::B1050MagikarpWaterfallEvolution);
         m.insert(("B1 237", 0), AttackId::B1088LuxrayFlashImpact);
         m.insert(("B1 245", 0), AttackId::B1157HydreigonHyperRay);
