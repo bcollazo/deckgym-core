@@ -124,13 +124,13 @@ fn forecast_effect_attack(
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
         ),
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
+        Mechanic::DamageAndTurnEffect { effect, duration } => {
+            damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
+        }
     }
 }
 
 //     match attack_id {
-//         AttackId::A1057PsyduckHeadache => {
-//             damage_and_turn_effect_attack(0, 1, TurnEffect::NoSupportCards)
-//         }
 //         AttackId::A1078GyaradosHyperBeam => damage_and_discard_energy(100, 1),
 //         AttackId::A1084ArticunoExBlizzard => articuno_ex_blizzard(state),
 //         AttackId::A1091BruxishSecondStrike => extra_damage_if_hurt(10, 60, acting_player, state),
@@ -403,9 +403,6 @@ fn forecast_effect_attack(
 //         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
 //         AttackId::B1102MegaAltariaExMegaHarmony => {
 //             bench_count_attack(acting_player, state, 40, 30, None)
-//         }
-//         AttackId::B1109ChinglingJinglyNoise => {
-//             damage_and_turn_effect_attack(0, 1, TurnEffect::NoItemCards)
 //         }
 //         AttackId::B1121IndeedeeExPsychic => {
 //             damage_based_on_opponent_energy(acting_player, state, 30, 30)
@@ -1102,15 +1099,15 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> (Probabilities, Mutations) {
     })
 }
 
-// fn damage_and_turn_effect_attack(
-//     index: usize,
-//     effect_duration: u8,
-//     effect: TurnEffect,
-// ) -> (Probabilities, Mutations) {
-//     index_active_damage_doutcome(index, move |_, state, _| {
-//         state.add_turn_effect(effect, effect_duration);
-//     })
-// }
+fn damage_and_turn_effect_attack(
+    damage: u32,
+    effect: TurnEffect,
+    effect_duration: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, _| {
+        state.add_turn_effect(effect, effect_duration);
+    })
+}
 
 // fn damage_and_card_effect_attack(
 //     index: usize,

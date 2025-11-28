@@ -1,4 +1,7 @@
-use crate::models::{EnergyType, StatusCondition};
+use crate::{
+    effects::TurnEffect,
+    models::{EnergyType, StatusCondition},
+};
 
 pub enum Mechanic {
     SelfHeal {
@@ -45,6 +48,10 @@ pub enum Mechanic {
     DirectDamage {
         damage: u32,
         bench_only: bool,
+    },
+    DamageAndTurnEffect {
+        effect: TurnEffect,
+        duration: u8,
     },
     // Fairly unique mechanics
     ManaphyOceanicGift,

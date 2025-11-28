@@ -6,6 +6,7 @@ use std::sync::LazyLock;
 
 use crate::{
     actions::attacks::Mechanic,
+    effects::TurnEffect,
     models::{EnergyType, StatusCondition},
 };
 
@@ -134,7 +135,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.", todo_implementation);
     // map.insert("During your opponent's next turn, the Defending Pokémon can't attack.", todo_implementation);
     // map.insert("During your opponent's next turn, the Defending Pokémon can't retreat.", todo_implementation);
-    // map.insert("During your opponent's next turn, they can't play any Item cards from their hand.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, they can't play any Item cards from their hand.",
+        Mechanic::DamageAndTurnEffect {
+            effect: TurnEffect::NoItemCards,
+            duration: 1,
+        },
+    );
     // map.insert("During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes +30 damage from attacks.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes -20 damage from attacks.", todo_implementation);
@@ -702,7 +709,13 @@ pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLo
     // map.insert("You can use this attack only if you have Uxie and Azelf on your Bench. Discard all Energy from this Pokémon.", todo_implementation);
     // map.insert("You may discard any number of your Benched [W] Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.", todo_implementation);
     // map.insert("You may switch this Pokémon with 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("Your opponent can't use any Supporter cards from their hand during their next turn.", todo_implementation);
+    map.insert(
+        "Your opponent can't use any Supporter cards from their hand during their next turn.",
+        Mechanic::DamageAndTurnEffect {
+            effect: TurnEffect::NoSupportCards,
+            duration: 1,
+        },
+    );
     // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck.", todo_implementation);
     // map.insert("Your opponent reveals their hand.", todo_implementation);
     // map.insert("Your opponent reveals their hand. Choose a Supporter card you find there and discard it.", todo_implementation);
