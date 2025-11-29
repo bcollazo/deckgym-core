@@ -136,7 +136,7 @@ cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/data
 
 To generate attacks do:
 ```bash
-cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/attack_implementations.rs && cargo fmt
+cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/effect_mechanic_map.rs && cargo fmt
 ```
 
 **Profiling Main Script**

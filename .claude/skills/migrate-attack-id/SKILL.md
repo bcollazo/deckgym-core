@@ -13,10 +13,10 @@ The codebase is in a dirty state, don't try to eliminate compilation warnings, o
   cargo run --bin search "Venusaur" --attack "Giant Bloom"
   ```
 
-- Search for the effect text in the above JSON in the `attack_implementations.rs` file.
+- Search for the effect text in the above JSON in the `effect_mechanic_map.rs` file.
 - Decide if we should introduce a new Mechanic or re-use or generalize an existing one. Try to re-use existing ones first.
-- Uncomment the all the effect lines in `attack_implementations.rs` that just require different parameters on the decided Mechanic variant.
-- Implement the mechanic logic in `forecast_effect_attack` in `apply_attack_action.rs`.
+- Uncomment the all the effect lines in `effect_mechanic_map.rs` that just require different parameters on the decided Mechanic variant, and map to the correct Mechanic variant instance.
+- Implement the mechanic logic in `forecast_effect_attack_by_mechanic` in `apply_attack_action.rs`.
   - Identify how it was implemented before. Refactor the old function to be usable with the new structure. 
   - Keep the code as a simple one-liner in the match statement by using helper functions
   - Remove their old usage in the big commented out match statement, and any other old implementation for this attack.

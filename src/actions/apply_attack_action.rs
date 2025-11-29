@@ -5,8 +5,8 @@ use crate::{
     actions::{
         apply_action_helpers::handle_damage,
         apply_evolve,
-        attack_implementations::ATTACK_EFFECT_MAP,
         attacks::{BenchSide, Mechanic},
+        effect_mechanic_map::EFFECT_MECHANIC_MAP,
         mutations::{doutcome, doutcome_from_mutation},
         Action,
     },
@@ -45,7 +45,7 @@ pub(crate) fn forecast_attack(
     if let Some(attack_id) = AttackId::from_pokemon_index(&active.get_id()[..], index) {
         forecast_effect_attack_by_attack_id(state, attack_id)
     } else {
-        let mechanic = ATTACK_EFFECT_MAP.get(&effect_text[..]);
+        let mechanic = EFFECT_MECHANIC_MAP.get(&effect_text[..]);
         let Some(mechanic) = mechanic else {
             panic!(
                 "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",

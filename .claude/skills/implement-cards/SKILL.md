@@ -50,7 +50,7 @@ to see what is missing from the specified card.
   cargo run --bin search "Venusaur" --attack "Giant Bloom"
   ```
 
-- Search for the effect text in the above JSON in the `attack_implementations.rs` file.
+- Search for the effect text in the above JSON in the `effect_mechanic_map.rs` file.
 - Decide if we should introduce a new Mechanic or re-use or generalize an existing one. Try to re-use existing ones first.
 - Identify all the cards that have the same effect text template, and just differ by parameters.
 - Uncomment all the `// map.insert("` lines that pertain to the mechanic, and add the correct value (an `Mechanic` enum variant with the corresponding parameters).

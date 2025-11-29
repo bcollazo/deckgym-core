@@ -253,7 +253,7 @@ fn print_attack_map(card_map: &IndexMap<String, Card>) {
     println!("use crate::{{actions::attacks::Mechanic, models::EnergyType}};");
     println!();
     println!("/// Map from attack effect text to its Mechanic.");
-    println!("pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {{");
+    println!("pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {{");
     println!("    let mut map: HashMap<&'static str, Mechanic> = HashMap::new();");
 
     // Sort effect texts alphabetically

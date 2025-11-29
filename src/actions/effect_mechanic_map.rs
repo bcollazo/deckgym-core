@@ -11,7 +11,7 @@ use crate::{
 };
 
 /// Map from attack effect text to its implementation.
-pub static ATTACK_EFFECT_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
+pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
     // map.insert("1 Special Condition from among Asleep, Burned, Confused, Paralyzed, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.", todo_implementation);
     // map.insert("1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it.", todo_implementation);
