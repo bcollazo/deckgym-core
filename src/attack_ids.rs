@@ -169,6 +169,7 @@ pub enum AttackId {
     A4001OddishPoisonPowder,
     A4021ShuckleExTripleSlap,
     A4026NinetalesScorchingBreath,
+    A4031MagcargoSpurtFire,
     A4032MagbyToastyToss,
     A4053QwilfishPoisonSting,
     A4066PichuCracklyToss,
@@ -511,6 +512,7 @@ lazy_static::lazy_static! {
         m.insert(("A4 001", 0), AttackId::A4001OddishPoisonPowder);
         m.insert(("A4 021", 0), AttackId::A4021ShuckleExTripleSlap);
         m.insert(("A4 026", 0), AttackId::A4026NinetalesScorchingBreath);
+        m.insert(("A4 031", 0), AttackId::A4031MagcargoSpurtFire);
         m.insert(("A4 032", 0), AttackId::A4032MagbyToastyToss);
         m.insert(("A4 053", 0), AttackId::A4053QwilfishPoisonSting);
         m.insert(("A4 066", 0), AttackId::A4066PichuCracklyToss);

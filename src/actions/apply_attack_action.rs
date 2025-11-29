@@ -471,6 +471,7 @@ fn forecast_effect_attack(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
         }
         AttackId::A4026NinetalesScorchingBreath => scorching_breath_attack(),
+        AttackId::A4031MagcargoSpurtFire => magcargo_spurt_fire(),
         AttackId::A4032MagbyToastyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
@@ -1498,10 +1499,44 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
     // For each time a Pokémon was chosen, also do 20 damage to it.
     doutcome(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> = generate_random_spread_indices(rng, state, true, 3)
+        let mut damage_map: std::collections::HashMap<(usize, usize), u32> =
+            std::collections::HashMap::new();
+
+        // Start with 100 damage to the active Pokémon
+        damage_map.insert((opponent, 0), 100);
+
+        let random_indices = generate_random_spread_indices(rng, state, true, 3, false)
             .into_iter()
-            .map(|idx| (20, opponent, idx))
-            .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
+            .map(|(_, idx)| idx);
+        for idx in random_indices {
+            *damage_map.entry((opponent, idx)).or_insert(0) += 20;
+        }
+
+        let targets: Vec<(u32, usize, usize)> = damage_map
+            .into_iter()
+            .map(|((player, idx), dmg)| (dmg, player, idx))
+            .collect();
+
+        let attacking_ref = (action.actor, 0);
+        handle_damage(state, attacking_ref, &targets, true);
+    })
+}
+
+fn magcargo_spurt_fire() -> (Probabilities, Mutations) {
+    // 1 other Pokémon (either yours or your opponent's) is chosen at random 3 times.
+    // For each time a Pokémon was chosen, do 50 damage to it.
+    doutcome(|rng, state, action| {
+        let mut damage_map: std::collections::HashMap<(usize, usize), u32> =
+            std::collections::HashMap::new();
+
+        let random_targets = generate_random_spread_indices(rng, state, false, 3, true);
+        for (player, idx) in random_targets {
+            *damage_map.entry((player, idx)).or_insert(0) += 50;
+        }
+
+        let targets: Vec<(u32, usize, usize)> = damage_map
+            .into_iter()
+            .map(|((player, idx), dmg)| (dmg, player, idx))
             .collect();
 
         let attacking_ref = (action.actor, 0);
@@ -1514,27 +1549,43 @@ fn generate_random_spread_indices(
     state: &State,
     bench_only: bool,
     count: usize,
-) -> Vec<usize> {
-    let opponent = (state.current_player + 1) % 2;
+    target_all: bool,
+) -> Vec<(usize, usize)> {
     let mut targets = vec![];
-    for _ in 0..count {
-        let possible_indices: Vec<usize> = if bench_only {
-            state
-                .enumerate_bench_pokemon(opponent)
-                .map(|(idx, _)| idx)
-                .collect()
-        } else {
+    let opponent = (state.current_player + 1) % 2;
+
+    let possible_targets: Vec<(usize, usize)> = if target_all {
+        let mut all_possible = state
+            .enumerate_in_play_pokemon(state.current_player)
+            .filter(|(idx, _)| *idx != 0) // Exclude attacker
+            .map(|(idx, _)| (state.current_player, idx))
+            .collect::<Vec<_>>();
+
+        all_possible.extend(
             state
                 .enumerate_in_play_pokemon(opponent)
-                .map(|(idx, _)| idx)
-                .collect()
-        };
-        if possible_indices.is_empty() {
-            continue;
-        }
+                .map(|(idx, _)| (opponent, idx)),
+        );
+        all_possible
+    } else if bench_only {
+        state
+            .enumerate_bench_pokemon(opponent)
+            .map(|(idx, _)| (opponent, idx))
+            .collect()
+    } else {
+        state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(idx, _)| (opponent, idx))
+            .collect()
+    };
 
-        let rand_idx = rng.gen_range(0..possible_indices.len());
-        targets.push(possible_indices[rand_idx]);
+    if possible_targets.is_empty() {
+        return targets;
+    }
+
+    for _ in 0..count {
+        let rand_idx = rng.gen_range(0..possible_targets.len());
+        targets.push(possible_targets[rand_idx]);
     }
     targets
 }
@@ -1751,6 +1802,86 @@ mod test {
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_mega_ampharos_lightning_lancer() {
+        let mut rng = StdRng::seed_from_u64(2);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let attacker = get_card_by_enum(CardId::B1085MegaAmpharosEx);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+
+        let p1_active = get_card_by_enum(CardId::A1026Pinsir);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&p1_active, false));
+
+        let p1_benched_1 = get_card_by_enum(CardId::A4a023Mantyke);
+        state.in_play_pokemon[1][1] = Some(to_playable_card(&p1_benched_1, false));
+        let p1_benched_2 = get_card_by_enum(CardId::A4a023Mantyke);
+        state.in_play_pokemon[1][2] = Some(to_playable_card(&p1_benched_2, false));
+
+        let (_, mut lazy_mutations) = mega_ampharos_lightning_lancer();
+        lazy_mutations.remove(0)(&mut rng, &mut state, &action);
+
+        // Two pokemon should be knocked out, remaining is one Mantyke
+        assert!(state.in_play_pokemon[1][0].is_none()); // Pinsir knocked out
+        assert!(state.in_play_pokemon[1][1].is_none()); // One Mantyke knocked out
+        assert_eq!(
+            state.in_play_pokemon[1][2].as_ref().unwrap().remaining_hp,
+            30
+        ); // Second Mantyke untouched
+    }
+
+    #[test]
+    fn test_magcargo_spurt_fire() {
+        let mut rng = StdRng::seed_from_u64(1);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let magcargo = get_card_by_enum(CardId::A4031Magcargo);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&magcargo, false));
+
+        let p0_benched = get_card_by_enum(CardId::A1001Bulbasaur);
+        state.in_play_pokemon[0][1] = Some(to_playable_card(&p0_benched, false));
+
+        let p1_active = get_card_by_enum(CardId::A1026Pinsir);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&p1_active, false));
+
+        let p1_benched = get_card_by_enum(CardId::A1003Venusaur);
+        state.in_play_pokemon[1][1] = Some(to_playable_card(&p1_benched, false));
+
+        let (_, mut lazy_mutations) = magcargo_spurt_fire();
+        lazy_mutations.remove(0)(&mut rng, &mut state, &action);
+
+        // With a seed of 1, the random targets should be:
+        // 1. Player 1's active (index 0) - takes 70 damage (50 + 20 weakness)
+        // 2. Player 0's benched (index 1) - takes 50 damage
+        // 3. Player 1's benched (index 1) - takes 50 damage
+        assert_eq!(
+            state.in_play_pokemon[0][0].as_ref().unwrap().remaining_hp,
+            120
+        );
+        assert_eq!(
+            state.in_play_pokemon[0][1].as_ref().unwrap().remaining_hp,
+            20
+        ); // 70 - 50
+        assert_eq!(
+            state.in_play_pokemon[1][0].as_ref().unwrap().remaining_hp,
+            20
+        ); // 90 - 70
+        assert_eq!(
+            state.in_play_pokemon[1][1].as_ref().unwrap().remaining_hp,
+            110
+        ); // 160 - 50
     }
 
     #[test]
