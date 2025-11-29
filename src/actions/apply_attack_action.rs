@@ -702,7 +702,7 @@ fn also_choice_bench_damage(
     } else {
         state.current_player
     };
-    let choices = state
+    let choices: Vec<_> = state
         .enumerate_bench_pokemon(bench_target)
         .map(|(in_play_idx, _)| {
             let targets = vec![
@@ -718,7 +718,9 @@ fn also_choice_bench_damage(
         .collect();
     doutcome_from_mutation(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
-            state.move_generation_stack.push((action.actor, choices));
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
         },
     ))
 }
