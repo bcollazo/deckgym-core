@@ -79,6 +79,7 @@ pub(crate) fn forecast_ability(
         }
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
         AbilityId::PA037CresseliaExLunarPlumage => panic!("Lunar Plumage is a passive ability"),
+        AbilityId::A1061PoliwrathCounterattack => panic!("Counterattack is a passive ability"),
     }
 }
 

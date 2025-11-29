@@ -4,6 +4,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum AbilityId {
     A1020VictreebelFragranceTrap,
+    A1061PoliwrathCounterattack,
     A1089GreninjaWaterShuriken,
     A1098MagnetonVoltCharge,
     A1123GengarExShadowySpellbind,
@@ -44,6 +45,7 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
         m.insert("A1 007", AbilityId::A1007Butterfree);
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
+        m.insert("A1 061", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A1 089", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 123", AbilityId::A1123GengarExShadowySpellbind);
@@ -52,6 +54,7 @@ lazy_static::lazy_static! {
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 056", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A1a 070", AbilityId::A1a006SerperiorJungleTotem);
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 082", AbilityId::A2a010LeafeonExForestBreath);
@@ -63,6 +66,7 @@ lazy_static::lazy_static! {
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 202", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A2b 028", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A2b 035", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 083", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A2b 096", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
@@ -78,6 +82,7 @@ lazy_static::lazy_static! {
         m.insert("A3a 015", AbilityId::A3a015LuxrayIntimidatingFang);
         m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
+        m.insert("A3a 052", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 075", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
@@ -102,6 +107,7 @@ lazy_static::lazy_static! {
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 022", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 025", AbilityId::A4a025RaikouExLegendaryPulse);
+        m.insert("A4a 065", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A4a 072", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 079", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("A4a 080", AbilityId::A4a020SuicuneExLegendaryPulse);
@@ -130,16 +136,18 @@ lazy_static::lazy_static! {
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
+        m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 256", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 260", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 275", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);
-        m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
-        m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("P-A 019", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
+        m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("P-A 054", AbilityId::A1061PoliwrathCounterattack);
         m.insert("P-A 104", AbilityId::A4a022MiloticHealingRipples);
+        m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
         m
     };
 }
