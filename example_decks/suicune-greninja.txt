@@ -1,13 +1,14 @@
 Energy: Water
 2 Froakie A1 87
+1 Frogadier A1 88
 2 Greninja A1 89
-1 Giratina ex A2b 35
 2 Suicune ex A4a 20
+1 Greninja ex B1 73
+1 Indeedee ex B1 121
 1 Giant Cape A2 147
 2 Cyrus A2 150
 1 Mars A2 155
-2 Irida A2a 72
+1 Irida A2a 72
+2 Poké Ball A2b 111
 2 Rare Candy A3 144
-1 Repel A3a 64
-2 Poké Ball P-A 5
-2 Professor's Research P-A 7
+2 Professor's Research A4b 373
