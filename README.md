@@ -134,6 +134,11 @@ Then temporarily edit `database.rs` for `_` to match Bulbasaur (this is so that 
 cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
 ```
 
+To generate attacks do:
+```bash
+cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/attack_implementations.rs && cargo fmt
+```
+
 **Profiling Main Script**
 
 ```bash

@@ -42,34 +42,6 @@ pub(crate) fn active_damage_effect_doutcome(
     )
 }
 
-// TODO: Ask for state so that we can get damage via index, before the mutation,
-//  and reuse the common mutation code.
-pub(crate) fn index_active_damage_doutcome<F>(
-    attack_index: usize,
-    additional_effect: F,
-) -> (Probabilities, Mutations)
-where
-    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
-{
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, action| {
-            additional_effect(rng, state, action);
-
-            let active = state.get_active(action.actor);
-            let attack = active.card.get_attacks()[attack_index].clone();
-            let damage = attack.fixed_damage;
-            let target_player = (action.actor + 1) % 2;
-            handle_damage(
-                state,
-                (action.actor, 0),
-                &[(damage, target_player, 0)],
-                true,
-            );
-        })],
-    )
-}
-
 pub(crate) fn damage_effect_doutcome<F>(
     targets: Vec<(u32, usize)>,
     additional_effect: F,
