@@ -58,6 +58,7 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
         CardId::A1221Blaine | CardId::A1268Blaine => can_play_trainer(state, trainer_card),
+        CardId::A1224Brock | CardId::A1271Brock => can_play_trainer(state, trainer_card),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             can_play_irida(state, trainer_card)
         }

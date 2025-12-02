@@ -50,6 +50,7 @@ pub fn forecast_trainer_action(
         }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
         CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
+        CardId::A1224Brock | CardId::A1271Brock => doutcome(brock_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             doutcome(irida_effect)
         }
@@ -321,6 +322,39 @@ fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
     state.add_turn_effect(TurnEffect::BlaineEffect, 0);
+}
+
+fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [F] Energy from your Energy Zone and attach it to Golem or Onix.
+    let player = action.actor;
+
+    // Check if there's a Fire energy in the discard pile
+    let fire_energy_in_discard_idx = state.discard_energies[player]
+        .iter()
+        .position(|&e| e == EnergyType::Fire);
+
+    if fire_energy_in_discard_idx.is_none() {
+        return; // No Fire energy to attach
+    }
+
+    // Enumerate all Golem and Onix in play
+    let possible_targets: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            let name = pokemon.get_name();
+            name == "Golem" || name == "Onix"
+        })
+        .map(|(in_play_idx, _)| SimpleAction::AttachFromDiscard {
+            in_play_idx,
+            num_random_energies: 1, // Will only attach 1 Fire energy, as it's the only one we found
+        })
+        .collect();
+
+    if !possible_targets.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_targets));
+    }
 }
 
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {
