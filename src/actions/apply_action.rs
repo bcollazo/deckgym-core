@@ -52,6 +52,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Heal { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
+        | SimpleAction::DiscardFossil { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -144,6 +145,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
         }
+        SimpleAction::DiscardFossil { in_play_idx } => {
+            apply_discard_fossil(action.actor, state, *in_play_idx)
+        }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
@@ -223,6 +227,19 @@ fn apply_healing(
     pokemon.heal(amount);
     if cure_status {
         pokemon.cure_status_conditions();
+    }
+}
+
+fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
+    // Remove the fossil from play and add its card to the discard pile
+    if let Some(fossil_card) = state.in_play_pokemon[acting_player][in_play_idx].take() {
+        state.discard_piles[acting_player].push(fossil_card.card);
+
+        // If discarding from active spot and there are benched pokemon, need to promote one
+        if in_play_idx == 0 && state.enumerate_bench_pokemon(acting_player).count() > 0 {
+            // This will trigger the "must promote" logic at end of turn
+            // The game should automatically handle this via knockout logic
+        }
     }
 }
 

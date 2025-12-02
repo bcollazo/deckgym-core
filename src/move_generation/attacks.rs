@@ -2,6 +2,7 @@ use crate::{
     actions::SimpleAction,
     effects::CardEffect,
     hooks::{contains_energy, get_attack_cost},
+    models::{Card, TrainerType},
     State,
 };
 
@@ -9,6 +10,13 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
     let mut actions = Vec::new();
     if let Some(active_pokemon) = &state.in_play_pokemon[current_player][0] {
+        // Fossil cards cannot attack
+        if let Card::Trainer(trainer_card) = &active_pokemon.card {
+            if trainer_card.trainer_card_type == TrainerType::Fossil {
+                return actions;
+            }
+        }
+
         // Check if the active Pokémon has the CannotAttack effect
         let active_effects = active_pokemon.get_active_effects();
         let cannot_attack = active_effects

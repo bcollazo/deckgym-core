@@ -49,6 +49,11 @@ pub fn trainer_move_generation_implementation(
         return can_play_tool(state, trainer_card);
     }
 
+    // Fossil cards are played as if they were Basic Pokemon
+    if trainer_card.trainer_card_type == TrainerType::Fossil {
+        return can_place_fossil(state, trainer_card);
+    }
+
     let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
     match trainer_id {
         // Complex cases: need to check specific conditions
@@ -487,4 +492,22 @@ fn can_play_celestic_town_elder(
     } else {
         cannot_play_trainer()
     }
+}
+
+/// Fossil cards can be placed in empty Active or Bench slots, like Basic Pokemon
+fn can_place_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let current_player = state.current_player;
+    let mut actions = Vec::new();
+
+    // Fossils can be placed in any empty slot
+    state.in_play_pokemon[current_player]
+        .iter()
+        .enumerate()
+        .for_each(|(i, x)| {
+            if x.is_none() {
+                actions.push(SimpleAction::Place(Card::Trainer(trainer_card.clone()), i));
+            }
+        });
+
+    Some(actions)
 }

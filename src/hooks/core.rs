@@ -788,4 +788,64 @@ mod tests {
             "Eevee ex should not be able to evolve into Charizard"
         );
     }
+
+    #[test]
+    fn test_aerodactyl_can_evolve_from_old_amber() {
+        // Aerodactyl (regular) should be able to evolve from Old Amber fossil
+        let aerodactyl = get_card_by_enum(CardId::A1210Aerodactyl);
+        let old_amber = to_playable_card(&get_card_by_enum(CardId::A1218OldAmber), false);
+
+        assert!(
+            can_evolve_into(&aerodactyl, &old_amber),
+            "Aerodactyl should be able to evolve from Old Amber fossil"
+        );
+    }
+
+    #[test]
+    fn test_aerodactyl_ex_can_evolve_from_old_amber() {
+        // Aerodactyl ex should be able to evolve from Old Amber fossil
+        let aerodactyl_ex = get_card_by_enum(CardId::A1a046AerodactylEx);
+        let old_amber = to_playable_card(&get_card_by_enum(CardId::A1218OldAmber), false);
+
+        assert!(
+            can_evolve_into(&aerodactyl_ex, &old_amber),
+            "Aerodactyl ex should be able to evolve from Old Amber fossil"
+        );
+    }
+
+    #[test]
+    fn test_omanyte_can_evolve_from_helix_fossil() {
+        // Omanyte should be able to evolve from Helix Fossil
+        let omanyte = get_card_by_enum(CardId::A1081Omanyte);
+        let helix_fossil = to_playable_card(&get_card_by_enum(CardId::A1216HelixFossil), false);
+
+        assert!(
+            can_evolve_into(&omanyte, &helix_fossil),
+            "Omanyte should be able to evolve from Helix Fossil"
+        );
+    }
+
+    #[test]
+    fn test_kabuto_can_evolve_from_dome_fossil() {
+        // Kabuto should be able to evolve from Dome Fossil
+        let kabuto = get_card_by_enum(CardId::A1158Kabuto);
+        let dome_fossil = to_playable_card(&get_card_by_enum(CardId::A1217DomeFossil), false);
+
+        assert!(
+            can_evolve_into(&kabuto, &dome_fossil),
+            "Kabuto should be able to evolve from Dome Fossil"
+        );
+    }
+
+    #[test]
+    fn test_aerodactyl_cannot_evolve_from_wrong_fossil() {
+        // Aerodactyl should NOT be able to evolve from Helix Fossil (only Old Amber)
+        let aerodactyl = get_card_by_enum(CardId::A1210Aerodactyl);
+        let helix_fossil = to_playable_card(&get_card_by_enum(CardId::A1216HelixFossil), false);
+
+        assert!(
+            !can_evolve_into(&aerodactyl, &helix_fossil),
+            "Aerodactyl should not be able to evolve from Helix Fossil"
+        );
+    }
 }
