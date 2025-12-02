@@ -49,6 +49,7 @@ pub fn forecast_trainer_action(
             doutcome(erika_effect)
         }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             doutcome(irida_effect)
         }
@@ -315,6 +316,11 @@ fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
+}
+
+fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(TurnEffect::BlaineEffect, 0);
 }
 
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {

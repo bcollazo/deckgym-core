@@ -18,4 +18,5 @@ pub enum TurnEffect {
     IncreasedDamage { amount: u32 },
     IncreasedDamageAgainstEx { amount: u32 },
     IncreasedDamageForEeveeEvolutions { amount: u32 },
+    BlaineEffect,
 }

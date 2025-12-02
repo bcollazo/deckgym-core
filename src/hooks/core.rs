@@ -387,6 +387,7 @@ fn get_increased_turn_effect_modifiers(
     is_active_to_active: bool,
     target_is_ex: bool,
     attacker_is_eevee_evolution: bool,
+    attacking_pokemon: &crate::models::PlayedCard,
 ) -> u32 {
     if !is_active_to_active {
         return 0;
@@ -401,6 +402,17 @@ fn get_increased_turn_effect_modifiers(
                 if attacker_is_eevee_evolution =>
             {
                 *amount
+            }
+            TurnEffect::BlaineEffect => {
+                let attacker_name = attacking_pokemon.get_name();
+                if attacker_name == "Ninetales"
+                    || attacker_name == "Rapidash"
+                    || attacker_name == "Magmar"
+                {
+                    30
+                } else {
+                    0
+                }
             }
             _ => 0,
         })
@@ -531,6 +543,7 @@ pub(crate) fn modify_damage(
         is_active_to_active,
         target_is_ex,
         attacker_is_eevee_evolution,
+        attacking_pokemon,
     );
     let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
         attacking_pokemon,
