@@ -302,10 +302,13 @@ pub(crate) fn handle_damage(
 
     // Set last_turn_ko_by_opponent flag
     // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
-    if is_from_active_attack { // Only care about KOs from active attacks
+    if is_from_active_attack {
+        // Only care about KOs from active attacks
         for (ko_receiver, _) in knockouts.clone() {
             let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-            if ko_receiver == state.current_player && ko_initiator_of_this_damage == (state.current_player + 1) % 2 {
+            if ko_receiver == state.current_player
+                && ko_initiator_of_this_damage == (state.current_player + 1) % 2
+            {
                 state.last_turn_ko_by_opponent = true;
                 break; // Only need to set once
             }
@@ -314,10 +317,13 @@ pub(crate) fn handle_damage(
 
     // Set last_turn_ko_by_opponent flag
     // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
-    if is_from_active_attack { // Only care about KOs from active attacks
+    if is_from_active_attack {
+        // Only care about KOs from active attacks
         for (ko_receiver, _) in knockouts.clone() {
             let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-            if ko_receiver == state.current_player && ko_initiator_of_this_damage == (state.current_player + 1) % 2 {
+            if ko_receiver == state.current_player
+                && ko_initiator_of_this_damage == (state.current_player + 1) % 2
+            {
                 state.last_turn_ko_by_opponent = true;
                 break; // Only need to set once
             }

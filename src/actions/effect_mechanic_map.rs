@@ -679,7 +679,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If your opponent's Active Pokémon is affected by a Special Condition, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is an evolved Pokémon, devolve it by putting the highest Stage Evolution card on it into your opponent's hand.", todo_implementation);
-    // map.insert("If your opponent's Pokémon is Knocked Out by damage from this attack, this Pokémon also does 50 damage to itself.", todo_implementation);
+    map.insert("If your opponent's Pokémon is Knocked Out by damage from this attack, this Pokémon also does 50 damage to itself.", Mechanic::RecoilIfKo { self_damage: 50 });
     // map.insert("Move all Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
     // map.insert("Put 1 random Basic Pokémon from your deck onto your Bench.", todo_implementation);

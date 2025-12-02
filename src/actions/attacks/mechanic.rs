@@ -116,4 +116,7 @@ pub enum Mechanic {
     ExtraDamageIfToolAttached {
         extra_damage: u32,
     },
+    RecoilIfKo {
+        self_damage: u32,
+    },
 }

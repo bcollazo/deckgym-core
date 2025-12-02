@@ -334,7 +334,26 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::PreventAllDamageAndEffectsNextTurn { probability } => {
+            prevent_all_damage_and_effects_next_turn_attack(
+                attack.fixed_damage,
+                (*probability).into(),
+            )
+        }
+        Mechanic::RecoilIfKo { self_damage } => {
+            recoil_if_ko_attack(attack.fixed_damage, *self_damage)
+        }
     }
+}
+
+fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if state.get_active(opponent).remaining_hp == 0 {
+            let active = state.get_active_mut(action.actor);
+            active.apply_damage(self_damage);
+        }
+    })
 }
 
 fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {

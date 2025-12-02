@@ -351,9 +351,7 @@ fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .collect();
 
     if !possible_targets.is_empty() {
-        state
-            .move_generation_stack
-            .push((player, possible_targets));
+        state.move_generation_stack.push((player, possible_targets));
     }
 }
 
