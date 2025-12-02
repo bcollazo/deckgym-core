@@ -142,7 +142,38 @@ pub fn trainer_move_generation_implementation(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             can_play_celestic_town_elder(state, trainer_card)
         }
+        CardId::A1216HelixFossil
+        | CardId::A1217DomeFossil
+        | CardId::A1218OldAmber
+        | CardId::A1a063OldAmber
+        | CardId::A2144SkullFossil
+        | CardId::A2145ArmorFossil
+        | CardId::A4b312OldAmber
+        | CardId::A4b313OldAmber
+        | CardId::B1214PlumeFossil
+        | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
         _ => None,
+    }
+}
+
+/// Check if a Fossil card can be played (requires at least 1 empty bench spot)
+fn can_play_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let empty_bench_slots: Vec<_> = state.in_play_pokemon[state.current_player]
+        .iter()
+        .enumerate()
+        .filter(|(i, p)| *i > 0 && p.is_none())
+        .map(|(i, _)| i)
+        .collect();
+
+    if empty_bench_slots.is_empty() {
+        cannot_play_trainer()
+    } else {
+        Some(
+            empty_bench_slots
+                .into_iter()
+                .map(|i| SimpleAction::Place(Card::Trainer(trainer_card.clone()), i))
+                .collect(),
+        )
     }
 }
 
