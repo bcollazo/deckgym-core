@@ -139,6 +139,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 288", AbilityId::A3b057SnorlaxExFullMouthManner);

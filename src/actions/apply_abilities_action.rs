@@ -83,8 +83,12 @@ pub(crate) fn forecast_ability(
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
         }
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
-        AbilityId::PA037CresseliaExLunarPlumage => panic!("Lunar Plumage is a passive ability"),
-        AbilityId::A1061PoliwrathCounterattack => panic!("Counterattack is a passive ability"),
+        AbilityId::PA037CresseliaExLunarPlumage => {
+            panic!("Lunar Plumage is a passive ability")
+        }
+        AbilityId::A1061PoliwrathCounterattack | AbilityId::A2092LucarioFightingCoach => {
+            panic!("Counterattack is a passive ability")
+        }
     }
 }
 
