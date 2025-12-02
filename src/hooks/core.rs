@@ -327,6 +327,7 @@ pub(crate) fn modify_damage(
     attacking_ref: (usize, usize),
     target_ref: (u32, usize, usize),
     is_from_active_attack: bool,
+    attack_name: Option<&str>,
 ) -> u32 {
     // If attack is 0, not even Giovanni takes it to 10.
     let (attacking_player, attacking_idx) = attacking_ref;
@@ -360,6 +361,19 @@ pub(crate) fn modify_damage(
     // Heavy Helmet damage reduction
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
 
+    // Exoskeleton ability damage reduction
+    let exoskeleton_reduction = if let Some(ability_id) =
+        AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..])
+    {
+        if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
+            20
+        } else {
+            0
+        }
+    } else {
+        0
+    };
+
     // Modifiers by effect (like Giovanni, Red, Eevee Bag), most apply just to active-to-active attacks
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
     let target_is_ex = receiving_pokemon.card.is_ex();
@@ -379,6 +393,33 @@ pub(crate) fn modify_damage(
                     *amount
                 }
                 _ => 0,
+            })
+            .sum::<u32>()
+    };
+
+    // Modifiers by attack-specific card effects (like Rolling Spin)
+    let increased_attack_specific_modifiers = if !is_active_to_active {
+        0
+    } else {
+        attacking_pokemon
+            .get_active_effects()
+            .iter()
+            .filter_map(|effect| match effect {
+                CardEffect::IncreasedDamageForAttack {
+                    attack_name: effect_attack_name,
+                    amount,
+                } => {
+                    if let Some(current_attack_name) = attack_name {
+                        if current_attack_name == effect_attack_name {
+                            Some(*amount)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
             })
             .sum::<u32>()
     };
@@ -418,17 +459,26 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
+        increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
-        intimidating_fang_reduction
+        intimidating_fang_reduction,
+        exoskeleton_reduction
     );
-    (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
-        reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
-    )
+    (base_damage
+        + weakness_modifier
+        + increased_turn_effect_modifiers
+        + increased_attack_specific_modifiers)
+        .saturating_sub(
+            reduced_card_effect_modifiers
+                + heavy_helmet_reduction
+                + intimidating_fang_reduction
+                + exoskeleton_reduction,
+        )
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
@@ -655,13 +705,14 @@ mod tests {
 
         // Get base damage without Giovanni effect
         let attack = attacker.get_attacks()[0].clone();
-        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Add Giovanni effect
         state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
-        let damage_with_giovanni = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let damage_with_giovanni =
+            modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Verify Giovanni adds exactly 10 damage
         assert_eq!(
@@ -680,9 +731,10 @@ mod tests {
         non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
         non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
-        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_non_ex =
+            modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_non_ex, base_damage_non_ex,
             "Red should not increase damage against non-EX Pokémon"
@@ -693,9 +745,9 @@ mod tests {
         ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
         ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
-        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_ex,
             base_damage_ex + 20,
@@ -719,7 +771,7 @@ mod tests {
             .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
 
         // Act
-        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true);
+        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true, None);
 
         // Assert
         assert_eq!(

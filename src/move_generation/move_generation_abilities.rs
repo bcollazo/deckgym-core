@@ -62,6 +62,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
+        AbilityId::A4a044DonphanExoskeleton => false, // Passive ability, triggers via hooks
         AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,

@@ -86,7 +86,30 @@ where
                 .iter()
                 .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
                 .collect();
-            handle_damage(state, (action.actor, 0), &targets, true);
+
+            // Extract attack name if this is an attack action
+            let attack_name: Option<String> =
+                if let super::SimpleAction::Attack(attack_index) = &action.action {
+                    state.in_play_pokemon[action.actor][0]
+                        .as_ref()
+                        .and_then(|pokemon| {
+                            pokemon
+                                .card
+                                .get_attacks()
+                                .get(*attack_index)
+                                .map(|attack| attack.title.clone())
+                        })
+                } else {
+                    None
+                };
+
+            handle_damage(
+                state,
+                (action.actor, 0),
+                &targets,
+                true,
+                attack_name.as_deref(),
+            );
         }
     })
 }

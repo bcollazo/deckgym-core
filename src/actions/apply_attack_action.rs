@@ -1321,7 +1321,7 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
             .collect();
 
         let attacking_ref = (action.actor, 0);
-        handle_damage(state, attacking_ref, &targets, true);
+        handle_damage(state, attacking_ref, &targets, true, None);
     })
 }
 
