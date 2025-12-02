@@ -98,6 +98,9 @@ pub enum Mechanic {
         extra_damage: u32,
         opponent: bool,
     },
+    ExtraDamageIfKnockedOutLastTurn {
+        extra_damage: u32,
+    },
     BenchCountDamage {
         include_fixed_damage: bool,
         damage_per: u32,

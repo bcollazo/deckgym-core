@@ -531,7 +531,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If Latios is on your Bench, this attack does 20 more damage.", todo_implementation);
     // map.insert("If Passimian is on your Bench, this attack does 40 more damage.", todo_implementation);
     // map.insert("If any of your Benched Pokémon have damage on them, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.", todo_implementation);
+    map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 60 });
     // map.insert("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.", todo_implementation);
     // map.insert("If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.", todo_implementation);
     // map.insert("If this Pokémon evolved during this turn, this attack does 20 more damage.", todo_implementation);

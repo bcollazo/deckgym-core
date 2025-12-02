@@ -331,6 +331,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DiscardRandomGlobalEnergy => {
             discard_random_global_energy_attack(attack.fixed_damage, state)
         }
+        Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
+            extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 
@@ -1212,6 +1215,19 @@ fn extra_damage_if_tool_attached(
 ) -> (Probabilities, Mutations) {
     let active = state.get_active(state.current_player);
     let damage = if active.has_tool_attached() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_knocked_out_last_turn_attack(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let damage = if state.last_turn_ko_by_opponent {
         base_damage + extra_damage
     } else {
         base_damage
