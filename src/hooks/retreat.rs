@@ -12,10 +12,7 @@ pub(crate) fn can_retreat(state: &State) -> bool {
     let has_no_retreat_effect = active.get_active_effects().contains(&CardEffect::NoRetreat);
 
     // Check if active card is a Fossil (Fossils can never retreat)
-    let is_fossil = match &active.card {
-        Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
-        _ => false,
-    };
+    let is_fossil = active.is_fossil();
 
     !state.has_retreated && !has_no_retreat_effect && !is_fossil
 }

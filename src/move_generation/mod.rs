@@ -193,18 +193,14 @@ fn get_current_hand(state: &State) -> &Vec<Card> {
 }
 
 fn generate_discard_fossil_actions(state: &State, actions: &mut Vec<SimpleAction>) {
-    use crate::models::TrainerType;
-
     let current_player = state.current_player;
 
     // Check all in-play pokemon to see if any are fossils
     state
         .enumerate_in_play_pokemon(current_player)
         .for_each(|(i, pokemon)| {
-            if let Card::Trainer(trainer_card) = &pokemon.card {
-                if trainer_card.trainer_card_type == TrainerType::Fossil {
-                    actions.push(SimpleAction::DiscardFossil { in_play_idx: i });
-                }
+            if pokemon.is_fossil() {
+                actions.push(SimpleAction::DiscardFossil { in_play_idx: i });
             }
         });
 }
