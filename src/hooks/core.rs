@@ -321,6 +321,55 @@ fn get_intimidating_fang_reduction(
     0
 }
 
+fn get_fighting_coach_boost(
+    state: &State,
+    attacking_ref: (usize, usize),
+    target_ref: (u32, usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    let (attacking_player, attacking_idx) = attacking_ref;
+    let (_, target_player, target_idx) = target_ref;
+
+    // Only applies to attacks from the active Pokemon to opponent's active Pokemon
+    if attacking_player == target_player
+        || attacking_idx != 0
+        || target_idx != 0
+        || !is_from_active_attack
+    {
+        return 0;
+    }
+
+    let attacking_pokemon = state.in_play_pokemon[attacking_player][attacking_idx]
+        .as_ref()
+        .expect("Attacking Pokemon should be there when checking Fighting Coach");
+
+    // Only applies to Fighting-type Pokemon
+    if attacking_pokemon.get_energy_type() != Some(EnergyType::Fighting) {
+        return 0;
+    }
+
+    // Count all Pokemon on the attacking player's field with Fighting Coach ability
+    let lucario_count = state.in_play_pokemon[attacking_player]
+        .iter()
+        .flatten()
+        .filter(|pokemon| {
+            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                .map(|id| id == AbilityId::A2092LucarioFightingCoach)
+                .unwrap_or(false)
+        })
+        .count() as u32;
+
+    if lucario_count > 0 {
+        debug!(
+            "Fighting Coach: Adding +{} damage to Fighting Pokemon's attack ({} Lucario(s))",
+            lucario_count * 20,
+            lucario_count
+        );
+    }
+
+    lucario_count * 20
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
@@ -359,6 +408,9 @@ pub(crate) fn modify_damage(
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     // Heavy Helmet damage reduction
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    // Fighting Coach ability damage boost
+    let fighting_coach_boost =
+        get_fighting_coach_boost(state, attacking_ref, target_ref, is_from_active_attack);
 
     // Modifiers by effect (like Giovanni, Red, Eevee Bag), most apply just to active-to-active attacks
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
@@ -418,17 +470,19 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, FightingCoach: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
-        intimidating_fang_reduction
+        intimidating_fang_reduction,
+        fighting_coach_boost
     );
-    (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
-        reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
-    )
+    (base_damage + weakness_modifier + increased_turn_effect_modifiers + fighting_coach_boost)
+        .saturating_sub(
+            reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
+        )
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
