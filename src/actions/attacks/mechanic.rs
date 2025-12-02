@@ -3,12 +3,14 @@ use crate::{
     models::{EnergyType, StatusCondition},
 };
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum BenchSide {
     YourBench,
     OpponentBench,
     BothBenches,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Mechanic {
     SelfHeal {
         amount: u32,
