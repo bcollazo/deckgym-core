@@ -212,7 +212,7 @@ impl State {
             self.turn_effects
                 .entry(target_turn)
                 .or_default()
-                .push(effect);
+                .push(effect.clone());
             trace!(
                 "Adding effect {:?} for {} turns, current turn: {}, target turn: {}",
                 effect,

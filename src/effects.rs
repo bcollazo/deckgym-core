@@ -10,7 +10,7 @@ pub enum CardEffect {
     IncreasedDamageForAttack { attack_name: String, amount: u32 },
 }
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TurnEffect {
     NoSupportCards,
     NoItemCards,
@@ -18,5 +18,8 @@ pub enum TurnEffect {
     IncreasedDamage { amount: u32 },
     IncreasedDamageAgainstEx { amount: u32 },
     IncreasedDamageForEeveeEvolutions { amount: u32 },
-    BlaineEffect,
+    IncreasedDamageForSpecificPokemon {
+        amount: u32,
+        pokemon_names: Vec<String>,
+    },
 }

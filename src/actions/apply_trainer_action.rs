@@ -321,32 +321,82 @@ fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 
 fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
-    state.add_turn_effect(TurnEffect::BlaineEffect, 0);
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Ninetales".to_string(),
+                "Rapidash".to_string(),
+                "Magmar".to_string(),
+            ],
+        },
+        0,
+    );
 }
 
 fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Take a [F] Energy from your Energy Zone and attach it to Golem or Onix.
-    let player = action.actor;
+    attach_energy_from_zone_to_specific_pokemon(
+        state,
+        action.actor,
+        EnergyType::Fighting,
+        &["Golem", "Onix"],
+    );
+}
 
-    // Check if there's a Fire energy in the discard pile
-    let fire_energy_in_discard_idx = state.discard_energies[player]
-        .iter()
-        .position(|&e| e == EnergyType::Fire);
-
-    if fire_energy_in_discard_idx.is_none() {
-        return; // No Fire energy to attach
-    }
-
-    // Enumerate all Golem and Onix in play
+/// Generic helper to attach energy from Energy Zone (unlimited) to specific Pokemon by name
+/// Used by cards like Brock, Kiawe, etc.
+fn attach_energy_from_zone_to_specific_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Enumerate all matching Pokemon in play
     let possible_targets: Vec<SimpleAction> = state
         .enumerate_in_play_pokemon(player)
         .filter(|(_, pokemon)| {
             let name = pokemon.get_name();
-            name == "Golem" || name == "Onix"
+            pokemon_names.iter().any(|&target_name| name == target_name)
+        })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, energy_type, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect();
+
+    if !possible_targets.is_empty() {
+        state.move_generation_stack.push((player, possible_targets));
+    }
+}
+
+/// Generic helper to attach energy from discard pile to specific Pokemon by name
+/// Used by items like Flame Patch
+fn attach_energy_from_discard_to_specific_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Check if there's the specified energy in the discard pile
+    let energy_in_discard = state.discard_energies[player]
+        .iter()
+        .any(|&e| e == energy_type);
+
+    if !energy_in_discard {
+        return; // No energy to attach
+    }
+
+    // Enumerate all matching Pokemon in play
+    let possible_targets: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            let name = pokemon.get_name();
+            pokemon_names.iter().any(|&target_name| name == target_name)
         })
         .map(|(in_play_idx, _)| SimpleAction::AttachFromDiscard {
             in_play_idx,
-            num_random_energies: 1, // Will only attach 1 Fire energy, as it's the only one we found
+            num_random_energies: 1,
         })
         .collect();
 

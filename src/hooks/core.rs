@@ -403,13 +403,13 @@ fn get_increased_turn_effect_modifiers(
             {
                 *amount
             }
-            TurnEffect::BlaineEffect => {
+            TurnEffect::IncreasedDamageForSpecificPokemon {
+                amount,
+                pokemon_names,
+            } => {
                 let attacker_name = attacking_pokemon.get_name();
-                if attacker_name == "Ninetales"
-                    || attacker_name == "Rapidash"
-                    || attacker_name == "Magmar"
-                {
-                    30
+                if pokemon_names.iter().any(|name| name.as_str() == attacker_name) {
+                    *amount
                 } else {
                     0
                 }

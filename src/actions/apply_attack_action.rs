@@ -280,7 +280,7 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
-            damage_and_turn_effect_attack(attack.fixed_damage, *effect, *duration)
+            damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
         }
         Mechanic::DamageAndCardEffect {
             opponent,
@@ -1045,8 +1045,9 @@ fn damage_and_turn_effect_attack(
     effect: TurnEffect,
     effect_duration: u8,
 ) -> (Probabilities, Mutations) {
+    let effect_clone = effect.clone();
     active_damage_effect_doutcome(damage, move |_, state, _| {
-        state.add_turn_effect(effect, effect_duration);
+        state.add_turn_effect(effect_clone.clone(), effect_duration);
     })
 }
 
