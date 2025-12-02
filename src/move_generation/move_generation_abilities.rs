@@ -9,11 +9,17 @@ use crate::{
 // Use the new function in the filter method
 pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
-    state
-        .enumerate_in_play_pokemon(current_player)
-        .filter(|(in_play_index, card)| can_use_ability(state, (*in_play_index, *card)))
-        .map(|(in_play_idx, _)| SimpleAction::UseAbility { in_play_idx })
-        .collect()
+    let mut actions = vec![];
+
+    for (in_play_idx, card) in state.enumerate_in_play_pokemon(current_player) {
+        if card.card.is_fossil() {
+            actions.push(SimpleAction::DiscardFossil { in_play_idx });
+        } else if can_use_ability(state, (in_play_idx, card)) {
+            actions.push(SimpleAction::UseAbility { in_play_idx });
+        }
+    }
+
+    actions
 }
 
 fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -> bool {

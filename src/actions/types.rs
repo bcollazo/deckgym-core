@@ -91,6 +91,9 @@ pub enum SimpleAction {
     DiscardOwnCard {
         card: Card,
     },
+    DiscardFossil {
+        in_play_idx: usize,
+    },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
         in_play_idx: usize,
@@ -184,6 +187,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardOwnCard { card } => {
                 write!(f, "DiscardOwnCard({card})")
+            }
+            SimpleAction::DiscardFossil { in_play_idx } => {
+                write!(f, "DiscardFossil({in_play_idx})")
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,

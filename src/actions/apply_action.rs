@@ -53,6 +53,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
+        | SimpleAction::DiscardFossil { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -148,6 +149,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
         }
+        SimpleAction::DiscardFossil { in_play_idx } => {
+            apply_discard_fossil(state, action.actor, *in_play_idx)
+        }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
@@ -212,6 +216,12 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
     state.remove_card_from_hand(actor, card);
+}
+
+fn apply_discard_fossil(state: &mut State, actor: usize, in_play_idx: usize) {
+    if let Some(played_card) = state.in_play_pokemon[actor][in_play_idx].take() {
+        state.discard_piles[actor].push(played_card.card);
+    }
 }
 
 fn apply_healing(
