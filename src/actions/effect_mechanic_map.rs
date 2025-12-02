@@ -445,7 +445,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip a coin. If heads, heal 60 damage from this Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If heads, put your opponent's Active Pokémon into their hand.", todo_implementation);
     // map.insert("Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.", todo_implementation);
-    // map.insert("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.", todo_implementation);
+    map.insert("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.", Mechanic::CantAttackNextTurn { probability: 0.5 });
     map.insert(
         "Flip a coin. If heads, this attack does 20 more damage.",
         Mechanic::CoinFlipExtraDamage { extra_damage: 20 },

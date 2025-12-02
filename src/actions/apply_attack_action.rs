@@ -238,6 +238,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
         }
+        Mechanic::CantAttackNextTurn { probability } => {
+            cant_attack_next_turn_attack(attack.fixed_damage, (*probability).into())
+        }
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
@@ -639,6 +642,20 @@ fn extra_or_self_damage_attack(
             let active = state.get_active_mut(action.actor);
             active.apply_damage(self_damage);
         }),
+    ];
+    (probabilities, mutations)
+}
+
+fn cant_attack_next_turn_attack(damage: u32, probability: f64) -> (Probabilities, Mutations) {
+    let probabilities = vec![probability, 1.0 - probability];
+    let mutations: Mutations = vec![
+        active_damage_effect_mutation(damage, |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state
+                .get_active_mut(opponent)
+                .add_effect(CardEffect::CannotAttack, 1);
+        }),
+        active_damage_mutation(damage),
     ];
     (probabilities, mutations)
 }

@@ -25,6 +25,9 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    CantAttackNextTurn {
+        probability: f32,
+    },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,
