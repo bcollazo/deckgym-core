@@ -370,41 +370,6 @@ fn attach_energy_from_zone_to_specific_pokemon(
     }
 }
 
-/// Generic helper to attach energy from discard pile to specific Pokemon by name
-/// Used by items like Flame Patch
-fn attach_energy_from_discard_to_specific_pokemon(
-    state: &mut State,
-    player: usize,
-    energy_type: EnergyType,
-    pokemon_names: &[&str],
-) {
-    // Check if there's the specified energy in the discard pile
-    let energy_in_discard = state.discard_energies[player]
-        .iter()
-        .any(|&e| e == energy_type);
-
-    if !energy_in_discard {
-        return; // No energy to attach
-    }
-
-    // Enumerate all matching Pokemon in play
-    let possible_targets: Vec<SimpleAction> = state
-        .enumerate_in_play_pokemon(player)
-        .filter(|(_, pokemon)| {
-            let name = pokemon.get_name();
-            pokemon_names.iter().any(|&target_name| name == target_name)
-        })
-        .map(|(in_play_idx, _)| SimpleAction::AttachFromDiscard {
-            in_play_idx,
-            num_random_energies: 1,
-        })
-        .collect();
-
-    if !possible_targets.is_empty() {
-        state.move_generation_stack.push((player, possible_targets));
-    }
-}
-
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.
     state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
