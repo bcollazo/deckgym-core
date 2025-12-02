@@ -4,7 +4,7 @@ use crate::{models::StatusCondition, State};
 
 use super::{
     apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
-    Action,
+    Action, SimpleAction,
 };
 
 // These functions should share the common code of
@@ -89,7 +89,7 @@ where
 
             // Extract attack name if this is an attack action
             let attack_name: Option<String> =
-                if let super::SimpleAction::Attack(attack_index) = &action.action {
+                if let SimpleAction::Attack(attack_index) = &action.action {
                     state.in_play_pokemon[action.actor][0]
                         .as_ref()
                         .and_then(|pokemon| {
