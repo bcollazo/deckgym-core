@@ -28,6 +28,7 @@ pub enum Mechanic {
     CantAttackNextTurn {
         probability: f32,
     },
+    DiscardRandomGlobalEnergy,
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,

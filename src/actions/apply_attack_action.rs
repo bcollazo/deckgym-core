@@ -328,6 +328,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::DiscardRandomGlobalEnergy => {
+            discard_random_global_energy_attack(attack.fixed_damage, state)
+        }
     }
 }
 
@@ -1069,6 +1072,42 @@ fn discard_all_energy_of_type_attack(
 
         // Use the state method to properly discard energies
         state.discard_from_active(action.actor, &to_discard);
+    })
+}
+
+fn discard_random_global_energy_attack(
+    fixed_damage: u32,
+    _state: &State,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(fixed_damage, move |rng, state, _action| {
+        let mut pokemon_with_energy = Vec::new();
+
+        // Collect all Pokémon in play (yours and opponent's) that have energy attached
+        for player_idx in 0..2 {
+            for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
+                if !pokemon.attached_energy.is_empty() {
+                    pokemon_with_energy.push((player_idx, in_play_idx));
+                }
+            }
+        }
+
+        if pokemon_with_energy.is_empty() {
+            return; // No Pokémon with energy to discard from
+        }
+
+        // Randomly select one Pokémon from the list
+        let (player_idx, in_play_idx) =
+            pokemon_with_energy[rng.gen_range(0..pokemon_with_energy.len())];
+        let pokemon = state.in_play_pokemon[player_idx][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there");
+
+        // Discard one random energy from the selected Pokémon
+        let energy_count = pokemon.attached_energy.len();
+        if energy_count > 0 {
+            let rand_idx = rng.gen_range(0..energy_count);
+            pokemon.attached_energy.remove(rand_idx);
+        }
     })
 }
 
