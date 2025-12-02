@@ -50,6 +50,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::Noop => forecast_deterministic_action(),
@@ -140,6 +141,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             amount,
             cure_status,
         } => apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status),
+        SimpleAction::MoveAllDamage { from, to } => {
+            apply_move_all_damage(action.actor, state, *from, *to)
+        }
         SimpleAction::ApplyEeveeBagDamageBoost => apply_eevee_bag_damage_boost(state),
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
@@ -223,6 +227,27 @@ fn apply_healing(
     pokemon.heal(amount);
     if cure_status {
         pokemon.cure_status_conditions();
+    }
+}
+
+fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize) {
+    let damage_to_move = {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_ref()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.total_hp - from_pokemon.remaining_hp
+    };
+
+    if damage_to_move > 0 {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_mut()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.heal(damage_to_move);
+
+        let to_pokemon = state.in_play_pokemon[actor][to]
+            .as_mut()
+            .expect("Pokemon to move damage to should be there");
+        to_pokemon.apply_damage(damage_to_move);
     }
 }
 

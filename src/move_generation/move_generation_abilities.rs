@@ -40,6 +40,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A2a071Arceus => false,
+        AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
         AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
         AbilityId::A2110DarkraiExNightmareAura => false,
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
@@ -108,4 +109,10 @@ fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
     // Opponent must have a benched Pokémon to switch to
     let opponent = (state.current_player + 1) % 2;
     state.enumerate_bench_pokemon(opponent).next().is_some()
+}
+
+fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(i, p)| p.is_damaged() && i != dusknoir_idx)
 }

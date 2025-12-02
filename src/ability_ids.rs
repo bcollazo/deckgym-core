@@ -15,6 +15,7 @@ pub enum AbilityId {
     A1a006SerperiorJungleTotem,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2072DusknoirShadowVoid,
     A2092LucarioFightingCoach,
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
@@ -68,6 +69,7 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 072", AbilityId::A2072DusknoirShadowVoid);
         m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);

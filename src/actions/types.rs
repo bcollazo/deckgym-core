@@ -57,6 +57,10 @@ pub enum SimpleAction {
         amount: u32,
         cure_status: bool,
     },
+    MoveAllDamage {
+        from: usize,
+        to: usize,
+    },
     ApplyDamage {
         attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
         targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
@@ -144,6 +148,9 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::MoveAllDamage { from, to } => {
+                write!(f, "MoveAllDamage(from:{from}, to:{to})")
+            }
             SimpleAction::ApplyDamage {
                 attacking_ref,
                 targets,
