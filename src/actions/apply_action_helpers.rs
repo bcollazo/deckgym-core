@@ -144,6 +144,7 @@ fn apply_pokemon_checkup(
             attacking_ref,
             &[(10, player, in_play_idx)],
             false,
+            None,
         );
     }
 
@@ -166,6 +167,7 @@ fn apply_pokemon_checkup(
             attacking_ref,
             &[(20, *player, *in_play_idx)],
             false,
+            None,
         );
     }
 
@@ -193,6 +195,7 @@ pub(crate) fn handle_damage(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
     is_from_active_attack: bool,
+    attack_name: Option<&str>,
 ) {
     let attacking_player = attacking_ref.0;
     let mut knockouts: Vec<(usize, usize)> = vec![];
@@ -201,8 +204,13 @@ pub(crate) fn handle_damage(
     let modified_targets = targets
         .iter()
         .map(|target_ref| {
-            let modified_damage =
-                modify_damage(state, attacking_ref, *target_ref, is_from_active_attack);
+            let modified_damage = modify_damage(
+                state,
+                attacking_ref,
+                *target_ref,
+                is_from_active_attack,
+                attack_name,
+            );
             (modified_damage, target_ref.1, target_ref.2)
         })
         .collect::<Vec<(u32, usize, usize)>>();

@@ -33,6 +33,7 @@ pub enum AbilityId {
     A4a020SuicuneExLegendaryPulse,
     A4a022MiloticHealingRipples,
     A4a025RaikouExLegendaryPulse,
+    A4a044DonphanExoskeleton,
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
@@ -110,6 +111,7 @@ lazy_static::lazy_static! {
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 022", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 025", AbilityId::A4a025RaikouExLegendaryPulse);
+        m.insert("A4a 044", AbilityId::A4a044DonphanExoskeleton);
         m.insert("A4a 065", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A4a 072", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 079", AbilityId::A4a010EnteiExLegendaryPulse);
