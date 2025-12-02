@@ -35,6 +35,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1123GengarExShadowySpellbind => false,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
+        AbilityId::A1188PidgeotDriveOff => can_use_pidgeot_drive_off(state, card),
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
@@ -98,4 +99,13 @@ fn can_use_greninja_shifting_stream(state: &State, card: &PlayedCard) -> bool {
         .enumerate_bench_pokemon(state.current_player)
         .next()
         .is_some()
+}
+
+fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    // Opponent must have a benched Pokémon to switch to
+    let opponent = (state.current_player + 1) % 2;
+    state.enumerate_bench_pokemon(opponent).next().is_some()
 }

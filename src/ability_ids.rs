@@ -9,6 +9,7 @@ pub enum AbilityId {
     A1098MagnetonVoltCharge,
     A1123GengarExShadowySpellbind,
     A1177Weezing,
+    A1188PidgeotDriveOff,
     A1007Butterfree,
     A1132Gardevoir,
     A1a006SerperiorJungleTotem,
@@ -52,6 +53,8 @@ lazy_static::lazy_static! {
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 123", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 177", AbilityId::A1177Weezing);
+        m.insert("A1 188", AbilityId::A1188PidgeotDriveOff);
+        m.insert("A1 245", AbilityId::A1188PidgeotDriveOff);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
