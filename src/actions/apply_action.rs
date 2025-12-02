@@ -231,16 +231,12 @@ fn apply_healing(
 }
 
 fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
-    // Remove the fossil from play and add its card to the discard pile
-    let fossil_card = state.in_play_pokemon[acting_player][in_play_idx]
-        .take()
-        .expect("Fossil should be there if discarding it");
-    state.discard_piles[acting_player].push(fossil_card.card);
+    // Discard the fossil from play (handles evolution chain and energies)
+    state.discard_from_play(acting_player, in_play_idx);
 
-    // If discarding from active spot and there are benched pokemon, need to promote one
-    if in_play_idx == 0 && state.enumerate_bench_pokemon(acting_player).count() > 0 {
-        // This will trigger the "must promote" logic at end of turn
-        // The game should automatically handle this via knockout logic
+    // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(acting_player);
     }
 }
 
