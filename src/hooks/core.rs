@@ -348,17 +348,26 @@ fn get_fighting_coach_boost(
         return 0;
     }
 
-    // Check if any Pokemon on the attacking player's field has Fighting Coach ability
-    for pokemon in state.in_play_pokemon[attacking_player].iter().flatten() {
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
-            if ability_id == AbilityId::A2092LucarioFightingCoach {
-                debug!("Fighting Coach: Adding +20 damage to Fighting Pokemon's attack");
-                return 20;
-            }
-        }
+    // Count all Pokemon on the attacking player's field with Fighting Coach ability
+    let lucario_count = state.in_play_pokemon[attacking_player]
+        .iter()
+        .flatten()
+        .filter(|pokemon| {
+            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                .map(|id| id == AbilityId::A2092LucarioFightingCoach)
+                .unwrap_or(false)
+        })
+        .count() as u32;
+
+    if lucario_count > 0 {
+        debug!(
+            "Fighting Coach: Adding +{} damage to Fighting Pokemon's attack ({} Lucario(s))",
+            lucario_count * 20,
+            lucario_count
+        );
     }
 
-    0
+    lucario_count * 20
 }
 
 // TODO: Confirm is_from_attack and goes to enemy active
