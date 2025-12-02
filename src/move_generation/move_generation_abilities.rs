@@ -41,6 +41,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A2a071Arceus => false,
         AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
+        AbilityId::A2078GiratinaLevitate => false, // Passive ability
         AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
         AbilityId::A2110DarkraiExNightmareAura => false,
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
