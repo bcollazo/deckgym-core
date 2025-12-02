@@ -561,16 +561,15 @@ fn calculate_type_boost_bonus(
                         return 20;
                     }
                 }
-                // Aegislash's Royal Command: +30 damage to Psychic and Metal-type attacks
-                // Note: Uncomment when Aegislash ability is implemented
-                // AbilityId::B1172AegislashRoyalCommand => {
-                //     if attacker_energy_type == EnergyType::Psychic
-                //         || attacker_energy_type == EnergyType::Metal
-                //     {
-                //         debug!("Royal Command (Aegislash): Increasing damage by 30");
-                //         return 30;
-                //     }
-                // }
+                // Aegislash's Cursed Metal: +30 damage to Psychic and Metal-type attacks
+                AbilityId::B1172AegislashCursedMetal => {
+                    if attacker_energy_type == EnergyType::Psychic
+                        || attacker_energy_type == EnergyType::Metal
+                    {
+                        debug!("Cursed Metal (Aegislash): Increasing damage by 30");
+                        return 30;
+                    }
+                }
                 _ => {}
             }
         }

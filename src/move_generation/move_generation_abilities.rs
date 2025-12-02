@@ -76,6 +76,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
+        AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
         AbilityId::B1177GoomyStickyMembrane => false,
         AbilityId::PA037CresseliaExLunarPlumage => false,
         AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks

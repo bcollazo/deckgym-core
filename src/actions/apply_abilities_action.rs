@@ -82,6 +82,7 @@ pub(crate) fn forecast_ability(
         AbilityId::B1157HydreigonRoarInUnison => {
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
         }
+        AbilityId::B1172AegislashCursedMetal => panic!("Cursed Metal is a passive ability"),
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
         AbilityId::PA037CresseliaExLunarPlumage => {
             panic!("Lunar Plumage is a passive ability")
