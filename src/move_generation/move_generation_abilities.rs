@@ -80,7 +80,6 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1177GoomyStickyMembrane => false,
         AbilityId::PA037CresseliaExLunarPlumage => false,
         AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks
-        AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
     }
 }
 
