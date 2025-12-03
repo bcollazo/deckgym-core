@@ -58,8 +58,14 @@ impl Player for ExpectiMiniMaxPlayer {
         log::set_max_level(LevelFilter::Info); // Temporarily silence debug and trace logs
         let mut scores: Vec<f64> = Vec::with_capacity(possible_actions.len());
         for action in possible_actions.iter() {
-            let (score, action_node) =
-                expected_value_function(rng, state, action, self.max_depth - 1, myself, self.value_function);
+            let (score, action_node) = expected_value_function(
+                rng,
+                state,
+                action,
+                self.max_depth - 1,
+                myself,
+                self.value_function,
+            );
             scores.push(score);
             root.children.push(action_node);
         }

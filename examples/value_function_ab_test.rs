@@ -210,13 +210,24 @@ fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Er
 
     // Print results
     println!("\n{}", "Results:".cyan().bold());
-    println!("  Games played: {}", config.num_games.to_formatted_string(&Locale::en));
-    println!("  Average game length: {:.1} turns", stats.avg_game_length());
+    println!(
+        "  Games played: {}",
+        config.num_games.to_formatted_string(&Locale::en)
+    );
+    println!(
+        "  Average game length: {:.1} turns",
+        stats.avg_game_length()
+    );
     println!();
 
     // Player A (baseline) stats
-    println!("  {} ({}):", "Player A".green().bold(), config.baseline_name);
-    println!("    Wins: {} ({:.1}%)",
+    println!(
+        "  {} ({}):",
+        "Player A".green().bold(),
+        config.baseline_name
+    );
+    println!(
+        "    Wins: {} ({:.1}%)",
         stats.wins[0].to_formatted_string(&Locale::en),
         stats.win_rate(0) * 100.0
     );
@@ -225,7 +236,8 @@ fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Er
 
     // Player B (test) stats
     println!("  {} ({}):", "Player B".yellow().bold(), config.test_name);
-    println!("    Wins: {} ({:.1}%)",
+    println!(
+        "    Wins: {} ({:.1}%)",
         stats.wins[1].to_formatted_string(&Locale::en),
         stats.win_rate(1) * 100.0
     );
