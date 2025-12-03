@@ -15,6 +15,7 @@ pub enum AbilityId {
     A1a046AerodactylExPrimevalLaw,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2092LucarioFightingCoach,
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
     A3066OricoricSafeguard,
@@ -33,6 +34,7 @@ pub enum AbilityId {
     A4a020SuicuneExLegendaryPulse,
     A4a022MiloticHealingRipples,
     A4a025RaikouExLegendaryPulse,
+    A4a044DonphanExoskeleton,
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
@@ -67,6 +69,8 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 202", AbilityId::A2110DarkraiExNightmareAura);
@@ -112,6 +116,7 @@ lazy_static::lazy_static! {
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 022", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 025", AbilityId::A4a025RaikouExLegendaryPulse);
+        m.insert("A4a 044", AbilityId::A4a044DonphanExoskeleton);
         m.insert("A4a 065", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A4a 072", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 079", AbilityId::A4a010EnteiExLegendaryPulse);
@@ -129,6 +134,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 197", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
+        m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);

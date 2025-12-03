@@ -134,7 +134,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             attacking_ref,
             targets,
             is_from_active_attack,
-        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack),
+        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack, None),
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,

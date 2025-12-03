@@ -321,12 +321,173 @@ fn get_intimidating_fang_reduction(
     0
 }
 
+fn get_fighting_coach_boost(
+    state: &State,
+    attacking_ref: (usize, usize),
+    target_ref: (u32, usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    let (attacking_player, attacking_idx) = attacking_ref;
+    let (_, target_player, target_idx) = target_ref;
+
+    // Only applies to attacks from the active Pokemon to opponent's active Pokemon
+    if attacking_player == target_player
+        || attacking_idx != 0
+        || target_idx != 0
+        || !is_from_active_attack
+    {
+        return 0;
+    }
+
+    let attacking_pokemon = state.in_play_pokemon[attacking_player][attacking_idx]
+        .as_ref()
+        .expect("Attacking Pokemon should be there when checking Fighting Coach");
+
+    // Only applies to Fighting-type Pokemon
+    if attacking_pokemon.get_energy_type() != Some(EnergyType::Fighting) {
+        return 0;
+    }
+
+    // Count all Pokemon on the attacking player's field with Fighting Coach ability
+    let lucario_count = state.in_play_pokemon[attacking_player]
+        .iter()
+        .flatten()
+        .filter(|pokemon| {
+            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                .map(|id| id == AbilityId::A2092LucarioFightingCoach)
+                .unwrap_or(false)
+        })
+        .count() as u32;
+
+    if lucario_count > 0 {
+        debug!(
+            "Fighting Coach: Adding +{} damage to Fighting Pokemon's attack ({} Lucario(s))",
+            lucario_count * 20,
+            lucario_count
+        );
+    }
+
+    lucario_count * 20
+}
+
+fn get_exoskeleton_reduction(
+    receiving_pokemon: &crate::models::PlayedCard,
+    is_from_active_attack: bool,
+) -> u32 {
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
+        if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
+            return 20;
+        }
+    }
+    0
+}
+
+fn get_increased_turn_effect_modifiers(
+    state: &State,
+    is_active_to_active: bool,
+    target_is_ex: bool,
+    attacker_is_eevee_evolution: bool,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    state
+        .get_current_turn_effects()
+        .iter()
+        .map(|effect| match effect {
+            TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
+            TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
+                if attacker_is_eevee_evolution =>
+            {
+                *amount
+            }
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
+fn get_increased_attack_specific_modifiers(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_active_to_active: bool,
+    attack_name: Option<&str>,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    attacking_pokemon
+        .get_active_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::IncreasedDamageForAttack {
+                attack_name: effect_attack_name,
+                amount,
+            } => {
+                if let Some(current_attack_name) = attack_name {
+                    if current_attack_name == effect_attack_name {
+                        Some(*amount)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .sum::<u32>()
+}
+
+fn get_reduced_card_effect_modifiers(
+    state: &State,
+    is_active_to_active: bool,
+    target_player: usize,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    state
+        .get_active(target_player)
+        .get_active_effects()
+        .iter()
+        .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
+        .map(|effect| match effect {
+            CardEffect::ReducedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
+fn get_weakness_modifier(
+    state: &State,
+    is_active_to_active: bool,
+    target_player: usize,
+    attacking_pokemon: &crate::models::PlayedCard,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    let receiving = state.get_active(target_player);
+    if let Card::Pokemon(pokemon_card) = &receiving.card {
+        if pokemon_card.weakness == attacking_pokemon.card.get_type() {
+            debug!(
+                "Weakness! {:?} is weak to {:?}",
+                pokemon_card,
+                attacking_pokemon.card.get_type()
+            );
+            return 20;
+        }
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
     attacking_ref: (usize, usize),
     target_ref: (u32, usize, usize),
     is_from_active_attack: bool,
+    attack_name: Option<&str>,
 ) -> u32 {
     // If attack is 0, not even Giovanni takes it to 10.
     let (attacking_player, attacking_idx) = attacking_ref;
@@ -354,81 +515,61 @@ pub(crate) fn modify_damage(
         }
     }
 
-    // Intimidating Fang ability damage reduction
-    let intimidating_fang_reduction =
-        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
-    // Heavy Helmet damage reduction
-    let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
-
-    // Modifiers by effect (like Giovanni, Red, Eevee Bag), most apply just to active-to-active attacks
+    // Calculate all modifiers
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
     let target_is_ex = receiving_pokemon.card.is_ex();
     let attacker_is_eevee_evolution = attacking_pokemon.evolved_from("Eevee");
-    let increased_turn_effect_modifiers = if !is_active_to_active {
-        0
-    } else {
-        state
-            .get_current_turn_effects()
-            .iter()
-            .map(|effect| match effect {
-                TurnEffect::IncreasedDamage { amount } => *amount,
-                TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
-                TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
-                    if attacker_is_eevee_evolution =>
-                {
-                    *amount
-                }
-                _ => 0,
-            })
-            .sum::<u32>()
-    };
 
-    // Modifiers by receiving card effects
-    let reduced_card_effect_modifiers = if !is_active_to_active {
-        0
-    } else {
-        state
-            .get_active(target_player)
-            .get_active_effects()
-            .iter()
-            .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
-            .map(|effect| match effect {
-                CardEffect::ReducedDamage { amount } => *amount,
-                _ => 0,
-            })
-            .sum::<u32>()
-    };
+    let intimidating_fang_reduction =
+        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
+    let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
+    let fighting_coach_boost =
+        get_fighting_coach_boost(state, attacking_ref, target_ref, is_from_active_attack);
+    let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
+        state,
+        is_active_to_active,
+        target_is_ex,
+        attacker_is_eevee_evolution,
+    );
+    let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
+        attacking_pokemon,
+        is_active_to_active,
+        attack_name,
+    );
+    let reduced_card_effect_modifiers =
+        get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
+    let weakness_modifier =
+        get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
 
-    // Weakness Modifier
-    let weakness_modifier = if !is_active_to_active {
-        0
-    } else {
-        let receiving = state.get_active(target_player);
-        if let Card::Pokemon(pokemon_card) = &receiving.card {
-            if pokemon_card.weakness == attacking_pokemon.card.get_type() {
-                debug!(
-                    "Weakness! {:?} is weak to {:?}",
-                    pokemon_card,
-                    attacking_pokemon.card.get_type()
-                );
-                return 20;
-            }
-        }
-        0
-    };
+    // Early return if weakness applies (overrides all other calculations)
+    if weakness_modifier > 0 {
+        return weakness_modifier;
+    }
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, FightingCoach: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
+        increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
-        intimidating_fang_reduction
+        intimidating_fang_reduction,
+        exoskeleton_reduction,
+        fighting_coach_boost
     );
-    (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
-        reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
-    )
+    (base_damage
+        + weakness_modifier
+        + increased_turn_effect_modifiers
+        + increased_attack_specific_modifiers
+        + fighting_coach_boost)
+        .saturating_sub(
+            reduced_card_effect_modifiers
+                + heavy_helmet_reduction
+                + intimidating_fang_reduction
+                + exoskeleton_reduction,
+        )
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
@@ -655,13 +796,14 @@ mod tests {
 
         // Get base damage without Giovanni effect
         let attack = attacker.get_attacks()[0].clone();
-        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Add Giovanni effect
         state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
-        let damage_with_giovanni = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let damage_with_giovanni =
+            modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Verify Giovanni adds exactly 10 damage
         assert_eq!(
@@ -680,9 +822,10 @@ mod tests {
         non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
         non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
-        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_non_ex =
+            modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_non_ex, base_damage_non_ex,
             "Red should not increase damage against non-EX Pokémon"
@@ -693,9 +836,9 @@ mod tests {
         ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
         ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
-        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_ex,
             base_damage_ex + 20,
@@ -719,7 +862,7 @@ mod tests {
             .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
 
         // Act
-        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true);
+        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true, None);
 
         // Assert
         assert_eq!(

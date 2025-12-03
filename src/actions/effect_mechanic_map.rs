@@ -148,12 +148,72 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 2,
         },
     );
-    // map.insert("During your next turn, this Pokémon's Gear Spinner attack does +70 damage.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon's Insatiable Striking attack does +40 damage.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon's Overacceleration attack does +20 damage.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon's Overdrive Smash attack does +30 damage.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.", todo_implementation);
-    // map.insert("During your next turn, this Pokémon's Rolling Spin attack does +60 damage.", todo_implementation);
+    map.insert(
+        "During your next turn, this Pokémon's Gear Spinner attack does +70 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Gear Spinner".to_string(),
+                amount: 70,
+            },
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon's Insatiable Striking attack does +40 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Insatiable Striking".to_string(),
+                amount: 40,
+            },
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon's Overacceleration attack does +20 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Overacceleration".to_string(),
+                amount: 20,
+            },
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon's Overdrive Smash attack does +30 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Overdrive Smash".to_string(),
+                amount: 30,
+            },
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon's Overdrive Smash attack does +60 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Overdrive Smash".to_string(),
+                amount: 60,
+            },
+            duration: 2,
+        },
+    );
+    map.insert(
+        "During your next turn, this Pokémon's Rolling Spin attack does +60 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Rolling Spin".to_string(),
+                amount: 60,
+            },
+            duration: 2,
+        },
+    );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.", todo_implementation);
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.", todo_implementation);
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.", todo_implementation);

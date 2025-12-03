@@ -40,6 +40,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A2a071Arceus => false,
+        AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
         AbilityId::A2110DarkraiExNightmareAura => false,
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
         AbilityId::A3066OricoricSafeguard => false,
@@ -63,6 +64,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
+        AbilityId::A4a044DonphanExoskeleton => false, // Passive ability, triggers via hooks
         AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
