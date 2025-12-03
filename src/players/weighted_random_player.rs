@@ -52,6 +52,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Retreat(_) => 2,
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,
+        SimpleAction::MoveAllDamage { .. } => 10,
         SimpleAction::Activate { .. } => 1,
         SimpleAction::CommunicatePokemon { .. } => 5,
         SimpleAction::ShufflePokemonIntoDeck { .. } => 5,
@@ -61,6 +62,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::AttachFromDiscard { .. } => 10,
         SimpleAction::ApplyEeveeBagDamageBoost => 5,
         SimpleAction::HealAllEeveeEvolutions => 5,
+        SimpleAction::DiscardFossil { .. } => 0,
         SimpleAction::Noop => 0, // No operation has no weight
     }
 }

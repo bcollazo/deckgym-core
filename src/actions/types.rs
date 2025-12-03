@@ -57,6 +57,10 @@ pub enum SimpleAction {
         amount: u32,
         cure_status: bool,
     },
+    MoveAllDamage {
+        from: usize,
+        to: usize,
+    },
     ApplyDamage {
         attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
         targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
@@ -86,6 +90,9 @@ pub enum SimpleAction {
     /// Sableye's Dirty Throw: discard a specific card from own hand
     DiscardOwnCard {
         card: Card,
+    },
+    DiscardFossil {
+        in_play_idx: usize,
     },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
@@ -144,6 +151,9 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::MoveAllDamage { from, to } => {
+                write!(f, "MoveAllDamage(from:{from}, to:{to})")
+            }
             SimpleAction::ApplyDamage {
                 attacking_ref,
                 targets,
@@ -177,6 +187,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardOwnCard { card } => {
                 write!(f, "DiscardOwnCard({card})")
+            }
+            SimpleAction::DiscardFossil { in_play_idx } => {
+                write!(f, "DiscardFossil({in_play_idx})")
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,

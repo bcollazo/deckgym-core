@@ -15,7 +15,10 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
+    apply_action_helpers::{
+        forecast_end_turn, handle_damage, trigger_promotion_or_declare_winner, Mutations,
+        Probabilities,
+    },
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -50,8 +53,10 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
+        | SimpleAction::DiscardFossil { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -133,16 +138,22 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             attacking_ref,
             targets,
             is_from_active_attack,
-        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack),
+        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack, None),
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,
             amount,
             cure_status,
         } => apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status),
+        SimpleAction::MoveAllDamage { from, to } => {
+            apply_move_all_damage(action.actor, state, *from, *to)
+        }
         SimpleAction::ApplyEeveeBagDamageBoost => apply_eevee_bag_damage_boost(state),
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
+        }
+        SimpleAction::DiscardFossil { in_play_idx } => {
+            apply_discard_fossil(state, action.actor, *in_play_idx)
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
@@ -210,6 +221,16 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
     state.remove_card_from_hand(actor, card);
 }
 
+fn apply_discard_fossil(state: &mut State, actor: usize, in_play_idx: usize) {
+    // Discard the fossil from play (handles evolution chain and energies)
+    state.discard_from_play(actor, in_play_idx);
+
+    // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        trigger_promotion_or_declare_winner(state, actor);
+    }
+}
+
 fn apply_healing(
     acting_player: usize,
     state: &mut State,
@@ -223,6 +244,27 @@ fn apply_healing(
     pokemon.heal(amount);
     if cure_status {
         pokemon.cure_status_conditions();
+    }
+}
+
+fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize) {
+    let damage_to_move = {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_ref()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.total_hp - from_pokemon.remaining_hp
+    };
+
+    if damage_to_move > 0 {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_mut()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.heal(damage_to_move);
+
+        // Use handle_damage to ensure KO checks and other effects are triggered
+        let targets = vec![(damage_to_move, actor, to)];
+        // Attacking ref is (actor, from) as the source of the damage move
+        handle_damage(state, (actor, from), &targets, false, None);
     }
 }
 

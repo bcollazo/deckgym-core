@@ -49,6 +49,11 @@ pub fn trainer_move_generation_implementation(
         return can_play_tool(state, trainer_card);
     }
 
+    // Fossil cards are played as if they were Basic Pokemon
+    if trainer_card.trainer_card_type == TrainerType::Fossil {
+        return can_place_fossil(state, trainer_card);
+    }
+
     let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
     match trainer_id {
         // Complex cases: need to check specific conditions
@@ -57,6 +62,8 @@ pub fn trainer_move_generation_implementation(
             can_play_erika(state, trainer_card)
         }
         CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
+        CardId::A1221Blaine | CardId::A1268Blaine => can_play_trainer(state, trainer_card),
+        CardId::A1224Brock | CardId::A1271Brock => can_play_trainer(state, trainer_card),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             can_play_irida(state, trainer_card)
         }
@@ -140,7 +147,38 @@ pub fn trainer_move_generation_implementation(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             can_play_celestic_town_elder(state, trainer_card)
         }
+        CardId::A1216HelixFossil
+        | CardId::A1217DomeFossil
+        | CardId::A1218OldAmber
+        | CardId::A1a063OldAmber
+        | CardId::A2144SkullFossil
+        | CardId::A2145ArmorFossil
+        | CardId::A4b312OldAmber
+        | CardId::A4b313OldAmber
+        | CardId::B1214PlumeFossil
+        | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
         _ => None,
+    }
+}
+
+/// Check if a Fossil card can be played (requires at least 1 empty bench spot)
+fn can_play_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let empty_bench_slots: Vec<_> = state.in_play_pokemon[state.current_player]
+        .iter()
+        .enumerate()
+        .filter(|(i, p)| *i > 0 && p.is_none())
+        .map(|(i, _)| i)
+        .collect();
+
+    if empty_bench_slots.is_empty() {
+        cannot_play_trainer()
+    } else {
+        Some(
+            empty_bench_slots
+                .into_iter()
+                .map(|i| SimpleAction::Place(Card::Trainer(trainer_card.clone()), i))
+                .collect(),
+        )
     }
 }
 
@@ -487,4 +525,22 @@ fn can_play_celestic_town_elder(
     } else {
         cannot_play_trainer()
     }
+}
+
+/// Fossil cards can be placed in empty Active or Bench slots, like Basic Pokemon
+fn can_place_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let current_player = state.current_player;
+    let mut actions = Vec::new();
+
+    // Fossils can be placed in any empty slot
+    state.in_play_pokemon[current_player]
+        .iter()
+        .enumerate()
+        .for_each(|(i, x)| {
+            if x.is_none() {
+                actions.push(SimpleAction::Place(Card::Trainer(trainer_card.clone()), i));
+            }
+        });
+
+    Some(actions)
 }

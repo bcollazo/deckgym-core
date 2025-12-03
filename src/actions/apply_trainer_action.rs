@@ -49,6 +49,8 @@ pub fn forecast_trainer_action(
             doutcome(erika_effect)
         }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
+        CardId::A1224Brock | CardId::A1271Brock => doutcome(brock_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             doutcome(irida_effect)
         }
@@ -315,6 +317,57 @@ fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
+}
+
+fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Ninetales".to_string(),
+                "Rapidash".to_string(),
+                "Magmar".to_string(),
+            ],
+        },
+        0,
+    );
+}
+
+fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [F] Energy from your Energy Zone and attach it to Golem or Onix.
+    attach_energy_from_zone_to_specific_pokemon(
+        state,
+        action.actor,
+        EnergyType::Fighting,
+        &["Golem", "Onix"],
+    );
+}
+
+/// Generic helper to attach energy from Energy Zone (unlimited) to specific Pokemon by name
+/// Used by cards like Brock, Kiawe, etc.
+fn attach_energy_from_zone_to_specific_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Enumerate all matching Pokemon in play
+    let possible_targets: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            let name = pokemon.get_name();
+            pokemon_names.iter().any(|&target_name| name == target_name)
+        })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, energy_type, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect();
+
+    if !possible_targets.is_empty() {
+        state.move_generation_stack.push((player, possible_targets));
+    }
 }
 
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {

@@ -1,4 +1,5 @@
 use crate::{
+    ability_ids::AbilityId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
     tool_ids::ToolId,
@@ -7,16 +8,21 @@ use crate::{
 
 pub(crate) fn can_retreat(state: &State) -> bool {
     // Get Active card of the current player, check it has no CardEffect::NoRetreat
-    let has_no_retreat = state
-        .get_active(state.current_player)
+    let active = state.get_active(state.current_player);
+    let has_no_retreat = active
         .get_active_effects()
         .contains(&CardEffect::NoRetreat);
 
-    !state.has_retreated && !has_no_retreat
+    !state.has_retreated && !has_no_retreat && !active.card.is_fossil()
 }
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&card.get_id()) {
+            if ability_id == AbilityId::A2078GiratinaLevitate && !card.attached_energy.is_empty() {
+                return vec![];
+            }
+        }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
         if let Some(tool_id) = card.attached_tool {
             if tool_id == ToolId::A4a067InflatableBoat

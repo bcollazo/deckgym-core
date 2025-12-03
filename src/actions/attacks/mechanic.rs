@@ -3,12 +3,14 @@ use crate::{
     models::{EnergyType, StatusCondition},
 };
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum BenchSide {
     YourBench,
     OpponentBench,
     BothBenches,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Mechanic {
     SelfHeal {
         amount: u32,
@@ -25,6 +27,10 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    CantAttackNextTurn {
+        probability: f32,
+    },
+    DiscardRandomGlobalEnergy,
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,
@@ -94,6 +100,12 @@ pub enum Mechanic {
         extra_damage: u32,
         opponent: bool,
     },
+    ExtraDamageIfKnockedOutLastTurn {
+        extra_damage: u32,
+    },
+    PreventAllDamageAndEffectsNextTurn {
+        probability: f32,
+    },
     BenchCountDamage {
         include_fixed_damage: bool,
         damage_per: u32,
@@ -106,5 +118,8 @@ pub enum Mechanic {
     },
     ExtraDamageIfToolAttached {
         extra_damage: u32,
+    },
+    RecoilIfKo {
+        self_damage: u32,
     },
 }
