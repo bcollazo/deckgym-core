@@ -78,6 +78,17 @@ fn list_available_functions() {
     println!("  deck_awareness    - Considers remaining deck size");
 }
 
+struct ComparisonConfig<'a> {
+    deck_path: &'a str,
+    baseline_fn: ValueFunction,
+    test_fn: ValueFunction,
+    baseline_name: &'a str,
+    test_name: &'a str,
+    depth: usize,
+    num_games: u32,
+    seed: Option<u64>,
+}
+
 struct GameStats {
     wins: [u32; 2],
     points: [u32; 2],
@@ -133,34 +144,24 @@ impl GameStats {
     }
 }
 
-fn run_comparison(
-    deck_path: &str,
-    baseline_fn: ValueFunction,
-    test_fn: ValueFunction,
-    baseline_name: &str,
-    test_name: &str,
-    depth: usize,
-    num_games: u32,
-    base_seed: Option<u64>,
-    _parallel: bool, // TODO: implement parallel execution
-) -> Result<(), Box<dyn std::error::Error>> {
+fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Error>> {
     println!("\n{}", "=".repeat(70).blue().bold());
     println!(
         "{} {} vs {}",
         "Testing:".blue().bold(),
-        baseline_name.green(),
-        test_name.yellow()
+        config.baseline_name.green(),
+        config.test_name.yellow()
     );
     println!("{}", "=".repeat(70).blue().bold());
 
     // Load deck
-    let deck = Deck::from_file(deck_path)?;
+    let deck = Deck::from_file(config.deck_path)?;
 
     // Initialize stats
     let mut stats = GameStats::new();
 
     // Create progress bar
-    let pb = ProgressBar::new(num_games as u64);
+    let pb = ProgressBar::new(config.num_games as u64);
     pb.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} games ({eta})")
@@ -169,28 +170,28 @@ fn run_comparison(
     );
 
     // Get base seed for reproducibility
-    let seed_base = base_seed.unwrap_or_else(|| {
+    let seed_base = config.seed.unwrap_or_else(|| {
         let mut rng = StdRng::from_entropy();
         rng.next_u64()
     });
 
     // Run games sequentially (TODO: parallelize)
-    for i in 0..num_games {
+    for i in 0..config.num_games {
         let game_seed = seed_base.wrapping_add(i as u64);
 
         // Create fresh players for each game
         let player_a = Box::new(ExpectiMiniMaxPlayer {
             deck: deck.clone(),
-            max_depth: depth,
+            max_depth: config.depth,
             write_debug_trees: false,
-            value_function: baseline_fn,
+            value_function: config.baseline_fn,
         });
 
         let player_b = Box::new(ExpectiMiniMaxPlayer {
             deck: deck.clone(),
-            max_depth: depth,
+            max_depth: config.depth,
             write_debug_trees: false,
-            value_function: test_fn,
+            value_function: config.test_fn,
         });
 
         // Create and play game
@@ -209,12 +210,12 @@ fn run_comparison(
 
     // Print results
     println!("\n{}", "Results:".cyan().bold());
-    println!("  Games played: {}", num_games.to_formatted_string(&Locale::en));
+    println!("  Games played: {}", config.num_games.to_formatted_string(&Locale::en));
     println!("  Average game length: {:.1} turns", stats.avg_game_length());
     println!();
 
     // Player A (baseline) stats
-    println!("  {} ({}):", "Player A".green().bold(), baseline_name);
+    println!("  {} ({}):", "Player A".green().bold(), config.baseline_name);
     println!("    Wins: {} ({:.1}%)",
         stats.wins[0].to_formatted_string(&Locale::en),
         stats.win_rate(0) * 100.0
@@ -223,7 +224,7 @@ fn run_comparison(
     println!();
 
     // Player B (test) stats
-    println!("  {} ({}):", "Player B".yellow().bold(), test_name);
+    println!("  {} ({}):", "Player B".yellow().bold(), config.test_name);
     println!("    Wins: {} ({:.1}%)",
         stats.wins[1].to_formatted_string(&Locale::en),
         stats.win_rate(1) * 100.0
@@ -239,13 +240,13 @@ fn run_comparison(
     if win_rate_diff > 0.0 {
         println!(
             "  {} wins {:.1}% more games",
-            test_name.yellow(),
+            config.test_name.yellow(),
             win_rate_diff.abs()
         );
     } else if win_rate_diff < 0.0 {
         println!(
             "  {} wins {:.1}% more games",
-            baseline_name.green(),
+            config.baseline_name.green(),
             win_rate_diff.abs()
         );
     } else {
@@ -256,13 +257,13 @@ fn run_comparison(
         if point_diff > 0.0 {
             println!(
                 "  {} scores {:.2} more points on average",
-                test_name.yellow(),
+                config.test_name.yellow(),
                 point_diff.abs()
             );
         } else {
             println!(
                 "  {} scores {:.2} more points on average",
-                baseline_name.green(),
+                config.baseline_name.green(),
                 point_diff.abs()
             );
         }
@@ -270,7 +271,7 @@ fn run_comparison(
 
     // Statistical significance (basic check)
     let min_games_for_significance = 100;
-    if num_games >= min_games_for_significance && win_rate_diff.abs() > 1.0 {
+    if config.num_games >= min_games_for_significance && win_rate_diff.abs() > 1.0 {
         println!();
         println!(
             "  {} Difference appears significant (>{:.0} games, >{:.0}% difference)",
@@ -278,7 +279,7 @@ fn run_comparison(
             min_games_for_significance,
             1.0
         );
-    } else if num_games < min_games_for_significance {
+    } else if config.num_games < min_games_for_significance {
         println!();
         println!(
             "  {} Run more games (>={}) for statistical significance",
@@ -308,17 +309,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // If test function is specified, run single comparison
     if let Some(test_name) = &args.test {
         let test_fn = get_value_function(test_name)?;
-        run_comparison(
-            &args.deck,
+        run_comparison(ComparisonConfig {
+            deck_path: &args.deck,
             baseline_fn,
             test_fn,
-            &args.baseline,
+            baseline_name: &args.baseline,
             test_name,
-            args.depth,
-            args.num,
-            args.seed,
-            args.parallel,
-        )?;
+            depth: args.depth,
+            num_games: args.num,
+            seed: args.seed,
+        })?;
     } else {
         // Run against all variants
         let variant_names = vec![
@@ -336,17 +336,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         for test_name in variant_names {
             let test_fn = get_value_function(test_name)?;
-            run_comparison(
-                &args.deck,
+            run_comparison(ComparisonConfig {
+                deck_path: &args.deck,
                 baseline_fn,
                 test_fn,
-                &args.baseline,
+                baseline_name: &args.baseline,
                 test_name,
-                args.depth,
-                args.num,
-                args.seed,
-                args.parallel,
-            )?;
+                depth: args.depth,
+                num_games: args.num,
+                seed: args.seed,
+            })?;
         }
 
         println!("\n{}", "=".repeat(70).blue().bold());
