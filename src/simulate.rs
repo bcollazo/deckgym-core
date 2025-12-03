@@ -15,6 +15,10 @@ use crate::{
     Deck, Game,
 };
 
+/// Type alias for player factory function
+pub type PlayerFactory =
+    Box<dyn Fn(Deck, Deck) -> Vec<Box<dyn crate::players::Player>> + Send + Sync>;
+
 /// Callbacks for simulation progress tracking
 pub struct SimulationCallbacks<F>
 where
@@ -59,8 +63,7 @@ pub struct Simulation {
     num_threads: Option<usize>,
     event_handler: Option<CompositeSimulationEventHandler>,
     callbacks: Option<SimulationCallbacks<Box<dyn Fn() + Sync>>>,
-    player_factory:
-        Option<Box<dyn Fn(Deck, Deck) -> Vec<Box<dyn crate::players::Player>> + Send + Sync>>,
+    player_factory: Option<PlayerFactory>,
 }
 
 impl Simulation {
