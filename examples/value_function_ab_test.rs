@@ -19,7 +19,7 @@ use rand::{RngCore, SeedableRng};
 /// Example usage:
 ///   cargo run --example value_function_ab_test -- deck.txt --num 1000
 ///   cargo run --example value_function_ab_test -- deck.txt --num 1000 --depth 2
-///   cargo run --example value_function_ab_test -- deck.txt --num 1000 --baseline aggressive_active
+///   cargo run --example value_function_ab_test -- deck.txt --num 1000 --test bench_depth
 #[derive(Parser, Debug)]
 #[command(name = "Value Function A/B Test")]
 #[command(about = "Compare two value functions in mirror matches", long_about = None)]
@@ -59,23 +59,17 @@ struct Args {
 fn get_value_function(name: &str) -> Result<ValueFunction, String> {
     match name {
         "baseline" => Ok(value_functions::baseline_value_function),
-        "aggressive_active" => Ok(value_functions::aggressive_active_value_function),
         "hand" => Ok(value_functions::hand_value_function),
         "bench_depth" => Ok(value_functions::bench_depth_value_function),
-        "hp_focused" => Ok(value_functions::hp_focused_value_function),
-        "deck_awareness" => Ok(value_functions::deck_awareness_value_function),
         _ => Err(format!("Unknown value function: {}", name)),
     }
 }
 
 fn list_available_functions() {
     println!("Available value functions:");
-    println!("  baseline          - Original value function (active_factor=2.0, hand_weight=1.0)");
-    println!("  aggressive_active - Emphasizes active Pokemon more (active_factor=3.0)");
-    println!("  hand              - Values hand cards more (hand_weight=2.0)");
-    println!("  bench_depth       - Considers bench depth as a feature");
-    println!("  hp_focused        - Emphasizes raw HP over HP*energy product");
-    println!("  deck_awareness    - Considers remaining deck size");
+    println!("  baseline    - Original value function (active_factor=2.0, hand_weight=1.0)");
+    println!("  hand        - Values hand cards more (hand_weight=2.0) [+4.8% win rate]");
+    println!("  bench_depth - Considers bench depth as a feature [+5.2% win rate - BEST]");
 }
 
 struct ComparisonConfig<'a> {
@@ -332,17 +326,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             seed: args.seed,
         })?;
     } else {
-        // Run against all variants
+        // Run against top performing variants
         let variant_names = vec![
-            "aggressive_active",
             "hand",
             "bench_depth",
-            "hp_focused",
-            "deck_awareness",
         ];
 
         println!(
-            "\n{} Running A/B tests against all variants...\n",
+            "\n{} Running A/B tests against top performing variants...\n",
             "●".blue().bold()
         );
 
