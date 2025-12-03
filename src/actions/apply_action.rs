@@ -254,10 +254,10 @@ fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize
             .expect("Pokemon to move damage from should be there");
         from_pokemon.heal(damage_to_move);
 
-        let to_pokemon = state.in_play_pokemon[actor][to]
-            .as_mut()
-            .expect("Pokemon to move damage to should be there");
-        to_pokemon.apply_damage(damage_to_move);
+        // Use handle_damage to ensure KO checks and other effects are triggered
+        let targets = vec![(damage_to_move, actor, to)];
+        // Attacking ref is (actor, from) as the source of the damage move
+        handle_damage(state, (actor, from), &targets, false, None);
     }
 }
 

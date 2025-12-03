@@ -172,7 +172,9 @@ fn apply_pokemon_checkup(
     }
 
     // Advance turn
-    mutated_state.last_turn_ko_by_opponent = false; // Reset the flag for the new turn
+    mutated_state.knocked_out_by_opponent_attack_last_turn =
+        mutated_state.knocked_out_by_opponent_attack_this_turn;
+    mutated_state.knocked_out_by_opponent_attack_this_turn = false;
     mutated_state.advance_turn();
 }
 
@@ -300,16 +302,15 @@ pub(crate) fn handle_damage(
         state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }
 
-    // Set last_turn_ko_by_opponent flag
+    // Set knocked_out_by_opponent_attack_this_turn flag
     // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
     if is_from_active_attack {
         // Only care about KOs from active attacks
         for (ko_receiver, _) in knockouts.clone() {
             let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-            if ko_receiver == state.current_player
-                && ko_initiator_of_this_damage == (state.current_player + 1) % 2
-            {
-                state.last_turn_ko_by_opponent = true;
+            // If the receiver is NOT the initiator, it's an opponent KO
+            if ko_receiver != ko_initiator_of_this_damage {
+                state.knocked_out_by_opponent_attack_this_turn = true;
                 break; // Only need to set once
             }
         }

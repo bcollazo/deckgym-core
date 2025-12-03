@@ -550,6 +550,8 @@ fn calculate_type_boost_bonus(
         None => return 0,
     };
 
+    let mut bonus = 0;
+
     // Check each Pokemon in play for type-boosting abilities
     for (_, pokemon) in state.enumerate_in_play_pokemon(attacking_player) {
         if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
@@ -558,7 +560,7 @@ fn calculate_type_boost_bonus(
                 AbilityId::A2092LucarioFightingCoach => {
                     if attacker_energy_type == EnergyType::Fighting {
                         debug!("Fighting Coach (Lucario): Increasing damage by 20");
-                        return 20;
+                        bonus += 20;
                     }
                 }
                 // Aegislash's Cursed Metal: +30 damage to Psychic and Metal-type attacks
@@ -567,7 +569,7 @@ fn calculate_type_boost_bonus(
                         || attacker_energy_type == EnergyType::Metal
                     {
                         debug!("Cursed Metal (Aegislash): Increasing damage by 30");
-                        return 30;
+                        bonus += 30;
                     }
                 }
                 _ => {}
@@ -575,7 +577,7 @@ fn calculate_type_boost_bonus(
         }
     }
 
-    0
+    bonus
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)

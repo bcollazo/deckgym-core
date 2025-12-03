@@ -40,7 +40,8 @@ pub struct State {
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
     pub(crate) has_retreated: bool,
-    pub(crate) last_turn_ko_by_opponent: bool,
+    pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
+    pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -61,7 +62,9 @@ impl State {
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
             has_played_support: false,
             has_retreated: false,
-            last_turn_ko_by_opponent: false,
+
+            knocked_out_by_opponent_attack_this_turn: false,
+            knocked_out_by_opponent_attack_last_turn: false,
             turn_effects: BTreeMap::new(),
         }
     }

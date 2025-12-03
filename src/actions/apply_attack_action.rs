@@ -1247,7 +1247,7 @@ fn extra_damage_if_knocked_out_last_turn_attack(
     base_damage: u32,
     extra_damage: u32,
 ) -> (Probabilities, Mutations) {
-    let damage = if state.last_turn_ko_by_opponent {
+    let damage = if state.knocked_out_by_opponent_attack_last_turn {
         base_damage + extra_damage
     } else {
         base_damage
