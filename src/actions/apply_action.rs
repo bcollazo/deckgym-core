@@ -15,7 +15,10 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
+    apply_action_helpers::{
+        forecast_end_turn, handle_damage, trigger_promotion_or_declare_winner, Mutations,
+        Probabilities,
+    },
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -219,8 +222,12 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
 }
 
 fn apply_discard_fossil(state: &mut State, actor: usize, in_play_idx: usize) {
-    if let Some(played_card) = state.in_play_pokemon[actor][in_play_idx].take() {
-        state.discard_piles[actor].push(played_card.card);
+    // Discard the fossil from play (handles evolution chain and energies)
+    state.discard_from_play(actor, in_play_idx);
+
+    // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        trigger_promotion_or_declare_winner(state, actor);
     }
 }
 

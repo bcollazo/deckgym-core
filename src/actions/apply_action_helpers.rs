@@ -335,38 +335,41 @@ pub(crate) fn handle_damage(
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
         }
+        trigger_promotion_or_declare_winner(state, ko_receiver);
+    }
+}
 
-        // If K.O. was Active and ko_receiver hasn't win, check if can select from Bench
-        let enumerated_bench_pokemon = state
-            .enumerate_bench_pokemon(ko_receiver)
+pub(crate) fn trigger_promotion_or_declare_winner(state: &mut State, player: usize) {
+    // If K.O. was Active and ko_receiver hasn't win, check if can select from Bench
+    let enumerated_bench_pokemon = state
+        .enumerate_bench_pokemon(player)
+        .collect::<Vec<_>>();
+    if enumerated_bench_pokemon.is_empty() {
+        // If no bench pokemon, opponent loses
+        let opponent = (player + 1) % 2;
+        state.winner = Some(GameOutcome::Win(opponent));
+        debug!("Player {player} lost due to no bench pokemon");
+    } else {
+        let possible_moves = state
+            .enumerate_bench_pokemon(player)
+            .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
             .collect::<Vec<_>>();
-        if enumerated_bench_pokemon.is_empty() {
-            // If no bench pokemon, opponent loses
-            let ko_initiator = (ko_receiver + 1) % 2;
-            state.winner = Some(GameOutcome::Win(ko_initiator));
-            debug!("Player {ko_receiver} lost due to no bench pokemon");
-        } else {
-            let possible_moves = state
-                .enumerate_bench_pokemon(ko_receiver)
-                .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
-                .collect::<Vec<_>>();
-            debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
-            // insert right next to EndTurn, so that if this was triggered by an attack,
-            // we resolve any move_generation_stack effects from that attack first.
-            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
-            let index_of_end_turn = state
+        debug!("Triggering Activate moves: {possible_moves:?} to player {player}");
+        // insert right next to EndTurn, so that if this was triggered by an attack,
+        // we resolve any move_generation_stack effects from that attack first.
+        // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
+        let index_of_end_turn = state
+            .move_generation_stack
+            .iter()
+            .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
+        if let Some(index_of_end_turn) = index_of_end_turn {
+            state
                 .move_generation_stack
-                .iter()
-                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
-            if let Some(index_of_end_turn) = index_of_end_turn {
-                state
-                    .move_generation_stack
-                    .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
-            } else {
-                state
-                    .move_generation_stack
-                    .push((ko_receiver, possible_moves));
-            }
+                .insert(index_of_end_turn + 1, (player, possible_moves));
+        } else {
+            state
+                .move_generation_stack
+                .push((player, possible_moves));
         }
     }
 }
