@@ -2,7 +2,6 @@ use crate::{
     actions::SimpleAction,
     effects::CardEffect,
     hooks::{contains_energy, get_attack_cost},
-    models::{Card, TrainerType},
     State,
 };
 

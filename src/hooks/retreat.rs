@@ -1,6 +1,6 @@
 use crate::{
     effects::{CardEffect, TurnEffect},
-    models::{Card, EnergyType, PlayedCard, TrainerType},
+    models::{Card, EnergyType, PlayedCard},
     tool_ids::ToolId,
     State,
 };

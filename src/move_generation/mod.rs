@@ -6,6 +6,7 @@ use crate::actions::{Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::state::State;
+use crate::AbilityId;
 
 use attacks::generate_attack_actions;
 use move_generation_abilities::generate_ability_actions;
@@ -163,17 +164,10 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     state
                         .enumerate_in_play_pokemon(current_player)
                         .for_each(|(i, pokemon)| {
-                            if !pokemon.played_this_turn && can_evolve_into(hand_card, pokemon) {
-                                // Check if Aerodactyl Ex's Primeval Law is blocking active evolution
-                                if i == 0
-                                    && has_opponent_aerodactyl_ex_primeval_law(
-                                        state,
-                                        current_player,
-                                    )
-                                {
-                                    // Cannot evolve active Pokemon when opponent has Aerodactyl Ex
-                                    return;
-                                }
+                            if !pokemon.played_this_turn
+                                && can_evolve_into(hand_card, pokemon)
+                                && can_evolve_at_position(state, current_player, i)
+                            {
                                 actions.push(SimpleAction::Evolve(hand_card.clone(), i));
                             }
                         });
@@ -205,9 +199,16 @@ fn generate_discard_fossil_actions(state: &State, actions: &mut Vec<SimpleAction
         });
 }
 
-fn has_opponent_aerodactyl_ex_primeval_law(state: &State, player: usize) -> bool {
-    use crate::AbilityId;
+/// Checks if evolution is allowed at the given position, considering ability restrictions
+fn can_evolve_at_position(state: &State, player: usize, position: usize) -> bool {
+    // Aerodactyl Ex's Primeval Law blocks evolution of opponent's active Pokemon
+    if position == 0 && has_opponent_aerodactyl_ex_primeval_law(state, player) {
+        return false;
+    }
+    true
+}
 
+fn has_opponent_aerodactyl_ex_primeval_law(state: &State, player: usize) -> bool {
     let opponent = (player + 1) % 2;
 
     // Check if opponent has any Aerodactyl Ex with Primeval Law ability in play
