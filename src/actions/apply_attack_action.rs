@@ -685,6 +685,21 @@ fn cant_attack_next_turn_attack(damage: u32, probability: f64) -> (Probabilities
     (probabilities, mutations)
 }
 
+fn prevent_all_damage_and_effects_next_turn_attack(
+    damage: u32,
+    probability: f64,
+) -> (Probabilities, Mutations) {
+    let probabilities = vec![probability, 1.0 - probability];
+    let mutations: Mutations = vec![
+        active_damage_effect_mutation(damage, |_, state, action| {
+            let active = state.get_active_mut(action.actor);
+            active.add_effect(CardEffect::PreventAllDamageAndEffects, 1);
+        }),
+        active_damage_mutation(damage),
+    ];
+    (probabilities, mutations)
+}
+
 fn damage_chance_status_attack(
     damage: u32,
     probability_of_status: f64,

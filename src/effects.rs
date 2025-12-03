@@ -8,6 +8,7 @@ pub enum CardEffect {
     CannotAttack,
     CannotUseAttack(String),
     IncreasedDamageForAttack { attack_name: String, amount: u32 },
+    PreventAllDamageAndEffects,
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]

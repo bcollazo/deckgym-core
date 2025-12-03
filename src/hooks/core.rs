@@ -478,6 +478,12 @@ pub(crate) fn modify_damage(
         }
     }
 
+    // Check for PreventAllDamageAndEffects (Shinx's Hide)
+    if receiving_pokemon.get_active_effects().iter().any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects)) {
+        debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
+        return 0;
+    }
+
     // Calculate all modifiers
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
     let target_is_ex = receiving_pokemon.card.is_ex();

@@ -308,7 +308,7 @@ pub(crate) fn handle_damage(
         // Only care about KOs from active attacks
         for (ko_receiver, _) in knockouts.clone() {
             let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-            // If the receiver is NOT the initiator, it's an opponent KO
+                                                               // If the receiver is NOT the initiator, it's an opponent KO
             if ko_receiver != ko_initiator_of_this_damage {
                 state.knocked_out_by_opponent_attack_this_turn = true;
                 break; // Only need to set once
@@ -341,9 +341,7 @@ pub(crate) fn handle_damage(
 
 pub(crate) fn trigger_promotion_or_declare_winner(state: &mut State, player: usize) {
     // If K.O. was Active and ko_receiver hasn't win, check if can select from Bench
-    let enumerated_bench_pokemon = state
-        .enumerate_bench_pokemon(player)
-        .collect::<Vec<_>>();
+    let enumerated_bench_pokemon = state.enumerate_bench_pokemon(player).collect::<Vec<_>>();
     if enumerated_bench_pokemon.is_empty() {
         // If no bench pokemon, opponent loses
         let opponent = (player + 1) % 2;
@@ -367,9 +365,7 @@ pub(crate) fn trigger_promotion_or_declare_winner(state: &mut State, player: usi
                 .move_generation_stack
                 .insert(index_of_end_turn + 1, (player, possible_moves));
         } else {
-            state
-                .move_generation_stack
-                .push((player, possible_moves));
+            state.move_generation_stack.push((player, possible_moves));
         }
     }
 }
