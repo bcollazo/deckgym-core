@@ -73,6 +73,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
+        AbilityId::A4a044DonphanExoskeleton => panic!("Exoskeleton is a passive ability"),
         AbilityId::B1073GreninjaExShiftingStream => doutcome(greninja_ex_shifting_stream),
         AbilityId::B1121IndeedeeExWatchOver => doutcome(indeedee_ex_watch_over),
         AbilityId::B1157HydreigonRoarInUnison => {
@@ -242,6 +243,7 @@ fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
             (action.actor, in_play_idx),
             &[(30, action.actor, in_play_idx)],
             false,
+            None,
         );
     })
 }
@@ -289,6 +291,7 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
         (action.actor, in_play_idx),
         &[(20, action.actor, in_play_idx)],
         false,
+        None,
     );
 }
 
