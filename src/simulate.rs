@@ -59,6 +59,8 @@ pub struct Simulation {
     num_threads: Option<usize>,
     event_handler: Option<CompositeSimulationEventHandler>,
     callbacks: Option<SimulationCallbacks<Box<dyn Fn() + Sync>>>,
+    player_factory:
+        Option<Box<dyn Fn(Deck, Deck) -> Vec<Box<dyn crate::players::Player>> + Send + Sync>>,
 }
 
 impl Simulation {
@@ -104,6 +106,34 @@ impl Simulation {
             num_threads,
             event_handler: None,
             callbacks: None,
+            player_factory: None,
+        })
+    }
+
+    pub fn new_with_player_factory<F>(
+        deck_a: Deck,
+        deck_b: Deck,
+        player_factory: F,
+        num_simulations: u32,
+        seed: Option<u64>,
+        parallel: bool,
+        num_threads: Option<usize>,
+    ) -> Result<Self, Box<dyn std::error::Error>>
+    where
+        F: Fn(Deck, Deck) -> Vec<Box<dyn crate::players::Player>> + Send + Sync + 'static,
+    {
+        Ok(Simulation {
+            deck_a,
+            deck_b,
+            player_codes: vec![], // Not used when player_factory is provided
+            num_simulations,
+            seed,
+            handler_factories: vec![],
+            parallel,
+            num_threads,
+            event_handler: None,
+            callbacks: None,
+            player_factory: Some(Box::new(player_factory)),
         })
     }
 
@@ -153,11 +183,15 @@ impl Simulation {
                     .collect(),
             );
 
-            let players = create_players(
-                self.deck_a.clone(),
-                self.deck_b.clone(),
-                self.player_codes.clone(),
-            );
+            let players = if let Some(ref factory) = self.player_factory {
+                factory(self.deck_a.clone(), self.deck_b.clone())
+            } else {
+                create_players(
+                    self.deck_a.clone(),
+                    self.deck_b.clone(),
+                    self.player_codes.clone(),
+                )
+            };
             let seed = self.seed.unwrap_or(rand::random::<u64>());
             let game_id = Uuid::new_v4();
             event_handler.on_game_start(game_id);

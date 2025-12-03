@@ -1,15 +1,50 @@
 use clap::Parser;
 use colored::Colorize;
 use deckgym::{
-    players::{value_functions, ExpectiMiniMaxPlayer, ValueFunction},
+    players::{value_functions, ExpectiMiniMaxPlayer, Player, ValueFunction},
     simulate::initialize_logger,
+    simulation_event_handler::{SimulationEventHandler, StatsCollector},
     state::GameOutcome,
-    Deck, Game,
+    Deck, Simulation, State,
 };
-use indicatif::{ProgressBar, ProgressStyle};
 use num_format::{Locale, ToFormattedString};
-use rand::rngs::StdRng;
-use rand::{RngCore, SeedableRng};
+use uuid::Uuid;
+
+/// Custom event handler to track points scored by each player
+#[derive(Default)]
+struct PointsCollector {
+    total_points: [u32; 2],
+    num_games: u32,
+}
+
+impl SimulationEventHandler for PointsCollector {
+    fn on_game_start(&mut self, _game_id: Uuid) {}
+
+    fn on_game_end(&mut self, _game_id: Uuid, state: State, _outcome: Option<GameOutcome>) {
+        self.total_points[0] += state.points[0] as u32;
+        self.total_points[1] += state.points[1] as u32;
+        self.num_games += 1;
+    }
+
+    fn merge(&mut self, other: &dyn SimulationEventHandler) {
+        if let Some(other_points) = (other as &dyn std::any::Any).downcast_ref::<PointsCollector>()
+        {
+            self.total_points[0] += other_points.total_points[0];
+            self.total_points[1] += other_points.total_points[1];
+            self.num_games += other_points.num_games;
+        }
+    }
+}
+
+impl PointsCollector {
+    fn avg_points(&self, player: usize) -> f64 {
+        if self.num_games == 0 {
+            0.0
+        } else {
+            self.total_points[player] as f64 / self.num_games as f64
+        }
+    }
+}
 
 /// A/B testing tool for comparing different value functions in ExpectiMiniMaxPlayer
 ///
@@ -81,61 +116,7 @@ struct ComparisonConfig<'a> {
     depth: usize,
     num_games: u32,
     seed: Option<u64>,
-}
-
-struct GameStats {
-    wins: [u32; 2],
-    points: [u32; 2],
-    total_games: u32,
-    total_turns: u32,
-}
-
-impl GameStats {
-    fn new() -> Self {
-        Self {
-            wins: [0, 0],
-            points: [0, 0],
-            total_games: 0,
-            total_turns: 0,
-        }
-    }
-
-    fn record_game(&mut self, outcome: GameOutcome, game_points: [u8; 2], turns: u8) {
-        self.total_games += 1;
-        self.total_turns += turns as u32;
-
-        match outcome {
-            GameOutcome::Win(player) => self.wins[player] += 1,
-            GameOutcome::Tie => {} // Don't increment wins for either player
-        }
-
-        self.points[0] += game_points[0] as u32;
-        self.points[1] += game_points[1] as u32;
-    }
-
-    fn win_rate(&self, player: usize) -> f64 {
-        if self.total_games == 0 {
-            0.0
-        } else {
-            self.wins[player] as f64 / self.total_games as f64
-        }
-    }
-
-    fn avg_points(&self, player: usize) -> f64 {
-        if self.total_games == 0 {
-            0.0
-        } else {
-            self.points[player] as f64 / self.total_games as f64
-        }
-    }
-
-    fn avg_game_length(&self) -> f64 {
-        if self.total_games == 0 {
-            0.0
-        } else {
-            self.total_turns as f64 / self.total_games as f64
-        }
-    }
+    parallel: bool,
 }
 
 fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Error>> {
@@ -151,58 +132,53 @@ fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Er
     // Load deck
     let deck = Deck::from_file(config.deck_path)?;
 
-    // Initialize stats
-    let mut stats = GameStats::new();
+    // Create player factory that builds ExpectiMiniMaxPlayers with different value functions
+    let baseline_fn = config.baseline_fn;
+    let test_fn = config.test_fn;
+    let depth = config.depth;
 
-    // Create progress bar
-    let pb = ProgressBar::new(config.num_games as u64);
-    pb.set_style(
-        ProgressStyle::default_bar()
-            .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos}/{len} games ({eta})")
-            .expect("Invalid progress bar template")
-            .progress_chars("=>-"),
-    );
+    let player_factory = move |deck_a: Deck, deck_b: Deck| -> Vec<Box<dyn Player>> {
+        vec![
+            Box::new(ExpectiMiniMaxPlayer {
+                deck: deck_a,
+                max_depth: depth,
+                write_debug_trees: false,
+                value_function: baseline_fn,
+            }),
+            Box::new(ExpectiMiniMaxPlayer {
+                deck: deck_b,
+                max_depth: depth,
+                write_debug_trees: false,
+                value_function: test_fn,
+            }),
+        ]
+    };
 
-    // Get base seed for reproducibility
-    let seed_base = config.seed.unwrap_or_else(|| {
-        let mut rng = StdRng::from_entropy();
-        rng.next_u64()
-    });
+    // Create and run simulation
+    let mut simulation = Simulation::new_with_player_factory(
+        deck.clone(),
+        deck,
+        player_factory,
+        config.num_games,
+        config.seed,
+        config.parallel,
+        None, // use default threads
+    )?
+    .register::<StatsCollector>()
+    .register::<PointsCollector>();
 
-    // Run games sequentially (TODO: parallelize)
-    for i in 0..config.num_games {
-        let game_seed = seed_base.wrapping_add(i as u64);
+    simulation.run();
 
-        // Create fresh players for each game
-        let player_a = Box::new(ExpectiMiniMaxPlayer {
-            deck: deck.clone(),
-            max_depth: config.depth,
-            write_debug_trees: false,
-            value_function: config.baseline_fn,
-        });
+    // Get stats
+    let stats_collector = simulation
+        .get_event_handler::<StatsCollector>()
+        .ok_or("Failed to retrieve StatsCollector")?;
+    let points_collector = simulation
+        .get_event_handler::<PointsCollector>()
+        .ok_or("Failed to retrieve PointsCollector")?;
 
-        let player_b = Box::new(ExpectiMiniMaxPlayer {
-            deck: deck.clone(),
-            max_depth: config.depth,
-            write_debug_trees: false,
-            value_function: config.test_fn,
-        });
+    let summary = stats_collector.compute_stats();
 
-        // Create and play game
-        let players: Vec<Box<dyn deckgym::players::Player>> = vec![player_a, player_b];
-        let mut game = Game::new(players, game_seed);
-
-        if let Some(outcome) = game.play() {
-            let state = game.get_state_clone();
-            stats.record_game(outcome, state.points, state.turn_count);
-        }
-
-        pb.inc(1);
-    }
-
-    pb.finish_with_message("Complete");
-
-    // Print results
     println!("\n{}", "Results:".cyan().bold());
     println!(
         "  Games played: {}",
@@ -210,7 +186,7 @@ fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Er
     );
     println!(
         "  Average game length: {:.1} turns",
-        stats.avg_game_length()
+        summary.avg_turns_per_game
     );
     println!();
 
@@ -222,25 +198,25 @@ fn run_comparison(config: ComparisonConfig) -> Result<(), Box<dyn std::error::Er
     );
     println!(
         "    Wins: {} ({:.1}%)",
-        stats.wins[0].to_formatted_string(&Locale::en),
-        stats.win_rate(0) * 100.0
+        summary.player_a_wins.to_formatted_string(&Locale::en),
+        summary.player_a_win_rate * 100.0
     );
-    println!("    Avg points: {:.2}", stats.avg_points(0));
+    println!("    Avg points: {:.2}", points_collector.avg_points(0));
     println!();
 
     // Player B (test) stats
     println!("  {} ({}):", "Player B".yellow().bold(), config.test_name);
     println!(
         "    Wins: {} ({:.1}%)",
-        stats.wins[1].to_formatted_string(&Locale::en),
-        stats.win_rate(1) * 100.0
+        summary.player_b_wins.to_formatted_string(&Locale::en),
+        summary.player_b_win_rate * 100.0
     );
-    println!("    Avg points: {:.2}", stats.avg_points(1));
+    println!("    Avg points: {:.2}", points_collector.avg_points(1));
     println!();
 
     // Comparison
-    let win_rate_diff = (stats.win_rate(1) - stats.win_rate(0)) * 100.0;
-    let point_diff = stats.avg_points(1) - stats.avg_points(0);
+    let win_rate_diff = (summary.player_b_win_rate - summary.player_a_win_rate) * 100.0;
+    let point_diff = points_collector.avg_points(1) - points_collector.avg_points(0);
 
     println!("{}", "Comparison:".cyan().bold());
     if win_rate_diff > 0.0 {
@@ -324,6 +300,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             depth: args.depth,
             num_games: args.num,
             seed: args.seed,
+            parallel: args.parallel,
         })?;
     } else {
         // Run against top performing variants
@@ -345,6 +322,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 depth: args.depth,
                 num_games: args.num,
                 seed: args.seed,
+                parallel: args.parallel,
             })?;
         }
 
