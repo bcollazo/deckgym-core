@@ -243,11 +243,17 @@ mod tests {
 
         // Debug output
         println!("Old Amber name: {}", played_old_amber.get_name());
-        println!("Old Amber played_this_turn: {}", played_old_amber.played_this_turn);
+        println!(
+            "Old Amber played_this_turn: {}",
+            played_old_amber.played_this_turn
+        );
         if let Card::Pokemon(poke) = &aerodactyl {
             println!("Aerodactyl evolves_from: {:?}", poke.evolves_from);
         }
-        println!("can_evolve_into result: {}", can_evolve_into(&aerodactyl, &played_old_amber));
+        println!(
+            "can_evolve_into result: {}",
+            can_evolve_into(&aerodactyl, &played_old_amber)
+        );
 
         // Generate actions
         let hand_actions = generate_hand_actions(&state);

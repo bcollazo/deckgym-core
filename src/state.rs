@@ -379,8 +379,10 @@ impl State {
                 .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
 
             if let Some(index_of_end_turn) = index_of_end_turn {
-                self.move_generation_stack
-                    .insert(index_of_end_turn + 1, (player_with_empty_active, possible_moves));
+                self.move_generation_stack.insert(
+                    index_of_end_turn + 1,
+                    (player_with_empty_active, possible_moves),
+                );
             } else {
                 self.move_generation_stack
                     .push((player_with_empty_active, possible_moves));
