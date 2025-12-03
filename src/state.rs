@@ -353,9 +353,6 @@ impl State {
     /// Triggers promotion from bench or declares winner if no bench pokemon available.
     /// This should be called when the active spot becomes empty (e.g., after KO or discard).
     pub(crate) fn trigger_promotion_or_declare_winner(&mut self, player_with_empty_active: usize) {
-        use crate::actions::SimpleAction;
-        use log::debug;
-
         let enumerated_bench_pokemon = self
             .enumerate_bench_pokemon(player_with_empty_active)
             .collect::<Vec<_>>();
