@@ -327,10 +327,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         })?;
     } else {
         // Run against top performing variants
-        let variant_names = vec![
-            "hand",
-            "bench_depth",
-        ];
+        let variant_names = vec!["hand", "bench_depth"];
 
         println!(
             "\n{} Running A/B tests against top performing variants...\n",
