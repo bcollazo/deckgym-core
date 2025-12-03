@@ -12,6 +12,10 @@ use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;
 
+// Type alias for value functions
+// Takes a state and player index, returns a score
+pub type ValueFunction = fn(&State, usize) -> f64;
+
 struct DebugStateNode {
     acting_player: usize,
     children: Vec<DebugActionNode>,
@@ -29,6 +33,7 @@ pub struct ExpectiMiniMaxPlayer {
     pub deck: Deck,
     pub max_depth: usize, // max_depth = 1 it should be value function player
     pub write_debug_trees: bool,
+    pub value_function: ValueFunction,
 }
 
 impl Player for ExpectiMiniMaxPlayer {
@@ -54,7 +59,7 @@ impl Player for ExpectiMiniMaxPlayer {
         let mut scores: Vec<f64> = Vec::with_capacity(possible_actions.len());
         for action in possible_actions.iter() {
             let (score, action_node) =
-                expected_value_function(rng, state, action, self.max_depth - 1, myself);
+                expected_value_function(rng, state, action, self.max_depth - 1, myself, self.value_function);
             scores.push(score);
             root.children.push(action_node);
         }
@@ -105,6 +110,7 @@ fn expected_value_function(
     action: &Action,
     depth: usize,
     myself: usize,
+    value_function: ValueFunction,
 ) -> (f64, DebugActionNode) {
     let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
@@ -125,7 +131,7 @@ fn expected_value_function(
         value: 0.0,
     };
     for (prob, outcome) in probabilities.iter().zip(outcomes.iter()) {
-        let (score, mut state_node) = expectiminimax(rng, outcome, depth, myself);
+        let (score, mut state_node) = expectiminimax(rng, outcome, depth, myself, value_function);
         scores.push(score);
         state_node.proba = *prob;
         action_node.children.push(state_node);
@@ -147,6 +153,7 @@ fn expectiminimax(
     state: &State,
     depth: usize,
     myself: usize,
+    value_function: ValueFunction,
 ) -> (f64, DebugStateNode) {
     if state.is_game_over() || depth == 0 {
         let score = value_function(state, myself);
@@ -166,7 +173,7 @@ fn expectiminimax(
         let mut children = vec![];
         for action in actions.iter() {
             let (score, action_node) =
-                expected_value_function(rng, state, action, depth - 1, myself);
+                expected_value_function(rng, state, action, depth - 1, myself, value_function);
             scores.push(score);
             children.push(action_node);
         }
@@ -186,7 +193,7 @@ fn expectiminimax(
         let mut children: Vec<DebugActionNode> = Vec::new();
         for action in actions.iter() {
             let (score, action_node) =
-                expected_value_function(rng, state, action, depth - 1, myself);
+                expected_value_function(rng, state, action, depth - 1, myself, value_function);
             scores.push(score);
             children.push(action_node);
         }
@@ -201,7 +208,7 @@ fn expectiminimax(
     }
 }
 
-fn value_function(state: &State, myself: usize) -> f64 {
+pub fn baseline_value_function(state: &State, myself: usize) -> f64 {
     let opponent = (myself + 1) % 2;
     let active_factor = 2.0; // Weight for active pokemon
 
