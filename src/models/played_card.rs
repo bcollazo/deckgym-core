@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     card_ids::CardId,
     effects::CardEffect,
-    models::{Attack, Card, EnergyType, StatusCondition},
+    models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     tool_ids::ToolId,
     AbilityId, State,
 };
@@ -69,6 +69,14 @@ impl PlayedCard {
         match &self.card {
             Card::Pokemon(pokemon_card) => pokemon_card.name.clone(),
             Card::Trainer(trainer_card) => trainer_card.name.clone(),
+        }
+    }
+
+    /// Returns true if this card is a Fossil trainer card
+    pub(crate) fn is_fossil(&self) -> bool {
+        match &self.card {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
+            _ => false,
         }
     }
 

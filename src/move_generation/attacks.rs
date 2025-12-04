@@ -9,6 +9,11 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
     let mut actions = Vec::new();
     if let Some(active_pokemon) = &state.in_play_pokemon[current_player][0] {
+        // Fossil cards cannot attack
+        if active_pokemon.is_fossil() {
+            return actions;
+        }
+
         // Check if the active Pokémon has the CannotAttack effect
         let active_effects = active_pokemon.get_active_effects();
         let cannot_attack = active_effects

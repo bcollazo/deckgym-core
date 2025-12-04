@@ -12,6 +12,7 @@ pub enum AbilityId {
     A1007Butterfree,
     A1132Gardevoir,
     A1a006SerperiorJungleTotem,
+    A1a046AerodactylExPrimevalLaw,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
     A2092LucarioFightingCoach,
@@ -56,8 +57,11 @@ lazy_static::lazy_static! {
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 046", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A1a 056", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A1a 070", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 078", AbilityId::A1a046AerodactylExPrimevalLaw);
+        m.insert("A1a 084", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 082", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 091", AbilityId::A2a010LeafeonExForestBreath);
@@ -90,6 +94,7 @@ lazy_static::lazy_static! {
         m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 075", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
+        m.insert("A3a 101", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A3b 009", AbilityId::A3b009FlareonExCombust);
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 056", AbilityId::A3b056EeveeExVeeveeVolve);
@@ -127,6 +132,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 155", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A4b 147", AbilityId::A3066OricoricSafeguard);
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
+        m.insert("A4b 197", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);

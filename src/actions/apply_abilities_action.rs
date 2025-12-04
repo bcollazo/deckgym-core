@@ -38,6 +38,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1177Weezing => doutcome(weezing_ability),
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
+        AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),

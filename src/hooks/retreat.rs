@@ -6,13 +6,15 @@ use crate::{
 };
 
 pub(crate) fn can_retreat(state: &State) -> bool {
-    // Get Active card of the current player, check it has no CardEffect::NoRetreat
-    let has_no_retreat = state
-        .get_active(state.current_player)
-        .get_active_effects()
-        .contains(&CardEffect::NoRetreat);
+    let active = state.get_active(state.current_player);
 
-    !state.has_retreated && !has_no_retreat
+    // Check if active card has CardEffect::NoRetreat
+    let has_no_retreat_effect = active.get_active_effects().contains(&CardEffect::NoRetreat);
+
+    // Check if active card is a Fossil (Fossils can never retreat)
+    let is_fossil = active.is_fossil();
+
+    !state.has_retreated && !has_no_retreat_effect && !is_fossil
 }
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {

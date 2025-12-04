@@ -52,6 +52,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Heal { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
+        | SimpleAction::DiscardFossil { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -144,6 +145,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
         }
+        SimpleAction::DiscardFossil { in_play_idx } => {
+            apply_discard_fossil(action.actor, state, *in_play_idx)
+        }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
@@ -223,6 +227,16 @@ fn apply_healing(
     pokemon.heal(amount);
     if cure_status {
         pokemon.cure_status_conditions();
+    }
+}
+
+fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
+    // Discard the fossil from play (handles evolution chain and energies)
+    state.discard_from_play(acting_player, in_play_idx);
+
+    // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(acting_player);
     }
 }
 
