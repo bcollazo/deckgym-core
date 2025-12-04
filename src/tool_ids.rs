@@ -31,6 +31,10 @@ lazy_static::lazy_static! {
         m.insert("A4a 067", ToolId::A4a067InflatableBoat);
         m.insert("A4b 318", ToolId::A4b318ElectricalCord);
         m.insert("A4b 319", ToolId::A4b319ElectricalCord);
+        m.insert("A4b 320", ToolId::A2147GiantCape);
+        m.insert("A4b 321", ToolId::A2147GiantCape);
+        m.insert("A4b 322", ToolId::A2148RockyHelmet);
+        m.insert("A4b 323", ToolId::A2148RockyHelmet);
         m.insert("B1 219", ToolId::B1219HeavyHelmet);
         m
     };

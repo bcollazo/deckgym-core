@@ -85,6 +85,10 @@ pub fn forecast_trainer_action(
         | CardId::A4a067InflatableBoat
         | CardId::A4b318ElectricalCord
         | CardId::A4b319ElectricalCord
+        | CardId::A4b320GiantCape
+        | CardId::A4b321GiantCape
+        | CardId::A4b322RockyHelmet
+        | CardId::A4b323RockyHelmet
         | CardId::B1219HeavyHelmet => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
