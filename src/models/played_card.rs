@@ -126,7 +126,7 @@ impl PlayedCard {
     ///   - 0: only during this turn
     ///   - 1: during opponent's next turn
     ///   - 2: on your next turn
-    pub(crate) fn add_effect(&mut self, effect: CardEffect, duration: u8) {
+    pub fn add_effect(&mut self, effect: CardEffect, duration: u8) {
         self.effects.push((effect, duration));
     }
 
