@@ -347,13 +347,31 @@ fn forecast_effect_attack_by_mechanic(
 }
 
 fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(damage, move |_, state, action| {
+    doutcome_from_mutation(Box::new(move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
-        if state.get_active(opponent).remaining_hp == 0 {
-            let active = state.get_active_mut(action.actor);
-            active.apply_damage(self_damage);
+        let attacking_ref = (action.actor, 0);
+
+        // First, deal damage to opponent's active
+        handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+
+        // Check if opponent's active was knocked out (it will be None if KO'd and discarded)
+        // or if remaining_hp is 0 (before promotion happens)
+        let opponent_ko = state.in_play_pokemon[opponent][0]
+            .as_ref()
+            .is_none_or(|p| p.remaining_hp == 0);
+
+        // If opponent was KO'd, apply recoil damage to self using handle_damage
+        // so that the attacker can also be properly KO'd if needed
+        if opponent_ko {
+            handle_damage(
+                state,
+                attacking_ref,
+                &[(self_damage, action.actor, 0)],
+                false, // Not from active attack (it's self-damage)
+                None,
+            );
         }
-    })
+    }))
 }
 
 fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {

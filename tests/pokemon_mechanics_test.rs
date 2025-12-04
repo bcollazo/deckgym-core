@@ -912,3 +912,207 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
     // The old active (now on bench at position 0 or moved) should have effects cleared
     // Note: In the game, switching clears status effects and card effects
 }
+
+// ============================================================================
+// Rampardos Tests - Head Smash Attack (Recoil if KO)
+// ============================================================================
+
+/// Test Rampardos's Head Smash deals 130 damage without recoil when opponent survives
+#[test]
+fn test_rampardos_head_smash_no_ko_no_recoil() {
+    let rampardos_card = get_card_by_enum(CardId::A2089Rampardos);
+    let opponent_card = get_card_by_enum(CardId::A1001Bulbasaur);
+
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    let test_player = state.current_player;
+    let opponent_player = (test_player + 1) % 2;
+
+    // Set up Rampardos with enough energy for Head Smash (1 Fighting)
+    let rampardos = PlayedCard::new(
+        rampardos_card.clone(),
+        150,
+        150,
+        vec![EnergyType::Fighting],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[test_player][0] = Some(rampardos);
+
+    // Set up opponent with HIGH HP so they survive (more than 130)
+    let opponent_active = PlayedCard::new(opponent_card.clone(), 200, 200, vec![], false, vec![]);
+    state.in_play_pokemon[opponent_player][0] = Some(opponent_active);
+
+    // Clear move generation stack
+    state.move_generation_stack.clear();
+
+    game.set_state(state);
+
+    // Apply Head Smash attack (attack index 0)
+    let attack_action = Action {
+        actor: test_player,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let final_state = game.get_state_clone();
+
+    // Opponent should have 200 - 130 = 70 HP
+    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
+        .as_ref()
+        .unwrap()
+        .remaining_hp;
+    assert_eq!(
+        opponent_hp, 70,
+        "Rampardos's Head Smash should deal 130 damage (200 - 130 = 70)"
+    );
+
+    // Rampardos should have full HP (no recoil since no KO)
+    let rampardos_hp = final_state.in_play_pokemon[test_player][0]
+        .as_ref()
+        .unwrap()
+        .remaining_hp;
+    assert_eq!(
+        rampardos_hp, 150,
+        "Rampardos should take no recoil damage when opponent survives"
+    );
+}
+
+/// Test Rampardos's Head Smash deals 50 recoil damage when opponent is KO'd
+#[test]
+fn test_rampardos_head_smash_ko_with_recoil() {
+    let rampardos_card = get_card_by_enum(CardId::A2089Rampardos);
+    let opponent_card = get_card_by_enum(CardId::A1001Bulbasaur);
+
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    let test_player = state.current_player;
+    let opponent_player = (test_player + 1) % 2;
+
+    // Set up Rampardos with enough energy
+    let rampardos = PlayedCard::new(
+        rampardos_card.clone(),
+        150,
+        150,
+        vec![EnergyType::Fighting],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[test_player][0] = Some(rampardos);
+
+    // Set up opponent with LOW HP so they get KO'd (less than or equal to 130)
+    let opponent_active = PlayedCard::new(opponent_card.clone(), 100, 100, vec![], false, vec![]);
+    state.in_play_pokemon[opponent_player][0] = Some(opponent_active);
+
+    // Set up a bench Pokemon for opponent so game doesn't end
+    let bench_pokemon = PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
+    state.in_play_pokemon[opponent_player][1] = Some(bench_pokemon);
+
+    // Reset points
+    state.points = [0, 0];
+
+    // Clear move generation stack
+    state.move_generation_stack.clear();
+
+    game.set_state(state);
+
+    // Apply Head Smash attack
+    let attack_action = Action {
+        actor: test_player,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let final_state = game.get_state_clone();
+
+    // Opponent's active should be KO'd (removed or replaced by promotion)
+    // Player should have earned 1 point for the KO
+    assert_eq!(
+        final_state.points[test_player], 1,
+        "Player should earn 1 point for KO'ing opponent's Pokemon"
+    );
+
+    // Rampardos should have taken 50 recoil damage (150 - 50 = 100)
+    let rampardos_hp = final_state.in_play_pokemon[test_player][0]
+        .as_ref()
+        .unwrap()
+        .remaining_hp;
+    assert_eq!(
+        rampardos_hp, 100,
+        "Rampardos should take 50 recoil damage after KO'ing opponent (150 - 50 = 100)"
+    );
+}
+
+/// Test Rampardos can KO itself with recoil damage if HP is low enough
+#[test]
+fn test_rampardos_head_smash_self_ko_from_recoil() {
+    let rampardos_card = get_card_by_enum(CardId::A2089Rampardos);
+    let opponent_card = get_card_by_enum(CardId::A1001Bulbasaur);
+
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    let test_player = state.current_player;
+    let opponent_player = (test_player + 1) % 2;
+
+    // Set up Rampardos with LOW HP (less than 50, so recoil will KO it)
+    let rampardos = PlayedCard::new(
+        rampardos_card.clone(),
+        30, // Will die from 50 recoil
+        150,
+        vec![EnergyType::Fighting],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[test_player][0] = Some(rampardos);
+
+    // Set up a bench Pokemon for test player so game doesn't end from self-KO
+    let bench_pokemon = PlayedCard::new(rampardos_card.clone(), 150, 150, vec![], false, vec![]);
+    state.in_play_pokemon[test_player][1] = Some(bench_pokemon);
+
+    // Set up opponent with LOW HP so they get KO'd
+    let opponent_active = PlayedCard::new(opponent_card.clone(), 100, 100, vec![], false, vec![]);
+    state.in_play_pokemon[opponent_player][0] = Some(opponent_active);
+
+    // Set up a bench Pokemon for opponent so game doesn't end
+    let opponent_bench = PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
+    state.in_play_pokemon[opponent_player][1] = Some(opponent_bench);
+
+    // Reset points
+    state.points = [0, 0];
+
+    // Clear move generation stack
+    state.move_generation_stack.clear();
+
+    game.set_state(state);
+
+    // Apply Head Smash attack
+    let attack_action = Action {
+        actor: test_player,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let final_state = game.get_state_clone();
+
+    // Test player should earn 1 point for KO'ing opponent
+    assert_eq!(
+        final_state.points[test_player], 1,
+        "Player should earn 1 point for KO'ing opponent's Pokemon"
+    );
+
+    // Opponent should earn 1 point for Rampardos self-KO from recoil
+    assert_eq!(
+        final_state.points[opponent_player], 1,
+        "Opponent should earn 1 point when Rampardos KO's itself from recoil"
+    );
+
+    // Rampardos should be KO'd (removed from active position)
+    // The bench Pokemon should have been promoted or there's a promotion pending
+    // Since Rampardos was at position 0 and got KO'd, it should be None or promoted
+}
