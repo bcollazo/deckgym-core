@@ -91,9 +91,6 @@ pub enum SimpleAction {
     DiscardOwnCard {
         card: Card,
     },
-    DiscardFossil {
-        in_play_idx: usize,
-    },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
         in_play_idx: usize,
@@ -103,6 +100,10 @@ pub enum SimpleAction {
     ApplyEeveeBagDamageBoost,
     /// Eevee Bag Option 2: Heal all Eevee evolutions
     HealAllEeveeEvolutions,
+    /// Discard a Fossil from play (Fossils can be discarded at any time during your turn)
+    DiscardFossil {
+        in_play_idx: usize,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -188,9 +189,6 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardOwnCard { card } => {
                 write!(f, "DiscardOwnCard({card})")
             }
-            SimpleAction::DiscardFossil { in_play_idx } => {
-                write!(f, "DiscardFossil({in_play_idx})")
-            }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,
                 num_random_energies,
@@ -202,6 +200,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::HealAllEeveeEvolutions => {
                 write!(f, "HealAllEeveeEvolutions")
+            }
+            SimpleAction::DiscardFossil { in_play_idx } => {
+                write!(f, "DiscardFossil({in_play_idx})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

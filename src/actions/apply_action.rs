@@ -15,10 +15,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{
-        forecast_end_turn, handle_damage, trigger_promotion_or_declare_winner, Mutations,
-        Probabilities,
-    },
+    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
     apply_attack_action::forecast_attack,
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
@@ -153,7 +150,7 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             apply_heal_all_eevee_evolutions(action.actor, state)
         }
         SimpleAction::DiscardFossil { in_play_idx } => {
-            apply_discard_fossil(state, action.actor, *in_play_idx)
+            apply_discard_fossil(action.actor, state, *in_play_idx)
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
@@ -221,13 +218,13 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
     state.remove_card_from_hand(actor, card);
 }
 
-fn apply_discard_fossil(state: &mut State, actor: usize, in_play_idx: usize) {
+fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
     // Discard the fossil from play (handles evolution chain and energies)
-    state.discard_from_play(actor, in_play_idx);
+    state.discard_from_play(acting_player, in_play_idx);
 
     // If discarding from active spot, trigger promotion or declare winner
     if in_play_idx == 0 {
-        trigger_promotion_or_declare_winner(state, actor);
+        state.trigger_promotion_or_declare_winner(acting_player);
     }
 }
 

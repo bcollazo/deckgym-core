@@ -5,12 +5,13 @@ use std::fmt::Write;
 use std::vec;
 
 use crate::actions::{forecast_action, Action};
-use crate::hooks::energy_missing;
-use crate::models::EnergyType;
-use crate::models::PlayedCard;
 use crate::{generate_possible_actions, Deck, State};
 
 use super::Player;
+
+// Type alias for value functions
+// Takes a state and player index, returns a score
+pub type ValueFunction = fn(&State, usize) -> f64;
 
 struct DebugStateNode {
     acting_player: usize,
@@ -29,6 +30,7 @@ pub struct ExpectiMiniMaxPlayer {
     pub deck: Deck,
     pub max_depth: usize, // max_depth = 1 it should be value function player
     pub write_debug_trees: bool,
+    pub value_function: ValueFunction,
 }
 
 impl Player for ExpectiMiniMaxPlayer {
@@ -53,8 +55,14 @@ impl Player for ExpectiMiniMaxPlayer {
         log::set_max_level(LevelFilter::Info); // Temporarily silence debug and trace logs
         let mut scores: Vec<f64> = Vec::with_capacity(possible_actions.len());
         for action in possible_actions.iter() {
-            let (score, action_node) =
-                expected_value_function(rng, state, action, self.max_depth - 1, myself);
+            let (score, action_node) = expected_value_function(
+                rng,
+                state,
+                action,
+                self.max_depth - 1,
+                myself,
+                self.value_function,
+            );
             scores.push(score);
             root.children.push(action_node);
         }
@@ -105,6 +113,7 @@ fn expected_value_function(
     action: &Action,
     depth: usize,
     myself: usize,
+    value_function: ValueFunction,
 ) -> (f64, DebugActionNode) {
     let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
@@ -125,7 +134,7 @@ fn expected_value_function(
         value: 0.0,
     };
     for (prob, outcome) in probabilities.iter().zip(outcomes.iter()) {
-        let (score, mut state_node) = expectiminimax(rng, outcome, depth, myself);
+        let (score, mut state_node) = expectiminimax(rng, outcome, depth, myself, value_function);
         scores.push(score);
         state_node.proba = *prob;
         action_node.children.push(state_node);
@@ -147,6 +156,7 @@ fn expectiminimax(
     state: &State,
     depth: usize,
     myself: usize,
+    value_function: ValueFunction,
 ) -> (f64, DebugStateNode) {
     if state.is_game_over() || depth == 0 {
         let score = value_function(state, myself);
@@ -166,7 +176,7 @@ fn expectiminimax(
         let mut children = vec![];
         for action in actions.iter() {
             let (score, action_node) =
-                expected_value_function(rng, state, action, depth - 1, myself);
+                expected_value_function(rng, state, action, depth - 1, myself, value_function);
             scores.push(score);
             children.push(action_node);
         }
@@ -186,7 +196,7 @@ fn expectiminimax(
         let mut children: Vec<DebugActionNode> = Vec::new();
         for action in actions.iter() {
             let (score, action_node) =
-                expected_value_function(rng, state, action, depth - 1, myself);
+                expected_value_function(rng, state, action, depth - 1, myself, value_function);
             scores.push(score);
             children.push(action_node);
         }
@@ -201,72 +211,10 @@ fn expectiminimax(
     }
 }
 
-fn value_function(state: &State, myself: usize) -> f64 {
-    let opponent = (myself + 1) % 2;
-    let active_factor = 2.0; // Weight for active pokemon
-
-    // Points
-    let points = state.points[myself] as f64;
-    let opponent_points = state.points[opponent] as f64;
-
-    // HP * Energy for my pokemon
-    let my_value = state
-        .enumerate_in_play_pokemon(myself)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // HP * Energy for opponent's pokemon
-    let opponent_value = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // Hand size advantage
-    let hand_size = state.hands[myself].len() as f64;
-    let opponent_hand_size = state.hands[opponent].len() as f64;
-
-    let score = (points - opponent_points) * 1000000.0
-        + (my_value - opponent_value)
-        + (hand_size - opponent_hand_size) * 1.0;
-    trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size})");
-    score
-}
-
 impl Debug for ExpectiMiniMaxPlayer {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "ExpectiMiniMaxPlayer")
     }
-}
-
-fn get_relevant_energy(state: &State, player: usize, card: &PlayedCard) -> f64 {
-    let most_expensive_attack_cost: Vec<EnergyType> = card
-        .card
-        .get_attacks()
-        .iter()
-        .map(|atk| atk.energy_required.clone())
-        .max()
-        .unwrap_or_default();
-
-    let missing = energy_missing(card, &most_expensive_attack_cost, state, player);
-
-    let total = most_expensive_attack_cost.len() as f64;
-    total - missing.len() as f64
 }
 
 fn save_tree_as_dot(

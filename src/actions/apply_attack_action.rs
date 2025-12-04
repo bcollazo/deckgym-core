@@ -492,7 +492,7 @@ fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
     let targets: Vec<(u32, usize)> = state
-        .enumerate_in_play_pokemon((state.current_player + 1) % 2)
+        .enumerate_bench_pokemon((state.current_player + 1) % 2)
         .map(|(idx, _)| (20, idx))
         .chain(std::iter::once((150, 0))) // Add active Pokémon directly
         .collect();

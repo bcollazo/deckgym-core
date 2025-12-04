@@ -62,7 +62,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::AttachFromDiscard { .. } => 10,
         SimpleAction::ApplyEeveeBagDamageBoost => 5,
         SimpleAction::HealAllEeveeEvolutions => 5,
-        SimpleAction::DiscardFossil { .. } => 0,
-        SimpleAction::Noop => 0, // No operation has no weight
+        SimpleAction::DiscardFossil { .. } => 1, // Low weight to discard fossils
+        SimpleAction::Noop => 0,                 // No operation has no weight
     }
 }
