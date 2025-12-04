@@ -194,7 +194,8 @@ fn run_comparison(config: ComparisonConfig) -> Result<Vec<DeckStats>, Box<dyn st
 fn print_deck_summary(_deck_name: &str, summary: &ComputedStats) {
     let win_rate_diff = (summary.player_b_win_rate - summary.player_a_win_rate) * 100.0;
 
-    println!("  {} vs {} vs {}",
+    println!(
+        "  {} vs {} vs {}",
         format!("{:.1}%", summary.player_a_win_rate * 100.0).green(),
         format!("{:.1}%", summary.tie_rate * 100.0).white(),
         format!("{:.1}%", summary.player_b_win_rate * 100.0).yellow(),

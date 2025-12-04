@@ -104,9 +104,8 @@ pub fn variant_value_function(state: &State, myself: usize) -> f64 {
     let opponent_deck_size = state.decks[opponent].cards.len() as f64;
     let deck_advantage = (opponent_deck_size - my_deck_size) * 0.5;
 
-    let score = (points - opponent_points) * 1000000.0
-        + (my_value - opponent_value)
-        + deck_advantage;
+    let score =
+        (points - opponent_points) * 1000000.0 + (my_value - opponent_value) + deck_advantage;
     trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value})");
     score
 }
