@@ -354,6 +354,22 @@ impl State {
             }
         }
     }
+
+    // =========================================================================
+    // Test Helper Methods
+    // These methods are public for integration tests but should be used carefully
+    // =========================================================================
+
+    /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.
+    /// Used for testing Marshadow's Revenge attack and similar mechanics.
+    pub fn set_knocked_out_by_opponent_attack_last_turn(&mut self, value: bool) {
+        self.knocked_out_by_opponent_attack_last_turn = value;
+    }
+
+    /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
+    pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
+        self.knocked_out_by_opponent_attack_last_turn
+    }
 }
 
 fn format_cards(played_cards: &[Option<PlayedCard>]) -> Vec<String> {
