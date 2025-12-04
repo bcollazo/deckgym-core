@@ -316,7 +316,7 @@ pub fn create_progress_bar(total: u64) -> ProgressBar {
 }
 
 /// Print simulation statistics to the console
-fn print_stats(stats: &crate::simulation_event_handler::ComputedStats) {
+pub fn print_stats(stats: &crate::simulation_event_handler::ComputedStats) {
     warn!(
         "Ran {} simulations in {} ({} per game)!",
         stats.num_games.to_formatted_string(&Locale::en),
