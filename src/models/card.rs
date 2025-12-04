@@ -141,10 +141,10 @@ impl Card {
         }
     }
 
-    pub(crate) fn get_attacks(&self) -> &Vec<Attack> {
+    pub(crate) fn get_attacks(&self) -> Vec<Attack> {
         match self {
-            Card::Pokemon(pokemon_card) => &pokemon_card.attacks,
-            _ => panic!("Unsupported playable card type"),
+            Card::Pokemon(pokemon_card) => pokemon_card.attacks.clone(),
+            _ => vec![],
         }
     }
 
