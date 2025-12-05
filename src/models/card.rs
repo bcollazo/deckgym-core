@@ -209,6 +209,13 @@ impl Card {
         }
     }
 
+    pub fn is_fossil(&self) -> bool {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
+            _ => false,
+        }
+    }
+
     pub fn as_trainer(&self) -> TrainerCard {
         match self {
             Card::Trainer(trainer_card) => trainer_card.clone(),
