@@ -148,6 +148,13 @@ impl Card {
         }
     }
 
+    pub fn get_retreat_cost(&self) -> &Vec<EnergyType> {
+        match self {
+            Card::Pokemon(pokemon_card) => &pokemon_card.retreat_cost,
+            _ => panic!("Unsupported playable card type"),
+        }
+    }
+
     pub(crate) fn is_ex(&self) -> bool {
         // A pokemon is EX if after splitting by spaces in the name, the last word is "EX"
         match self {

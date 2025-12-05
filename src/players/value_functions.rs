@@ -18,7 +18,7 @@ pub fn baseline_value_function(state: &State, myself: usize) -> f64 {
     let score = (my.points - opp.points) * 1000000.0
         + (my.pokemon_value - opp.pokemon_value) * 1.0
         + (my.hand_size - opp.hand_size) * 1.0
-        + (opp.deck_size - my.deck_size) * 0.5;
+        + (opp.deck_size - my.deck_size) * 1.0;
     trace!("baseline_value_function: {score} (my: {my:?}, opp: {opp:?})");
     score
 }
@@ -33,7 +33,8 @@ pub fn variant_value_function(state: &State, myself: usize) -> f64 {
     let score = (my.points - opp.points) * 1000000.0
         + (my.pokemon_value - opp.pokemon_value) * 1.0
         + (my.hand_size - opp.hand_size) * 1.0
-        + (opp.deck_size - my.deck_size) * 0.5;
+        + (opp.deck_size - my.deck_size) * 1.0
+        - my.active_retreat_cost * 1.0;
     trace!("variant_value_function: {score} (my: {my:?}, opp: {opp:?})");
     score
 }
@@ -45,6 +46,7 @@ struct Features {
     pokemon_value: f64,
     hand_size: f64,
     deck_size: f64,
+    active_retreat_cost: f64,
 }
 
 /// Extract features for a single player
@@ -53,13 +55,22 @@ fn extract_features(state: &State, player: usize, active_factor: f64) -> Feature
     let pokemon_value = calculate_pokemon_value(state, player, active_factor);
     let hand_size = state.hands[player].len() as f64;
     let deck_size = state.decks[player].cards.len() as f64;
+    let active_retreat_cost = get_active_retreat_cost(state, player) as f64;
 
     Features {
         points,
         pokemon_value,
         hand_size,
         deck_size,
+        active_retreat_cost,
     }
+}
+
+fn get_active_retreat_cost(state: &State, player: usize) -> usize {
+    state
+        .maybe_get_active(player)
+        .map(|card| card.card.get_retreat_cost().len())
+        .unwrap_or(0)
 }
 
 /// Calculate total pokemon value (HP * Energy) for a player
