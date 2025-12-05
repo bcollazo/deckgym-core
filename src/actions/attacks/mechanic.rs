@@ -119,4 +119,5 @@ pub enum Mechanic {
     RecoilIfKo {
         self_damage: u32,
     },
+    ShuffleOpponentActiveIntoDeck,
 }

@@ -343,6 +343,7 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
+        Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
     }
 }
 
@@ -1455,6 +1456,41 @@ fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mu
             }
         })
     }
+}
+
+/// For Aerodactyl's Primal Wingbeat: Flip a coin. If heads, opponent shuffles their Active Pokémon into their deck.
+fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
+    let probabilities = vec![0.5, 0.5]; // 50% heads (shuffle), 50% tails (nothing)
+    let mutations: Mutations = vec![
+        // Heads: shuffle opponent's active into deck
+        active_damage_effect_mutation(0, move |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+
+            // Get the active Pokemon
+            let active_pokemon = state.in_play_pokemon[opponent][0]
+                .take()
+                .expect("Active Pokemon should be there");
+
+            // Put the card (and evolution chain) back into deck
+            let mut cards_to_shuffle = active_pokemon.cards_behind.clone();
+            cards_to_shuffle.push(active_pokemon.card.clone());
+
+            // Add cards to deck
+            state.decks[opponent].cards.extend(cards_to_shuffle);
+
+            // Put energies back into discard pile
+            state.discard_energies[opponent].extend(active_pokemon.attached_energy.iter().cloned());
+
+            // Shuffle the deck
+            state.decks[opponent].shuffle(false, rng);
+
+            // Trigger promotion from bench (or declare winner if no bench)
+            state.trigger_promotion_or_declare_winner(opponent);
+        }),
+        // Tails: just do nothing
+        active_damage_mutation(0),
+    ];
+    (probabilities, mutations)
 }
 
 fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
