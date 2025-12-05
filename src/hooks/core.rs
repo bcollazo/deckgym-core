@@ -359,7 +359,10 @@ fn get_increased_turn_effect_modifiers(
                 pokemon_names,
             } => {
                 let attacker_name = attacking_pokemon.get_name();
-                if pokemon_names.iter().any(|name| name.as_str() == attacker_name) {
+                if pokemon_names
+                    .iter()
+                    .any(|name| name.as_str() == attacker_name)
+                {
                     *amount
                 } else {
                     0
@@ -479,7 +482,11 @@ pub(crate) fn modify_damage(
     }
 
     // Check for PreventAllDamageAndEffects (Shinx's Hide)
-    if receiving_pokemon.get_active_effects().iter().any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects)) {
+    if receiving_pokemon
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
+    {
         debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
         return 0;
     }

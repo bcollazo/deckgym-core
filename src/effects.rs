@@ -15,10 +15,18 @@ pub enum CardEffect {
 pub enum TurnEffect {
     NoSupportCards,
     NoItemCards,
-    ReducedRetreatCost { amount: u8 },
-    IncreasedDamage { amount: u32 },
-    IncreasedDamageAgainstEx { amount: u32 },
-    IncreasedDamageForEeveeEvolutions { amount: u32 },
+    ReducedRetreatCost {
+        amount: u8,
+    },
+    IncreasedDamage {
+        amount: u32,
+    },
+    IncreasedDamageAgainstEx {
+        amount: u32,
+    },
+    IncreasedDamageForEeveeEvolutions {
+        amount: u32,
+    },
     IncreasedDamageForSpecificPokemon {
         amount: u32,
         pokemon_names: Vec<String>,
