@@ -36,11 +36,16 @@ pub(crate) fn forecast_ability(
             panic!("Shadowy Spellbind is a passive ability")
         }
         AbilityId::A1177Weezing => doutcome(weezing_ability),
+        AbilityId::A1188PidgeotDriveOff => doutcome(pidgeot_drive_off),
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2072DusknoirShadowVoid => {
+            doutcome_from_mutation(dusknoir_shadow_void(in_play_idx))
+        }
+        AbilityId::A2078GiratinaLevitate => panic!("Levitate is a passive ability"),
         AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),
         AbilityId::A2110DarkraiExNightmareAura => panic!("Darkrai ex's ability is passive"),
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => {
@@ -80,9 +85,14 @@ pub(crate) fn forecast_ability(
         AbilityId::B1157HydreigonRoarInUnison => {
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
         }
+        AbilityId::B1172AegislashCursedMetal => panic!("Cursed Metal is a passive ability"),
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
-        AbilityId::PA037CresseliaExLunarPlumage => panic!("Lunar Plumage is a passive ability"),
-        AbilityId::A1061PoliwrathCounterattack => panic!("Counterattack is a passive ability"),
+        AbilityId::PA037CresseliaExLunarPlumage => {
+            panic!("Lunar Plumage is a passive ability")
+        }
+        AbilityId::A1061PoliwrathCounterattack => {
+            panic!("Counterattack is a passive ability")
+        }
     }
 }
 
@@ -101,6 +111,20 @@ fn weezing_ability(_: &mut StdRng, state: &mut State, action: &Action) {
         .as_mut()
         .expect("Opponent should have active pokemon");
     opponent_active.poisoned = true;
+}
+
+fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    debug!("Pidgeot's Drive Off: Forcing opponent to switch active");
+    let opponent = (action.actor + 1) % 2;
+    let mut choices = Vec::new();
+    for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
+        choices.push(SimpleAction::Activate { in_play_idx });
+    }
+    if choices.is_empty() {
+        return; // No benched pokemon to switch with
+    }
+    state.move_generation_stack.push((opponent, choices));
 }
 
 fn gardevoir_ability(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -224,6 +248,23 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
         state
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::EndTurn]));
+    })
+}
+
+fn dusknoir_shadow_void(dusknoir_idx: usize) -> Mutation {
+    Box::new(move |_, state, action| {
+        let choices: Vec<SimpleAction> = state
+            .enumerate_in_play_pokemon(action.actor)
+            .filter(|(i, p)| p.is_damaged() && *i != dusknoir_idx)
+            .map(|(i, _)| SimpleAction::MoveAllDamage {
+                from: i,
+                to: dusknoir_idx,
+            })
+            .collect();
+
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
     })
 }
 

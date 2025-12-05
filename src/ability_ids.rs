@@ -9,12 +9,15 @@ pub enum AbilityId {
     A1098MagnetonVoltCharge,
     A1123GengarExShadowySpellbind,
     A1177Weezing,
+    A1188PidgeotDriveOff,
     A1007Butterfree,
     A1132Gardevoir,
     A1a006SerperiorJungleTotem,
     A1a046AerodactylExPrimevalLaw,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2072DusknoirShadowVoid,
+    A2078GiratinaLevitate,
     A2092LucarioFightingCoach,
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
@@ -38,6 +41,7 @@ pub enum AbilityId {
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
+    B1172AegislashCursedMetal,
     B1177GoomyStickyMembrane,
     PA037CresseliaExLunarPlumage,
 }
@@ -53,6 +57,8 @@ lazy_static::lazy_static! {
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 123", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 177", AbilityId::A1177Weezing);
+        m.insert("A1 188", AbilityId::A1188PidgeotDriveOff);
+        m.insert("A1 245", AbilityId::A1188PidgeotDriveOff);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
@@ -69,6 +75,9 @@ lazy_static::lazy_static! {
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 072", AbilityId::A2072DusknoirShadowVoid);
+        m.insert("A2 078", AbilityId::A2078GiratinaLevitate);
+        m.insert("A2 167", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
@@ -137,6 +146,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 288", AbilityId::A3b057SnorlaxExFullMouthManner);
@@ -147,6 +158,7 @@ lazy_static::lazy_static! {
         m.insert("B1 073", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
+        m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);

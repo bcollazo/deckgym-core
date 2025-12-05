@@ -50,6 +50,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
@@ -141,6 +142,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             amount,
             cure_status,
         } => apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status),
+        SimpleAction::MoveAllDamage { from, to } => {
+            apply_move_all_damage(action.actor, state, *from, *to)
+        }
         SimpleAction::ApplyEeveeBagDamageBoost => apply_eevee_bag_damage_boost(state),
         SimpleAction::HealAllEeveeEvolutions => {
             apply_heal_all_eevee_evolutions(action.actor, state)
@@ -214,6 +218,16 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
     state.remove_card_from_hand(actor, card);
 }
 
+fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
+    // Discard the fossil from play (handles evolution chain and energies)
+    state.discard_from_play(acting_player, in_play_idx);
+
+    // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(acting_player);
+    }
+}
+
 fn apply_healing(
     acting_player: usize,
     state: &mut State,
@@ -230,13 +244,24 @@ fn apply_healing(
     }
 }
 
-fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
-    // Discard the fossil from play (handles evolution chain and energies)
-    state.discard_from_play(acting_player, in_play_idx);
+fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize) {
+    let damage_to_move = {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_ref()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.total_hp - from_pokemon.remaining_hp
+    };
 
-    // If discarding from active spot, trigger promotion or declare winner
-    if in_play_idx == 0 {
-        state.trigger_promotion_or_declare_winner(acting_player);
+    if damage_to_move > 0 {
+        let from_pokemon = state.in_play_pokemon[actor][from]
+            .as_mut()
+            .expect("Pokemon to move damage from should be there");
+        from_pokemon.heal(damage_to_move);
+
+        // Use handle_damage to ensure KO checks and other effects are triggered
+        let targets = vec![(damage_to_move, actor, to)];
+        // Attacking ref is (actor, from) as the source of the damage move
+        handle_damage(state, (actor, from), &targets, false, None);
     }
 }
 

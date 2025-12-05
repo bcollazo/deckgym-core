@@ -277,15 +277,20 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
-            damage_and_turn_effect_attack(attack.fixed_damage, *effect, *duration)
+            damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
         }
         Mechanic::DamageAndCardEffect {
             opponent,
             effect,
             duration,
-        } => {
-            damage_and_card_effect_attack(attack.fixed_damage, *opponent, effect.clone(), *duration)
-        }
+            probability,
+        } => damage_and_card_effect_attack(
+            attack.fixed_damage,
+            *opponent,
+            effect.clone(),
+            *duration,
+            *probability,
+        ),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
@@ -305,6 +310,10 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             opponent,
         } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
+        Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
+        Mechanic::ExtraDamageEqualToSelfDamage => {
+            extra_damage_equal_to_self_damage(state, attack.fixed_damage)
+        }
         Mechanic::BenchCountDamage {
             include_fixed_damage,
             damage_per,
@@ -325,7 +334,44 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::DiscardRandomGlobalEnergy => {
+            discard_random_global_energy_attack(attack.fixed_damage, state)
+        }
+        Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
+            extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
+        }
+        Mechanic::RecoilIfKo { self_damage } => {
+            recoil_if_ko_attack(attack.fixed_damage, *self_damage)
+        }
     }
+}
+
+fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let attacking_ref = (action.actor, 0);
+
+        // First, deal damage to opponent's active
+        handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+
+        // Check if opponent's active was knocked out (it will be None if KO'd and discarded)
+        // or if remaining_hp is 0 (before promotion happens)
+        let opponent_ko = state.in_play_pokemon[opponent][0]
+            .as_ref()
+            .is_none_or(|p| p.remaining_hp == 0);
+
+        // If opponent was KO'd, apply recoil damage to self using handle_damage
+        // so that the attacker can also be properly KO'd if needed
+        if opponent_ko {
+            handle_damage(
+                state,
+                attacking_ref,
+                &[(self_damage, action.actor, 0)],
+                false, // Not from active attack (it's self-damage)
+                None,
+            );
+        }
+    }))
 }
 
 fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {
@@ -1003,8 +1049,9 @@ fn damage_and_turn_effect_attack(
     effect: TurnEffect,
     effect_duration: u8,
 ) -> (Probabilities, Mutations) {
+    let effect_clone = effect.clone();
     active_damage_effect_doutcome(damage, move |_, state, _| {
-        state.add_turn_effect(effect, effect_duration);
+        state.add_turn_effect(effect_clone.clone(), effect_duration);
     })
 }
 
@@ -1013,18 +1060,41 @@ fn damage_and_card_effect_attack(
     opponent: bool,
     effect: CardEffect,
     effect_duration: u8,
+    probability: Option<f32>,
 ) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(damage, move |_, state, action| {
-        let player = if opponent {
-            (action.actor + 1) % 2
-        } else {
-            action.actor
-        };
-        // Are we sure pokemon is there? What if knocked out?
-        state
-            .get_active_mut(player)
-            .add_effect(effect.clone(), effect_duration);
-    })
+    match probability {
+        None => {
+            // 100% chance - always apply effect
+            active_damage_effect_doutcome(damage, move |_, state, action| {
+                let player = if opponent {
+                    (action.actor + 1) % 2
+                } else {
+                    action.actor
+                };
+                state
+                    .get_active_mut(player)
+                    .add_effect(effect.clone(), effect_duration);
+            })
+        }
+        Some(prob) => {
+            // Coin flip probability
+            let probabilities = vec![prob as f64, 1.0 - prob as f64];
+            let mutations: Mutations = vec![
+                active_damage_effect_mutation(damage, move |_, state, action| {
+                    let player = if opponent {
+                        (action.actor + 1) % 2
+                    } else {
+                        action.actor
+                    };
+                    state
+                        .get_active_mut(player)
+                        .add_effect(effect.clone(), effect_duration);
+                }),
+                active_damage_mutation(damage),
+            ];
+            (probabilities, mutations)
+        }
+    }
 }
 
 /// Discard all energy from this Pokemon
@@ -1052,6 +1122,56 @@ fn discard_all_energy_of_type_attack(
 
         // Use the state method to properly discard energies
         state.discard_from_active(action.actor, &to_discard);
+    })
+}
+
+fn discard_random_global_energy_attack(
+    fixed_damage: u32,
+    _state: &State,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(fixed_damage, move |rng, state, _action| {
+        let mut pokemon_with_energy: Vec<(usize, usize, usize)> = Vec::new();
+
+        // Collect all Pokémon in play (yours and opponent's) that have energy attached
+        // Store (player_idx, in_play_idx, energy_count) for weighted selection
+        for player_idx in 0..2 {
+            for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
+                let energy_count = pokemon.attached_energy.len();
+                if energy_count > 0 {
+                    pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
+                }
+            }
+        }
+
+        if pokemon_with_energy.is_empty() {
+            return; // No Pokémon with energy to discard from
+        }
+
+        // Weight selection by energy count: a Pokemon with 9 energies should be
+        // hit 9x more often than one with 1 energy
+        let total_energy: usize = pokemon_with_energy.iter().map(|(_, _, e)| e).sum();
+        let mut roll = rng.gen_range(0..total_energy);
+        let mut selected_player_idx = 0;
+        let mut selected_in_play_idx = 0;
+        for (player_idx, in_play_idx, energy_count) in &pokemon_with_energy {
+            if roll < *energy_count {
+                selected_player_idx = *player_idx;
+                selected_in_play_idx = *in_play_idx;
+                break;
+            }
+            roll -= energy_count;
+        }
+
+        let pokemon = state.in_play_pokemon[selected_player_idx][selected_in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there");
+
+        // Discard one random energy from the selected Pokémon
+        let energy_count = pokemon.attached_energy.len();
+        if energy_count > 0 {
+            let rand_idx = rng.gen_range(0..energy_count);
+            pokemon.attached_energy.remove(rand_idx);
+        }
     })
 }
 
@@ -1099,6 +1219,21 @@ fn extra_damage_if_hurt(
     } else {
         active_damage_doutcome(base)
     }
+}
+
+fn damage_equal_to_self_damage(state: &State) -> (Probabilities, Mutations) {
+    let attacker = state.get_active(state.current_player);
+    let damage = attacker.total_hp - attacker.remaining_hp;
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_equal_to_self_damage(
+    state: &State,
+    base_damage: u32,
+) -> (Probabilities, Mutations) {
+    let attacker = state.get_active(state.current_player);
+    let self_damage = attacker.total_hp - attacker.remaining_hp;
+    active_damage_doutcome(base_damage + self_damage)
 }
 
 fn extra_damage_per_energy(
@@ -1156,6 +1291,19 @@ fn extra_damage_if_tool_attached(
 ) -> (Probabilities, Mutations) {
     let active = state.get_active(state.current_player);
     let damage = if active.has_tool_attached() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_knocked_out_last_turn_attack(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let damage = if state.knocked_out_by_opponent_attack_last_turn {
         base_damage + extra_damage
     } else {
         base_damage

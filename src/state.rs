@@ -40,6 +40,8 @@ pub struct State {
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
     pub(crate) has_retreated: bool,
+    pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
+    pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -60,6 +62,9 @@ impl State {
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
             has_played_support: false,
             has_retreated: false,
+
+            knocked_out_by_opponent_attack_this_turn: false,
+            knocked_out_by_opponent_attack_last_turn: false,
             turn_effects: BTreeMap::new(),
         }
     }
@@ -210,7 +215,7 @@ impl State {
             self.turn_effects
                 .entry(target_turn)
                 .or_default()
-                .push(effect);
+                .push(effect.clone());
             trace!(
                 "Adding effect {:?} for {} turns, current turn: {}, target turn: {}",
                 effect,
@@ -388,6 +393,22 @@ impl State {
                     .push((player_with_empty_active, possible_moves));
             }
         }
+    }
+
+    // =========================================================================
+    // Test Helper Methods
+    // These methods are public for integration tests but should be used carefully
+    // =========================================================================
+
+    /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.
+    /// Used for testing Marshadow's Revenge attack and similar mechanics.
+    pub fn set_knocked_out_by_opponent_attack_last_turn(&mut self, value: bool) {
+        self.knocked_out_by_opponent_attack_last_turn = value;
+    }
+
+    /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
+    pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
+        self.knocked_out_by_opponent_attack_last_turn
     }
 }
 

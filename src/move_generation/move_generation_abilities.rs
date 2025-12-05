@@ -9,11 +9,17 @@ use crate::{
 // Use the new function in the filter method
 pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
-    state
-        .enumerate_in_play_pokemon(current_player)
-        .filter(|(in_play_index, card)| can_use_ability(state, (*in_play_index, *card)))
-        .map(|(in_play_idx, _)| SimpleAction::UseAbility { in_play_idx })
-        .collect()
+    let mut actions = vec![];
+
+    for (in_play_idx, card) in state.enumerate_in_play_pokemon(current_player) {
+        if card.card.is_fossil() {
+            actions.push(SimpleAction::DiscardFossil { in_play_idx });
+        } else if can_use_ability(state, (in_play_idx, card)) {
+            actions.push(SimpleAction::UseAbility { in_play_idx });
+        }
+    }
+
+    actions
 }
 
 fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -> bool {
@@ -35,11 +41,14 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1123GengarExShadowySpellbind => false,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
+        AbilityId::A1188PidgeotDriveOff => can_use_pidgeot_drive_off(state, card),
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A2a071Arceus => false,
+        AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
+        AbilityId::A2078GiratinaLevitate => false, // Passive ability
         AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
         AbilityId::A2110DarkraiExNightmareAura => false,
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
@@ -68,6 +77,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
+        AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
         AbilityId::B1177GoomyStickyMembrane => false,
         AbilityId::PA037CresseliaExLunarPlumage => false,
         AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks
@@ -99,4 +109,19 @@ fn can_use_greninja_shifting_stream(state: &State, card: &PlayedCard) -> bool {
         .enumerate_bench_pokemon(state.current_player)
         .next()
         .is_some()
+}
+
+fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    // Opponent must have a benched Pokémon to switch to
+    let opponent = (state.current_player + 1) % 2;
+    state.enumerate_bench_pokemon(opponent).next().is_some()
+}
+
+fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(i, p)| p.is_damaged() && i != dusknoir_idx)
 }
