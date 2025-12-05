@@ -11,103 +11,71 @@ use crate::State;
 
 pub fn baseline_value_function(state: &State, myself: usize) -> f64 {
     let opponent = (myself + 1) % 2;
-    let active_factor = 2.0; // Weight for active pokemon
-
-    // Points
-    let points = state.points[myself] as f64;
-    let opponent_points = state.points[opponent] as f64;
-
-    // HP * Energy for my pokemon
-    let my_value = state
-        .enumerate_in_play_pokemon(myself)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // HP * Energy for opponent's pokemon
-    let opponent_value = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // Hand size advantage
-    let hand_size = state.hands[myself].len() as f64;
-    let opponent_hand_size = state.hands[opponent].len() as f64;
-
-    // Deck size advantage (more cards left in deck = worse)
-    let my_deck_size = state.decks[myself].cards.len() as f64;
-    let opponent_deck_size = state.decks[opponent].cards.len() as f64;
-    let deck_advantage = (opponent_deck_size - my_deck_size) * 0.5;
-
-    let score = (points - opponent_points) * 1000000.0
-        + (my_value - opponent_value)
-        + (hand_size - opponent_hand_size) * 1.0
-        + deck_advantage;
-    trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value}, hand_size: {hand_size}, opponent_hand_size: {opponent_hand_size})");
+    let (my, opp) = (
+        extract_features(state, myself, 2.0),
+        extract_features(state, opponent, 2.0),
+    );
+    let score = (my.points - opp.points) * 1000000.0
+        + (my.pokemon_value - opp.pokemon_value) * 1.0
+        + (my.hand_size - opp.hand_size) * 1.0
+        + (opp.deck_size - my.deck_size) * 0.5;
+    trace!("baseline_value_function: {score} (my: {my:?}, opp: {opp:?})");
     score
 }
 
 /// A variant of the baseline value function
 pub fn variant_value_function(state: &State, myself: usize) -> f64 {
     let opponent = (myself + 1) % 2;
-    let active_factor = 2.0; // Weight for active pokemon
-
-    // Points
-    let points = state.points[myself] as f64;
-    let opponent_points = state.points[opponent] as f64;
-
-    // HP * Energy for my pokemon
-    let my_value = state
-        .enumerate_in_play_pokemon(myself)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // HP * Energy for opponent's pokemon
-    let opponent_value = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(pos, card)| {
-            let relevant_energy = get_relevant_energy(state, opponent, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
-            if pos == 0 {
-                hp_energy_product * active_factor
-            } else {
-                hp_energy_product
-            }
-        })
-        .sum::<f64>();
-
-    // Deck size advantage (more cards left in deck = worse)
-    let my_deck_size = state.decks[myself].cards.len() as f64;
-    let opponent_deck_size = state.decks[opponent].cards.len() as f64;
-    let deck_advantage = (opponent_deck_size - my_deck_size) * 0.5;
-
-    let score =
-        (points - opponent_points) * 1000000.0 + (my_value - opponent_value) + deck_advantage;
-    trace!("ValueFunction: {score} (points: {points}, opponent_points: {opponent_points}, my_value: {my_value}, opponent_value: {opponent_value})");
+    let (my, opp) = (
+        extract_features(state, myself, 2.0),
+        extract_features(state, opponent, 2.0),
+    );
+    let score = (my.points - opp.points) * 1000000.0
+        + (my.pokemon_value - opp.pokemon_value) * 1.0
+        + (my.hand_size - opp.hand_size) * 1.0
+        + (opp.deck_size - my.deck_size) * 0.5;
+    trace!("variant_value_function: {score} (my: {my:?}, opp: {opp:?})");
     score
+}
+
+/// Features extracted from a player's game state
+#[derive(Debug)]
+struct Features {
+    points: f64,
+    pokemon_value: f64,
+    hand_size: f64,
+    deck_size: f64,
+}
+
+/// Extract features for a single player
+fn extract_features(state: &State, player: usize, active_factor: f64) -> Features {
+    let points = state.points[player] as f64;
+    let pokemon_value = calculate_pokemon_value(state, player, active_factor);
+    let hand_size = state.hands[player].len() as f64;
+    let deck_size = state.decks[player].cards.len() as f64;
+
+    Features {
+        points,
+        pokemon_value,
+        hand_size,
+        deck_size,
+    }
+}
+
+/// Calculate total pokemon value (HP * Energy) for a player
+fn calculate_pokemon_value(state: &State, player: usize, active_factor: f64) -> f64 {
+    state
+        .enumerate_in_play_pokemon(player)
+        .map(|(pos, card)| {
+            let relevant_energy = get_relevant_energy(state, player, card);
+            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
+            if pos == 0 {
+                hp_energy_product * active_factor
+            } else {
+                hp_energy_product
+            }
+        })
+        .sum()
 }
 
 /// Helper function to calculate relevant energy for a Pokemon
