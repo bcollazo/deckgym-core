@@ -144,14 +144,7 @@ fn test_dusknoir_shadow_void_move_damage() {
     let test_player = state.current_player;
 
     // Set up Dusknoir on bench (position 1) with full HP
-    let dusknoir = PlayedCard::new(
-        dusknoir_card.clone(),
-        130,
-        130,
-        vec![],
-        false,
-        vec![],
-    );
+    let dusknoir = PlayedCard::new(dusknoir_card.clone(), 130, 130, vec![], false, vec![]);
     state.in_play_pokemon[test_player][1] = Some(dusknoir);
 
     // Set up Bulbasaur in active (position 0) with damage (40 damage taken, 30 HP remaining)
@@ -302,14 +295,7 @@ fn test_dusknoir_shadow_void_multiple_uses() {
     let test_player = state.current_player;
 
     // Set up Dusknoir on bench with lots of HP
-    let dusknoir = PlayedCard::new(
-        dusknoir_card.clone(),
-        130,
-        130,
-        vec![],
-        false,
-        vec![],
-    );
+    let dusknoir = PlayedCard::new(dusknoir_card.clone(), 130, 130, vec![], false, vec![]);
     state.in_play_pokemon[test_player][1] = Some(dusknoir);
 
     // Set up Bulbasaur in active with damage
@@ -425,14 +411,7 @@ fn test_lucario_fighting_coach_single() {
     state.in_play_pokemon[test_player][0] = Some(riolu_attacker);
 
     // Set up Lucario on bench for the Fighting Coach ability
-    let lucario_bench = PlayedCard::new(
-        lucario_card.clone(),
-        100,
-        100,
-        vec![],
-        false,
-        vec![],
-    );
+    let lucario_bench = PlayedCard::new(lucario_card.clone(), 100, 100, vec![], false, vec![]);
     state.in_play_pokemon[test_player][1] = Some(lucario_bench);
 
     // Set up opponent
@@ -490,24 +469,10 @@ fn test_lucario_fighting_coach_stacked() {
     state.in_play_pokemon[test_player][0] = Some(lucario_active);
 
     // Set up TWO Lucarios on bench for stacked ability
-    let lucario_bench1 = PlayedCard::new(
-        lucario_card.clone(),
-        100,
-        100,
-        vec![],
-        false,
-        vec![],
-    );
+    let lucario_bench1 = PlayedCard::new(lucario_card.clone(), 100, 100, vec![], false, vec![]);
     state.in_play_pokemon[test_player][1] = Some(lucario_bench1);
 
-    let lucario_bench2 = PlayedCard::new(
-        lucario_card.clone(),
-        100,
-        100,
-        vec![],
-        false,
-        vec![],
-    );
+    let lucario_bench2 = PlayedCard::new(lucario_card.clone(), 100, 100, vec![], false, vec![]);
     state.in_play_pokemon[test_player][2] = Some(lucario_bench2);
 
     // Set up opponent with high HP
@@ -566,14 +531,7 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     state.in_play_pokemon[test_player][0] = Some(bulbasaur);
 
     // Set up Lucario on bench
-    let lucario_bench = PlayedCard::new(
-        lucario_card.clone(),
-        100,
-        100,
-        vec![],
-        false,
-        vec![],
-    );
+    let lucario_bench = PlayedCard::new(lucario_card.clone(), 100, 100, vec![], false, vec![]);
     state.in_play_pokemon[test_player][1] = Some(lucario_bench);
 
     // Set up opponent
