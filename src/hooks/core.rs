@@ -321,55 +321,6 @@ fn get_intimidating_fang_reduction(
     0
 }
 
-fn get_fighting_coach_boost(
-    state: &State,
-    attacking_ref: (usize, usize),
-    target_ref: (u32, usize, usize),
-    is_from_active_attack: bool,
-) -> u32 {
-    let (attacking_player, attacking_idx) = attacking_ref;
-    let (_, target_player, target_idx) = target_ref;
-
-    // Only applies to attacks from the active Pokemon to opponent's active Pokemon
-    if attacking_player == target_player
-        || attacking_idx != 0
-        || target_idx != 0
-        || !is_from_active_attack
-    {
-        return 0;
-    }
-
-    let attacking_pokemon = state.in_play_pokemon[attacking_player][attacking_idx]
-        .as_ref()
-        .expect("Attacking Pokemon should be there when checking Fighting Coach");
-
-    // Only applies to Fighting-type Pokemon
-    if attacking_pokemon.get_energy_type() != Some(EnergyType::Fighting) {
-        return 0;
-    }
-
-    // Count all Pokemon on the attacking player's field with Fighting Coach ability
-    let lucario_count = state.in_play_pokemon[attacking_player]
-        .iter()
-        .flatten()
-        .filter(|pokemon| {
-            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
-                .map(|id| id == AbilityId::A2092LucarioFightingCoach)
-                .unwrap_or(false)
-        })
-        .count() as u32;
-
-    if lucario_count > 0 {
-        debug!(
-            "Fighting Coach: Adding +{} damage to Fighting Pokemon's attack ({} Lucario(s))",
-            lucario_count * 20,
-            lucario_count
-        );
-    }
-
-    lucario_count * 20
-}
-
 fn get_exoskeleton_reduction(
     receiving_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
@@ -387,6 +338,7 @@ fn get_increased_turn_effect_modifiers(
     is_active_to_active: bool,
     target_is_ex: bool,
     attacker_is_eevee_evolution: bool,
+    attacking_pokemon: &crate::models::PlayedCard,
 ) -> u32 {
     if !is_active_to_active {
         return 0;
@@ -401,6 +353,20 @@ fn get_increased_turn_effect_modifiers(
                 if attacker_is_eevee_evolution =>
             {
                 *amount
+            }
+            TurnEffect::IncreasedDamageForSpecificPokemon {
+                amount,
+                pokemon_names,
+            } => {
+                let attacker_name = attacking_pokemon.get_name();
+                if pokemon_names
+                    .iter()
+                    .any(|name| name.as_str() == attacker_name)
+                {
+                    *amount
+                } else {
+                    0
+                }
             }
             _ => 0,
         })
@@ -515,6 +481,16 @@ pub(crate) fn modify_damage(
         }
     }
 
+    // Check for PreventAllDamageAndEffects (Shinx's Hide)
+    if receiving_pokemon
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
+    {
+        debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
+        return 0;
+    }
+
     // Calculate all modifiers
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
     let target_is_ex = receiving_pokemon.card.is_ex();
@@ -524,13 +500,12 @@ pub(crate) fn modify_damage(
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
     let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
-    let fighting_coach_boost =
-        get_fighting_coach_boost(state, attacking_ref, target_ref, is_from_active_attack);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
         target_is_ex,
         attacker_is_eevee_evolution,
+        attacking_pokemon,
     );
     let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
         attacking_pokemon,
@@ -547,8 +522,17 @@ pub(crate) fn modify_damage(
         return weakness_modifier;
     }
 
+    // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
+    // These check if certain ability-holders are in play and boost damage for specific energy types
+    // Only applies to active-to-active attacks (not damage moves like Dusknoir's Shadow Void)
+    let type_boost_bonus = if is_active_to_active {
+        calculate_type_boost_bonus(state, attacking_player, attacking_pokemon)
+    } else {
+        0
+    };
+
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, FightingCoach: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -557,19 +541,61 @@ pub(crate) fn modify_damage(
         heavy_helmet_reduction,
         intimidating_fang_reduction,
         exoskeleton_reduction,
-        fighting_coach_boost
+        type_boost_bonus
     );
     (base_damage
         + weakness_modifier
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
-        + fighting_coach_boost)
+        + type_boost_bonus)
         .saturating_sub(
             reduced_card_effect_modifiers
                 + heavy_helmet_reduction
                 + intimidating_fang_reduction
                 + exoskeleton_reduction,
         )
+}
+
+/// Calculate type-specific damage boost from abilities like Lucario's Fighting Coach or Aegislash's Royal Command
+/// Returns the bonus damage amount based on attacking Pokemon's energy type and abilities in play
+fn calculate_type_boost_bonus(
+    state: &State,
+    attacking_player: usize,
+    attacking_pokemon: &PlayedCard,
+) -> u32 {
+    let attacker_energy_type = match attacking_pokemon.get_energy_type() {
+        Some(energy_type) => energy_type,
+        None => return 0,
+    };
+
+    let mut bonus = 0;
+
+    // Check each Pokemon in play for type-boosting abilities
+    for (_, pokemon) in state.enumerate_in_play_pokemon(attacking_player) {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
+            match ability_id {
+                // Lucario's Fighting Coach: +20 damage to Fighting-type attacks
+                AbilityId::A2092LucarioFightingCoach => {
+                    if attacker_energy_type == EnergyType::Fighting {
+                        debug!("Fighting Coach (Lucario): Increasing damage by 20");
+                        bonus += 20;
+                    }
+                }
+                // Aegislash's Cursed Metal: +30 damage to Psychic and Metal-type attacks
+                AbilityId::B1172AegislashCursedMetal => {
+                    if attacker_energy_type == EnergyType::Psychic
+                        || attacker_energy_type == EnergyType::Metal
+                    {
+                        debug!("Cursed Metal (Aegislash): Increasing damage by 30");
+                        bonus += 30;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    bonus
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)

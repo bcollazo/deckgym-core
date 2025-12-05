@@ -141,10 +141,10 @@ impl Card {
         }
     }
 
-    pub(crate) fn get_attacks(&self) -> &Vec<Attack> {
+    pub(crate) fn get_attacks(&self) -> Vec<Attack> {
         match self {
-            Card::Pokemon(pokemon_card) => &pokemon_card.attacks,
-            _ => panic!("Unsupported playable card type"),
+            Card::Pokemon(pokemon_card) => pokemon_card.attacks.clone(),
+            _ => vec![],
         }
     }
 
@@ -212,6 +212,13 @@ impl Card {
     pub fn is_basic(&self) -> bool {
         match self {
             Card::Pokemon(pokemon_card) => pokemon_card.stage == BASIC_STAGE,
+            _ => false,
+        }
+    }
+
+    pub fn is_fossil(&self) -> bool {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
             _ => false,
         }
     }

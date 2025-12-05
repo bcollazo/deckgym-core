@@ -172,6 +172,9 @@ fn apply_pokemon_checkup(
     }
 
     // Advance turn
+    mutated_state.knocked_out_by_opponent_attack_last_turn =
+        mutated_state.knocked_out_by_opponent_attack_this_turn;
+    mutated_state.knocked_out_by_opponent_attack_this_turn = false;
     mutated_state.advance_turn();
 }
 
@@ -299,6 +302,20 @@ pub(crate) fn handle_damage(
         state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }
 
+    // Set knocked_out_by_opponent_attack_this_turn flag
+    // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
+    if is_from_active_attack {
+        // Only care about KOs from active attacks
+        for (ko_receiver, _) in knockouts.clone() {
+            let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
+                                                               // If the receiver is NOT the initiator, it's an opponent KO
+            if ko_receiver != ko_initiator_of_this_damage {
+                state.knocked_out_by_opponent_attack_this_turn = true;
+                break; // Only need to set once
+            }
+        }
+    }
+
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
     // Note even attacking player can lose by counterattack K.O.
     if state.points[0] >= 3 && state.points[1] >= 3 {
@@ -318,7 +335,6 @@ pub(crate) fn handle_damage(
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
         }
-
         // If K.O. was Active, trigger promotion or declare winner
         state.trigger_promotion_or_declare_winner(ko_receiver);
     }

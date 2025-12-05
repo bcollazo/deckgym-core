@@ -175,6 +175,22 @@ impl PyCard {
         self.card.get_ability().map(|a| a.into())
     }
 
+    #[getter]
+    fn weakness(&self) -> Option<PyEnergyType> {
+        match &self.card {
+            Card::Pokemon(pokemon_card) => pokemon_card.weakness.map(|w| w.into()),
+            _ => None,
+        }
+    }
+
+    #[getter]
+    fn retreat_cost(&self) -> usize {
+        match &self.card {
+            Card::Pokemon(pokemon_card) => pokemon_card.retreat_cost.len(),
+            _ => 0,
+        }
+    }
+
     fn __repr__(&self) -> String {
         format!(
             "Card(id='{}', name='{}')",
