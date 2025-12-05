@@ -98,6 +98,8 @@ pub enum Mechanic {
         extra_damage: u32,
         opponent: bool,
     },
+    DamageEqualToSelfDamage,
+    ExtraDamageEqualToSelfDamage,
     ExtraDamageIfKnockedOutLastTurn {
         extra_damage: u32,
     },

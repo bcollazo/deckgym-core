@@ -1084,8 +1084,11 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: false,
         },
     );
-    // map.insert("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.", todo_implementation);
-    // map.insert("This attack does more damage equal to the damage this Pokémon has on it.", todo_implementation);
+    map.insert("This attack does damage to your opponent's Active Pokémon equal to the damage this Pokémon has on it.", Mechanic::DamageEqualToSelfDamage);
+    map.insert(
+        "This attack does more damage equal to the damage this Pokémon has on it.",
+        Mechanic::ExtraDamageEqualToSelfDamage,
+    );
     // map.insert("This attack's damage isn't affected by Weakness.", todo_implementation);
     // map.insert("This attack's damage isn't affected by any effects on your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Until this Pokémon leaves the Active Spot, this Pokémon's Rolling Frenzy attack does +30 damage. This effect stacks.", todo_implementation);
