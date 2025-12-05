@@ -100,7 +100,7 @@ fn extract_features(state: &State, player: usize, active_factor: f64) -> Feature
 fn get_active_retreat_cost(state: &State, player: usize) -> usize {
     state
         .maybe_get_active(player)
-        .map(|card| card.card.get_retreat_cost().len())
+        .map(|card| card.card.get_retreat_cost().map(|rc| rc.len()).unwrap_or(5))
         .unwrap_or(0)
 }
 
