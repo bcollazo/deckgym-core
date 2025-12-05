@@ -1466,14 +1466,6 @@ fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
         active_damage_effect_mutation(0, move |rng, state, action| {
             let opponent = (action.actor + 1) % 2;
 
-            // Check if opponent has benched Pokemon to replace active
-            let has_bench = state.enumerate_bench_pokemon(opponent).next().is_some();
-
-            if !has_bench {
-                // No bench Pokemon - opponent loses
-                return;
-            }
-
             // Get the active Pokemon
             let active_pokemon = state.in_play_pokemon[opponent][0]
                 .take()
@@ -1492,7 +1484,7 @@ fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
             // Shuffle the deck
             state.decks[opponent].shuffle(false, rng);
 
-            // Trigger promotion from bench
+            // Trigger promotion from bench (or declare winner if no bench)
             state.trigger_promotion_or_declare_winner(opponent);
         }),
         // Tails: just do nothing
