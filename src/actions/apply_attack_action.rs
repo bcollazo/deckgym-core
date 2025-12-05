@@ -310,6 +310,10 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             opponent,
         } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
+        Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
+        Mechanic::ExtraDamageEqualToSelfDamage => {
+            extra_damage_equal_to_self_damage(state, attack.fixed_damage)
+        }
         Mechanic::BenchCountDamage {
             include_fixed_damage,
             damage_per,
@@ -1215,6 +1219,21 @@ fn extra_damage_if_hurt(
     } else {
         active_damage_doutcome(base)
     }
+}
+
+fn damage_equal_to_self_damage(state: &State) -> (Probabilities, Mutations) {
+    let attacker = state.get_active(state.current_player);
+    let damage = attacker.total_hp - attacker.remaining_hp;
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_equal_to_self_damage(
+    state: &State,
+    base_damage: u32,
+) -> (Probabilities, Mutations) {
+    let attacker = state.get_active(state.current_player);
+    let self_damage = attacker.total_hp - attacker.remaining_hp;
+    active_damage_doutcome(base_damage + self_damage)
 }
 
 fn extra_damage_per_energy(
