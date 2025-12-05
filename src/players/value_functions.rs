@@ -138,11 +138,11 @@ fn calculate_turns_until_opponent_wins(state: &State, player: usize) -> f64 {
                     let missing = energy_missing(pokemon, &atk.energy_required, state, opponent);
                     (atk.fixed_damage, missing.len())
                 })
-                .min_by_key(|(damage, missing)| (*missing, 0 - (*damage))); // Prioritize by missing energy, then by damage
+                .min_by_key(|(damage, missing)| (*missing, u32::MAX - damage)); // Prioritize by missing energy, then by damage
 
             best_attack
         })
-        .min_by_key(|(damage, missing)| (*missing, 0 - (*damage))); // Find pokemon with least missing energy
+        .min_by_key(|(damage, missing)| (*missing, u32::MAX - damage)); // Find pokemon with least missing energy
     let (max_damage, missing_energy) = match best_threat {
         Some((damage, missing)) => (damage as f64, missing),
         None => return 30.0, // No pokemon can deal damage
