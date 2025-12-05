@@ -517,7 +517,12 @@ pub(crate) fn modify_damage(
 
     // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
     // These check if certain ability-holders are in play and boost damage for specific energy types
-    let type_boost_bonus = calculate_type_boost_bonus(state, attacking_player, attacking_pokemon);
+    // Only applies to active-to-active attacks (not damage moves like Dusknoir's Shadow Void)
+    let type_boost_bonus = if is_active_to_active {
+        calculate_type_boost_bonus(state, attacking_player, attacking_pokemon)
+    } else {
+        0
+    };
 
     debug!(
         "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",

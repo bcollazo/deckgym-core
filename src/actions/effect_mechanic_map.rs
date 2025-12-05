@@ -125,6 +125,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::CannotAttack,
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -133,6 +134,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::CannotUseAttack("Big Beat".to_string()),
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -141,6 +143,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::CannotUseAttack("Frenzy Plant".to_string()),
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -149,6 +152,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::CannotUseAttack("Sacred Sword".to_string()),
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -160,6 +164,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 70,
             },
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -171,6 +176,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 40,
             },
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -182,6 +188,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 20,
             },
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -193,6 +200,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 30,
             },
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -204,6 +212,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 60,
             },
             duration: 2,
+            probability: None,
         },
     );
     map.insert(
@@ -215,6 +224,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
                 amount: 60,
             },
             duration: 2,
+            probability: None,
         },
     );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.", todo_implementation);
@@ -233,6 +243,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: true,
             effect: CardEffect::CannotAttack,
             duration: 1,
+            probability: None,
         },
     );
     map.insert(
@@ -241,6 +252,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: true,
             effect: CardEffect::NoRetreat,
             duration: 1,
+            probability: None,
         },
     );
     map.insert(
@@ -258,6 +270,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::ReducedDamage { amount: 20 },
             duration: 1,
+            probability: None,
         },
     );
     map.insert(
@@ -266,6 +279,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::ReducedDamage { amount: 30 },
             duration: 1,
+            probability: None,
         },
     );
     map.insert(
@@ -274,6 +288,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
             effect: CardEffect::ReducedDamage { amount: 50 },
             duration: 1,
+            probability: None,
         },
     );
     // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
@@ -444,11 +459,21 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If heads, discard a random card from your opponent's hand.", todo_implementation);
     // map.insert("Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.", todo_implementation);
-    map.insert("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", Mechanic::PreventAllDamageAndEffectsNextTurn { probability: 0.5 });
+    map.insert("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", Mechanic::DamageAndCardEffect {
+        opponent: false,
+        effect: CardEffect::PreventAllDamageAndEffects,
+        duration: 1,
+        probability: Some(0.5),
+    });
     // map.insert("Flip a coin. If heads, heal 60 damage from this Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If heads, put your opponent's Active Pokémon into their hand.", todo_implementation);
     // map.insert("Flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.", todo_implementation);
-    map.insert("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.", Mechanic::CantAttackNextTurn { probability: 0.5 });
+    map.insert("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.", Mechanic::DamageAndCardEffect {
+        opponent: true,
+        effect: CardEffect::CannotAttack,
+        duration: 1,
+        probability: Some(0.5),
+    });
     map.insert(
         "Flip a coin. If heads, this attack does 20 more damage.",
         Mechanic::CoinFlipExtraDamage { extra_damage: 20 },

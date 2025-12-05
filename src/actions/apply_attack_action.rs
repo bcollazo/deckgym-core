@@ -238,9 +238,6 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
         }
-        Mechanic::CantAttackNextTurn { probability } => {
-            cant_attack_next_turn_attack(attack.fixed_damage, (*probability).into())
-        }
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
@@ -286,9 +283,14 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             effect,
             duration,
-        } => {
-            damage_and_card_effect_attack(attack.fixed_damage, *opponent, effect.clone(), *duration)
-        }
+            probability,
+        } => damage_and_card_effect_attack(
+            attack.fixed_damage,
+            *opponent,
+            effect.clone(),
+            *duration,
+            *probability,
+        ),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
@@ -333,12 +335,6 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
-        }
-        Mechanic::PreventAllDamageAndEffectsNextTurn { probability } => {
-            prevent_all_damage_and_effects_next_turn_attack(
-                attack.fixed_damage,
-                (*probability).into(),
-            )
         }
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
@@ -685,35 +681,6 @@ fn extra_or_self_damage_attack(
             let active = state.get_active_mut(action.actor);
             active.apply_damage(self_damage);
         }),
-    ];
-    (probabilities, mutations)
-}
-
-fn cant_attack_next_turn_attack(damage: u32, probability: f64) -> (Probabilities, Mutations) {
-    let probabilities = vec![probability, 1.0 - probability];
-    let mutations: Mutations = vec![
-        active_damage_effect_mutation(damage, |_, state, action| {
-            let opponent = (action.actor + 1) % 2;
-            state
-                .get_active_mut(opponent)
-                .add_effect(CardEffect::CannotAttack, 1);
-        }),
-        active_damage_mutation(damage),
-    ];
-    (probabilities, mutations)
-}
-
-fn prevent_all_damage_and_effects_next_turn_attack(
-    damage: u32,
-    probability: f64,
-) -> (Probabilities, Mutations) {
-    let probabilities = vec![probability, 1.0 - probability];
-    let mutations: Mutations = vec![
-        active_damage_effect_mutation(damage, |_, state, action| {
-            let active = state.get_active_mut(action.actor);
-            active.add_effect(CardEffect::PreventAllDamageAndEffects, 1);
-        }),
-        active_damage_mutation(damage),
     ];
     (probabilities, mutations)
 }
@@ -1089,18 +1056,41 @@ fn damage_and_card_effect_attack(
     opponent: bool,
     effect: CardEffect,
     effect_duration: u8,
+    probability: Option<f32>,
 ) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(damage, move |_, state, action| {
-        let player = if opponent {
-            (action.actor + 1) % 2
-        } else {
-            action.actor
-        };
-        // Are we sure pokemon is there? What if knocked out?
-        state
-            .get_active_mut(player)
-            .add_effect(effect.clone(), effect_duration);
-    })
+    match probability {
+        None => {
+            // 100% chance - always apply effect
+            active_damage_effect_doutcome(damage, move |_, state, action| {
+                let player = if opponent {
+                    (action.actor + 1) % 2
+                } else {
+                    action.actor
+                };
+                state
+                    .get_active_mut(player)
+                    .add_effect(effect.clone(), effect_duration);
+            })
+        }
+        Some(prob) => {
+            // Coin flip probability
+            let probabilities = vec![prob as f64, 1.0 - prob as f64];
+            let mutations: Mutations = vec![
+                active_damage_effect_mutation(damage, move |_, state, action| {
+                    let player = if opponent {
+                        (action.actor + 1) % 2
+                    } else {
+                        action.actor
+                    };
+                    state
+                        .get_active_mut(player)
+                        .add_effect(effect.clone(), effect_duration);
+                }),
+                active_damage_mutation(damage),
+            ];
+            (probabilities, mutations)
+        }
+    }
 }
 
 /// Discard all energy from this Pokemon
@@ -1136,13 +1126,15 @@ fn discard_random_global_energy_attack(
     _state: &State,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(fixed_damage, move |rng, state, _action| {
-        let mut pokemon_with_energy = Vec::new();
+        let mut pokemon_with_energy: Vec<(usize, usize, usize)> = Vec::new();
 
         // Collect all Pokémon in play (yours and opponent's) that have energy attached
+        // Store (player_idx, in_play_idx, energy_count) for weighted selection
         for player_idx in 0..2 {
             for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
-                if !pokemon.attached_energy.is_empty() {
-                    pokemon_with_energy.push((player_idx, in_play_idx));
+                let energy_count = pokemon.attached_energy.len();
+                if energy_count > 0 {
+                    pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
                 }
             }
         }
@@ -1151,10 +1143,22 @@ fn discard_random_global_energy_attack(
             return; // No Pokémon with energy to discard from
         }
 
-        // Randomly select one Pokémon from the list
-        let (player_idx, in_play_idx) =
-            pokemon_with_energy[rng.gen_range(0..pokemon_with_energy.len())];
-        let pokemon = state.in_play_pokemon[player_idx][in_play_idx]
+        // Weight selection by energy count: a Pokemon with 9 energies should be
+        // hit 9x more often than one with 1 energy
+        let total_energy: usize = pokemon_with_energy.iter().map(|(_, _, e)| e).sum();
+        let mut roll = rng.gen_range(0..total_energy);
+        let mut selected_player_idx = 0;
+        let mut selected_in_play_idx = 0;
+        for (player_idx, in_play_idx, energy_count) in &pokemon_with_energy {
+            if roll < *energy_count {
+                selected_player_idx = *player_idx;
+                selected_in_play_idx = *in_play_idx;
+                break;
+            }
+            roll -= energy_count;
+        }
+
+        let pokemon = state.in_play_pokemon[selected_player_idx][selected_in_play_idx]
             .as_mut()
             .expect("Pokemon should be there");
 

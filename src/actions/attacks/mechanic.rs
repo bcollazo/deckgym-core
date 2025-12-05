@@ -27,9 +27,6 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
-    CantAttackNextTurn {
-        probability: f32,
-    },
     DiscardRandomGlobalEnergy,
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
@@ -85,6 +82,7 @@ pub enum Mechanic {
         opponent: bool,
         effect: CardEffect,
         duration: u8,
+        probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
     },
     SelfDiscardAllEnergy,
     AlsoBenchDamage {
@@ -102,9 +100,6 @@ pub enum Mechanic {
     },
     ExtraDamageIfKnockedOutLastTurn {
         extra_damage: u32,
-    },
-    PreventAllDamageAndEffectsNextTurn {
-        probability: f32,
     },
     BenchCountDamage {
         include_fixed_damage: bool,

@@ -42,7 +42,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
-        AbilityId::A2072DusknoirShadowVoid => dusknoir_shadow_void(state, in_play_idx),
+        AbilityId::A2072DusknoirShadowVoid => {
+            doutcome_from_mutation(dusknoir_shadow_void(in_play_idx))
+        }
         AbilityId::A2078GiratinaLevitate => panic!("Levitate is a passive ability"),
         AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),
         AbilityId::A2110DarkraiExNightmareAura => panic!("Darkrai ex's ability is passive"),
@@ -249,26 +251,21 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
     })
 }
 
-fn dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> (Probabilities, Mutations) {
-    let choices: Vec<SimpleAction> = state
-        .enumerate_in_play_pokemon(state.current_player)
-        .filter(|(i, p)| p.is_damaged() && *i != dusknoir_idx)
-        .map(|(i, _)| SimpleAction::MoveAllDamage {
-            from: i,
-            to: dusknoir_idx,
-        })
-        .collect();
+fn dusknoir_shadow_void(dusknoir_idx: usize) -> Mutation {
+    Box::new(move |_, state, action| {
+        let choices: Vec<SimpleAction> = state
+            .enumerate_in_play_pokemon(action.actor)
+            .filter(|(i, p)| p.is_damaged() && *i != dusknoir_idx)
+            .map(|(i, _)| SimpleAction::MoveAllDamage {
+                from: i,
+                to: dusknoir_idx,
+            })
+            .collect();
 
-    if choices.is_empty() {
-        return doutcome(|_, _, _| {});
-    }
-
-    (
-        vec![1.0],
-        vec![Box::new(move |_, state, action| {
+        if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
-        })],
-    )
+        }
+    })
 }
 
 fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
