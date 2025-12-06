@@ -8,6 +8,7 @@ pub mod combinatorics;
 pub mod database;
 pub mod deck;
 pub mod effects;
+pub mod example_utils;
 pub mod game;
 pub mod gameplay_stats_collector;
 mod hooks;

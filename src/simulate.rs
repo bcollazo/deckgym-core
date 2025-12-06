@@ -359,7 +359,8 @@ pub fn initialize_logger(verbose: u8) {
         1 => "warn",
         2 => "info",
         3 => "debug",
-        _ => "trace",
+        4 => "trace",
+        _ => "error",
     };
     Builder::from_env(Env::default().default_filter_or(level))
         .format(|buf, record| writeln!(buf, "{}", record.args()))

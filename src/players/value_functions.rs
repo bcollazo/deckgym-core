@@ -11,41 +11,81 @@ use crate::models::{Card, EnergyType, PlayedCard};
 use crate::state::GameOutcome;
 use crate::State;
 
+/// Coefficients for the parametric value function
+#[derive(Debug, Clone, Copy)]
+pub struct ValueFunctionParams {
+    pub pokemon_value: f64,
+    pub hand_size: f64,
+    pub deck_size: f64,
+    pub active_retreat_cost: f64,
+    pub active_pokemon_online_score: f64,
+    pub active_safety: f64,
+    pub active_has_tool: f64,
+    pub is_winner: f64,
+    pub turns_until_opponent_wins: f64,
+    pub online_pokemon_count: f64,
+    pub energy_distance_to_online: f64,
+}
+
+impl ValueFunctionParams {
+    /// Baseline parameters (same as original baseline function)
+    pub const fn baseline() -> Self {
+        Self {
+            pokemon_value: 1.0,
+            hand_size: 1.0,
+            deck_size: 1.0,
+            active_retreat_cost: 1.0,
+            active_pokemon_online_score: 0.0,
+            active_safety: 0.0,
+            active_has_tool: 0.0,
+            is_winner: 0.0,
+            turns_until_opponent_wins: 0.0,
+            online_pokemon_count: 0.0,
+            energy_distance_to_online: 0.0,
+        }
+    }
+
+    /// Variant parameters (same as original variant function)
+    pub const fn variant() -> Self {
+        Self::baseline() // Variant currently uses same params as baseline
+    }
+}
+
 pub fn baseline_value_function(state: &State, myself: usize) -> f64 {
-    let opponent = (myself + 1) % 2;
-    let (my, opp) = (
-        extract_features(state, myself, 2.0),
-        extract_features(state, opponent, 2.0),
-    );
-    let score = (my.points - opp.points) * 1000000.0
-        + (my.pokemon_value - opp.pokemon_value) * 1.0
-        + (my.hand_size - opp.hand_size) * 1.0
-        + (opp.deck_size - my.deck_size) * 1.0
-        + (-my.active_retreat_cost) * 1.0;
-    trace!("baseline_value_function: {score} (my: {my:?}, opp: {opp:?})");
-    score
+    parametric_value_function(state, myself, &ValueFunctionParams::baseline())
 }
 
 /// A variant of the baseline value function
 pub fn variant_value_function(state: &State, myself: usize) -> f64 {
+    parametric_value_function(state, myself, &ValueFunctionParams::variant())
+}
+
+/// Parametric value function that uses the provided coefficients
+pub fn parametric_value_function(
+    state: &State,
+    myself: usize,
+    params: &ValueFunctionParams,
+) -> f64 {
     let opponent = (myself + 1) % 2;
     let (my, opp) = (
         extract_features(state, myself, 2.0),
         extract_features(state, opponent, 2.0),
     );
     let score = (my.points - opp.points) * 1000000.0
-        + (my.pokemon_value - opp.pokemon_value) * 1.0
-        + (my.hand_size - opp.hand_size) * 1.0
-        + (opp.deck_size - my.deck_size) * 1.0
-        + (-my.active_retreat_cost) * 1.0
-        + (my.active_pokemon_online_score - opp.active_pokemon_online_score) * 0.0
-        + (my.active_safety - opp.active_safety) * 0.0
-        + (my.active_has_tool - opp.active_has_tool) * 0.0
-        + (my.is_winner - opp.is_winner) * 0.0
-        + my.turns_until_opponent_wins * 0.0
-        + (my.online_pokemon_count - opp.online_pokemon_count) * 0.0
-        + (my.energy_distance_to_online - opp.energy_distance_to_online) * 0.0;
-    trace!("variant_value_function: {score} (my: {my:?}, opp: {opp:?})");
+        + (my.pokemon_value - opp.pokemon_value) * params.pokemon_value
+        + (my.hand_size - opp.hand_size) * params.hand_size
+        + (opp.deck_size - my.deck_size) * params.deck_size
+        + (-my.active_retreat_cost) * params.active_retreat_cost
+        + (my.active_pokemon_online_score - opp.active_pokemon_online_score)
+            * params.active_pokemon_online_score
+        + (my.active_safety - opp.active_safety) * params.active_safety
+        + (my.active_has_tool - opp.active_has_tool) * params.active_has_tool
+        + (my.is_winner - opp.is_winner) * params.is_winner
+        + my.turns_until_opponent_wins * params.turns_until_opponent_wins
+        + (my.online_pokemon_count - opp.online_pokemon_count) * params.online_pokemon_count
+        + (my.energy_distance_to_online - opp.energy_distance_to_online)
+            * params.energy_distance_to_online;
+    trace!("parametric_value_function: {score} (params: {params:?}, my: {my:?}, opp: {opp:?})");
     score
 }
 

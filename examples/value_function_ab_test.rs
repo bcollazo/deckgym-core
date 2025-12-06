@@ -1,13 +1,13 @@
 use clap::Parser;
 use colored::Colorize;
 use deckgym::{
+    example_utils::discover_deck_files,
     players::{value_functions, ExpectiMiniMaxPlayer, Player},
     simulate::initialize_logger,
     simulation_event_handler::{ComputedStats, StatsCollector},
     Deck, Simulation,
 };
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 /// A/B testing tool for comparing different value functions in ExpectiMiniMaxPlayer
 ///
@@ -61,43 +61,6 @@ struct DeckStats {
     total_games: u32,
 }
 
-/// Discover all .txt files in a directory
-fn discover_deck_files(folder: &str) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
-    let path = Path::new(folder);
-
-    if !path.exists() {
-        return Err(format!("Folder does not exist: {}", folder).into());
-    }
-
-    if !path.is_dir() {
-        return Err(format!("Path is not a directory: {}", folder).into());
-    }
-
-    let mut deck_files = Vec::new();
-
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        let path = entry.path();
-
-        if path.is_file() {
-            if let Some(ext) = path.extension() {
-                if ext == "txt" {
-                    deck_files.push(path);
-                }
-            }
-        }
-    }
-
-    if deck_files.is_empty() {
-        return Err(format!("No .txt deck files found in folder: {}", folder).into());
-    }
-
-    // Sort for consistent ordering
-    deck_files.sort();
-
-    Ok(deck_files)
-}
-
 fn run_comparison(config: ComparisonConfig) -> Result<Vec<DeckStats>, Box<dyn std::error::Error>> {
     println!("\n{}", "=".repeat(70).blue().bold());
     println!(
@@ -141,13 +104,13 @@ fn run_comparison(config: ComparisonConfig) -> Result<Vec<DeckStats>, Box<dyn st
                     deck: deck_a,
                     max_depth: depth,
                     write_debug_trees: false,
-                    value_function: baseline_fn,
+                    value_function: Box::new(baseline_fn),
                 }),
                 Box::new(ExpectiMiniMaxPlayer {
                     deck: deck_b,
                     max_depth: depth,
                     write_debug_trees: false,
-                    value_function: test_fn,
+                    value_function: Box::new(test_fn),
                 }),
             ]
         };
