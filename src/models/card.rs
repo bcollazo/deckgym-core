@@ -148,6 +148,13 @@ impl Card {
         }
     }
 
+    pub fn get_retreat_cost(&self) -> Option<Vec<EnergyType>> {
+        match self {
+            Card::Pokemon(pokemon_card) => Some(pokemon_card.retreat_cost.clone()),
+            _ => None, // Fossils
+        }
+    }
+
     pub(crate) fn is_ex(&self) -> bool {
         // A pokemon is EX if after splitting by spaces in the name, the last word is "EX"
         match self {
