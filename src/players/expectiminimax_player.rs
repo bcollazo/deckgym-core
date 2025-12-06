@@ -11,7 +11,8 @@ use super::Player;
 
 // Type alias for value functions
 // Takes a state and player index, returns a score
-pub type ValueFunction = fn(&State, usize) -> f64;
+// Using Box<dyn Fn> to allow closures with captured variables
+pub type ValueFunction = Box<dyn Fn(&State, usize) -> f64>;
 
 struct DebugStateNode {
     acting_player: usize,
@@ -61,7 +62,7 @@ impl Player for ExpectiMiniMaxPlayer {
                 action,
                 self.max_depth - 1,
                 myself,
-                self.value_function,
+                &self.value_function,
             );
             scores.push(score);
             root.children.push(action_node);
@@ -113,7 +114,7 @@ fn expected_value_function(
     action: &Action,
     depth: usize,
     myself: usize,
-    value_function: ValueFunction,
+    value_function: &ValueFunction,
 ) -> (f64, DebugActionNode) {
     let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
@@ -156,9 +157,9 @@ fn expectiminimax(
     state: &State,
     depth: usize,
     myself: usize,
-    value_function: ValueFunction,
+    value_function: &ValueFunction,
 ) -> (f64, DebugStateNode) {
-    if state.is_game_over() || depth == 0 {
+    if state.is_game_over() || depth == 0 || state.current_player != myself {
         let score = value_function(state, myself);
         let state_node = DebugStateNode {
             acting_player: state.current_player,

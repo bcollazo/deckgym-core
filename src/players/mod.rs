@@ -119,7 +119,7 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
             deck,
             max_depth: *max_depth,
             write_debug_trees: false,
-            value_function: value_functions::baseline_value_function,
+            value_function: Box::new(value_functions::baseline_value_function),
         }),
         PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
     }
