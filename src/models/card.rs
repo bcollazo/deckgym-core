@@ -148,10 +148,10 @@ impl Card {
         }
     }
 
-    pub fn get_retreat_cost(&self) -> &Vec<EnergyType> {
+    pub fn get_retreat_cost(&self) -> Option<Vec<EnergyType>> {
         match self {
-            Card::Pokemon(pokemon_card) => &pokemon_card.retreat_cost,
-            _ => panic!("Unsupported playable card type"),
+            Card::Pokemon(pokemon_card) => Some(pokemon_card.retreat_cost.clone()),
+            _ => None, // Fossils
         }
     }
 
