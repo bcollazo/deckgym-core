@@ -14,6 +14,7 @@ use crate::State;
 /// Coefficients for the parametric value function
 #[derive(Debug, Clone, Copy)]
 pub struct ValueFunctionParams {
+    pub points: f64,
     pub pokemon_value: f64,
     pub hand_size: f64,
     pub deck_size: f64,
@@ -31,23 +32,37 @@ impl ValueFunctionParams {
     /// Baseline parameters (same as original baseline function)
     pub const fn baseline() -> Self {
         Self {
+            points: 10_000.0,
             pokemon_value: 1.0,
             hand_size: 1.0,
             deck_size: 1.0,
             active_retreat_cost: 1.0,
             active_pokemon_online_score: 0.0,
             active_safety: 0.0,
-            active_has_tool: 0.0,
-            is_winner: 0.0,
+            active_has_tool: 10.0,
+            is_winner: 100_000.0,
             turns_until_opponent_wins: 0.0,
             online_pokemon_count: 0.0,
             energy_distance_to_online: 0.0,
         }
     }
 
-    /// Variant parameters (same as original variant function)
+    /// Variant parameters
     pub const fn variant() -> Self {
-        Self::baseline() // Variant currently uses same params as baseline
+        Self {
+            points: 10_000.0,
+            pokemon_value: 1.0,
+            hand_size: 1.0,
+            deck_size: 1.0,
+            active_retreat_cost: 1.0,
+            active_pokemon_online_score: 0.0,
+            active_safety: 0.0,
+            active_has_tool: 10.0,
+            is_winner: 100_000.0,
+            turns_until_opponent_wins: 0.0,
+            online_pokemon_count: 0.0,
+            energy_distance_to_online: 0.0,
+        }
     }
 }
 
@@ -71,7 +86,7 @@ pub fn parametric_value_function(
         extract_features(state, myself, 2.0),
         extract_features(state, opponent, 2.0),
     );
-    let score = (my.points - opp.points) * 1000000.0
+    let score = (my.points - opp.points) * params.points
         + (my.pokemon_value - opp.pokemon_value) * params.pokemon_value
         + (my.hand_size - opp.hand_size) * params.hand_size
         + (opp.deck_size - my.deck_size) * params.deck_size
