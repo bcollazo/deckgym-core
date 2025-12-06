@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use log::debug;
 use rand::rngs::StdRng;
 
@@ -202,6 +204,16 @@ pub(crate) fn handle_damage(
 ) {
     let attacking_player = attacking_ref.0;
     let mut knockouts: Vec<(usize, usize)> = vec![];
+
+    // Reduce and sum damage for duplicate targets
+    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+    for (damage, player, idx) in targets {
+        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    }
+    let targets: Vec<(u32, usize, usize)> = damage_map
+        .into_iter()
+        .map(|((player, idx), damage)| (damage, player, idx))
+        .collect();
 
     // Modify to apply any multipliers (e.g. Oricorio, Giovanni, etc...)
     let modified_targets = targets
