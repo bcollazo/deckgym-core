@@ -30,6 +30,10 @@ struct Cli {
     /// Players' strategies as a comma-separated list
     #[arg(long, value_delimiter = ',', value_parser = parse_player_code)]
     players: Option<Vec<PlayerCode>>,
+
+    /// Random seed for game simulation
+    #[arg(long)]
+    seed: Option<u64>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -55,7 +59,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = Terminal::new(backend)?;
 
     // create app and run it
-    let app = App::new(&cli.deck_a, &cli.deck_b, player_codes)?;
+    let app = App::new(&cli.deck_a, &cli.deck_b, player_codes, cli.seed)?;
     let res = run_app(&mut terminal, app);
 
     // restore terminal
@@ -137,6 +141,7 @@ mod tests {
             "example_decks/venusaur-exeggutor.txt",
             "example_decks/weezing-arbok.txt",
             vec![PlayerCode::R, PlayerCode::R],
+            None,
         )
         .expect("Failed to create app");
 
