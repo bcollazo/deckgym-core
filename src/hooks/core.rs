@@ -517,11 +517,6 @@ pub(crate) fn modify_damage(
     let weakness_modifier =
         get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
 
-    // Early return if weakness applies (overrides all other calculations)
-    if weakness_modifier > 0 {
-        return weakness_modifier;
-    }
-
     // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
     // These check if certain ability-holders are in play and boost damage for specific energy types
     // Only applies to active-to-active attacks (not damage moves like Dusknoir's Shadow Void)
