@@ -33,17 +33,17 @@ impl ValueFunctionParams {
     pub const fn baseline() -> Self {
         Self {
             points: 10_000.0,
-            pokemon_value: 1.0,
+            pokemon_value: 0.0,
             hand_size: 100.0,
             deck_size: 1.0,
             active_retreat_cost: 1.0,
-            active_pokemon_online_score: 500.0,
+            active_pokemon_online_score: 100.0,
             active_safety: 1.0,
             active_has_tool: 10.0,
             is_winner: 100_000.0,
             turns_until_opponent_wins: 100.0,
-            online_pokemon_count: 0.0,
-            energy_distance_to_online: 0.0,
+            online_pokemon_count: 10.0,
+            energy_distance_to_online: 10.0,
         }
     }
 
@@ -83,8 +83,8 @@ pub fn parametric_value_function(
 ) -> f64 {
     let opponent = (myself + 1) % 2;
     let (my, opp) = (
-        extract_features(state, myself, 2.0),
-        extract_features(state, opponent, 2.0),
+        extract_features(state, myself, 1.0),
+        extract_features(state, opponent, 1.0),
     );
     let score = (my.points - opp.points) * params.points
         + (my.pokemon_value - opp.pokemon_value) * params.pokemon_value
@@ -96,7 +96,8 @@ pub fn parametric_value_function(
         + (my.active_safety - opp.active_safety) * params.active_safety
         + (my.active_has_tool - opp.active_has_tool) * params.active_has_tool
         + (my.is_winner - opp.is_winner) * params.is_winner
-        + my.turns_until_opponent_wins * params.turns_until_opponent_wins
+        + (my.turns_until_opponent_wins - opp.turns_until_opponent_wins)
+            * params.turns_until_opponent_wins
         + (my.online_pokemon_count - opp.online_pokemon_count) * params.online_pokemon_count
         + (my.energy_distance_to_online - opp.energy_distance_to_online)
             * params.energy_distance_to_online;

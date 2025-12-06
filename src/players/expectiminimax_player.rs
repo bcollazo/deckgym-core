@@ -159,7 +159,7 @@ fn expectiminimax(
     myself: usize,
     value_function: &ValueFunction,
 ) -> (f64, DebugStateNode) {
-    if state.is_game_over() || depth == 0 {
+    if state.is_game_over() || depth == 0 || state.current_player != myself {
         let score = value_function(state, myself);
         let state_node = DebugStateNode {
             acting_player: state.current_player,
