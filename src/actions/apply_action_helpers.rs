@@ -106,6 +106,40 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
     (probabilities, outcomes)
 }
 
+/// Calculate poison damage based on base damage (10) plus +10 for each opponent's Nihilego with More Poison ability
+/// Only applies the bonus if the poisoned Pokemon is in the active spot (index 0)
+fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
+    use crate::ability_ids::AbilityId;
+
+    let base_damage = 10;
+
+    // Nihilego's More Poison ability only affects the active Pokemon
+    if in_play_idx != 0 {
+        return base_damage;
+    }
+
+    let opponent = (player + 1) % 2;
+    let nihilego_count = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| {
+            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                .map(|id| id == AbilityId::A3a042NihilegoMorePoison)
+                .unwrap_or(false)
+        })
+        .count();
+
+    let total_damage = base_damage + (nihilego_count as u32 * 10);
+
+    if nihilego_count > 0 {
+        debug!(
+            "Nihilego's More Poison: {} Nihilego in play, poison damage is {}",
+            nihilego_count, total_damage
+        );
+    }
+
+    total_damage
+}
+
 fn apply_pokemon_checkup(
     mutated_state: &mut State,
     sleeps_to_handle: Vec<(usize, usize)>,
@@ -138,13 +172,15 @@ fn apply_pokemon_checkup(
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
 
-    // Poison always deals 10 damage
+    // Poison always deals 10 damage (+10 for each Nihilego with More Poison ability opponent has in play)
     for (player, in_play_idx) in poisons_to_handle {
         let attacking_ref = (player, in_play_idx); // present it as self-damage
+        let poison_damage = get_poison_damage(mutated_state, player, in_play_idx);
+
         handle_damage(
             mutated_state,
             attacking_ref,
-            &[(10, player, in_play_idx)],
+            &[(poison_damage, player, in_play_idx)],
             false,
             None,
         );
@@ -375,5 +411,31 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::EndTurn]));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card};
+
+    #[test]
+    fn test_poison_damage_no_nihilego() {
+        let state = State::default();
+        // Poison damage should be 10 with no Nihilego in play
+        assert_eq!(get_poison_damage(&state, 0, 0), 10);
+    }
+
+    #[test]
+    fn test_poison_damage_with_nihilego() {
+        let mut state = State::default();
+
+        // Add 2 Nihilego to opponent's field (player 1)
+        let nihilego = get_card_by_enum(CardId::A3a042Nihilego);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&nihilego, false));
+        state.in_play_pokemon[1][1] = Some(to_playable_card(&nihilego, false));
+
+        // Player 0's active pokemon should take 30 damage (10 base + 10 per Nihilego)
+        assert_eq!(get_poison_damage(&state, 0, 0), 30);
     }
 }

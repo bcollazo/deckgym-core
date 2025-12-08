@@ -156,15 +156,34 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                 } else {
                     // Evolutions can only be played if previous stage
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
-                    if state.is_users_first_turn() {
+                    // Exception: Eevee with Boosted Evolution ability can evolve on first turn
+                    // or turn it was played, if it's in the active spot.
+                    use crate::ability_ids::AbilityId;
+
+                    // Check if we should skip evolution checks due to first turn
+                    // (unless there's a Boosted Evolution Eevee in active spot)
+                    let has_boosted_evolution_in_active = state.in_play_pokemon[current_player][0]
+                        .as_ref()
+                        .and_then(|active| AbilityId::from_pokemon_id(&active.card.get_id()[..]))
+                        .map(|id| id == AbilityId::B1184EeveeBoostedEvolution)
+                        .unwrap_or(false);
+
+                    if state.is_users_first_turn() && !has_boosted_evolution_in_active {
                         return;
                     }
+
                     // For each non-zero stage pokemon in hand, check if it can evolve
                     // from any pokemon in play (using can_evolve_into which handles special abilities)
                     state
                         .enumerate_in_play_pokemon(current_player)
                         .for_each(|(i, pokemon)| {
-                            if !pokemon.played_this_turn
+                            // Check if this pokemon has Boosted Evolution and is in active spot
+                            let can_bypass_timing = i == 0
+                                && AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                                    .map(|id| id == AbilityId::B1184EeveeBoostedEvolution)
+                                    .unwrap_or(false);
+
+                            if (!pokemon.played_this_turn || can_bypass_timing)
                                 && can_evolve_into(hand_card, pokemon)
                                 && can_evolve_at_position(state, current_player, i)
                             {
