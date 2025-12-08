@@ -35,5 +35,17 @@ pub(crate) fn should_poison_attacker(card: &PlayedCard) -> bool {
             return true;
         }
     }
+
+    // Some cards have it as an ability (Dragalge ex's Poison Point)
+    let card_id = CardId::from_card_id(&card.card.get_id());
+    match card_id {
+        Some(CardId::B1160DragalgeEx)
+        | Some(CardId::B1263DragalgeEx)
+        | Some(CardId::B1281DragalgeEx) => {
+            return true;
+        }
+        _ => {}
+    }
+
     false
 }

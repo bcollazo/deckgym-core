@@ -120,4 +120,5 @@ pub enum Mechanic {
         self_damage: u32,
     },
     ShuffleOpponentActiveIntoDeck,
+    BlockBasicAttack,
 }

@@ -344,6 +344,7 @@ fn forecast_effect_attack_by_mechanic(
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
+        Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
     }
 }
 
@@ -1456,6 +1457,19 @@ fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mu
             }
         })
     }
+}
+
+/// For Umbreon's Dark Binding: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.
+fn block_basic_attack(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.get_active_mut(opponent);
+
+        // Check if the defending Pokemon is a Basic Pokemon (stage 0)
+        if opponent_active.card.is_basic() {
+            opponent_active.add_effect(CardEffect::CannotAttack, 1);
+        }
+    })
 }
 
 /// For Aerodactyl's Primal Wingbeat: Flip a coin. If heads, opponent shuffles their Active Pokémon into their deck.
