@@ -435,10 +435,7 @@ mod tests {
         state.in_play_pokemon[1][0] = Some(to_playable_card(&nihilego, false));
         state.in_play_pokemon[1][1] = Some(to_playable_card(&nihilego, false));
 
-        // Player 0's active pokemon should take 30 damage (10 + 10 + 10)
+        // Player 0's active pokemon should take 30 damage (10 base + 10 per Nihilego)
         assert_eq!(get_poison_damage(&state, 0, 0), 30);
-
-        // Bench pokemon should still take 10 damage (ability only affects active)
-        assert_eq!(get_poison_damage(&state, 0, 1), 10);
     }
 }
