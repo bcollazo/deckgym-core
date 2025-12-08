@@ -16,9 +16,11 @@ pub enum AbilityId {
     A1a046AerodactylExPrimevalLaw,
     A2a010LeafeonExForestBreath,
     A2a071Arceus,
+    A2022ShayminFragrantFlowerGarden,
     A2072DusknoirShadowVoid,
     A2078GiratinaLevitate,
     A2092LucarioFightingCoach,
+    A2a069ShayminSkySupport,
     A2110DarkraiExNightmareAura,
     A2b035GiratinaExBrokenSpaceBellow,
     A3066OricoricSafeguard,
@@ -71,16 +73,19 @@ lazy_static::lazy_static! {
         m.insert("A1a 078", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A1a 084", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
+        m.insert("A2a 069", AbilityId::A2a069ShayminSkySupport);
+        m.insert("A2a 081", AbilityId::A2a069ShayminSkySupport);
         m.insert("A2a 082", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 091", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 071", AbilityId::A2a071Arceus);
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
         m.insert("A2a 096", AbilityId::A2a071Arceus);
+        m.insert("A2 022", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A2 072", AbilityId::A2072DusknoirShadowVoid);
         m.insert("A2 078", AbilityId::A2078GiratinaLevitate);
-        m.insert("A2 167", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A2 159", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
@@ -138,6 +143,8 @@ lazy_static::lazy_static! {
         m.insert("A4a 087", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("A4a 088", AbilityId::A4a025RaikouExLegendaryPulse);
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
+        m.insert("A4b 030", AbilityId::A2022ShayminFragrantFlowerGarden);
+        m.insert("A4b 031", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
@@ -157,6 +164,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 247", AbilityId::A3a042NihilegoMorePoison);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 288", AbilityId::A3b057SnorlaxExFullMouthManner);
+        m.insert("A4b 297", AbilityId::A2a069ShayminSkySupport);
+        m.insert("A4b 298", AbilityId::A2a069ShayminSkySupport);
         m.insert("A4b 304", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 305", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
@@ -168,6 +177,7 @@ lazy_static::lazy_static! {
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
+        m.insert("B1 289", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 256", AbilityId::B1073GreninjaExShiftingStream);
@@ -178,9 +188,10 @@ lazy_static::lazy_static! {
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 054", AbilityId::A1061PoliwrathCounterattack);
-        m.insert("P-A 109", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("P-A 104", AbilityId::A4a022MiloticHealingRipples);
+        m.insert("P-A 109", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
+        m.insert("P-A 116", AbilityId::A2022ShayminFragrantFlowerGarden);
         m
     };
 }

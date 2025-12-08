@@ -41,6 +41,8 @@ pub(crate) fn forecast_ability(
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
+        AbilityId::A2022ShayminFragrantFlowerGarden => doutcome(shaymin_fragrant_flower_garden),
+        AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A2072DusknoirShadowVoid => {
             doutcome_from_mutation(dusknoir_shadow_void(in_play_idx))
@@ -102,6 +104,13 @@ fn butterfree_heal(_: &mut StdRng, state: &mut State, action: &Action) {
     debug!("Ability: Healing 20 damage from each Pokemon");
     for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
         pokemon.heal(20);
+    }
+}
+
+fn shaymin_fragrant_flower_garden(_: &mut StdRng, state: &mut State, action: &Action) {
+    debug!("Shaymin's Fragrant Flower Garden: Healing 10 damage from each Pokemon");
+    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+        pokemon.heal(10);
     }
 }
 

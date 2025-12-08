@@ -46,6 +46,8 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
+        AbilityId::A2022ShayminFragrantFlowerGarden => !card.ability_used,
+        AbilityId::A2a069ShayminSkySupport => false, // Passive ability
         AbilityId::A2a071Arceus => false,
         AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
         AbilityId::A2078GiratinaLevitate => false, // Passive ability
