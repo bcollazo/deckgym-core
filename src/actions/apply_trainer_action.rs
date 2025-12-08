@@ -1,7 +1,7 @@
 use std::cmp::min;
 
 use log::debug;
-use rand::rngs::StdRng;
+use rand::{rngs::StdRng, Rng};
 
 use crate::{
     actions::{
@@ -91,7 +91,8 @@ pub fn forecast_trainer_action(
         | CardId::A4b321GiantCape
         | CardId::A4b322RockyHelmet
         | CardId::A4b323RockyHelmet
-        | CardId::B1219HeavyHelmet => doutcome(attach_tool),
+        | CardId::B1219HeavyHelmet
+        | CardId::B1218SitrusBerry => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
         }
@@ -109,6 +110,10 @@ pub fn forecast_trainer_action(
         CardId::A4151ElementalSwitch
         | CardId::A4b310ElementalSwitch
         | CardId::A4b311ElementalSwitch => doutcome(elemental_switch_effect),
+        CardId::A2154Dawn | CardId::A2194Dawn | CardId::A4b342Dawn | CardId::A4b343Dawn => {
+            doutcome(dawn_effect)
+        }
+        CardId::A3149Ilima | CardId::A3191Ilima => doutcome(ilima_effect),
         CardId::A3a067Gladion | CardId::A3a081Gladion => {
             gladion_search_outcomes(acting_player, state)
         }
@@ -528,6 +533,77 @@ fn elemental_switch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((player, possible_transfers));
+    }
+}
+
+fn dawn_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    if state.maybe_get_active(player).is_none() {
+        return;
+    }
+    let mut possible_transfers = Vec::new();
+
+    for (from_idx, pokemon) in state.enumerate_bench_pokemon(player) {
+        for &energy in &pokemon.attached_energy {
+            let move_action = SimpleAction::MoveEnergy {
+                from_in_play_idx: from_idx,
+                to_in_play_idx: 0,
+                energy,
+            };
+            if !possible_transfers.contains(&move_action) {
+                possible_transfers.push(move_action);
+            }
+        }
+    }
+
+    if !possible_transfers.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_transfers));
+    }
+}
+
+fn ilima_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Put 1 of your [C] Pokémon that has damage on it into your hand.
+    let player = action.actor;
+
+    // Find all Colorless Pokemon with damage
+    let damaged_colorless_pokemon: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            pokemon.get_energy_type() == Some(EnergyType::Colorless)
+                && pokemon.remaining_hp < pokemon.total_hp
+        })
+        .map(|(idx, _)| idx)
+        .collect();
+
+    if damaged_colorless_pokemon.is_empty() {
+        return;
+    }
+
+    // Pick a random damaged Colorless Pokemon
+    let chosen_idx = damaged_colorless_pokemon[rng.gen_range(0..damaged_colorless_pokemon.len())];
+
+    // Return the Pokemon to hand
+    if let Some(pokemon) = state.in_play_pokemon[player][chosen_idx].take() {
+        let mut cards_to_collect = pokemon.cards_behind;
+        cards_to_collect.push(pokemon.card);
+        state.hands[player].extend(cards_to_collect);
+    }
+
+    // If we removed the active Pokemon and there are bench Pokemon, force promotion
+    if chosen_idx == 0 {
+        let bench_pokemon = state.enumerate_bench_pokemon(player).count();
+        if bench_pokemon == 0 {
+            debug!("Player lost due to no bench pokemon after Ilima");
+            state.winner = Some(GameOutcome::Win((player + 1) % 2))
+        } else {
+            let possible_moves = state
+                .enumerate_bench_pokemon(player)
+                .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+                .collect::<Vec<_>>();
+            state.move_generation_stack.push((player, possible_moves));
+        }
     }
 }
 

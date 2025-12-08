@@ -129,4 +129,8 @@ pub enum Mechanic {
     },
     ShuffleOpponentActiveIntoDeck,
     BlockBasicAttack,
+    SwitchSelfWithBench,
+    ExtraDamagePerOpponentRetreatCost {
+        damage_per_energy: u32,
+    },
 }

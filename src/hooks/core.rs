@@ -119,7 +119,8 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
         | ToolId::A4a067InflatableBoat
         | ToolId::A4b318ElectricalCord
         | ToolId::A4b319ElectricalCord
-        | ToolId::B1219HeavyHelmet => {}
+        | ToolId::B1219HeavyHelmet
+        | ToolId::B1218SitrusBerry => {}
     }
 }
 
@@ -250,6 +251,32 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 .as_mut()
                 .expect("Zeraora should be there");
             zeraora.attach_energy(&EnergyType::Lightning, 1);
+        }
+    }
+
+    // Check for Sitrus Berry on all Pokemon (both players)
+    use crate::tool_ids::ToolId;
+    for player in 0..2 {
+        let pokemon_with_sitrus: Vec<usize> = state
+            .enumerate_in_play_pokemon(player)
+            .filter_map(|(idx, pokemon)| {
+                if pokemon.attached_tool == Some(ToolId::B1218SitrusBerry)
+                    && pokemon.remaining_hp <= pokemon.total_hp / 2
+                {
+                    Some(idx)
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        for idx in pokemon_with_sitrus {
+            debug!("Sitrus Berry: Healing 30 damage from Pokemon at index {idx}");
+            let pokemon = state.in_play_pokemon[player][idx]
+                .as_mut()
+                .expect("Pokemon should be there");
+            pokemon.heal(30);
+            pokemon.attached_tool = None; // Discard the Sitrus Berry
         }
     }
 }
@@ -429,10 +456,20 @@ fn get_weakness_modifier(
     is_active_to_active: bool,
     target_player: usize,
     attacking_pokemon: &crate::models::PlayedCard,
+    attack_name: Option<&str>,
 ) -> u32 {
     if !is_active_to_active {
         return 0;
     }
+
+    // Check if this attack ignores weakness
+    if let Some(name) = attack_name {
+        if name == "Quick Straight" {
+            debug!("Attack {} ignores weakness", name);
+            return 0;
+        }
+    }
+
     let receiving = state.get_active(target_player);
     if let Card::Pokemon(pokemon_card) = &receiving.card {
         if pokemon_card.weakness == attacking_pokemon.card.get_type() {
@@ -514,8 +551,13 @@ pub(crate) fn modify_damage(
     );
     let reduced_card_effect_modifiers =
         get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
-    let weakness_modifier =
-        get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
+    let weakness_modifier = get_weakness_modifier(
+        state,
+        is_active_to_active,
+        target_player,
+        attacking_pokemon,
+        attack_name,
+    );
 
     // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
     // These check if certain ability-holders are in play and boost damage for specific energy types

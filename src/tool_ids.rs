@@ -18,6 +18,7 @@ pub enum ToolId {
     A4b318ElectricalCord,
     A4b319ElectricalCord,
     B1219HeavyHelmet,
+    B1218SitrusBerry,
 }
 
 lazy_static::lazy_static! {
@@ -36,6 +37,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 322", ToolId::A2148RockyHelmet);
         m.insert("A4b 323", ToolId::A2148RockyHelmet);
         m.insert("B1 219", ToolId::B1219HeavyHelmet);
+        m.insert("B1 218", ToolId::B1218SitrusBerry);
         m
     };
 }
@@ -66,7 +68,8 @@ impl ToolId {
             ToolId::A2147GiantCape
             | ToolId::A2148RockyHelmet
             | ToolId::A3146PoisonBarb
-            | ToolId::B1219HeavyHelmet => true,
+            | ToolId::B1219HeavyHelmet
+            | ToolId::B1218SitrusBerry => true,
         }
     }
 

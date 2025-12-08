@@ -358,6 +358,10 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::ExtraDamagePerOpponentRetreatCost { damage_per_energy } => {
+            extra_damage_per_opponent_retreat_cost(state, attack.fixed_damage, *damage_per_energy)
+        }
     }
 }
 
@@ -1609,6 +1613,41 @@ fn generate_random_spread_indices(
         targets.push(possible_indices[rand_idx]);
     }
     targets
+}
+
+fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutations) {
+    let choices: Vec<_> = state
+        .enumerate_bench_pokemon(state.current_player)
+        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .collect();
+
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        // Push choices for switching if there are benched Pokemon
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }
+    })
+}
+
+fn extra_damage_per_opponent_retreat_cost(
+    state: &State,
+    base_damage: u32,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+
+    // Get the retreat cost of the opponent's active Pokemon
+    let retreat_cost_count = if let Card::Pokemon(pokemon_card) = &opponent_active.card {
+        pokemon_card.retreat_cost.len() as u32
+    } else {
+        0
+    };
+
+    let total_damage = base_damage + (retreat_cost_count * damage_per_energy);
+    active_damage_doutcome(total_damage)
 }
 
 #[cfg(test)]

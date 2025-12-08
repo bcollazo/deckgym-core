@@ -760,7 +760,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck.", todo_implementation);
     // map.insert("Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.", todo_implementation);
     // map.insert("Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
-    // map.insert("Switch this Pokémon with 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Switch this Pokémon with 1 of your Benched Pokémon.",
+        Mechanic::SwitchSelfWithBench,
+    );
     // map.insert("Switch this Pokémon with 1 of your Benched [L] Pokémon.", todo_implementation);
     map.insert(
         "Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
@@ -1057,7 +1060,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_energy: 30,
         },
     );
-    // map.insert("This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
+    map.insert(
+        "This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.",
+        Mechanic::ExtraDamagePerOpponentRetreatCost {
+            damage_per_energy: 30,
+        },
+    );
     map.insert(
         "This attack does 30 more damage for each Evolution Pokémon on your Bench.",
         Mechanic::EvolutionBenchCountDamage {
@@ -1082,7 +1090,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: false,
         },
     );
-    // map.insert("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
+    map.insert(
+        "This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.",
+        Mechanic::ExtraDamagePerOpponentRetreatCost {
+            damage_per_energy: 40,
+        },
+    );
     // map.insert("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.", todo_implementation);
     // map.insert("This attack does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
