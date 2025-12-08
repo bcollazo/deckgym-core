@@ -133,7 +133,10 @@ fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
     let opponent = (action.actor + 1) % 2;
     let mut choices = Vec::new();
     for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-        choices.push(SimpleAction::Activate { in_play_idx });
+        choices.push(SimpleAction::Activate {
+            player: opponent,
+            in_play_idx,
+        });
     }
     if choices.is_empty() {
         return; // No benched pokemon to switch with
@@ -152,7 +155,10 @@ fn rising_road(index: usize) -> Mutation {
     Box::new(move |_, state, action| {
         // Once during your turn, if this Pokémon is on your Bench, you may switch it with your Active Pokémon.
         debug!("Solgaleo's ability: Switching with active Pokemon");
-        let choices = vec![SimpleAction::Activate { in_play_idx: index }];
+        let choices = vec![SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx: index,
+        }];
         state.move_generation_stack.push((action.actor, choices));
     })
 }
@@ -165,7 +171,10 @@ fn victreebel_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
         .filter(|(_, pokemon)| pokemon.card.is_basic())
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -179,7 +188,10 @@ fn celesteela_ultra_thrusters(_: &mut StdRng, state: &mut State, action: &Action
     let choices = state
         .enumerate_bench_pokemon(acting_player)
         .filter(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: acting_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     if choices.is_empty() {
         return;
@@ -193,7 +205,10 @@ fn greninja_ex_shifting_stream(_: &mut StdRng, state: &mut State, action: &Actio
     let acting_player = action.actor;
     let choices = state
         .enumerate_bench_pokemon(acting_player)
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: acting_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state.move_generation_stack.push((acting_player, choices));
 }
@@ -381,7 +396,10 @@ fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
         .filter(|(_, pokemon)| pokemon.is_damaged())
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack

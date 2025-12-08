@@ -848,7 +848,10 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
     // Opponent retreats/switches to bench Pokemon
     let switch_action = Action {
         actor: opponent_player,
-        action: SimpleAction::Activate { in_play_idx: 1 },
+        action: SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx: 1,
+        },
         is_stack: false,
     };
     game.apply_action(&switch_action);

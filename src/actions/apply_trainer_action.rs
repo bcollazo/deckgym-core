@@ -17,7 +17,6 @@ use crate::{
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard},
-    state::GameOutcome,
     tool_ids::ToolId,
     State,
 };
@@ -261,7 +260,10 @@ fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
-        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .map(|(i, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx: i,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -273,7 +275,10 @@ fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
-        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .map(|(i, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx: i,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -286,11 +291,14 @@ fn cyrus_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
         .filter(|(_, x)| x.is_damaged())
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
-        .push((opponent_player, possible_moves));
+        .push((action.actor, possible_moves));
 }
 
 fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -391,20 +399,7 @@ fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state.in_play_pokemon[action.actor][0] = None;
 
     // if no bench pokemon, finish game as a loss
-    let bench_pokemon = state.enumerate_bench_pokemon(action.actor).count();
-    if bench_pokemon == 0 {
-        debug!("Player lost due to no bench pokemon after Koga");
-        state.winner = Some(GameOutcome::Win((action.actor + 1) % 2))
-    } else {
-        // else force current_player to promote one of their bench pokemon
-        let possible_moves = state
-            .enumerate_bench_pokemon(action.actor)
-            .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
-            .collect::<Vec<_>>();
-        state
-            .move_generation_stack
-            .push((action.actor, possible_moves));
-    }
+    state.trigger_promotion_or_declare_winner(action.actor);
 }
 
 // TODO: Problem. With doing 1.0, we are basically giving bots the ability to see the cards in deck.
@@ -574,7 +569,10 @@ fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_activations = state
         .enumerate_bench_pokemon(action.actor)
-        .map(|(idx, _)| SimpleAction::Activate { in_play_idx: idx })
+        .map(|(idx, _)| SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx: idx,
+        })
         .collect();
     state
         .move_generation_stack

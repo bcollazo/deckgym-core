@@ -371,7 +371,10 @@ impl State {
             // Queue up promotion actions
             let possible_moves = self
                 .enumerate_bench_pokemon(player_with_empty_active)
-                .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+                .map(|(i, _)| SimpleAction::Activate {
+                    player: player_with_empty_active,
+                    in_play_idx: i,
+                })
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {player_with_empty_active}");
 

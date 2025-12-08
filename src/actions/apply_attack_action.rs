@@ -1333,7 +1333,10 @@ fn teleport_attack() -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-            choices.push(SimpleAction::Activate { in_play_idx });
+            choices.push(SimpleAction::Activate {
+                player: action.actor,
+                in_play_idx,
+            });
         }
         if choices.is_empty() {
             return; // No benched pokemon to switch with
@@ -1389,7 +1392,10 @@ fn knock_back_attack(damage: u32) -> (Probabilities, Mutations) {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-            choices.push(SimpleAction::Activate { in_play_idx });
+            choices.push(SimpleAction::Activate {
+                player: opponent,
+                in_play_idx,
+            });
         }
         if choices.is_empty() {
             return; // No benched pokemon to knock back
@@ -1627,7 +1633,10 @@ fn generate_random_spread_indices(
 fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutations) {
     let choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: state.current_player,
+            in_play_idx,
+        })
         .collect();
 
     doutcome_from_mutation(Box::new(
