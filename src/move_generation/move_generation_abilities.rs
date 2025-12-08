@@ -79,7 +79,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
         AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
         AbilityId::B1177GoomyStickyMembrane => false,
+        AbilityId::B1184EeveeBoostedEvolution => false, // Passive ability, triggers via hooks
         AbilityId::PA037CresseliaExLunarPlumage => false,
+        AbilityId::A3a042NihilegoMorePoison => false, // Passive ability, triggers via hooks
         AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks
     }
 }

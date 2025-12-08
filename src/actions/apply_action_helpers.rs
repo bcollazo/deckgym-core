@@ -138,13 +138,38 @@ fn apply_pokemon_checkup(
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
 
-    // Poison always deals 10 damage
+    // Poison always deals 10 damage (or 20 if opponent has Nihilego with More Poison ability)
     for (player, in_play_idx) in poisons_to_handle {
         let attacking_ref = (player, in_play_idx); // present it as self-damage
+
+        // Check if this is the active Pokemon and if opponent has Nihilego with More Poison ability
+        let mut poison_damage = 10;
+        if in_play_idx == 0 {
+            let opponent = (player + 1) % 2;
+            let has_nihilego_more_poison =
+                mutated_state
+                    .enumerate_in_play_pokemon(opponent)
+                    .any(|(_, pokemon)| {
+                        use crate::ability_ids::AbilityId;
+                        if let Some(ability_id) =
+                            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                        {
+                            ability_id == AbilityId::A3a042NihilegoMorePoison
+                        } else {
+                            false
+                        }
+                    });
+
+            if has_nihilego_more_poison {
+                poison_damage = 20;
+                debug!("Nihilego's More Poison: Increasing poison damage from 10 to 20");
+            }
+        }
+
         handle_damage(
             mutated_state,
             attacking_ref,
-            &[(10, player, in_play_idx)],
+            &[(poison_damage, player, in_play_idx)],
             false,
             None,
         );

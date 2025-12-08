@@ -229,7 +229,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.", todo_implementation);
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.", todo_implementation);
-    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::ReducedDamage { amount: 20 },
+            duration: 1,
+            probability: None,
+        },
+    );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon do -30 damage.", todo_implementation);
     // map.insert("During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen.", todo_implementation);
     // map.insert("During your opponent's next turn, if they attach Energy from their Energy Zone to the Defending Pokémon, that Pokémon will be Asleep.", todo_implementation);

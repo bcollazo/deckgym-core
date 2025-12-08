@@ -87,9 +87,11 @@ pub(crate) fn forecast_ability(
         }
         AbilityId::B1172AegislashCursedMetal => panic!("Cursed Metal is a passive ability"),
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
+        AbilityId::B1184EeveeBoostedEvolution => panic!("Boosted Evolution is a passive ability"),
         AbilityId::PA037CresseliaExLunarPlumage => {
             panic!("Lunar Plumage is a passive ability")
         }
+        AbilityId::A3a042NihilegoMorePoison => panic!("More Poison is a passive ability"),
         AbilityId::A1061PoliwrathCounterattack => {
             panic!("Counterattack is a passive ability")
         }

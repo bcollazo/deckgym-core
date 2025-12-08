@@ -27,6 +27,7 @@ pub enum AbilityId {
     A3a015LuxrayIntimidatingFang,
     A3a021ZeraoraThunderclapFlash,
     A3a027ShiinoticIlluminate,
+    A3a042NihilegoMorePoison,
     A3a062CelesteelaUltraThrusters,
     A3b009FlareonExCombust,
     A3b034SylveonExHappyRibbon,
@@ -41,6 +42,7 @@ pub enum AbilityId {
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
+    B1184EeveeBoostedEvolution,
     B1172AegislashCursedMetal,
     B1177GoomyStickyMembrane,
     PA037CresseliaExLunarPlumage,
@@ -99,11 +101,13 @@ lazy_static::lazy_static! {
         m.insert("A3a 015", AbilityId::A3a015LuxrayIntimidatingFang);
         m.insert("A3a 021", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A3a 027", AbilityId::A3a027ShiinoticIlluminate);
+        m.insert("A3a 042", AbilityId::A3a042NihilegoMorePoison);
         m.insert("A3a 052", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A3a 062", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 075", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A3a 093", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("A3a 101", AbilityId::A1a046AerodactylExPrimevalLaw);
+        m.insert("A3a 103", AbilityId::A3a042NihilegoMorePoison);
         m.insert("A3b 009", AbilityId::A3b009FlareonExCombust);
         m.insert("A3b 034", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A3b 056", AbilityId::A3b056EeveeExVeeveeVolve);
@@ -149,6 +153,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
+        m.insert("A4b 246", AbilityId::A3a042NihilegoMorePoison);
+        m.insert("A4b 247", AbilityId::A3a042NihilegoMorePoison);
         m.insert("A4b 287", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 288", AbilityId::A3b057SnorlaxExFullMouthManner);
         m.insert("A4b 304", AbilityId::A3a062CelesteelaUltraThrusters);
@@ -160,6 +166,7 @@ lazy_static::lazy_static! {
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
+        m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
@@ -171,6 +178,7 @@ lazy_static::lazy_static! {
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 054", AbilityId::A1061PoliwrathCounterattack);
+        m.insert("P-A 109", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("P-A 104", AbilityId::A4a022MiloticHealingRipples);
         m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
         m
