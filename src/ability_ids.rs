@@ -86,6 +86,7 @@ lazy_static::lazy_static! {
         m.insert("A2 078", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 159", AbilityId::A2022ShayminFragrantFlowerGarden);
+        m.insert("A2 167", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A2 187", AbilityId::A2110DarkraiExNightmareAura);
