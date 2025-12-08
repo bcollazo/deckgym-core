@@ -129,4 +129,5 @@ pub enum Mechanic {
     },
     ShuffleOpponentActiveIntoDeck,
     BlockBasicAttack,
+    SwitchSelfWithBench,
 }

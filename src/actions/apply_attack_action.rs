@@ -358,6 +358,7 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
     }
 }
 
@@ -1609,6 +1610,28 @@ fn generate_random_spread_indices(
         targets.push(possible_indices[rand_idx]);
     }
     targets
+}
+
+fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutations) {
+    let choices: Vec<_> = state
+        .enumerate_bench_pokemon(state.current_player)
+        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .collect();
+
+    doutcome_from_mutation(Box::new(
+        move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let opponent = (action.actor + 1) % 2;
+            let attacking_ref = (action.actor, 0);
+
+            // Deal damage to opponent's active
+            handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+
+            // Push choices for switching if there are benched Pokemon
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        },
+    ))
 }
 
 #[cfg(test)]
