@@ -81,17 +81,28 @@ pub fn forecast_trainer_action(
         }
         CardId::A2147GiantCape
         | CardId::A2148RockyHelmet
+        | CardId::A2149LumBerry
         | CardId::A3146PoisonBarb
         | CardId::A3147LeafCape
         | CardId::A3a065ElectricalCord
+        | CardId::A3a066Beastite
+        | CardId::A3b067Leftovers
+        | CardId::A4153SteelApron
+        | CardId::A4154DarkPendant
+        | CardId::A4155RescueScarf
         | CardId::A4a067InflatableBoat
+        | CardId::A4a068MemoryLight
         | CardId::A4b318ElectricalCord
         | CardId::A4b319ElectricalCord
         | CardId::A4b320GiantCape
         | CardId::A4b321GiantCape
         | CardId::A4b322RockyHelmet
         | CardId::A4b323RockyHelmet
-        | CardId::B1219HeavyHelmet => doutcome(attach_tool),
+        | CardId::A4b324LeafCape
+        | CardId::A4b325LeafCape
+        | CardId::B1218SitrusBerry
+        | CardId::B1219HeavyHelmet
+        | CardId::B1220LuckyMittens => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
         }

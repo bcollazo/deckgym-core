@@ -39,13 +39,22 @@ pub(crate) fn tool_id_to_name(tool_id: ToolId) -> &'static str {
     match tool_id {
         ToolId::A2147GiantCape => "Giant Cape",
         ToolId::A2148RockyHelmet => "Rocky Helmet",
+        ToolId::A2149LumBerry => "Lum Berry",
         ToolId::A3146PoisonBarb => "Poison Barb",
         ToolId::A3147LeafCape => "Leaf Cape",
         ToolId::A3a065ElectricalCord
         | ToolId::A4b318ElectricalCord
         | ToolId::A4b319ElectricalCord => "Electrical Cord",
+        ToolId::A3a066Beastite => "Beastite",
+        ToolId::A3b067Leftovers => "Leftovers",
+        ToolId::A4153SteelApron => "Steel Apron",
+        ToolId::A4154DarkPendant => "Dark Pendant",
+        ToolId::A4155RescueScarf => "Rescue Scarf",
         ToolId::A4a067InflatableBoat => "Inflatable Boat",
+        ToolId::A4a068MemoryLight => "Memory Light",
+        ToolId::B1218SitrusBerry => "Sitrus Berry",
         ToolId::B1219HeavyHelmet => "Heavy Helmet",
+        ToolId::B1220LuckyMittens => "Lucky Mittens",
     }
 }
 

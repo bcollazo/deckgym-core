@@ -176,6 +176,14 @@ impl PlayedCard {
             return;
         }
 
+        // Steel Apron prevents all Special Conditions
+        if let Some(tool_id) = self.attached_tool {
+            if tool_id == crate::tool_ids::ToolId::A4153SteelApron {
+                debug!("Steel Apron prevents status effect");
+                return;
+            }
+        }
+
         match status {
             StatusCondition::Asleep => self.asleep = true,
             StatusCondition::Paralyzed => self.paralyzed = true,

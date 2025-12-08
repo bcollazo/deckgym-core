@@ -37,3 +37,8 @@ pub(crate) fn should_poison_attacker(card: &PlayedCard) -> bool {
     }
     false
 }
+
+// TODO: Dark Pendant (A4154DarkPendant) - requires architectural changes
+// TODO: Rescue Scarf (A4155RescueScarf) - requires knockout handling changes
+// TODO: Lucky Mittens (B1220LuckyMittens) - requires knockout handling changes
+// TODO: Memory Light (A4a068MemoryLight) - requires attack generation changes

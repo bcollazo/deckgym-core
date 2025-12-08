@@ -326,6 +326,9 @@ pub(crate) fn handle_damage(
                 debug!("Poison Barb: Poisoned the attacking Pokemon");
             }
         }
+
+        // TODO: Implement Dark Pendant effect (A4 154)
+        // Requires access to RNG to shuffle card into deck
     }
 
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)

@@ -112,14 +112,32 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
             card.remaining_hp += 30;
             card.total_hp += 30;
         }
+        ToolId::A4153SteelApron => {
+            // Recovers from all Special Conditions on attach
+            let card = state.in_play_pokemon[actor][in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there");
+            card.asleep = false;
+            card.paralyzed = false;
+            card.poisoned = false;
+            card.burned = false;
+        }
         // Many tools do nothing on attach
         ToolId::A2148RockyHelmet
+        | ToolId::A2149LumBerry
         | ToolId::A3146PoisonBarb
         | ToolId::A3a065ElectricalCord
+        | ToolId::A3a066Beastite
+        | ToolId::A3b067Leftovers
+        | ToolId::A4154DarkPendant
+        | ToolId::A4155RescueScarf
         | ToolId::A4a067InflatableBoat
+        | ToolId::A4a068MemoryLight
         | ToolId::A4b318ElectricalCord
         | ToolId::A4b319ElectricalCord
-        | ToolId::B1219HeavyHelmet => {}
+        | ToolId::B1218SitrusBerry
+        | ToolId::B1219HeavyHelmet
+        | ToolId::B1220LuckyMittens => {}
     }
 }
 
@@ -252,6 +270,61 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
             zeraora.attach_energy(&EnergyType::Lightning, 1);
         }
     }
+
+    // Handle end-of-turn tool effects for ALL players (not just the one ending their turn)
+    for player in 0..2 {
+        let mut tools_to_discard = vec![];
+
+        for in_play_idx in 0..4 {
+            if let Some(pokemon) = &mut state.in_play_pokemon[player][in_play_idx] {
+                if let Some(tool_id) = pokemon.attached_tool {
+                    match tool_id {
+                        ToolId::A2149LumBerry => {
+                            // At the end of each turn, if the Pokémon this card is attached to is affected by any Special Conditions, it recovers from all of them, and discard this card.
+                            if pokemon.asleep
+                                || pokemon.paralyzed
+                                || pokemon.poisoned
+                                || pokemon.burned
+                            {
+                                debug!("Lum Berry: Curing all status conditions and discarding");
+                                pokemon.asleep = false;
+                                pokemon.paralyzed = false;
+                                pokemon.poisoned = false;
+                                pokemon.burned = false;
+                                tools_to_discard.push((player, in_play_idx));
+                            }
+                        }
+                        ToolId::A3b067Leftovers => {
+                            // At the end of your turn, if the Pokémon this card is attached to is in the Active Spot, heal 10 damage from that Pokémon.
+                            if player == player_ending_turn
+                                && in_play_idx == 0
+                                && pokemon.is_damaged()
+                            {
+                                debug!("Leftovers: Healing 10 damage from active Pokemon");
+                                pokemon.heal(10);
+                            }
+                        }
+                        ToolId::B1218SitrusBerry => {
+                            // At the end of each turn, if the Pokémon this card is attached to has half of its maximum HP or less remaining, heal 30 damage from it. If you do, discard this card.
+                            if pokemon.remaining_hp <= pokemon.total_hp / 2 {
+                                debug!("Sitrus Berry: Healing 30 damage and discarding");
+                                pokemon.heal(30);
+                                tools_to_discard.push((player, in_play_idx));
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+
+        // Discard tools that need to be discarded
+        for (discard_player, discard_idx) in tools_to_discard {
+            if let Some(pokemon) = &mut state.in_play_pokemon[discard_player][discard_idx] {
+                pokemon.attached_tool = None;
+            }
+        }
+    }
 }
 
 pub(crate) fn can_play_support(state: &State) -> bool {
@@ -292,6 +365,36 @@ fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize
                     return 20;
                 }
             }
+        }
+    }
+    0
+}
+
+fn get_steel_apron_reduction(state: &State, (target_player, target_idx): (usize, usize)) -> u32 {
+    let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
+        .as_ref()
+        .expect("Defending Pokemon should be there when checking Steel Apron");
+    if let Some(tool_id) = defending_pokemon.attached_tool {
+        if tool_id == ToolId::A4153SteelApron {
+            debug!("Steel Apron: Reducing damage by 10");
+            return 10;
+        }
+    }
+    0
+}
+
+fn get_beastite_boost(state: &State, (attacking_player, attacking_idx): (usize, usize)) -> u32 {
+    let attacking_pokemon = &state.in_play_pokemon[attacking_player][attacking_idx]
+        .as_ref()
+        .expect("Attacking Pokemon should be there when checking Beastite");
+    if let Some(tool_id) = attacking_pokemon.attached_tool {
+        if tool_id == ToolId::A3a066Beastite {
+            let points = state.points[attacking_player] as u32;
+            debug!(
+                "Beastite: Increasing damage by {} (points earned)",
+                points * 10
+            );
+            return points * 10;
         }
     }
     0
@@ -499,7 +602,9 @@ pub(crate) fn modify_damage(
     let intimidating_fang_reduction =
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    let steel_apron_reduction = get_steel_apron_reduction(state, (target_player, target_idx));
     let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
+    let beastite_boost = get_beastite_boost(state, attacking_ref);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
@@ -527,25 +632,29 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, SteelApron: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}, Beastite: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
         increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
+        steel_apron_reduction,
         intimidating_fang_reduction,
         exoskeleton_reduction,
-        type_boost_bonus
+        type_boost_bonus,
+        beastite_boost
     );
     (base_damage
         + weakness_modifier
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
-        + type_boost_bonus)
+        + type_boost_bonus
+        + beastite_boost)
         .saturating_sub(
             reduced_card_effect_modifiers
                 + heavy_helmet_reduction
+                + steel_apron_reduction
                 + intimidating_fang_reduction
                 + exoskeleton_reduction,
         )
