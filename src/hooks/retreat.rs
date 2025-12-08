@@ -34,7 +34,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             }
         }
         // Implement Retreat Cost Modifiers here
-        let to_subtract = state
+        let mut to_subtract = state
             .get_current_turn_effects()
             .iter()
             .filter(|x| matches!(x, TurnEffect::ReducedRetreatCost { .. }))
@@ -43,6 +43,19 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 _ => 0,
             })
             .sum::<u8>();
+
+        // Shaymin's Sky Support: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.
+        if pokemon_card.stage == 0 {
+            // Only affects Basic Pokemon
+            let current_player = state.current_player;
+            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
+                if let Some(ability_id) = AbilityId::from_pokemon_id(&benched_pokemon.get_id()) {
+                    if ability_id == AbilityId::A2a069ShayminSkySupport {
+                        to_subtract += 1;
+                    }
+                }
+            }
+        }
 
         // Retreat Effects accumulate so we add them.
         for _ in 0..to_subtract {

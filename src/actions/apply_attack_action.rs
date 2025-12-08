@@ -327,10 +327,23 @@ fn forecast_effect_attack_by_mechanic(
             *energy_type,
             bench_side,
         ),
+        Mechanic::EvolutionBenchCountDamage {
+            include_fixed_damage,
+            damage_per,
+        } => evolution_bench_count_damage_attack(
+            state,
+            attack.fixed_damage,
+            *include_fixed_damage,
+            *damage_per,
+        ),
         Mechanic::ExtraDamagePerEnergy {
             opponent,
             damage_per_energy,
         } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
+        Mechanic::DamagePerEnergyAll {
+            opponent,
+            damage_per_energy,
+        } => damage_per_energy_all(state, *opponent, *damage_per_energy),
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
@@ -734,6 +747,32 @@ fn bench_count_damage_attack(
         base_damage + damage_per * bench_count
     } else {
         damage_per * bench_count
+    };
+    active_damage_doutcome(total_damage)
+}
+
+fn evolution_bench_count_damage_attack(
+    state: &State,
+    base_damage: u32,
+    include_base_damage: bool,
+    damage_per: u32,
+) -> (Probabilities, Mutations) {
+    let current_player = state.current_player;
+    let evolution_count = state
+        .enumerate_bench_pokemon(current_player)
+        .filter(|(_, pokemon)| {
+            if let Card::Pokemon(pokemon_card) = &pokemon.card {
+                pokemon_card.stage > 0
+            } else {
+                false
+            }
+        })
+        .count() as u32;
+
+    let total_damage = if include_base_damage {
+        base_damage + damage_per * evolution_count
+    } else {
+        damage_per * evolution_count
     };
     active_damage_doutcome(total_damage)
 }
@@ -1255,6 +1294,25 @@ fn extra_damage_per_energy(
             .get_effective_attached_energy(state, target)
             .len() as u32)
             * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+fn damage_per_energy_all(
+    state: &State,
+    opponent: bool,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let target = if opponent {
+        (state.current_player + 1) % 2
+    } else {
+        state.current_player
+    };
+    let total_energy: u32 = state.in_play_pokemon[target]
+        .iter()
+        .flatten()
+        .map(|pokemon| pokemon.get_effective_attached_energy(state, target).len() as u32)
+        .sum();
+    let damage = total_energy * damage_per_energy;
     active_damage_doutcome(damage)
 }
 

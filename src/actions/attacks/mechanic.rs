@@ -109,7 +109,15 @@ pub enum Mechanic {
         energy_type: Option<EnergyType>,
         bench_side: BenchSide,
     },
+    EvolutionBenchCountDamage {
+        include_fixed_damage: bool,
+        damage_per: u32,
+    },
     ExtraDamagePerEnergy {
+        opponent: bool,
+        damage_per_energy: u32,
+    },
+    DamagePerEnergyAll {
         opponent: bool,
         damage_per_energy: u32,
     },
