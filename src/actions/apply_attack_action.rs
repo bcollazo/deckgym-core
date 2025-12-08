@@ -1459,7 +1459,7 @@ fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mu
     }
 }
 
-/// For Aerodactyl's Primal Wingbeat: Flip a coin. If heads, opponent shuffles their Active Pokémon into their deck.
+/// For Umbreon's Dark Binding: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.
 fn block_basic_attack(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
@@ -1467,11 +1467,12 @@ fn block_basic_attack(damage: u32) -> (Probabilities, Mutations) {
 
         // Check if the defending Pokemon is a Basic Pokemon (stage 0)
         if opponent_active.card.is_basic() {
-            opponent_active.add_effect(crate::effects::CardEffect::CannotAttack, 1);
+            opponent_active.add_effect(CardEffect::CannotAttack, 1);
         }
     })
 }
 
+/// For Aerodactyl's Primal Wingbeat: Flip a coin. If heads, opponent shuffles their Active Pokémon into their deck.
 fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
     let probabilities = vec![0.5, 0.5]; // 50% heads (shuffle), 50% tails (nothing)
     let mutations: Mutations = vec![
