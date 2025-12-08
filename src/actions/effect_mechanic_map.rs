@@ -95,7 +95,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::DiscardRandomGlobalEnergy,
     );
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);
-    // map.insert("Discard a random Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a random Energy from this Pokémon.",
+        Mechanic::SelfDiscardRandomEnergy,
+    );
     map.insert(
         "Discard a random Energy from your opponent's Active Pokémon.",
         Mechanic::DiscardEnergyFromOpponentActive,

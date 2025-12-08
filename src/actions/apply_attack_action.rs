@@ -292,6 +292,7 @@ fn forecast_effect_attack_by_mechanic(
             *probability,
         ),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
             damage,
@@ -1144,6 +1145,17 @@ fn damage_and_discard_all_energy(damage: u32) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
+    })
+}
+
+fn damage_and_discard_random_energy(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |rng, state, action| {
+        let active = state.get_active(action.actor);
+        if !active.attached_energy.is_empty() {
+            let idx = rng.gen_range(0..active.attached_energy.len());
+            let energy = active.attached_energy[idx];
+            state.discard_from_active(action.actor, &[energy]);
+        }
     })
 }
 
