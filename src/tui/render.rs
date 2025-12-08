@@ -46,6 +46,7 @@ pub(crate) fn tool_id_to_name(tool_id: ToolId) -> &'static str {
         | ToolId::A4b319ElectricalCord => "Electrical Cord",
         ToolId::A4a067InflatableBoat => "Inflatable Boat",
         ToolId::B1219HeavyHelmet => "Heavy Helmet",
+        ToolId::B1218SitrusBerry => "Sitrus Berry",
     }
 }
 
