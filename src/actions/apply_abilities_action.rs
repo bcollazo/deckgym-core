@@ -352,10 +352,16 @@ fn indeedee_ex_watch_over(_: &mut StdRng, state: &mut State, action: &Action) {
 fn crobat_cunning_link(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.
     debug!("Crobat's Cunning Link: Dealing 30 damage to opponent's active Pokemon");
+    let SimpleAction::UseAbility {
+        in_play_idx: crobat_idx,
+    } = action.action
+    else {
+        panic!("Crobat's ability should be triggered by UseAbility action");
+    };
+
     let opponent = (action.actor + 1) % 2;
-    if let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_mut() {
-        opponent_active.apply_damage(30);
-    }
+    let attacking_ref = (action.actor, crobat_idx);
+    handle_damage(state, attacking_ref, &[(30, opponent, 0)], false, None);
 }
 
 fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
