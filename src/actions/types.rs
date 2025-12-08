@@ -68,6 +68,7 @@ pub enum SimpleAction {
     },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
+        player: usize,
         in_play_idx: usize,
     },
     // Custom Mechanics:
@@ -173,7 +174,10 @@ impl fmt::Display for SimpleAction {
                     attacking_ref, targets_str, is_from_active_attack
                 )
             }
-            SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
+            SimpleAction::Activate {
+                player,
+                in_play_idx,
+            } => write!(f, "Activate({player}, {in_play_idx})"),
             SimpleAction::CommunicatePokemon { hand_pokemon } => {
                 write!(f, "CommunicatePokemon({hand_pokemon})")
             }

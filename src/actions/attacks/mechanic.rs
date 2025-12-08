@@ -85,6 +85,7 @@ pub enum Mechanic {
         probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
     },
     SelfDiscardAllEnergy,
+    SelfDiscardRandomEnergy,
     AlsoBenchDamage {
         opponent: bool,
         damage: u32,
@@ -129,4 +130,5 @@ pub enum Mechanic {
     },
     ShuffleOpponentActiveIntoDeck,
     BlockBasicAttack,
+    SwitchSelfWithBench,
 }

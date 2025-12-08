@@ -292,6 +292,7 @@ fn forecast_effect_attack_by_mechanic(
             *probability,
         ),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
             damage,
@@ -358,6 +359,7 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
     }
 }
 
@@ -1146,6 +1148,17 @@ fn damage_and_discard_all_energy(damage: u32) -> (Probabilities, Mutations) {
     })
 }
 
+fn damage_and_discard_random_energy(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |rng, state, action| {
+        let active = state.get_active(action.actor);
+        if !active.attached_energy.is_empty() {
+            let idx = rng.gen_range(0..active.attached_energy.len());
+            let energy = active.attached_energy[idx];
+            state.discard_from_active(action.actor, &[energy]);
+        }
+    })
+}
+
 /// For attacks that discard all energy of a specific type after dealing damage.
 fn discard_all_energy_of_type_attack(
     damage: u32,
@@ -1320,7 +1333,10 @@ fn teleport_attack() -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-            choices.push(SimpleAction::Activate { in_play_idx });
+            choices.push(SimpleAction::Activate {
+                player: action.actor,
+                in_play_idx,
+            });
         }
         if choices.is_empty() {
             return; // No benched pokemon to switch with
@@ -1376,7 +1392,10 @@ fn knock_back_attack(damage: u32) -> (Probabilities, Mutations) {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-            choices.push(SimpleAction::Activate { in_play_idx });
+            choices.push(SimpleAction::Activate {
+                player: opponent,
+                in_play_idx,
+            });
         }
         if choices.is_empty() {
             return; // No benched pokemon to knock back
@@ -1609,6 +1628,31 @@ fn generate_random_spread_indices(
         targets.push(possible_indices[rand_idx]);
     }
     targets
+}
+
+fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutations) {
+    let choices: Vec<_> = state
+        .enumerate_bench_pokemon(state.current_player)
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: state.current_player,
+            in_play_idx,
+        })
+        .collect();
+
+    doutcome_from_mutation(Box::new(
+        move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let opponent = (action.actor + 1) % 2;
+            let attacking_ref = (action.actor, 0);
+
+            // Deal damage to opponent's active
+            handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+
+            // Push choices for switching if there are benched Pokemon
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        },
+    ))
 }
 
 #[cfg(test)]

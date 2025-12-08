@@ -127,9 +127,10 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         ),
         SimpleAction::Place(card, index) => apply_place_card(state, action.actor, card, *index),
         SimpleAction::Evolve(card, position) => apply_evolve(action.actor, state, card, *position),
-        SimpleAction::Activate { in_play_idx } => {
-            apply_retreat(action.actor, state, *in_play_idx, true)
-        }
+        SimpleAction::Activate {
+            player,
+            in_play_idx,
+        } => apply_retreat(*player, state, *in_play_idx, true),
         SimpleAction::Retreat(position) => apply_retreat(action.actor, state, *position, false),
         SimpleAction::ApplyDamage {
             attacking_ref,
@@ -267,14 +268,14 @@ fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize
 
 /// is_free is analogous to "via retreat". If false, its because this comes from an Activate.
 /// Note: This might be called when a K.O. happens, so can't assume there is an active...
-fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_free: bool) {
+fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bool) {
     if !is_free {
-        let active = state.in_play_pokemon[acting_player][0]
+        let active = state.in_play_pokemon[player][0]
             .as_ref()
             .expect("Active Pokemon should be there if paid retreating");
-        let double_grass = active.has_double_grass(state, acting_player);
+        let double_grass = active.has_double_grass(state, player);
         let retreat_cost = get_retreat_cost(state, active).len();
-        let attached_energy: &mut Vec<_> = state.in_play_pokemon[acting_player][0]
+        let attached_energy: &mut Vec<_> = state.in_play_pokemon[player][0]
             .as_mut()
             .expect("Active Pokemon should be there if paid retreating")
             .attached_energy
@@ -311,10 +312,10 @@ fn apply_retreat(acting_player: usize, state: &mut State, bench_idx: usize, is_f
         }
     }
 
-    state.in_play_pokemon[acting_player].swap(0, bench_idx);
+    state.in_play_pokemon[player].swap(0, bench_idx);
 
     // Clear status and effects of the new bench Pokemon
-    if let Some(pokemon) = state.in_play_pokemon[acting_player][bench_idx].as_mut() {
+    if let Some(pokemon) = state.in_play_pokemon[player][bench_idx].as_mut() {
         pokemon.clear_status_and_effects();
     }
 
@@ -634,7 +635,10 @@ mod tests {
         let mut rng: StdRng = StdRng::seed_from_u64(rand::random());
         let action = Action {
             actor: 0,
-            action: SimpleAction::Activate { in_play_idx: 2 },
+            action: SimpleAction::Activate {
+                player: 0,
+                in_play_idx: 2,
+            },
             is_stack: false,
         };
         apply_action(&mut rng, &mut state, &action);

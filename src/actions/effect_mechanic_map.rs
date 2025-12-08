@@ -95,7 +95,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::DiscardRandomGlobalEnergy,
     );
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);
-    // map.insert("Discard a random Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a random Energy from this Pokémon.",
+        Mechanic::SelfDiscardRandomEnergy,
+    );
     map.insert(
         "Discard a random Energy from your opponent's Active Pokémon.",
         Mechanic::DiscardEnergyFromOpponentActive,
@@ -760,7 +763,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck.", todo_implementation);
     // map.insert("Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.", todo_implementation);
     // map.insert("Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
-    // map.insert("Switch this Pokémon with 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Switch this Pokémon with 1 of your Benched Pokémon.",
+        Mechanic::SwitchSelfWithBench,
+    );
     // map.insert("Switch this Pokémon with 1 of your Benched [L] Pokémon.", todo_implementation);
     map.insert(
         "Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
