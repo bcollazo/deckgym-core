@@ -15,6 +15,7 @@ pub enum AbilityId {
     A1a006SerperiorJungleTotem,
     A1a046AerodactylExPrimevalLaw,
     A2a010LeafeonExForestBreath,
+    A2a050CrobatCunningLink,
     A2a071Arceus,
     A2072DusknoirShadowVoid,
     A2078GiratinaLevitate,
@@ -34,6 +35,7 @@ pub enum AbilityId {
     A3b056EeveeExVeeveeVolve,
     A3b057SnorlaxExFullMouthManner,
     A4083EspeonExPsychicHealing,
+    A4112UmbreonExDarkChase,
     A4a010EnteiExLegendaryPulse,
     A4a020SuicuneExLegendaryPulse,
     A4a022MiloticHealingRipples,
@@ -42,6 +44,7 @@ pub enum AbilityId {
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
+    B1160DragalgeExPoisonPoint,
     B1184EeveeBoostedEvolution,
     B1172AegislashCursedMetal,
     B1177GoomyStickyMembrane,
@@ -73,6 +76,7 @@ lazy_static::lazy_static! {
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 082", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 091", AbilityId::A2a010LeafeonExForestBreath);
+        m.insert("A2a 050", AbilityId::A2a050CrobatCunningLink);
         m.insert("A2a 071", AbilityId::A2a071Arceus);
         m.insert("A2a 086", AbilityId::A2a071Arceus);
         m.insert("A2a 095", AbilityId::A2a071Arceus);
@@ -123,6 +127,9 @@ lazy_static::lazy_static! {
         m.insert("A4 083", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4 190", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4 205", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4 112", AbilityId::A4112UmbreonExDarkChase);
+        m.insert("A4 193", AbilityId::A4112UmbreonExDarkChase);
+        m.insert("A4 208", AbilityId::A4112UmbreonExDarkChase);
         m.insert("A4 218", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4 233", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A4a 010", AbilityId::A4a010EnteiExLegendaryPulse);
@@ -152,6 +159,9 @@ lazy_static::lazy_static! {
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
+        m.insert("A4b 230", AbilityId::A2a050CrobatCunningLink);
+        m.insert("A4b 231", AbilityId::A2a050CrobatCunningLink);
+        m.insert("A4b 241", AbilityId::A4112UmbreonExDarkChase);
         m.insert("A4b 245", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("A4b 246", AbilityId::A3a042NihilegoMorePoison);
         m.insert("A4b 247", AbilityId::A3a042NihilegoMorePoison);
@@ -164,6 +174,9 @@ lazy_static::lazy_static! {
         m.insert("B1 073", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
+        m.insert("B1 160", AbilityId::B1160DragalgeExPoisonPoint);
+        m.insert("B1 263", AbilityId::B1160DragalgeExPoisonPoint);
+        m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);

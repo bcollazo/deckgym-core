@@ -83,6 +83,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::PA037CresseliaExLunarPlumage => false,
         AbilityId::A3a042NihilegoMorePoison => false, // Passive ability, triggers via hooks
         AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks
+        AbilityId::A2a050CrobatCunningLink => can_use_crobat_cunning_link(state, card),
+        AbilityId::A4112UmbreonExDarkChase => is_active && can_use_umbreon_dark_chase(state, card),
+        AbilityId::B1160DragalgeExPoisonPoint => false, // Passive ability, triggers via hooks
     }
 }
 
@@ -126,4 +129,29 @@ fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
     state
         .enumerate_in_play_pokemon(state.current_player)
         .any(|(i, p)| p.is_damaged() && i != dusknoir_idx)
+}
+
+fn can_use_crobat_cunning_link(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    // Check if player has Arceus or Arceus ex in play
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| {
+            let name = pokemon.get_name();
+            name == "Arceus" || name == "Arceus ex"
+        })
+}
+
+fn can_use_umbreon_dark_chase(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    // Must be in the Active Spot (index 0)
+    // Opponent must have a benched Pokémon with damage
+    let opponent = (state.current_player + 1) % 2;
+    state
+        .enumerate_bench_pokemon(opponent)
+        .any(|(_, pokemon)| pokemon.is_damaged())
 }
