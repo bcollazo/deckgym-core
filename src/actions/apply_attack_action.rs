@@ -1647,8 +1647,9 @@ fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutatio
             // Deal damage to opponent's active
             handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
 
-            // Push choices for switching if there are benched Pokemon
-            if !choices.is_empty() {
+            // Push choices for switching if there are benched Pokemon and pokemon
+            // is still alive (after possible counterdamage)
+            if !choices.is_empty() && state.maybe_get_active(action.actor).is_some() {
                 state.move_generation_stack.push((action.actor, choices));
             }
         },
