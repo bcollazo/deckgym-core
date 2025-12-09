@@ -262,7 +262,13 @@ where
     // For every valid combination, complete the deck and simulate games.
     let mut results = Vec::new();
 
-    for comb in &combinations {
+    for (comb_idx, comb) in combinations.iter().enumerate() {
+        warn!(
+            "Evaluating combination {}/{}: {:?}",
+            comb_idx + 1,
+            combinations.len(),
+            comb
+        );
         // Create a completed deck by cloning the incomplete one and adding the candidate cards.
         let mut completed_deck = incomplete_deck.clone();
         for card_id in comb {

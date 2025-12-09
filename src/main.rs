@@ -124,6 +124,38 @@ fn main() {
 
             warn!("Welcome to {} optimizer!", "deckgym".blue().bold());
 
+            // Warn if using E4+ players
+            if let Some(ref player_codes) = players {
+                for player_code in player_codes {
+                    if let PlayerCode::E { max_depth } = player_code {
+                        if *max_depth >= 4 {
+                            warn!(
+                                "{}",
+                                format!(
+                                    "WARNING: Using E{} players for optimization can be EXTREMELY SLOW!",
+                                    max_depth
+                                )
+                                .yellow()
+                                .bold()
+                            );
+                            warn!(
+                                "{}",
+                                "Consider using E2, E3, or random (r) players for faster optimization."
+                                    .yellow()
+                            );
+                            if !parallel {
+                                warn!(
+                                    "{}",
+                                    "TIP: Use --parallel flag for significantly faster results."
+                                        .yellow()
+                                );
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
             let sim_config = SimulationConfig {
                 num_games: num,
                 players,
