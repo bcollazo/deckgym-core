@@ -990,16 +990,23 @@ fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> (Probabilities, Muta
             damage,
             move |_, state, action| {
                 let opponent = (action.actor + 1) % 2;
-                let active = state.get_active_mut(opponent);
+                let mut to_discard = Vec::new();
 
+                // Collect energies to discard
                 for _ in 0..energies_to_remove {
+                    let active = state.get_active(opponent);
                     if active.attached_energy.is_empty() {
                         break; // No more energy to discard
                     }
-                    // NOTE: Using pop() instead of random selection to avoid expanding the game tree.
+                    // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
                     // This is a simplification - the card text says "random Energy" but we always
                     // remove the last one for performance reasons.
-                    active.attached_energy.pop();
+                    to_discard.push(*active.attached_energy.last().unwrap());
+                }
+
+                // Discard collected energies properly (moves to discard pile)
+                if !to_discard.is_empty() {
+                    state.discard_from_active(opponent, &to_discard);
                 }
             },
         ));
