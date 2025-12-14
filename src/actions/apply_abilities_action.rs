@@ -423,6 +423,9 @@ fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
             energy: EnergyType::Water,
         })
         .collect::<Vec<_>>();
+    if possible_moves.is_empty() {
+        return; // No benched Water Pokémon with Water Energy
+    }
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
