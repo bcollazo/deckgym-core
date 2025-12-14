@@ -230,6 +230,7 @@ fn forecast_effect_attack_by_mechanic(
             energies,
             target_benched_type,
         } => energy_bench_attack(energies.clone(), *target_benched_type, state, attack),
+        Mechanic::VaporeonHyperWhirlpool => vaporeon_hyper_whirlpool(state, attack.fixed_damage),
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
@@ -961,6 +962,32 @@ fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
     for energies_to_remove in 0..6 {
         outcomes.push(active_damage_effect_mutation(
             30,
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                let active = state.get_active_mut(opponent);
+
+                for _ in 0..energies_to_remove {
+                    if active.attached_energy.is_empty() {
+                        break; // No more energy to discard
+                    }
+                    // NOTE: Using pop() instead of random selection to avoid expanding the game tree.
+                    // This is a simplification - the card text says "random Energy" but we always
+                    // remove the last one for performance reasons.
+                    active.attached_energy.pop();
+                }
+            },
+        ));
+    }
+    (probabilities, outcomes)
+}
+
+fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> (Probabilities, Mutations) {
+    // Flip coins until tails - capped at 5 heads for practicality
+    let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
+    let mut outcomes: Mutations = vec![];
+    for energies_to_remove in 0..6 {
+        outcomes.push(active_damage_effect_mutation(
+            damage,
             move |_, state, action| {
                 let opponent = (action.actor + 1) % 2;
                 let active = state.get_active_mut(opponent);

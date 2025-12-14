@@ -40,6 +40,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
+        AbilityId::A1a019VaporeonWashOut => doutcome(vaporeon_wash_out),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
         AbilityId::A2022ShayminFragrantFlowerGarden => doutcome(shaymin_fragrant_flower_garden),
         AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
@@ -399,6 +400,27 @@ fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
         .map(|(in_play_idx, _)| SimpleAction::Activate {
             player: opponent_player,
             in_play_idx,
+        })
+        .collect::<Vec<_>>();
+    state
+        .move_generation_stack
+        .push((acting_player, possible_moves));
+}
+
+fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
+    // As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.
+    debug!("Vaporeon's Wash Out: Moving Water Energy from benched Water Pokemon to active");
+    let acting_player = action.actor;
+    let possible_moves = state
+        .enumerate_bench_pokemon(acting_player)
+        .filter(|(_, pokemon)| {
+            pokemon.card.get_type() == Some(EnergyType::Water)
+                && pokemon.attached_energy.contains(&EnergyType::Water)
+        })
+        .map(|(in_play_idx, _)| SimpleAction::MoveEnergy {
+            from_in_play_idx: in_play_idx,
+            to_in_play_idx: 0, // Active spot
+            energy: EnergyType::Water,
         })
         .collect::<Vec<_>>();
     state

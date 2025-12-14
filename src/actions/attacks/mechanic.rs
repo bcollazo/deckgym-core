@@ -77,6 +77,7 @@ pub enum Mechanic {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
     },
+    VaporeonHyperWhirlpool,
     // End Unique mechanics
     DamageAndCardEffect {
         opponent: bool,

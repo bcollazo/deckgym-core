@@ -45,6 +45,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
+        AbilityId::A1a019VaporeonWashOut => can_use_vaporeon_wash_out(state),
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
         AbilityId::A2022ShayminFragrantFlowerGarden => !card.ability_used,
         AbilityId::A2a069ShayminSkySupport => false, // Passive ability
@@ -156,4 +157,19 @@ fn can_use_umbreon_dark_chase(state: &State, card: &PlayedCard) -> bool {
     state
         .enumerate_bench_pokemon(opponent)
         .any(|(_, pokemon)| pokemon.is_damaged())
+}
+
+fn can_use_vaporeon_wash_out(state: &State) -> bool {
+    // Check if active Pokémon is Water type
+    let active = state.get_active(state.current_player);
+    if active.get_energy_type() != Some(EnergyType::Water) {
+        return false;
+    }
+    // Check if there's a benched Water Pokémon with Water energy
+    state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| {
+            pokemon.card.get_type() == Some(EnergyType::Water)
+                && pokemon.attached_energy.contains(&EnergyType::Water)
+        })
 }
