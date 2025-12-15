@@ -20,6 +20,13 @@ We already provide several example decks in the repo you can use to get started.
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
 ```
 
+You can also simulate one deck against multiple decks in a folder. The total games will be distributed evenly across all decks:
+
+```bash
+# Simulate your deck against all decks in example_decks folder (1000 games total)
+cargo run simulate my_deck.txt example_decks/ --num 1000 -v
+```
+
 ## Terminal User Interface (TUI)
 
 The TUI provides an interactive way to view and replay games with a visual representation of the game state.
@@ -67,9 +74,15 @@ cargo bench
 **Running Main Script**
 
 ```bash
+# Simulate between two specific decks
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 --players r,r
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vv
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vvvv
+
+# Simulate one deck against all decks in a folder (games distributed evenly)
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/ --num 1000 --players r,r -v
+
+# Optimize incomplete decks
 cargo run optimize example_decks/incomplete-chari.txt A2147,A2148 example_decks/ --num 10 --players e,e -v
 cargo run optimize example_decks/incomplete-chari.txt A2147,A2147,A2148,A2148 example_decks/ --num 1000 --players r,r -v --parallel
 ```
