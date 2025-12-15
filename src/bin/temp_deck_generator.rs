@@ -164,23 +164,68 @@ fn generate_temp_deck(card: &Card) -> String {
     };
 
     let (basic, stage1, stage2) = get_evolution_line(card);
-    let energy_type = format_energy_type(pokemon.energy_type);
+
+    // Calculate energy types from all attacks in the evolution line
+    let energy_types = calculate_energy_types(&basic, &stage1, &stage2, pokemon.energy_type);
 
     match pokemon.stage {
         2 => {
             // Stage 2 deck template
-            generate_stage2_deck(basic, stage1, stage2, &energy_type)
+            generate_stage2_deck(basic, stage1, stage2, &energy_types)
         }
         1 => {
             // Stage 1 deck template
-            generate_stage1_deck(basic, stage1, &energy_type)
+            generate_stage1_deck(basic, stage1, &energy_types)
         }
         0 => {
             // Basic deck template
-            generate_basic_deck(basic, &energy_type)
+            generate_basic_deck(basic, &energy_types)
         }
         _ => String::from("Error: Unknown Pokemon stage"),
     }
+}
+
+/// Calculate energy types from all attacks in the evolution line
+/// Returns a comma-separated string of energy types
+fn calculate_energy_types(
+    basic: &Option<Card>,
+    stage1: &Option<Card>,
+    stage2: &Option<Card>,
+    fallback_type: EnergyType,
+) -> String {
+    use std::collections::HashSet;
+
+    let mut energy_set: HashSet<EnergyType> = HashSet::new();
+
+    // Collect energy types from all cards in the evolution line
+    for card_option in [basic, stage1, stage2].iter() {
+        if let Some(Card::Pokemon(pokemon)) = card_option {
+            for attack in &pokemon.attacks {
+                for energy in &attack.energy_required {
+                    energy_set.insert(*energy);
+                }
+            }
+        }
+    }
+
+    // Remove Colorless from the set
+    energy_set.remove(&EnergyType::Colorless);
+
+    // If empty (only had Colorless or no attacks), use fallback
+    if energy_set.is_empty() {
+        return format_energy_type(fallback_type);
+    }
+
+    // Sort for consistent output
+    let mut energy_vec: Vec<EnergyType> = energy_set.into_iter().collect();
+    energy_vec.sort();
+
+    // Format as comma-separated string
+    energy_vec
+        .iter()
+        .map(|e| format_energy_type(*e))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 fn format_energy_type(energy_type: EnergyType) -> String {
