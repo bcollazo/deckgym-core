@@ -110,4 +110,27 @@ to see what is missing from the specified card.
 
 ## Appendix
 
+### Testing Your Implementation
+
+After implementing a card, it's important to test it against a variety of decks to ensure it works correctly:
+
+1. Generate a temporary test deck for the card you implemented:
+   ```bash
+   cargo run --bin temp_deck_generator -- "Card Name" > test_deck.txt
+   ```
+
+2. Run 1,000 random games against all decks in the example_decks folder:
+   ```bash
+   cargo run simulate test_deck.txt example_decks/ --num 1000 --players r,r -v
+   ```
+
+   This will automatically distribute the 1,000 games evenly across all decks in the folder, testing your implementation against diverse strategies and card combinations.
+
+3. Review the results to ensure:
+   - The games complete without errors
+   - Win rates are reasonable (not 0% or 100% unless expected)
+   - The card's effects are working as intended
+
+### Code Quality
+
 Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui` still work.
