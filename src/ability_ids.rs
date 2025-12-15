@@ -14,6 +14,7 @@ pub enum AbilityId {
     A1132Gardevoir,
     A1a006SerperiorJungleTotem,
     A1a046AerodactylExPrimevalLaw,
+    A1a019VaporeonWashOut,
     A2a010LeafeonExForestBreath,
     A2a050CrobatCunningLink,
     A2a071Arceus,
@@ -70,9 +71,11 @@ lazy_static::lazy_static! {
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1a 006", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 019", AbilityId::A1a019VaporeonWashOut);
         m.insert("A1a 046", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A1a 056", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A1a 070", AbilityId::A1a006SerperiorJungleTotem);
+        m.insert("A1a 072", AbilityId::A1a019VaporeonWashOut);
         m.insert("A1a 078", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A1a 084", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A2a 010", AbilityId::A2a010LeafeonExForestBreath);
@@ -154,6 +157,8 @@ lazy_static::lazy_static! {
         m.insert("A4b 030", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A4b 031", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
+        m.insert("A4b 099", AbilityId::A1a019VaporeonWashOut);
+        m.insert("A4b 100", AbilityId::A1a019VaporeonWashOut);
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 146", AbilityId::A3066OricoricSafeguard);
