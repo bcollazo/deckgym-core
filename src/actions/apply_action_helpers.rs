@@ -37,7 +37,11 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
                     let both_players_initiated = state.in_play_pokemon[0][0].is_some()
                         && state.in_play_pokemon[1][0].is_some();
                     if both_players_initiated {
-                        // Actually start game (no energy generation)
+                        // Actually start game
+                        // First player (turn 1) doesn't get energy, but we queue for both players
+                        // so they can see the preview of their next turn's energy
+                        state.queue_energy_for_player(0);
+                        state.queue_energy_for_player(1);
                         state.turn_count = 1;
                         state.end_turn_maintenance();
                         state.queue_draw_action(state.current_player, 1);

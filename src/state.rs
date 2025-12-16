@@ -30,6 +30,8 @@ pub struct State {
 
     // Core state
     pub(crate) current_energy: Option<EnergyType>,
+    // Queued energy for each player (preview of next turn's energy for multi-energy decks)
+    pub(crate) queued_energy: [Option<EnergyType>; 2],
     pub hands: [Vec<Card>; 2],
     pub decks: [Deck; 2],
     pub discard_piles: [Vec<Card>; 2],
@@ -55,6 +57,7 @@ impl State {
             current_player: 0,
             move_generation_stack: Vec::new(),
             current_energy: None,
+            queued_energy: [None, None],
             hands: [Vec::new(), Vec::new()],
             decks: [deck_a.clone(), deck_b.clone()],
             discard_piles: [Vec::new(), Vec::new()],
@@ -174,17 +177,39 @@ impl State {
             .filter(|card| matches!(card, Card::Pokemon(_)))
     }
 
-    pub(crate) fn generate_energy(&mut self) {
-        if self.decks[self.current_player].energy_types.len() == 1 {
-            self.current_energy = Some(self.decks[self.current_player].energy_types[0]);
+    /// Generates a random energy for the given player based on their deck's energy types.
+    /// For single-energy decks, returns that energy type deterministically.
+    fn random_energy_for_player(&self, player: usize) -> EnergyType {
+        let deck_energies = &self.decks[player].energy_types;
+        if deck_energies.len() == 1 {
+            return deck_energies[0];
         }
-
-        let deck_energies = &self.decks[self.current_player].energy_types;
         let mut rng = rand::thread_rng();
-        let generated = deck_energies
+        *deck_energies
             .choose(&mut rng)
-            .expect("Decks should have at least 1 energy");
-        self.current_energy = Some(*generated);
+            .expect("Decks should have at least 1 energy")
+    }
+
+    /// Queues energy for a player's next turn. Used for multi-energy decks to show
+    /// the energy preview.
+    pub(crate) fn queue_energy_for_player(&mut self, player: usize) {
+        self.queued_energy[player] = Some(self.random_energy_for_player(player));
+    }
+
+    /// Generates energy for the current turn. For multi-energy decks, uses the
+    /// previously queued energy and queues a new one for the next turn.
+    pub(crate) fn generate_energy(&mut self) {
+        let player = self.current_player;
+        let is_multi_energy = self.decks[player].energy_types.len() > 1;
+
+        if is_multi_energy {
+            // Use the queued energy and queue a new one for next turn
+            self.current_energy = self.queued_energy[player];
+            self.queue_energy_for_player(player);
+        } else {
+            // Single-energy deck: always use the same energy type
+            self.current_energy = Some(self.decks[player].energy_types[0]);
+        }
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
@@ -451,6 +476,14 @@ mod tests {
 
     use super::*;
 
+    /// Creates a multi-energy deck for testing by adding multiple energy types
+    fn create_multi_energy_deck() -> Deck {
+        let mut deck = load_test_decks().0; // Get venusaur-exeggutor deck
+                                            // Add Fire energy type to make it a multi-energy deck
+        deck.energy_types.push(EnergyType::Fire);
+        deck
+    }
+
     #[test]
     fn test_draw_transfers_to_hand() {
         let (deck_a, deck_b) = load_test_decks();
@@ -512,5 +545,114 @@ mod tests {
         assert_eq!(state.discard_energies[0].len(), 2);
         assert_eq!(state.discard_energies[0][0], EnergyType::Grass);
         assert_eq!(state.discard_energies[0][1], EnergyType::Grass);
+    }
+
+    #[test]
+    fn test_single_energy_deck_generates_deterministic_energy() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        state.turn_count = 2; // Past initial setup
+        state.current_player = 0;
+
+        // Generate energy multiple times - should always be the same type
+        state.generate_energy();
+        let first_energy = state.current_energy;
+
+        state.generate_energy();
+        let second_energy = state.current_energy;
+
+        assert!(first_energy.is_some());
+        assert_eq!(first_energy, second_energy);
+        assert_eq!(first_energy.unwrap(), state.decks[0].energy_types[0]);
+    }
+
+    #[test]
+    fn test_multi_energy_deck_queues_energy() {
+        let multi_deck = create_multi_energy_deck();
+        let (_, deck_b) = load_test_decks();
+        let mut state = State::new(&multi_deck, &deck_b);
+        state.current_player = 0;
+
+        // Initially no queued energy
+        assert!(state.queued_energy[0].is_none());
+
+        // Queue energy for player 0
+        state.queue_energy_for_player(0);
+
+        // Should now have queued energy
+        assert!(state.queued_energy[0].is_some());
+        let queued = state.queued_energy[0].unwrap();
+
+        // Queued energy should be one of the deck's energy types
+        assert!(state.decks[0].energy_types.contains(&queued));
+    }
+
+    #[test]
+    fn test_multi_energy_deck_generate_uses_queued_energy() {
+        let multi_deck = create_multi_energy_deck();
+        let (_, deck_b) = load_test_decks();
+        let mut state = State::new(&multi_deck, &deck_b);
+        state.turn_count = 2;
+        state.current_player = 0;
+
+        // Queue a specific energy
+        state.queue_energy_for_player(0);
+        let queued_energy = state.queued_energy[0].unwrap();
+
+        // Generate energy should use the queued energy
+        state.generate_energy();
+        assert_eq!(state.current_energy.unwrap(), queued_energy);
+
+        // And should have queued a new energy for next turn
+        assert!(state.queued_energy[0].is_some());
+    }
+
+    #[test]
+    fn test_first_turn_no_energy_for_first_player() {
+        // This tests the expected behavior after initial setup:
+        // Turn 1 (first player) should have no current_energy
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        state.turn_count = 1; // Turn 1 (first player's first turn)
+        state.current_player = 0;
+
+        // On turn 1, current_energy is None (first player doesn't get energy)
+        // This is set by the game flow, not generate_energy
+        assert!(state.current_energy.is_none());
+    }
+
+    #[test]
+    fn test_advance_turn_generates_energy_for_next_player() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        state.turn_count = 1;
+        state.current_player = 0;
+
+        // Simulate end of turn 1, advancing to turn 2 (second player's turn)
+        state.advance_turn();
+
+        // Now on turn 2, current player should be 1 and have energy
+        assert_eq!(state.current_player, 1);
+        assert_eq!(state.turn_count, 2);
+        assert!(state.current_energy.is_some());
+    }
+
+    #[test]
+    fn test_multi_energy_preview_available_from_turn_1() {
+        let multi_deck = create_multi_energy_deck();
+        let (_, deck_b) = load_test_decks();
+        let mut state = State::new(&multi_deck, &deck_b);
+
+        // Simulate the transition from initial setup to turn 1
+        // This is what happens in forecast_end_turn when both players have active Pokemon
+        state.queue_energy_for_player(0);
+        state.queue_energy_for_player(1);
+        state.turn_count = 1;
+        state.current_player = 0;
+
+        // First player on turn 1: no current energy, but queued energy should be visible
+        assert!(state.current_energy.is_none());
+        assert!(state.queued_energy[0].is_some()); // Preview for turn 3
+        assert!(state.queued_energy[1].is_some()); // Preview for turn 4
     }
 }
