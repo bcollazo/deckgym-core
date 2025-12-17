@@ -24,6 +24,9 @@ pub enum Mechanic {
     InflictStatusCondition {
         condition: StatusCondition,
     },
+    InflictMultipleStatusConditions {
+        conditions: Vec<StatusCondition>,
+    },
     ChanceStatusAttack {
         condition: StatusCondition,
     },
@@ -76,6 +79,9 @@ pub enum Mechanic {
     ChargeBench {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
+    },
+    ChargeSelf {
+        energies: Vec<EnergyType>,
     },
     VaporeonHyperWhirlpool,
     // End Unique mechanics
