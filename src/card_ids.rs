@@ -2298,6 +2298,109 @@ pub enum CardId {
     B1329Lilligant,
     B1330Klefki,
     B1331FlamePatch,
+    B1a001Bulbasaur,
+    B1a002Ivysaur,
+    B1a003Venusaur,
+    B1a004MegaVenusaurEx,
+    B1a005Spinarak,
+    B1a006Ariados,
+    B1a007Sunkern,
+    B1a008Sunflora,
+    B1a009Burmy,
+    B1a010Mothim,
+    B1a011Charmander,
+    B1a012Charmeleon,
+    B1a013Charizard,
+    B1a014MegaCharizardEx,
+    B1a015Houndour,
+    B1a016Houndoom,
+    B1a017Squirtle,
+    B1a018Wartortle,
+    B1a019Blastoise,
+    B1a020MegaBlastoiseEx,
+    B1a021Basculin,
+    B1a022Clauncher,
+    B1a023Clawitzer,
+    B1a024Magnemite,
+    B1a025Magneton,
+    B1a026Magnezone,
+    B1a027Emolga,
+    B1a028Helioptile,
+    B1a029Heliolisk,
+    B1a030Misdreavus,
+    B1a031Mismagius,
+    B1a032Solosis,
+    B1a033Duosion,
+    B1a034Reuniclus,
+    B1a035Spritzee,
+    B1a036Aromatisse,
+    B1a037Xerneas,
+    B1a038Onix,
+    B1a039Makuhita,
+    B1a040Hariyama,
+    B1a041Nosepass,
+    B1a042MegaLopunnyEx,
+    B1a043Mienfoo,
+    B1a044Mienshao,
+    B1a045Grimer,
+    B1a046Muk,
+    B1a047Purrloin,
+    B1a048Liepard,
+    B1a049Trubbish,
+    B1a050Garbodor,
+    B1a051Steelix,
+    B1a052MegaSteelixEx,
+    B1a053Probopass,
+    B1a054Genesect,
+    B1a055Ditto,
+    B1a056Porygon,
+    B1a057Porygon2,
+    B1a058PorygonZ,
+    B1a059Starly,
+    B1a060Staravia,
+    B1a061Staraptor,
+    B1a062Buneary,
+    B1a063Lopunny,
+    B1a064Bouffalant,
+    B1a065Furfrou,
+    B1a066ClemontsBackpack,
+    B1a067QuickGrowExtract,
+    B1a068Clemont,
+    B1a069Serena,
+    B1a070Ariados,
+    B1a071Sunflora,
+    B1a072Reuniclus,
+    B1a073Xerneas,
+    B1a074Trubbish,
+    B1a075Buneary,
+    B1a076MegaVenusaurEx,
+    B1a077MegaCharizardEx,
+    B1a078MegaBlastoiseEx,
+    B1a079MegaLopunnyEx,
+    B1a080MegaSteelixEx,
+    B1a081Clemont,
+    B1a082Serena,
+    B1a083MegaVenusaurEx,
+    B1a084MegaBlastoiseEx,
+    B1a085MegaLopunnyEx,
+    B1a086MegaSteelixEx,
+    B1a087MegaCharizardEx,
+    B1a088Oddish,
+    B1a089Gloom,
+    B1a090Vileplume,
+    B1a091Charizard,
+    B1a092Shellder,
+    B1a093Cloyster,
+    B1a094Sandshrew,
+    B1a095Sandslash,
+    B1a096TypeNull,
+    B1a097Silvally,
+    B1a098BuzzwoleEx,
+    B1a099LunalaEx,
+    B1a100GuzzlordEx,
+    B1a101SolgaleoEx,
+    B1a102Aegislash,
+    B1a103QuickGrowExtract,
     PA001Potion,
     PA002XSpeed,
     PA003HandScope,
@@ -4710,6 +4813,109 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1 329", CardId::B1329Lilligant);
     map.insert("B1 330", CardId::B1330Klefki);
     map.insert("B1 331", CardId::B1331FlamePatch);
+    map.insert("B1a 001", CardId::B1a001Bulbasaur);
+    map.insert("B1a 002", CardId::B1a002Ivysaur);
+    map.insert("B1a 003", CardId::B1a003Venusaur);
+    map.insert("B1a 004", CardId::B1a004MegaVenusaurEx);
+    map.insert("B1a 005", CardId::B1a005Spinarak);
+    map.insert("B1a 006", CardId::B1a006Ariados);
+    map.insert("B1a 007", CardId::B1a007Sunkern);
+    map.insert("B1a 008", CardId::B1a008Sunflora);
+    map.insert("B1a 009", CardId::B1a009Burmy);
+    map.insert("B1a 010", CardId::B1a010Mothim);
+    map.insert("B1a 011", CardId::B1a011Charmander);
+    map.insert("B1a 012", CardId::B1a012Charmeleon);
+    map.insert("B1a 013", CardId::B1a013Charizard);
+    map.insert("B1a 014", CardId::B1a014MegaCharizardEx);
+    map.insert("B1a 015", CardId::B1a015Houndour);
+    map.insert("B1a 016", CardId::B1a016Houndoom);
+    map.insert("B1a 017", CardId::B1a017Squirtle);
+    map.insert("B1a 018", CardId::B1a018Wartortle);
+    map.insert("B1a 019", CardId::B1a019Blastoise);
+    map.insert("B1a 020", CardId::B1a020MegaBlastoiseEx);
+    map.insert("B1a 021", CardId::B1a021Basculin);
+    map.insert("B1a 022", CardId::B1a022Clauncher);
+    map.insert("B1a 023", CardId::B1a023Clawitzer);
+    map.insert("B1a 024", CardId::B1a024Magnemite);
+    map.insert("B1a 025", CardId::B1a025Magneton);
+    map.insert("B1a 026", CardId::B1a026Magnezone);
+    map.insert("B1a 027", CardId::B1a027Emolga);
+    map.insert("B1a 028", CardId::B1a028Helioptile);
+    map.insert("B1a 029", CardId::B1a029Heliolisk);
+    map.insert("B1a 030", CardId::B1a030Misdreavus);
+    map.insert("B1a 031", CardId::B1a031Mismagius);
+    map.insert("B1a 032", CardId::B1a032Solosis);
+    map.insert("B1a 033", CardId::B1a033Duosion);
+    map.insert("B1a 034", CardId::B1a034Reuniclus);
+    map.insert("B1a 035", CardId::B1a035Spritzee);
+    map.insert("B1a 036", CardId::B1a036Aromatisse);
+    map.insert("B1a 037", CardId::B1a037Xerneas);
+    map.insert("B1a 038", CardId::B1a038Onix);
+    map.insert("B1a 039", CardId::B1a039Makuhita);
+    map.insert("B1a 040", CardId::B1a040Hariyama);
+    map.insert("B1a 041", CardId::B1a041Nosepass);
+    map.insert("B1a 042", CardId::B1a042MegaLopunnyEx);
+    map.insert("B1a 043", CardId::B1a043Mienfoo);
+    map.insert("B1a 044", CardId::B1a044Mienshao);
+    map.insert("B1a 045", CardId::B1a045Grimer);
+    map.insert("B1a 046", CardId::B1a046Muk);
+    map.insert("B1a 047", CardId::B1a047Purrloin);
+    map.insert("B1a 048", CardId::B1a048Liepard);
+    map.insert("B1a 049", CardId::B1a049Trubbish);
+    map.insert("B1a 050", CardId::B1a050Garbodor);
+    map.insert("B1a 051", CardId::B1a051Steelix);
+    map.insert("B1a 052", CardId::B1a052MegaSteelixEx);
+    map.insert("B1a 053", CardId::B1a053Probopass);
+    map.insert("B1a 054", CardId::B1a054Genesect);
+    map.insert("B1a 055", CardId::B1a055Ditto);
+    map.insert("B1a 056", CardId::B1a056Porygon);
+    map.insert("B1a 057", CardId::B1a057Porygon2);
+    map.insert("B1a 058", CardId::B1a058PorygonZ);
+    map.insert("B1a 059", CardId::B1a059Starly);
+    map.insert("B1a 060", CardId::B1a060Staravia);
+    map.insert("B1a 061", CardId::B1a061Staraptor);
+    map.insert("B1a 062", CardId::B1a062Buneary);
+    map.insert("B1a 063", CardId::B1a063Lopunny);
+    map.insert("B1a 064", CardId::B1a064Bouffalant);
+    map.insert("B1a 065", CardId::B1a065Furfrou);
+    map.insert("B1a 066", CardId::B1a066ClemontsBackpack);
+    map.insert("B1a 067", CardId::B1a067QuickGrowExtract);
+    map.insert("B1a 068", CardId::B1a068Clemont);
+    map.insert("B1a 069", CardId::B1a069Serena);
+    map.insert("B1a 070", CardId::B1a070Ariados);
+    map.insert("B1a 071", CardId::B1a071Sunflora);
+    map.insert("B1a 072", CardId::B1a072Reuniclus);
+    map.insert("B1a 073", CardId::B1a073Xerneas);
+    map.insert("B1a 074", CardId::B1a074Trubbish);
+    map.insert("B1a 075", CardId::B1a075Buneary);
+    map.insert("B1a 076", CardId::B1a076MegaVenusaurEx);
+    map.insert("B1a 077", CardId::B1a077MegaCharizardEx);
+    map.insert("B1a 078", CardId::B1a078MegaBlastoiseEx);
+    map.insert("B1a 079", CardId::B1a079MegaLopunnyEx);
+    map.insert("B1a 080", CardId::B1a080MegaSteelixEx);
+    map.insert("B1a 081", CardId::B1a081Clemont);
+    map.insert("B1a 082", CardId::B1a082Serena);
+    map.insert("B1a 083", CardId::B1a083MegaVenusaurEx);
+    map.insert("B1a 084", CardId::B1a084MegaBlastoiseEx);
+    map.insert("B1a 085", CardId::B1a085MegaLopunnyEx);
+    map.insert("B1a 086", CardId::B1a086MegaSteelixEx);
+    map.insert("B1a 087", CardId::B1a087MegaCharizardEx);
+    map.insert("B1a 088", CardId::B1a088Oddish);
+    map.insert("B1a 089", CardId::B1a089Gloom);
+    map.insert("B1a 090", CardId::B1a090Vileplume);
+    map.insert("B1a 091", CardId::B1a091Charizard);
+    map.insert("B1a 092", CardId::B1a092Shellder);
+    map.insert("B1a 093", CardId::B1a093Cloyster);
+    map.insert("B1a 094", CardId::B1a094Sandshrew);
+    map.insert("B1a 095", CardId::B1a095Sandslash);
+    map.insert("B1a 096", CardId::B1a096TypeNull);
+    map.insert("B1a 097", CardId::B1a097Silvally);
+    map.insert("B1a 098", CardId::B1a098BuzzwoleEx);
+    map.insert("B1a 099", CardId::B1a099LunalaEx);
+    map.insert("B1a 100", CardId::B1a100GuzzlordEx);
+    map.insert("B1a 101", CardId::B1a101SolgaleoEx);
+    map.insert("B1a 102", CardId::B1a102Aegislash);
+    map.insert("B1a 103", CardId::B1a103QuickGrowExtract);
     map.insert("P-A 001", CardId::PA001Potion);
     map.insert("P-A 002", CardId::PA002XSpeed);
     map.insert("P-A 003", CardId::PA003HandScope);

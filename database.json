@@ -51669,6 +51669,2296 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B1a 001",
+      "name": "Bulbasaur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 002",
+      "name": "Ivysaur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Synthesis",
+          "fixed_damage": 0,
+          "effect": "Take 2 Grass Energy from your Energy Zone and attach it to this Pokémon"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 003",
+      "name": "Venusaur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 160,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless", "Colorless"],
+          "title": "Poisonous Whip",
+          "fixed_damage": 90,
+          "effect": "Your opponent's Active Pokémon is now Poisoned"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 004",
+      "name": "Mega Venusaur ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 240,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless", "Colorless"],
+          "title": "Critical Bloom",
+          "fixed_damage": 120,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Asleep"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 005",
+      "name": "Spinarak",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Sting",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 006",
+      "name": "Ariados",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pierce",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 007",
+      "name": "Sunkern",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Seed Bomb",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 008",
+      "name": "Sunflora",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Quick-Grow Beam",
+          "fixed_damage": 30,
+          "effect": "If Quick-Grow Extract is in your discard pile, this attack does 30 more damage"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 009",
+      "name": "Burmy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Hang Down",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 010",
+      "name": "Mothim",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Cutting Wind",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 011",
+      "name": "Charmander",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "Bite",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 012",
+      "name": "Charmeleon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Steady Firebreathing",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 013",
+      "name": "Charizard",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Inferno Onrush",
+          "fixed_damage": 150,
+          "effect": "This Pokémon also does 30 damage to itself"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 014",
+      "name": "Mega Charizard ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Crimson Dive",
+          "fixed_damage": 250,
+          "effect": "This Pokémon also does 50 damage to itself"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 015",
+      "name": "Houndour",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Roar",
+          "fixed_damage": 0,
+          "effect": "Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon)"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 016",
+      "name": "Houndoom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Sharp Fang",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 017",
+      "name": "Squirtle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Tail Whap",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 018",
+      "name": "Wartortle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Waterfall",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 019",
+      "name": "Blastoise",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Double Splash",
+          "fixed_damage": 90,
+          "effect": "If this Pokémon has at least 2 extra Water Energy attached, this attack does 50 damage to 1 of your opponent's Benched Pokémon"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 020",
+      "name": "Mega Blastoise ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Triple Bombardment",
+          "fixed_damage": 130,
+          "effect": "If this Pokémon has at least 3 extra Water Energy attached, this attack does 50 damage to 2 of your opponent's Benched Pokémon"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 021",
+      "name": "Basculin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Surprise Strike",
+          "fixed_damage": 40,
+          "effect": "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 022",
+      "name": "Clauncher",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 023",
+      "name": "Clawitzer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Aqua Shower",
+          "fixed_damage": 0,
+          "effect": "This attack does 20 damage to each of your opponent's Pokémon"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 024",
+      "name": "Magnemite",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electro Ball",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 025",
+      "name": "Magneton",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Spark",
+          "fixed_damage": 20,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 026",
+      "name": "Magnezone",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless", "Colorless"],
+          "title": "Mirror Shot",
+          "fixed_damage": 90,
+          "effect": "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 027",
+      "name": "Emolga",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Mach Bolt",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 028",
+      "name": "Helioptile",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Thunder Shock",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 029",
+      "name": "Heliolisk",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Thunder Bolt",
+          "fixed_damage": 120,
+          "effect": "Discard all Energy from this Pokémon"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 030",
+      "name": "Misdreavus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Lead",
+          "fixed_damage": 0,
+          "effect": "Put a random Supporter card from your deck into your hand"
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 031",
+      "name": "Mismagius",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Stored Power",
+          "fixed_damage": 60,
+          "effect": "Move all Psychic Enegy from this Pokémon to 1 of your Benched Pokémon"
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 032",
+      "name": "Solosis",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Rollout",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 033",
+      "name": "Duosion",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Psyshot",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 034",
+      "name": "Reuniclus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Psypunch",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 035",
+      "name": "Spritzee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Sweet Scent",
+          "fixed_damage": 0,
+          "effect": "Heal 20 damage from 1 of your Pokémon"
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 036",
+      "name": "Aromatisse",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Perfume Blast",
+          "fixed_damage": 60,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 Colorless more"
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 037",
+      "name": "Xerneas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Geoburst",
+          "fixed_damage": 120,
+          "effect": "This attack's damage is reduced by the amount of damage this Pokémon has on it"
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 038",
+      "name": "Onix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Dig",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, uring your opponent's next turn, prevent all damage from-and effects of-attacks done to this Pokémon"
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 039",
+      "name": "Makuhita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Strength",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 040",
+      "name": "Hariyama",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Megaton Slap Push",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 041",
+      "name": "Nosepass",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Rising Lunge",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 20 more damage"
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 042",
+      "name": "Mega Lopunny ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Rapid Smashers",
+          "fixed_damage": 90,
+          "effect": "Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 043",
+      "name": "Mienfoo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Chop",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 044",
+      "name": "Mienshao",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Low Sweep",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 045",
+      "name": "Grimer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 046",
+      "name": "Muk",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Gunk Shot",
+          "fixed_damage": 70,
+          "effect": "Your opponent's ActiveP okémon is now Poisoned"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 047",
+      "name": "Purrloin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Trip Over",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage"
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 048",
+      "name": "Liepard",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Snatch and Flee",
+          "fixed_damage": 60,
+          "effect": "Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 049",
+      "name": "Trubbish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Drool",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 050",
+      "name": "Garbodor",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Acid Spray",
+          "fixed_damage": 70,
+          "effect": "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 051",
+      "name": "Steelix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Metal Defender",
+          "fixed_damage": 100,
+          "effect": "During your opponent's enxt turn, this Pokémon has no Weakness"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 052",
+      "name": "Mega Steelix ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Adamantine Rolling",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 053",
+      "name": "Probopass",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Metallic Turbo",
+          "fixed_damage": 40,
+          "effect": "Take 3 Metal Energy from your Energy Zone and attach it to 1 of your Benched Pokémon"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 054",
+      "name": "Genesect",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Metal Blast",
+          "fixed_damage": 10,
+          "effect": "This attack does 20 more damage for each Metal Energy attached to this Pokémon"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 055",
+      "name": "Ditto",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Cop a Friend",
+          "fixed_damage": 0,
+          "effect": "Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary energy to use that attack, this attack does nothing"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 056",
+      "name": "Porygon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stiffen",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 057",
+      "name": "Porygon2",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 058",
+      "name": "Porygon-Z",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Cyberjack",
+          "fixed_damage": 20,
+          "effect": "This attack does 20 more damage for each Trainer card in your opponent's deck"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 059",
+      "name": "Starly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Call for Family",
+          "fixed_damage": 0,
+          "effect": "Put 1 random Starly from your deck onto your bench"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 060",
+      "name": "Staravia",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Quick Attack",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 061",
+      "name": "Staraptor",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Hurricane Wing",
+          "fixed_damage": 50,
+          "effect": "Flip 4 coins. This attack does 50 damage for each heads"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 062",
+      "name": "Buneary",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Double Kick",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 063",
+      "name": "Lopunny",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Double Kick",
+          "fixed_damage": 50,
+          "effect": "Flip 2 coins. This attack does 50 damage for each heads"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 064",
+      "name": "Bouffalant",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Revenge",
+          "fixed_damage": 40,
+          "effect": "If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 065",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 066",
+      "trainer_card_type": "Item",
+      "name": "Clemont's Backpack",
+      "effect": "During this turn, attacks used by your Magneton or Heliolisk do +20 damage to your opponent's Pokémon",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 067",
+      "trainer_card_type": "Item",
+      "name": "Quick-Grow Extract",
+      "effect": "Choose 1 of your Grass Pokémon in play. Put a random Grass Pokémon from your deck that evolves from tha Pokémon onto that Pokémon to evolve it. You can't use this card during your first turn or on a Pokémon that was put into play this turn",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 068",
+      "trainer_card_type": "Supporter",
+      "name": "Clemont",
+      "effect": "Put 2 random cards from among Magneton, Heliolisk and Clemont's Backpack from your deck into your hand You may play only 1 Supporter card during your turn.",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 069",
+      "trainer_card_type": "Supporter",
+      "name": "Serena",
+      "effect": "Put a random Mega Evolution Pokémon ex from your deck into your hand You may play only 1 Supporter card during your turn.",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 070",
+      "name": "Ariados",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pierce",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 071",
+      "name": "Sunflora",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Quick-Grow Beam",
+          "fixed_damage": 30,
+          "effect": "If Quick-Grow Extract is in your discard pile, this attack does 30 more damage"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 072",
+      "name": "Reuniclus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Psypunch",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 073",
+      "name": "Xerneas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Geoburst",
+          "fixed_damage": 120,
+          "effect": "This attack's damage is reduced by the amount of damage this Pokémon has on it"
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 074",
+      "name": "Trubbish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Drool",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 075",
+      "name": "Buneary",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Double Kick",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 076",
+      "name": "Mega Venusaur ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 240,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless", "Colorless"],
+          "title": "Critical Bloom",
+          "fixed_damage": 120,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Asleep"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 077",
+      "name": "Mega Charizard ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Crimson Dive",
+          "fixed_damage": 250,
+          "effect": "This Pokémon also does 50 damage to itself"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 078",
+      "name": "Mega Blastoise ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Triple Bombardment",
+          "fixed_damage": 130,
+          "effect": "If this Pokémon has at least 3 extra Water Energy attached, this attack does 50 damage to 2 of your opponent's Benched Pokémon"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 079",
+      "name": "Mega Lopunny ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 190,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Rapid Smashers",
+          "fixed_damage": 90,
+          "effect": "Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 080",
+      "name": "Mega Steelix ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Adamantine Rolling",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 081",
+      "trainer_card_type": "Supporter",
+      "name": "Clemont",
+      "effect": "Put 2 random cards from among Magneton, Heliolisk and Clemont's Backpack from your deck into your hand You may play only 1 Supporter card during your turn.",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 082",
+      "trainer_card_type": "Supporter",
+      "name": "Serena",
+      "effect": "Put a random Mega Evolution Pokémon ex from your deck into your hand You may play only 1 Supporter card during your turn.",
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 083",
+      "name": "Mega Venusaur ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 240,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless", "Colorless"],
+          "title": "Critical Bloom",
+          "fixed_damage": 120,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Asleep"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 084",
+      "name": "Mega Blastoise ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Triple Bombardment",
+          "fixed_damage": 130,
+          "effect": "If this Pokémon has at least 3 extra Water Energy attached, this attack does 50 damage to 2 of your opponent's Benched Pokémon"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 085",
+      "name": "Mega Lopunny ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 190,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Adamantine Rolling",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness"
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 086",
+      "name": "Mega Steelix ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Rapid Smashers",
+          "fixed_damage": 90,
+          "effect": "Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 087",
+      "name": "Mega Charizard ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 220,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Crimson Dive",
+          "fixed_damage": 250,
+          "effect": "This Pokémon also does 50 damage to itself"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 088",
+      "name": "Oddish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Poison Powder",
+          "fixed_damage": 10,
+          "effect": "Your opponent's Active Pokémon is now Poisoned"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 089",
+      "name": "Gloom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Leaf Step",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 090",
+      "name": "Vileplume",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Soothing Scent",
+          "fixed_damage": 80,
+          "effect": "Your opponent's Active Pokémon is now Asleep"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 091",
+      "name": "Charizard",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Inferno Onrush",
+          "fixed_damage": 150,
+          "effect": "This Pokémon also does 30 damage to itself"
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 092",
+      "name": "Shellder",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Tackle",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 093",
+      "name": "Cloyster",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Guard Press",
+          "fixed_damage": 50,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks"
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 094",
+      "name": "Sandshrew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Sand Spray",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 095",
+      "name": "Sandslash",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Cut",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 096",
+      "name": "Type: Null",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Quick Blow",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, this attack does 20 more damage"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 097",
+      "name": "Silvally",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Brave Buddies",
+          "fixed_damage": 50,
+          "effect": "If you played a Supporter card from your hand during this turn, this attack does 50 more damage"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 098",
+      "name": "Buzzwole ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Punch",
+          "fixed_damage": 30,
+          "effect": null
+        },
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Big Beat",
+          "fixed_damage": 120,
+          "effect": "During your next turn, this Pokémon can't use Big Beat"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 099",
+      "name": "Lunala ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless", "Colorless"],
+          "title": "Lunar Blast",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 100",
+      "name": "Guzzlord ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Grindcore",
+          "fixed_damage": 30,
+          "effect": "Flip a coin until you get a tails. For each heads, discard a random Energy from your opponent's Active Pokémon"
+        },
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness", "Colorless"],
+          "title": "Tyrannical Hole",
+          "fixed_damage": 120,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 101",
+      "name": "Solgaleo ex",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Sol Breaker",
+          "fixed_damage": 120,
+          "effect": "This Pokémon also does 10 damage to itself"
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B1a 102",
+      "name": "Aegislash",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless", "Colorless"],
+          "title": "Slicing Blade",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Booster"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B1a 103",
+      "trainer_card_type": "Item",
+      "name": "Quick-Grow Extract",
+      "effect": "During this turn, attacks used by your Magneton or Heliolisk do +20 damage to your opponent's Pokémon",
+      "rarity": "♛",
+      "booster_pack": "Booster"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
