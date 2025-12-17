@@ -136,6 +136,8 @@ pub fn forecast_trainer_action(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
         }
+        CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
+        CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -770,4 +772,23 @@ fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabili
     }
 
     (probabilities, outcomes)
+}
+
+fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Magneton or Heliolisk do +20 damage to your opponent's Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 20,
+            pokemon_names: vec!["Magneton".to_string(), "Heliolisk".to_string()],
+        },
+        0,
+    );
+}
+
+fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+        let name = card.get_name();
+        name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
+    })
 }
