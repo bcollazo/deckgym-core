@@ -2311,7 +2311,7 @@ pub enum CardId {
     B1a011Charmander,
     B1a012Charmeleon,
     B1a013Charizard,
-    B1a014MegaCharizardEx,
+    B1a014MegaCharizardYEx,
     B1a015Houndour,
     B1a016Houndoom,
     B1a017Squirtle,
@@ -2374,7 +2374,7 @@ pub enum CardId {
     B1a074Trubbish,
     B1a075Buneary,
     B1a076MegaVenusaurEx,
-    B1a077MegaCharizardEx,
+    B1a077MegaCharizardYEx,
     B1a078MegaBlastoiseEx,
     B1a079MegaLopunnyEx,
     B1a080MegaSteelixEx,
@@ -2384,7 +2384,7 @@ pub enum CardId {
     B1a084MegaBlastoiseEx,
     B1a085MegaLopunnyEx,
     B1a086MegaSteelixEx,
-    B1a087MegaCharizardEx,
+    B1a087MegaCharizardYEx,
     B1a088Oddish,
     B1a089Gloom,
     B1a090Vileplume,
@@ -2518,6 +2518,30 @@ pub enum CardId {
     PA115Regigigas,
     PA116Shaymin,
     PA117Absol,
+    PB001Pikachu,
+    PB002Petilil,
+    PB003Froakie,
+    PB004Luxray,
+    PB005Pidgey,
+    PB006MegaPidgeotEx,
+    PB007Torchic,
+    PB008Psyduck,
+    PB009MegaAbsolEx,
+    PB010Drifblim,
+    PB011Eevee,
+    PB012Ditto,
+    PB013Arcanine,
+    PB014Magikarp,
+    PB015Mareep,
+    PB016Krookodile,
+    PB017Swablu,
+    PB018Heliolisk,
+    PB019Buneary,
+    PB020Charmeleon,
+    PB021Onix,
+    PB022Hawlucha,
+    PB023Genesect,
+    PB024MegaLatiosEx,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -4826,7 +4850,7 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1a 011", CardId::B1a011Charmander);
     map.insert("B1a 012", CardId::B1a012Charmeleon);
     map.insert("B1a 013", CardId::B1a013Charizard);
-    map.insert("B1a 014", CardId::B1a014MegaCharizardEx);
+    map.insert("B1a 014", CardId::B1a014MegaCharizardYEx);
     map.insert("B1a 015", CardId::B1a015Houndour);
     map.insert("B1a 016", CardId::B1a016Houndoom);
     map.insert("B1a 017", CardId::B1a017Squirtle);
@@ -4889,7 +4913,7 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1a 074", CardId::B1a074Trubbish);
     map.insert("B1a 075", CardId::B1a075Buneary);
     map.insert("B1a 076", CardId::B1a076MegaVenusaurEx);
-    map.insert("B1a 077", CardId::B1a077MegaCharizardEx);
+    map.insert("B1a 077", CardId::B1a077MegaCharizardYEx);
     map.insert("B1a 078", CardId::B1a078MegaBlastoiseEx);
     map.insert("B1a 079", CardId::B1a079MegaLopunnyEx);
     map.insert("B1a 080", CardId::B1a080MegaSteelixEx);
@@ -4899,7 +4923,7 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1a 084", CardId::B1a084MegaBlastoiseEx);
     map.insert("B1a 085", CardId::B1a085MegaLopunnyEx);
     map.insert("B1a 086", CardId::B1a086MegaSteelixEx);
-    map.insert("B1a 087", CardId::B1a087MegaCharizardEx);
+    map.insert("B1a 087", CardId::B1a087MegaCharizardYEx);
     map.insert("B1a 088", CardId::B1a088Oddish);
     map.insert("B1a 089", CardId::B1a089Gloom);
     map.insert("B1a 090", CardId::B1a090Vileplume);
@@ -5033,6 +5057,30 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-A 115", CardId::PA115Regigigas);
     map.insert("P-A 116", CardId::PA116Shaymin);
     map.insert("P-A 117", CardId::PA117Absol);
+    map.insert("P-B 001", CardId::PB001Pikachu);
+    map.insert("P-B 002", CardId::PB002Petilil);
+    map.insert("P-B 003", CardId::PB003Froakie);
+    map.insert("P-B 004", CardId::PB004Luxray);
+    map.insert("P-B 005", CardId::PB005Pidgey);
+    map.insert("P-B 006", CardId::PB006MegaPidgeotEx);
+    map.insert("P-B 007", CardId::PB007Torchic);
+    map.insert("P-B 008", CardId::PB008Psyduck);
+    map.insert("P-B 009", CardId::PB009MegaAbsolEx);
+    map.insert("P-B 010", CardId::PB010Drifblim);
+    map.insert("P-B 011", CardId::PB011Eevee);
+    map.insert("P-B 012", CardId::PB012Ditto);
+    map.insert("P-B 013", CardId::PB013Arcanine);
+    map.insert("P-B 014", CardId::PB014Magikarp);
+    map.insert("P-B 015", CardId::PB015Mareep);
+    map.insert("P-B 016", CardId::PB016Krookodile);
+    map.insert("P-B 017", CardId::PB017Swablu);
+    map.insert("P-B 018", CardId::PB018Heliolisk);
+    map.insert("P-B 019", CardId::PB019Buneary);
+    map.insert("P-B 020", CardId::PB020Charmeleon);
+    map.insert("P-B 021", CardId::PB021Onix);
+    map.insert("P-B 022", CardId::PB022Hawlucha);
+    map.insert("P-B 023", CardId::PB023Genesect);
+    map.insert("P-B 024", CardId::PB024MegaLatiosEx);
     map
 });
 
