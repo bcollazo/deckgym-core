@@ -58,6 +58,10 @@ name = "tui"
 path = "src/bin/tui.rs"
 required-features = ["tui"]
 
+[[bin]]
+name = "temp_deck_generator"
+path = "src/bin/temp_deck_generator.rs"
+
 [[example]]
 name = "sylveon_deck_draw_speed"
 required-features = ["csv-export"]
