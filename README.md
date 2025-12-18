@@ -118,26 +118,11 @@ The tool displays a summary showing total cards, completion percentage, and a br
 
 **Temporary Deck Generator**
 
-Generate a temporary test deck for a specific card. The tool automatically determines the card's evolution stage and creates an appropriate deck template:
+Generate a temporary test deck for a specific pokemon card id. The tool automatically determines the card's evolution stage and creates an appropriate deck template:
 
 ```bash
-# Generate a deck for a Stage 2 Pokemon (includes full evolution line)
-cargo run --bin temp_deck_generator -- Venusaur
-
-# Generate a deck for a Stage 1 Pokemon (includes basic and stage 1)
-cargo run --bin temp_deck_generator -- Parasect
-
-# Generate a deck for a Basic Pokemon
-cargo run --bin temp_deck_generator -- Pikachu
-
-# You can also use card IDs instead of names
 cargo run --bin temp_deck_generator -- "A1 035"
 ```
-
-The generated decks follow standard templates optimized for testing:
-- Stage 2 decks include the full evolution line (Basic, Stage 1, Stage 2) plus support cards
-- Stage 1 decks include Basic and Stage 1 plus support cards with X Speed
-- Basic decks include just the Basic Pokemon plus support cards with X Speed
 
 **Setting Up Git Hooks (Optional)**
 
