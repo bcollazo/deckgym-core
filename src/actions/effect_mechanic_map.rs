@@ -790,6 +790,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: Some(EnergyType::Grass),
         },
     );
+    map.insert(
+        "Take 2 [G] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::ChargeSelf {
+            energies: vec![EnergyType::Grass, EnergyType::Grass],
+        },
+    );
     // map.insert("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     map.insert(
         "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
@@ -1150,6 +1156,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("Your opponent's Active Pokémon is now Confused.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned and Burned.", todo_implementation);
+    map.insert(
+        "Your opponent's Active Pokémon is now Poisoned and Asleep.",
+        Mechanic::InflictMultipleStatusConditions {
+            conditions: vec![StatusCondition::Poisoned, StatusCondition::Asleep],
+        },
+    );
     map.insert(
         "Your opponent's Active Pokémon is now Poisoned.",
         Mechanic::InflictStatusCondition {

@@ -230,12 +230,16 @@ fn forecast_effect_attack_by_mechanic(
             energies,
             target_benched_type,
         } => energy_bench_attack(energies.clone(), *target_benched_type, state, attack),
+        Mechanic::ChargeSelf { energies } => charge_self_attack(energies, attack),
         Mechanic::VaporeonHyperWhirlpool => vaporeon_hyper_whirlpool(state, attack.fixed_damage),
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
         Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
+        Mechanic::InflictMultipleStatusConditions { conditions } => {
+            damage_multiple_status_attack(conditions, attack)
+        }
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
         }
@@ -826,6 +830,17 @@ fn self_charge_active_attack(
     })
 }
 
+/// Attach multiple energy from Energy Zone to the active Pokemon.
+fn charge_self_attack(energies: &[EnergyType], attack: &Attack) -> (Probabilities, Mutations) {
+    let energies = energies.to_vec();
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        for energy in &energies {
+            active.attach_energy(energy, 1);
+        }
+    })
+}
+
 /// Used for attacks that can go directly to bench.
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
 fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
@@ -1025,6 +1040,21 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
 /// For attacks that deal damage and apply a status effect (e.g. Wigglituff Ex)
 fn damage_status_attack(status: StatusCondition, attack: &Attack) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(attack.fixed_damage, build_status_effect(status))
+}
+
+/// For attacks that deal damage and apply multiple status effects (e.g. Mega Venusaur Ex)
+fn damage_multiple_status_attack(
+    conditions: &[StatusCondition],
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    let conditions = conditions.to_vec();
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.get_active_mut(opponent);
+        for &condition in &conditions {
+            opponent_active.apply_status_condition(condition);
+        }
+    })
 }
 
 /// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
