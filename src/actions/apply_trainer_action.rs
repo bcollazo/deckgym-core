@@ -17,7 +17,6 @@ use crate::{
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard},
-    state::GameOutcome,
     tool_ids::ToolId,
     State,
 };
@@ -49,6 +48,8 @@ pub fn forecast_trainer_action(
             doutcome(erika_effect)
         }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
+        CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
+        CardId::A1224Brock | CardId::A1271Brock => doutcome(brock_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             doutcome(irida_effect)
         }
@@ -85,6 +86,10 @@ pub fn forecast_trainer_action(
         | CardId::A4a067InflatableBoat
         | CardId::A4b318ElectricalCord
         | CardId::A4b319ElectricalCord
+        | CardId::A4b320GiantCape
+        | CardId::A4b321GiantCape
+        | CardId::A4b322RockyHelmet
+        | CardId::A4b323RockyHelmet
         | CardId::B1219HeavyHelmet => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
@@ -128,6 +133,11 @@ pub fn forecast_trainer_action(
         }
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
+        CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
+            celestic_town_elder_effect(acting_player, state)
+        }
+        CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
+        CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -252,7 +262,10 @@ fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
-        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .map(|(i, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx: i,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -264,7 +277,10 @@ fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
-        .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
+        .map(|(i, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx: i,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -277,11 +293,14 @@ fn cyrus_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
         .filter(|(_, x)| x.is_damaged())
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
-        .push((opponent_player, possible_moves));
+        .push((action.actor, possible_moves));
 }
 
 fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -314,6 +333,57 @@ fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 }
 
+fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Ninetales".to_string(),
+                "Rapidash".to_string(),
+                "Magmar".to_string(),
+            ],
+        },
+        0,
+    );
+}
+
+fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [F] Energy from your Energy Zone and attach it to Golem or Onix.
+    attach_energy_from_zone_to_specific_pokemon(
+        state,
+        action.actor,
+        EnergyType::Fighting,
+        &["Golem", "Onix"],
+    );
+}
+
+/// Generic helper to attach energy from Energy Zone (unlimited) to specific Pokemon by name
+/// Used by cards like Brock, Kiawe, etc.
+fn attach_energy_from_zone_to_specific_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Enumerate all matching Pokemon in play
+    let possible_targets: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            let name = pokemon.get_name();
+            pokemon_names.iter().any(|&target_name| name == target_name)
+        })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, energy_type, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect();
+
+    if !possible_targets.is_empty() {
+        state.move_generation_stack.push((player, possible_targets));
+    }
+}
+
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.
     state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
@@ -331,20 +401,7 @@ fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state.in_play_pokemon[action.actor][0] = None;
 
     // if no bench pokemon, finish game as a loss
-    let bench_pokemon = state.enumerate_bench_pokemon(action.actor).count();
-    if bench_pokemon == 0 {
-        debug!("Player lost due to no bench pokemon after Koga");
-        state.winner = Some(GameOutcome::Win((action.actor + 1) % 2))
-    } else {
-        // else force current_player to promote one of their bench pokemon
-        let possible_moves = state
-            .enumerate_bench_pokemon(action.actor)
-            .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
-            .collect::<Vec<_>>();
-        state
-            .move_generation_stack
-            .push((action.actor, possible_moves));
-    }
+    state.trigger_promotion_or_declare_winner(action.actor);
 }
 
 // TODO: Problem. With doing 1.0, we are basically giving bots the ability to see the cards in deck.
@@ -514,7 +571,10 @@ fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_activations = state
         .enumerate_bench_pokemon(action.actor)
-        .map(|(idx, _)| SimpleAction::Activate { in_play_idx: idx })
+        .map(|(idx, _)| SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx: idx,
+        })
         .collect();
     state
         .move_generation_stack
@@ -677,5 +737,58 @@ fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutation
         } else {
             false
         }
+    })
+}
+
+fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 1 random Basic Pokémon from your discard pile into your hand.
+    let basic_pokemon: Vec<Card> = state.discard_piles[acting_player]
+        .iter()
+        .filter(|card| card.is_basic())
+        .cloned()
+        .collect();
+
+    if basic_pokemon.is_empty() {
+        // No basic Pokemon in discard, nothing to do
+        return doutcome(|_, _, _| {});
+    }
+
+    // Create one outcome for each possible basic Pokemon that could be selected
+    let num_outcomes = basic_pokemon.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for pokemon in basic_pokemon {
+        outcomes.push(Box::new(move |_, state, action| {
+            // Find and remove this specific Pokemon from discard pile
+            if let Some(idx) = state.discard_piles[action.actor]
+                .iter()
+                .position(|card| card == &pokemon)
+            {
+                state.discard_piles[action.actor].remove(idx);
+                state.hands[action.actor].push(pokemon.clone());
+            }
+        }));
+    }
+
+    (probabilities, outcomes)
+}
+
+fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Magneton or Heliolisk do +20 damage to your opponent's Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 20,
+            pokemon_names: vec!["Magneton".to_string(), "Heliolisk".to_string()],
+        },
+        0,
+    );
+}
+
+fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+        let name = card.get_name();
+        name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
     })
 }

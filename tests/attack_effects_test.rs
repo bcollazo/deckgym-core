@@ -17,6 +17,7 @@ fn test_weedle_multiply_attack() {
     // Initialize with basic decks
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
+    state.current_player = 0;
 
     // Set up player 0 with Weedle in active position
     let active_weedle = PlayedCard::new(

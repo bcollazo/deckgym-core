@@ -1,0 +1,15 @@
+Energy: Fighting
+1 Aerodactyl A1 210
+2 Aerodactyl ex A1a 46
+2 Riolu A2 91
+2 Lucario A2 92
+1 Donphan A2a 38
+1 Phanpy A4 99
+1 Donphan ex A4 100
+1 Donphan A4a 44
+1 Phanpy A4a 76
+2 Old Amber A1 218
+2 Professor's Research A4b 373
+1 May B1 223
+1 Copycat B1 225
+2 Poké Ball P-A 5

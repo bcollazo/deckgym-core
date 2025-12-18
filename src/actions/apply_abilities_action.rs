@@ -36,10 +36,20 @@ pub(crate) fn forecast_ability(
             panic!("Shadowy Spellbind is a passive ability")
         }
         AbilityId::A1177Weezing => doutcome(weezing_ability),
+        AbilityId::A1188PidgeotDriveOff => doutcome(pidgeot_drive_off),
         AbilityId::A1132Gardevoir => doutcome(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
+        AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
+        AbilityId::A1a019VaporeonWashOut => doutcome(vaporeon_wash_out),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
+        AbilityId::A2022ShayminFragrantFlowerGarden => doutcome(shaymin_fragrant_flower_garden),
+        AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2072DusknoirShadowVoid => {
+            doutcome_from_mutation(dusknoir_shadow_void(in_play_idx))
+        }
+        AbilityId::A2078GiratinaLevitate => panic!("Levitate is a passive ability"),
+        AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),
         AbilityId::A2110DarkraiExNightmareAura => panic!("Darkrai ex's ability is passive"),
         AbilityId::A2b035GiratinaExBrokenSpaceBellow => {
             doutcome_from_mutation(charge_giratina_and_end_turn(in_play_idx))
@@ -72,12 +82,25 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
+        AbilityId::A4a044DonphanExoskeleton => panic!("Exoskeleton is a passive ability"),
         AbilityId::B1073GreninjaExShiftingStream => doutcome(greninja_ex_shifting_stream),
         AbilityId::B1121IndeedeeExWatchOver => doutcome(indeedee_ex_watch_over),
         AbilityId::B1157HydreigonRoarInUnison => {
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
         }
+        AbilityId::B1172AegislashCursedMetal => panic!("Cursed Metal is a passive ability"),
         AbilityId::B1177GoomyStickyMembrane => panic!("Sticky Membrane is a passive ability"),
+        AbilityId::B1184EeveeBoostedEvolution => panic!("Boosted Evolution is a passive ability"),
+        AbilityId::PA037CresseliaExLunarPlumage => {
+            panic!("Lunar Plumage is a passive ability")
+        }
+        AbilityId::A3a042NihilegoMorePoison => panic!("More Poison is a passive ability"),
+        AbilityId::A1061PoliwrathCounterattack => {
+            panic!("Counterattack is a passive ability")
+        }
+        AbilityId::A2a050CrobatCunningLink => doutcome(crobat_cunning_link),
+        AbilityId::A4112UmbreonExDarkChase => doutcome(umbreon_dark_chase),
+        AbilityId::B1160DragalgeExPoisonPoint => panic!("Poison Point is a passive ability"),
     }
 }
 
@@ -85,6 +108,13 @@ fn butterfree_heal(_: &mut StdRng, state: &mut State, action: &Action) {
     debug!("Ability: Healing 20 damage from each Pokemon");
     for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
         pokemon.heal(20);
+    }
+}
+
+fn shaymin_fragrant_flower_garden(_: &mut StdRng, state: &mut State, action: &Action) {
+    debug!("Shaymin's Fragrant Flower Garden: Healing 10 damage from each Pokemon");
+    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+        pokemon.heal(10);
     }
 }
 
@@ -98,6 +128,23 @@ fn weezing_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     opponent_active.poisoned = true;
 }
 
+fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    debug!("Pidgeot's Drive Off: Forcing opponent to switch active");
+    let opponent = (action.actor + 1) % 2;
+    let mut choices = Vec::new();
+    for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
+        choices.push(SimpleAction::Activate {
+            player: opponent,
+            in_play_idx,
+        });
+    }
+    if choices.is_empty() {
+        return; // No benched pokemon to switch with
+    }
+    state.move_generation_stack.push((opponent, choices));
+}
+
 fn gardevoir_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, you may attach a Psychic Energy to your Active Pokémon.
     debug!("Gardevoir's ability: Attaching Psychic Energy to active Pokemon");
@@ -109,7 +156,10 @@ fn rising_road(index: usize) -> Mutation {
     Box::new(move |_, state, action| {
         // Once during your turn, if this Pokémon is on your Bench, you may switch it with your Active Pokémon.
         debug!("Solgaleo's ability: Switching with active Pokemon");
-        let choices = vec![SimpleAction::Activate { in_play_idx: index }];
+        let choices = vec![SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx: index,
+        }];
         state.move_generation_stack.push((action.actor, choices));
     })
 }
@@ -122,7 +172,10 @@ fn victreebel_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)
         .filter(|(_, pokemon)| pokemon.card.is_basic())
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state
         .move_generation_stack
@@ -136,7 +189,10 @@ fn celesteela_ultra_thrusters(_: &mut StdRng, state: &mut State, action: &Action
     let choices = state
         .enumerate_bench_pokemon(acting_player)
         .filter(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: acting_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     if choices.is_empty() {
         return;
@@ -150,7 +206,10 @@ fn greninja_ex_shifting_stream(_: &mut StdRng, state: &mut State, action: &Actio
     let acting_player = action.actor;
     let choices = state
         .enumerate_bench_pokemon(acting_player)
-        .map(|(in_play_idx, _)| SimpleAction::Activate { in_play_idx })
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: acting_player,
+            in_play_idx,
+        })
         .collect::<Vec<_>>();
     state.move_generation_stack.push((acting_player, choices));
 }
@@ -222,6 +281,23 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
     })
 }
 
+fn dusknoir_shadow_void(dusknoir_idx: usize) -> Mutation {
+    Box::new(move |_, state, action| {
+        let choices: Vec<SimpleAction> = state
+            .enumerate_in_play_pokemon(action.actor)
+            .filter(|(i, p)| p.is_damaged() && *i != dusknoir_idx)
+            .map(|(i, _)| SimpleAction::MoveAllDamage {
+                from: i,
+                to: dusknoir_idx,
+            })
+            .collect();
+
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
 fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
     Box::new(move |_, state, action| {
         // Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.
@@ -239,6 +315,7 @@ fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
             (action.actor, in_play_idx),
             &[(30, action.actor, in_play_idx)],
             false,
+            None,
         );
     })
 }
@@ -286,6 +363,7 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
         (action.actor, in_play_idx),
         &[(20, action.actor, in_play_idx)],
         false,
+        None,
     );
 }
 
@@ -294,4 +372,61 @@ fn indeedee_ex_watch_over(_: &mut StdRng, state: &mut State, action: &Action) {
     debug!("Indeedee ex's Watch Over: Healing 20 damage from Active Pokemon");
     let active = state.get_active_mut(action.actor);
     active.heal(20);
+}
+
+fn crobat_cunning_link(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.
+    debug!("Crobat's Cunning Link: Dealing 30 damage to opponent's active Pokemon");
+    let SimpleAction::UseAbility {
+        in_play_idx: crobat_idx,
+    } = action.action
+    else {
+        panic!("Crobat's ability should be triggered by UseAbility action");
+    };
+
+    let opponent = (action.actor + 1) % 2;
+    let attacking_ref = (action.actor, crobat_idx);
+    handle_damage(state, attacking_ref, &[(30, opponent, 0)], false, None);
+}
+
+fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.
+    debug!("Umbreon ex's Dark Chase: Switching in opponent's damaged benched Pokemon");
+    let acting_player = action.actor;
+    let opponent_player = (acting_player + 1) % 2;
+    let possible_moves = state
+        .enumerate_bench_pokemon(opponent_player)
+        .filter(|(_, pokemon)| pokemon.is_damaged())
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: opponent_player,
+            in_play_idx,
+        })
+        .collect::<Vec<_>>();
+    state
+        .move_generation_stack
+        .push((acting_player, possible_moves));
+}
+
+fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
+    // As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.
+    debug!("Vaporeon's Wash Out: Moving Water Energy from benched Water Pokemon to active");
+    let acting_player = action.actor;
+    let possible_moves = state
+        .enumerate_bench_pokemon(acting_player)
+        .filter(|(_, pokemon)| {
+            pokemon.card.get_type() == Some(EnergyType::Water)
+                && pokemon.attached_energy.contains(&EnergyType::Water)
+        })
+        .map(|(in_play_idx, _)| SimpleAction::MoveEnergy {
+            from_in_play_idx: in_play_idx,
+            to_in_play_idx: 0, // Active spot
+            energy: EnergyType::Water,
+        })
+        .collect::<Vec<_>>();
+    if possible_moves.is_empty() {
+        return; // No benched Water Pokémon with Water Energy
+    }
+    state
+        .move_generation_stack
+        .push((acting_player, possible_moves));
 }

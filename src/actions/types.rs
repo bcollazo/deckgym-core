@@ -57,6 +57,10 @@ pub enum SimpleAction {
         amount: u32,
         cure_status: bool,
     },
+    MoveAllDamage {
+        from: usize,
+        to: usize,
+    },
     ApplyDamage {
         attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
         targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
@@ -64,6 +68,7 @@ pub enum SimpleAction {
     },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
+        player: usize,
         in_play_idx: usize,
     },
     // Custom Mechanics:
@@ -96,6 +101,10 @@ pub enum SimpleAction {
     ApplyEeveeBagDamageBoost,
     /// Eevee Bag Option 2: Heal all Eevee evolutions
     HealAllEeveeEvolutions,
+    /// Discard a Fossil from play (Fossils can be discarded at any time during your turn)
+    DiscardFossil {
+        in_play_idx: usize,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -144,6 +153,9 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::MoveAllDamage { from, to } => {
+                write!(f, "MoveAllDamage(from:{from}, to:{to})")
+            }
             SimpleAction::ApplyDamage {
                 attacking_ref,
                 targets,
@@ -162,7 +174,10 @@ impl fmt::Display for SimpleAction {
                     attacking_ref, targets_str, is_from_active_attack
                 )
             }
-            SimpleAction::Activate { in_play_idx } => write!(f, "Activate({in_play_idx})"),
+            SimpleAction::Activate {
+                player,
+                in_play_idx,
+            } => write!(f, "Activate({player}, {in_play_idx})"),
             SimpleAction::CommunicatePokemon { hand_pokemon } => {
                 write!(f, "CommunicatePokemon({hand_pokemon})")
             }
@@ -189,6 +204,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::HealAllEeveeEvolutions => {
                 write!(f, "HealAllEeveeEvolutions")
+            }
+            SimpleAction::DiscardFossil { in_play_idx } => {
+                write!(f, "DiscardFossil({in_play_idx})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

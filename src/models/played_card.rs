@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     card_ids::CardId,
     effects::CardEffect,
-    models::{Attack, Card, EnergyType, StatusCondition},
+    models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     tool_ids::ToolId,
     AbilityId, State,
 };
@@ -72,6 +72,14 @@ impl PlayedCard {
         }
     }
 
+    /// Returns true if this card is a Fossil trainer card
+    pub(crate) fn is_fossil(&self) -> bool {
+        match &self.card {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
+            _ => false,
+        }
+    }
+
     pub(crate) fn get_attacks(&self) -> &Vec<Attack> {
         match &self.card {
             Card::Pokemon(pokemon_card) => &pokemon_card.attacks,
@@ -126,12 +134,15 @@ impl PlayedCard {
     ///   - 0: only during this turn
     ///   - 1: during opponent's next turn
     ///   - 2: on your next turn
-    pub(crate) fn add_effect(&mut self, effect: CardEffect, duration: u8) {
+    pub fn add_effect(&mut self, effect: CardEffect, duration: u8) {
         self.effects.push((effect, duration));
     }
 
     pub(crate) fn get_active_effects(&self) -> Vec<CardEffect> {
-        self.effects.iter().map(|(effect, _)| *effect).collect()
+        self.effects
+            .iter()
+            .map(|(effect, _)| effect.clone())
+            .collect()
     }
 
     pub(crate) fn clear_status_and_effects(&mut self) {

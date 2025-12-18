@@ -1,4 +1,5 @@
 use crate::{
+    actions::EFFECT_MECHANIC_MAP,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, TrainerType},
@@ -44,10 +45,12 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
         Card::Pokemon(pokemon) => {
             // Verify attacks have no effects or effects are implemented
             for (index, attack) in pokemon.attacks.iter().enumerate() {
-                if attack.effect.is_some()
-                    && AttackId::from_pokemon_index(&card_id_string, index).is_none()
-                {
-                    return ImplementationStatus::MissingAttack;
+                if let Some(effect_text) = &attack.effect {
+                    if AttackId::from_pokemon_index(&card_id_string, index).is_none()
+                        && EFFECT_MECHANIC_MAP.get(&effect_text[..]).is_none()
+                    {
+                        return ImplementationStatus::MissingAttack;
+                    }
                 }
             }
 

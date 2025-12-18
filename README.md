@@ -2,7 +2,7 @@
 
 # deckgym-core: Pokémon TCG Pocket Simulator
 
-![Card Implemented](https://img.shields.io/badge/Cards_Implemented-1392_%2F_2408_%2857.8%25%29-yellow)
+![Card Implemented](https://img.shields.io/badge/Cards_Implemented-1709_%2F_2408_%2871.0%25%29-yellow)
 
 **deckgym-core** is a high-performance Rust library designed for simulating Pokémon TCG Pocket games. It features a command-line interface (CLI) capable of running 10,000 simulations in approximately 3 seconds. This is the library that powers https://www.deckgym.com.
 
@@ -185,6 +185,11 @@ Then temporarily edit `database.rs` for `_` to match Bulbasaur (this is so that 
 
 ```bash
 cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
+```
+
+To generate attacks do:
+```bash
+cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/effect_mechanic_map.rs && cargo fmt
 ```
 
 **Profiling Main Script**

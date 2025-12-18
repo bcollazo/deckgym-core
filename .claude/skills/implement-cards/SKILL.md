@@ -44,19 +44,19 @@ to see what is missing from the specified card.
 
 ## Attack
 
-- Get the details of all the cards that have the attack you want to implement by using the following script:
+- Get the details of the card with the attack you want to implement by using the following script:
 
   ```bash
   cargo run --bin search "Venusaur" --attack "Giant Bloom"
   ```
 
-- Copy the ids of cards to implement (including full art versions) in the above JSON.
-- In `attack_ids.rs` add the attack to the `AttackId` enum and the `ATTACK_ID_MAP` map (with the correct index).
-  - Only implement attacks with effects.
-  - Keep the file ordered by set and number.
-- Review similar attacks in `apply_attack_action.rs` to ensure consistency in implementation.
-- Implement the attack logic in `forecast_effect_attack` in `apply_attack_action.rs`.
-  - Keep the code as a one-liner in the match statement, and implement the logic using a helper function.
+- Search for the effect text in the above JSON in the `effect_mechanic_map.rs` file.
+- Decide if we should introduce a new Mechanic or re-use or generalize an existing one. Try to re-use existing ones first.
+- Identify all the cards that have the same effect text template, and just differ by parameters.
+- Uncomment all the `// map.insert("` lines that pertain to the mechanic, and add the correct value (an `Mechanic` enum variant with the corresponding parameters).
+- Implement the mechanic logic in `forecast_effect_attack_by_mechanic` in `apply_attack_action.rs`.
+  - Keep the code as a simple one-liner in the match statement by using helper functions
+  - Review similar attacks in `apply_attack_action.rs` to ensure consistency in implementation.
 
 ## Tool
 

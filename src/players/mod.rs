@@ -6,16 +6,18 @@ mod human_player;
 mod mcts_player;
 mod random_player;
 mod value_function_player;
+pub mod value_functions;
 mod weighted_random_player;
 
 pub use attach_attack_player::AttachAttackPlayer;
 pub use end_turn_player::EndTurnPlayer;
 pub use evolution_rusher_player::EvolutionRusherPlayer;
-pub use expectiminimax_player::ExpectiMiniMaxPlayer;
+pub use expectiminimax_player::{ExpectiMiniMaxPlayer, ValueFunction};
 pub use human_player::HumanPlayer;
 pub use mcts_player::MctsPlayer;
 pub use random_player::RandomPlayer;
 pub use value_function_player::ValueFunctionPlayer;
+pub use value_functions::*;
 pub use weighted_random_player::WeightedRandomPlayer;
 
 use crate::{actions::Action, Deck, State};
@@ -117,6 +119,7 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
             deck,
             max_depth: *max_depth,
             write_debug_trees: false,
+            value_function: Box::new(value_functions::baseline_value_function),
         }),
         PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
     }

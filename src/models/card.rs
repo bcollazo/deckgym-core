@@ -141,10 +141,17 @@ impl Card {
         }
     }
 
-    pub(crate) fn get_attacks(&self) -> &Vec<Attack> {
+    pub(crate) fn get_attacks(&self) -> Vec<Attack> {
         match self {
-            Card::Pokemon(pokemon_card) => &pokemon_card.attacks,
-            _ => panic!("Unsupported playable card type"),
+            Card::Pokemon(pokemon_card) => pokemon_card.attacks.clone(),
+            _ => vec![],
+        }
+    }
+
+    pub fn get_retreat_cost(&self) -> Option<Vec<EnergyType>> {
+        match self {
+            Card::Pokemon(pokemon_card) => Some(pokemon_card.retreat_cost.clone()),
+            _ => None, // Fossils
         }
     }
 
@@ -209,6 +216,13 @@ impl Card {
         }
     }
 
+    pub fn is_fossil(&self) -> bool {
+        match self {
+            Card::Trainer(trainer_card) => trainer_card.trainer_card_type == TrainerType::Fossil,
+            _ => false,
+        }
+    }
+
     pub fn as_trainer(&self) -> TrainerCard {
         match self {
             Card::Trainer(trainer_card) => trainer_card.clone(),
@@ -223,6 +237,7 @@ pub enum StatusCondition {
     Paralyzed,
     Asleep,
     Burned,
+    // TODO: Confused
 }
 
 impl fmt::Display for Card {

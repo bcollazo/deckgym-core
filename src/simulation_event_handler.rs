@@ -1,6 +1,5 @@
 use core::panic;
-use log::{info, warn};
-use num_format::{Locale, ToFormattedString};
+use log::info;
 use std::{
     any,
     time::{Duration, Instant},
@@ -41,6 +40,16 @@ pub struct CompositeSimulationEventHandler {
 impl CompositeSimulationEventHandler {
     pub fn new(handlers: Vec<Box<dyn SimulationEventHandler>>) -> Self {
         Self { handlers }
+    }
+
+    /// Get a reference to a specific handler by type
+    pub fn get_handler<T: SimulationEventHandler + 'static>(&self) -> Option<&T> {
+        for handler in &self.handlers {
+            if let Some(h) = (handler.as_ref() as &dyn any::Any).downcast_ref::<T>() {
+                return Some(h);
+            }
+        }
+        None
     }
 }
 
@@ -96,6 +105,22 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
             panic!("Attempted to merge CompositeSimulationEventHandler with incompatible type");
         }
     }
+}
+
+// Statistics computed from a StatsCollector
+pub struct ComputedStats {
+    pub duration: Duration,
+    pub avg_duration: Duration,
+    pub num_games: u32,
+    pub avg_turns_per_game: f32,
+    pub avg_plys_per_game: f32,
+    pub avg_degrees_per_ply: f32,
+    pub player_a_wins: u32,
+    pub player_b_wins: u32,
+    pub ties: u32,
+    pub player_a_win_rate: f32,
+    pub player_b_win_rate: f32,
+    pub tie_rate: f32,
 }
 
 // Example: Statistics collector
@@ -197,7 +222,12 @@ impl SimulationEventHandler for StatsCollector {
         }
     }
 
-    fn on_simulation_end(&mut self) {
+    fn on_simulation_end(&mut self) {}
+}
+
+impl StatsCollector {
+    /// Compute and return statistics without printing
+    pub fn compute_stats(&self) -> ComputedStats {
         let duration = self.end.duration_since(self.start);
         let avg_time_per_game = duration.as_secs_f64() / self.num_games as f64;
         let avg_duration = Duration::from_secs_f64(avg_time_per_game);
@@ -218,33 +248,23 @@ impl SimulationEventHandler for StatsCollector {
             self.total_degrees.iter().sum::<u32>() as f32 / self.total_degrees.len() as f32
         };
 
-        warn!(
-            "Ran {} simulations in {} ({} per game)!",
-            self.num_games.to_formatted_string(&Locale::en),
-            humantime::format_duration(duration),
-            humantime::format_duration(avg_duration)
-        );
-        warn!("Average number of turns per game: {avg_turns_per_game:.2}");
-        warn!("Average number of plys per game: {avg_plys_per_game:.2}");
-        warn!("Average number of degrees per ply: {avg_degrees_per_ply:.2}");
-
         let player_a_win_rate = self.player_a_wins as f32 / self.num_games as f32;
         let player_b_win_rate = self.player_b_wins as f32 / self.num_games as f32;
         let tie_rate = self.ties as f32 / self.num_games as f32;
-        warn!(
-            "Player 0 won: {} ({:.2}%)",
-            self.player_a_wins.to_formatted_string(&Locale::en),
-            player_a_win_rate * 100.0
-        );
-        warn!(
-            "Player 1 won: {} ({:.2}%)",
-            self.player_b_wins.to_formatted_string(&Locale::en),
-            player_b_win_rate * 100.0
-        );
-        warn!(
-            "Draws: {} ({:.2}%)",
-            self.ties.to_formatted_string(&Locale::en),
-            tie_rate * 100.0
-        );
+
+        ComputedStats {
+            duration,
+            avg_duration,
+            num_games: self.num_games,
+            avg_turns_per_game,
+            avg_plys_per_game,
+            avg_degrees_per_ply,
+            player_a_wins: self.player_a_wins,
+            player_b_wins: self.player_b_wins,
+            ties: self.ties,
+            player_a_win_rate,
+            player_b_win_rate,
+            tie_rate,
+        }
     }
 }

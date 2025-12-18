@@ -38,7 +38,7 @@ pub fn is_ultra_beast(pokemon_name: &str) -> bool {
     ULTRA_BEAST_NAMES.contains(&pokemon_name)
 }
 
-pub(crate) fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
+pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
     let total_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
@@ -155,6 +155,18 @@ pub(crate) fn on_attach_energy(
             debug!("Komala's Comatose: Putting Komala to sleep");
             let komala = state.get_active_mut(actor);
             komala.asleep = true;
+        }
+
+        // Check for Cresselia ex's Lunar Plumage ability
+        if ability_id == AbilityId::PA037CresseliaExLunarPlumage
+            && energy_type == EnergyType::Psychic
+        {
+            // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
+            debug!("Cresselia ex's Lunar Plumage: Healing 20 damage");
+            let pokemon = state.in_play_pokemon[actor][in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there if attaching energy to it");
+            pokemon.heal(20);
         }
     }
 }
@@ -309,12 +321,139 @@ fn get_intimidating_fang_reduction(
     0
 }
 
+fn get_exoskeleton_reduction(
+    receiving_pokemon: &crate::models::PlayedCard,
+    is_from_active_attack: bool,
+) -> u32 {
+    if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
+        if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
+            return 20;
+        }
+    }
+    0
+}
+
+fn get_increased_turn_effect_modifiers(
+    state: &State,
+    is_active_to_active: bool,
+    target_is_ex: bool,
+    attacker_is_eevee_evolution: bool,
+    attacking_pokemon: &crate::models::PlayedCard,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    state
+        .get_current_turn_effects()
+        .iter()
+        .map(|effect| match effect {
+            TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
+            TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
+                if attacker_is_eevee_evolution =>
+            {
+                *amount
+            }
+            TurnEffect::IncreasedDamageForSpecificPokemon {
+                amount,
+                pokemon_names,
+            } => {
+                let attacker_name = attacking_pokemon.get_name();
+                if pokemon_names
+                    .iter()
+                    .any(|name| name.as_str() == attacker_name)
+                {
+                    *amount
+                } else {
+                    0
+                }
+            }
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
+fn get_increased_attack_specific_modifiers(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_active_to_active: bool,
+    attack_name: Option<&str>,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    attacking_pokemon
+        .get_active_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::IncreasedDamageForAttack {
+                attack_name: effect_attack_name,
+                amount,
+            } => {
+                if let Some(current_attack_name) = attack_name {
+                    if current_attack_name == effect_attack_name {
+                        Some(*amount)
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        })
+        .sum::<u32>()
+}
+
+fn get_reduced_card_effect_modifiers(
+    state: &State,
+    is_active_to_active: bool,
+    target_player: usize,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    state
+        .get_active(target_player)
+        .get_active_effects()
+        .iter()
+        .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
+        .map(|effect| match effect {
+            CardEffect::ReducedDamage { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
+fn get_weakness_modifier(
+    state: &State,
+    is_active_to_active: bool,
+    target_player: usize,
+    attacking_pokemon: &crate::models::PlayedCard,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    let receiving = state.get_active(target_player);
+    if let Card::Pokemon(pokemon_card) = &receiving.card {
+        if pokemon_card.weakness == attacking_pokemon.card.get_type() {
+            debug!(
+                "Weakness! {:?} is weak to {:?}",
+                pokemon_card,
+                attacking_pokemon.card.get_type()
+            );
+            return 20;
+        }
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
     attacking_ref: (usize, usize),
     target_ref: (u32, usize, usize),
     is_from_active_attack: bool,
+    attack_name: Option<&str>,
 ) -> u32 {
     // If attack is 0, not even Giovanni takes it to 10.
     let (attacking_player, attacking_idx) = attacking_ref;
@@ -342,81 +481,116 @@ pub(crate) fn modify_damage(
         }
     }
 
-    // Intimidating Fang ability damage reduction
-    let intimidating_fang_reduction =
-        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
-    // Heavy Helmet damage reduction
-    let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    // Check for PreventAllDamageAndEffects (Shinx's Hide)
+    if receiving_pokemon
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
+    {
+        debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
+        return 0;
+    }
 
-    // Modifiers by effect (like Giovanni, Red, Eevee Bag), most apply just to active-to-active attacks
+    // Calculate all modifiers
     let is_active_to_active = target_idx == 0 && attacking_idx == 0 && is_from_active_attack;
     let target_is_ex = receiving_pokemon.card.is_ex();
     let attacker_is_eevee_evolution = attacking_pokemon.evolved_from("Eevee");
-    let increased_turn_effect_modifiers = if !is_active_to_active {
-        0
-    } else {
-        state
-            .get_current_turn_effects()
-            .iter()
-            .map(|effect| match effect {
-                TurnEffect::IncreasedDamage { amount } => *amount,
-                TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
-                TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
-                    if attacker_is_eevee_evolution =>
-                {
-                    *amount
-                }
-                _ => 0,
-            })
-            .sum::<u32>()
-    };
 
-    // Modifiers by receiving card effects
-    let reduced_card_effect_modifiers = if !is_active_to_active {
-        0
-    } else {
-        state
-            .get_active(target_player)
-            .get_active_effects()
-            .iter()
-            .filter(|effect| matches!(effect, CardEffect::ReducedDamage { .. }))
-            .map(|effect| match effect {
-                CardEffect::ReducedDamage { amount } => *amount,
-                _ => 0,
-            })
-            .sum::<u32>()
-    };
+    let intimidating_fang_reduction =
+        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
+    let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
+    let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
+        state,
+        is_active_to_active,
+        target_is_ex,
+        attacker_is_eevee_evolution,
+        attacking_pokemon,
+    );
+    let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
+        attacking_pokemon,
+        is_active_to_active,
+        attack_name,
+    );
+    let reduced_card_effect_modifiers =
+        get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
+    let weakness_modifier =
+        get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
 
-    // Weakness Modifier
-    let weakness_modifier = if !is_active_to_active {
-        0
+    // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
+    // These check if certain ability-holders are in play and boost damage for specific energy types
+    // Only applies to active-to-active attacks (not damage moves like Dusknoir's Shadow Void)
+    let type_boost_bonus = if is_active_to_active {
+        calculate_type_boost_bonus(state, attacking_player, attacking_pokemon)
     } else {
-        let receiving = state.get_active(target_player);
-        if let Card::Pokemon(pokemon_card) = &receiving.card {
-            if pokemon_card.weakness == attacking_pokemon.card.get_type() {
-                debug!(
-                    "Weakness! {:?} is weak to {:?}",
-                    pokemon_card,
-                    attacking_pokemon.card.get_type()
-                );
-                return 20;
-            }
-        }
         0
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
+        increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
-        intimidating_fang_reduction
+        intimidating_fang_reduction,
+        exoskeleton_reduction,
+        type_boost_bonus
     );
-    (base_damage + weakness_modifier + increased_turn_effect_modifiers).saturating_sub(
-        reduced_card_effect_modifiers + heavy_helmet_reduction + intimidating_fang_reduction,
-    )
+    (base_damage
+        + weakness_modifier
+        + increased_turn_effect_modifiers
+        + increased_attack_specific_modifiers
+        + type_boost_bonus)
+        .saturating_sub(
+            reduced_card_effect_modifiers
+                + heavy_helmet_reduction
+                + intimidating_fang_reduction
+                + exoskeleton_reduction,
+        )
+}
+
+/// Calculate type-specific damage boost from abilities like Lucario's Fighting Coach or Aegislash's Royal Command
+/// Returns the bonus damage amount based on attacking Pokemon's energy type and abilities in play
+fn calculate_type_boost_bonus(
+    state: &State,
+    attacking_player: usize,
+    attacking_pokemon: &PlayedCard,
+) -> u32 {
+    let attacker_energy_type = match attacking_pokemon.get_energy_type() {
+        Some(energy_type) => energy_type,
+        None => return 0,
+    };
+
+    let mut bonus = 0;
+
+    // Check each Pokemon in play for type-boosting abilities
+    for (_, pokemon) in state.enumerate_in_play_pokemon(attacking_player) {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
+            match ability_id {
+                // Lucario's Fighting Coach: +20 damage to Fighting-type attacks
+                AbilityId::A2092LucarioFightingCoach => {
+                    if attacker_energy_type == EnergyType::Fighting {
+                        debug!("Fighting Coach (Lucario): Increasing damage by 20");
+                        bonus += 20;
+                    }
+                }
+                // Aegislash's Cursed Metal: +30 damage to Psychic and Metal-type attacks
+                AbilityId::B1172AegislashCursedMetal => {
+                    if attacker_energy_type == EnergyType::Psychic
+                        || attacker_energy_type == EnergyType::Metal
+                    {
+                        debug!("Cursed Metal (Aegislash): Increasing damage by 30");
+                        bonus += 30;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    bonus
 }
 
 // Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
@@ -643,13 +817,14 @@ mod tests {
 
         // Get base damage without Giovanni effect
         let attack = attacker.get_attacks()[0].clone();
-        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Add Giovanni effect
         state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
-        let damage_with_giovanni = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true);
+        let damage_with_giovanni =
+            modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
 
         // Verify Giovanni adds exactly 10 damage
         assert_eq!(
@@ -668,9 +843,10 @@ mod tests {
         non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
         non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
-        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_non_ex =
+            modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_non_ex, base_damage_non_ex,
             "Red should not increase damage against non-EX Pokémon"
@@ -681,9 +857,9 @@ mod tests {
         ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
         ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
-        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true);
+        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
         assert_eq!(
             damage_with_red_vs_ex,
             base_damage_ex + 20,
@@ -707,7 +883,7 @@ mod tests {
             .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
 
         // Act
-        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true);
+        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true, None);
 
         // Assert
         assert_eq!(
@@ -774,6 +950,66 @@ mod tests {
         assert!(
             !can_evolve_into(&charizard, &eevee_ex),
             "Eevee ex should not be able to evolve into Charizard"
+        );
+    }
+
+    #[test]
+    fn test_aerodactyl_can_evolve_from_old_amber() {
+        // Aerodactyl (regular) should be able to evolve from Old Amber fossil
+        let aerodactyl = get_card_by_enum(CardId::A1210Aerodactyl);
+        let old_amber = to_playable_card(&get_card_by_enum(CardId::A1218OldAmber), false);
+
+        assert!(
+            can_evolve_into(&aerodactyl, &old_amber),
+            "Aerodactyl should be able to evolve from Old Amber fossil"
+        );
+    }
+
+    #[test]
+    fn test_aerodactyl_ex_can_evolve_from_old_amber() {
+        // Aerodactyl ex should be able to evolve from Old Amber fossil
+        let aerodactyl_ex = get_card_by_enum(CardId::A1a046AerodactylEx);
+        let old_amber = to_playable_card(&get_card_by_enum(CardId::A1218OldAmber), false);
+
+        assert!(
+            can_evolve_into(&aerodactyl_ex, &old_amber),
+            "Aerodactyl ex should be able to evolve from Old Amber fossil"
+        );
+    }
+
+    #[test]
+    fn test_omanyte_can_evolve_from_helix_fossil() {
+        // Omanyte should be able to evolve from Helix Fossil
+        let omanyte = get_card_by_enum(CardId::A1081Omanyte);
+        let helix_fossil = to_playable_card(&get_card_by_enum(CardId::A1216HelixFossil), false);
+
+        assert!(
+            can_evolve_into(&omanyte, &helix_fossil),
+            "Omanyte should be able to evolve from Helix Fossil"
+        );
+    }
+
+    #[test]
+    fn test_kabuto_can_evolve_from_dome_fossil() {
+        // Kabuto should be able to evolve from Dome Fossil
+        let kabuto = get_card_by_enum(CardId::A1158Kabuto);
+        let dome_fossil = to_playable_card(&get_card_by_enum(CardId::A1217DomeFossil), false);
+
+        assert!(
+            can_evolve_into(&kabuto, &dome_fossil),
+            "Kabuto should be able to evolve from Dome Fossil"
+        );
+    }
+
+    #[test]
+    fn test_aerodactyl_cannot_evolve_from_wrong_fossil() {
+        // Aerodactyl should NOT be able to evolve from Helix Fossil (only Old Amber)
+        let aerodactyl = get_card_by_enum(CardId::A1210Aerodactyl);
+        let helix_fossil = to_playable_card(&get_card_by_enum(CardId::A1216HelixFossil), false);
+
+        assert!(
+            !can_evolve_into(&aerodactyl, &helix_fossil),
+            "Aerodactyl should not be able to evolve from Helix Fossil"
         );
     }
 }

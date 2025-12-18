@@ -4,7 +4,7 @@ use crate::{models::StatusCondition, State};
 
 use super::{
     apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
-    Action,
+    Action, SimpleAction,
 };
 
 // These functions should share the common code of
@@ -39,34 +39,6 @@ pub(crate) fn active_damage_effect_doutcome(
     (
         vec![1.0],
         vec![active_damage_effect_mutation(damage, additional_effect)],
-    )
-}
-
-// TODO: Ask for state so that we can get damage via index, before the mutation,
-//  and reuse the common mutation code.
-pub(crate) fn index_active_damage_doutcome<F>(
-    attack_index: usize,
-    additional_effect: F,
-) -> (Probabilities, Mutations)
-where
-    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
-{
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, action| {
-            additional_effect(rng, state, action);
-
-            let active = state.get_active(action.actor);
-            let attack = active.card.get_attacks()[attack_index].clone();
-            let damage = attack.fixed_damage;
-            let target_player = (action.actor + 1) % 2;
-            handle_damage(
-                state,
-                (action.actor, 0),
-                &[(damage, target_player, 0)],
-                true,
-            );
-        })],
     )
 }
 
@@ -114,7 +86,30 @@ where
                 .iter()
                 .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
                 .collect();
-            handle_damage(state, (action.actor, 0), &targets, true);
+
+            // Extract attack name if this is an attack action
+            let attack_name: Option<String> =
+                if let SimpleAction::Attack(attack_index) = &action.action {
+                    state.in_play_pokemon[action.actor][0]
+                        .as_ref()
+                        .and_then(|pokemon| {
+                            pokemon
+                                .card
+                                .get_attacks()
+                                .get(*attack_index)
+                                .map(|attack| attack.title.clone())
+                        })
+                } else {
+                    None
+                };
+
+            handle_damage(
+                state,
+                (action.actor, 0),
+                &targets,
+                true,
+                attack_name.as_deref(),
+            );
         }
     })
 }

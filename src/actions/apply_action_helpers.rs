@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use log::debug;
 use rand::rngs::StdRng;
 
@@ -104,6 +106,40 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
     (probabilities, outcomes)
 }
 
+/// Calculate poison damage based on base damage (10) plus +10 for each opponent's Nihilego with More Poison ability
+/// Only applies the bonus if the poisoned Pokemon is in the active spot (index 0)
+fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
+    use crate::ability_ids::AbilityId;
+
+    let base_damage = 10;
+
+    // Nihilego's More Poison ability only affects the active Pokemon
+    if in_play_idx != 0 {
+        return base_damage;
+    }
+
+    let opponent = (player + 1) % 2;
+    let nihilego_count = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| {
+            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+                .map(|id| id == AbilityId::A3a042NihilegoMorePoison)
+                .unwrap_or(false)
+        })
+        .count();
+
+    let total_damage = base_damage + (nihilego_count as u32 * 10);
+
+    if nihilego_count > 0 {
+        debug!(
+            "Nihilego's More Poison: {} Nihilego in play, poison damage is {}",
+            nihilego_count, total_damage
+        );
+    }
+
+    total_damage
+}
+
 fn apply_pokemon_checkup(
     mutated_state: &mut State,
     sleeps_to_handle: Vec<(usize, usize)>,
@@ -136,14 +172,17 @@ fn apply_pokemon_checkup(
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
 
-    // Poison always deals 10 damage
+    // Poison always deals 10 damage (+10 for each Nihilego with More Poison ability opponent has in play)
     for (player, in_play_idx) in poisons_to_handle {
         let attacking_ref = (player, in_play_idx); // present it as self-damage
+        let poison_damage = get_poison_damage(mutated_state, player, in_play_idx);
+
         handle_damage(
             mutated_state,
             attacking_ref,
-            &[(10, player, in_play_idx)],
+            &[(poison_damage, player, in_play_idx)],
             false,
+            None,
         );
     }
 
@@ -166,10 +205,14 @@ fn apply_pokemon_checkup(
             attacking_ref,
             &[(20, *player, *in_play_idx)],
             false,
+            None,
         );
     }
 
     // Advance turn
+    mutated_state.knocked_out_by_opponent_attack_last_turn =
+        mutated_state.knocked_out_by_opponent_attack_this_turn;
+    mutated_state.knocked_out_by_opponent_attack_this_turn = false;
     mutated_state.advance_turn();
 }
 
@@ -193,16 +236,32 @@ pub(crate) fn handle_damage(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
     is_from_active_attack: bool,
+    attack_name: Option<&str>,
 ) {
     let attacking_player = attacking_ref.0;
     let mut knockouts: Vec<(usize, usize)> = vec![];
+
+    // Reduce and sum damage for duplicate targets
+    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+    for (damage, player, idx) in targets {
+        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    }
+    let targets: Vec<(u32, usize, usize)> = damage_map
+        .into_iter()
+        .map(|((player, idx), damage)| (damage, player, idx))
+        .collect();
 
     // Modify to apply any multipliers (e.g. Oricorio, Giovanni, etc...)
     let modified_targets = targets
         .iter()
         .map(|target_ref| {
-            let modified_damage =
-                modify_damage(state, attacking_ref, *target_ref, is_from_active_attack);
+            let modified_damage = modify_damage(
+                state,
+                attacking_ref,
+                *target_ref,
+                is_from_active_attack,
+                attack_name,
+            );
             (modified_damage, target_ref.1, target_ref.2)
         })
         .collect::<Vec<(u32, usize, usize)>>();
@@ -291,6 +350,20 @@ pub(crate) fn handle_damage(
         state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }
 
+    // Set knocked_out_by_opponent_attack_this_turn flag
+    // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
+    if is_from_active_attack {
+        // Only care about KOs from active attacks
+        for (ko_receiver, _) in knockouts.clone() {
+            let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
+                                                               // If the receiver is NOT the initiator, it's an opponent KO
+            if ko_receiver != ko_initiator_of_this_damage {
+                state.knocked_out_by_opponent_attack_this_turn = true;
+                break; // Only need to set once
+            }
+        }
+    }
+
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
     // Note even attacking player can lose by counterattack K.O.
     if state.points[0] >= 3 && state.points[1] >= 3 {
@@ -310,39 +383,8 @@ pub(crate) fn handle_damage(
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
         }
-
-        // If K.O. was Active and ko_receiver hasn't win, check if can select from Bench
-        let enumerated_bench_pokemon = state
-            .enumerate_bench_pokemon(ko_receiver)
-            .collect::<Vec<_>>();
-        if enumerated_bench_pokemon.is_empty() {
-            // If no bench pokemon, opponent loses
-            let ko_initiator = (ko_receiver + 1) % 2;
-            state.winner = Some(GameOutcome::Win(ko_initiator));
-            debug!("Player {ko_receiver} lost due to no bench pokemon");
-        } else {
-            let possible_moves = state
-                .enumerate_bench_pokemon(ko_receiver)
-                .map(|(i, _)| SimpleAction::Activate { in_play_idx: i })
-                .collect::<Vec<_>>();
-            debug!("Triggering Activate moves: {possible_moves:?} to player {ko_receiver}");
-            // insert right next to EndTurn, so that if this was triggered by an attack,
-            // we resolve any move_generation_stack effects from that attack first.
-            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
-            let index_of_end_turn = state
-                .move_generation_stack
-                .iter()
-                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
-            if let Some(index_of_end_turn) = index_of_end_turn {
-                state
-                    .move_generation_stack
-                    .insert(index_of_end_turn + 1, (ko_receiver, possible_moves));
-            } else {
-                state
-                    .move_generation_stack
-                    .push((ko_receiver, possible_moves));
-            }
-        }
+        // If K.O. was Active, trigger promotion or declare winner
+        state.trigger_promotion_or_declare_winner(ko_receiver);
     }
 }
 
@@ -369,5 +411,31 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::EndTurn]));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card};
+
+    #[test]
+    fn test_poison_damage_no_nihilego() {
+        let state = State::default();
+        // Poison damage should be 10 with no Nihilego in play
+        assert_eq!(get_poison_damage(&state, 0, 0), 10);
+    }
+
+    #[test]
+    fn test_poison_damage_with_nihilego() {
+        let mut state = State::default();
+
+        // Add 2 Nihilego to opponent's field (player 1)
+        let nihilego = get_card_by_enum(CardId::A3a042Nihilego);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&nihilego, false));
+        state.in_play_pokemon[1][1] = Some(to_playable_card(&nihilego, false));
+
+        // Player 0's active pokemon should take 30 damage (10 base + 10 per Nihilego)
+        assert_eq!(get_poison_damage(&state, 0, 0), 30);
     }
 }

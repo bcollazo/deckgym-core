@@ -41,6 +41,7 @@ impl App {
         deck_a_path: &str,
         deck_b_path: &str,
         player_codes: Vec<PlayerCode>,
+        seed: Option<u64>,
     ) -> Result<App, Box<dyn Error>> {
         // Load decks from files
         let deck_a = Deck::from_file(deck_a_path)?;
@@ -49,11 +50,15 @@ impl App {
         // Detect if any player is human
         let has_human = player_codes.contains(&PlayerCode::H);
 
+        // Use provided seed or generate a random one
+        let seed = seed.unwrap_or_else(|| {
+            let mut rng = thread_rng();
+            rng.gen::<u64>()
+        });
+
         let mode = if has_human {
             // Interactive mode - create live game
             let players: Vec<Box<dyn Player>> = create_players(deck_a, deck_b, player_codes);
-            let mut rng = thread_rng();
-            let seed = rng.gen::<u64>();
             let game = Box::new(Game::new(players, seed));
 
             // Get initial state and possible actions
@@ -70,8 +75,6 @@ impl App {
         } else {
             // Replay mode - pre-compute entire game
             let players: Vec<Box<dyn Player>> = create_players(deck_a, deck_b, player_codes);
-            let mut rng = thread_rng();
-            let seed = rng.gen::<u64>();
             let mut game = Game::new(players, seed);
 
             let mut states = Vec::new();

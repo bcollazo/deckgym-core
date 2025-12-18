@@ -13,6 +13,21 @@ use crate::{
     Deck, Game,
 };
 
+/// Configuration for a single enemy deck in optimization
+#[derive(Clone)]
+pub struct EnemyDeckConfig {
+    pub deck: Deck,
+    pub num_games: u32,
+}
+
+/// Configuration for optimization runs
+#[derive(Clone)]
+pub struct OptimizationConfig {
+    pub enemy_deck_configs: Vec<EnemyDeckConfig>,
+    pub players: Option<Vec<PlayerCode>>,
+    pub seed: Option<u64>,
+}
+
 /// Configuration for running simulations
 #[derive(Clone)]
 pub struct SimulationConfig {
@@ -150,6 +165,7 @@ pub fn cli_optimize(
     pb.finish_with_message("Optimization complete!");
 }
 
+/// Wrapper function that accepts simple Deck slice for backward compatibility
 pub fn optimize<F, G>(
     incomplete_deck: &Deck,
     candidate_cards: &[String],
@@ -162,7 +178,42 @@ where
     F: Fn(usize, usize, &[CardId], f32),
     G: Fn() + Sync,
 {
-    if enemy_decks.is_empty() {
+    // Convert to OptimizationConfig format
+    let enemy_deck_configs: Vec<EnemyDeckConfig> = enemy_decks
+        .iter()
+        .map(|deck| EnemyDeckConfig {
+            deck: deck.clone(),
+            num_games: sim_config.num_games,
+        })
+        .collect();
+    let opt_config = OptimizationConfig {
+        enemy_deck_configs,
+        players: sim_config.players,
+        seed: sim_config.seed,
+    };
+
+    optimize_with_configs(
+        incomplete_deck,
+        candidate_cards,
+        opt_config,
+        parallel_config,
+        callbacks,
+    )
+}
+
+/// Optimizes with per-deck game configuration
+pub fn optimize_with_configs<F, G>(
+    incomplete_deck: &Deck,
+    candidate_cards: &[String],
+    opt_config: OptimizationConfig,
+    parallel_config: ParallelConfig,
+    callbacks: Option<OptimizationCallbacks<F, G>>,
+) -> Vec<(Vec<CardId>, f32)>
+where
+    F: Fn(usize, usize, &[CardId], f32),
+    G: Fn() + Sync,
+{
+    if opt_config.enemy_deck_configs.is_empty() {
         warn!("No valid enemy decks provided. Optimization cannot proceed.");
         return Vec::new();
     }
@@ -190,11 +241,15 @@ where
         "Valid combinations ({}): {combinations:?}",
         combinations.len()
     );
+    let total_games_per_combination: u32 = opt_config
+        .enemy_deck_configs
+        .iter()
+        .map(|config| config.num_games)
+        .sum();
     warn!(
-        "Games to Play: {} combinations × {} enemy decks × {} games per deck",
+        "Games to Play: {} combinations × {} total games per combination",
         combinations.len(),
-        enemy_decks.len(),
-        sim_config.num_games
+        total_games_per_combination
     );
 
     // Configure rayon thread pool if specified
@@ -225,15 +280,17 @@ where
         }
 
         // Generate all games to simulate for this combination
-        let games_to_simulate: Vec<(Deck, Deck, Vec<PlayerCode>)> = enemy_decks
+        let games_to_simulate: Vec<(Deck, Deck, Vec<PlayerCode>)> = opt_config
+            .enemy_deck_configs
             .iter()
-            .flat_map(|enemy_deck| {
+            .flat_map(|enemy_config| {
                 let deck_clone = completed_deck.clone();
-                let players_clone = sim_config.players.clone();
-                (0..sim_config.num_games).map(move |_| {
+                let players_clone = opt_config.players.clone();
+                let enemy_deck_clone = enemy_config.deck.clone();
+                (0..enemy_config.num_games).map(move |_| {
                     (
                         deck_clone.clone(),
-                        enemy_deck.clone(),
+                        enemy_deck_clone.clone(),
                         fill_code_array(players_clone.clone()),
                     )
                 })
@@ -252,7 +309,7 @@ where
                 .map(|(deck_a, deck_b, player_codes)| {
                     let players =
                         create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
-                    let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
+                    let seed = opt_config.seed.unwrap_or(rand::random::<u64>());
                     let mut game = Game::new(players, seed);
                     let outcome = game.play();
 
@@ -275,7 +332,7 @@ where
                 .map(|(deck_a, deck_b, player_codes)| {
                     let players =
                         create_players(deck_a.clone(), deck_b.clone(), player_codes.clone());
-                    let seed = sim_config.seed.unwrap_or(rand::random::<u64>());
+                    let seed = opt_config.seed.unwrap_or(rand::random::<u64>());
                     let mut game = Game::new(players, seed);
                     let outcome = game.play();
 
