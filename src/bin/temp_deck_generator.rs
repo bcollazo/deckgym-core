@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use clap::Parser;
 use deckgym::card_ids::CardId;
 use deckgym::database::get_card_by_enum;
@@ -184,8 +186,6 @@ fn generate_temp_deck(card: &Card) -> String {
 /// Calculate energy types from all attacks in the Pokemon list
 /// Returns a comma-separated string of energy types
 fn calculate_energy_types(pokemon_list: &[&PokemonCard], fallback_type: EnergyType) -> String {
-    use std::collections::HashSet;
-
     let mut energy_set: HashSet<EnergyType> = HashSet::new();
 
     // Collect energy types from all Pokemon in the list
