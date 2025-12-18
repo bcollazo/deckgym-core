@@ -3,7 +3,7 @@ use colored::Colorize;
 use deckgym::optimize::{ParallelConfig, SimulationConfig};
 use deckgym::players::{parse_player_code, PlayerCode};
 use deckgym::simulate::initialize_logger;
-use deckgym::{cli_optimize, simulate};
+use deckgym::{cli_optimize, simulate, Deck};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
 use std::fs;
@@ -100,8 +100,6 @@ fn simulate_against_folder(
     parallel: bool,
     num_threads: Option<usize>,
 ) {
-    use deckgym::Deck;
-
     // Read all deck files from the folder
     let deck_paths: Vec<String> = fs::read_dir(decks_folder)
         .expect("Failed to read decks folder")
