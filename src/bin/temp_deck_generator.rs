@@ -1,53 +1,42 @@
 use clap::Parser;
 use deckgym::card_ids::CardId;
 use deckgym::database::get_card_by_enum;
-use deckgym::models::{Card, EnergyType};
+use deckgym::models::{Card, EnergyType, PokemonCard};
 use strum::IntoEnumIterator;
 
 #[derive(Parser, Debug)]
 #[command(name = "temp_deck_generator")]
 #[command(about = "Generate a temporary deck for testing given a card", long_about = None)]
 struct Args {
-    /// Card ID (e.g., "A1 003") or card name (e.g., "Venusaur")
-    card: String,
+    /// Card ID (e.g., "A1 003")
+    card_id: String,
 }
 
 fn main() {
     let args = Args::parse();
 
-    // Find the card by ID or name
-    let card = find_card(&args.card);
-
-    match card {
-        Some(card) => {
-            let deck = generate_temp_deck(&card);
-            println!("{}", deck);
-        }
+    // Find the CardId enum variant by ID string
+    let card_id = match find_card_id(&args.card_id) {
+        Some(id) => id,
         None => {
-            eprintln!("Error: Card '{}' not found in database", args.card);
-            eprintln!("Please provide a valid card ID (e.g., 'A1 003') or name (e.g., 'Venusaur')");
+            eprintln!("Error: Card ID '{}' not found", args.card_id);
+            eprintln!("Please provide a valid card ID (e.g., 'A1 003')");
             std::process::exit(1);
         }
-    }
+    };
+
+    let card = get_card_by_enum(card_id);
+    let deck = generate_temp_deck(&card);
+    println!("{}", deck);
 }
 
-/// Find a card by ID or name
-fn find_card(query: &str) -> Option<Card> {
-    for id in CardId::iter() {
-        let card = get_card_by_enum(id);
-
-        // Check if it matches by ID or name
-        let matches = match &card {
-            Card::Pokemon(pokemon) => {
-                pokemon.id == query || pokemon.name.eq_ignore_ascii_case(query)
-            }
-            Card::Trainer(trainer) => {
-                trainer.id == query || trainer.name.eq_ignore_ascii_case(query)
-            }
-        };
-
-        if matches {
-            return Some(card);
+/// Find a CardId by its ID string (e.g., "A1 003")
+fn find_card_id(id: &str) -> Option<CardId> {
+    for card_id in CardId::iter() {
+        let card = get_card_by_enum(card_id);
+        let card_id_str = card.get_id();
+        if card_id_str == id {
+            return Some(card_id);
         }
     }
     None
@@ -64,12 +53,8 @@ fn get_evolution_line(card: &Card) -> (Option<Card>, Option<Card>, Option<Card>)
         0 => {
             // Basic Pokemon - find Stage 1 and Stage 2
             let stage1 = find_stage1_evolution(&pokemon.name);
-            let stage2 = if let Some(ref s1) = stage1 {
-                if let Card::Pokemon(s1_pokemon) = s1 {
-                    find_stage2_evolution(&s1_pokemon.name)
-                } else {
-                    None
-                }
+            let stage2 = if let Some(Card::Pokemon(s1_pokemon)) = &stage1 {
+                find_stage2_evolution(&s1_pokemon.name)
             } else {
                 None
             };
@@ -90,15 +75,11 @@ fn get_evolution_line(card: &Card) -> (Option<Card>, Option<Card>, Option<Card>)
                 .evolves_from
                 .as_ref()
                 .and_then(|name| find_card_by_name(name));
-            let basic = if let Some(ref s1) = stage1 {
-                if let Card::Pokemon(s1_pokemon) = s1 {
-                    s1_pokemon
-                        .evolves_from
-                        .as_ref()
-                        .and_then(|name| find_card_by_name(name))
-                } else {
-                    None
-                }
+            let basic = if let Some(Card::Pokemon(s1_pokemon)) = &stage1 {
+                s1_pokemon
+                    .evolves_from
+                    .as_ref()
+                    .and_then(|name| find_card_by_name(name))
             } else {
                 None
             };
@@ -160,13 +141,28 @@ fn find_card_by_name(name: &str) -> Option<Card> {
 /// Generate a temporary deck for testing based on the card's evolution stage
 fn generate_temp_deck(card: &Card) -> String {
     let Card::Pokemon(pokemon) = card else {
-        return format!("Error: Only Pokemon cards are supported for deck generation. '{}' is a Trainer card.", card.get_name());
+        return format!(
+            "Error: Only Pokemon cards are supported for deck generation. '{}' is a Trainer card.",
+            card.get_name()
+        );
     };
 
     let (basic, stage1, stage2) = get_evolution_line(card);
 
+    // Collect all Pokemon in the evolution line
+    let mut pokemon_list = Vec::new();
+    if let Some(Card::Pokemon(p)) = &basic {
+        pokemon_list.push(p);
+    }
+    if let Some(Card::Pokemon(p)) = &stage1 {
+        pokemon_list.push(p);
+    }
+    if let Some(Card::Pokemon(p)) = &stage2 {
+        pokemon_list.push(p);
+    }
+
     // Calculate energy types from all attacks in the evolution line
-    let energy_types = calculate_energy_types(&basic, &stage1, &stage2, pokemon.energy_type);
+    let energy_types = calculate_energy_types(&pokemon_list, pokemon.energy_type);
 
     match pokemon.stage {
         2 => {
@@ -185,25 +181,18 @@ fn generate_temp_deck(card: &Card) -> String {
     }
 }
 
-/// Calculate energy types from all attacks in the evolution line
+/// Calculate energy types from all attacks in the Pokemon list
 /// Returns a comma-separated string of energy types
-fn calculate_energy_types(
-    basic: &Option<Card>,
-    stage1: &Option<Card>,
-    stage2: &Option<Card>,
-    fallback_type: EnergyType,
-) -> String {
+fn calculate_energy_types(pokemon_list: &[&PokemonCard], fallback_type: EnergyType) -> String {
     use std::collections::HashSet;
 
     let mut energy_set: HashSet<EnergyType> = HashSet::new();
 
-    // Collect energy types from all cards in the evolution line
-    for card_option in [basic, stage1, stage2].iter() {
-        if let Some(Card::Pokemon(pokemon)) = card_option {
-            for attack in &pokemon.attacks {
-                for energy in &attack.energy_required {
-                    energy_set.insert(*energy);
-                }
+    // Collect energy types from all Pokemon in the list
+    for pokemon in pokemon_list {
+        for attack in &pokemon.attacks {
+            for energy in &attack.energy_required {
+                energy_set.insert(*energy);
             }
         }
     }
@@ -213,7 +202,7 @@ fn calculate_energy_types(
 
     // If empty (only had Colorless or no attacks), use fallback
     if energy_set.is_empty() {
-        return format_energy_type(fallback_type);
+        return fallback_type.as_str().to_string();
     }
 
     // Sort for consistent output
@@ -223,25 +212,9 @@ fn calculate_energy_types(
     // Format as comma-separated string
     energy_vec
         .iter()
-        .map(|e| format_energy_type(*e))
+        .map(|e| e.as_str())
         .collect::<Vec<_>>()
         .join(", ")
-}
-
-fn format_energy_type(energy_type: EnergyType) -> String {
-    match energy_type {
-        EnergyType::Grass => "Grass",
-        EnergyType::Fire => "Fire",
-        EnergyType::Water => "Water",
-        EnergyType::Lightning => "Lightning",
-        EnergyType::Psychic => "Psychic",
-        EnergyType::Fighting => "Fighting",
-        EnergyType::Darkness => "Darkness",
-        EnergyType::Metal => "Metal",
-        EnergyType::Dragon => "Dragon",
-        EnergyType::Colorless => "Colorless",
-    }
-    .to_string()
 }
 
 fn format_card_line(card: &Card, count: u8) -> String {

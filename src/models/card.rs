@@ -35,6 +35,21 @@ impl EnergyType {
             _ => None,
         }
     }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            EnergyType::Grass => "Grass",
+            EnergyType::Fire => "Fire",
+            EnergyType::Water => "Water",
+            EnergyType::Lightning => "Lightning",
+            EnergyType::Psychic => "Psychic",
+            EnergyType::Fighting => "Fighting",
+            EnergyType::Darkness => "Darkness",
+            EnergyType::Metal => "Metal",
+            EnergyType::Dragon => "Dragon",
+            EnergyType::Colorless => "Colorless",
+        }
+    }
 }
 
 /// Represents an attack of a card.

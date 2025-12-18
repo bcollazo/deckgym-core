@@ -152,7 +152,7 @@ fn simulate_against_folder(
 
     // Run simulations against each deck
     for (i, (deck_path, _)) in valid_decks.iter().enumerate() {
-        let deck_name = deck_path.split('/').last().unwrap_or(deck_path);
+        let deck_name = deck_path.split('/').next_back().unwrap_or(deck_path);
         let games_for_this_deck = if i < remainder as usize {
             games_per_deck + 1
         } else {
@@ -210,9 +210,25 @@ fn main() {
             // Check if deck_b_or_folder is a directory
             let path = std::path::Path::new(&deck_b_or_folder);
             if path.is_dir() {
-                simulate_against_folder(&deck_a, &deck_b_or_folder, players, num, seed, parallel, threads);
+                simulate_against_folder(
+                    &deck_a,
+                    &deck_b_or_folder,
+                    players,
+                    num,
+                    seed,
+                    parallel,
+                    threads,
+                );
             } else {
-                simulate(&deck_a, &deck_b_or_folder, players, num, seed, parallel, threads);
+                simulate(
+                    &deck_a,
+                    &deck_b_or_folder,
+                    players,
+                    num,
+                    seed,
+                    parallel,
+                    threads,
+                );
             }
         }
         Commands::Optimize {
