@@ -3,7 +3,8 @@ use std::collections::HashSet;
 use clap::Parser;
 use deckgym::card_ids::CardId;
 use deckgym::database::get_card_by_enum;
-use deckgym::models::{Card, EnergyType, PokemonCard};
+use deckgym::models::{Card, EnergyType, PokemonCard, TrainerType};
+use deckgym::Deck;
 use strum::IntoEnumIterator;
 
 #[derive(Parser, Debug)]
@@ -28,8 +29,29 @@ fn main() {
     };
 
     let card = get_card_by_enum(card_id);
-    let deck = generate_temp_deck(&card);
-    println!("{}", deck);
+    let deck_string = generate_temp_deck(&card);
+
+    // Validate the generated deck
+    match Deck::from_string(&deck_string) {
+        Ok(deck) => {
+            if deck.is_valid() {
+                println!("{}", deck_string);
+            } else {
+                eprintln!("Error: Generated deck is invalid");
+                eprintln!("Deck must have exactly 20 cards, at least 1 basic Pokemon,");
+                eprintln!("and no card name can appear more than twice.");
+                eprintln!("\nGenerated deck:");
+                eprintln!("{}", deck_string);
+                std::process::exit(1);
+            }
+        }
+        Err(e) => {
+            eprintln!("Error: Failed to parse generated deck: {}", e);
+            eprintln!("\nGenerated deck:");
+            eprintln!("{}", deck_string);
+            std::process::exit(1);
+        }
+    }
 }
 
 /// Find a CardId by its ID string (e.g., "A1 003")
@@ -140,47 +162,111 @@ fn find_card_by_name(name: &str) -> Option<Card> {
     None
 }
 
-/// Generate a temporary deck for testing based on the card's evolution stage
+/// Get a valid fallback energy type (Water if Colorless or Dragon)
+fn get_valid_fallback_energy(energy_type: EnergyType) -> EnergyType {
+    if energy_type == EnergyType::Colorless || energy_type == EnergyType::Dragon {
+        EnergyType::Water
+    } else {
+        energy_type
+    }
+}
+
+/// Generate a temporary deck for testing based on the card type
 fn generate_temp_deck(card: &Card) -> String {
+    match card {
+        Card::Pokemon(pokemon) => {
+            let (basic, stage1, stage2) = get_evolution_line(card);
+            let evolution_line = vec![basic, stage1, stage2];
+            let fallback = get_valid_fallback_energy(pokemon.energy_type);
+            generate_evolution_line_deck(&evolution_line, fallback)
+        }
+        Card::Trainer(trainer) => {
+            if trainer.trainer_card_type == TrainerType::Fossil {
+                generate_fossil_deck(card)
+            } else {
+                generate_trainer_deck(card, &trainer.trainer_card_type)
+            }
+        }
+    }
+}
+
+/// Generate a deck for a Fossil card
+fn generate_fossil_deck(fossil_card: &Card) -> String {
+    let fossil_name = fossil_card.get_name();
+
+    // Find Pokemon that evolve from this fossil and get the highest evolution
+    let highest_evolution = find_highest_fossil_evolution(&fossil_name);
+
+    match highest_evolution {
+        Some(pokemon_card) => {
+            if let Card::Pokemon(pokemon) = &pokemon_card {
+                // Get the evolution line (this will include the fossil as "basic")
+                let (_, stage1, stage2) = get_evolution_line(&pokemon_card);
+
+                // Build evolution line with fossil instead of basic
+                let evolution_line = vec![Some(fossil_card.clone()), stage1, stage2];
+                let fallback = get_valid_fallback_energy(pokemon.energy_type);
+                generate_evolution_line_deck(&evolution_line, fallback)
+            } else {
+                "Error: Unexpected card type for fossil evolution".to_string()
+            }
+        }
+        None => format!(
+            "Error: No Pokemon found that evolves from '{}' fossil",
+            fossil_name
+        ),
+    }
+}
+
+/// Find the highest evolution Pokemon that can evolve from a fossil
+fn find_highest_fossil_evolution(fossil_name: &str) -> Option<Card> {
+    // Find all Pokemon that directly evolve from this fossil
+    let direct_evolutions: Vec<Card> = CardId::iter()
+        .map(get_card_by_enum)
+        .filter(|card| {
+            if let Card::Pokemon(pokemon) = card {
+                pokemon
+                    .evolves_from
+                    .as_ref()
+                    .is_some_and(|name| name == fossil_name)
+            } else {
+                false
+            }
+        })
+        .collect();
+
+    // Find the highest stage evolution from the direct evolutions
+    direct_evolutions
+        .iter()
+        .filter_map(find_highest_evolution)
+        .max_by_key(|card| {
+            if let Card::Pokemon(pokemon) = card {
+                pokemon.stage
+            } else {
+                0
+            }
+        })
+}
+
+/// Find the highest evolution stage for a given Pokemon
+fn find_highest_evolution(card: &Card) -> Option<Card> {
     let Card::Pokemon(pokemon) = card else {
-        return format!(
-            "Error: Only Pokemon cards are supported for deck generation. '{}' is a Trainer card.",
-            card.get_name()
-        );
+        return None;
     };
 
-    let (basic, stage1, stage2) = get_evolution_line(card);
-
-    // Collect all Pokemon in the evolution line
-    let mut pokemon_list = Vec::new();
-    if let Some(Card::Pokemon(p)) = &basic {
-        pokemon_list.push(p);
-    }
-    if let Some(Card::Pokemon(p)) = &stage1 {
-        pokemon_list.push(p);
-    }
-    if let Some(Card::Pokemon(p)) = &stage2 {
-        pokemon_list.push(p);
+    // Check if there's a Stage 2 evolution
+    if let Some(stage2) = find_stage2_evolution(&pokemon.name) {
+        return Some(stage2);
     }
 
-    // Calculate energy types from all attacks in the evolution line
-    let energy_types = calculate_energy_types(&pokemon_list, pokemon.energy_type);
-
-    match pokemon.stage {
-        2 => {
-            // Stage 2 deck template
-            generate_stage2_deck(basic, stage1, stage2, &energy_types)
-        }
-        1 => {
-            // Stage 1 deck template
-            generate_stage1_deck(basic, stage1, &energy_types)
-        }
-        0 => {
-            // Basic deck template
-            generate_basic_deck(basic, &energy_types)
-        }
-        _ => String::from("Error: Unknown Pokemon stage"),
+    // Check if there's a Stage 1 evolution
+    if let Some(stage1) = find_stage1_evolution(&pokemon.name) {
+        // Recursively check if that Stage 1 has a Stage 2
+        return find_highest_evolution(&stage1);
     }
+
+    // This is the highest evolution
+    Some(card.clone())
 }
 
 /// Calculate energy types from all attacks in the Pokemon list
@@ -240,87 +326,127 @@ fn format_card_id(id: &str) -> String {
     }
 }
 
-fn generate_stage2_deck(
-    basic: Option<Card>,
-    stage1: Option<Card>,
-    stage2: Option<Card>,
-    energy_type: &str,
+/// Unified deck generation for evolution lines (works for both Pokemon and Fossils)
+/// Takes a list of cards in evolution order and generates an appropriate deck
+fn generate_evolution_line_deck(
+    evolution_line: &[Option<Card>],
+    fallback_energy: EnergyType,
 ) -> String {
-    let basic_line = if let Some(basic) = basic {
-        format_card_line(&basic, 2)
-    } else {
-        "# ERROR: Could not find Basic Pokemon".to_string()
-    };
+    // Collect all Pokemon cards from the evolution line
+    let pokemon_cards: Vec<&Card> = evolution_line.iter().filter_map(|c| c.as_ref()).collect();
 
-    let stage1_line = if let Some(stage1) = stage1 {
-        format_card_line(&stage1, 2)
-    } else {
-        "# ERROR: Could not find Stage 1 Pokemon".to_string()
-    };
+    // Check if there are any basic Pokemon in the evolution line
+    let has_basic = pokemon_cards.iter().any(|card| card.is_basic());
 
-    let stage2_line = if let Some(stage2) = stage2 {
-        format_card_line(&stage2, 2)
-    } else {
-        "# ERROR: Could not find Stage 2 Pokemon".to_string()
-    };
+    // Extract PokemonCard refs for energy calculation
+    let pokemon_list: Vec<&PokemonCard> = pokemon_cards
+        .iter()
+        .filter_map(|c| {
+            if let Card::Pokemon(p) = c {
+                Some(p)
+            } else {
+                None
+            }
+        })
+        .collect();
 
-    format!(
-        r#"Energy: {energy_type}
-{basic_line}
-{stage1_line}
-{stage2_line}
+    // Calculate energy types
+    let energy_type = calculate_energy_types(&pokemon_list, fallback_energy);
+
+    // Generate card lines for all cards in the evolution line
+    let mut card_lines: Vec<String> = pokemon_cards
+        .iter()
+        .map(|card| format_card_line(card, 2))
+        .collect();
+
+    // If no basic Pokemon, add Meowth as a basic
+    if !has_basic {
+        let meowth = get_card_by_enum(CardId::A1196Meowth);
+        card_lines.push(format_card_line(&meowth, 2));
+    }
+
+    // Count how many cards we have to determine what trainers to include
+    let num_cards = card_lines.len();
+
+    // Build the deck output
+    let mut deck = format!("Energy: {energy_type}\n");
+
+    // Add all evolution line cards
+    for line in card_lines {
+        deck.push_str(&line);
+        deck.push('\n');
+    }
+
+    // Add 10 trainer cards
+    deck.push_str("2 Giovanni A1 223\n");
+    deck.push_str("2 Poké Ball A2b 111\n");
+    deck.push_str("2 Professor's Research A4b 373\n");
+    deck.push_str("2 Copycat B1 270\n");
+    deck.push_str("2 Giant Cape A2 147\n");
+
+    // Adjust trainers based on number of Pokemon cards
+    match num_cards {
+        4 => {
+            // 4 Pokemon cards (fossil + 2 evolutions + Meowth) = 8 cards
+            // Need 2 more trainer cards
+            deck.push_str("1 Sabrina A1 225\n");
+            deck.push_str("1 Cyrus A2 150\n");
+        }
+        3 => {
+            // 3 Pokemon cards = 6 cards
+            // Need 4 more trainer cards
+            deck.push_str("2 Sabrina A1 225\n");
+            deck.push_str("2 Cyrus A2 150\n");
+        }
+        2 => {
+            // 2 Pokemon cards = 4 cards
+            // Need 6 more trainer cards
+            deck.push_str("2 Sabrina A1 225\n");
+            deck.push_str("2 Cyrus A2 150\n");
+            deck.push_str("2 Potion P-A 1\n");
+        }
+        _ => {
+            // 1 Pokemon card = 2 cards
+            // Need 8 more trainer cards
+            deck.push_str("2 Sabrina A1 225\n");
+            deck.push_str("2 Cyrus A2 150\n");
+            deck.push_str("2 Potion P-A 1\n");
+            deck.push_str("2 X Speed P-A 2\n");
+        }
+    }
+
+    deck
+}
+
+/// Generate a deck for a Trainer card (18T template)
+fn generate_trainer_deck(card: &Card, trainer_type: &TrainerType) -> String {
+    let card_line = format_card_line(card, 2);
+
+    match trainer_type {
+        TrainerType::Fossil => {
+            panic!("Fossils should be handled by generate_fossil_deck")
+        }
+        TrainerType::Tool => {
+            // Replace Giant Cape
+            format!(
+                r#"Energy: Lightning
+2 Tapu Koko ex A3a 19
 2 Giovanni A1 223
-1 Sabrina A1 225
-2 Giant Cape A2 147
-1 Cyrus A2 150
+2 Sabrina A1 225
+2 Cyrus A2 150
 2 Poké Ball A2b 111
 2 Professor's Research A4b 373
 2 Copycat B1 270
 2 Potion P-A 1
+{card_line}
 "#
-    )
-}
-
-fn generate_stage1_deck(basic: Option<Card>, stage1: Option<Card>, energy_type: &str) -> String {
-    let basic_line = if let Some(basic) = basic {
-        format_card_line(&basic, 2)
-    } else {
-        "# ERROR: Could not find Basic Pokemon".to_string()
-    };
-
-    let stage1_line = if let Some(stage1) = stage1 {
-        format_card_line(&stage1, 2)
-    } else {
-        "# ERROR: Could not find Stage 1 Pokemon".to_string()
-    };
-
-    format!(
-        r#"Energy: {energy_type}
-{basic_line}
-{stage1_line}
-2 Giovanni A1 223
-1 Sabrina A1 225
-2 Giant Cape A2 147
-1 Cyrus A2 150
-2 Poké Ball A2b 111
-2 Professor's Research A4b 373
-2 Copycat B1 270
-2 Potion P-A 1
-2 X Speed P-A 2
-"#
-    )
-}
-
-fn generate_basic_deck(basic: Option<Card>, energy_type: &str) -> String {
-    let basic_line = if let Some(basic) = basic {
-        format_card_line(&basic, 2)
-    } else {
-        "# ERROR: Could not find Basic Pokemon".to_string()
-    };
-
-    format!(
-        r#"Energy: {energy_type}
-{basic_line}
+            )
+        }
+        TrainerType::Item => {
+            // Replace X Speed with the requested item/tool/fossil
+            format!(
+                r#"Energy: Lightning
+2 Tapu Koko ex A3a 19
 2 Giovanni A1 223
 2 Sabrina A1 225
 2 Giant Cape A2 147
@@ -329,7 +455,26 @@ fn generate_basic_deck(basic: Option<Card>, energy_type: &str) -> String {
 2 Professor's Research A4b 373
 2 Copycat B1 270
 2 Potion P-A 1
+{card_line}
+"#
+            )
+        }
+        TrainerType::Supporter => {
+            // Replace Sabrina with the requested supporter
+            format!(
+                r#"Energy: Lightning
+2 Tapu Koko ex A3a 19
+2 Giovanni A1 223
+{card_line}
+2 Giant Cape A2 147
+2 Cyrus A2 150
+2 Poké Ball A2b 111
+2 Professor's Research A4b 373
+2 Copycat B1 270
+2 Potion P-A 1
 2 X Speed P-A 2
 "#
-    )
+            )
+        }
+    }
 }
