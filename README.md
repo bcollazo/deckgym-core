@@ -118,7 +118,7 @@ The tool displays a summary showing total cards, completion percentage, and a br
 
 **Temporary Deck Generator**
 
-Generate a temporary test deck for a specific pokemon card id. The tool automatically determines the card's evolution stage and creates an appropriate deck template:
+Generate a valid temporary test deck for a specific card id (it considers the evolution chain of a card and the required energy types if its a pokemon card).
 
 ```bash
 cargo run --bin temp_deck_generator -- "A1 035"

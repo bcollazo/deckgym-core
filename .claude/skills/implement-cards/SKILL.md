@@ -112,9 +112,9 @@ to see what is missing from the specified card.
 
 ### Testing Your Implementation
 
-After implementing a Pokemon card test it like so:
+After implementing a card test it like so:
 
-1. Generate a temporary test deck for the Pokemon you implemented:
+1. Generate a temporary test deck for the card you implemented:
    ```bash
    cargo run --bin temp_deck_generator -- "Card ID" > test_deck.txt
    ```
@@ -126,10 +126,7 @@ After implementing a Pokemon card test it like so:
 
    This will automatically distribute the 10,000 games evenly across all decks in the folder, testing your implementation against diverse strategies and card combinations.
 
-3. Review the results to ensure:
-   - The games complete without errors
-   - Win rates are reasonable (not 0% or 100% unless expected)
-   - The card's effects are working as intended
+3. Review the results to ensure the games complete without errors.
 
 ### Code Quality
 
