@@ -292,6 +292,16 @@ fn forecast_effect_attack_by_mechanic(
             *duration,
             *probability,
         ),
+        Mechanic::DamageAndMultipleCardEffects {
+            opponent,
+            effects,
+            duration,
+        } => damage_and_multiple_card_effects_attack(
+            attack.fixed_damage,
+            *opponent,
+            effects.clone(),
+            *duration,
+        ),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
@@ -1172,6 +1182,26 @@ fn damage_and_card_effect_attack(
             (probabilities, mutations)
         }
     }
+}
+
+fn damage_and_multiple_card_effects_attack(
+    damage: u32,
+    opponent: bool,
+    effects: Vec<CardEffect>,
+    effect_duration: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let player = if opponent {
+            (action.actor + 1) % 2
+        } else {
+            action.actor
+        };
+        for effect in effects.iter() {
+            state
+                .get_active_mut(player)
+                .add_effect(effect.clone(), effect_duration);
+        }
+    })
 }
 
 /// Discard all energy from this Pokemon

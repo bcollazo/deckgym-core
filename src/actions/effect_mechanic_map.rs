@@ -302,6 +302,17 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             probability: None,
         },
     );
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness.",
+        Mechanic::DamageAndMultipleCardEffects {
+            opponent: false,
+            effects: vec![
+                CardEffect::ReducedDamage { amount: 20 },
+                CardEffect::NoWeakness,
+            ],
+            duration: 1,
+        },
+    );
     // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
     map.insert(
         "Flip 2 coins. If both of them are heads, this attack does 70 more damage.",

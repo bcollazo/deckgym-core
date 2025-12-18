@@ -52867,7 +52867,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",
@@ -53468,7 +53468,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",
@@ -53580,7 +53580,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",

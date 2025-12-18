@@ -149,6 +149,7 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
+        CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber

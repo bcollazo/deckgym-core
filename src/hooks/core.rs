@@ -434,6 +434,17 @@ fn get_weakness_modifier(
         return 0;
     }
     let receiving = state.get_active(target_player);
+
+    // Check if the receiving Pokemon has NoWeakness effect
+    if receiving
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::NoWeakness))
+    {
+        debug!("NoWeakness effect: Ignoring weakness");
+        return 0;
+    }
+
     if let Card::Pokemon(pokemon_card) = &receiving.card {
         if pokemon_card.weakness == attacking_pokemon.card.get_type() {
             debug!(

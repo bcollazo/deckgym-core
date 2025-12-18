@@ -138,6 +138,7 @@ pub fn forecast_trainer_action(
         }
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
+        CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -790,5 +791,13 @@ fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
     pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         let name = card.get_name();
         name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
+    })
+}
+
+fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put a random Mega Evolution Pokémon ex from your deck into your hand.
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| {
+        let name = card.get_name();
+        name.starts_with("Mega ") && name.ends_with(" ex")
     })
 }
