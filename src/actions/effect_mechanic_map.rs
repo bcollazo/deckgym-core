@@ -145,7 +145,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::DamageAndCardEffect {
             opponent: false,
             effect: CardEffect::NoWeakness,
-            duration: 2,
+            duration: 1,
             probability: None,
         },
     );
