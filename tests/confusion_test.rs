@@ -141,14 +141,7 @@ fn test_confusion_cleared_on_retreat() {
 #[test]
 fn test_confusion_field_can_be_set() {
     let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(
-        charizard.clone(),
-        150,
-        150,
-        vec![],
-        false,
-        vec![],
-    );
+    let mut charizard_played = PlayedCard::new(charizard.clone(), 150, 150, vec![], false, vec![]);
 
     // Initially not confused
     assert!(!charizard_played.confused);
@@ -164,14 +157,7 @@ fn test_confusion_field_can_be_set() {
 #[test]
 fn test_multiple_status_conditions_with_confusion() {
     let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(
-        charizard.clone(),
-        150,
-        150,
-        vec![],
-        false,
-        vec![],
-    );
+    let mut charizard_played = PlayedCard::new(charizard.clone(), 150, 150, vec![], false, vec![]);
 
     // Set multiple status conditions
     charizard_played.confused = true;
@@ -252,14 +238,7 @@ fn test_confusing_attack_inflicts_confusion() {
     // by checking that a Pokémon can become confused
 
     let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    let mut squirtle_played = PlayedCard::new(
-        squirtle.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    );
+    let mut squirtle_played = PlayedCard::new(squirtle.clone(), 70, 70, vec![], false, vec![]);
 
     // Initially not confused
     assert!(!squirtle_played.confused);

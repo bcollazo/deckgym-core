@@ -1214,5 +1214,68 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", Mechanic::DiscardRandomGlobalEnergy);
     // map.insert("Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.", todo_implementation);
+    map.insert(
+        "If this Pokémon has at least 3 extra [W] Energy attached, this attack also does 50 damage to 2 of your opponent's Benched Pokémon.",
+        Mechanic::ConditionalBenchDamage {
+            required_extra_energy: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
+            bench_damage: 50,
+            num_bench_targets: 2,
+            opponent: true,
+        },
+    );
+    map.insert(
+        "Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused.",
+        Mechanic::ExtraDamageForEachHeadsWithStatus {
+            include_fixed_damage: false,
+            damage_per_head: 90,
+            num_coins: 2,
+            status: StatusCondition::Confused,
+        },
+    );
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness.",
+        Mechanic::DamageAndMultipleCardEffects {
+            opponent: false,
+            effects: vec![
+                CardEffect::ReducedDamage { amount: 20 },
+                CardEffect::NoWeakness,
+            ],
+            duration: 1,
+        },
+    );
+    // Database has a bug with missing "-20" in effect text, handle both versions
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.",
+        Mechanic::DamageAndMultipleCardEffects {
+            opponent: false,
+            effects: vec![
+                CardEffect::ReducedDamage { amount: 20 },
+                CardEffect::NoWeakness,
+            ],
+            duration: 1,
+        },
+    );
+    map.insert(
+        "This attack's damage is reduced by the amount of damage this Pokémon has on it.",
+        Mechanic::DamageReducedBySelfDamage,
+    );
+    map.insert(
+        "This attack does 20 more damage for each Trainer card in your opponent's deck.",
+        Mechanic::ExtraDamagePerTrainerInOpponentDeck {
+            damage_per_trainer: 20,
+        },
+    );
+    map.insert(
+        "If Quick-Grow Extract is in your discard pile, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfCardInDiscard {
+            card_name: "Quick-Grow Extract".to_string(),
+            extra_damage: 30,
+        },
+    );
+    map.insert(
+        "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen.",
+        Mechanic::CoinFlipToBlockAttackNextTurn,
+    );
+
     map
 });
