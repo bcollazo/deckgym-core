@@ -138,6 +138,10 @@ pub fn forecast_trainer_action(
         }
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
+        CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
+            quick_grow_extract_effect(acting_player, state)
+        }
+        CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -791,4 +795,62 @@ fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
         let name = card.get_name();
         name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
     })
+}
+
+fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Put a random Mega Evolution Pokémon ex from your deck into your hand.
+    // All Mega evolutions are ex by definition
+    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+}
+
+fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Choose 1 of your [G] Pokémon in play. Put a random [G] Pokémon from your deck
+    // that evolves from that Pokémon onto that Pokémon to evolve it.
+    // Similar to rare candy but automatic random evolution from deck
+
+    // Find all Grass Pokemon in play that have valid evolutions in deck
+    let mut evolution_choices: Vec<(usize, Card)> = vec![];
+
+    for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(acting_player) {
+        if pokemon.get_energy_type() != Some(EnergyType::Grass) || pokemon.played_this_turn {
+            continue;
+        }
+
+        // Find Grass evolutions in deck that evolve from this Pokemon
+        let pokemon_name = pokemon.get_name();
+        for deck_card in state.decks[acting_player].cards.iter() {
+            if let Card::Pokemon(deck_pokemon) = deck_card {
+                if deck_pokemon.energy_type == EnergyType::Grass
+                    && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
+                {
+                    evolution_choices.push((in_play_idx, deck_card.clone()));
+                }
+            }
+        }
+    }
+
+    if evolution_choices.is_empty() {
+        // No valid evolution targets
+        return doutcome(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    // Create one outcome per possible evolution
+    let num_outcomes = evolution_choices.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for (in_play_idx, evolution_card) in evolution_choices {
+        outcomes.push(Box::new(move |rng, state, action| {
+            // Evolve the Pokemon
+            state.move_generation_stack.push((
+                action.actor,
+                vec![SimpleAction::Evolve(evolution_card.clone(), in_play_idx)],
+            ));
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+
+    (probabilities, outcomes)
 }

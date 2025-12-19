@@ -149,6 +149,10 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
+        CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
+            can_play_quick_grow_extract(state, trainer_card)
+        }
+        CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
@@ -545,4 +549,44 @@ fn can_place_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
         });
 
     Some(actions)
+}
+
+/// Check if Quick-Grow Extract can be played
+/// Requires: not first turn, at least 1 Grass pokemon that wasn't played this turn,
+/// with a valid Grass evolution available in deck
+fn can_play_quick_grow_extract(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    // Can't use during first turn
+    if state.is_users_first_turn() {
+        return cannot_play_trainer();
+    }
+
+    let player = state.current_player;
+
+    // Check if there's at least 1 Grass pokemon that can evolve
+    let has_valid_target = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| {
+            pokemon.get_energy_type() == Some(EnergyType::Grass) && !pokemon.played_this_turn
+        })
+        .any(|(_, pokemon)| {
+            let pokemon_name = pokemon.get_name();
+            // Check if there's a Grass evolution in deck
+            state.decks[player].cards.iter().any(|deck_card| {
+                if let Card::Pokemon(deck_pokemon) = deck_card {
+                    deck_pokemon.energy_type == EnergyType::Grass
+                        && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
+                } else {
+                    false
+                }
+            })
+        });
+
+    if has_valid_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
 }

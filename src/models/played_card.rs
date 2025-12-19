@@ -141,11 +141,6 @@ impl PlayedCard {
         effective_hp
     }
 
-    /// Returns true if this Pokemon is knocked out (HP <= 0 after considering HP bonuses)
-    pub(crate) fn is_knocked_out(&self) -> bool {
-        self.remaining_hp == 0
-    }
-
     pub(crate) fn has_status_condition(&self) -> bool {
         self.poisoned || self.paralyzed || self.asleep
     }
