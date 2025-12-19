@@ -30,6 +30,9 @@ pub enum Mechanic {
     InflictMultipleStatusConditions {
         conditions: Vec<StatusCondition>,
     },
+    InflictSelfStatusCondition {
+        condition: StatusCondition,
+    },
     DamageAllOpponentPokemon {
         damage: u32,
     },

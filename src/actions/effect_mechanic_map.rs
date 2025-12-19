@@ -535,7 +535,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent shuffles their Active Pokémon into their deck.", todo_implementation);
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Burned.", todo_implementation);
-    // map.insert("Flip a coin. If heads, your opponent's Active Pokémon is now Confused.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, your opponent's Active Pokémon is now Confused.",
+        Mechanic::ChanceStatusAttack {
+            condition: StatusCondition::Confused,
+        },
+    );
     map.insert(
         "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",
         Mechanic::ChanceStatusAttack {
@@ -861,9 +866,19 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "This Pokémon also does 70 damage to itself.",
         Mechanic::SelfDamage { amount: 70 },
     );
-    // map.insert("This Pokémon is now Asleep.", todo_implementation);
+    map.insert(
+        "This Pokémon is now Asleep.",
+        Mechanic::InflictSelfStatusCondition {
+            condition: StatusCondition::Asleep,
+        },
+    );
     // map.insert("This Pokémon is now Asleep. Heal 30 damage from it.", todo_implementation);
-    // map.insert("This Pokémon is now Confused.", todo_implementation);
+    map.insert(
+        "This Pokémon is now Confused.",
+        Mechanic::InflictSelfStatusCondition {
+            condition: StatusCondition::Confused,
+        },
+    );
     map.insert(
         "This attack also does 10 damage to 1 of your Benched Pokémon.",
         Mechanic::AlsoChoiceBenchDamage {
@@ -1178,7 +1193,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             condition: StatusCondition::Burned,
         },
     );
-    // map.insert("Your opponent's Active Pokémon is now Confused.", todo_implementation);
+    map.insert(
+        "Your opponent's Active Pokémon is now Confused.",
+        Mechanic::InflictStatusCondition {
+            condition: StatusCondition::Confused,
+        },
+    );
     // map.insert("Your opponent's Active Pokémon is now Poisoned and Burned.", todo_implementation);
     map.insert(
         "Your opponent's Active Pokémon is now Poisoned and Asleep.",

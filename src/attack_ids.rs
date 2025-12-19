@@ -232,10 +232,6 @@ lazy_static::lazy_static! {
         m.insert(("A4b 363", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("A4b 369", 0), AttackId::A3122SolgaleoExSolBreaker);
 
-        // B1a
-        m.insert(("B1a 002", 0), AttackId::B1a002IvysaurSynthesis);
-        m.insert(("B1a 097", 0), AttackId::A3a061SilvallyBraveBuddies);
-
         // B1
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
@@ -253,6 +249,10 @@ lazy_static::lazy_static! {
         m.insert(("B1 319", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("B1 322", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("B1 325", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
+
+        // B1a
+        m.insert(("B1a 002", 0), AttackId::B1a002IvysaurSynthesis);
+        m.insert(("B1a 097", 0), AttackId::A3a061SilvallyBraveBuddies);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);

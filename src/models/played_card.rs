@@ -25,6 +25,7 @@ pub struct PlayedCard {
     pub paralyzed: bool,
     pub asleep: bool,
     pub burned: bool,
+    pub confused: bool,
     pub cards_behind: Vec<Card>,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
@@ -54,6 +55,7 @@ impl PlayedCard {
             paralyzed: false,
             asleep: false,
             burned: false,
+            confused: false,
             effects: vec![],
         }
     }
@@ -142,7 +144,7 @@ impl PlayedCard {
     }
 
     pub(crate) fn has_status_condition(&self) -> bool {
-        self.poisoned || self.paralyzed || self.asleep
+        self.poisoned || self.paralyzed || self.asleep || self.confused
     }
 
     pub(crate) fn has_tool_attached(&self) -> bool {
@@ -169,6 +171,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
+        self.confused = false;
         self.effects.clear();
     }
 
@@ -177,6 +180,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
+        self.confused = false;
     }
 
     /// Apply a status condition to this Pokémon, respecting Arceus ex immunity
@@ -200,6 +204,7 @@ impl PlayedCard {
             StatusCondition::Paralyzed => self.paralyzed = true,
             StatusCondition::Poisoned => self.poisoned = true,
             StatusCondition::Burned => self.burned = true,
+            StatusCondition::Confused => self.confused = true,
         }
     }
 

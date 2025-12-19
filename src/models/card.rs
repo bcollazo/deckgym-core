@@ -252,7 +252,7 @@ pub enum StatusCondition {
     Paralyzed,
     Asleep,
     Burned,
-    // TODO: Confused
+    Confused,
 }
 
 impl fmt::Display for Card {

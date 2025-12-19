@@ -38,22 +38,60 @@ pub(crate) fn forecast_attack(
     let attack = active.card.get_attacks()[index].clone();
     trace!("Forecasting attack: {active:?} {attack:?}");
 
+    // Handle confusion: 50% chance the attack fails (coin flip)
+    if active.confused {
+        let (base_probs, base_mutations) =
+            forecast_attack_inner(state, &active.card, &attack, index);
+        return apply_confusion_coin_flip(base_probs, base_mutations);
+    }
+
+    forecast_attack_inner(state, &active.card, &attack, index)
+}
+
+fn forecast_attack_inner(
+    state: &State,
+    card: &Card,
+    attack: &Attack,
+    index: usize,
+) -> (Probabilities, Mutations) {
+    let card_id = card.get_id();
+
     let Some(effect_text) = &attack.effect else {
         return active_damage_doutcome(attack.fixed_damage);
     };
     // Try AttackId first, if not, fallback to mechanic map
-    if let Some(attack_id) = AttackId::from_pokemon_index(&active.get_id()[..], index) {
+    if let Some(attack_id) = AttackId::from_pokemon_index(&card_id[..], index) {
         forecast_effect_attack_by_attack_id(state, attack_id)
     } else {
         let mechanic = EFFECT_MECHANIC_MAP.get(&effect_text[..]);
         let Some(mechanic) = mechanic else {
             panic!(
                 "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
-                effect_text, attack, active.card
+                effect_text, attack, card
             );
         };
-        forecast_effect_attack_by_mechanic(state, &attack, mechanic)
+        forecast_effect_attack_by_mechanic(state, attack, mechanic)
     }
+}
+
+/// Applies confusion coin flip: 50% chance the attack fails (does nothing)
+fn apply_confusion_coin_flip(
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    // Confusion: 50% tails = attack fails, 50% heads = attack succeeds
+    let mut probs = vec![0.5]; // First outcome: tails (confusion - attack fails)
+    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
+        // Attack fails due to confusion - do nothing
+    })];
+
+    // Add all base outcomes with halved probabilities (heads = attack succeeds)
+    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
+        probs.push(prob * 0.5);
+        mutations.push(mutation);
+    }
+
+    (probs, mutations)
 }
 
 fn forecast_effect_attack_by_attack_id(
@@ -242,6 +280,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::InflictMultipleStatusConditions { conditions } => {
             damage_multiple_status_attack(conditions.clone(), attack)
+        }
+        Mechanic::InflictSelfStatusCondition { condition } => {
+            damage_and_self_status_attack(attack.fixed_damage, *condition)
         }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
