@@ -572,12 +572,11 @@ fn can_play_quick_grow_extract(
             pokemon.get_energy_type() == Some(EnergyType::Grass) && !pokemon.played_this_turn
         })
         .any(|(_, pokemon)| {
-            let pokemon_name = pokemon.get_name();
             // Check if there's a Grass evolution in deck
             state.decks[player].cards.iter().any(|deck_card| {
                 if let Card::Pokemon(deck_pokemon) = deck_card {
                     deck_pokemon.energy_type == EnergyType::Grass
-                        && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
+                        && pokemon.card.can_evolve_into(deck_card)
                 } else {
                     false
                 }
