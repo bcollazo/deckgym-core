@@ -817,11 +817,10 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
         }
 
         // Find Grass evolutions in deck that evolve from this Pokemon
-        let pokemon_name = pokemon.get_name();
         for deck_card in state.decks[acting_player].cards.iter() {
             if let Card::Pokemon(deck_pokemon) = deck_card {
                 if deck_pokemon.energy_type == EnergyType::Grass
-                    && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
+                    && pokemon.card.can_evolve_into(deck_card)
                 {
                     evolution_choices.push((in_play_idx, deck_card.clone()));
                 }
