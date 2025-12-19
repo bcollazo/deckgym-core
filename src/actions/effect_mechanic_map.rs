@@ -141,6 +141,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "During your opponent's next turn, this Pokémon has no Weakness.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::NoWeakness,
+            duration: 2,
+            probability: None,
+        },
+    );
+    map.insert(
         "During your next turn, this Pokémon can't use Frenzy Plant.",
         Mechanic::DamageAndCardEffect {
             opponent: false,
@@ -575,6 +584,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If Passimian is on your Bench, this attack does 40 more damage.", todo_implementation);
     // map.insert("If any of your Benched Pokémon have damage on them, this attack does 50 more damage.", todo_implementation);
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 60 });
+    map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 40 });
     map.insert("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.", Mechanic::BlockBasicAttack);
     // map.insert("If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.", todo_implementation);
     // map.insert("If this Pokémon evolved during this turn, this attack does 20 more damage.", todo_implementation);
@@ -748,6 +758,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Put 1 random Weedle from your deck onto your Bench.",
         Mechanic::SearchToBenchByName {
             name: "Weedle".to_string(),
+        },
+    );
+    map.insert(
+        "Put 1 random Starly from your deck onto your Bench.",
+        Mechanic::SearchToBenchByName {
+            name: "Starly".to_string(),
         },
     );
     // map.insert("Put 1 random Wishiwashi or Wishiwashi ex from your deck onto your Bench.", todo_implementation);
@@ -946,7 +962,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: false,
         },
     );
-    // map.insert("This attack does 10 damage to each of your opponent's Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 10 damage to each of your opponent's Pokémon.",
+        Mechanic::DamageAllOpponentPokemon { damage: 10 },
+    );
+    map.insert(
+        "This attack does 20 damage to each of your opponent's Pokémon.",
+        Mechanic::DamageAllOpponentPokemon { damage: 20 },
+    );
     // map.insert("This attack does 10 more damage for each [W] Energy attached to this Pokémon.", todo_implementation);
     // map.insert("This attack does 100 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
     map.insert(
@@ -1002,6 +1025,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.", 
         Mechanic::ExtraDamagePerEnergy {
             opponent: true,
+            damage_per_energy: 20,
+        },
+    );
+    map.insert(
+        "This attack does 20 more damage for each [M] Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type: EnergyType::Metal,
             damage_per_energy: 20,
         },
     );
@@ -1150,6 +1180,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("Your opponent's Active Pokémon is now Confused.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned and Burned.", todo_implementation);
+    map.insert(
+        "Your opponent's Active Pokémon is now Poisoned and Asleep.",
+        Mechanic::InflictMultipleStatusConditions {
+            conditions: vec![StatusCondition::Poisoned, StatusCondition::Asleep],
+        },
+    );
     map.insert(
         "Your opponent's Active Pokémon is now Poisoned.",
         Mechanic::InflictStatusCondition {

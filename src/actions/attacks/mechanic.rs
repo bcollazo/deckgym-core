@@ -27,6 +27,12 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    InflictMultipleStatusConditions {
+        conditions: Vec<StatusCondition>,
+    },
+    DamageAllOpponentPokemon {
+        damage: u32,
+    },
     DiscardRandomGlobalEnergy,
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
@@ -121,6 +127,10 @@ pub enum Mechanic {
     },
     DamagePerEnergyAll {
         opponent: bool,
+        damage_per_energy: u32,
+    },
+    ExtraDamagePerSpecificEnergy {
+        energy_type: EnergyType,
         damage_per_energy: u32,
     },
     ExtraDamageIfToolAttached {

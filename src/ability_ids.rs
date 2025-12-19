@@ -203,6 +203,12 @@ lazy_static::lazy_static! {
         m.insert("B1 260", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 275", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);
+        // B1a
+        m.insert("B1a 101", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("B1a 102", AbilityId::B1172AegislashCursedMetal);
+        // A4b Solgaleo ex
+        m.insert("A4b 259", AbilityId::A3122SolgaleoExRisingRoad);
+        m.insert("A4b 369", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("P-A 019", AbilityId::A1089GreninjaWaterShuriken);
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);

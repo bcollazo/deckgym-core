@@ -209,6 +209,7 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
+        AttackId::B1a002IvysaurSynthesis => self_charge_active_attack(0, EnergyType::Grass, 2),
     }
 }
 
@@ -238,6 +239,12 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
+        }
+        Mechanic::InflictMultipleStatusConditions { conditions } => {
+            damage_multiple_status_attack(conditions.clone(), attack)
+        }
+        Mechanic::DamageAllOpponentPokemon { damage } => {
+            damage_all_opponent_pokemon(state, *damage)
         }
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
@@ -346,6 +353,15 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => damage_per_energy_all(state, *opponent, *damage_per_energy),
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type,
+            damage_per_energy,
+        } => extra_damage_per_specific_energy(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *damage_per_energy,
+        ),
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
@@ -1027,6 +1043,20 @@ fn damage_status_attack(status: StatusCondition, attack: &Attack) -> (Probabilit
     active_damage_effect_doutcome(attack.fixed_damage, build_status_effect(status))
 }
 
+/// For attacks that deal damage and apply multiple status effects (e.g. Mega Venusaur Critical Bloom)
+fn damage_multiple_status_attack(
+    statuses: Vec<StatusCondition>,
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.get_active_mut(opponent);
+        for status in &statuses {
+            opponent_active.apply_status_condition(*status);
+        }
+    })
+}
+
 /// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
 fn damage_and_self_status_attack(
     damage: u32,
@@ -1290,6 +1320,17 @@ fn also_bench_damage(
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
+/// Deals the same damage to all of opponent's Pokémon (active and bench) - like Spiritomb/Clawitzer
+fn damage_all_opponent_pokemon(state: &State, damage: u32) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
+    // Collect all opponent's Pokémon (active at index 0, plus bench)
+    let targets: Vec<(u32, usize)> = state
+        .enumerate_in_play_pokemon(opponent)
+        .map(|(idx, _)| (damage, idx))
+        .collect();
+    damage_effect_doutcome(targets, |_, _, _| {})
+}
+
 fn extra_damage_if_hurt(
     state: &State,
     base: u32,
@@ -1360,6 +1401,23 @@ fn damage_per_energy_all(
         .map(|pokemon| pokemon.get_effective_attached_energy(state, target).len() as u32)
         .sum();
     let damage = total_energy * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+/// Damage per specific energy type attached to self (e.g., Genesect's Metal Blast)
+fn extra_damage_per_specific_energy(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let active = state.get_active(state.current_player);
+    let matching_energy_count = active
+        .attached_energy
+        .iter()
+        .filter(|e| **e == energy_type)
+        .count() as u32;
+    let damage = base_damage + matching_energy_count * damage_per_energy;
     active_damage_doutcome(damage)
 }
 
