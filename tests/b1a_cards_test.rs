@@ -415,7 +415,10 @@ fn test_blastoise_double_splash_with_extra_energy() {
     // Get the choices from the stack
     let (actor, choices) = state.move_generation_stack.last().unwrap();
     assert_eq!(*actor, 0, "Actor should be player 0");
-    assert!(!choices.is_empty(), "Should have at least one bench target choice");
+    assert!(
+        !choices.is_empty(),
+        "Should have at least one bench target choice"
+    );
 
     // Apply the first choice (damage to bench position 1)
     let bench_damage_action = Action {
@@ -456,11 +459,7 @@ fn test_blastoise_double_splash_without_extra_energy() {
         blastoise.clone(),
         150,
         150,
-        vec![
-            EnergyType::Water,
-            EnergyType::Water,
-            EnergyType::Fire,
-        ],
+        vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire],
         false,
         vec![],
     );
@@ -492,7 +491,9 @@ fn test_blastoise_double_splash_without_extra_energy() {
 
     // Check that move_generation_stack has NO ApplyDamage actions (no bench damage)
     let has_apply_damage = state.move_generation_stack.iter().any(|(_, choices)| {
-        choices.iter().any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
+        choices
+            .iter()
+            .any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
     });
     assert!(
         !has_apply_damage,
@@ -513,7 +514,8 @@ fn test_blastoise_double_splash_without_extra_energy() {
         "Opponent bench Pokemon should still be alive"
     );
     assert_eq!(
-        opponent_bench.as_ref().unwrap().remaining_hp, 50,
+        opponent_bench.as_ref().unwrap().remaining_hp,
+        50,
         "Opponent bench should still have 50 HP (no bench damage without extra energy)"
     );
 }
