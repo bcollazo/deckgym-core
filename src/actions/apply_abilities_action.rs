@@ -101,6 +101,13 @@ pub(crate) fn forecast_ability(
         AbilityId::A2a050CrobatCunningLink => doutcome(crobat_cunning_link),
         AbilityId::A4112UmbreonExDarkChase => doutcome(umbreon_dark_chase),
         AbilityId::B1160DragalgeExPoisonPoint => panic!("Poison Point is a passive ability"),
+        AbilityId::B1a006AriadosTrapTerritory => panic!("Trap Territory is a passive ability"),
+        AbilityId::B1a012CharmeleonIgnition => panic!("Ignition is triggered on evolve"),
+        AbilityId::B1a018WartortleShellShield => panic!("Shell Shield is a passive ability"),
+        AbilityId::B1a034ReuniclusInfiniteIncrease => {
+            panic!("Infinite Increase is a passive ability")
+        }
+        AbilityId::B1a065FurfrouFurCoat => panic!("Fur Coat is a passive ability"),
     }
 }
 

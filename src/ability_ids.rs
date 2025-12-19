@@ -52,6 +52,11 @@ pub enum AbilityId {
     B1172AegislashCursedMetal,
     B1177GoomyStickyMembrane,
     PA037CresseliaExLunarPlumage,
+    B1a006AriadosTrapTerritory,
+    B1a012CharmeleonIgnition,
+    B1a018WartortleShellShield,
+    B1a034ReuniclusInfiniteIncrease,
+    B1a065FurfrouFurCoat,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -204,6 +209,13 @@ lazy_static::lazy_static! {
         m.insert("B1 275", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);
         // B1a
+        m.insert("B1a 006", AbilityId::B1a006AriadosTrapTerritory);
+        m.insert("B1a 012", AbilityId::B1a012CharmeleonIgnition);
+        m.insert("B1a 018", AbilityId::B1a018WartortleShellShield);
+        m.insert("B1a 034", AbilityId::B1a034ReuniclusInfiniteIncrease);
+        m.insert("B1a 065", AbilityId::B1a065FurfrouFurCoat);
+        m.insert("B1a 070", AbilityId::B1a006AriadosTrapTerritory);  // Rare variant
+        m.insert("B1a 072", AbilityId::B1a034ReuniclusInfiniteIncrease);  // Rare variant
         m.insert("B1a 101", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("B1a 102", AbilityId::B1172AegislashCursedMetal);
         // A4b Solgaleo ex

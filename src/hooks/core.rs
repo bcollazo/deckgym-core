@@ -200,6 +200,21 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                 state.move_generation_stack.push((actor, possible_moves));
             }
         }
+        if ability_id == AbilityId::B1a012CharmeleonIgnition {
+            // Ignition: When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn,
+            // you may take 1 [R] Energy from your Energy Zone and attach it to this Pokémon.
+            // Find the active Pokémon (where evolution just happened) and attach energy
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::Attach {
+                        attachments: vec![(1, EnergyType::Fire, 0)], // Attach to active (index 0)
+                        is_turn_energy: false, // From ability, not turn energy
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
+        }
     }
 }
 
@@ -326,7 +341,13 @@ fn get_exoskeleton_reduction(
     is_from_active_attack: bool,
 ) -> u32 {
     if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
+        // Donphan Exoskeleton - only applies to active attacks
         if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
+            return 20;
+        }
+        // Furfrou Fur Coat - applies to all attacks
+        if ability_id == AbilityId::B1a065FurfrouFurCoat {
+            debug!("Fur Coat: Reducing damage by 20");
             return 20;
         }
     }
@@ -488,6 +509,11 @@ pub(crate) fn modify_damage(
             && attacking_pokemon.card.is_ex()
         {
             debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
+            return 0;
+        }
+        // Wartortle Shell Shield: prevent all damage when on bench
+        if ability_id == AbilityId::B1a018WartortleShellShield && target_idx != 0 {
+            debug!("Shell Shield: Preventing all damage to benched Wartortle");
             return 0;
         }
     }

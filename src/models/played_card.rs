@@ -88,7 +88,7 @@ impl PlayedCard {
     }
 
     pub(crate) fn heal(&mut self, amount: u32) {
-        self.remaining_hp = (self.remaining_hp + amount).min(self.total_hp);
+        self.remaining_hp = (self.remaining_hp + amount).min(self.get_effective_total_hp());
     }
 
     pub(crate) fn attach_energy(&mut self, energy: &EnergyType, amount: u8) {
@@ -119,7 +119,31 @@ impl PlayedCard {
     }
 
     pub(crate) fn is_damaged(&self) -> bool {
-        self.remaining_hp < self.total_hp
+        self.remaining_hp < self.get_effective_total_hp()
+    }
+
+    /// Returns effective total HP considering abilities like Reuniclus Infinite Increase
+    pub(crate) fn get_effective_total_hp(&self) -> u32 {
+        let mut effective_hp = self.total_hp;
+
+        // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
+            if ability_id == AbilityId::B1a034ReuniclusInfiniteIncrease {
+                let psychic_count = self
+                    .attached_energy
+                    .iter()
+                    .filter(|e| **e == EnergyType::Psychic)
+                    .count() as u32;
+                effective_hp += psychic_count * 30;
+            }
+        }
+
+        effective_hp
+    }
+
+    /// Returns true if this Pokemon is knocked out (HP <= 0 after considering HP bonuses)
+    pub(crate) fn is_knocked_out(&self) -> bool {
+        self.remaining_hp == 0
     }
 
     pub(crate) fn has_status_condition(&self) -> bool {
