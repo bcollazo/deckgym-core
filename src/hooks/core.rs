@@ -512,7 +512,10 @@ pub(crate) fn modify_damage(
             return 0;
         }
         // Wartortle Shell Shield: prevent all damage when on bench
-        if ability_id == AbilityId::B1a018WartortleShellShield && target_idx != 0 {
+        if ability_id == AbilityId::B1a018WartortleShellShield
+            && is_from_active_attack
+            && target_idx != 0
+        {
             debug!("Shell Shield: Preventing all damage to benched Wartortle");
             return 0;
         }
