@@ -1215,6 +1215,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", Mechanic::DiscardRandomGlobalEnergy);
     // map.insert("Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.", todo_implementation);
     map.insert(
+        "If this Pokémon has at least 2 extra [W] Energy attached, this attack also does 50 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::ConditionalBenchDamage {
+            required_extra_energy: vec![EnergyType::Water, EnergyType::Water],
+            bench_damage: 50,
+            num_bench_targets: 1,
+            opponent: true,
+        },
+    );
+    map.insert(
         "If this Pokémon has at least 3 extra [W] Energy attached, this attack also does 50 damage to 2 of your opponent's Benched Pokémon.",
         Mechanic::ConditionalBenchDamage {
             required_extra_energy: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
