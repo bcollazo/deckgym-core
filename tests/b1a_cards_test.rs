@@ -356,6 +356,168 @@ fn test_coin_flip_to_block_attack_effect() {
     // In a real scenario, we'd need access to the probability tree to verify 50/50 split
 }
 
+/// Test Blastoise B1a 019 - Double Splash with extra energy
+/// Should deal 90 to active and 50 to 1 benched Pokemon when 2+ extra Water energies attached
+#[test]
+fn test_blastoise_double_splash_with_extra_energy() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+
+    // Set up Blastoise with 5 Water energies (3 required + 2 extra)
+    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
+    let blastoise_played = PlayedCard::new(
+        blastoise.clone(),
+        150,
+        150,
+        vec![
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+        ],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[0][0] = Some(blastoise_played);
+
+    // Set up opponent active with high HP
+    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
+    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
+    bulbasaur_played.total_hp = 150;
+    bulbasaur_played.remaining_hp = 150;
+    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+
+    // Set up opponent bench Pokemon
+    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
+    let squirtle_played = PlayedCard::new(squirtle.clone(), 50, 50, vec![], false, vec![]);
+    state.in_play_pokemon[1][1] = Some(squirtle_played);
+
+    game.set_state(state);
+
+    // Attack with Double Splash
+    let action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+
+    game.apply_action(&action);
+    let state = game.get_state_clone();
+
+    // Check that move_generation_stack has bench target choices
+    assert!(
+        !state.move_generation_stack.is_empty(),
+        "Move generation stack should have bench target choices"
+    );
+
+    // Get the choices from the stack
+    let (actor, choices) = state.move_generation_stack.last().unwrap();
+    assert_eq!(*actor, 0, "Actor should be player 0");
+    assert!(!choices.is_empty(), "Should have at least one bench target choice");
+
+    // Apply the first choice (damage to bench position 1)
+    let bench_damage_action = Action {
+        actor: 0,
+        action: choices[0].clone(),
+        is_stack: true,
+    };
+
+    game.apply_action(&bench_damage_action);
+    let state = game.get_state_clone();
+
+    // Verify active took 90 damage (150 - 90 = 60)
+    let opponent_active = state.get_active(1);
+    assert_eq!(
+        opponent_active.remaining_hp, 60,
+        "Opponent active should have 60 HP remaining (150 - 90)"
+    );
+
+    // Verify bench took 50 damage (50 - 50 = 0, KO'd)
+    let opponent_bench = &state.in_play_pokemon[1][1];
+    assert!(
+        opponent_bench.is_none(),
+        "Opponent bench Pokemon should be KO'd (50 - 50 = 0)"
+    );
+}
+
+/// Test Blastoise B1a 019 - Double Splash without extra energy
+/// Should deal only 90 to active when no extra energies
+#[test]
+fn test_blastoise_double_splash_without_extra_energy() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+
+    // Set up Blastoise with exactly 3 energies (no extra Water)
+    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
+    let blastoise_played = PlayedCard::new(
+        blastoise.clone(),
+        150,
+        150,
+        vec![
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Fire,
+        ],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[0][0] = Some(blastoise_played);
+
+    // Set up opponent active
+    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
+    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
+    bulbasaur_played.total_hp = 150;
+    bulbasaur_played.remaining_hp = 150;
+    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+
+    // Set up opponent bench Pokemon
+    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
+    let squirtle_played = PlayedCard::new(squirtle.clone(), 50, 50, vec![], false, vec![]);
+    state.in_play_pokemon[1][1] = Some(squirtle_played);
+
+    game.set_state(state);
+
+    // Attack with Double Splash
+    let action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+
+    game.apply_action(&action);
+    let state = game.get_state_clone();
+
+    // Check that move_generation_stack has NO ApplyDamage actions (no bench damage)
+    let has_apply_damage = state.move_generation_stack.iter().any(|(_, choices)| {
+        choices.iter().any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
+    });
+    assert!(
+        !has_apply_damage,
+        "Move generation stack should have no ApplyDamage actions (no extra energy for bench damage)"
+    );
+
+    // Verify active took 90 damage (150 - 90 = 60)
+    let opponent_active = state.get_active(1);
+    assert_eq!(
+        opponent_active.remaining_hp, 60,
+        "Opponent active should have 60 HP remaining (150 - 90)"
+    );
+
+    // Verify bench took NO damage (still at 50 HP)
+    let opponent_bench = &state.in_play_pokemon[1][1];
+    assert!(
+        opponent_bench.is_some(),
+        "Opponent bench Pokemon should still be alive"
+    );
+    assert_eq!(
+        opponent_bench.as_ref().unwrap().remaining_hp, 50,
+        "Opponent bench should still have 50 HP (no bench damage without extra energy)"
+    );
+}
+
 /// Test Mega Steelix ex B1a 052 - Adamantine Rolling
 /// Should apply NoWeakness and ReducedDamage effects, negating Fire weakness on next turn
 #[test]
