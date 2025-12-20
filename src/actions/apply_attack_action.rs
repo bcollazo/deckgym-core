@@ -1978,49 +1978,67 @@ fn conditional_bench_damage_attack(
     );
 
     if has_extra_energy {
-        active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
-            let target_player = if opponent {
-                (action.actor + 1) % 2
-            } else {
-                action.actor
-            };
-            let benched: Vec<usize> = state
-                .enumerate_bench_pokemon(target_player)
-                .map(|(idx, _)| idx)
-                .collect();
+        let opponent_player = (state.current_player + 1) % 2;
+        let bench_target = if opponent {
+            opponent_player
+        } else {
+            state.current_player
+        };
+        let benched: Vec<usize> = state
+            .enumerate_bench_pokemon(bench_target)
+            .map(|(idx, _)| idx)
+            .collect();
 
-            // Only add bench damage choices if there are enough bench targets
-            if benched.len() >= num_bench_targets {
+        // Only create choices with bench damage if there are enough bench targets
+        // Otherwise, just apply active damage without creating choices
+        if benched.len() >= num_bench_targets {
+            let choices: Vec<_> = if num_bench_targets == 1 {
+                benched
+                    .iter()
+                    .map(|&bench_idx| {
+                        let targets = vec![
+                            (attack.fixed_damage, opponent_player, 0),
+                            (bench_damage, bench_target, bench_idx),
+                        ];
+                        SimpleAction::ApplyDamage {
+                            attacking_ref: (state.current_player, 0),
+                            targets,
+                            is_from_active_attack: true,
+                        }
+                    })
+                    .collect()
+            } else if num_bench_targets == 2 {
                 let mut choices = Vec::new();
-                if num_bench_targets == 1 {
-                    for &bench_idx in &benched {
+                for i in 0..benched.len() {
+                    for j in (i + 1)..benched.len() {
+                        let targets = vec![
+                            (attack.fixed_damage, opponent_player, 0),
+                            (bench_damage, bench_target, benched[i]),
+                            (bench_damage, bench_target, benched[j]),
+                        ];
                         choices.push(SimpleAction::ApplyDamage {
-                            attacking_ref: (action.actor, 0),
-                            targets: vec![(bench_damage, target_player, bench_idx)],
+                            attacking_ref: (state.current_player, 0),
+                            targets,
                             is_from_active_attack: true,
                         });
                     }
-                } else if num_bench_targets == 2 {
-                    for i in 0..benched.len() {
-                        for j in (i + 1)..benched.len() {
-                            choices.push(SimpleAction::ApplyDamage {
-                                attacking_ref: (action.actor, 0),
-                                targets: vec![
-                                    (bench_damage, target_player, benched[i]),
-                                    (bench_damage, target_player, benched[j]),
-                                ],
-                                is_from_active_attack: true,
-                            });
-                        }
-                    }
                 }
+                choices
+            } else {
+                vec![]
+            };
 
-                if !choices.is_empty() {
-                    state.move_generation_stack.push((action.actor, choices));
-                }
-            }
-            // If not enough bench targets, the active still takes damage (no additional bench damage)
-        })
+            doutcome_from_mutation(Box::new(
+                move |_: &mut StdRng, state: &mut State, action: &Action| {
+                    if !choices.is_empty() {
+                        state.move_generation_stack.push((action.actor, choices));
+                    }
+                },
+            ))
+        } else {
+            // Not enough bench targets, just apply damage to active without creating choices
+            active_damage_doutcome(attack.fixed_damage)
+        }
     } else {
         active_damage_doutcome(attack.fixed_damage)
     }
