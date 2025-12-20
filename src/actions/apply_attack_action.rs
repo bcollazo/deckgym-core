@@ -11,7 +11,7 @@ use crate::{
         Action,
     },
     effects::{CardEffect, TurnEffect},
-    hooks::{can_evolve_into, contains_energy, get_stage},
+    hooks::{can_evolve_into, contains_energy, get_retreat_cost, get_stage},
     models::{Attack, Card, EnergyType, StatusCondition},
     AttackId, State,
 };
@@ -433,6 +433,9 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
+        Mechanic::ExtraDamagePerRetreatCost { damage_per_energy } => {
+            extra_damage_per_retreat_cost(state, attack.fixed_damage, *damage_per_energy)
+        }
         Mechanic::DamagePerEnergyAll {
             opponent,
             damage_per_energy,
@@ -1519,6 +1522,18 @@ fn extra_damage_per_energy(
             .get_effective_attached_energy(state, target)
             .len() as u32)
             * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_per_retreat_cost(
+    state: &State,
+    base_damage: u32,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let retreat_cost = get_retreat_cost(state, opponent_active);
+    let damage = base_damage + (retreat_cost.len() as u32) * damage_per_energy;
     active_damage_doutcome(damage)
 }
 
