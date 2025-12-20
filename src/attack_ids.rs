@@ -33,7 +33,6 @@ pub enum AttackId {
     A2141ChatotFuryAttack,
     A2a001HeracrossSingleHornThrow,
     A2a063SnorlaxCollapse,
-    A2b010CharizardExStoke,
     A2b032MrMimeJuggling,
     A2b044FlamigoDoubleKick,
     A3002AlolanExeggutorTropicalHammer,
@@ -124,11 +123,9 @@ lazy_static::lazy_static! {
         m.insert(("A2a 063", 0), AttackId::A2a063SnorlaxCollapse);
 
         // A2b
-        m.insert(("A2b 010", 0), AttackId::A2b010CharizardExStoke);
+        // A2b 010, A2b 080, A2b 108 CharizardExStoke now use Mechanic::SelfChargeActive
         m.insert(("A2b 032", 0), AttackId::A2b032MrMimeJuggling);
         m.insert(("A2b 044", 0), AttackId::A2b044FlamigoDoubleKick);
-        m.insert(("A2b 080", 0), AttackId::A2b010CharizardExStoke);
-        m.insert(("A2b 108", 0), AttackId::A2b010CharizardExStoke);
 
         // A3
         m.insert(("A3 002", 0), AttackId::A3002AlolanExeggutorTropicalHammer);
@@ -205,7 +202,7 @@ lazy_static::lazy_static! {
         // A4b
         m.insert(("A4b 023", 0), AttackId::A4021ShuckleExTripleSlap);
         m.insert(("A4b 042", 0), AttackId::A3012DecidueyeExPierceThePain);
-        m.insert(("A4b 060", 0), AttackId::A2b010CharizardExStoke);
+        // A4b 060 CharizardExStoke now uses Mechanic::SelfChargeActive
         m.insert(("A4b 075", 0), AttackId::A2029InfernapeExFlareBlitz);
         m.insert(("A4b 096", 0), AttackId::A1a017MagikarpLeapOut);
         m.insert(("A4b 097", 0), AttackId::A1a017MagikarpLeapOut);
@@ -248,6 +245,10 @@ lazy_static::lazy_static! {
         m.insert(("B1 319", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("B1 322", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
         m.insert(("B1 325", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
+
+        // B1a
+        // B1a 002 IvysaurSynthesis now uses Mechanic::SelfChargeActive
+        m.insert(("B1a 097", 0), AttackId::A3a061SilvallyBraveBuddies);
 
         // Promo
         m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);

@@ -89,6 +89,11 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A2a050CrobatCunningLink => can_use_crobat_cunning_link(state, card),
         AbilityId::A4112UmbreonExDarkChase => is_active && can_use_umbreon_dark_chase(state, card),
         AbilityId::B1160DragalgeExPoisonPoint => false, // Passive ability, triggers via hooks
+        AbilityId::B1a006AriadosTrapTerritory => false, // Passive ability
+        AbilityId::B1a012CharmeleonIgnition => false,   // Triggered on evolve
+        AbilityId::B1a018WartortleShellShield => false, // Passive ability
+        AbilityId::B1a034ReuniclusInfiniteIncrease => false, // Passive ability
+        AbilityId::B1a065FurfrouFurCoat => false,       // Passive ability
     }
 }
 

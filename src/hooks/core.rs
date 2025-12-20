@@ -72,26 +72,9 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     }
 }
 
-/// Check if a Pokemon in play can evolve into a card from hand
-/// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+// TODO: Deprecated. Use PokemonCard::can_evolve_into instead.
 pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
-    if let Card::Pokemon(evolution_pokemon) = evolution_card {
-        if let Some(evolves_from) = &evolution_pokemon.evolves_from {
-            // Normal evolution: the card evolves from the base Pokemon's name
-            if base_pokemon.get_name() == *evolves_from {
-                return true;
-            }
-
-            // Special case: Eevee ex's Veevee 'volve ability
-            // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
-            if let Some(ability_id) = AbilityId::from_pokemon_id(&base_pokemon.card.get_id()[..]) {
-                if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee" {
-                    return true;
-                }
-            }
-        }
-    }
-    false
+    base_pokemon.card.can_evolve_into(evolution_card)
 }
 
 pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
@@ -199,6 +182,21 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
             if possible_moves.len() > 1 {
                 state.move_generation_stack.push((actor, possible_moves));
             }
+        }
+        if ability_id == AbilityId::B1a012CharmeleonIgnition {
+            // Ignition: When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn,
+            // you may take 1 [R] Energy from your Energy Zone and attach it to this Pokémon.
+            // Find the active Pokémon (where evolution just happened) and attach energy
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::Attach {
+                        attachments: vec![(1, EnergyType::Fire, 0)], // Attach to active (index 0)
+                        is_turn_energy: false, // From ability, not turn energy
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
         }
     }
 }
@@ -326,7 +324,13 @@ fn get_exoskeleton_reduction(
     is_from_active_attack: bool,
 ) -> u32 {
     if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
+        // Donphan Exoskeleton - only applies to active attacks
         if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
+            return 20;
+        }
+        // Furfrou Fur Coat - applies to all attacks
+        if ability_id == AbilityId::B1a065FurfrouFurCoat {
+            debug!("Fur Coat: Reducing damage by 20");
             return 20;
         }
     }
@@ -434,6 +438,17 @@ fn get_weakness_modifier(
         return 0;
     }
     let receiving = state.get_active(target_player);
+
+    // Check if defender has NoWeakness effect active
+    if receiving
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::NoWeakness))
+    {
+        debug!("NoWeakness: Ignoring weakness damage");
+        return 0;
+    }
+
     if let Card::Pokemon(pokemon_card) = &receiving.card {
         if pokemon_card.weakness == attacking_pokemon.card.get_type() {
             debug!(
@@ -477,6 +492,14 @@ pub(crate) fn modify_damage(
             && attacking_pokemon.card.is_ex()
         {
             debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
+            return 0;
+        }
+        // Wartortle Shell Shield: prevent all damage when on bench
+        if ability_id == AbilityId::B1a018WartortleShellShield
+            && is_from_active_attack
+            && target_idx != 0
+        {
+            debug!("Shell Shield: Preventing all damage to benched Wartortle");
             return 0;
         }
     }

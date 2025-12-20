@@ -25,6 +25,7 @@ pub struct PlayedCard {
     pub paralyzed: bool,
     pub asleep: bool,
     pub burned: bool,
+    pub confused: bool,
     pub cards_behind: Vec<Card>,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
@@ -54,6 +55,7 @@ impl PlayedCard {
             paralyzed: false,
             asleep: false,
             burned: false,
+            confused: false,
             effects: vec![],
         }
     }
@@ -88,7 +90,7 @@ impl PlayedCard {
     }
 
     pub(crate) fn heal(&mut self, amount: u32) {
-        self.remaining_hp = (self.remaining_hp + amount).min(self.total_hp);
+        self.remaining_hp = (self.remaining_hp + amount).min(self.get_effective_total_hp());
     }
 
     pub(crate) fn attach_energy(&mut self, energy: &EnergyType, amount: u8) {
@@ -119,11 +121,30 @@ impl PlayedCard {
     }
 
     pub(crate) fn is_damaged(&self) -> bool {
-        self.remaining_hp < self.total_hp
+        self.remaining_hp < self.get_effective_total_hp()
+    }
+
+    /// Returns effective total HP considering abilities like Reuniclus Infinite Increase
+    pub(crate) fn get_effective_total_hp(&self) -> u32 {
+        let mut effective_hp = self.total_hp;
+
+        // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
+            if ability_id == AbilityId::B1a034ReuniclusInfiniteIncrease {
+                let psychic_count = self
+                    .attached_energy
+                    .iter()
+                    .filter(|e| **e == EnergyType::Psychic)
+                    .count() as u32;
+                effective_hp += psychic_count * 30;
+            }
+        }
+
+        effective_hp
     }
 
     pub(crate) fn has_status_condition(&self) -> bool {
-        self.poisoned || self.paralyzed || self.asleep
+        self.poisoned || self.paralyzed || self.asleep || self.confused
     }
 
     pub(crate) fn has_tool_attached(&self) -> bool {
@@ -150,6 +171,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
+        self.confused = false;
         self.effects.clear();
     }
 
@@ -158,6 +180,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
+        self.confused = false;
     }
 
     /// Apply a status condition to this Pokémon, respecting Arceus ex immunity
@@ -181,6 +204,7 @@ impl PlayedCard {
             StatusCondition::Paralyzed => self.paralyzed = true,
             StatusCondition::Poisoned => self.poisoned = true,
             StatusCondition::Burned => self.burned = true,
+            StatusCondition::Confused => self.confused = true,
         }
     }
 

@@ -1,7 +1,7 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
-    card_logic::can_rare_candy_evolve,
+    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
@@ -149,6 +149,10 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
+        CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
+            can_play_quick_grow_extract(state, trainer_card)
+        }
+        CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
@@ -545,4 +549,24 @@ fn can_place_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
         });
 
     Some(actions)
+}
+
+/// Check if Quick-Grow Extract can be played
+/// Requires: not first turn, at least 1 Grass pokemon that wasn't played this turn,
+/// with a valid Grass evolution available in deck
+fn can_play_quick_grow_extract(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    // Can't use during first turn
+    if state.is_users_first_turn() {
+        return cannot_play_trainer();
+    }
+
+    // Check if there are any valid evolution candidates
+    if quick_grow_extract_candidates(state, state.current_player).is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
 }

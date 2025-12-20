@@ -3,7 +3,7 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-use crate::card_ids::CardId;
+use crate::{card_ids::CardId, AbilityId};
 
 /// Represents the type of energy.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
@@ -244,6 +244,29 @@ impl Card {
             _ => panic!("Card is not a Trainer"),
         }
     }
+
+    /// Check if this card can evolve into the given evolution card
+    /// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+    pub fn can_evolve_into(&self, evolution_card: &Card) -> bool {
+        if let Card::Pokemon(evolution_pokemon) = evolution_card {
+            if let Some(evolves_from) = &evolution_pokemon.evolves_from {
+                // Normal evolution: the evolution card evolves from this card's name
+                if self.get_name() == *evolves_from {
+                    return true;
+                }
+
+                // Special case: Eevee ex's Veevee 'volve ability
+                // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
+                if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
+                    if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee"
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        false
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -252,7 +275,7 @@ pub enum StatusCondition {
     Paralyzed,
     Asleep,
     Burned,
-    // TODO: Confused
+    Confused,
 }
 
 impl fmt::Display for Card {

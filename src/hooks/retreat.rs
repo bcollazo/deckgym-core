@@ -61,6 +61,20 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         for _ in 0..to_subtract {
             normal_cost.pop(); // Remove one colorless energy from retreat cost
         }
+
+        // Ariados Trap Territory: Your opponent's Active Pokémon's Retreat Cost is 1 more.
+        // This check needs to look at if the OPPONENT has Ariados in play
+        let opponent = (state.current_player + 1) % 2;
+        for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
+            if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
+                if ability_id == AbilityId::B1a006AriadosTrapTerritory {
+                    // Add 1 Colorless to retreat cost for opponent's active
+                    normal_cost.push(EnergyType::Colorless);
+                    break; // Only apply once
+                }
+            }
+        }
+
         normal_cost
     } else {
         vec![]

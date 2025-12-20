@@ -21,11 +21,15 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
-    InflictStatusCondition {
-        condition: StatusCondition,
+    InflictStatusConditions {
+        conditions: Vec<StatusCondition>,
+        target_opponent: bool,
     },
     ChanceStatusAttack {
         condition: StatusCondition,
+    },
+    DamageAllOpponentPokemon {
+        damage: u32,
     },
     DiscardRandomGlobalEnergy,
     DiscardEnergyFromOpponentActive,
@@ -66,6 +70,9 @@ pub enum Mechanic {
         effect: TurnEffect,
         duration: u8,
     },
+    SelfChargeActive {
+        energies: Vec<EnergyType>,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
@@ -73,11 +80,37 @@ pub enum Mechanic {
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
+    CoinFlipToBlockAttackNextTurn,
     ChargeBench {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
     },
     VaporeonHyperWhirlpool,
+    ConditionalBenchDamage {
+        required_extra_energy: Vec<EnergyType>,
+        bench_damage: u32,
+        num_bench_targets: usize,
+        opponent: bool,
+    },
+    ExtraDamageForEachHeadsWithStatus {
+        include_fixed_damage: bool,
+        damage_per_head: u32,
+        num_coins: usize,
+        status: StatusCondition,
+    },
+    DamageAndMultipleCardEffects {
+        opponent: bool,
+        effects: Vec<CardEffect>,
+        duration: u8,
+    },
+    DamageReducedBySelfDamage,
+    ExtraDamagePerTrainerInOpponentDeck {
+        damage_per_trainer: u32,
+    },
+    ExtraDamageIfCardInDiscard {
+        card_name: String,
+        extra_damage: u32,
+    },
     // End Unique mechanics
     DamageAndCardEffect {
         opponent: bool,
@@ -121,6 +154,10 @@ pub enum Mechanic {
     },
     DamagePerEnergyAll {
         opponent: bool,
+        damage_per_energy: u32,
+    },
+    ExtraDamagePerSpecificEnergy {
+        energy_type: EnergyType,
         damage_per_energy: u32,
     },
     ExtraDamageIfToolAttached {

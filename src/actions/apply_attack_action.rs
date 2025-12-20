@@ -38,22 +38,93 @@ pub(crate) fn forecast_attack(
     let attack = active.card.get_attacks()[index].clone();
     trace!("Forecasting attack: {active:?} {attack:?}");
 
+    // Check for CoinFlipToBlockAttack effect
+    let has_block_effect = active
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
+
+    // Handle confusion: 50% chance the attack fails (coin flip)
+    if active.confused {
+        let (base_probs, base_mutations) =
+            forecast_attack_inner(state, &active.card, &attack, index);
+        return apply_confusion_coin_flip(base_probs, base_mutations);
+    }
+
+    // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
+    if has_block_effect {
+        let (base_probs, base_mutations) =
+            forecast_attack_inner(state, &active.card, &attack, index);
+        return apply_block_attack_coin_flip(base_probs, base_mutations);
+    }
+
+    forecast_attack_inner(state, &active.card, &attack, index)
+}
+
+fn forecast_attack_inner(
+    state: &State,
+    card: &Card,
+    attack: &Attack,
+    index: usize,
+) -> (Probabilities, Mutations) {
+    let card_id = card.get_id();
+
     let Some(effect_text) = &attack.effect else {
         return active_damage_doutcome(attack.fixed_damage);
     };
     // Try AttackId first, if not, fallback to mechanic map
-    if let Some(attack_id) = AttackId::from_pokemon_index(&active.get_id()[..], index) {
+    if let Some(attack_id) = AttackId::from_pokemon_index(&card_id[..], index) {
         forecast_effect_attack_by_attack_id(state, attack_id)
     } else {
         let mechanic = EFFECT_MECHANIC_MAP.get(&effect_text[..]);
         let Some(mechanic) = mechanic else {
             panic!(
                 "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
-                effect_text, attack, active.card
+                effect_text, attack, card
             );
         };
-        forecast_effect_attack_by_mechanic(state, &attack, mechanic)
+        forecast_effect_attack_by_mechanic(state, attack, mechanic)
     }
+}
+
+/// Applies confusion coin flip: 50% chance the attack fails (does nothing)
+fn apply_confusion_coin_flip(
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    // Confusion: 50% tails = attack fails, 50% heads = attack succeeds
+    let mut probs = vec![0.5]; // First outcome: tails (confusion - attack fails)
+    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
+        // Attack fails due to confusion - do nothing
+    })];
+
+    // Add all base outcomes with halved probabilities (heads = attack succeeds)
+    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
+        probs.push(prob * 0.5);
+        mutations.push(mutation);
+    }
+
+    (probs, mutations)
+}
+
+/// Applies CoinFlipToBlockAttack effect: 50% chance the attack is blocked (tails)
+fn apply_block_attack_coin_flip(
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    // 50% tails = attack blocked, 50% heads = attack succeeds
+    let mut probs = vec![0.5]; // First outcome: tails (attack blocked)
+    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
+        // Attack blocked - do nothing
+    })];
+
+    // Add all base outcomes with halved probabilities (heads = attack succeeds)
+    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
+        probs.push(prob * 0.5);
+        mutations.push(mutation);
+    }
+
+    (probs, mutations)
 }
 
 fn forecast_effect_attack_by_attack_id(
@@ -72,7 +143,7 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
         AttackId::A1178MawileCrunch => mawile_crunch(),
-        AttackId::A1181MeltanAmass => self_charge_active_attack(0, EnergyType::Metal, 1),
+        AttackId::A1181MeltanAmass => self_charge_active_from_energies(0, vec![EnergyType::Metal]),
         AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
         AttackId::A1203KangaskhanDizzyPunch => {
@@ -93,12 +164,14 @@ fn forecast_effect_attack_by_attack_id(
             damage_effect_doutcome(targets, |_, _, _| {})
         }
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
-        AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
+        AttackId::A2023MagmarStoke => self_charge_active_from_energies(0, vec![EnergyType::Fire]),
         AttackId::A2029InfernapeExFlareBlitz => {
             discard_all_energy_of_type_attack(140, EnergyType::Fire)
         }
         AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
-        AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2056ElectabuzzCharge => {
+            self_charge_active_from_energies(0, vec![EnergyType::Lightning])
+        }
         AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
         AttackId::A2084GliscorAcrobatics => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
@@ -119,9 +192,8 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
         }
         AttackId::A2a063SnorlaxCollapse => {
-            damage_and_self_status_attack(100, StatusCondition::Asleep)
+            damage_and_self_multiple_status_attack(100, vec![StatusCondition::Asleep])
         }
-        AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
@@ -140,9 +212,11 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
         }
         AttackId::A3040AlolanVulpixCallForthCold => {
-            self_charge_active_attack(0, EnergyType::Water, 1)
+            self_charge_active_from_energies(0, vec![EnergyType::Water])
         }
-        AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
+        AttackId::A3071SpoinkPsycharge => {
+            self_charge_active_from_energies(0, vec![EnergyType::Psychic])
+        }
         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
@@ -151,7 +225,7 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
         }
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
-            self_charge_active_attack(20, EnergyType::Lightning, 1)
+            self_charge_active_from_energies(20, vec![EnergyType::Lightning])
         }
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
@@ -167,7 +241,9 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A3a062CelesteelaMoombahton => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
         }
-        AttackId::A1a001ExeggcuteGrowthSpurt => self_charge_active_attack(0, EnergyType::Grass, 1),
+        AttackId::A1a001ExeggcuteGrowthSpurt => {
+            self_charge_active_from_energies(0, vec![EnergyType::Grass])
+        }
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3b013IncineroarDarkestLariat => {
@@ -178,7 +254,7 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A3b057SnorlaxExFlopDownPunch => {
-            damage_and_self_status_attack(130, StatusCondition::Asleep)
+            damage_and_self_multiple_status_attack(130, vec![StatusCondition::Asleep])
         }
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
@@ -221,6 +297,9 @@ fn forecast_effect_attack_by_mechanic(
     match mechanic {
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
+        Mechanic::SelfChargeActive { energies } => {
+            self_charge_active_from_energies(attack.fixed_damage, energies.clone())
+        }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
@@ -235,9 +314,21 @@ fn forecast_effect_attack_by_mechanic(
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
-        Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
+        Mechanic::InflictStatusConditions {
+            conditions,
+            target_opponent,
+        } => {
+            if *target_opponent {
+                damage_multiple_status_attack(conditions.clone(), attack)
+            } else {
+                damage_and_self_multiple_status_attack(attack.fixed_damage, conditions.clone())
+            }
+        }
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
+        }
+        Mechanic::DamageAllOpponentPokemon { damage } => {
+            damage_all_opponent_pokemon(state, *damage)
         }
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
@@ -346,6 +437,15 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => damage_per_energy_all(state, *opponent, *damage_per_energy),
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type,
+            damage_per_energy,
+        } => extra_damage_per_specific_energy(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *damage_per_energy,
+        ),
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
@@ -361,6 +461,61 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
         Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::ConditionalBenchDamage {
+            required_extra_energy,
+            bench_damage,
+            num_bench_targets,
+            opponent,
+        } => conditional_bench_damage_attack(
+            state,
+            attack,
+            required_extra_energy.clone(),
+            *bench_damage,
+            *num_bench_targets,
+            *opponent,
+        ),
+        Mechanic::ExtraDamageForEachHeadsWithStatus {
+            include_fixed_damage,
+            damage_per_head,
+            num_coins,
+            status,
+        } => damage_for_each_heads_with_status_attack(
+            *include_fixed_damage,
+            *damage_per_head,
+            *num_coins,
+            attack,
+            *status,
+        ),
+        Mechanic::DamageAndMultipleCardEffects {
+            opponent,
+            effects,
+            duration,
+        } => damage_and_multiple_card_effects_attack(
+            attack.fixed_damage,
+            *opponent,
+            effects.clone(),
+            *duration,
+        ),
+        Mechanic::DamageReducedBySelfDamage => damage_reduced_by_self_damage_attack(state, attack),
+        Mechanic::ExtraDamagePerTrainerInOpponentDeck { damage_per_trainer } => {
+            extra_damage_per_trainer_in_opponent_deck_attack(
+                state,
+                attack.fixed_damage,
+                *damage_per_trainer,
+            )
+        }
+        Mechanic::ExtraDamageIfCardInDiscard {
+            card_name,
+            extra_damage,
+        } => extra_damage_if_card_in_discard_attack(
+            state,
+            attack.fixed_damage,
+            card_name.clone(),
+            *extra_damage,
+        ),
+        Mechanic::CoinFlipToBlockAttackNextTurn => {
+            coin_flip_to_block_attack_next_turn(attack.fixed_damage)
+        }
     }
 }
 
@@ -815,14 +970,15 @@ fn also_choice_bench_damage(
     ))
 }
 
-fn self_charge_active_attack(
+fn self_charge_active_from_energies(
     damage: u32,
-    energy_type: EnergyType,
-    amount: u8,
+    energies: Vec<EnergyType>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
-        active.attach_energy(&energy_type, amount);
+        for energy in &energies {
+            active.attach_energy(energy, 1);
+        }
     })
 }
 
@@ -1022,19 +1178,30 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
     })
 }
 
-/// For attacks that deal damage and apply a status effect (e.g. Wigglituff Ex)
-fn damage_status_attack(status: StatusCondition, attack: &Attack) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(attack.fixed_damage, build_status_effect(status))
+/// For attacks that deal damage and apply multiple status effects to opponent (e.g. Mega Venusaur Critical Bloom)
+fn damage_multiple_status_attack(
+    statuses: Vec<StatusCondition>,
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.get_active_mut(opponent);
+        for status in &statuses {
+            opponent_active.apply_status_condition(*status);
+        }
+    })
 }
 
-/// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
-fn damage_and_self_status_attack(
+/// For attacks that deal damage to opponent and apply multiple status effects to the attacker (e.g. Snorlax Collapse)
+fn damage_and_self_multiple_status_attack(
     damage: u32,
-    status: StatusCondition,
+    statuses: Vec<StatusCondition>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
-        active.apply_status_condition(status);
+        for status in &statuses {
+            active.apply_status_condition(*status);
+        }
     })
 }
 
@@ -1290,6 +1457,17 @@ fn also_bench_damage(
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
+/// Deals the same damage to all of opponent's Pokémon (active and bench) - like Spiritomb/Clawitzer
+fn damage_all_opponent_pokemon(state: &State, damage: u32) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
+    // Collect all opponent's Pokémon (active at index 0, plus bench)
+    let targets: Vec<(u32, usize)> = state
+        .enumerate_in_play_pokemon(opponent)
+        .map(|(idx, _)| (damage, idx))
+        .collect();
+    damage_effect_doutcome(targets, |_, _, _| {})
+}
+
 fn extra_damage_if_hurt(
     state: &State,
     base: u32,
@@ -1360,6 +1538,23 @@ fn damage_per_energy_all(
         .map(|pokemon| pokemon.get_effective_attached_energy(state, target).len() as u32)
         .sum();
     let damage = total_energy * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+/// Damage per specific energy type attached to self (e.g., Genesect's Metal Blast)
+fn extra_damage_per_specific_energy(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    damage_per_energy: u32,
+) -> (Probabilities, Mutations) {
+    let active = state.get_active(state.current_player);
+    let matching_energy_count = active
+        .attached_energy
+        .iter()
+        .filter(|e| **e == energy_type)
+        .count() as u32;
+    let damage = base_damage + matching_energy_count * damage_per_energy;
     active_damage_doutcome(damage)
 }
 
@@ -1688,6 +1883,193 @@ fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutatio
             }
         },
     ))
+}
+
+/// Mega Steelix ex - Adamantine Rolling: Deals damage and applies multiple card effects
+fn damage_and_multiple_card_effects_attack(
+    damage: u32,
+    opponent: bool,
+    effects: Vec<CardEffect>,
+    effect_duration: u8,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let player = if opponent {
+            (action.actor + 1) % 2
+        } else {
+            action.actor
+        };
+        let target_pokemon = state.get_active_mut(player);
+        for effect in effects.iter() {
+            target_pokemon.add_effect(effect.clone(), effect_duration);
+        }
+    })
+}
+
+/// Mega Lopunny ex - Rapid Smashers: Flips coins for damage and always inflicts status
+fn damage_for_each_heads_with_status_attack(
+    include_fixed_damage: bool,
+    damage_per_head: u32,
+    num_coins: usize,
+    attack: &Attack,
+    status: StatusCondition,
+) -> (Probabilities, Mutations) {
+    let probabilities = calculate_binomial_probabilities(num_coins);
+    let mutations: Mutations = (0..=num_coins)
+        .map(|heads| {
+            let damage = if include_fixed_damage {
+                attack.fixed_damage + (heads as u32 * damage_per_head)
+            } else {
+                heads as u32 * damage_per_head
+            };
+            active_damage_effect_mutation(damage, build_status_effect(status))
+        })
+        .collect();
+    (probabilities, mutations)
+}
+
+/// Calculate binomial probabilities for n coin flips
+fn calculate_binomial_probabilities(n: usize) -> Vec<f64> {
+    let mut probs = Vec::new();
+    for k in 0..=n {
+        let coef = binomial_coefficient(n, k);
+        let prob = coef as f64 / (1 << n) as f64;
+        probs.push(prob);
+    }
+    probs
+}
+
+/// Mega Blastoise ex - Triple Bombardment: Conditional bench damage based on extra energy
+fn conditional_bench_damage_attack(
+    state: &State,
+    attack: &Attack,
+    required_extra_energy: Vec<EnergyType>,
+    bench_damage: u32,
+    num_bench_targets: usize,
+    opponent: bool,
+) -> (Probabilities, Mutations) {
+    let pokemon = state.get_active(state.current_player);
+    let cost_with_extra_energy = attack
+        .energy_required
+        .iter()
+        .cloned()
+        .chain(required_extra_energy.iter().cloned())
+        .collect::<Vec<EnergyType>>();
+
+    let has_extra_energy = contains_energy(
+        pokemon,
+        &cost_with_extra_energy,
+        state,
+        state.current_player,
+    );
+
+    if has_extra_energy {
+        active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+            let target_player = if opponent {
+                (action.actor + 1) % 2
+            } else {
+                action.actor
+            };
+            let benched: Vec<usize> = state
+                .enumerate_bench_pokemon(target_player)
+                .map(|(idx, _)| idx)
+                .collect();
+
+            // Only add bench damage choices if there are enough bench targets
+            if benched.len() >= num_bench_targets {
+                let mut choices = Vec::new();
+                if num_bench_targets == 1 {
+                    for &bench_idx in &benched {
+                        choices.push(SimpleAction::ApplyDamage {
+                            attacking_ref: (action.actor, 0),
+                            targets: vec![(bench_damage, target_player, bench_idx)],
+                            is_from_active_attack: true,
+                        });
+                    }
+                } else if num_bench_targets == 2 {
+                    for i in 0..benched.len() {
+                        for j in (i + 1)..benched.len() {
+                            choices.push(SimpleAction::ApplyDamage {
+                                attacking_ref: (action.actor, 0),
+                                targets: vec![
+                                    (bench_damage, target_player, benched[i]),
+                                    (bench_damage, target_player, benched[j]),
+                                ],
+                                is_from_active_attack: true,
+                            });
+                        }
+                    }
+                }
+
+                if !choices.is_empty() {
+                    state.move_generation_stack.push((action.actor, choices));
+                }
+            }
+            // If not enough bench targets, the active still takes damage (no additional bench damage)
+        })
+    } else {
+        active_damage_doutcome(attack.fixed_damage)
+    }
+}
+
+/// Xerneas - Geoburst: Damage reduced by self damage
+fn damage_reduced_by_self_damage_attack(
+    state: &State,
+    attack: &Attack,
+) -> (Probabilities, Mutations) {
+    let active = state.get_active(state.current_player);
+    let damage_taken = active.total_hp - active.remaining_hp;
+    let actual_damage = attack.fixed_damage.saturating_sub(damage_taken);
+    active_damage_doutcome(actual_damage)
+}
+
+/// Porygon-Z - Cyberjack: Extra damage per trainer in opponent deck
+fn extra_damage_per_trainer_in_opponent_deck_attack(
+    state: &State,
+    base_damage: u32,
+    damage_per_trainer: u32,
+) -> (Probabilities, Mutations) {
+    let opponent = (state.current_player + 1) % 2;
+    let trainer_count = state.decks[opponent]
+        .cards
+        .iter()
+        .filter(|card| matches!(card, crate::models::Card::Trainer(_)))
+        .count() as u32;
+    let total_damage = base_damage + (trainer_count * damage_per_trainer);
+    active_damage_doutcome(total_damage)
+}
+
+/// Sunflora - Quick-Grow Beam: Extra damage if specific card in discard
+fn extra_damage_if_card_in_discard_attack(
+    state: &State,
+    base_damage: u32,
+    card_name: String,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let has_card_in_discard = state.discard_piles[state.current_player]
+        .iter()
+        .any(|card| {
+            if let crate::models::Card::Trainer(trainer) = card {
+                trainer.name == card_name
+            } else {
+                false
+            }
+        });
+    let total_damage = if has_card_in_discard {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(total_damage)
+}
+
+/// Magnezone - Mirror Shot: Coin flip to block opponent attack next turn
+fn coin_flip_to_block_attack_next_turn(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        state
+            .get_active_mut(opponent)
+            .add_effect(CardEffect::CoinFlipToBlockAttack, 1);
+    })
 }
 
 #[cfg(test)]
