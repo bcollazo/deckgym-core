@@ -21,16 +21,11 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
-    InflictStatusCondition {
-        condition: StatusCondition,
+    InflictStatusConditions {
+        conditions: Vec<StatusCondition>,
+        target_opponent: bool,
     },
     ChanceStatusAttack {
-        condition: StatusCondition,
-    },
-    InflictMultipleStatusConditions {
-        conditions: Vec<StatusCondition>,
-    },
-    InflictSelfStatusCondition {
         condition: StatusCondition,
     },
     DamageAllOpponentPokemon {
@@ -74,6 +69,9 @@ pub enum Mechanic {
     DamageAndTurnEffect {
         effect: TurnEffect,
         duration: u8,
+    },
+    SelfChargeActive {
+        energies: Vec<EnergyType>,
     },
     // Fairly unique mechanics
     ManaphyOceanicGift,

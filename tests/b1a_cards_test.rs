@@ -520,6 +520,71 @@ fn test_blastoise_double_splash_without_extra_energy() {
     );
 }
 
+/// Test Blastoise B1a 019 - Double Splash with extra energy but no bench
+/// Should deal 90 to active only (no bench to hit)
+#[test]
+fn test_blastoise_double_splash_with_extra_energy_no_bench() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+
+    // Set up Blastoise with 5 Water energies (3 required + 2 extra)
+    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
+    let blastoise_played = PlayedCard::new(
+        blastoise.clone(),
+        150,
+        150,
+        vec![
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+        ],
+        false,
+        vec![],
+    );
+    state.in_play_pokemon[0][0] = Some(blastoise_played);
+
+    // Set up opponent active ONLY (no bench)
+    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
+    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
+    bulbasaur_played.total_hp = 150;
+    bulbasaur_played.remaining_hp = 150;
+    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    // No bench Pokemon!
+
+    game.set_state(state);
+
+    // Attack with Double Splash
+    let action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+
+    game.apply_action(&action);
+    let state = game.get_state_clone();
+
+    // Check that move_generation_stack has NO ApplyDamage actions (no bench to hit)
+    let has_apply_damage = state.move_generation_stack.iter().any(|(_, choices)| {
+        choices
+            .iter()
+            .any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
+    });
+    assert!(
+        !has_apply_damage,
+        "Move generation stack should have no ApplyDamage actions (no bench Pokemon to hit)"
+    );
+
+    // Verify active took 90 damage (150 - 90 = 60)
+    let opponent_active = state.get_active(1);
+    assert_eq!(
+        opponent_active.remaining_hp, 60,
+        "Opponent active should have 60 HP remaining (150 - 90), even with extra energy but no bench"
+    );
+}
+
 /// Test Mega Steelix ex B1a 052 - Adamantine Rolling
 /// Should apply NoWeakness and ReducedDamage effects, negating Fire weakness on next turn
 #[test]

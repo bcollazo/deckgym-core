@@ -143,7 +143,7 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
         AttackId::A1178MawileCrunch => mawile_crunch(),
-        AttackId::A1181MeltanAmass => self_charge_active_attack(0, EnergyType::Metal, 1),
+        AttackId::A1181MeltanAmass => self_charge_active_from_energies(0, vec![EnergyType::Metal]),
         AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
         AttackId::A1203KangaskhanDizzyPunch => {
@@ -164,12 +164,14 @@ fn forecast_effect_attack_by_attack_id(
             damage_effect_doutcome(targets, |_, _, _| {})
         }
         AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
-        AttackId::A2023MagmarStoke => self_charge_active_attack(0, EnergyType::Fire, 1),
+        AttackId::A2023MagmarStoke => self_charge_active_from_energies(0, vec![EnergyType::Fire]),
         AttackId::A2029InfernapeExFlareBlitz => {
             discard_all_energy_of_type_attack(140, EnergyType::Fire)
         }
         AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
-        AttackId::A2056ElectabuzzCharge => self_charge_active_attack(0, EnergyType::Lightning, 1),
+        AttackId::A2056ElectabuzzCharge => {
+            self_charge_active_from_energies(0, vec![EnergyType::Lightning])
+        }
         AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
         AttackId::A2084GliscorAcrobatics => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
@@ -190,9 +192,8 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
         }
         AttackId::A2a063SnorlaxCollapse => {
-            damage_and_self_status_attack(100, StatusCondition::Asleep)
+            damage_and_self_multiple_status_attack(100, vec![StatusCondition::Asleep])
         }
-        AttackId::A2b010CharizardExStoke => self_charge_active_attack(0, EnergyType::Fire, 3),
         AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
@@ -211,9 +212,11 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
         }
         AttackId::A3040AlolanVulpixCallForthCold => {
-            self_charge_active_attack(0, EnergyType::Water, 1)
+            self_charge_active_from_energies(0, vec![EnergyType::Water])
         }
-        AttackId::A3071SpoinkPsycharge => self_charge_active_attack(0, EnergyType::Psychic, 1),
+        AttackId::A3071SpoinkPsycharge => {
+            self_charge_active_from_energies(0, vec![EnergyType::Psychic])
+        }
         AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
@@ -222,7 +225,7 @@ fn forecast_effect_attack_by_attack_id(
             probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
         }
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
-            self_charge_active_attack(20, EnergyType::Lightning, 1)
+            self_charge_active_from_energies(20, vec![EnergyType::Lightning])
         }
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
@@ -238,7 +241,9 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A3a062CelesteelaMoombahton => {
             probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
         }
-        AttackId::A1a001ExeggcuteGrowthSpurt => self_charge_active_attack(0, EnergyType::Grass, 1),
+        AttackId::A1a001ExeggcuteGrowthSpurt => {
+            self_charge_active_from_energies(0, vec![EnergyType::Grass])
+        }
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3b013IncineroarDarkestLariat => {
@@ -249,7 +254,7 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A3b057SnorlaxExFlopDownPunch => {
-            damage_and_self_status_attack(130, StatusCondition::Asleep)
+            damage_and_self_multiple_status_attack(130, vec![StatusCondition::Asleep])
         }
         AttackId::A3b058AipomDoubleHit => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
@@ -280,7 +285,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
-        AttackId::B1a002IvysaurSynthesis => self_charge_active_attack(0, EnergyType::Grass, 2),
     }
 }
 
@@ -293,6 +297,9 @@ fn forecast_effect_attack_by_mechanic(
     match mechanic {
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
+        Mechanic::SelfChargeActive { energies } => {
+            self_charge_active_from_energies(attack.fixed_damage, energies.clone())
+        }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
@@ -307,15 +314,18 @@ fn forecast_effect_attack_by_mechanic(
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
-        Mechanic::InflictStatusCondition { condition } => damage_status_attack(*condition, attack),
+        Mechanic::InflictStatusConditions {
+            conditions,
+            target_opponent,
+        } => {
+            if *target_opponent {
+                damage_multiple_status_attack(conditions.clone(), attack)
+            } else {
+                damage_and_self_multiple_status_attack(attack.fixed_damage, conditions.clone())
+            }
+        }
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
-        }
-        Mechanic::InflictMultipleStatusConditions { conditions } => {
-            damage_multiple_status_attack(conditions.clone(), attack)
-        }
-        Mechanic::InflictSelfStatusCondition { condition } => {
-            damage_and_self_status_attack(attack.fixed_damage, *condition)
         }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
@@ -960,14 +970,15 @@ fn also_choice_bench_damage(
     ))
 }
 
-fn self_charge_active_attack(
+fn self_charge_active_from_energies(
     damage: u32,
-    energy_type: EnergyType,
-    amount: u8,
+    energies: Vec<EnergyType>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
-        active.attach_energy(&energy_type, amount);
+        for energy in &energies {
+            active.attach_energy(energy, 1);
+        }
     })
 }
 
@@ -1167,12 +1178,7 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
     })
 }
 
-/// For attacks that deal damage and apply a status effect (e.g. Wigglituff Ex)
-fn damage_status_attack(status: StatusCondition, attack: &Attack) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(attack.fixed_damage, build_status_effect(status))
-}
-
-/// For attacks that deal damage and apply multiple status effects (e.g. Mega Venusaur Critical Bloom)
+/// For attacks that deal damage and apply multiple status effects to opponent (e.g. Mega Venusaur Critical Bloom)
 fn damage_multiple_status_attack(
     statuses: Vec<StatusCondition>,
     attack: &Attack,
@@ -1186,14 +1192,16 @@ fn damage_multiple_status_attack(
     })
 }
 
-/// For attacks that deal damage to opponent and apply a status effect to the attacker (e.g. Snorlax Collapse)
-fn damage_and_self_status_attack(
+/// For attacks that deal damage to opponent and apply multiple status effects to the attacker (e.g. Snorlax Collapse)
+fn damage_and_self_multiple_status_attack(
     damage: u32,
-    status: StatusCondition,
+    statuses: Vec<StatusCondition>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
-        active.apply_status_condition(status);
+        for status in &statuses {
+            active.apply_status_condition(*status);
+        }
     })
 }
 
@@ -1966,37 +1974,37 @@ fn conditional_bench_damage_attack(
                 .map(|(idx, _)| idx)
                 .collect();
 
-            if benched.len() < num_bench_targets {
-                return;
-            }
-
-            let mut choices = Vec::new();
-            if num_bench_targets == 1 {
-                for &bench_idx in &benched {
-                    choices.push(SimpleAction::ApplyDamage {
-                        attacking_ref: (action.actor, 0),
-                        targets: vec![(bench_damage, target_player, bench_idx)],
-                        is_from_active_attack: true,
-                    });
-                }
-            } else if num_bench_targets == 2 {
-                for i in 0..benched.len() {
-                    for j in (i + 1)..benched.len() {
+            // Only add bench damage choices if there are enough bench targets
+            if benched.len() >= num_bench_targets {
+                let mut choices = Vec::new();
+                if num_bench_targets == 1 {
+                    for &bench_idx in &benched {
                         choices.push(SimpleAction::ApplyDamage {
                             attacking_ref: (action.actor, 0),
-                            targets: vec![
-                                (bench_damage, target_player, benched[i]),
-                                (bench_damage, target_player, benched[j]),
-                            ],
+                            targets: vec![(bench_damage, target_player, bench_idx)],
                             is_from_active_attack: true,
                         });
                     }
+                } else if num_bench_targets == 2 {
+                    for i in 0..benched.len() {
+                        for j in (i + 1)..benched.len() {
+                            choices.push(SimpleAction::ApplyDamage {
+                                attacking_ref: (action.actor, 0),
+                                targets: vec![
+                                    (bench_damage, target_player, benched[i]),
+                                    (bench_damage, target_player, benched[j]),
+                                ],
+                                is_from_active_attack: true,
+                            });
+                        }
+                    }
+                }
+
+                if !choices.is_empty() {
+                    state.move_generation_stack.push((action.actor, choices));
                 }
             }
-
-            if !choices.is_empty() {
-                state.move_generation_stack.push((action.actor, choices));
-            }
+            // If not enough bench targets, the active still takes damage (no additional bench damage)
         })
     } else {
         active_damage_doutcome(attack.fixed_damage)

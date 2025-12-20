@@ -796,7 +796,18 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: None,
         },
     );
-    // map.insert("Take 3 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take 2 [G] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Grass, EnergyType::Grass],
+        },
+    );
+    map.insert(
+        "Take 3 [R] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
+        },
+    );
     map.insert(
         "Take a [C] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
         Mechanic::ChargeBench {
@@ -811,7 +822,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: Some(EnergyType::Grass),
         },
     );
-    // map.insert("Take a [G] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [G] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Grass],
+        },
+    );
     map.insert(
         "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
         Mechanic::ChargeBench {
@@ -826,10 +842,25 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: Some(EnergyType::Lightning),
         },
     );
-    // map.insert("Take a [L] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
-    // map.insert("Take a [M] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [L] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Lightning],
+        },
+    );
+    map.insert(
+        "Take a [M] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Metal],
+        },
+    );
     // map.insert("Take a [P] Energy from your Energy Zone and attach it to Mesprit or Azelf.", todo_implementation);
-    // map.insert("Take a [P] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [P] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Psychic],
+        },
+    );
     // map.insert("Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
     map.insert(
         "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
@@ -838,10 +869,20 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: None,
         },
     );
-    // map.insert("Take a [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [R] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Fire],
+        },
+    );
     // map.insert("Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.", todo_implementation);
     // map.insert("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.", todo_implementation);
-    // map.insert("Take a [W] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [W] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Water],
+        },
+    );
     map.insert(
         "This Pokémon also does 10 damage to itself.",
         Mechanic::SelfDamage { amount: 10 },
@@ -868,15 +909,17 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     map.insert(
         "This Pokémon is now Asleep.",
-        Mechanic::InflictSelfStatusCondition {
-            condition: StatusCondition::Asleep,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Asleep],
+            target_opponent: false,
         },
     );
     // map.insert("This Pokémon is now Asleep. Heal 30 damage from it.", todo_implementation);
     map.insert(
         "This Pokémon is now Confused.",
-        Mechanic::InflictSelfStatusCondition {
-            condition: StatusCondition::Confused,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Confused],
+            target_opponent: false,
         },
     );
     map.insert(
@@ -1183,33 +1226,38 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Your opponent reveals their hand. Choose a card you find there and shuffle it into your opponent's deck.", todo_implementation);
     map.insert(
         "Your opponent's Active Pokémon is now Asleep.",
-        Mechanic::InflictStatusCondition {
-            condition: StatusCondition::Asleep,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Asleep],
+            target_opponent: true,
         },
     );
     map.insert(
         "Your opponent's Active Pokémon is now Burned.",
-        Mechanic::InflictStatusCondition {
-            condition: StatusCondition::Burned,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Burned],
+            target_opponent: true,
         },
     );
     map.insert(
         "Your opponent's Active Pokémon is now Confused.",
-        Mechanic::InflictStatusCondition {
-            condition: StatusCondition::Confused,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Confused],
+            target_opponent: true,
         },
     );
     // map.insert("Your opponent's Active Pokémon is now Poisoned and Burned.", todo_implementation);
     map.insert(
         "Your opponent's Active Pokémon is now Poisoned and Asleep.",
-        Mechanic::InflictMultipleStatusConditions {
+        Mechanic::InflictStatusConditions {
             conditions: vec![StatusCondition::Poisoned, StatusCondition::Asleep],
+            target_opponent: true,
         },
     );
     map.insert(
         "Your opponent's Active Pokémon is now Poisoned.",
-        Mechanic::InflictStatusCondition {
-            condition: StatusCondition::Poisoned,
+        Mechanic::InflictStatusConditions {
+            conditions: vec![StatusCondition::Poisoned],
+            target_opponent: true,
         },
     );
     map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", Mechanic::DiscardRandomGlobalEnergy);
