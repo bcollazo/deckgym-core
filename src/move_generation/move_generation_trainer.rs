@@ -1,7 +1,7 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
-    card_logic::can_rare_candy_evolve,
+    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
@@ -563,30 +563,10 @@ fn can_play_quick_grow_extract(
         return cannot_play_trainer();
     }
 
-    let player = state.current_player;
-
-    // Check if there's at least 1 Grass pokemon that can evolve
-    let has_valid_target = state
-        .enumerate_in_play_pokemon(player)
-        .filter(|(_, pokemon)| {
-            pokemon.get_energy_type() == Some(EnergyType::Grass) && !pokemon.played_this_turn
-        })
-        .any(|(_, pokemon)| {
-            let pokemon_name = pokemon.get_name();
-            // Check if there's a Grass evolution in deck
-            state.decks[player].cards.iter().any(|deck_card| {
-                if let Card::Pokemon(deck_pokemon) = deck_card {
-                    deck_pokemon.energy_type == EnergyType::Grass
-                        && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
-                } else {
-                    false
-                }
-            })
-        });
-
-    if has_valid_target {
-        can_play_trainer(state, trainer_card)
-    } else {
+    // Check if there are any valid evolution candidates
+    if quick_grow_extract_candidates(state, state.current_player).is_empty() {
         cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
     }
 }

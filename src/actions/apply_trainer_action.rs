@@ -12,7 +12,7 @@ use crate::{
         },
     },
     card_ids::CardId,
-    card_logic::can_rare_candy_evolve,
+    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
     combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
@@ -808,26 +808,8 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
     // that evolves from that Pokémon onto that Pokémon to evolve it.
     // Similar to rare candy but automatic random evolution from deck
 
-    // Find all Grass Pokemon in play that have valid evolutions in deck
-    let mut evolution_choices: Vec<(usize, Card)> = vec![];
-
-    for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(acting_player) {
-        if pokemon.get_energy_type() != Some(EnergyType::Grass) || pokemon.played_this_turn {
-            continue;
-        }
-
-        // Find Grass evolutions in deck that evolve from this Pokemon
-        let pokemon_name = pokemon.get_name();
-        for deck_card in state.decks[acting_player].cards.iter() {
-            if let Card::Pokemon(deck_pokemon) = deck_card {
-                if deck_pokemon.energy_type == EnergyType::Grass
-                    && deck_pokemon.evolves_from.as_ref() == Some(&pokemon_name)
-                {
-                    evolution_choices.push((in_play_idx, deck_card.clone()));
-                }
-            }
-        }
-    }
+    // Find all valid evolution candidates
+    let evolution_choices = quick_grow_extract_candidates(state, acting_player);
 
     if evolution_choices.is_empty() {
         // No valid evolution targets

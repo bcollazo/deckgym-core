@@ -72,26 +72,9 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     }
 }
 
-/// Check if a Pokemon in play can evolve into a card from hand
-/// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+// TODO: Deprecated. Use PokemonCard::can_evolve_into instead.
 pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
-    if let Card::Pokemon(evolution_pokemon) = evolution_card {
-        if let Some(evolves_from) = &evolution_pokemon.evolves_from {
-            // Normal evolution: the card evolves from the base Pokemon's name
-            if base_pokemon.get_name() == *evolves_from {
-                return true;
-            }
-
-            // Special case: Eevee ex's Veevee 'volve ability
-            // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
-            if let Some(ability_id) = AbilityId::from_pokemon_id(&base_pokemon.card.get_id()[..]) {
-                if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee" {
-                    return true;
-                }
-            }
-        }
-    }
-    false
+    base_pokemon.card.can_evolve_into(evolution_card)
 }
 
 pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
@@ -512,7 +495,10 @@ pub(crate) fn modify_damage(
             return 0;
         }
         // Wartortle Shell Shield: prevent all damage when on bench
-        if ability_id == AbilityId::B1a018WartortleShellShield && target_idx != 0 {
+        if ability_id == AbilityId::B1a018WartortleShellShield
+            && is_from_active_attack
+            && target_idx != 0
+        {
             debug!("Shell Shield: Preventing all damage to benched Wartortle");
             return 0;
         }

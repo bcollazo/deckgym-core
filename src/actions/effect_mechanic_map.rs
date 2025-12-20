@@ -145,7 +145,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::DamageAndCardEffect {
             opponent: false,
             effect: CardEffect::NoWeakness,
-            duration: 2,
+            duration: 1,
             probability: None,
         },
     );
@@ -1252,7 +1252,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 1,
         },
     );
-    // Database has a bug with missing "-20" in effect text, handle both versions
+    // TODO: Database has a bug with missing "-20" in effect text, handle both versions
     map.insert(
         "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.",
         Mechanic::DamageAndMultipleCardEffects {
