@@ -74,7 +74,7 @@ impl Player for EvolutionRusherPlayer {
         }
         let maybe_evolve = possible_actions
             .iter()
-            .find(|action| matches!(action.action, SimpleAction::Evolve(_, _)));
+            .find(|action| matches!(action.action, SimpleAction::Evolve { .. }));
         if let Some(evolve) = maybe_evolve {
             return evolve.clone();
         }

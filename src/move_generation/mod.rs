@@ -158,7 +158,6 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
                     // Exception: Eevee with Boosted Evolution ability can evolve on first turn
                     // or turn it was played, if it's in the active spot.
-                    use crate::ability_ids::AbilityId;
 
                     // Check if we should skip evolution checks due to first turn
                     // (unless there's a Boosted Evolution Eevee in active spot)
@@ -187,7 +186,11 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                                 && can_evolve_into(hand_card, pokemon)
                                 && can_evolve_at_position(state, current_player, i)
                             {
-                                actions.push(SimpleAction::Evolve(hand_card.clone(), i));
+                                actions.push(SimpleAction::Evolve {
+                                    evolution: hand_card.clone(),
+                                    in_play_idx: i,
+                                    from_deck: false, // Normal evolution from hand
+                                });
                             }
                         });
                 }
@@ -286,7 +289,7 @@ mod tests {
         let has_evolve_action = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 0) if card.get_id() == aerodactyl.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 0, .. } if evolution.get_id() == aerodactyl.get_id()
             )
         });
 
@@ -318,7 +321,7 @@ mod tests {
         let has_evolve_action = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 1) if card.get_id() == aerodactyl_ex.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 1, .. } if evolution.get_id() == aerodactyl_ex.get_id()
             )
         });
 
@@ -356,7 +359,7 @@ mod tests {
         let has_active_evolve = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 0) if card.get_id() == ivysaur.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 0, .. } if evolution.get_id() == ivysaur.get_id()
             )
         });
 
@@ -398,7 +401,7 @@ mod tests {
         let has_bench_evolve = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 1) if card.get_id() == ivysaur.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 1, .. } if evolution.get_id() == ivysaur.get_id()
             )
         });
 

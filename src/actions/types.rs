@@ -26,7 +26,11 @@ pub enum SimpleAction {
     // Card because of the fossil Trainer Cards...
     // usize is bench 1-based index, with 0 meaning Active pokemon, 1..4 meaning Bench
     Place(Card, usize),
-    Evolve(Card, usize),
+    Evolve {
+        evolution: Card,
+        in_play_idx: usize,
+        from_deck: bool,
+    },
     UseAbility {
         in_play_idx: usize,
     },
@@ -114,7 +118,16 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DrawCard { amount } => write!(f, "DrawCard({amount})"),
             SimpleAction::Play { trainer_card } => write!(f, "Play({trainer_card:?})"),
             SimpleAction::Place(card, index) => write!(f, "Place({card}, {index})"),
-            SimpleAction::Evolve(card, index) => write!(f, "Evolve({card}, {index})"),
+            SimpleAction::Evolve {
+                evolution,
+                in_play_idx,
+                from_deck,
+            } => {
+                write!(
+                    f,
+                    "Evolve({evolution}, {in_play_idx}, from_deck: {from_deck})"
+                )
+            }
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
             SimpleAction::Attack(index) => write!(f, "Attack({index})"),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
