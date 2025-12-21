@@ -108,6 +108,9 @@ pub(crate) fn forecast_ability(
             panic!("Infinite Increase is a passive ability")
         }
         AbilityId::B1a065FurfrouFurCoat => panic!("Fur Coat is a passive ability"),
+        AbilityId::A4a032MisdreavusInfiltratingInspection => {
+            panic!("Infiltrating Inspection is triggered when played to bench")
+        }
     }
 }
 

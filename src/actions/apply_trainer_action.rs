@@ -132,6 +132,7 @@ pub fn forecast_trainer_action(
             doutcome(iono_effect)
         }
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
+        CardId::B1224Fantina | CardId::B1269Fantina => doutcome(fantina_effect),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
@@ -386,6 +387,49 @@ fn attach_energy_from_zone_to_specific_pokemon(
     if !possible_targets.is_empty() {
         state.move_generation_stack.push((player, possible_targets));
     }
+}
+
+/// Attach energy to ALL Pokemon matching the specified names (not a choice)
+fn attach_energy_to_all_matching_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Collect indices first to avoid borrow checker issues
+    let matching_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .filter_map(|(in_play_idx, pokemon)| {
+            let name = pokemon.get_name();
+            if pokemon_names.iter().any(|&target_name| name == target_name) {
+                Some(in_play_idx)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    // Attach energy to all matching Pokemon
+    for in_play_idx in matching_indices {
+        debug!(
+            "Fantina: Attaching {} Energy to Pokemon at position {}",
+            energy_type, in_play_idx
+        );
+        let pokemon = state.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there");
+        pokemon.attach_energy(&energy_type, 1);
+    }
+}
+
+fn fantina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [P] Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius.
+    attach_energy_to_all_matching_pokemon(
+        state,
+        action.actor,
+        EnergyType::Psychic,
+        &["Drifblim", "Mismagius"],
+    );
 }
 
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {

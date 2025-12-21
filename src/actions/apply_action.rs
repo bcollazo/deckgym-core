@@ -8,7 +8,10 @@ use crate::{
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{apply_common_mutation, Mutation},
     },
-    hooks::{get_retreat_cost, on_attach_energy, on_attach_tool, on_evolve, to_playable_card},
+    hooks::{
+        get_retreat_cost, on_attach_energy, on_attach_tool, on_evolve, on_play_to_bench,
+        to_playable_card,
+    },
     models::{Card, EnergyType},
     state::State,
     tool_ids::ToolId,
@@ -217,6 +220,7 @@ fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) 
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
     state.remove_card_from_hand(actor, card);
+    on_play_to_bench(actor, state, card, index);
 }
 
 fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {

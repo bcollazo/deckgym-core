@@ -48,6 +48,17 @@ pub(crate) fn gladion_search_outcomes(
     })
 }
 
+pub(crate) fn supporter_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    pokemon_search_outcomes_with_filter(
+        acting_player,
+        state,
+        move |card: &&Card| matches!(card, Card::Trainer(trainer_card) if trainer_card.trainer_card_type == crate::models::TrainerType::Supporter),
+    )
+}
+
 fn pokemon_search_outcomes_with_filter<F>(
     acting_player: usize,
     state: &State,

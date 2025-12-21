@@ -21,7 +21,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.", todo_implementation);
     // map.insert("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.", todo_implementation);
     // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.", todo_implementation);
-    // map.insert("At the end of your opponent's next turn, do 90 damage to the Defending Pokémon.", todo_implementation);
+    map.insert(
+        "At the end of your opponent's next turn, do 90 damage to the Defending Pokémon.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::DelayedDamage { amount: 90 },
+            duration: 1,
+            probability: None,
+        },
+    );
     // map.insert("Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Both Active Pokémon are now Asleep.", todo_implementation);
     // map.insert("Both Active Pokémon are now Confused.", todo_implementation);
@@ -739,6 +747,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If your opponent's Active Pokémon is an evolved Pokémon, devolve it by putting the highest Stage Evolution card on it into your opponent's hand.", todo_implementation);
     map.insert("If your opponent's Pokémon is Knocked Out by damage from this attack, this Pokémon also does 50 damage to itself.", Mechanic::RecoilIfKo { self_damage: 50 });
     // map.insert("Move all Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Move all [P] Energy from this Pokémon to 1 of your Benched Pokémon.",
+        Mechanic::MoveAllEnergyTypeToBench {
+            energy_type: EnergyType::Psychic,
+        },
+    );
     // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
     // map.insert("Put 1 random Basic Pokémon from your deck onto your Bench.", todo_implementation);
     map.insert(
@@ -777,6 +791,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::SearchToHandByEnergy {
             energy_type: EnergyType::Grass,
         },
+    );
+    map.insert(
+        "Put a random Supporter card from your deck into your hand.",
+        Mechanic::SearchToHandSupporterCard,
     );
     // map.insert("Put a random Pokémon from your deck into your hand.", todo_implementation);
     map.insert("Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", Mechanic::MagikarpWaterfallEvolution);

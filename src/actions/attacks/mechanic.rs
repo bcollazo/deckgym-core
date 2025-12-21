@@ -21,6 +21,7 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
+    SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
         target_opponent: bool,
@@ -81,6 +82,9 @@ pub enum Mechanic {
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
     CoinFlipToBlockAttackNextTurn,
+    MoveAllEnergyTypeToBench {
+        energy_type: EnergyType,
+    },
     ChargeBench {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,

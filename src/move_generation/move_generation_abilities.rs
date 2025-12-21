@@ -94,6 +94,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1a018WartortleShellShield => false, // Passive ability
         AbilityId::B1a034ReuniclusInfiniteIncrease => false, // Passive ability
         AbilityId::B1a065FurfrouFurCoat => false,       // Passive ability
+        AbilityId::A4a032MisdreavusInfiltratingInspection => false, // Triggered when played to bench
     }
 }
 
