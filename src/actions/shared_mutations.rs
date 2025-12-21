@@ -17,7 +17,7 @@ pub(crate) fn pokemon_search_outcomes(
     state: &State,
     basic_only: bool,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         if basic_only {
             card.is_basic()
         } else {
@@ -31,7 +31,7 @@ pub(crate) fn pokemon_search_outcomes_by_type(
     basic_only: bool,
     energy_type: EnergyType,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(state.current_player, state, move |card: &&Card| {
+    card_search_outcomes_with_filter(state.current_player, state, move |card: &&Card| {
         let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check
@@ -42,13 +42,24 @@ pub(crate) fn gladion_search_outcomes(
     acting_player: usize,
     state: &State,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let name = card.get_name();
         name == "Type: Null" || name == "Silvally"
     })
 }
 
-fn pokemon_search_outcomes_with_filter<F>(
+pub(crate) fn supporter_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        move |card: &&Card| matches!(card, Card::Trainer(trainer_card) if trainer_card.trainer_card_type == crate::models::TrainerType::Supporter),
+    )
+}
+
+fn card_search_outcomes_with_filter<F>(
     acting_player: usize,
     state: &State,
     card_filter: F,
@@ -56,11 +67,11 @@ fn pokemon_search_outcomes_with_filter<F>(
 where
     F: Fn(&&Card) -> bool + Clone + 'static,
 {
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, card_filter)
+    card_search_outcomes_with_filter_multiple(acting_player, state, 1, card_filter)
 }
 
-/// Draw up to `num_to_draw` Pokemon from deck that match the filter, using unordered combinations
-pub(crate) fn pokemon_search_outcomes_with_filter_multiple<F>(
+/// Draw up to `num_to_draw` cards from deck that match the filter, using unordered combinations
+pub(crate) fn card_search_outcomes_with_filter_multiple<F>(
     acting_player: usize,
     state: &State,
     num_to_draw: usize,

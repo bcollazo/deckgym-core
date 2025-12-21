@@ -11,6 +11,7 @@ pub enum CardEffect {
     PreventAllDamageAndEffects,
     NoWeakness,
     CoinFlipToBlockAttack,
+    DelayedDamage { amount: u32 },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]

@@ -8,8 +8,8 @@ use crate::{
         apply_evolve,
         mutations::doutcome,
         shared_mutations::{
-            gladion_search_outcomes, pokemon_search_outcomes,
-            pokemon_search_outcomes_with_filter_multiple,
+            card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
+            pokemon_search_outcomes,
         },
     },
     card_ids::CardId,
@@ -133,6 +133,7 @@ pub fn forecast_trainer_action(
             doutcome(iono_effect)
         }
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
+        CardId::B1224Fantina | CardId::B1269Fantina => doutcome(fantina_effect),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
@@ -389,6 +390,49 @@ fn attach_energy_from_zone_to_specific_pokemon(
     }
 }
 
+/// Attach energy to ALL Pokemon matching the specified names (not a choice)
+fn attach_energy_to_all_matching_pokemon(
+    state: &mut State,
+    player: usize,
+    energy_type: EnergyType,
+    pokemon_names: &[&str],
+) {
+    // Collect indices first to avoid borrow checker issues
+    let matching_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .filter_map(|(in_play_idx, pokemon)| {
+            let name = pokemon.get_name();
+            if pokemon_names.iter().any(|&target_name| name == target_name) {
+                Some(in_play_idx)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    // Attach energy to all matching Pokemon
+    for in_play_idx in matching_indices {
+        debug!(
+            "Fantina: Attaching {} Energy to Pokemon at position {}",
+            energy_type, in_play_idx
+        );
+        let pokemon = state.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there");
+        pokemon.attach_energy(&energy_type, 1);
+    }
+}
+
+fn fantina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [P] Energy from your Energy Zone and attach it to each of your Drifblim and Mismagius.
+    attach_energy_to_all_matching_pokemon(
+        state,
+        action.actor,
+        EnergyType::Psychic,
+        &["Drifblim", "Mismagius"],
+    );
+}
+
 fn red_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon ex.
     state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
@@ -521,7 +565,8 @@ fn elemental_switch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
                 let move_action = SimpleAction::MoveEnergy {
                     from_in_play_idx: from_idx,
                     to_in_play_idx: 0,
-                    energy,
+                    energy_type: energy,
+                    amount: 1,
                 };
                 if !possible_transfers.contains(&move_action) {
                     possible_transfers.push(move_action);
@@ -740,7 +785,7 @@ pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
 
 fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+    card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         if let Card::Pokemon(pokemon_card) = card {
             pokemon_card.stage == 0 && pokemon_card.hp <= 50
         } else {
@@ -796,7 +841,7 @@ fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 
 fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+    card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         let name = card.get_name();
         name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
     })
@@ -805,7 +850,7 @@ fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
 fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+    card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
 }
 
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {

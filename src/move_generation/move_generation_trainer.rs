@@ -143,6 +143,7 @@ pub fn trainer_move_generation_implementation(
             can_play_trainer(state, trainer_card)
         }
         CardId::B1223May | CardId::B1268May => can_play_trainer(state, trainer_card),
+        CardId::B1224Fantina | CardId::B1269Fantina => can_play_trainer(state, trainer_card),
         CardId::B1226Lisia | CardId::B1271Lisia => can_play_trainer(state, trainer_card),
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             can_play_celestic_town_elder(state, trainer_card)

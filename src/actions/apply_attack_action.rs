@@ -24,6 +24,7 @@ use super::{
     },
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
+        supporter_search_outcomes,
     },
     SimpleAction,
 };
@@ -305,6 +306,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
         Mechanic::MoltresExInfernoDance => moltres_inferno_dance(),
         Mechanic::MagikarpWaterfallEvolution => waterfall_evolution(state),
+        Mechanic::MoveAllEnergyTypeToBench { energy_type } => {
+            move_all_energy_type_to_bench(state, attack, *energy_type)
+        }
         Mechanic::ChargeBench {
             energies,
             target_benched_type,
@@ -312,6 +316,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::VaporeonHyperWhirlpool => vaporeon_hyper_whirlpool(state, attack.fixed_damage),
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
+        }
+        Mechanic::SearchToHandSupporterCard => {
+            supporter_search_outcomes(state.current_player, state)
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
         Mechanic::InflictStatusConditions {
@@ -725,6 +732,72 @@ fn moltres_inferno_dance() -> (Probabilities, Mutations) {
         })
         .collect();
     (probabilities, mutations)
+}
+
+fn move_all_energy_type_to_bench(
+    state: &State,
+    attack: &Attack,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    // Count how many of the specified energy type the active Pokemon has
+    let active = state.get_active(state.current_player);
+    let energy_count = active
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count();
+
+    if energy_count == 0 {
+        // No energy of this type, just do damage
+        return active_damage_doutcome(attack.fixed_damage);
+    }
+
+    // Generate move actions for each benched Pokemon
+    let bench_pokemon: Vec<usize> = state
+        .enumerate_bench_pokemon(state.current_player)
+        .map(|(idx, _)| idx)
+        .collect();
+
+    if bench_pokemon.is_empty() {
+        // No bench Pokemon, can't move energy, just do damage
+        return active_damage_doutcome(attack.fixed_damage);
+    }
+
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        // Collect bench Pokemon
+        let bench_pokemon: Vec<usize> = state
+            .enumerate_bench_pokemon(action.actor)
+            .map(|(idx, _)| idx)
+            .collect();
+
+        if bench_pokemon.is_empty() {
+            return; // No bench Pokemon
+        }
+
+        // Count how many energies of this type are on the active Pokemon
+        let active = &state.in_play_pokemon[action.actor][0]
+            .as_ref()
+            .expect("Active should be there");
+        let energy_count = active
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == energy_type)
+            .count() as u32;
+
+        if energy_count > 0 {
+            // Create one bulk MoveEnergy action per bench Pokemon
+            let choices: Vec<SimpleAction> = bench_pokemon
+                .iter()
+                .map(|&to_idx| SimpleAction::MoveEnergy {
+                    from_in_play_idx: 0,
+                    to_in_play_idx: to_idx,
+                    energy_type,
+                    amount: energy_count,
+                })
+                .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn generate_energy_distributions(fire_bench_idx: &[usize], heads: usize) -> Vec<SimpleAction> {
