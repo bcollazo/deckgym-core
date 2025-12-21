@@ -45,7 +45,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Attach { .. }
         | SimpleAction::MoveEnergy { .. }
         | SimpleAction::AttachTool { .. }
-        | SimpleAction::Evolve(_, _)
+        | SimpleAction::Evolve { .. }
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
@@ -126,7 +126,11 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             *energy,
         ),
         SimpleAction::Place(card, index) => apply_place_card(state, action.actor, card, *index),
-        SimpleAction::Evolve(card, position) => apply_evolve(action.actor, state, card, *position),
+        SimpleAction::Evolve {
+            evolution,
+            in_play_idx,
+            from_deck,
+        } => apply_evolve(action.actor, state, evolution, *in_play_idx, *from_deck),
         SimpleAction::Activate {
             player,
             in_play_idx,
@@ -329,6 +333,7 @@ pub(crate) fn apply_evolve(
     state: &mut State,
     to_card: &Card,
     position: usize,
+    from_deck: bool,
 ) {
     // This removes status conditions
     let mut played_card = to_playable_card(to_card, true);
@@ -351,7 +356,13 @@ pub(crate) fn apply_evolve(
     } else {
         panic!("Only Pokemon cards can be evolved");
     }
-    state.remove_card_from_hand(acting_player, to_card);
+
+    // Remove the evolution card from either hand or deck depending on the source
+    if from_deck {
+        state.remove_card_from_deck(acting_player, to_card);
+    } else {
+        state.remove_card_from_hand(acting_player, to_card);
+    }
 
     // Run special logic hooks on evolution
     on_evolve(acting_player, state, to_card)
@@ -583,7 +594,7 @@ mod tests {
         state.hands[0] = vec![primeape.clone(), primeape.clone()];
 
         // Evolve Active
-        apply_evolve(0, &mut state, &primeape, 0);
+        apply_evolve(0, &mut state, &primeape, 0, false);
         assert_eq!(
             state.in_play_pokemon[0][0],
             Some(PlayedCard::new(
@@ -597,7 +608,7 @@ mod tests {
         );
 
         // Evolve Bench
-        apply_evolve(0, &mut state, &primeape, 2);
+        apply_evolve(0, &mut state, &primeape, 2, false);
         assert_eq!(
             state.in_play_pokemon[0][0],
             Some(PlayedCard::new(

@@ -632,11 +632,8 @@ fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
     let mut outcomes: Mutations = vec![];
     for evolution_card in evolution_cards {
         outcomes.push(Box::new(move |rng, state, action| {
-            // Transfer the evolution card from deck to hand
-            state.transfer_card_from_deck_to_hand(action.actor, &evolution_card);
-
             // Evolve the active Pokemon (position 0) using the centralized logic
-            apply_evolve(action.actor, state, &evolution_card, 0);
+            apply_evolve(action.actor, state, &evolution_card, 0, true);
 
             // Shuffle the deck
             state.decks[action.actor].shuffle(false, rng);

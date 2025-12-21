@@ -115,6 +115,15 @@ impl State {
         self.hands[current_player].swap_remove(index);
     }
 
+    pub(crate) fn remove_card_from_deck(&mut self, player: usize, card: &Card) {
+        let pos = self.decks[player]
+            .cards
+            .iter()
+            .position(|c| c == card)
+            .expect("Evolution card should be in deck");
+        self.decks[player].cards.remove(pos);
+    }
+
     pub(crate) fn discard_card_from_hand(&mut self, current_player: usize, card: &Card) {
         self.remove_card_from_hand(current_player, card);
         self.discard_piles[current_player].push(card.clone());

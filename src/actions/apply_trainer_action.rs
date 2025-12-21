@@ -5,6 +5,7 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::{
+        apply_evolve,
         mutations::doutcome,
         shared_mutations::{
             gladion_search_outcomes, pokemon_search_outcomes,
@@ -475,7 +476,11 @@ fn rare_candy_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .flat_map(|(in_play_idx, in_play)| {
             hand.iter()
                 .filter(|card| can_rare_candy_evolve(card, in_play))
-                .map(move |card| SimpleAction::Evolve(card.clone(), in_play_idx))
+                .map(move |card| SimpleAction::Evolve {
+                    evolution: card.clone(),
+                    in_play_idx,
+                    from_deck: false, // Rare Candy uses evolution from hand
+                })
         })
         .collect();
 
@@ -825,11 +830,7 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
 
     for (in_play_idx, evolution_card) in evolution_choices {
         outcomes.push(Box::new(move |rng, state, action| {
-            // Evolve the Pokemon
-            state.move_generation_stack.push((
-                action.actor,
-                vec![SimpleAction::Evolve(evolution_card.clone(), in_play_idx)],
-            ));
+            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
             state.decks[action.actor].shuffle(false, rng);
         }));
     }

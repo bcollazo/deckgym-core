@@ -45,7 +45,7 @@ fn test_no_supporter_or_evolutions_in_first_turns() {
     while state.turn_count == 0 {
         let action = game.play_tick();
         state = game.get_state_clone();
-        if let SimpleAction::Evolve(_, _) = action.action {
+        if let SimpleAction::Evolve { .. } = action.action {
             panic!("Evolution played in first 2 turns");
         }
         if let SimpleAction::Play { trainer_card } = action.action {
@@ -57,14 +57,14 @@ fn test_no_supporter_or_evolutions_in_first_turns() {
     while state.turn_count == 1 {
         let action = game.play_tick();
         state = game.get_state_clone();
-        if let SimpleAction::Evolve(_, _) = action.action {
+        if let SimpleAction::Evolve { .. } = action.action {
             panic!("Evolution played in first 2 turns");
         }
     }
     while state.turn_count == 2 {
         let action = game.play_tick();
         state = game.get_state_clone();
-        if let SimpleAction::Evolve(_, _) = action.action {
+        if let SimpleAction::Evolve { .. } = action.action {
             panic!("Evolution played in first 2 turns");
         }
     }
