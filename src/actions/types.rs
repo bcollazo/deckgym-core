@@ -50,7 +50,8 @@ pub enum SimpleAction {
     MoveEnergy {
         from_in_play_idx: usize,
         to_in_play_idx: usize,
-        energy: EnergyType,
+        energy_type: EnergyType,
+        amount: u32,
     },
     AttachTool {
         in_play_idx: usize,
@@ -148,11 +149,12 @@ impl fmt::Display for SimpleAction {
             SimpleAction::MoveEnergy {
                 from_in_play_idx,
                 to_in_play_idx,
-                energy,
+                energy_type,
+                amount,
             } => {
                 write!(
                     f,
-                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {energy:?})"
+                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {amount}x {energy_type:?})"
                 )
             }
             SimpleAction::AttachTool {

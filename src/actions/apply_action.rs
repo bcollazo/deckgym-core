@@ -120,13 +120,15 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::MoveEnergy {
             from_in_play_idx,
             to_in_play_idx,
-            energy,
+            energy_type,
+            amount,
         } => apply_move_energy(
             state,
             action.actor,
             *from_in_play_idx,
             *to_in_play_idx,
-            *energy,
+            *energy_type,
+            *amount,
         ),
         SimpleAction::Place(card, index) => apply_place_card(state, action.actor, card, *index),
         SimpleAction::Evolve {
@@ -200,22 +202,35 @@ fn apply_move_energy(
     actor: usize,
     from_idx: usize,
     to_idx: usize,
-    energy: EnergyType,
+    energy_type: EnergyType,
+    amount: u32,
 ) {
     let actor_board = &mut state.in_play_pokemon[actor];
-    let mut removed = false;
+    let mut removed_energies = Vec::new();
+
+    // Remove the specified amount of energy from source
     if let Some(from_card) = actor_board[from_idx].as_mut() {
-        if let Some(pos) = from_card.attached_energy.iter().position(|e| e == &energy) {
-            from_card.attached_energy.swap_remove(pos);
-            removed = true;
+        for _ in 0..amount {
+            if let Some(pos) = from_card
+                .attached_energy
+                .iter()
+                .position(|e| e == &energy_type)
+            {
+                from_card.attached_energy.swap_remove(pos);
+                removed_energies.push(energy_type);
+            } else {
+                break; // No more energy of this type to remove
+            }
         }
     }
-    if removed {
+
+    // Add removed energies to destination
+    if !removed_energies.is_empty() {
         if let Some(to_card) = actor_board[to_idx].as_mut() {
-            to_card.attached_energy.push(energy);
+            to_card.attached_energy.extend(removed_energies);
         } else if let Some(from_card) = actor_board[from_idx].as_mut() {
-            // Put energy back if destination vanished (should not normally happen)
-            from_card.attached_energy.push(energy);
+            // Put energies back if destination vanished (should not normally happen)
+            from_card.attached_energy.extend(removed_energies);
         }
     }
 }

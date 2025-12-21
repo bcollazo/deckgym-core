@@ -8,8 +8,8 @@ use crate::{
         apply_evolve,
         mutations::doutcome,
         shared_mutations::{
-            gladion_search_outcomes, pokemon_search_outcomes,
-            pokemon_search_outcomes_with_filter_multiple,
+            card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
+            pokemon_search_outcomes,
         },
     },
     card_ids::CardId,
@@ -565,7 +565,8 @@ fn elemental_switch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
                 let move_action = SimpleAction::MoveEnergy {
                     from_in_play_idx: from_idx,
                     to_in_play_idx: 0,
-                    energy,
+                    energy_type: energy,
+                    amount: 1,
                 };
                 if !possible_transfers.contains(&move_action) {
                     possible_transfers.push(move_action);
@@ -784,7 +785,7 @@ pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
 
 fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+    card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         if let Card::Pokemon(pokemon_card) = card {
             pokemon_card.stage == 0 && pokemon_card.hp <= 50
         } else {
@@ -840,7 +841,7 @@ fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 
 fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+    card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         let name = card.get_name();
         name == "Magneton" || name == "Heliolisk" || name == "Clemont's Backpack"
     })
@@ -849,7 +850,7 @@ fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
 fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+    card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
 }
 
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {

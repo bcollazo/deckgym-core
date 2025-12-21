@@ -246,8 +246,8 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
 
     // Process delayed damage effects on active Pokemon
     // Delayed damage triggers at the end of the opponent's turn (when their turn ends, the effect expires)
-    let active = state.get_active_mut(player_ending_turn);
-    let delayed_damage: Vec<u32> = active
+    let total_delayed_damage: u32 = state
+        .get_active(player_ending_turn)
         .get_effects()
         .iter()
         .filter_map(|(effect, _)| {
@@ -257,14 +257,22 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 None
             }
         })
-        .collect();
+        .sum();
 
-    for damage in delayed_damage {
+    if total_delayed_damage > 0 {
         debug!(
             "Delayed damage: Applying {} damage to active Pokemon",
-            damage
+            total_delayed_damage
         );
-        active.apply_damage(damage);
+        // The opponent is the source of the delayed damage (they used the attack that caused it)
+        let opponent = (player_ending_turn + 1) % 2;
+        crate::actions::handle_damage(
+            state,
+            (opponent, 0), // Opponent's active Pokemon as the source
+            &[(total_delayed_damage, player_ending_turn, 0)], // Target is current player's active
+            false, // Not from an active attack (it's a delayed effect)
+            None,  // No attack name
+        );
     }
 
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)

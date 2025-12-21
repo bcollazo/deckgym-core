@@ -430,7 +430,8 @@ fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
         .map(|(in_play_idx, _)| SimpleAction::MoveEnergy {
             from_in_play_idx: in_play_idx,
             to_in_play_idx: 0, // Active spot
-            energy: EnergyType::Water,
+            energy_type: EnergyType::Water,
+            amount: 1,
         })
         .collect::<Vec<_>>();
     if possible_moves.is_empty() {

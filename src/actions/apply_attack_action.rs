@@ -774,43 +774,28 @@ fn move_all_energy_type_to_bench(
             return; // No bench Pokemon
         }
 
-        // For each bench Pokemon, generate a sequence of MoveEnergy actions
-        let choices: Vec<SimpleAction> = bench_pokemon
+        // Count how many energies of this type are on the active Pokemon
+        let active = &state.in_play_pokemon[action.actor][0]
+            .as_ref()
+            .expect("Active should be there");
+        let energy_count = active
+            .attached_energy
             .iter()
-            .flat_map(|&to_idx| {
-                // Count energy that needs to be moved
-                let active = &state.in_play_pokemon[action.actor][0]
-                    .as_ref()
-                    .expect("Active should be there");
-                let energy_count = active
-                    .attached_energy
-                    .iter()
-                    .filter(|&&e| e == energy_type)
-                    .count();
+            .filter(|&&e| e == energy_type)
+            .count() as u32;
 
-                // Generate multiple MoveEnergy actions for this choice
-                (0..energy_count).map(move |_| SimpleAction::MoveEnergy {
-                    from_in_play_idx: 0,
-                    to_in_play_idx: to_idx,
-                    energy: energy_type,
-                })
-            })
-            .collect();
-
-        if !choices.is_empty() {
-            // Just queue one MoveEnergy action per bench Pokemon for simplicity
-            // In practice, players will need to move energy one at a time
-            let simple_choices: Vec<SimpleAction> = bench_pokemon
+        if energy_count > 0 {
+            // Create one bulk MoveEnergy action per bench Pokemon
+            let choices: Vec<SimpleAction> = bench_pokemon
                 .iter()
                 .map(|&to_idx| SimpleAction::MoveEnergy {
                     from_in_play_idx: 0,
                     to_in_play_idx: to_idx,
-                    energy: energy_type,
+                    energy_type,
+                    amount: energy_count,
                 })
                 .collect();
-            state
-                .move_generation_stack
-                .push((action.actor, simple_choices));
+            state.move_generation_stack.push((action.actor, choices));
         }
     })
 }
