@@ -270,8 +270,8 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
             state,
             (opponent, 0), // Opponent's active Pokemon as the source
             &[(total_delayed_damage, player_ending_turn, 0)], // Target is current player's active
-            false, // Not from an active attack (it's a delayed effect)
-            None,  // No attack name
+            false,         // Not from an active attack (it's a delayed effect)
+            None,          // No attack name
         );
     }
 
