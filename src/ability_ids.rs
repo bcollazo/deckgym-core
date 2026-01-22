@@ -242,6 +242,8 @@ lazy_static::lazy_static! {
         m.insert("P-A 109", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("P-A 116", AbilityId::A2022ShayminFragrantFlowerGarden);
+        // P-B
+        m.insert("P-B 020", AbilityId::B1a012CharmeleonIgnition);
         m
     };
 }
