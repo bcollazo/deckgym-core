@@ -1356,6 +1356,54 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen.",
         Mechanic::CoinFlipToBlockAttackNextTurn,
     );
+    // NEW MECHANICS INTRODUCES IN B2
+    // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.", todo_implementation);
+    // map.insert("Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
+    // map.insert("Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", todo_implementation);
+    // map.insert("Discard 3 [R] Energy from this Pokémon.", todo_implementation);
+    // map.insert("Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
+    // map.insert("Discard a Stadium in play.", todo_implementation);
+    // map.insert("During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 80 damage to the Attacking Pokémon.", todo_implementation);
+    // map.insert("During your opponent's next turn, if this Pokémon is in the Active Spot when your opponent's Active Pokémon retreats, this attack does 40 damage to the new Active Pokémon.", todo_implementation);
+    // map.insert("During your opponent's next turn, this Pokémon takes -80 damage from attacks from your opponent's Pokémon ex.", todo_implementation);
+    // map.insert("Flip 2 coins. If both of them are heads, this attack does 20 more damage.", todo_implementation);
+    // map.insert("Flip 2 coins. This attack does 40 more damage for each heads.", todo_implementation);
+    // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If all of them are tails, this attack does nothing.", todo_implementation);
+    // map.insert("Flip 3 coins. This attack does 30 damage for each heads.", todo_implementation);
+    // map.insert("Flip a coin for each Tandemaus and Maushold you have in play. This attack does 60 damage for each heads.", todo_implementation);
+    // map.insert("Flip a coin. If heads, discard your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("Flip a coin. If heads, during your opponent's next turn, this Pokémon takes -100 damage from attacks.", todo_implementation);
+    // map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", todo_implementation);
+    // map.insert("Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    // map.insert("Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("Flip a coin. If tails, this Pokémon also does 50 damage to itself.", todo_implementation);
+    // map.insert("Heal 20 damage from 1 of your Pokémon.", todo_implementation);
+    // map.insert("If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("If a Stadium is in play, this attack does 40 more damage.", todo_implementation);
+    // map.insert("If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If this Pokémon has any [P] Energy attached, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.", todo_implementation);
+    // map.insert("If you have 5 or more [P] Energy in play, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If you have fewer Pokémon in play than your opponent, this attack does 80 more damage.", todo_implementation);
+    // map.insert("If your opponent has gotten exactly 1 points, this attack does 40 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);
+    // map.insert("Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.", todo_implementation);
+    // map.insert("Put a random card that evolves from Spewpa from your deck into your hand.", todo_implementation);
+    // map.insert("Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.", todo_implementation);
+    // map.insert("Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.", todo_implementation);
+    // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
+    // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
+    // map.insert("This attack does 20 more damage for each Supporter card in your discard pile.", todo_implementation);
+    // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)", todo_implementation);
+    // map.insert("This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.", todo_implementation);
+    // map.insert("You may shuffle this Pokémon and all attached cards into your deck.", todo_implementation);
+    // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck.", todo_implementation);
+    // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);
 
     map
 });

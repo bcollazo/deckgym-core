@@ -15,6 +15,10 @@ struct Args {
     /// Flag to generate a map of attack effect texts to implementations.
     #[arg(long)]
     attack_map: bool,
+
+    /// Flag to generate only missing attack effect map lines for effect_mechanic_map.rs.
+    #[arg(long)]
+    incremental_attack_map: bool,
 }
 
 /// A CLI program to generate card_ids.rs and database.rs from the database.json file.
@@ -54,6 +58,8 @@ fn main() {
         print_database(&card_map);
     } else if args.attack_map {
         print_attack_map(&card_map);
+    } else if args.incremental_attack_map {
+        print_incremental_attack_map(&card_map, "src/actions/effect_mechanic_map.rs");
     } else {
         print_enums(&card_map, &id_to_enum);
     }
@@ -271,4 +277,72 @@ fn print_attack_map(card_map: &IndexMap<String, Card>) {
 
     println!("    map");
     println!("}});");
+}
+
+fn print_incremental_attack_map(card_map: &IndexMap<String, Card>, existing_path: &str) {
+    let existing_contents = std::fs::read_to_string(existing_path)
+        .expect("expected effect_mechanic_map.rs to be readable");
+    let existing_effects = extract_existing_effect_texts(&existing_contents);
+
+    // Collect all unique attack effect texts
+    let mut effect_texts: IndexMap<String, ()> = IndexMap::new();
+    for card in card_map.values() {
+        if let Card::Pokemon(pokemon_card) = card {
+            for attack in &pokemon_card.attacks {
+                if let Some(effect) = &attack.effect {
+                    effect_texts.insert(effect.clone(), ());
+                }
+            }
+        }
+    }
+
+    let mut sorted_effects: Vec<&String> = effect_texts.keys().collect();
+    sorted_effects.sort();
+
+    for effect_text in sorted_effects {
+        let escaped = effect_text
+            .replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('\n', "\\n");
+        if !existing_effects.contains(&escaped) {
+            println!("    // map.insert(\"{escaped}\", todo_implementation);");
+        }
+    }
+}
+
+fn extract_existing_effect_texts(contents: &str) -> std::collections::HashSet<String> {
+    let mut results = std::collections::HashSet::new();
+    let bytes = contents.as_bytes();
+    let mut index = 0;
+    while let Some(pos) = contents[index..].find("map.insert") {
+        let start = index + pos;
+        let quote = bytes[start..]
+            .iter()
+            .position(|&b| b == b'"')
+            .map(|offset| start + offset);
+        let quote = match quote {
+            Some(q) => q,
+            None => break,
+        };
+        let mut j = quote + 1;
+        while j < bytes.len() {
+            if bytes[j] == b'\\' {
+                if j + 1 < bytes.len() {
+                    j += 2;
+                    continue;
+                }
+                break;
+            }
+            if bytes[j] == b'"' {
+                break;
+            }
+            j += 1;
+        }
+        if j <= bytes.len() {
+            let effect = contents[quote + 1..j].to_string();
+            results.insert(effect);
+        }
+        index = j + 1;
+    }
+    results
 }
