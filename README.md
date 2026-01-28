@@ -155,14 +155,15 @@ Then temporarily edit `database.rs` for `_` to match Bulbasaur (this is so that 
 cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
 ```
 
-To generate attacks do:
+To generate attacks do (first time):
 ```bash
 cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/effect_mechanic_map.rs && cargo fmt
+then with each new set of new mechanics, use:
+```bash
+cargo run --bin card_enum_generator -- --incremental-attack-ma
 ```
+and manually copy-paste into the ever changing `src/actions/effect_mechanic_map.rs`.
 
 **Profiling Main Script**
-
-```bash
-cargo install flamegraph
 sudo cargo flamegraph --root --dev -- simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 && open flamegraph.svg
 ```
