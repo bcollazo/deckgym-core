@@ -476,5 +476,22 @@ fn generate_trainer_deck(card: &Card, trainer_type: &TrainerType) -> String {
 "#
             )
         }
+        TrainerType::Stadium => {
+            // Replace X Speed with the requested stadium
+            format!(
+                r#"Energy: Lightning
+2 Tapu Koko ex A3a 19
+2 Giovanni A1 223
+2 Sabrina A1 225
+2 Giant Cape A2 147
+2 Cyrus A2 150
+2 Poké Ball A2b 111
+2 Professor's Research A4b 373
+2 Copycat B1 270
+2 Potion P-A 1
+{card_line}
+"#
+            )
+        }
     }
 }
