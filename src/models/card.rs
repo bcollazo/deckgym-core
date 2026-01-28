@@ -104,6 +104,7 @@ pub enum TrainerType {
     Item,
     Tool,
     Fossil,
+    Stadium,
 }
 
 /// Represents the data of a single trainer card.

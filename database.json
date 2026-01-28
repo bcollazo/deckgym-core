@@ -53989,6 +53989,5248 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B2 001",
+      "name": "Ledyba",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Punch",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 002",
+      "name": "Ledian",
+      "stage": 1,
+      "evolves_from": "Ledyba",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Swift",
+          "fixed_damage": 40,
+          "effect": "This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 003",
+      "name": "Shuckle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Guard Press",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 004",
+      "name": "Roselia",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Trip Over",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 005",
+      "name": "Roserade",
+      "stage": 1,
+      "evolves_from": "Roselia",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Poison Ring",
+          "fixed_damage": 50,
+          "effect": "Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 006",
+      "name": "Cacnea",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Corkscrew Punch",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 007",
+      "name": "Cacturne",
+      "stage": 1,
+      "evolves_from": "Cacnea",
+      "hp": 120,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Spike Rend",
+          "fixed_damage": 60,
+          "effect": "If your opponent's Active Pokémon has damage on it, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 008",
+      "name": "Chespin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Vine Whip",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 009",
+      "name": "Quilladin",
+      "stage": 1,
+      "evolves_from": "Chespin",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Needle Arm",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 010",
+      "name": "Chesnaught",
+      "stage": 2,
+      "evolves_from": "Quilladin",
+      "hp": 160,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless", "Colorless"],
+          "title": "Needle Lariat",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, if this Pokémon is damaged by an attack, do 80 damage to the Attacking Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 011",
+      "name": "Scatterbug",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Bug Bite",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 012",
+      "name": "Spewpa",
+      "stage": 1,
+      "evolves_from": "Scatterbug",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Signs of Evolution",
+          "fixed_damage": 0,
+          "effect": "Put a random card that evolves from Spewpa from your deck into your hand."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 013",
+      "name": "Vivillon",
+      "stage": 2,
+      "evolves_from": "Spewpa",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Vivid Powder",
+          "fixed_damage": 60,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Asleep."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 014",
+      "name": "Buzzwole",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Ground Beat",
+          "fixed_damage": 40,
+          "effect": "If your opponent has gotten exactly 1 points, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 015",
+      "name": "Gossifleur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Razor Leaf",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 016",
+      "name": "Eldegoss",
+      "stage": 1,
+      "evolves_from": "Gossifleur",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Float Up",
+          "fixed_damage": 40,
+          "effect": "You may shuffle this Pokémon and all attached cards into your deck."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 017",
+      "name": "Teal Mask Ogerpon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Soothing Wind",
+        "effect": "Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Energized Leaves",
+          "fixed_damage": 60,
+          "effect": "If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 018",
+      "name": "Alolan Marowak",
+      "stage": 1,
+      "evolves_from": "Cubone",
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Fiery Bone",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 019",
+      "name": "Reshiram",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Blue Flare",
+          "fixed_damage": 110,
+          "effect": "Discard 2 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 020",
+      "name": "Litleo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 021",
+      "name": "Pyroar",
+      "stage": 1,
+      "evolves_from": "Litleo",
+      "hp": 90,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Heat Blast",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 022",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Inspiring Dance",
+          "fixed_damage": 10,
+          "effect": "During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 023",
+      "name": "Blacephalon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Singe",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        },
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Pop-Punk",
+          "fixed_damage": 140,
+          "effect": "Discard 3 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 024",
+      "name": "Scorbunny",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Flop",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 025",
+      "name": "Raboot",
+      "stage": 1,
+      "evolves_from": "Scorbunny",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 026",
+      "name": "Cinderace",
+      "stage": 2,
+      "evolves_from": "Raboot",
+      "hp": 130,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Fireball Shot",
+          "fixed_damage": 120,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 027",
+      "name": "Hearthflame Mask Ogerpon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "Hearthflame Dance",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 028",
+      "name": "Alolan Vulpix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 029",
+      "name": "Alolan Ninetales ex",
+      "stage": 1,
+      "evolves_from": "Alolan Vulpix",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Binding Snow",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 030",
+      "name": "Galarian Mr. Mime",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Icy Snow",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 031",
+      "name": "Galarian Mr. Rime",
+      "stage": 1,
+      "evolves_from": "Galarian Mr. Mime",
+      "hp": 110,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Triple Spin",
+          "fixed_damage": 60,
+          "effect": "Flip 3 coins. This attack does 60 damage for each heads."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 032",
+      "name": "Delibird",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Box of Surprises",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 033",
+      "name": "Mudkip",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 034",
+      "name": "Marshtomp",
+      "stage": 1,
+      "evolves_from": "Mudkip",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Surf",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 035",
+      "name": "Swampert",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Large Whirlpool",
+          "fixed_damage": 100,
+          "effect": "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 036",
+      "name": "Mega Swampert ex",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Strong-Armed Destroyer",
+          "fixed_damage": 150,
+          "effect": "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 037",
+      "name": "Vanillite",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Chilly",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 038",
+      "name": "Vanillish",
+      "stage": 1,
+      "evolves_from": "Vanillite",
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Frost Breath",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 039",
+      "name": "Vanilluxe",
+      "stage": 2,
+      "evolves_from": "Vanillish",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Sweets Relay",
+          "fixed_damage": 60,
+          "effect": "If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 040",
+      "name": "Cryogonal",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Frozen Lock",
+          "fixed_damage": 20,
+          "effect": "During your opponent's next turn, they can't play any Item cards from their hand."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 041",
+      "name": "Amaura",
+      "stage": 1,
+      "evolves_from": "Sail Fossil",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Aurora Beam",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 042",
+      "name": "Aurorus",
+      "stage": 2,
+      "evolves_from": "Amaura",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Hail Prison",
+          "fixed_damage": 90,
+          "effect": "Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 043",
+      "name": "Chewtle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 044",
+      "name": "Drednaw",
+      "stage": 1,
+      "evolves_from": "Chewtle",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Heavy Impact",
+          "fixed_damage": 120,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 045",
+      "name": "Cramorant",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Spit-Out Shot",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 046",
+      "name": "Arrokuda",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Ram",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 047",
+      "name": "Barraskewda",
+      "stage": 1,
+      "evolves_from": "Arrokuda",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Jet Headbutt",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 048",
+      "name": "Wellspring Mask Ogerpon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Wellspring Dance",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 049",
+      "name": "Pikachu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Thunder Jolt",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 050",
+      "name": "Alolan Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 110,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Surge Surfer",
+        "effect": "If a Stadium is in play, this Pokémon has no Retreat Cost."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Thunder Spear",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 051",
+      "name": "Zapdos",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Heavy Thunder",
+          "fixed_damage": 0,
+          "effect": "1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 052",
+      "name": "Plusle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electric Tail",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 053",
+      "name": "Minun",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Buddy Spark",
+          "fixed_damage": 30,
+          "effect": "If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 054",
+      "name": "Toxel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Static Shock",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 055",
+      "name": "Toxtricity ex",
+      "stage": 1,
+      "evolves_from": "Toxel",
+      "hp": 150,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Damaging Spark",
+          "fixed_damage": 90,
+          "effect": "This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 056",
+      "name": "Tadbulb",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Charge",
+          "fixed_damage": 0,
+          "effect": "Take a [L] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 057",
+      "name": "Bellibolt",
+      "stage": 1,
+      "evolves_from": "Tadbulb",
+      "hp": 130,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Electric Ball",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 058",
+      "name": "Galarian Ponyta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flop",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 059",
+      "name": "Galarian Rapidash",
+      "stage": 1,
+      "evolves_from": "Galarian Ponyta",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Photon Laser",
+          "fixed_damage": 40,
+          "effect": "If you have 5 or more [P] Energy in play, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 060",
+      "name": "Wobbuffet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless", "Colorless"],
+          "title": "Flip Over",
+          "fixed_damage": 80,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 061",
+      "name": "Snubbull",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sharp Fang",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 062",
+      "name": "Granbull",
+      "stage": 1,
+      "evolves_from": "Snubbull",
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Strength",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 063",
+      "name": "Ralts",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Confuse Ray",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 064",
+      "name": "Kirlia",
+      "stage": 1,
+      "evolves_from": "Ralts",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Psybeam",
+          "fixed_damage": 20,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 065",
+      "name": "Gardevoir",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psy Turbo",
+          "fixed_damage": 60,
+          "effect": "Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 066",
+      "name": "Mega Gardevoir ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 210,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Fantasia Force",
+          "fixed_damage": 110,
+          "effect": "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 067",
+      "name": "Litwick",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Mumble",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 068",
+      "name": "Lampent",
+      "stage": 1,
+      "evolves_from": "Litwick",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Petty Grudge",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 069",
+      "name": "Chandelure",
+      "stage": 2,
+      "evolves_from": "Lampent",
+      "hp": 140,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Past Friends",
+          "fixed_damage": 60,
+          "effect": "This attack does 20 more damage for each Supporter card in your discard pile."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 070",
+      "name": "Meloetta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Strange Singing",
+        "effect": "At the beginning of your turn, if this Pokémon is in the Active Spot, put a random [P] Pokémon from your deck into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psyshot",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 071",
+      "name": "Pumpkaboo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 072",
+      "name": "Gourgeist",
+      "stage": 1,
+      "evolves_from": "Pumpkaboo",
+      "hp": 110,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Soul Shot",
+          "fixed_damage": 70,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 073",
+      "name": "Mimikyu ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Disguise",
+        "effect": "When this Pokémon is first damaged by an attack after coming into play, prevent that damage."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Claw Slash",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 074",
+      "name": "Sinistea",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Hide",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 075",
+      "name": "Polteageist",
+      "stage": 1,
+      "evolves_from": "Sinistea",
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Refreshing Tea",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may have your opponent shuffle their hand into their deck. For each remaining point that your opponent needs to win, they draw a card."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Spooky Shot",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 076",
+      "name": "Indeedee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Zen Shard",
+          "fixed_damage": 0,
+          "effect": "This attack does 70 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 077",
+      "name": "Sandshrew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Double Scratch",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 078",
+      "name": "Sandslash",
+      "stage": 1,
+      "evolves_from": "Sandshrew",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Fury Swipes",
+          "fixed_damage": 30,
+          "effect": "Flip 3 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 079",
+      "name": "Machop",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Shatter",
+          "fixed_damage": 10,
+          "effect": "Discard a Stadium in play."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 080",
+      "name": "Machoke",
+      "stage": 1,
+      "evolves_from": "Machop",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Chop",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 081",
+      "name": "Machamp",
+      "stage": 2,
+      "evolves_from": "Machoke",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Knocking Hammer",
+          "fixed_damage": 80,
+          "effect": "Discard the top card of your opponent's deck."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 082",
+      "name": "Cubone",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 083",
+      "name": "Meditite",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Smack",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 084",
+      "name": "Medicham",
+      "stage": 1,
+      "evolves_from": "Meditite",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Psykick",
+          "fixed_damage": 50,
+          "effect": "If this Pokémon has any [P] Energy attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 085",
+      "name": "Roggenrola",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Mud-Slap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 086",
+      "name": "Boldore",
+      "stage": 1,
+      "evolves_from": "Roggenrola",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Power Gem",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 087",
+      "name": "Gigalith ex",
+      "stage": 2,
+      "evolves_from": "Boldore",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Fighting"],
+          "title": "Megaton Cannon",
+          "fixed_damage": 0,
+          "effect": "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 088",
+      "name": "Drilbur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Headbutt Bounce",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 089",
+      "name": "Tyrunt",
+      "stage": 1,
+      "evolves_from": "Jaw Fossil",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Hammer In",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 090",
+      "name": "Tyrantrum",
+      "stage": 2,
+      "evolves_from": "Tyrunt",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Tyrannical Fang",
+          "fixed_damage": 100,
+          "effect": "If you have fewer Pokémon in play than your opponent, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 091",
+      "name": "Passimian",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Fling",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 093",
+      "name": "Cornerstone Mask Ogerpon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Cornerstone Dance",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, this Pokémon takes -100 damage from attacks."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 094",
+      "name": "Alolan Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Swagger",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 095",
+      "name": "Alolan Persian",
+      "stage": 1,
+      "evolves_from": "Alolan Meowth",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Bite",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 096",
+      "name": "Alolan Grimer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Pound",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 097",
+      "name": "Alolan Muk",
+      "stage": 1,
+      "evolves_from": "Alolan Grimer",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Power of Alchemy",
+        "effect": "Basic Pokémon in play (both yours and your opponent's) have no Abilities."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless", "Colorless"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 098",
+      "name": "Galarian Zigzagoon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Dig Claws",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 099",
+      "name": "Galarian Linoone",
+      "stage": 1,
+      "evolves_from": "Galarian Zigzagoon",
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Rear Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 100",
+      "name": "Galarian Obstagoon",
+      "stage": 2,
+      "evolves_from": "Galarian Linoone",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Merciless Strike",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon has damage on it, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 101",
+      "name": "Stunky",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Spray Fluid",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 102",
+      "name": "Skuntank",
+      "stage": 1,
+      "evolves_from": "Stunky",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Smokescreen Shot",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 103",
+      "name": "Spiritomb",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Final Scream",
+        "effect": "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon, do 10 damage to each of your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Spooky Shot",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 104",
+      "name": "Purrloin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Whiny Voice",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 105",
+      "name": "Liepard",
+      "stage": 1,
+      "evolves_from": "Purrloin",
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Fasten Claws",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 106",
+      "name": "Scraggy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Headbutt",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 107",
+      "name": "Scrafty",
+      "stage": 1,
+      "evolves_from": "Scraggy",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Crush the Weak",
+          "fixed_damage": 50,
+          "effect": "If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 108",
+      "name": "Yveltal",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Evil Crash",
+          "fixed_damage": 90,
+          "effect": "Discard a random Energy from both Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 109",
+      "name": "Guzzlord",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness", "Colorless"],
+          "title": "Breakcore",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, discard your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 110",
+      "name": "Galarian Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Slash",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 111",
+      "name": "Galarian Perrserker",
+      "stage": 1,
+      "evolves_from": "Galarian Meowth",
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Dig Up",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put 2 random Pokémon Tool cards from your discard pile into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Metal Claw",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 112",
+      "name": "Mawile",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Cavernous Chomp",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 113",
+      "name": "Mega Mawile ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Heat-Up Crunch",
+          "fixed_damage": 60,
+          "effect": "Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 114",
+      "name": "Excadrill",
+      "stage": 1,
+      "evolves_from": "Drilbur",
+      "hp": 120,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Slashing Claw",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 115",
+      "name": "Ferroseed",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 116",
+      "name": "Ferrothorn",
+      "stage": 1,
+      "evolves_from": "Ferroseed",
+      "hp": 120,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Pummel",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 117",
+      "name": "Galarian Stunfisk",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Snapping Trap",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, if this Pokémon is in the Active Spot when your opponent's Active Pokémon retreats, this attack does 40 damage to the new Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 118",
+      "name": "Honedge",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Cut Up",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 119",
+      "name": "Doublade",
+      "stage": 1,
+      "evolves_from": "Honedge",
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Dual Blades",
+          "fixed_damage": 40,
+          "effect": "Flip 2 coins. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 120",
+      "name": "Aegislash",
+      "stage": 2,
+      "evolves_from": "Doublade",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Metal"],
+          "title": "Superb Shield",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, this Pokémon takes -80 damage from attacks from your opponent's Pokémon ex."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 121",
+      "name": "Bagon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Bite",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 122",
+      "name": "Shelgon",
+      "stage": 1,
+      "evolves_from": "Bagon",
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Water"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 123",
+      "name": "Salamence",
+      "stage": 2,
+      "evolves_from": "Shelgon",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Water", "Colorless"],
+          "title": "Dragon Dive",
+          "fixed_damage": 150,
+          "effect": "Flip a coin. If tails, this Pokémon also does 50 damage to itself."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 124",
+      "name": "Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Carefree Steps",
+        "effect": "If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Feelin' Fine",
+          "fixed_damage": 0,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 125",
+      "name": "Persian",
+      "stage": 1,
+      "evolves_from": "Meowth",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Slash",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 126",
+      "name": "Kangaskhan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Steady Punch",
+          "fixed_damage": 60,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 127",
+      "name": "Mega Kangaskhan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Double-Punching Family",
+          "fixed_damage": 80,
+          "effect": "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 128",
+      "name": "Sentret",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tail Rap",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 129",
+      "name": "Furret",
+      "stage": 1,
+      "evolves_from": "Sentret",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Headbutt Bounce",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 130",
+      "name": "Smeargle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Portrait",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Tail Whap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 131",
+      "name": "Lugia",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [
+            "Colorless",
+            "Colorless",
+            "Colorless",
+            "Colorless"
+          ],
+          "title": "Aeroblast",
+          "fixed_damage": 80,
+          "effect": "Flip 2 coins. This attack does 40 more damage for each heads."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 132",
+      "name": "Taillow",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Peck",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 133",
+      "name": "Swellow",
+      "stage": 1,
+      "evolves_from": "Taillow",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Repelling Wind",
+        "effect": "Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wing Attack",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 134",
+      "name": "Slakoth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Yawn",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 135",
+      "name": "Vigoroth",
+      "stage": 1,
+      "evolves_from": "Slakoth",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Best Punch",
+          "fixed_damage": 90,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 136",
+      "name": "Slaking",
+      "stage": 2,
+      "evolves_from": "Vigoroth",
+      "hp": 160,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Snoozing Habit",
+        "effect": "As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Knuckle Sandwich",
+          "fixed_damage": 150,
+          "effect": "Discard a random Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 137",
+      "name": "Spinda",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Teetering Steps",
+          "fixed_damage": 40,
+          "effect": "This Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 138",
+      "name": "Tornadus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Blow Through",
+          "fixed_damage": 40,
+          "effect": "If a Stadium is in play, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 139",
+      "name": "Bunnelby",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 140",
+      "name": "Diggersby",
+      "stage": 1,
+      "evolves_from": "Bunnelby",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Earthquake",
+          "fixed_damage": 70,
+          "effect": "This attack also does 10 damage to each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 141",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Hammer In",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 142",
+      "name": "Tandemaus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flock",
+          "fixed_damage": 0,
+          "effect": "Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 143",
+      "name": "Maushold",
+      "stage": 1,
+      "evolves_from": "Tandemaus",
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Family Beatdown",
+          "fixed_damage": 60,
+          "effect": "Flip a coin for each Tandemaus and Maushold you have in play. This attack does 60 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 144",
+      "trainer_card_type": "Fossil",
+      "name": "Jaw Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 145",
+      "trainer_card_type": "Item",
+      "name": "Lucky Ice Pop",
+      "effect": "Heal 20 damage from your Active Pokémon. If you healed any damage in this way, flip a coin. If heads, put this Lucky Ice Pop into your hand instead of the discard pile.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 146",
+      "trainer_card_type": "Fossil",
+      "name": "Sail Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 147",
+      "trainer_card_type": "Tool",
+      "name": "Protective Poncho",
+      "effect": "As long as the Pokémon this card is attached to is on your Bench, prevent all damage done to that Pokémon by your opponent's attacks and Abilities.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 148",
+      "trainer_card_type": "Tool",
+      "name": "Metal Core Barrier",
+      "effect": "If this card is attached to 1 of your Pokémon, discard it at the end of your opponent's turn.The [M] Pokémon this card is attached to takes -50 damage from attacks from your opponent's Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 149",
+      "trainer_card_type": "Supporter",
+      "name": "Diantha",
+      "effect": "Heal 90 damage from 1 of your [P] Pokémon that has 2 or more [P] Energy attached. If you healed any damage in this way, discard 2 [P] Energy from that Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 150",
+      "trainer_card_type": "Supporter",
+      "name": "Sightseer",
+      "effect": "Look at the top 4 cards of your deck. Put all Stage 1 Pokémon you find there into your hand. Shuffle the other cards back into your deck.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 151",
+      "trainer_card_type": "Supporter",
+      "name": "Juggler",
+      "effect": "You can use this card only if your Pokémon in play have 3 or more different types of Energy attached.Move all Energy from each of your Benched Pokémon to your Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 152",
+      "trainer_card_type": "Supporter",
+      "name": "Piers",
+      "effect": "You can use this card only if you have Galarian Obstagoon in play.Discard 2 random Energy from your opponent's Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 153",
+      "trainer_card_type": "Stadium",
+      "name": "Training Area",
+      "effect": "Attacks used by Stage 1 Pokémon in play (both yours and your opponent's) do +10 damage to the opponent's Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 154",
+      "trainer_card_type": "Stadium",
+      "name": "Starting Plains",
+      "effect": "Each Basic Pokémon in play (both yours and your opponent's) gets +20 HP.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 155",
+      "trainer_card_type": "Stadium",
+      "name": "Peculiar Plaza",
+      "effect": "The Retreat Cost of each [P] Pokémon in play (both yours and your opponent's) is 2 less.",
+      "rarity": "◊◊",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 156",
+      "name": "Cacnea",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Corkscrew Punch",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 157",
+      "name": "Roserade",
+      "stage": 1,
+      "evolves_from": "Roselia",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Poison Ring",
+          "fixed_damage": 50,
+          "effect": "Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 158",
+      "name": "Vivillon",
+      "stage": 2,
+      "evolves_from": "Spewpa",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Vivid Powder",
+          "fixed_damage": 60,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Asleep."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 159",
+      "name": "Buzzwole",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Ground Beat",
+          "fixed_damage": 40,
+          "effect": "If your opponent has gotten exactly 1 points, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 160",
+      "name": "Reshiram",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Blue Flare",
+          "fixed_damage": 110,
+          "effect": "Discard 2 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 161",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Inspiring Dance",
+          "fixed_damage": 10,
+          "effect": "During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 162",
+      "name": "Scorbunny",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Flop",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 163",
+      "name": "Aurorus",
+      "stage": 2,
+      "evolves_from": "Amaura",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Hail Prison",
+          "fixed_damage": 90,
+          "effect": "Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 164",
+      "name": "Cramorant",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Spit-Out Shot",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 165",
+      "name": "Minun",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Buddy Spark",
+          "fixed_damage": 30,
+          "effect": "If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 166",
+      "name": "Toxel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Static Shock",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 167",
+      "name": "Galarian Ponyta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Flop",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 168",
+      "name": "Snubbull",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Sharp Fang",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 169",
+      "name": "Indeedee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Zen Shard",
+          "fixed_damage": 0,
+          "effect": "This attack does 70 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 170",
+      "name": "Sandshrew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Double Scratch",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 171",
+      "name": "Tyrantrum",
+      "stage": 2,
+      "evolves_from": "Tyrunt",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Tyrannical Fang",
+          "fixed_damage": 100,
+          "effect": "If you have fewer Pokémon in play than your opponent, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 172",
+      "name": "Falinks",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": {
+        "title": "Coordinated Unit",
+        "effect": "If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes -20 damage from attacks from your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Invade",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 173",
+      "name": "Alolan Muk",
+      "stage": 1,
+      "evolves_from": "Alolan Grimer",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Power of Alchemy",
+        "effect": "Basic Pokémon in play (both yours and your opponent's) have no Abilities."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless", "Colorless"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 174",
+      "name": "Purrloin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Whiny Voice",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 175",
+      "name": "Yveltal",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Evil Crash",
+          "fixed_damage": 90,
+          "effect": "Discard a random Energy from both Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 176",
+      "name": "Galarian Obstagoon",
+      "stage": 2,
+      "evolves_from": "Galarian Linoone",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Merciless Strike",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon has damage on it, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 177",
+      "name": "Galarian Perrserker",
+      "stage": 1,
+      "evolves_from": "Galarian Meowth",
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Dig Up",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put 2 random Pokémon Tool cards from your discard pile into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Metal Claw",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 178",
+      "name": "Salamence",
+      "stage": 2,
+      "evolves_from": "Shelgon",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Water", "Colorless"],
+          "title": "Dragon Dive",
+          "fixed_damage": 150,
+          "effect": "Flip a coin. If tails, this Pokémon also does 50 damage to itself."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 179",
+      "name": "Slakoth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Yawn",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 180",
+      "name": "Teal Mask Ogerpon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Soothing Wind",
+        "effect": "Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Energized Leaves",
+          "fixed_damage": 60,
+          "effect": "If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 181",
+      "name": "Blacephalon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Singe",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        },
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Pop-Punk",
+          "fixed_damage": 140,
+          "effect": "Discard 3 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 182",
+      "name": "Alolan Ninetales ex",
+      "stage": 1,
+      "evolves_from": "Alolan Vulpix",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Binding Snow",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 183",
+      "name": "Mega Swampert ex",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Strong-Armed Destroyer",
+          "fixed_damage": 150,
+          "effect": "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 184",
+      "name": "Toxtricity ex",
+      "stage": 1,
+      "evolves_from": "Toxel",
+      "hp": 150,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Damaging Spark",
+          "fixed_damage": 90,
+          "effect": "This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 185",
+      "name": "Mega Gardevoir ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 210,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Fantasia Force",
+          "fixed_damage": 110,
+          "effect": "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 186",
+      "name": "Mimikyu ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Disguise",
+        "effect": "When this Pokémon is first damaged by an attack after coming into play, prevent that damage."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Claw Slash",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 187",
+      "name": "Gigalith ex",
+      "stage": 2,
+      "evolves_from": "Boldore",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Fighting"],
+          "title": "Megaton Cannon",
+          "fixed_damage": 0,
+          "effect": "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 188",
+      "name": "Mega Mawile ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Heat-Up Crunch",
+          "fixed_damage": 60,
+          "effect": "Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 189",
+      "name": "Mega Kangaskhan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Double-Punching Family",
+          "fixed_damage": 80,
+          "effect": "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 190",
+      "trainer_card_type": "Supporter",
+      "name": "Diantha",
+      "effect": "Heal 90 damage from 1 of your [P] Pokémon that has 2 or more [P] Energy attached. If you healed any damage in this way, discard 2 [P] Energy from that Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 191",
+      "trainer_card_type": "Supporter",
+      "name": "Sightseer",
+      "effect": "Look at the top 4 cards of your deck. Put all Stage 1 Pokémon you find there into your hand. Shuffle the other cards back into your deck.",
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 192",
+      "trainer_card_type": "Supporter",
+      "name": "Juggler",
+      "effect": "You can use this card only if your Pokémon in play have 3 or more different types of Energy attached.Move all Energy from each of your Benched Pokémon to your Active Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 193",
+      "trainer_card_type": "Supporter",
+      "name": "Piers",
+      "effect": "You can use this card only if you have Galarian Obstagoon in play.Discard 2 random Energy from your opponent's Active Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 194",
+      "name": "Teal Mask Ogerpon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Soothing Wind",
+        "effect": "Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Energized Leaves",
+          "fixed_damage": 60,
+          "effect": "If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 195",
+      "name": "Blacephalon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Singe",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        },
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Pop-Punk",
+          "fixed_damage": 140,
+          "effect": "Discard 3 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 196",
+      "name": "Alolan Ninetales ex",
+      "stage": 1,
+      "evolves_from": "Alolan Vulpix",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Binding Snow",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 197",
+      "name": "Mega Swampert ex",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Strong-Armed Destroyer",
+          "fixed_damage": 150,
+          "effect": "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 198",
+      "name": "Toxtricity ex",
+      "stage": 1,
+      "evolves_from": "Toxel",
+      "hp": 150,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Damaging Spark",
+          "fixed_damage": 90,
+          "effect": "This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 199",
+      "name": "Mimikyu ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Disguise",
+        "effect": "When this Pokémon is first damaged by an attack after coming into play, prevent that damage."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Claw Slash",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 200",
+      "name": "Gigalith ex",
+      "stage": 2,
+      "evolves_from": "Boldore",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Fighting"],
+          "title": "Megaton Cannon",
+          "fixed_damage": 0,
+          "effect": "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 201",
+      "name": "Mega Mawile ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Heat-Up Crunch",
+          "fixed_damage": 60,
+          "effect": "Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 202",
+      "name": "Mega Kangaskhan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Double-Punching Family",
+          "fixed_damage": 80,
+          "effect": "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 203",
+      "name": "Mega Gardevoir ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 210,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Fantasia Force",
+          "fixed_damage": 110,
+          "effect": "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 204",
+      "name": "Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Carefree Steps",
+        "effect": "If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Feelin' Fine",
+          "fixed_damage": 0,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 205",
+      "name": "Tangela",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Sleep Powder",
+          "fixed_damage": 20,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 206",
+      "name": "Magby",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Toasty Toss",
+          "fixed_damage": 0,
+          "effect": "Take a [R] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 207",
+      "name": "Magmar",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Stoke",
+          "fixed_damage": 0,
+          "effect": "Take a [R] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 208",
+      "name": "Horsea",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Hook",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 209",
+      "name": "Seadra",
+      "stage": 1,
+      "evolves_from": "Horsea",
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Razor Fin",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 210",
+      "name": "Mantyke",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Splashy Toss",
+          "fixed_damage": 0,
+          "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 211",
+      "name": "Omanyte",
+      "stage": 1,
+      "evolves_from": "Helix Fossil",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 212",
+      "name": "Omastar",
+      "stage": 2,
+      "evolves_from": "Omanyte",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless", "Colorless"],
+          "title": "Ancient Whirlpool",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, the Defending Pokémon can't attack."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 213",
+      "name": "Pichu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Crackly Toss",
+          "fixed_damage": 0,
+          "effect": "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 214",
+      "name": "Clefairy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Slap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 215",
+      "name": "Clefable",
+      "stage": 1,
+      "evolves_from": "Clefairy",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Magical Shot",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 216",
+      "name": "Latias",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Crossing Flights",
+          "fixed_damage": 20,
+          "effect": "If Latios is on your Bench, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 217",
+      "name": "Latios",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Fantastical Floating",
+        "effect": "If you have Latias in play, this Pokémon has no Retreat Cost."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Luster Purge",
+          "fixed_damage": 120,
+          "effect": "Discard all Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 218",
+      "name": "Hitmonlee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Stretch Kick",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 219",
+      "name": "Hitmonchan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Jab",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 220",
+      "name": "Kabuto",
+      "stage": 1,
+      "evolves_from": "Dome Fossil",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Shell Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 221",
+      "name": "Kabutops",
+      "stage": 2,
+      "evolves_from": "Kabuto",
+      "hp": 140,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Leech Life",
+          "fixed_damage": 50,
+          "effect": "Heal from this Pokémon the same amount of damage you did to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 222",
+      "name": "Phanpy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Reckless Charge",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 223",
+      "name": "Tyrogue",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Slappy Knuckle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 224",
+      "name": "Tauros",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Fighting Tackle",
+          "fixed_damage": 40,
+          "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 225",
+      "name": "Flareon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": {
+        "title": "Combust",
+        "effect": "Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Fire Spin",
+          "fixed_damage": 130,
+          "effect": "Discard 2 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 226",
+      "name": "Ho-Oh ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Phoenix Turbo",
+          "fixed_damage": 80,
+          "effect": "Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 227",
+      "name": "Kingdra ex",
+      "stage": 2,
+      "evolves_from": "Seadra",
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Stormy Prison",
+          "fixed_damage": 90,
+          "effect": "During your opponent's next turn, the Defending Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 228",
+      "name": "Espeon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Psychic Healing",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Super Psy Bolt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 229",
+      "name": "Sylveon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Happy Ribbon",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Fairy Wind",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 230",
+      "name": "Donphan ex",
+      "stage": 1,
+      "evolves_from": "Phanpy",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Gigantic Press",
+          "fixed_damage": 50,
+          "effect": "If this Pokémon has at least 2 extra [F] Energy attached, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 231",
+      "name": "Umbreon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Dark Chase",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Fang",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 232",
+      "name": "Lugia ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Water", "Lightning"],
+          "title": "Elemental Blast",
+          "fixed_damage": 180,
+          "effect": "Discard a [R], [W], and [L] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B2 233",
+      "name": "Meloetta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Strange Singing",
+        "effect": "At the beginning of your turn, if this Pokémon is in the Active Spot, put a random [P] Pokémon from your deck into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psyshot",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B2 234",
+      "trainer_card_type": "Tool",
+      "name": "Protective Poncho",
+      "effect": "As long as the Pokémon this card is attached to is on your Bench, prevent all damage done to that Pokémon by your opponent's attacks and Abilities.",
+      "rarity": "♛",
+      "booster_pack": "Fantastical Parade (B2)"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
