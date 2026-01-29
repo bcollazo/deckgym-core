@@ -152,6 +152,25 @@ pub(crate) fn on_attach_energy(
             pokemon.heal(20);
         }
     }
+
+    // Check for opponent's Jolteon ex's Electromagnetic Wall ability
+    // "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy
+    // from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon."
+    let opponent = (actor + 1) % 2;
+    if let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_ref() {
+        if let Some(ability_id) = AbilityId::from_pokemon_id(&opponent_active.card.get_id()[..]) {
+            if ability_id == AbilityId::B1081JolteonExElectromagneticWall && is_turn_energy {
+                debug!(
+                    "Jolteon ex's Electromagnetic Wall: Dealing 20 damage to Pokemon at position {}",
+                    in_play_idx
+                );
+                let target = state.in_play_pokemon[actor][in_play_idx]
+                    .as_mut()
+                    .expect("Pokemon should be there if attaching energy to it");
+                target.apply_damage(20);
+            }
+        }
+    }
 }
 
 /// Called when a Pokémon evolves

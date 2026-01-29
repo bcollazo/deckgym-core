@@ -314,6 +314,10 @@ fn forecast_effect_attack_by_mechanic(
             target_benched_type,
         } => energy_bench_attack(energies.clone(), *target_benched_type, state, attack),
         Mechanic::VaporeonHyperWhirlpool => vaporeon_hyper_whirlpool(state, attack.fixed_damage),
+        Mechanic::CoinFlipEnergyDiscard { num_coins } => {
+            coin_flip_energy_discard(*num_coins, attack.fixed_damage)
+        }
+        Mechanic::MegaAbsolDarknessClaw => darkness_claw_attack(state.current_player, state),
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
@@ -1204,6 +1208,44 @@ fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
                     // remove the last one for performance reasons.
                     active.attached_energy.pop();
                 }
+            },
+        ));
+    }
+    (probabilities, outcomes)
+}
+
+/// Flip N coins, discard energy for each heads, if all tails attack does nothing
+fn coin_flip_energy_discard(num_coins: usize, damage: u32) -> (Probabilities, Mutations) {
+    // Calculate binomial probabilities for each number of heads
+    // n choose k * (0.5)^n
+    let total_outcomes = 2_u64.pow(num_coins as u32) as f64;
+    let mut probabilities: Vec<f64> = Vec::new();
+    for k in 0..=num_coins {
+        let n_choose_k = binomial_coefficient(num_coins, k) as f64;
+        probabilities.push(n_choose_k / total_outcomes);
+    }
+
+    let mut outcomes: Mutations = vec![];
+    for heads in 0..=num_coins {
+        // If all tails (0 heads), attack does nothing (0 damage)
+        let actual_damage = if heads == 0 { 0 } else { damage };
+        outcomes.push(active_damage_effect_mutation(
+            actual_damage,
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                let active = state.get_active(opponent);
+                // Only discard up to the number of energies the Pokemon actually has
+                let energies_to_discard = heads.min(active.attached_energy.len());
+                if energies_to_discard == 0 {
+                    return;
+                }
+
+                // Collect energies to discard (from the end of the list)
+                let to_discard: Vec<EnergyType> = active.attached_energy
+                    [active.attached_energy.len() - energies_to_discard..]
+                    .to_vec();
+
+                state.discard_from_active(opponent, &to_discard);
             },
         ));
     }
