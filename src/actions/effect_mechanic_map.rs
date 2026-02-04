@@ -710,6 +710,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfHurt {
+            extra_damage: 50,
+            opponent: true,
+        },
+    );
+    map.insert(
         "If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.",
         Mechanic::ExtraDamageIfHurt {
             extra_damage: 60,
