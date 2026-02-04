@@ -90,6 +90,10 @@ pub enum Mechanic {
         target_benched_type: Option<EnergyType>,
     },
     VaporeonHyperWhirlpool,
+    CoinFlipEnergyDiscard {
+        num_coins: usize,
+    },
+    MegaAbsolDarknessClaw,
     ConditionalBenchDamage {
         required_extra_energy: Vec<EnergyType>,
         bench_damage: u32,

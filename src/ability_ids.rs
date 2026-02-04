@@ -58,6 +58,7 @@ pub enum AbilityId {
     B1a034ReuniclusInfiniteIncrease,
     B1a065FurfrouFurCoat,
     A4a032MisdreavusInfiltratingInspection,
+    B1081JolteonExElectromagneticWall,
 }
 
 // Create a static HashMap for fast (pokemon, index) lookup
@@ -212,12 +213,15 @@ lazy_static::lazy_static! {
         m.insert("B1 160", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
+        m.insert("B1 081", AbilityId::B1081JolteonExElectromagneticWall);
         m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);
         m.insert("B1 263", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 256", AbilityId::B1073GreninjaExShiftingStream);
+        m.insert("B1 257", AbilityId::B1081JolteonExElectromagneticWall);
+        m.insert("B1 276", AbilityId::B1081JolteonExElectromagneticWall);
         m.insert("B1 260", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 275", AbilityId::B1073GreninjaExShiftingStream);
         m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);

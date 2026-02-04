@@ -319,7 +319,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             probability: None,
         },
     );
-    // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.",
+        Mechanic::CoinFlipEnergyDiscard { num_coins: 2 },
+    );
+    map.insert(
+        "Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If all of them are tails, this attack does nothing.",
+        Mechanic::CoinFlipEnergyDiscard { num_coins: 3 },
+    );
     map.insert(
         "Flip 2 coins. If both of them are heads, this attack does 70 more damage.",
         Mechanic::ExtraDamageIfBothHeads { extra_damage: 70 },
@@ -560,8 +567,20 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.", todo_implementation);
     // map.insert("Flip a coin. If tails, discard 2 random Energy from this Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If tails, during your next turn, this Pokémon can't attack.", todo_implementation);
-    // map.insert("Flip a coin. If tails, this Pokémon also does 20 damage to itself.", todo_implementation);
-    // map.insert("Flip a coin. If tails, this Pokémon also does 30 damage to itself.", todo_implementation);
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 20 damage to itself.",
+        Mechanic::CoinFlipExtraDamageOrSelfDamage {
+            extra_damage: 0,
+            self_damage: 20,
+        },
+    );
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 30 damage to itself.",
+        Mechanic::CoinFlipExtraDamageOrSelfDamage {
+            extra_damage: 0,
+            self_damage: 30,
+        },
+    );
     map.insert(
         "Flip a coin. If tails, this attack does nothing.",
         Mechanic::CoinFlipNoEffect,
@@ -1245,7 +1264,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck.", todo_implementation);
     // map.insert("Your opponent reveals their hand.", todo_implementation);
-    // map.insert("Your opponent reveals their hand. Choose a Supporter card you find there and discard it.", todo_implementation);
+    map.insert(
+        "Your opponent reveals their hand. Choose a Supporter card you find there and discard it.",
+        Mechanic::MegaAbsolDarknessClaw,
+    );
     // map.insert("Your opponent reveals their hand. Choose a card you find there and shuffle it into your opponent's deck.", todo_implementation);
     map.insert(
         "Your opponent's Active Pokémon is now Asleep.",

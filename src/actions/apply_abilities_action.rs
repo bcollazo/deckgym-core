@@ -111,6 +111,9 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a032MisdreavusInfiltratingInspection => {
             panic!("Infiltrating Inspection is triggered when played to bench")
         }
+        AbilityId::B1081JolteonExElectromagneticWall => {
+            panic!("Electromagnetic Wall is a passive ability triggered on energy attachment")
+        }
     }
 }
 
