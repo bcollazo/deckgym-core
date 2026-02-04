@@ -149,6 +149,7 @@ pub fn trainer_move_generation_implementation(
             can_play_celestic_town_elder(state, trainer_card)
         }
         CardId::A2a075Adaman | CardId::A2a090Adaman => can_play_trainer(state, trainer_card),
+        CardId::B2152Piers | CardId::B2193Piers => can_play_piers(state, trainer_card),
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
@@ -513,6 +514,18 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
     let has_fire_energy_in_discard = state.discard_energies[player].contains(&EnergyType::Fire);
 
     if active_is_fire && has_fire_energy_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Piers can be played (requires Galarian Obstagoon in play)
+fn can_play_piers(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_obstagoon = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.get_name() == "Galarian Obstagoon");
+    if has_obstagoon {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

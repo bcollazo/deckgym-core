@@ -139,6 +139,7 @@ pub fn forecast_trainer_action(
             celestic_town_elder_effect(acting_player, state)
         }
         CardId::A2a075Adaman | CardId::A2a090Adaman => doutcome(adaman_effect),
+        CardId::B2152Piers | CardId::B2193Piers => doutcome(piers_effect),
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
@@ -350,6 +351,25 @@ fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         },
         1,
     );
+}
+
+fn piers_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Discard 2 random Energy from your opponent's Active Pokémon.
+    let opponent = (action.actor + 1) % 2;
+    let mut to_discard = Vec::new();
+
+    for _ in 0..2 {
+        let active = state.get_active(opponent);
+        if active.attached_energy.is_empty() {
+            break;
+        }
+        // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
+        to_discard.push(*active.attached_energy.last().unwrap());
+    }
+
+    if !to_discard.is_empty() {
+        state.discard_from_active(opponent, &to_discard);
+    }
 }
 
 fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
