@@ -100,7 +100,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard a card from your hand. If you can't, this attack does nothing.", todo_implementation);
     map.insert(
         "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
-        Mechanic::DiscardRandomGlobalEnergy,
+        Mechanic::DiscardRandomGlobalEnergy { count: 1 },
     );
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);
     map.insert(
@@ -1283,7 +1283,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_opponent: true,
         },
     );
-    map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", Mechanic::DiscardRandomGlobalEnergy);
+    map.insert(
+        "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
+        Mechanic::DiscardRandomGlobalEnergy { count: 1 },
+    );
     // map.insert("Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.", todo_implementation);
     map.insert(
         "If this Pokémon has at least 2 extra [W] Energy attached, this attack also does 50 damage to 1 of your opponent's Benched Pokémon.",
@@ -1359,7 +1362,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // NEW MECHANICS INTRODUCES IN B2
     // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.", todo_implementation);
     // map.insert("Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
-    // map.insert("Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", todo_implementation);
+    map.insert(
+        "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
+        Mechanic::DiscardRandomGlobalEnergy { count: 2 },
+    );
     // map.insert("Discard 3 [R] Energy from this Pokémon.", todo_implementation);
     // map.insert("Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("Discard a Stadium in play.", todo_implementation);

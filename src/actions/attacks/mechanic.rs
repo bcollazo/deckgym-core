@@ -32,7 +32,9 @@ pub enum Mechanic {
     DamageAllOpponentPokemon {
         damage: u32,
     },
-    DiscardRandomGlobalEnergy,
+    DiscardRandomGlobalEnergy {
+        count: usize,
+    },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,
