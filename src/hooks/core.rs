@@ -478,6 +478,33 @@ fn get_reduced_card_effect_modifiers(
         .sum::<u32>()
 }
 
+fn get_turn_effect_damage_reduction(
+    state: &State,
+    target_player: usize,
+    target_pokemon: &crate::models::PlayedCard,
+    attacking_player: usize,
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+    let target_energy_type = target_pokemon.get_energy_type();
+    state
+        .get_current_turn_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::ReducedDamageForType {
+                amount,
+                energy_type,
+                player,
+            } if *player == target_player && target_energy_type == Some(*energy_type) => {
+                Some(*amount)
+            }
+            _ => None,
+        })
+        .sum::<u32>()
+}
+
 fn get_weakness_modifier(
     state: &State,
     is_active_to_active: bool,
@@ -588,6 +615,13 @@ pub(crate) fn modify_damage(
     );
     let reduced_card_effect_modifiers =
         get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
+    let reduced_turn_effect_modifiers = get_turn_effect_damage_reduction(
+        state,
+        target_player,
+        receiving_pokemon,
+        attacking_player,
+        is_from_active_attack,
+    );
     let weakness_modifier =
         get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
 
@@ -601,12 +635,13 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
         increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
+        reduced_turn_effect_modifiers,
         heavy_helmet_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
@@ -619,6 +654,7 @@ pub(crate) fn modify_damage(
         + type_boost_bonus)
         .saturating_sub(
             reduced_card_effect_modifiers
+                + reduced_turn_effect_modifiers
                 + heavy_helmet_reduction
                 + intimidating_fang_reduction
                 + ability_damage_reduction,

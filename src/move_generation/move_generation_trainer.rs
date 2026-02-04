@@ -148,6 +148,7 @@ pub fn trainer_move_generation_implementation(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             can_play_celestic_town_elder(state, trainer_card)
         }
+        CardId::A2a075Adaman | CardId::A2a090Adaman => can_play_trainer(state, trainer_card),
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {

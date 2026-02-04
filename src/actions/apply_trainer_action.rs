@@ -138,6 +138,7 @@ pub fn forecast_trainer_action(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
         }
+        CardId::A2a075Adaman | CardId::A2a090Adaman => doutcome(adaman_effect),
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
@@ -337,6 +338,18 @@ fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
+}
+
+fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your [M] Pokémon take -20 damage from attacks.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForType {
+            amount: 20,
+            energy_type: EnergyType::Metal,
+            player: action.actor,
+        },
+        1,
+    );
 }
 
 fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
