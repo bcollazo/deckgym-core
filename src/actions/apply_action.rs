@@ -53,6 +53,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
         | SimpleAction::Heal { .. }
+        | SimpleAction::HealAndDiscardEnergy { .. }
         | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
@@ -152,6 +153,17 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             amount,
             cure_status,
         } => apply_healing(action.actor, state, *in_play_idx, *amount, *cure_status),
+        SimpleAction::HealAndDiscardEnergy {
+            in_play_idx,
+            heal_amount,
+            discard_energies,
+        } => apply_heal_and_discard_energy(
+            action.actor,
+            state,
+            *in_play_idx,
+            *heal_amount,
+            discard_energies,
+        ),
         SimpleAction::MoveAllDamage { from, to } => {
             apply_move_all_damage(action.actor, state, *from, *to)
         }
@@ -266,6 +278,28 @@ fn apply_healing(
     if cure_status {
         pokemon.cure_status_conditions();
     }
+}
+
+fn apply_heal_and_discard_energy(
+    acting_player: usize,
+    state: &mut State,
+    position: usize,
+    heal_amount: u32,
+    discard_energies: &[EnergyType],
+) {
+    let pokemon = state.in_play_pokemon[acting_player][position]
+        .as_mut()
+        .expect("Pokemon should be there if healing it");
+    let missing_hp = pokemon
+        .get_effective_total_hp()
+        .saturating_sub(pokemon.remaining_hp);
+    let healed = heal_amount.min(missing_hp);
+    pokemon.heal(heal_amount);
+
+    if healed == 0 {
+        return;
+    }
+    state.discard_energy_from_in_play(acting_player, position, discard_energies);
 }
 
 fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize) {

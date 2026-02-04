@@ -13,7 +13,7 @@ use crate::{
         },
     },
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
+    card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
     combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
@@ -139,6 +139,7 @@ pub fn forecast_trainer_action(
             celestic_town_elder_effect(acting_player, state)
         }
         CardId::A2a075Adaman | CardId::A2a090Adaman => doutcome(adaman_effect),
+        CardId::B2149Diantha | CardId::B2190Diantha => doutcome(diantha_effect),
         CardId::B2152Piers | CardId::B2193Piers => doutcome(piers_effect),
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
@@ -369,6 +370,24 @@ fn piers_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
     if !to_discard.is_empty() {
         state.discard_from_active(opponent, &to_discard);
+    }
+}
+
+fn diantha_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 90 damage from 1 of your [P] Pokemon with >= 2 [P] Energy. If healed, discard 2 [P].
+    let possible_moves = diantha_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| SimpleAction::HealAndDiscardEnergy {
+            in_play_idx,
+            heal_amount: 90,
+            discard_energies: vec![EnergyType::Psychic; 2],
+        })
+        .collect::<Vec<_>>();
+
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
     }
 }
 

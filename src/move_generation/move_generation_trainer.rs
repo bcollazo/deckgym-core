@@ -1,7 +1,7 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
+    card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tool_ids::ToolId,
@@ -149,6 +149,7 @@ pub fn trainer_move_generation_implementation(
             can_play_celestic_town_elder(state, trainer_card)
         }
         CardId::A2a075Adaman | CardId::A2a090Adaman => can_play_trainer(state, trainer_card),
+        CardId::B2149Diantha | CardId::B2190Diantha => can_play_diantha(state, trainer_card),
         CardId::B2152Piers | CardId::B2193Piers => can_play_piers(state, trainer_card),
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
@@ -526,6 +527,16 @@ fn can_play_piers(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .enumerate_in_play_pokemon(state.current_player)
         .any(|(_, pokemon)| pokemon.get_name() == "Galarian Obstagoon");
     if has_obstagoon {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Diantha can be played (requires damaged Psychic Pokemon with >= 2 Psychic Energy)
+fn can_play_diantha(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_target = !diantha_targets(state, state.current_player).is_empty();
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

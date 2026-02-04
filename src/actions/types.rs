@@ -62,6 +62,11 @@ pub enum SimpleAction {
         amount: u32,
         cure_status: bool,
     },
+    HealAndDiscardEnergy {
+        in_play_idx: usize,
+        heal_amount: u32,
+        discard_energies: Vec<EnergyType>,
+    },
     MoveAllDamage {
         from: usize,
         to: usize,
@@ -168,6 +173,14 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::HealAndDiscardEnergy {
+                in_play_idx,
+                heal_amount,
+                discard_energies,
+            } => write!(
+                f,
+                "HealAndDiscardEnergy({in_play_idx}, {heal_amount}, {discard_energies:?})"
+            ),
             SimpleAction::MoveAllDamage { from, to } => {
                 write!(f, "MoveAllDamage(from:{from}, to:{to})")
             }
