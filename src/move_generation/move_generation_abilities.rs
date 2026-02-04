@@ -85,7 +85,6 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
-        AbilityId::A4a044DonphanExoskeleton => false, // Passive ability, triggers via hooks
         AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
@@ -102,7 +101,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1a012CharmeleonIgnition => false,   // Triggered on evolve
         AbilityId::B1a018WartortleShellShield => false, // Passive ability
         AbilityId::B1a034ReuniclusInfiniteIncrease => false, // Passive ability
-        AbilityId::B1a065FurfrouFurCoat => false,       // Passive ability
+        AbilityId::B1a065FurfrouFurCoat => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A4a032MisdreavusInfiltratingInspection => false, // Triggered when played to bench
         AbilityId::A1007Butterfree | AbilityId::A2022ShayminFragrantFlowerGarden => {
             unreachable!("Handled by AbilityMechanic")
@@ -122,6 +121,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::SwitchActiveTypedWithBench { energy_type } => {
             can_use_switch_active_typed_with_bench(state, card, *energy_type)
         }
+        AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
     }
 }
 

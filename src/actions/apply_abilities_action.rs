@@ -93,7 +93,6 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a025RaikouExLegendaryPulse => {
             panic!("Legendary Pulse is triggered at end of turn")
         }
-        AbilityId::A4a044DonphanExoskeleton => panic!("Exoskeleton is a passive ability"),
         AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1121IndeedeeExWatchOver => doutcome(indeedee_ex_watch_over),
         AbilityId::B1157HydreigonRoarInUnison => {
@@ -118,7 +117,7 @@ pub(crate) fn forecast_ability(
         AbilityId::B1a034ReuniclusInfiniteIncrease => {
             panic!("Infinite Increase is a passive ability")
         }
-        AbilityId::B1a065FurfrouFurCoat => panic!("Fur Coat is a passive ability"),
+        AbilityId::B1a065FurfrouFurCoat => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A4a032MisdreavusInfiltratingInspection => {
             panic!("Infiltrating Inspection is triggered when played to bench")
         }
@@ -134,6 +133,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::DamageOneOpponentPokemon { amount } => damage_one_opponent(*amount),
         AbilityMechanic::SwitchActiveTypedWithBench { .. } => {
             switch_active_typed_with_bench_outcome()
+        }
+        AbilityMechanic::ReduceDamageFromAttacks { .. } => {
+            panic!("ReduceDamageFromAttacks is a passive ability")
         }
     }
 }

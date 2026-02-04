@@ -43,7 +43,6 @@ pub enum AbilityId {
     A4a020SuicuneExLegendaryPulse,
     A4a022MiloticHealingRipples,
     A4a025RaikouExLegendaryPulse,
-    A4a044DonphanExoskeleton,
     B1073GreninjaExShiftingStream,
     B1121IndeedeeExWatchOver,
     B1157HydreigonRoarInUnison,
@@ -158,7 +157,6 @@ lazy_static::lazy_static! {
         m.insert("A4a 022", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 025", AbilityId::A4a025RaikouExLegendaryPulse);
         m.insert("A4a 032", AbilityId::A4a032MisdreavusInfiltratingInspection);
-        m.insert("A4a 044", AbilityId::A4a044DonphanExoskeleton);
         m.insert("A4a 065", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A4a 072", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 079", AbilityId::A4a010EnteiExLegendaryPulse);
@@ -201,21 +199,18 @@ lazy_static::lazy_static! {
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         // B1
-
         m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 160", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
         m.insert("B1 177", AbilityId::B1177GoomyStickyMembrane);
         m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);
-        m.insert("B1 263", AbilityId::B1160DragalgeExPoisonPoint);
-        m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
-
         m.insert("B1 260", AbilityId::B1121IndeedeeExWatchOver);
-
+        m.insert("B1 263", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);
+        m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 289", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);
         // B1a
@@ -223,7 +218,6 @@ lazy_static::lazy_static! {
         m.insert("B1a 012", AbilityId::B1a012CharmeleonIgnition);
         m.insert("B1a 018", AbilityId::B1a018WartortleShellShield);
         m.insert("B1a 034", AbilityId::B1a034ReuniclusInfiniteIncrease);
-        m.insert("B1a 065", AbilityId::B1a065FurfrouFurCoat);
         m.insert("B1a 070", AbilityId::B1a006AriadosTrapTerritory);  // Rare variant
         m.insert("B1a 072", AbilityId::B1a034ReuniclusInfiniteIncrease);  // Rare variant
         m.insert("B1a 101", AbilityId::A3122SolgaleoExRisingRoad);

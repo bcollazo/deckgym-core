@@ -4,7 +4,7 @@ use std::vec;
 use log::debug;
 
 use crate::{
-    actions::SimpleAction,
+    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, SimpleAction},
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
     tool_ids::ToolId,
@@ -370,19 +370,18 @@ fn get_intimidating_fang_reduction(
     0
 }
 
-fn get_exoskeleton_reduction(
+fn get_ability_damage_reduction(
     receiving_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
 ) -> u32 {
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
-        // Donphan Exoskeleton - only applies to active attacks
-        if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
-            return 20;
-        }
-        // Furfrou Fur Coat - applies to all attacks
-        if ability_id == AbilityId::B1a065FurfrouFurCoat {
-            debug!("Fur Coat: Reducing damage by 20");
-            return 20;
+    if let Some(ability) = receiving_pokemon.card.get_ability() {
+        if let Some(AbilityMechanic::ReduceDamageFromAttacks { amount }) =
+            ability_mechanic_from_effect(&ability.effect)
+        {
+            if is_from_active_attack {
+                debug!("ReduceDamageFromAttacks: Reducing damage by {}", amount);
+                return *amount;
+            }
         }
     }
     0
@@ -573,7 +572,8 @@ pub(crate) fn modify_damage(
     let intimidating_fang_reduction =
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
-    let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
+    let ability_damage_reduction =
+        get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
@@ -601,7 +601,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -609,7 +609,7 @@ pub(crate) fn modify_damage(
         reduced_card_effect_modifiers,
         heavy_helmet_reduction,
         intimidating_fang_reduction,
-        exoskeleton_reduction,
+        ability_damage_reduction,
         type_boost_bonus
     );
     (base_damage
@@ -621,7 +621,7 @@ pub(crate) fn modify_damage(
             reduced_card_effect_modifiers
                 + heavy_helmet_reduction
                 + intimidating_fang_reduction
-                + exoskeleton_reduction,
+                + ability_damage_reduction,
         )
 }
 

@@ -118,7 +118,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("This Pokémon gets +30 HP for each [P] Energy attached to it.", todo_implementation);
         // map.insert("This Pokémon takes -10 damage from attacks.", todo_implementation);
         // map.insert("This Pokémon takes -20 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
-        // map.insert("This Pokémon takes -20 damage from attacks.", todo_implementation);
+        map.insert(
+            "This Pokémon takes -20 damage from attacks.",
+            AbilityMechanic::ReduceDamageFromAttacks { amount: 20 },
+        );
         // map.insert("This Pokémon takes -30 damage from attacks from [F] Pokémon.", todo_implementation);
         // map.insert("This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
         // map.insert("When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.", todo_implementation);
