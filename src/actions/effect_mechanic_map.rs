@@ -1419,7 +1419,18 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)", todo_implementation);
     // map.insert("This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.", todo_implementation);
+    map.insert(
+        "Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Heat-Up Crunch".to_string(),
+                amount: 30,
+            },
+            duration: u8::MAX,
+            probability: None,
+        },
+    );
     // map.insert("You may shuffle this Pokémon and all attached cards into your deck.", todo_implementation);
     // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);
