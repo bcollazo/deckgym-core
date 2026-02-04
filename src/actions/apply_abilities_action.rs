@@ -140,6 +140,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => {
             panic!("StartTurnRandomPokemonToHand is a passive ability")
         }
+        AbilityMechanic::PreventFirstAttack => {
+            panic!("PreventFirstAttack is a passive ability")
+        }
     }
 }
 

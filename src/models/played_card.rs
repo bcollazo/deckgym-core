@@ -27,6 +27,7 @@ pub struct PlayedCard {
     pub burned: bool,
     pub confused: bool,
     pub cards_behind: Vec<Card>,
+    pub prevent_first_attack_damage_used: bool,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
     /// The second value is the number of turns left for the effect.
@@ -57,6 +58,7 @@ impl PlayedCard {
             burned: false,
             confused: false,
             effects: vec![],
+            prevent_first_attack_damage_used: false,
         }
     }
 

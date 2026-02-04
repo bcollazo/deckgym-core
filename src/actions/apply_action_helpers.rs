@@ -5,7 +5,8 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::{
-        abilities::AbilityMechanic, ability_mechanic_from_effect, shared_mutations, SimpleAction,
+        abilities::AbilityMechanic, ability_mechanic_from_effect,
+        effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
     },
     hooks::{
         get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
@@ -279,6 +280,31 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
         .collect()
 }
 
+fn checkapply_prevent_first_attack(
+    state: &mut State,
+    target_player: usize,
+    target_pokemon_idx: usize,
+    is_from_active_attack: bool,
+) -> bool {
+    if !is_from_active_attack {
+        return false;
+    }
+
+    if let Some(target_pokemon) = state.in_play_pokemon[target_player][target_pokemon_idx].as_mut()
+    {
+        if !target_pokemon.prevent_first_attack_damage_used {
+            if let Some(AbilityMechanic::PreventFirstAttack) =
+                get_ability_mechanic(&target_pokemon.card)
+            {
+                debug!("PreventFirstAttackDamageAfterEnteringPlay: Preventing first attack damage");
+                target_pokemon.prevent_first_attack_damage_used = true;
+                return true;
+            }
+        }
+    }
+    false
+}
+
 /// NOTE: This function also handles Counter-Attack logic, attack modifiers, and
 ///  queues up promotion actions if any K.O.s happen.
 pub(crate) fn handle_damage(
@@ -318,7 +344,13 @@ pub(crate) fn handle_damage(
 
     // Handle each target individually
     for (damage, target_player, target_pokemon_idx) in modified_targets {
-        if damage == 0 {
+        let applied = checkapply_prevent_first_attack(
+            state,
+            target_player,
+            target_pokemon_idx,
+            is_from_active_attack,
+        );
+        if applied || damage == 0 {
             continue;
         }
 
@@ -491,5 +523,26 @@ mod tests {
 
         // Player 0's active pokemon should take 30 damage (10 base + 10 per Nihilego)
         assert_eq!(get_poison_damage(&state, 0, 0), 30);
+    }
+
+    #[test]
+    fn test_mimikyu_ex_disguise_prevents_first_attack_only() {
+        let mut state = State::default();
+
+        let attacker = get_card_by_enum(CardId::A1001Bulbasaur);
+        let mimikyu_ex = get_card_by_enum(CardId::B2073MimikyuEx);
+
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&mimikyu_ex, false));
+
+        let starting_hp = state.get_active(1).remaining_hp;
+
+        // First attack damage should be prevented
+        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        assert_eq!(state.get_active(1).remaining_hp, starting_hp);
+
+        // Second attack should deal damage normally
+        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        assert_eq!(state.get_active(1).remaining_hp, starting_hp - 30);
     }
 }

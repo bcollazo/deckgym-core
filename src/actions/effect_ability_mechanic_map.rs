@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::actions::abilities::AbilityMechanic;
-use crate::models::EnergyType;
+use crate::models::{Card, EnergyType};
 
 /// Map from ability effect text to its AbilityMechanic.
 pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMechanic>> =
@@ -130,7 +130,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("This Pokémon takes -30 damage from attacks from [F] Pokémon.", todo_implementation);
         // map.insert("This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
         // map.insert("When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.", todo_implementation);
-        // map.insert("When this Pokémon is first damaged by an attack after coming into play, prevent that damage.", todo_implementation);
+        map.insert(
+            "When this Pokémon is first damaged by an attack after coming into play, prevent that damage.",
+            AbilityMechanic::PreventFirstAttack,
+        );
         // map.insert("Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("Whenever you attach a [P] Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.", todo_implementation);
         // map.insert("Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", todo_implementation);
@@ -145,4 +148,21 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
 
 pub fn ability_mechanic_from_effect(effect: &str) -> Option<&'static AbilityMechanic> {
     EFFECT_ABILITY_MECHANIC_MAP.get(effect)
+}
+
+pub fn get_ability_mechanic(card: &Card) -> Option<&'static AbilityMechanic> {
+    let Card::Pokemon(pokemon) = card else {
+        panic!("Card is not a Pokemon");
+    };
+
+    if let Some(ability) = &pokemon.ability {
+        let mechanic = ability_mechanic_from_effect(&ability.effect);
+        if let Some(mechanic) = mechanic {
+            Some(mechanic)
+        } else {
+            None
+        }
+    } else {
+        None
+    }
 }
