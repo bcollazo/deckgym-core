@@ -4,6 +4,7 @@ mod apply_action;
 mod apply_action_helpers;
 mod apply_attack_action;
 mod apply_trainer_action;
+pub(crate) mod attack_helpers;
 mod attacks;
 mod effect_ability_mechanic_map;
 mod effect_mechanic_map;

@@ -5,6 +5,9 @@ use crate::{
     actions::{
         apply_action_helpers::handle_damage,
         apply_evolve,
+        attack_helpers::{
+            collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
+        },
         attacks::{BenchSide, Mechanic},
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         mutations::{doutcome, doutcome_from_mutation},
@@ -300,6 +303,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
+        }
+        Mechanic::ChargeYourTypeAnyWay { energy_type, count } => {
+            charge_energy_any_way_to_type(attack.fixed_damage, *energy_type, *count)
         }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
@@ -734,6 +740,20 @@ fn moltres_inferno_dance() -> (Probabilities, Mutations) {
     (probabilities, mutations)
 }
 
+fn charge_energy_any_way_to_type(
+    damage: u32,
+    energy_type: EnergyType,
+    count: usize,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let target_indices = collect_in_play_indices_by_type(state, action.actor, energy_type);
+        let choices = energy_any_way_choices(&target_indices, energy_type, count);
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
 fn move_all_energy_type_to_bench(
     state: &State,
     attack: &Attack,
@@ -828,38 +848,6 @@ fn generate_energy_distributions(fire_bench_idx: &[usize], heads: usize) -> Vec<
     }
 
     all_choices
-}
-
-// Helper function to generate all possible distributions of 'heads' energy
-// across the available Pokémon
-fn generate_distributions(
-    fire_bench_idx: &[usize],
-    remaining: usize,
-    start_idx: usize,
-    current: &mut Vec<usize>,
-    result: &mut Vec<Vec<usize>>,
-) {
-    if remaining == 0 {
-        result.push(current.clone());
-        return;
-    }
-
-    if start_idx >= fire_bench_idx.len() {
-        return;
-    }
-
-    // Try different amounts for the current Pokémon
-    for amount in 0..=remaining {
-        current[start_idx] = amount;
-        generate_distributions(
-            fire_bench_idx,
-            remaining - amount,
-            start_idx + 1,
-            current,
-            result,
-        );
-    }
-    current[start_idx] = 0;
 }
 
 fn damage_for_each_heads_attack(

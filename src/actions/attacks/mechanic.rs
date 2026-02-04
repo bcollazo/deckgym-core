@@ -76,6 +76,10 @@ pub enum Mechanic {
     SelfChargeActive {
         energies: Vec<EnergyType>,
     },
+    ChargeYourTypeAnyWay {
+        energy_type: EnergyType,
+        count: usize,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,

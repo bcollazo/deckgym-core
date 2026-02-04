@@ -1399,7 +1399,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.", todo_implementation);
     // map.insert("Put a random card that evolves from Spewpa from your deck into your hand.", todo_implementation);
     // map.insert("Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.", todo_implementation);
-    // map.insert("Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.", todo_implementation);
+    map.insert(
+        "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.",
+        Mechanic::ChargeYourTypeAnyWay {
+            energy_type: EnergyType::Psychic,
+            count: 3,
+        },
+    );
     // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
     // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
     // map.insert("This attack does 20 more damage for each Supporter card in your discard pile.", todo_implementation);
