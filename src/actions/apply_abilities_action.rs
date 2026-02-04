@@ -42,7 +42,7 @@ pub(crate) fn forecast_ability(
         .expect("Pokemon should have ability implemented");
     match ability_id {
         AbilityId::A1020VictreebelFragranceTrap => doutcome(victreebel_ability),
-        AbilityId::A1089GreninjaWaterShuriken => doutcome(greninja_shuriken),
+        AbilityId::A1089GreninjaWaterShuriken => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1098MagnetonVoltCharge => doutcome_from_mutation(charge_magneton(in_play_idx)),
         AbilityId::A1123GengarExShadowySpellbind => {
             panic!("Shadowy Spellbind is a passive ability")
@@ -94,7 +94,7 @@ pub(crate) fn forecast_ability(
             panic!("Legendary Pulse is triggered at end of turn")
         }
         AbilityId::A4a044DonphanExoskeleton => panic!("Exoskeleton is a passive ability"),
-        AbilityId::B1073GreninjaExShiftingStream => doutcome(greninja_ex_shifting_stream),
+        AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1121IndeedeeExWatchOver => doutcome(indeedee_ex_watch_over),
         AbilityId::B1157HydreigonRoarInUnison => {
             doutcome_from_mutation(charge_hydreigon_and_damage_self(in_play_idx))
@@ -130,15 +130,58 @@ pub(crate) fn forecast_ability(
 
 fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, Mutations) {
     match mechanic {
-        AbilityMechanic::HealAllYourPokemon { amount } => {
-            let amount = *amount;
-            doutcome_from_mutation(Box::new(move |_rng, state, action| {
-                for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
-                    pokemon.heal(amount);
-                }
-            }))
+        AbilityMechanic::HealAllYourPokemon { amount } => heal_all_your_pokemon(*amount),
+        AbilityMechanic::DamageOneOpponentPokemon { amount } => damage_one_opponent(*amount),
+        AbilityMechanic::SwitchActiveTypedWithBench { .. } => {
+            switch_active_typed_with_bench_outcome()
         }
     }
+}
+
+fn heal_all_your_pokemon(amount: u32) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+            pokemon.heal(amount);
+        }
+    }))
+}
+
+fn damage_one_opponent(amount: u32) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        let SimpleAction::UseAbility {
+            in_play_idx: attacking_idx,
+        } = action.action
+        else {
+            panic!("Ability should be triggered by UseAbility action");
+        };
+
+        let opponent = (action.actor + 1) % 2;
+        let possible_moves = state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+                attacking_ref: (action.actor, attacking_idx),
+                targets: vec![(amount, opponent, in_play_idx)],
+                is_from_active_attack: false,
+            })
+            .collect::<Vec<_>>();
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }))
+}
+
+fn switch_active_typed_with_bench_outcome() -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        let acting_player = action.actor;
+        let choices = state
+            .enumerate_bench_pokemon(acting_player)
+            .map(|(in_play_idx, _)| SimpleAction::Activate {
+                player: acting_player,
+                in_play_idx,
+            })
+            .collect::<Vec<_>>();
+        state.move_generation_stack.push((acting_player, choices));
+    }))
 }
 
 fn weezing_ability(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -223,20 +266,6 @@ fn celesteela_ultra_thrusters(_: &mut StdRng, state: &mut State, action: &Action
     state.move_generation_stack.push((acting_player, choices));
 }
 
-fn greninja_ex_shifting_stream(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.
-    debug!("Greninja ex's Shifting Stream: Switching active Water Pokemon with a benched Pokemon");
-    let acting_player = action.actor;
-    let choices = state
-        .enumerate_bench_pokemon(acting_player)
-        .map(|(in_play_idx, _)| SimpleAction::Activate {
-            player: acting_player,
-            in_play_idx,
-        })
-        .collect::<Vec<_>>();
-    state.move_generation_stack.push((acting_player, choices));
-}
-
 fn leafon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     // Take a Grass Energy from Energy Zone and attach it to 1 of your Grass Pokémon.
     debug!("Leafeon ex's ability: Attaching 1 Grass Energy to a Grass Pokemon");
@@ -246,30 +275,6 @@ fn leafon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
         .map(|(in_play_idx, _)| SimpleAction::Attach {
             attachments: vec![(1, EnergyType::Grass, in_play_idx)],
             is_turn_energy: false,
-        })
-        .collect::<Vec<_>>();
-    state
-        .move_generation_stack
-        .push((action.actor, possible_moves));
-}
-
-fn greninja_shuriken(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.
-    debug!("Greninja's ability: Dealing 20 damage to 1 opponent's Pokemon");
-    let SimpleAction::UseAbility {
-        in_play_idx: attacking_idx,
-    } = action.action
-    else {
-        panic!("Greninja's ability should be triggered by UseAbility action");
-    };
-
-    let opponent = (action.actor + 1) % 2;
-    let possible_moves = state
-        .enumerate_in_play_pokemon(opponent)
-        .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
-            attacking_ref: (action.actor, attacking_idx),
-            targets: vec![(20, opponent, in_play_idx)],
-            is_from_active_attack: false,
         })
         .collect::<Vec<_>>();
     state

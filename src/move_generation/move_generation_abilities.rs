@@ -47,7 +47,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
     });
     match ability {
         AbilityId::A1020VictreebelFragranceTrap => is_active && !card.ability_used,
-        AbilityId::A1089GreninjaWaterShuriken => !card.ability_used,
+        AbilityId::A1089GreninjaWaterShuriken => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1123GengarExShadowySpellbind => false,
         AbilityId::A1177Weezing => is_active && !card.ability_used,
@@ -86,7 +86,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
         AbilityId::A4a044DonphanExoskeleton => false, // Passive ability, triggers via hooks
-        AbilityId::B1073GreninjaExShiftingStream => can_use_greninja_shifting_stream(state, card),
+        AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
         AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
@@ -111,13 +111,17 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
 }
 
 fn can_use_ability_by_mechanic(
-    _state: &State,
+    state: &State,
     mechanic: &AbilityMechanic,
     _in_play_index: usize,
     card: &PlayedCard,
 ) -> bool {
     match mechanic {
         AbilityMechanic::HealAllYourPokemon { .. } => !card.ability_used,
+        AbilityMechanic::DamageOneOpponentPokemon { .. } => !card.ability_used,
+        AbilityMechanic::SwitchActiveTypedWithBench { energy_type } => {
+            can_use_switch_active_typed_with_bench(state, card, *energy_type)
+        }
     }
 }
 
@@ -134,12 +138,16 @@ fn can_use_celesteela_ultra_thrusters(state: &State, card: &PlayedCard) -> bool 
         .any(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
 }
 
-fn can_use_greninja_shifting_stream(state: &State, card: &PlayedCard) -> bool {
+fn can_use_switch_active_typed_with_bench(
+    state: &State,
+    card: &PlayedCard,
+    energy_type: EnergyType,
+) -> bool {
     if card.ability_used {
         return false;
     }
     let active = state.get_active(state.current_player);
-    if active.get_energy_type() != Some(EnergyType::Water) {
+    if active.get_energy_type() != Some(energy_type) {
         return false;
     }
     state
@@ -147,7 +155,6 @@ fn can_use_greninja_shifting_stream(state: &State, card: &PlayedCard) -> bool {
         .next()
         .is_some()
 }
-
 fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
     if card.ability_used {
         return false;

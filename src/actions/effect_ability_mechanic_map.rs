@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::actions::abilities::AbilityMechanic;
+use crate::models::EnergyType;
 
 /// Map from ability effect text to its AbilityMechanic.
 pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMechanic>> =
@@ -75,7 +76,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may choose either player. Look at the top card of that player's deck.", todo_implementation);
         // map.insert("Once during your turn, you may discard the top card of your opponent's deck.", todo_implementation);
-        // map.insert("Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.",
+            AbilityMechanic::DamageOneOpponentPokemon { amount: 20 },
+        );
         // map.insert("Once during your turn, you may flip a coin. If heads, switch in 1 of your opponent's Benched Pokémon to the Active Spot.", todo_implementation);
         // map.insert("Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Asleep.", todo_implementation);
         // map.insert("Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
@@ -98,7 +102,7 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
         // map.insert("Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
         // map.insert("Once during your turn, you may switch your Active Ultra Beast with 1 of your Benched Ultra Beasts.", todo_implementation);
-        // map.insert("Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.", todo_implementation);
+        map.insert("Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.", AbilityMechanic::SwitchActiveTypedWithBench { energy_type: EnergyType::Water });
         // map.insert("Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.", todo_implementation);
