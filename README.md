@@ -124,6 +124,14 @@ Generate a valid temporary test deck for a specific card id (it considers the ev
 cargo run --bin temp_deck_generator -- "A1 035"
 ```
 
+**Card Test Command**
+
+Generate a temporary test deck and run 10,000 games against all decks in `example_decks/` (games distributed evenly) using random players.
+
+```bash
+cargo run --bin card_test -- "A1 035"
+```
+
 **Setting Up Git Hooks (Optional)**
 
 The repository includes a pre-commit hook that ensures code quality by automatically fixing issues and running tests before each commit. To enable it:
