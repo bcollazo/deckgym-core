@@ -65,7 +65,6 @@ lazy_static::lazy_static! {
     static ref ABILITY_ID_MAP: HashMap<&'static str, AbilityId> = {
         let mut m = HashMap::new();
         // A1
-        m.insert("A1 007", AbilityId::A1007Butterfree);
         m.insert("A1 020", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("A1 061", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A1 089", AbilityId::A1089GreninjaWaterShuriken);
@@ -87,11 +86,9 @@ lazy_static::lazy_static! {
         m.insert("A1a 078", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A1a 084", AbilityId::A1a046AerodactylExPrimevalLaw);
         // A2
-        m.insert("A2 022", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A2 072", AbilityId::A2072DusknoirShadowVoid);
         m.insert("A2 078", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 092", AbilityId::A2092LucarioFightingCoach);
-        m.insert("A2 159", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A2 167", AbilityId::A2078GiratinaLevitate);
         m.insert("A2 170", AbilityId::A2092LucarioFightingCoach);
         m.insert("A2 110", AbilityId::A2110DarkraiExNightmareAura);
@@ -171,8 +168,6 @@ lazy_static::lazy_static! {
         m.insert("A4a 088", AbilityId::A4a025RaikouExLegendaryPulse);
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
         //A4b
-        m.insert("A4b 030", AbilityId::A2022ShayminFragrantFlowerGarden);
-        m.insert("A4b 031", AbilityId::A2022ShayminFragrantFlowerGarden);
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
         m.insert("A4b 099", AbilityId::A1a019VaporeonWashOut);
         m.insert("A4b 100", AbilityId::A1a019VaporeonWashOut);
@@ -241,7 +236,6 @@ lazy_static::lazy_static! {
         m.insert("P-A 104", AbilityId::A4a022MiloticHealingRipples);
         m.insert("P-A 109", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("P-A 110", AbilityId::A4a010EnteiExLegendaryPulse);
-        m.insert("P-A 116", AbilityId::A2022ShayminFragrantFlowerGarden);
         // P-B
         m.insert("P-B 020", AbilityId::B1a012CharmeleonIgnition);
         m

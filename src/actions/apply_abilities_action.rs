@@ -6,7 +6,9 @@ use rand::rngs::StdRng;
 use crate::{
     ability_ids::AbilityId,
     actions::{
+        abilities::AbilityMechanic,
         apply_action_helpers::{handle_damage, Mutation, Mutations, Probabilities},
+        effect_ability_mechanic_map::ability_mechanic_from_effect,
         mutations::{doutcome, doutcome_from_mutation},
         shared_mutations::pokemon_search_outcomes,
         Action, SimpleAction,
@@ -25,10 +27,20 @@ pub(crate) fn forecast_ability(
     let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
         .as_ref()
         .expect("Pokemon should be there if using ability");
+
+    // Try AbilityMechanic first
+    if let Some(mechanic) = pokemon
+        .card
+        .get_ability()
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+    {
+        return forecast_ability_by_mechanic(mechanic);
+    }
+
+    // Existing AbilityId fallback
     let ability_id = AbilityId::from_pokemon_id(&pokemon.get_id()[..])
         .expect("Pokemon should have ability implemented");
     match ability_id {
-        AbilityId::A1007Butterfree => doutcome(butterfree_heal),
         AbilityId::A1020VictreebelFragranceTrap => doutcome(victreebel_ability),
         AbilityId::A1089GreninjaWaterShuriken => doutcome(greninja_shuriken),
         AbilityId::A1098MagnetonVoltCharge => doutcome_from_mutation(charge_magneton(in_play_idx)),
@@ -42,7 +54,6 @@ pub(crate) fn forecast_ability(
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A1a019VaporeonWashOut => doutcome(vaporeon_wash_out),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
-        AbilityId::A2022ShayminFragrantFlowerGarden => doutcome(shaymin_fragrant_flower_garden),
         AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A2072DusknoirShadowVoid => {
@@ -111,20 +122,22 @@ pub(crate) fn forecast_ability(
         AbilityId::A4a032MisdreavusInfiltratingInspection => {
             panic!("Infiltrating Inspection is triggered when played to bench")
         }
+        AbilityId::A1007Butterfree | AbilityId::A2022ShayminFragrantFlowerGarden => {
+            unreachable!("Handled by AbilityMechanic")
+        }
     }
 }
 
-fn butterfree_heal(_: &mut StdRng, state: &mut State, action: &Action) {
-    debug!("Ability: Healing 20 damage from each Pokemon");
-    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
-        pokemon.heal(20);
-    }
-}
-
-fn shaymin_fragrant_flower_garden(_: &mut StdRng, state: &mut State, action: &Action) {
-    debug!("Shaymin's Fragrant Flower Garden: Healing 10 damage from each Pokemon");
-    for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
-        pokemon.heal(10);
+fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, Mutations) {
+    match mechanic {
+        AbilityMechanic::HealAllYourPokemon { amount } => {
+            let amount = *amount;
+            doutcome_from_mutation(Box::new(move |_rng, state, action| {
+                for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
+                    pokemon.heal(amount);
+                }
+            }))
+        }
     }
 }
 

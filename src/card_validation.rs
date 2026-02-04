@@ -1,5 +1,5 @@
 use crate::{
-    actions::EFFECT_MECHANIC_MAP,
+    actions::{ability_mechanic_from_effect, EFFECT_MECHANIC_MAP},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, TrainerType},
@@ -55,8 +55,12 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
             }
 
             // Verify ability is implemented
-            if pokemon.ability.is_some() && AbilityId::from_pokemon_id(&card_id_string).is_none() {
-                return ImplementationStatus::MissingAbility;
+            if let Some(ability) = &pokemon.ability {
+                if AbilityId::from_pokemon_id(&card_id_string).is_none()
+                    && ability_mechanic_from_effect(&ability.effect).is_none()
+                {
+                    return ImplementationStatus::MissingAbility;
+                }
             }
         }
         Card::Trainer(trainer_card) => {
