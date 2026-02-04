@@ -122,6 +122,7 @@ fn can_use_ability_by_mechanic(
             can_use_switch_active_typed_with_bench(state, card, *energy_type)
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
+        AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
     }
 }
 

@@ -6,4 +6,5 @@ pub enum AbilityMechanic {
     DamageOneOpponentPokemon { amount: u32 },
     SwitchActiveTypedWithBench { energy_type: EnergyType },
     ReduceDamageFromAttacks { amount: u32 },
+    StartTurnRandomPokemonToHand { energy_type: EnergyType },
 }

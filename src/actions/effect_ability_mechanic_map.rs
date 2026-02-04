@@ -22,7 +22,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.", todo_implementation);
         // map.insert("As often as you like during your turn, you may choose 1 of your Pokémon that has damage on it, and move all of its damage to this Pokémon.", todo_implementation);
         // map.insert("As often as you like during your turn, you may move a [W] Energy from 1 of your Benched [W] Pokémon to your Active [W] Pokémon.", todo_implementation);
-        // map.insert("At the beginning of your turn, if this Pokémon is in the Active Spot, put a random [P] Pokémon from your deck into your hand.", todo_implementation);
+        map.insert(
+            "At the beginning of your turn, if this Pokémon is in the Active Spot, put a random [P] Pokémon from your deck into your hand.",
+            AbilityMechanic::StartTurnRandomPokemonToHand {
+                energy_type: EnergyType::Psychic,
+            },
+        );
         // map.insert("At the end of your first turn, take a [L] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
         // map.insert("At the end of your turn, if this Pokémon is in the Active Spot, draw a card.", todo_implementation);
         // map.insert("At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.", todo_implementation);
