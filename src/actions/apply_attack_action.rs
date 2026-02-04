@@ -47,22 +47,19 @@ pub(crate) fn forecast_attack(
         .get_active_effects()
         .iter()
         .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
+    let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
 
     // Handle confusion: 50% chance the attack fails (coin flip)
     if active.confused {
-        let (base_probs, base_mutations) =
-            forecast_attack_inner(state, &active.card, &attack, index);
         return apply_confusion_coin_flip(base_probs, base_mutations);
     }
 
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
     if has_block_effect {
-        let (base_probs, base_mutations) =
-            forecast_attack_inner(state, &active.card, &attack, index);
         return apply_block_attack_coin_flip(base_probs, base_mutations);
     }
 
-    forecast_attack_inner(state, &active.card, &attack, index)
+    (base_probs, base_mutations)
 }
 
 fn forecast_attack_inner(
