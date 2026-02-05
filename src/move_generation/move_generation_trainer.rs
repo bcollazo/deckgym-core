@@ -39,7 +39,7 @@ pub fn generate_possible_trainer_actions(
 }
 
 /// Returns None instead of panicing if the trainer card is not implemented; this is so that the
-/// WASM module can do "feature detection", and know if a card is implemented.
+/// card_validation module can do "feature detection", and know if a card is implemented.
 pub fn trainer_move_generation_implementation(
     state: &State,
     trainer_card: &TrainerCard,
