@@ -91,7 +91,9 @@ pub fn forecast_trainer_action(
         | CardId::A4b321GiantCape
         | CardId::A4b322RockyHelmet
         | CardId::A4b323RockyHelmet
-        | CardId::B1219HeavyHelmet => doutcome(attach_tool),
+        | CardId::B1219HeavyHelmet
+        | CardId::B2147ProtectivePoncho
+        | CardId::B2234ProtectivePoncho => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
         }

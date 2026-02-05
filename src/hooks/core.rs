@@ -102,7 +102,8 @@ pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize
         | ToolId::A4a067InflatableBoat
         | ToolId::A4b318ElectricalCord
         | ToolId::A4b319ElectricalCord
-        | ToolId::B1219HeavyHelmet => {}
+        | ToolId::B1219HeavyHelmet
+        | ToolId::B2147ProtectivePoncho => {}
     }
 }
 
@@ -579,6 +580,12 @@ pub(crate) fn modify_damage(
             debug!("Shell Shield: Preventing all damage to benched Wartortle");
             return 0;
         }
+    }
+
+    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
+    if target_idx != 0 && receiving_pokemon.attached_tool == Some(ToolId::B2147ProtectivePoncho) {
+        debug!("Protective Poncho: Preventing all damage to benched Pokémon");
+        return 0;
     }
 
     // Check for PreventAllDamageAndEffects (Shinx's Hide)

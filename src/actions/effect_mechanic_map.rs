@@ -1373,7 +1373,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
         Mechanic::DiscardRandomGlobalEnergy { count: 2 },
     );
-    // map.insert("Discard 3 [R] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard 3 [R] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
+        },
+    );
     // map.insert("Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("Discard a Stadium in play.", todo_implementation);
     // map.insert("During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.", todo_implementation);
