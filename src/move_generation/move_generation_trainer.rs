@@ -4,7 +4,7 @@ use crate::{
     card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
-    tool_ids::ToolId,
+    tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
 };
 
@@ -46,7 +46,10 @@ pub fn trainer_move_generation_implementation(
 ) -> Option<Vec<SimpleAction>> {
     // Pokemon tools can be played if there is a space in the mat for them.
     if trainer_card.trainer_card_type == TrainerType::Tool {
-        return can_play_tool(state, trainer_card);
+        if is_tool_effect_implemented(trainer_card) {
+            return can_play_tool(state, trainer_card);
+        }
+        return None;
     }
 
     // Fossil cards are played as if they were Basic Pokemon
@@ -195,11 +198,7 @@ fn can_play_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
 
 /// Check if a Pokemon tool can be played (requires at least 1 pokemon in play without a tool)
 fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
-
-    let valid_targets = tool_id
-        .enumerate_choices(state, state.current_player)
-        .count();
+    let valid_targets = enumerate_tool_choices(trainer_card, state, state.current_player).len();
     if valid_targets > 0 {
         Some(vec![SimpleAction::Play {
             trainer_card: trainer_card.clone(),

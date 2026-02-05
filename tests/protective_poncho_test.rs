@@ -4,7 +4,6 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    tool_ids::ToolId,
 };
 
 mod common;
@@ -42,7 +41,7 @@ fn test_protective_poncho_prevents_bench_damage_from_attack() {
     // Set up defender's benched Pokémon WITH Protective Poncho
     let mut benched_with_poncho =
         PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
-    benched_with_poncho.attached_tool = Some(ToolId::B2147ProtectivePoncho);
+    benched_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
     state.in_play_pokemon[defender][1] = Some(benched_with_poncho);
 
     // Set up defender's benched Pokémon WITHOUT Protective Poncho
@@ -105,7 +104,7 @@ fn test_protective_poncho_prevents_greninja_water_shuriken() {
     // Set up defender's benched Pokémon WITH Protective Poncho
     let mut benched_with_poncho =
         PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    benched_with_poncho.attached_tool = Some(ToolId::B2147ProtectivePoncho);
+    benched_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
     state.in_play_pokemon[defender][1] = Some(benched_with_poncho);
 
     state.move_generation_stack.clear();
@@ -170,7 +169,7 @@ fn test_protective_poncho_no_protection_when_active() {
     // Set up defender's ACTIVE Pokémon with Protective Poncho (should NOT protect in active)
     let mut active_with_poncho =
         PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    active_with_poncho.attached_tool = Some(ToolId::B2147ProtectivePoncho);
+    active_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
     state.in_play_pokemon[defender][0] = Some(active_with_poncho);
 
     // Add a bench Pokémon so game doesn't end if KO

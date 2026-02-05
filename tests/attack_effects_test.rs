@@ -4,7 +4,6 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    tool_ids::ToolId,
 };
 
 mod common;
@@ -127,7 +126,7 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     );
     // Attach Rocky Helmet
     let mut squirtle_with_tool = squirtle_played;
-    squirtle_with_tool.attached_tool = Some(ToolId::A2148RockyHelmet);
+    squirtle_with_tool.attached_tool = Some(get_card_by_enum(CardId::A2148RockyHelmet));
     state.in_play_pokemon[1][0] = Some(squirtle_with_tool);
 
     // Add 1 bench Pokémon for Player 1

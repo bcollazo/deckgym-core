@@ -1,12 +1,10 @@
-use crate::{card_ids::CardId, models::PlayedCard, tool_ids::ToolId};
+use crate::{card_ids::CardId, models::PlayedCard, tools::has_tool};
 
 /// Some cards counterattack either because of RockyHelmet or because of their own ability.
 pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
     let mut total_damage = 0;
-    if let Some(tool) = card.attached_tool {
-        if tool == ToolId::A2148RockyHelmet {
-            total_damage += 20;
-        }
+    if has_tool(card, CardId::A2148RockyHelmet) {
+        total_damage += 20;
     }
 
     // Some cards have it as an ability
@@ -30,10 +28,8 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
 /// Check if the defending Pokemon should poison the attacker when damaged.
 /// Returns true if the attacker should be poisoned.
 pub(crate) fn should_poison_attacker(card: &PlayedCard) -> bool {
-    if let Some(tool) = card.attached_tool {
-        if tool == ToolId::A3146PoisonBarb {
-            return true;
-        }
+    if has_tool(card, CardId::A3146PoisonBarb) {
+        return true;
     }
 
     // Some cards have it as an ability (Dragalge ex's Poison Point)

@@ -5,7 +5,7 @@ use crate::{
     models::{Card, TrainerType},
     move_generation::trainer_move_generation_implementation,
     state::State,
-    tool_ids::ToolId,
+    tools::is_tool_effect_implemented,
     AbilityId, AttackId,
 };
 use serde::{Deserialize, Serialize};
@@ -65,7 +65,7 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
         }
         Card::Trainer(trainer_card) => {
             if trainer_card.trainer_card_type == TrainerType::Tool
-                && ToolId::from_trainer_card(&trainer_card).is_none()
+                && !is_tool_effect_implemented(&trainer_card)
             {
                 return ImplementationStatus::MissingTool;
             }

@@ -5,9 +5,10 @@ use log::debug;
 
 use crate::{
     actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, SimpleAction},
+    card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
-    tool_ids::ToolId,
+    tools::{has_tool, tool_effects_equal},
     AbilityId, State,
 };
 
@@ -77,33 +78,28 @@ pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) 
     base_pokemon.card.can_evolve_into(evolution_card)
 }
 
-pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
-    match tool_id {
-        ToolId::A2147GiantCape => {
-            // Add +20 to remaining_hp and total_hp
-            let card = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Active Pokemon should be there");
-            card.remaining_hp += 20;
-            card.total_hp += 20;
-        }
-        ToolId::A3147LeafCape => {
-            // Add +30 to remaining_hp and total_hp (only for Grass pokemon)
-            let card = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Active Pokemon should be there");
-            card.remaining_hp += 30;
-            card.total_hp += 30;
-        }
-        // Many tools do nothing on attach
-        ToolId::A2148RockyHelmet
-        | ToolId::A3146PoisonBarb
-        | ToolId::A3a065ElectricalCord
-        | ToolId::A4a067InflatableBoat
-        | ToolId::A4b318ElectricalCord
-        | ToolId::A4b319ElectricalCord
-        | ToolId::B1219HeavyHelmet
-        | ToolId::B2147ProtectivePoncho => {}
+pub(crate) fn on_attach_tool(
+    state: &mut State,
+    actor: usize,
+    in_play_idx: usize,
+    tool_card: &TrainerCard,
+) {
+    if tool_effects_equal(tool_card, CardId::A2147GiantCape) {
+        // Add +20 to remaining_hp and total_hp
+        let card = state.in_play_pokemon[actor][in_play_idx]
+            .as_mut()
+            .expect("Active Pokemon should be there");
+        card.remaining_hp += 20;
+        card.total_hp += 20;
+        return;
+    }
+    if tool_effects_equal(tool_card, CardId::A3147LeafCape) {
+        // Add +30 to remaining_hp and total_hp (only for Grass pokemon)
+        let card = state.in_play_pokemon[actor][in_play_idx]
+            .as_mut()
+            .expect("Active Pokemon should be there");
+        card.remaining_hp += 30;
+        card.total_hp += 30;
     }
 }
 
@@ -276,6 +272,23 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         );
     }
 
+    // Discard Metal Core Barrier from the opponent's Pokémon at the end of this player's turn.
+    // ("discard it at the end of your opponent's turn" — the tool owner is the other player)
+    let tool_owner = (player_ending_turn + 1) % 2;
+    let barrier_indices: Vec<usize> = state.in_play_pokemon[tool_owner]
+        .iter()
+        .enumerate()
+        .filter(|(_, slot)| {
+            slot.as_ref()
+                .is_some_and(|p| has_tool(p, CardId::B2148MetalCoreBarrier))
+        })
+        .map(|(i, _)| i)
+        .collect();
+    for idx in barrier_indices {
+        debug!("Metal Core Barrier: Discarding at end of opponent's turn");
+        state.discard_tool(tool_owner, idx);
+    }
+
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)
     // Turn 1 is player 0's first turn, turn 2 is player 1's first turn
     if state.turn_count == 1 || state.turn_count == 2 {
@@ -334,15 +347,27 @@ fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Heavy Helmet");
-    if let Some(tool_id) = defending_pokemon.attached_tool {
-        if tool_id == ToolId::B1219HeavyHelmet {
-            if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
-                if pokemon_card.retreat_cost.len() >= 3 {
-                    debug!("Heavy Helmet: Reducing damage by 20");
-                    return 20;
-                }
+    if has_tool(defending_pokemon, CardId::B1219HeavyHelmet) {
+        if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
+            if pokemon_card.retreat_cost.len() >= 3 {
+                debug!("Heavy Helmet: Reducing damage by 20");
+                return 20;
             }
         }
+    }
+    0
+}
+
+fn get_metal_core_barrier_reduction(
+    state: &State,
+    (target_player, target_idx): (usize, usize),
+) -> u32 {
+    let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
+        .as_ref()
+        .expect("Defending Pokemon should be there when checking Metal Core Barrier");
+    if has_tool(defending_pokemon, CardId::B2148MetalCoreBarrier) {
+        debug!("Metal Core Barrier: Reducing damage by 50");
+        return 50;
     }
     0
 }
@@ -583,7 +608,7 @@ pub(crate) fn modify_damage(
     }
 
     // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
-    if target_idx != 0 && receiving_pokemon.attached_tool == Some(ToolId::B2147ProtectivePoncho) {
+    if target_idx != 0 && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho) {
         debug!("Protective Poncho: Preventing all damage to benched Pokémon");
         return 0;
     }
@@ -606,6 +631,8 @@ pub(crate) fn modify_damage(
     let intimidating_fang_reduction =
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
+    let metal_core_barrier_reduction =
+        get_metal_core_barrier_reduction(state, (target_player, target_idx));
     let ability_damage_reduction =
         get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
@@ -642,7 +669,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -650,6 +677,7 @@ pub(crate) fn modify_damage(
         reduced_card_effect_modifiers,
         reduced_turn_effect_modifiers,
         heavy_helmet_reduction,
+        metal_core_barrier_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
         type_boost_bonus
@@ -663,6 +691,7 @@ pub(crate) fn modify_damage(
             reduced_card_effect_modifiers
                 + reduced_turn_effect_modifiers
                 + heavy_helmet_reduction
+                + metal_core_barrier_reduction
                 + intimidating_fang_reduction
                 + ability_damage_reduction,
         )
@@ -785,12 +814,7 @@ pub(crate) fn on_knockout(
         .expect("Pokemon should be there if knocked out");
 
     // Handle Electrical Cord
-    if matches!(
-        knocked_out_pokemon.attached_tool,
-        Some(ToolId::A3a065ElectricalCord)
-            | Some(ToolId::A4b318ElectricalCord)
-            | Some(ToolId::A4b319ElectricalCord)
-    ) {
+    if has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord) {
         // Only triggers if knocked out in active spot from an active attack
         if knocked_out_idx != 0 || !is_from_active_attack {
             return;

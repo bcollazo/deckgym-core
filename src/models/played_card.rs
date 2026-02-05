@@ -6,7 +6,6 @@ use crate::{
     card_ids::CardId,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
-    tool_ids::ToolId,
     AbilityId, State,
 };
 
@@ -18,7 +17,7 @@ pub struct PlayedCard {
     pub remaining_hp: u32,
     pub total_hp: u32,
     pub attached_energy: Vec<EnergyType>,
-    pub attached_tool: Option<ToolId>,
+    pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
     pub ability_used: bool,
     pub poisoned: bool,
