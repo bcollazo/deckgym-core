@@ -1,3 +1,6 @@
+mod energy;
+mod played_card;
+
 use log::{debug, trace};
 use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
@@ -8,8 +11,10 @@ use crate::{
     actions::SimpleAction,
     deck::Deck,
     effects::TurnEffect,
-    models::{Card, EnergyType, PlayedCard},
+    models::{Card, EnergyType},
 };
+
+pub use played_card::{has_serperior_jungle_totem, PlayedCard};
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameOutcome {
@@ -312,31 +317,6 @@ impl State {
         self.turn_count <= 2
     }
 
-    /// Attaches energies from the discard pile to a Pokemon in play.
-    /// Removes the specified energies from discard_energies and attaches them to the Pokemon.
-    pub(crate) fn attach_energies_from_discard(
-        &mut self,
-        player: usize,
-        in_play_idx: usize,
-        energies: &[EnergyType],
-    ) {
-        // Remove energies from discard pile
-        for energy in energies {
-            let pos = self.discard_energies[player]
-                .iter()
-                .position(|e| e == energy)
-                .expect("Energy should be in discard pile");
-            self.discard_energies[player].remove(pos);
-        }
-
-        // Attach energies to Pokemon
-        self.in_play_pokemon[player][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there if attaching energy to it")
-            .attached_energy
-            .extend(energies.iter().cloned());
-    }
-
     /// Discards a Pokemon from play, moving it, its evolution chain, and its energies
     ///  to the discard pile.
     pub(crate) fn discard_from_play(&mut self, ko_receiver: usize, ko_pokemon_idx: usize) {
@@ -529,13 +509,13 @@ mod tests {
         let mut state = State::new(&deck_a, &deck_b);
 
         let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-        let mut played_bulbasaur = to_playable_card(&bulbasaur_card, false);
-
-        // Attach some energy to test energy discard
-        played_bulbasaur.attach_energy(&EnergyType::Grass, 2);
+        let played_bulbasaur = to_playable_card(&bulbasaur_card, false);
 
         // Place Bulbasaur in active slot for player 0
         state.in_play_pokemon[0][0] = Some(played_bulbasaur.clone());
+
+        // Attach some energy to test energy discard
+        state.attach_energy_from_zone(0, 0, EnergyType::Grass, 2, false);
 
         // Verify initial state
         assert!(state.in_play_pokemon[0][0].is_some());

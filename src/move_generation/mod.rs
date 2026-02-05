@@ -63,6 +63,9 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
             .enumerate()
             .for_each(|(i, x)| {
                 if x.is_some() {
+                    if !state.can_attach_energy_from_zone(i) {
+                        return;
+                    }
                     actions.push(SimpleAction::Attach {
                         attachments: vec![(1, energy, i)],
                         is_turn_energy: true,

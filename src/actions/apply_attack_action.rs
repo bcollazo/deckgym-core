@@ -1033,9 +1033,8 @@ fn self_charge_active_from_energies(
     energies: Vec<EnergyType>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
         for energy in &energies {
-            active.attach_energy(energy, 1);
+            state.attach_energy_from_zone(action.actor, 0, *energy, 1, false);
         }
     })
 }
@@ -2320,9 +2319,8 @@ mod test {
         let celebi = get_card_by_enum(CardId::A1a003CelebiEx);
         state.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
 
-        let active = state.get_active_mut(0);
-        active.attached_energy.push(EnergyType::Grass);
-        active.attached_energy.push(EnergyType::Fire);
+        state.attach_energy_from_zone(0, 0, EnergyType::Grass, 1, false);
+        state.attach_energy_from_zone(0, 0, EnergyType::Fire, 1, false);
 
         let (probabilities, _mutations) = celebi_powerful_bloom(&state);
 

@@ -103,54 +103,6 @@ pub(crate) fn on_attach_tool(
     }
 }
 
-/// Called when energy is attached to a Pokémon
-pub(crate) fn on_attach_energy(
-    state: &mut State,
-    actor: usize,
-    in_play_idx: usize,
-    energy_type: EnergyType,
-    is_turn_energy: bool,
-) {
-    let pokemon = state.in_play_pokemon[actor][in_play_idx]
-        .as_ref()
-        .expect("Pokemon should be there if attaching energy to it");
-
-    // Check for Darkrai ex's Nightmare Aura ability
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
-        if ability_id == AbilityId::A2110DarkraiExNightmareAura
-            && energy_type == EnergyType::Darkness
-            && is_turn_energy
-        {
-            // Deal 20 damage to opponent's active Pokémon
-            debug!("Darkrai ex's Nightmare Aura: Dealing 20 damage to opponent's active Pokemon");
-            let opponent = (actor + 1) % 2;
-            if let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_mut() {
-                opponent_active.apply_damage(20);
-            }
-        }
-
-        // Check for Komala's Comatose ability
-        if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 {
-            // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
-            debug!("Komala's Comatose: Putting Komala to sleep");
-            let komala = state.get_active_mut(actor);
-            komala.asleep = true;
-        }
-
-        // Check for Cresselia ex's Lunar Plumage ability
-        if ability_id == AbilityId::PA037CresseliaExLunarPlumage
-            && energy_type == EnergyType::Psychic
-        {
-            // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
-            debug!("Cresselia ex's Lunar Plumage: Healing 20 damage");
-            let pokemon = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Pokemon should be there if attaching energy to it");
-            pokemon.heal(20);
-        }
-    }
-}
-
 /// Called when a Pokémon evolves
 pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
     if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
@@ -309,10 +261,13 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         for in_play_idx in zeraora_indices {
             // At the end of your first turn, take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
             debug!("Zeraora's Thunderclap Flash: Attaching 1 Lightning Energy");
-            let zeraora = state.in_play_pokemon[player_ending_turn][in_play_idx]
-                .as_mut()
-                .expect("Zeraora should be there");
-            zeraora.attach_energy(&EnergyType::Lightning, 1);
+            state.attach_energy_from_zone(
+                player_ending_turn,
+                in_play_idx,
+                EnergyType::Lightning,
+                1,
+                false,
+            );
         }
     }
 }

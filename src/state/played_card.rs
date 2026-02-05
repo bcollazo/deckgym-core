@@ -2,12 +2,13 @@ use core::fmt;
 use log::debug;
 use serde::{Deserialize, Serialize};
 
+use super::State;
 use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
-    AbilityId, State,
+    AbilityId,
 };
 
 /// This represents a card in the mat. Has a pointer to the card
@@ -142,11 +143,6 @@ impl PlayedCard {
 
     pub(crate) fn heal(&mut self, amount: u32) {
         self.remaining_hp = (self.remaining_hp + amount).min(self.get_effective_total_hp());
-    }
-
-    pub(crate) fn attach_energy(&mut self, energy: &EnergyType, amount: u8) {
-        self.attached_energy
-            .extend(std::iter::repeat_n(*energy, amount as usize));
     }
 
     pub(crate) fn apply_damage(&mut self, damage: u32) {
@@ -330,7 +326,7 @@ impl fmt::Debug for PlayedCard {
     }
 }
 
-pub fn has_serperior_jungle_totem(state: &crate::state::State, player: usize) -> bool {
+pub fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
     state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
         AbilityId::from_pokemon_id(&pokemon.get_id()[..])
             .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)

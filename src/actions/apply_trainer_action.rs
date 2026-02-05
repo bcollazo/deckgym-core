@@ -498,10 +498,7 @@ fn attach_energy_to_all_matching_pokemon(
             "Fantina: Attaching {} Energy to Pokemon at position {}",
             energy_type, in_play_idx
         );
-        let pokemon = state.in_play_pokemon[player][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
-        pokemon.attach_energy(&energy_type, 1);
+        state.attach_energy_from_zone(player, in_play_idx, energy_type, 1, false);
     }
 }
 
@@ -748,9 +745,7 @@ fn flame_patch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state.discard_energies[player].remove(fire_idx);
 
         // Attach it to the active Pokemon
-        if let Some(active_pokemon) = state.in_play_pokemon[player][0].as_mut() {
-            active_pokemon.attached_energy.push(EnergyType::Fire);
-        }
+        state.attach_energy_from_discard(player, 0, &[EnergyType::Fire]);
     }
 }
 

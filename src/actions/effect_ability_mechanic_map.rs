@@ -15,7 +15,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("As long as this Pokémon is in the Active Spot, attacks used by your opponent's Active Pokémon do -20 damage.", todo_implementation);
         // map.insert("As long as this Pokémon is in the Active Spot, it can evolve during your first turn or the turn you play it.", todo_implementation);
         // map.insert("As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.", todo_implementation);
-        // map.insert("As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon.", todo_implementation);
+        map.insert(
+            "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon.",
+            AbilityMechanic::ElectromagneticWall,
+        );
         // map.insert("As long as this Pokémon is in the Active Spot, your opponent can't use any Supporter cards from their hand.", todo_implementation);
         // map.insert("As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("As long as this Pokémon is on your Bench, prevent all damage done to this Pokémon by attacks.", todo_implementation);

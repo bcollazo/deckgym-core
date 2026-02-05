@@ -8,4 +8,5 @@ pub enum AbilityMechanic {
     ReduceDamageFromAttacks { amount: u32 },
     StartTurnRandomPokemonToHand { energy_type: EnergyType },
     PreventFirstAttack,
+    ElectromagneticWall,
 }

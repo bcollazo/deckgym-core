@@ -290,7 +290,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 1,
         },
     );
-    // map.insert("During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.",
+        Mechanic::DamageAndTurnEffect {
+            effect: TurnEffect::NoEnergyFromZoneToActive,
+            duration: 1,
+        },
+    );
     // map.insert("During your opponent's next turn, this Pokémon takes +30 damage from attacks.", todo_implementation);
     map.insert(
         "During your opponent's next turn, this Pokémon takes -20 damage from attacks.",

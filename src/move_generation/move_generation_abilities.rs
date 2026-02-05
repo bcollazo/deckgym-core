@@ -124,6 +124,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::PreventFirstAttack => false,
+        AbilityMechanic::ElectromagneticWall => false,
     }
 }
 

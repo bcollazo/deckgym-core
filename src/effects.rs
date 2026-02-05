@@ -20,6 +20,7 @@ pub enum CardEffect {
 pub enum TurnEffect {
     NoSupportCards,
     NoItemCards,
+    NoEnergyFromZoneToActive,
     ReducedRetreatCost {
         amount: u8,
     },

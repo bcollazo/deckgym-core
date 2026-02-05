@@ -143,6 +143,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::PreventFirstAttack => {
             panic!("PreventFirstAttack is a passive ability")
         }
+        AbilityMechanic::ElectromagneticWall => {
+            panic!("ElectromagneticWall is a passive ability")
+        }
     }
 }
 
@@ -222,8 +225,7 @@ fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
 fn gardevoir_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, you may attach a Psychic Energy to your Active Pokémon.
     debug!("Gardevoir's ability: Attaching Psychic Energy to active Pokemon");
-    let active = state.get_active_mut(action.actor);
-    active.attach_energy(&EnergyType::Psychic, 1);
+    state.attach_energy_from_zone(action.actor, 0, EnergyType::Psychic, 1, false);
 }
 
 fn rising_road(index: usize) -> Mutation {
@@ -294,10 +296,7 @@ fn charge_magneton(in_play_idx: usize) -> Mutation {
     Box::new(move |_, state, action| {
         // Once during your turn, you may take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
         debug!("Magneton's Volt Charge: Attaching 1 Lightning Energy to Magneton");
-        let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
-        pokemon.attach_energy(&EnergyType::Lightning, 1);
+        state.attach_energy_from_zone(action.actor, in_play_idx, EnergyType::Lightning, 1, false);
     })
 }
 
@@ -305,15 +304,15 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
     Box::new(move |_, state, action| {
         // Once during your turn, you may take a Psychic Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.
         debug!("Giratina ex's ability: Attaching 1 Psychic Energy and ending turn");
-        let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
-        pokemon.attach_energy(&EnergyType::Psychic, 1);
+        let attached =
+            state.attach_energy_from_zone(action.actor, in_play_idx, EnergyType::Psychic, 1, false);
 
         // End the turn after using this ability
-        state
-            .move_generation_stack
-            .push((action.actor, vec![SimpleAction::EndTurn]));
+        if attached {
+            state
+                .move_generation_stack
+                .push((action.actor, vec![SimpleAction::EndTurn]));
+        }
     })
 }
 
@@ -340,19 +339,24 @@ fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
         debug!(
             "Hydreigon's Roar in Unison: Attaching 2 Darkness Energy and dealing 30 damage to self"
         );
-        let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
-        pokemon.attach_energy(&EnergyType::Darkness, 2);
+        let attached = state.attach_energy_from_zone(
+            action.actor,
+            in_play_idx,
+            EnergyType::Darkness,
+            2,
+            false,
+        );
 
         // Use handle_damage to properly trigger KO checks
-        handle_damage(
-            state,
-            (action.actor, in_play_idx),
-            &[(30, action.actor, in_play_idx)],
-            false,
-            None,
-        );
+        if attached {
+            handle_damage(
+                state,
+                (action.actor, in_play_idx),
+                &[(30, action.actor, in_play_idx)],
+                false,
+                None,
+            );
+        }
     })
 }
 
@@ -388,10 +392,7 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
     state.discard_energies[action.actor].swap_remove(fire_position);
 
     // Attach the Fire Energy to Flareon EX
-    let flareon = state.in_play_pokemon[action.actor][in_play_idx]
-        .as_mut()
-        .expect("Flareon ex should be there");
-    flareon.attach_energy(&EnergyType::Fire, 1);
+    state.attach_energy_from_discard(action.actor, in_play_idx, &[EnergyType::Fire]);
 
     // Deal 20 damage to Flareon EX using handle_damage
     handle_damage(

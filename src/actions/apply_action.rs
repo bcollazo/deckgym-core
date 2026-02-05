@@ -8,10 +8,7 @@ use crate::{
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{apply_common_mutation, Mutation},
     },
-    hooks::{
-        get_retreat_cost, on_attach_energy, on_attach_tool, on_evolve, on_play_to_bench,
-        to_playable_card,
-    },
+    hooks::{get_retreat_cost, on_attach_tool, on_evolve, on_play_to_bench, to_playable_card},
     models::{Card, EnergyType},
     state::State,
 };
@@ -189,18 +186,7 @@ fn apply_attach_energy(
     is_turn_energy: bool,
 ) {
     for (amount, energy, in_play_idx) in attachments {
-        state.in_play_pokemon[actor][*in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there if attaching energy to it")
-            .attached_energy
-            .extend(std::iter::repeat_n(*energy, *amount as usize));
-        // Call hook for each energy attached
-        for _ in 0..*amount {
-            on_attach_energy(state, actor, *in_play_idx, *energy, is_turn_energy);
-        }
-    }
-    if is_turn_energy {
-        state.current_energy = None;
+        state.attach_energy_from_zone(actor, *in_play_idx, *energy, *amount, is_turn_energy);
     }
 }
 
@@ -574,7 +560,7 @@ fn forecast_attach_from_discard(
         return (
             vec![1.0],
             vec![Box::new(move |_rng, state, action| {
-                state.attach_energies_from_discard(action.actor, in_play_idx, &[energy]);
+                state.attach_energy_from_discard(action.actor, in_play_idx, &[energy]);
                 debug!(
                     "Lusamine: Attached {:?} from discard to Pokemon at index {}",
                     energy, in_play_idx
@@ -593,7 +579,7 @@ fn forecast_attach_from_discard(
         let probability = count as f64 / total_combinations as f64;
         probabilities.push(probability);
         mutations.push(Box::new(move |_rng, state, action| {
-            state.attach_energies_from_discard(action.actor, in_play_idx, &combo);
+            state.attach_energy_from_discard(action.actor, in_play_idx, &combo);
             debug!(
                 "Lusamine: Attached {:?} from discard to Pokemon at index {}",
                 combo, in_play_idx
