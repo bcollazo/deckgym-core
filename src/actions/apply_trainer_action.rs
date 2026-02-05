@@ -149,6 +149,7 @@ pub fn forecast_trainer_action(
             quick_grow_extract_effect(acting_player, state)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
+        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -204,6 +205,38 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
+    let probabilities = vec![0.5, 0.5];
+    let mut outcomes: Mutations = vec![];
+
+    // Heads: heal 20 + return card from discard to hand
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.heal(20);
+        }
+        // Card was already discarded by apply_common_mutation, move it back to hand
+        if let SimpleAction::Play { trainer_card } = &action.action {
+            let card = Card::Trainer(trainer_card.clone());
+            if let Some(pos) = state.discard_piles[action.actor]
+                .iter()
+                .position(|c| *c == card)
+            {
+                state.discard_piles[action.actor].remove(pos);
+                state.hands[action.actor].push(card);
+            }
+        }
+    }));
+
+    // Tails: heal 20 only (card stays in discard via apply_common_mutation)
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.heal(20);
+        }
+    }));
+
+    (probabilities, outcomes)
 }
 
 // Queues up the decision of healing an in_play pokemon that matches energy (if None, then any)

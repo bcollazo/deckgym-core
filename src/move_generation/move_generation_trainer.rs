@@ -167,6 +167,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b313OldAmber
         | CardId::B1214PlumeFossil
         | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
+        CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
         _ => None,
     }
 }
@@ -219,6 +220,15 @@ fn can_play_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
     } else {
         cannot_play_trainer()
     }
+}
+
+fn can_play_lucky_ice_pop(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if let Some(active) = state.maybe_get_active(state.current_player) {
+        if active.is_damaged() {
+            return can_play_trainer(state, trainer_card);
+        }
+    }
+    cannot_play_trainer()
 }
 
 /// Check if Erika can be played (requires at least 1 damaged Grass pokemon in play)
