@@ -152,7 +152,7 @@ pub fn ability_mechanic_from_effect(effect: &str) -> Option<&'static AbilityMech
 
 pub fn get_ability_mechanic(card: &Card) -> Option<&'static AbilityMechanic> {
     let Card::Pokemon(pokemon) = card else {
-        panic!("Card is not a Pokemon");
+        return None;
     };
 
     if let Some(ability) = &pokemon.ability {
