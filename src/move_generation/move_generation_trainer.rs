@@ -1,7 +1,9 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
+    card_logic::{
+        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+    },
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
@@ -107,6 +109,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
+        CardId::A3149Ilima | CardId::A3191Ilima => can_play_ilima(state, trainer_card),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             can_play_lyra(state, trainer_card)
         }
@@ -215,6 +218,15 @@ fn can_play_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
         .filter(|(_, x)| x.is_damaged())
         .count();
     if damaged_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Ilima can be played (requires a damaged Colorless Pokemon in play)
+fn can_play_ilima(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if !ilima_targets(state, state.current_player).is_empty() {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

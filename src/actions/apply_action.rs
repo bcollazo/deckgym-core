@@ -57,6 +57,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
+        | SimpleAction::ReturnPokemonToHand { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -173,6 +174,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::DiscardFossil { in_play_idx } => {
             apply_discard_fossil(action.actor, state, *in_play_idx)
         }
+        SimpleAction::ReturnPokemonToHand { in_play_idx } => {
+            apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
+        }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
@@ -259,6 +263,20 @@ fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: us
     state.discard_from_play(acting_player, in_play_idx);
 
     // If discarding from active spot, trigger promotion or declare winner
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(acting_player);
+    }
+}
+
+fn apply_return_pokemon_to_hand(acting_player: usize, state: &mut State, in_play_idx: usize) {
+    let played_card = state.in_play_pokemon[acting_player][in_play_idx]
+        .take()
+        .expect("Pokemon should be there if returning to hand");
+    let mut cards_to_collect = played_card.cards_behind.clone();
+    cards_to_collect.push(played_card.card.clone());
+    state.hands[acting_player].extend(cards_to_collect);
+
+    // If returning the active, trigger promotion or declare winner.
     if in_play_idx == 0 {
         state.trigger_promotion_or_declare_winner(acting_player);
     }

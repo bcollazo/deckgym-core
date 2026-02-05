@@ -13,7 +13,9 @@ use crate::{
         },
     },
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
+    card_logic::{
+        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+    },
     combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
@@ -111,6 +113,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => doutcome(lusamine_effect),
+        CardId::A3149Ilima | CardId::A3191Ilima => doutcome(ilima_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             doutcome(lyra_effect)
         }
@@ -530,6 +533,18 @@ fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
     // if no bench pokemon, finish game as a loss
     state.trigger_promotion_or_declare_winner(action.actor);
+}
+
+fn ilima_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Put 1 of your [C] Pokemon that has damage on it into your hand.
+    let choices = ilima_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| SimpleAction::ReturnPokemonToHand { in_play_idx })
+        .collect::<Vec<_>>();
+
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
+    }
 }
 
 // TODO: Problem. With doing 1.0, we are basically giving bots the ability to see the cards in deck.

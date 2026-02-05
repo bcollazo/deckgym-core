@@ -112,6 +112,10 @@ pub enum SimpleAction {
     DiscardFossil {
         in_play_idx: usize,
     },
+    /// Return a Pokemon in play to your hand (e.g., Ilima).
+    ReturnPokemonToHand {
+        in_play_idx: usize,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -232,6 +236,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardFossil { in_play_idx } => {
                 write!(f, "DiscardFossil({in_play_idx})")
+            }
+            SimpleAction::ReturnPokemonToHand { in_play_idx } => {
+                write!(f, "ReturnPokemonToHand({in_play_idx})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }
