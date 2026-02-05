@@ -2,8 +2,7 @@ use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    database::get_card_by_enum,
-    models::{EnergyType, PlayedCard},
+    models::{EnergyType, PlayedCard, StatusCondition},
 };
 
 mod common;
@@ -15,29 +14,14 @@ fn test_confused_pokemon_can_attack() {
     let mut state = game.get_state_clone();
 
     // Set up Player 0 with a confused Pokémon
-    let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(
-        charizard.clone(),
-        150,
-        150,
-        vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
-        false,
-        vec![],
+    state.in_play_pokemon[0][0] = Some(
+        PlayedCard::from_id(CardId::A1035Charizard)
+            .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])
+            .with_status(StatusCondition::Confused),
     );
-    // Make the Pokémon confused
-    charizard_played.confused = true;
-    state.in_play_pokemon[0][0] = Some(charizard_played);
 
     // Set up opponent with a basic Pokémon
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    state.in_play_pokemon[1][0] = Some(PlayedCard::new(
-        squirtle.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     state.turn_count = 3;
     state.current_player = 0;
@@ -67,38 +51,17 @@ fn test_confusion_cleared_on_retreat() {
     let mut state = game.get_state_clone();
 
     // Set up Player 0 with a confused Pokémon with enough energy to retreat
-    let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(
-        charizard.clone(),
-        150,
-        150,
-        vec![EnergyType::Fire, EnergyType::Fire], // 2 energy for retreat cost
-        false,
-        vec![],
+    state.in_play_pokemon[0][0] = Some(
+        PlayedCard::from_id(CardId::A1035Charizard)
+            .with_energy(vec![EnergyType::Fire, EnergyType::Fire])
+            .with_status(StatusCondition::Confused),
     );
-    charizard_played.confused = true;
-    state.in_play_pokemon[0][0] = Some(charizard_played);
 
     // Add a bench Pokémon to retreat to
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    state.in_play_pokemon[0][1] = Some(PlayedCard::new(
-        squirtle.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
+    state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     // Set up opponent
-    state.in_play_pokemon[1][0] = Some(PlayedCard::new(
-        squirtle.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     state.turn_count = 3;
     state.current_player = 0;
@@ -140,8 +103,7 @@ fn test_confusion_cleared_on_retreat() {
 /// Test that confusion field exists and can be set directly
 #[test]
 fn test_confusion_field_can_be_set() {
-    let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(charizard.clone(), 150, 150, vec![], false, vec![]);
+    let mut charizard_played = PlayedCard::from_id(CardId::A1035Charizard);
 
     // Initially not confused
     assert!(!charizard_played.confused);
@@ -156,12 +118,9 @@ fn test_confusion_field_can_be_set() {
 /// Test multiple status conditions including confusion
 #[test]
 fn test_multiple_status_conditions_with_confusion() {
-    let charizard = get_card_by_enum(CardId::A1035Charizard);
-    let mut charizard_played = PlayedCard::new(charizard.clone(), 150, 150, vec![], false, vec![]);
-
-    // Set multiple status conditions
-    charizard_played.confused = true;
-    charizard_played.poisoned = true;
+    let charizard_played = PlayedCard::from_id(CardId::A1035Charizard)
+        .with_status(StatusCondition::Confused)
+        .with_status(StatusCondition::Poisoned);
 
     assert!(charizard_played.confused);
     assert!(charizard_played.poisoned);
@@ -175,27 +134,13 @@ fn test_confused_attack_can_succeed() {
         let mut game = get_initialized_game(seed);
         let mut state = game.get_state_clone();
 
-        let charizard = get_card_by_enum(CardId::A1035Charizard);
-        let mut charizard_played = PlayedCard::new(
-            charizard.clone(),
-            150,
-            150,
-            vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
-            false,
-            vec![],
+        state.in_play_pokemon[0][0] = Some(
+            PlayedCard::from_id(CardId::A1035Charizard)
+                .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])
+                .with_status(StatusCondition::Confused),
         );
-        charizard_played.confused = true;
-        state.in_play_pokemon[0][0] = Some(charizard_played);
 
-        let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-        state.in_play_pokemon[1][0] = Some(PlayedCard::new(
-            squirtle.clone(),
-            70,
-            70,
-            vec![],
-            false,
-            vec![],
-        ));
+        state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
         state.turn_count = 3;
         state.current_player = 0;
@@ -233,12 +178,7 @@ fn test_confusing_attack_inflicts_confusion() {
     let mut game = get_initialized_game(42);
     let mut state = game.get_state_clone();
 
-    // Slowpoke has Confusion Wave attack that confuses opponent
-    // But let's use a simpler approach: manually verify the mechanics work
-    // by checking that a Pokémon can become confused
-
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    let mut squirtle_played = PlayedCard::new(squirtle.clone(), 70, 70, vec![], false, vec![]);
+    let mut squirtle_played = PlayedCard::from_id(CardId::A1053Squirtle);
 
     // Initially not confused
     assert!(!squirtle_played.confused);

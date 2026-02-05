@@ -2,8 +2,7 @@ use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    database::get_card_by_enum,
-    models::{Card, PlayedCard, TrainerCard},
+    models::{Card, PlayedCard, StatusCondition, TrainerCard},
 };
 
 mod common;
@@ -16,16 +15,8 @@ fn test_pokemon_center_lady_heals_30_damage() {
     let current_player = state.current_player;
 
     // Setup: Put a damaged Bulbasaur in active spot
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur = PlayedCard::new(
-        bulbasaur_card.clone(),
-        20, // remaining_hp (damaged, was 70)
-        70, // total_hp
-        vec![],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[current_player][0] = Some(bulbasaur);
+    state.in_play_pokemon[current_player][0] =
+        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20));
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -92,10 +83,8 @@ fn test_pokemon_center_lady_cures_poisoned() {
     let current_player = state.current_player;
 
     // Setup: Put a poisoned Bulbasaur in active spot
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur = PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur.poisoned = true;
-    state.in_play_pokemon[current_player][0] = Some(bulbasaur);
+    state.in_play_pokemon[current_player][0] =
+        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_status(StatusCondition::Poisoned));
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -161,19 +150,13 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     let current_player = state.current_player;
 
     // Setup: Put a damaged and poisoned Bulbasaur in active spot
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur = PlayedCard::new(
-        bulbasaur_card.clone(),
-        30, // remaining_hp (damaged, was 70)
-        70, // total_hp
-        vec![],
-        false,
-        vec![],
+    state.in_play_pokemon[current_player][0] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_hp(30)
+            .with_status(StatusCondition::Poisoned)
+            .with_status(StatusCondition::Paralyzed)
+            .with_status(StatusCondition::Asleep),
     );
-    bulbasaur.poisoned = true;
-    bulbasaur.paralyzed = true;
-    bulbasaur.asleep = true;
-    state.in_play_pokemon[current_player][0] = Some(bulbasaur);
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {

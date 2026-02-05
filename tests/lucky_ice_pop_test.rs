@@ -21,9 +21,8 @@ fn setup_damaged_active(seed: u64) -> (deckgym::Game<'static>, usize, TrainerCar
     let current_player = state.current_player;
 
     // Setup: Put a damaged Bulbasaur as active (70 max HP, 50 remaining = 20 damage taken)
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur = PlayedCard::new(bulbasaur_card, 50, 70, vec![], false, vec![]);
-    state.in_play_pokemon[current_player][0] = Some(bulbasaur);
+    state.in_play_pokemon[current_player][0] =
+        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(20));
 
     // Add Lucky Ice Pop to hand
     let trainer_card = make_lucky_ice_pop_trainer_card();

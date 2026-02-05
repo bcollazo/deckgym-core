@@ -2,7 +2,6 @@ use common::get_initialized_game;
 use deckgym::{
     actions::SimpleAction,
     card_ids::CardId,
-    database::get_card_by_enum,
     generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
@@ -15,9 +14,6 @@ fn test_serperior_jungle_totem_ability() {
     // Bulbasaur's Vine Whip requires 1 Grass + 1 Colorless (2 total)
     // With Jungle Totem, 1 Grass energy should count as 2, making the attack usable
 
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
-
     // Initialize with basic decks
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
@@ -26,26 +22,14 @@ fn test_serperior_jungle_totem_ability() {
     let test_player = state.current_player;
 
     // Set up test_player with Bulbasaur in active position with only 1 Grass energy
-    let bulbasaur = PlayedCard::new(
-        bulbasaur_card.clone(),
-        70,                      // remaining_hp
-        70,                      // total_hp
-        vec![EnergyType::Grass], // Only 1 Grass energy (normally not enough for Vine Whip)
-        false,
-        vec![],
+    // and Serperior on the bench
+    state.set_board(
+        test_player,
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
+            PlayedCard::from_id(CardId::A1a006Serperior),
+        ],
     );
-    state.in_play_pokemon[test_player][0] = Some(bulbasaur);
-
-    // Set up Serperior on the bench
-    let serperior = PlayedCard::new(
-        serperior_card.clone(),
-        110,    // remaining_hp
-        110,    // total_hp
-        vec![], // No energy needed for ability
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[test_player][1] = Some(serperior);
 
     // Clear the move generation stack so we can test attack generation
     state.move_generation_stack.clear();

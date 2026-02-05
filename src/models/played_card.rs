@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     card_ids::CardId,
+    database::get_card_by_enum,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     AbilityId, State,
@@ -59,6 +60,55 @@ impl PlayedCard {
             effects: vec![],
             prevent_first_attack_damage_used: false,
         }
+    }
+
+    /// Create a fresh PlayedCard from a Card at full HP with no energy, tools, or status.
+    pub fn from_card(card: &Card) -> Self {
+        let total_hp = match card {
+            Card::Pokemon(pokemon_card) => pokemon_card.hp,
+            Card::Trainer(trainer_card) => {
+                if trainer_card.trainer_card_type == TrainerType::Fossil {
+                    40
+                } else {
+                    panic!(
+                        "Cannot create PlayedCard from non-Fossil Trainer: {:?}",
+                        trainer_card
+                    );
+                }
+            }
+        };
+        Self::new(card.clone(), total_hp, total_hp, vec![], false, vec![])
+    }
+
+    /// Create a fresh PlayedCard from a CardId at full HP with no energy, tools, or status.
+    pub fn from_id(card_id: CardId) -> Self {
+        let card = get_card_by_enum(card_id);
+        Self::from_card(&card)
+    }
+
+    pub fn with_energy(mut self, energy: Vec<EnergyType>) -> Self {
+        self.attached_energy = energy;
+        self
+    }
+
+    pub fn with_damage(mut self, damage: u32) -> Self {
+        self.remaining_hp = self.remaining_hp.saturating_sub(damage);
+        self
+    }
+
+    pub fn with_hp(mut self, remaining_hp: u32) -> Self {
+        self.remaining_hp = remaining_hp;
+        self
+    }
+
+    pub fn with_tool(mut self, tool: Card) -> Self {
+        self.attached_tool = Some(tool);
+        self
+    }
+
+    pub fn with_status(mut self, status: StatusCondition) -> Self {
+        self.apply_status_condition(status);
+        self
     }
 
     pub fn get_id(&self) -> String {

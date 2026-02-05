@@ -439,6 +439,14 @@ impl State {
     // These methods are public for integration tests but should be used carefully
     // =========================================================================
 
+    /// Set up multiple in-play pokemon for a player at once.
+    /// Index 0 = active, 1..3 = bench.
+    pub fn set_board(&mut self, player: usize, pokemon: Vec<PlayedCard>) {
+        for (i, card) in pokemon.into_iter().enumerate() {
+            self.in_play_pokemon[player][i] = Some(card);
+        }
+    }
+
     /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     /// Used for testing Marshadow's Revenge attack and similar mechanics.
     pub fn set_knocked_out_by_opponent_attack_last_turn(&mut self, value: bool) {

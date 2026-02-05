@@ -15,8 +15,6 @@ mod common;
 /// Test that Protective Poncho prevents damage to a benched Pokémon from an active attack
 #[test]
 fn test_protective_poncho_prevents_bench_damage_from_attack() {
-    let opponent_card = get_card_by_enum(CardId::A1001Bulbasaur);
-
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -24,30 +22,18 @@ fn test_protective_poncho_prevents_bench_damage_from_attack() {
     let defender = (attacker + 1) % 2;
 
     // Set up attacker's active Pokémon with energy
-    let attacker_pokemon = PlayedCard::new(
-        get_card_by_enum(CardId::A1001Bulbasaur),
-        70,
-        70,
-        vec![EnergyType::Grass, EnergyType::Colorless],
-        false,
-        vec![],
+    state.in_play_pokemon[attacker][0] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
     );
-    state.in_play_pokemon[attacker][0] = Some(attacker_pokemon);
 
-    // Set up defender's active Pokémon
-    let defender_active = PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[defender][0] = Some(defender_active);
-
-    // Set up defender's benched Pokémon WITH Protective Poncho
-    let mut benched_with_poncho =
-        PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
-    benched_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
-    state.in_play_pokemon[defender][1] = Some(benched_with_poncho);
-
-    // Set up defender's benched Pokémon WITHOUT Protective Poncho
-    let benched_without_poncho =
-        PlayedCard::new(opponent_card.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[defender][2] = Some(benched_without_poncho);
+    // Set up defender's board: active + benched with poncho + benched without poncho
+    state.in_play_pokemon[defender][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+    state.in_play_pokemon[defender][1] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_tool(get_card_by_enum(CardId::B2147ProtectivePoncho)),
+    );
+    state.in_play_pokemon[defender][2] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     state.move_generation_stack.clear();
     game.set_state(state);
@@ -80,32 +66,27 @@ fn test_protective_poncho_prevents_bench_damage_from_attack() {
 /// Test that Protective Poncho prevents damage from Greninja's Water Shuriken ability
 #[test]
 fn test_protective_poncho_prevents_greninja_water_shuriken() {
-    let greninja_card = get_card_by_enum(CardId::A1089Greninja);
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
     let greninja_player = state.current_player;
     let defender = (greninja_player + 1) % 2;
 
-    // Set up Greninja on the bench (position 1) — ability can be used from bench or active
-    let greninja = PlayedCard::new(greninja_card.clone(), 120, 120, vec![], false, vec![]);
-    state.in_play_pokemon[greninja_player][1] = Some(greninja);
+    // Set up Greninja player's board
+    state.set_board(
+        greninja_player,
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1089Greninja),
+        ],
+    );
 
-    // Set up a basic active for the Greninja player
-    let active = PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[greninja_player][0] = Some(active);
-
-    // Set up defender's active Pokémon
-    let defender_active = PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[defender][0] = Some(defender_active);
-
-    // Set up defender's benched Pokémon WITH Protective Poncho
-    let mut benched_with_poncho =
-        PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    benched_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
-    state.in_play_pokemon[defender][1] = Some(benched_with_poncho);
+    // Set up defender's board: active + benched with poncho
+    state.in_play_pokemon[defender][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+    state.in_play_pokemon[defender][1] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_tool(get_card_by_enum(CardId::B2147ProtectivePoncho)),
+    );
 
     state.move_generation_stack.clear();
     game.set_state(state);
@@ -147,8 +128,6 @@ fn test_protective_poncho_prevents_greninja_water_shuriken() {
 /// Test that Protective Poncho does NOT prevent damage when the Pokémon is in the active spot
 #[test]
 fn test_protective_poncho_no_protection_when_active() {
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -156,25 +135,19 @@ fn test_protective_poncho_no_protection_when_active() {
     let defender = (attacker + 1) % 2;
 
     // Set up attacker's active Pokémon with energy for Vine Whip (40 damage)
-    let attacker_pokemon = PlayedCard::new(
-        bulbasaur_card.clone(),
-        70,
-        70,
-        vec![EnergyType::Grass, EnergyType::Colorless],
-        false,
-        vec![],
+    state.in_play_pokemon[attacker][0] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
     );
-    state.in_play_pokemon[attacker][0] = Some(attacker_pokemon);
 
     // Set up defender's ACTIVE Pokémon with Protective Poncho (should NOT protect in active)
-    let mut active_with_poncho =
-        PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    active_with_poncho.attached_tool = Some(get_card_by_enum(CardId::B2147ProtectivePoncho));
-    state.in_play_pokemon[defender][0] = Some(active_with_poncho);
+    state.in_play_pokemon[defender][0] = Some(
+        PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_tool(get_card_by_enum(CardId::B2147ProtectivePoncho)),
+    );
 
     // Add a bench Pokémon so game doesn't end if KO
-    let bench = PlayedCard::new(bulbasaur_card.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[defender][1] = Some(bench);
+    state.in_play_pokemon[defender][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     state.move_generation_stack.clear();
     game.set_state(state);

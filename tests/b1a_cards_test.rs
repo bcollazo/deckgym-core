@@ -18,25 +18,16 @@ fn test_magnezone_mirror_shot() {
     state.current_player = 0;
 
     // Set up Magnezone as attacker
-    let magnezone = get_card_by_enum(CardId::B1a026Magnezone);
-    let magnezone_played = PlayedCard::new(
-        magnezone.clone(),
-        120,
-        120,
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::B1a026Magnezone).with_energy(
         vec![
             EnergyType::Lightning,
             EnergyType::Colorless,
             EnergyType::Colorless,
         ],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(magnezone_played);
+    ));
 
     // Set up opponent active
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     game.set_state(state);
 
@@ -68,27 +59,17 @@ fn test_xerneas_geoburst_full_hp() {
     state.current_player = 0;
 
     // Set up Xerneas at full HP
-    let xerneas = get_card_by_enum(CardId::B1a037Xerneas);
-    let xerneas_played = PlayedCard::new(
-        xerneas.clone(),
-        120,
-        120,
-        vec![
+    state.in_play_pokemon[0][0] =
+        Some(PlayedCard::from_id(CardId::B1a037Xerneas).with_energy(vec![
             EnergyType::Psychic,
             EnergyType::Psychic,
             EnergyType::Colorless,
-        ],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(xerneas_played);
+        ]));
 
     // Set up opponent with higher HP to survive the attack
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 150;
-    bulbasaur_played.remaining_hp = 150;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
+    // Fix total_hp too since from_id sets it to 70
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     game.set_state(state);
 
@@ -116,27 +97,19 @@ fn test_xerneas_geoburst_damaged() {
     state.current_player = 0;
 
     // Set up Xerneas with 50 damage (70 HP remaining out of 120)
-    let xerneas = get_card_by_enum(CardId::B1a037Xerneas);
-    let xerneas_played = PlayedCard::new(
-        xerneas.clone(),
-        70, // 50 damage taken
-        120,
-        vec![
-            EnergyType::Psychic,
-            EnergyType::Psychic,
-            EnergyType::Colorless,
-        ],
-        false,
-        vec![],
+    state.in_play_pokemon[0][0] = Some(
+        PlayedCard::from_id(CardId::B1a037Xerneas)
+            .with_damage(50)
+            .with_energy(vec![
+                EnergyType::Psychic,
+                EnergyType::Psychic,
+                EnergyType::Colorless,
+            ]),
     );
-    state.in_play_pokemon[0][0] = Some(xerneas_played);
 
     // Set up opponent with 100 HP
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 100;
-    bulbasaur_played.remaining_hp = 100;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100));
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
 
     game.set_state(state);
 
@@ -166,39 +139,24 @@ fn test_porygonz_cyberjack() {
     state.current_player = 0;
 
     // Set up Porygon-Z
-    let porygonz = get_card_by_enum(CardId::B1a058PorygonZ);
-    let porygonz_played = PlayedCard::new(
-        porygonz.clone(),
-        110,
-        110,
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::B1a058PorygonZ).with_energy(
         vec![
             EnergyType::Colorless,
             EnergyType::Colorless,
             EnergyType::Colorless,
         ],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(porygonz_played);
+    ));
 
-    // Set up opponent
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 150;
-    bulbasaur_played.remaining_hp = 150;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    // Set up opponent with 150 HP
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     // Put 4 Trainer cards in opponent's deck
-    let pokeball = get_card_by_enum(CardId::A2b111PokeBall);
-    let professor = get_card_by_enum(CardId::A4b373ProfessorsResearch);
-    let giovanni = get_card_by_enum(CardId::A1223Giovanni);
-    let potion = get_card_by_enum(CardId::PA001Potion);
-
     state.decks[1].cards = vec![
-        pokeball.clone(),
-        professor.clone(),
-        giovanni.clone(),
-        potion.clone(),
+        get_card_by_enum(CardId::A2b111PokeBall),
+        get_card_by_enum(CardId::A4b373ProfessorsResearch),
+        get_card_by_enum(CardId::A1223Giovanni),
+        get_card_by_enum(CardId::PA001Potion),
     ];
 
     game.set_state(state);
@@ -229,21 +187,11 @@ fn test_sunflora_quick_grow_beam_without_extract() {
     state.current_player = 0;
 
     // Set up Sunflora
-    let sunflora = get_card_by_enum(CardId::B1a008Sunflora);
-    let sunflora_played = PlayedCard::new(
-        sunflora.clone(),
-        80,
-        80,
-        vec![EnergyType::Grass],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(sunflora_played);
+    state.in_play_pokemon[0][0] =
+        Some(PlayedCard::from_id(CardId::B1a008Sunflora).with_energy(vec![EnergyType::Grass]));
 
     // Set up opponent
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     // No Quick-Grow Extract in discard pile
     state.discard_piles[0] = vec![];
@@ -274,25 +222,14 @@ fn test_sunflora_quick_grow_beam_with_extract() {
     state.current_player = 0;
 
     // Set up Sunflora
-    let sunflora = get_card_by_enum(CardId::B1a008Sunflora);
-    let sunflora_played = PlayedCard::new(
-        sunflora.clone(),
-        80,
-        80,
-        vec![EnergyType::Grass],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(sunflora_played);
+    state.in_play_pokemon[0][0] =
+        Some(PlayedCard::from_id(CardId::B1a008Sunflora).with_energy(vec![EnergyType::Grass]));
 
     // Set up opponent
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     // Put Quick-Grow Extract in discard pile
-    let extract = get_card_by_enum(CardId::B1a067QuickGrowExtract);
-    state.discard_piles[0] = vec![extract];
+    state.discard_piles[0] = vec![get_card_by_enum(CardId::B1a067QuickGrowExtract)];
 
     game.set_state(state);
 
@@ -321,22 +258,13 @@ fn test_coin_flip_to_block_attack_effect() {
     state.current_player = 0;
 
     // Set up attacker with CoinFlipToBlockAttack effect
-    let charmander = get_card_by_enum(CardId::A1033Charmander);
-    let mut charmander_played = PlayedCard::new(
-        charmander.clone(),
-        60,
-        60,
-        vec![EnergyType::Fire, EnergyType::Fire],
-        false,
-        vec![],
-    );
+    let mut charmander_played = PlayedCard::from_id(CardId::A1033Charmander)
+        .with_energy(vec![EnergyType::Fire, EnergyType::Fire]);
     charmander_played.add_effect(CardEffect::CoinFlipToBlockAttack, 1);
     state.in_play_pokemon[0][0] = Some(charmander_played);
 
     // Set up opponent
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     game.set_state(state);
 
@@ -365,11 +293,7 @@ fn test_blastoise_double_splash_with_extra_energy() {
     state.current_player = 0;
 
     // Set up Blastoise with 5 Water energies (3 required + 2 extra)
-    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
-    let blastoise_played = PlayedCard::new(
-        blastoise.clone(),
-        150,
-        150,
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::B1a019Blastoise).with_energy(
         vec![
             EnergyType::Water,
             EnergyType::Water,
@@ -377,22 +301,14 @@ fn test_blastoise_double_splash_with_extra_energy() {
             EnergyType::Water,
             EnergyType::Water,
         ],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(blastoise_played);
+    ));
 
     // Set up opponent active with high HP
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 150;
-    bulbasaur_played.remaining_hp = 150;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     // Set up opponent bench Pokemon
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    let squirtle_played = PlayedCard::new(squirtle.clone(), 50, 50, vec![], false, vec![]);
-    state.in_play_pokemon[1][1] = Some(squirtle_played);
+    state.in_play_pokemon[1][1] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     game.set_state(state);
 
@@ -437,11 +353,16 @@ fn test_blastoise_double_splash_with_extra_energy() {
         "Opponent active should have 60 HP remaining (150 - 90)"
     );
 
-    // Verify bench took 50 damage (50 - 50 = 0, KO'd)
+    // Verify bench took 50 damage (60 - 50 = 10 HP remaining)
     let opponent_bench = &state.in_play_pokemon[1][1];
     assert!(
-        opponent_bench.is_none(),
-        "Opponent bench Pokemon should be KO'd (50 - 50 = 0)"
+        opponent_bench.is_some(),
+        "Opponent bench Pokemon should still be alive (60 - 50 = 10)"
+    );
+    assert_eq!(
+        opponent_bench.as_ref().unwrap().remaining_hp,
+        10,
+        "Opponent bench Pokemon should have 10 HP remaining (60 - 50)"
     );
 }
 
@@ -454,28 +375,20 @@ fn test_blastoise_double_splash_without_extra_energy() {
     state.current_player = 0;
 
     // Set up Blastoise with exactly 3 energies (no extra Water)
-    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
-    let blastoise_played = PlayedCard::new(
-        blastoise.clone(),
-        150,
-        150,
-        vec![EnergyType::Water, EnergyType::Water, EnergyType::Fire],
-        false,
-        vec![],
+    state.in_play_pokemon[0][0] = Some(
+        PlayedCard::from_id(CardId::B1a019Blastoise).with_energy(vec![
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Fire,
+        ]),
     );
-    state.in_play_pokemon[0][0] = Some(blastoise_played);
 
-    // Set up opponent active
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 150;
-    bulbasaur_played.remaining_hp = 150;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    // Set up opponent active with 150 HP
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     // Set up opponent bench Pokemon
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    let squirtle_played = PlayedCard::new(squirtle.clone(), 50, 50, vec![], false, vec![]);
-    state.in_play_pokemon[1][1] = Some(squirtle_played);
+    state.in_play_pokemon[1][1] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     game.set_state(state);
 
@@ -515,8 +428,8 @@ fn test_blastoise_double_splash_without_extra_energy() {
     );
     assert_eq!(
         opponent_bench.as_ref().unwrap().remaining_hp,
-        50,
-        "Opponent bench should still have 50 HP (no bench damage without extra energy)"
+        60,
+        "Opponent bench should still have 60 HP (no bench damage without extra energy)"
     );
 }
 
@@ -529,11 +442,7 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
     state.current_player = 0;
 
     // Set up Blastoise with 5 Water energies (3 required + 2 extra)
-    let blastoise = get_card_by_enum(CardId::B1a019Blastoise);
-    let blastoise_played = PlayedCard::new(
-        blastoise.clone(),
-        150,
-        150,
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::B1a019Blastoise).with_energy(
         vec![
             EnergyType::Water,
             EnergyType::Water,
@@ -541,17 +450,11 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
             EnergyType::Water,
             EnergyType::Water,
         ],
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[0][0] = Some(blastoise_played);
+    ));
 
-    // Set up opponent active ONLY (no bench)
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let mut bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    bulbasaur_played.total_hp = 150;
-    bulbasaur_played.remaining_hp = 150;
-    state.in_play_pokemon[1][0] = Some(bulbasaur_played);
+    // Set up opponent active ONLY (no bench) with 150 HP
+    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
     // No bench Pokemon!
 
     game.set_state(state);
@@ -594,33 +497,19 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
     state.current_player = 0;
 
     // Set up Mega Steelix ex as player 0's active (Fire weakness: +20)
-    let mega_steelix = get_card_by_enum(CardId::B1a052MegaSteelixEx);
-    let mega_steelix_played = PlayedCard::new(
-        mega_steelix.clone(),
-        220,
-        220,
-        vec![
+    state.in_play_pokemon[0][0] = Some(
+        PlayedCard::from_id(CardId::B1a052MegaSteelixEx).with_energy(vec![
             EnergyType::Metal,
             EnergyType::Metal,
             EnergyType::Metal,
             EnergyType::Colorless,
-        ],
-        false,
-        vec![],
+        ]),
     );
-    state.in_play_pokemon[0][0] = Some(mega_steelix_played);
 
     // Set up opponent (player 1) with Charmander (Fire type attacker)
     // Give it extra HP to survive Mega Steelix's 120 damage attack
-    let charmander = get_card_by_enum(CardId::A1033Charmander);
-    let mut charmander_played = PlayedCard::new(
-        charmander.clone(),
-        60,
-        60,
-        vec![EnergyType::Fire, EnergyType::Fire],
-        false,
-        vec![],
-    );
+    let mut charmander_played = PlayedCard::from_id(CardId::A1033Charmander)
+        .with_energy(vec![EnergyType::Fire, EnergyType::Fire]);
     charmander_played.total_hp = 150;
     charmander_played.remaining_hp = 150;
     state.in_play_pokemon[1][0] = Some(charmander_played);
@@ -689,17 +578,16 @@ fn test_quick_grow_extract_evolves_from_deck() {
     state.decks[0].cards.clear();
 
     // Set up Bulbasaur as active (Grass type, stage 0)
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let bulbasaur_played = PlayedCard::new(bulbasaur.clone(), 70, 70, vec![], false, vec![]);
-    state.in_play_pokemon[0][0] = Some(bulbasaur_played);
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     // Put exactly ONE Ivysaur (evolution of Bulbasaur, Grass type) in the deck
     let ivysaur = get_card_by_enum(CardId::A1002Ivysaur);
     state.decks[0].cards.push(ivysaur.clone());
 
     // Add some other cards to the deck so it's not empty
-    let oddish = get_card_by_enum(CardId::A1011Oddish);
-    state.decks[0].cards.push(oddish);
+    state.decks[0]
+        .cards
+        .push(get_card_by_enum(CardId::A1011Oddish));
 
     // Put Quick-Grow Extract in hand
     let extract = get_card_by_enum(CardId::B1a067QuickGrowExtract);
@@ -744,9 +632,7 @@ fn test_charmeleon_ignition() {
         let mut state = game.get_state_clone();
         state.current_player = 0;
 
-        let charmander = get_card_by_enum(CardId::A1033Charmander);
-        let charmander_played = PlayedCard::new(charmander.clone(), 60, 60, vec![], false, vec![]);
-        state.in_play_pokemon[0][0] = Some(charmander_played);
+        state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::A1033Charmander));
 
         let charmeleon = get_card_by_enum(CardId::B1a012Charmeleon);
         state.hands[0].push(charmeleon.clone());

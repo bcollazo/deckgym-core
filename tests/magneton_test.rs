@@ -2,7 +2,6 @@ use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    database::get_card_by_enum,
     generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
@@ -12,21 +11,12 @@ mod common;
 #[test]
 fn test_magneton_volt_charge_attaches_lightning_energy() {
     // Arrange: Create a game with Magneton in play
-    let magneton_card = get_card_by_enum(CardId::A1098Magneton);
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     let current_player = state.current_player;
 
     // Setup: Put Magneton on the bench (index 1) for current player
-    let magneton = PlayedCard::new(
-        magneton_card.clone(),
-        100,    // remaining_hp
-        100,    // total_hp
-        vec![], // No energy initially
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[current_player][1] = Some(magneton);
+    state.in_play_pokemon[current_player][1] = Some(PlayedCard::from_id(CardId::A1098Magneton));
     game.set_state(state);
 
     // Verify initial energy state
@@ -68,21 +58,12 @@ fn test_magneton_volt_charge_attaches_lightning_energy() {
 #[test]
 fn test_magneton_volt_charge_can_only_be_used_once() {
     // Arrange: Create a game with Magneton in play
-    let magneton_card = get_card_by_enum(CardId::A1098Magneton);
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     let current_player = state.current_player;
 
     // Setup: Put Magneton in active spot (index 0) for current player
-    let magneton = PlayedCard::new(
-        magneton_card.clone(),
-        100,    // remaining_hp
-        100,    // total_hp
-        vec![], // No energy initially
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[current_player][0] = Some(magneton);
+    state.in_play_pokemon[current_player][0] = Some(PlayedCard::from_id(CardId::A1098Magneton));
     game.set_state(state);
 
     // Act: Use Magneton's Volt Charge ability first time
@@ -119,21 +100,12 @@ fn test_magneton_volt_charge_can_only_be_used_once() {
 #[test]
 fn test_magneton_volt_charge_doesnt_end_turn() {
     // Arrange: Create a game with Magneton in play
-    let magneton_card = get_card_by_enum(CardId::A1098Magneton);
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     let current_player = state.current_player;
 
     // Setup: Put Magneton in active spot for current player
-    let magneton = PlayedCard::new(
-        magneton_card.clone(),
-        100,    // remaining_hp
-        100,    // total_hp
-        vec![], // No energy initially
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[current_player][0] = Some(magneton);
+    state.in_play_pokemon[current_player][0] = Some(PlayedCard::from_id(CardId::A1098Magneton));
     game.set_state(state);
 
     // Act: Use Magneton's Volt Charge ability

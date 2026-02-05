@@ -35,18 +35,10 @@ fn test_giant_cape_attach_increases_hp() {
     let mut state = game.get_state_clone();
 
     let player = state.current_player;
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
     let base_total_hp = 70;
     let base_remaining_hp = 70;
 
-    state.in_play_pokemon[player][0] = Some(PlayedCard::new(
-        bulbasaur,
-        base_total_hp,
-        base_remaining_hp,
-        vec![],
-        false,
-        vec![],
-    ));
+    state.in_play_pokemon[player][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
     state.hands[player] = vec![get_card_by_enum(CardId::A2147GiantCape)];
     state.move_generation_stack.clear();
@@ -82,27 +74,16 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let mut state = game.get_state_clone();
 
     let player = state.current_player;
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    let charmander = get_card_by_enum(CardId::A1033Charmander);
     let base_total_hp = 70;
     let base_remaining_hp = 70;
 
-    state.in_play_pokemon[player][0] = Some(PlayedCard::new(
-        bulbasaur,
-        base_total_hp,
-        base_remaining_hp,
-        vec![],
-        false,
-        vec![],
-    ));
-    state.in_play_pokemon[player][1] = Some(PlayedCard::new(
-        charmander,
-        base_total_hp,
-        base_remaining_hp,
-        vec![],
-        false,
-        vec![],
-    ));
+    state.set_board(
+        player,
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+    );
 
     state.hands[player] = vec![get_card_by_enum(CardId::A3147LeafCape)];
     state.move_generation_stack.clear();
