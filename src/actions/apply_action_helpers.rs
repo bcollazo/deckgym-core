@@ -4,7 +4,10 @@ use log::debug;
 use rand::rngs::StdRng;
 
 use crate::{
-    actions::SimpleAction,
+    actions::{
+        abilities::AbilityMechanic, ability_mechanic_from_effect,
+        effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
+    },
     hooks::{
         get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
     },
@@ -26,25 +29,37 @@ pub(crate) type Mutations = Vec<Mutation>;
 
 /// Advance state to the next turn (i.e. maintain current_player and turn_count)
 pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
-    let in_initial_setup_phase = state.turn_count == 0;
-    if in_initial_setup_phase {
-        (
-            vec![1.0],
-            vec![Box::new({
-                |_, state, _| {
-                    // advance current_player, but only advance "turn" (i.e. stay in 0) when both players done.
+    let in_setup_phase = state.turn_count == 0;
+    if in_setup_phase {
+        let both_players_initiated =
+            state.in_play_pokemon[0][0].is_some() && state.in_play_pokemon[1][0].is_some();
+        if !both_players_initiated {
+            // Just advance the setup phase to the next player
+            return (
+                vec![1.0],
+                vec![Box::new(|_, state, _| {
                     state.current_player = (state.current_player + 1) % 2;
-                    let both_players_initiated = state.in_play_pokemon[0][0].is_some()
-                        && state.in_play_pokemon[1][0].is_some();
-                    if both_players_initiated {
-                        // Actually start game (no energy generation)
-                        state.turn_count = 1;
-                        state.end_turn_maintenance();
-                        state.queue_draw_action(state.current_player, 1);
-                    }
-                }
-            })],
-        )
+                })],
+            );
+        }
+
+        let next_player = (state.current_player + 1) % 2;
+        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player);
+
+        let mut outcomes: Mutations = Vec::with_capacity(start_mutations.len());
+        for start_mutation in start_mutations {
+            outcomes.push(Box::new(move |rng, state, action| {
+                state.current_player = (state.current_player + 1) % 2;
+
+                // Actually start game (no energy generation)
+                state.turn_count = 1;
+                state.end_turn_maintenance();
+                start_mutation(rng, state, action);
+                state.queue_draw_action(state.current_player, 1);
+            }));
+        }
+
+        (start_probs, outcomes)
     } else {
         forecast_pokemon_checkup(state)
     }
@@ -80,30 +95,66 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
     // (e.g. outcome [true, false] might represent waking up one pokemon and not healing another's burn).
     let total_coin_flips = sleeps_to_handle.len() + burns_to_handle.len();
     let outcome_ids = generate_boolean_vectors(total_coin_flips);
-    let probabilities = vec![1.0 / outcome_ids.len() as f64; outcome_ids.len()];
-    let mut outcomes: Mutations = vec![];
+    let base_probability = 1.0 / outcome_ids.len() as f64;
+
+    let next_player = (state.current_player + 1) % 2;
+    let mut probabilities = Vec::with_capacity(outcome_ids.len());
+    let mut outcomes: Mutations = Vec::with_capacity(outcome_ids.len());
     for outcome in outcome_ids {
         let sleeps_to_handle = sleeps_to_handle.clone();
         let paralyzed_to_handle = paralyzed_to_handle.clone();
         let poisons_to_handle = poisons_to_handle.clone();
         let burns_to_handle = burns_to_handle.clone();
-        outcomes.push(Box::new({
-            |_, state, action| {
+        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player);
+        for (start_prob, start_mutation) in start_probs.into_iter().zip(start_mutations) {
+            let sleeps_to_handle = sleeps_to_handle.clone();
+            let paralyzed_to_handle = paralyzed_to_handle.clone();
+            let poisons_to_handle = poisons_to_handle.clone();
+            let burns_to_handle = burns_to_handle.clone();
+            let outcome = outcome.clone();
+            probabilities.push(base_probability * start_prob);
+            outcomes.push(Box::new(move |rng, state, action| {
                 // Important for these to happen before Pokemon Checkup (Zeraora, Suicune, etc)
                 on_end_turn(action.actor, state);
 
                 apply_pokemon_checkup(
                     state,
-                    sleeps_to_handle,
-                    paralyzed_to_handle,
-                    poisons_to_handle,
-                    burns_to_handle,
-                    outcome,
+                    sleeps_to_handle.clone(),
+                    paralyzed_to_handle.clone(),
+                    poisons_to_handle.clone(),
+                    burns_to_handle.clone(),
+                    outcome.clone(),
                 );
-            }
-        }));
+
+                start_mutation(rng, state, action);
+            }));
+        }
     }
     (probabilities, outcomes)
+}
+
+fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, Mutations) {
+    let Some(active) = state.maybe_get_active(player) else {
+        return (vec![1.0], vec![noop_mutation()]);
+    };
+    let Some(ability) = active.card.get_ability() else {
+        return (vec![1.0], vec![noop_mutation()]);
+    };
+    let Some(mechanic) = ability_mechanic_from_effect(&ability.effect) else {
+        return (vec![1.0], vec![noop_mutation()]);
+    };
+
+    match mechanic {
+        AbilityMechanic::StartTurnRandomPokemonToHand { energy_type } => {
+            shared_mutations::pokemon_search_outcomes_by_type_for_player(
+                player,
+                state,
+                false,
+                *energy_type,
+            )
+        }
+        _ => (vec![1.0], vec![noop_mutation()]),
+    }
 }
 
 /// Calculate poison damage based on base damage (10) plus +10 for each opponent's Nihilego with More Poison ability
@@ -229,6 +280,31 @@ fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {
         .collect()
 }
 
+fn checkapply_prevent_first_attack(
+    state: &mut State,
+    target_player: usize,
+    target_pokemon_idx: usize,
+    is_from_active_attack: bool,
+) -> bool {
+    if !is_from_active_attack {
+        return false;
+    }
+
+    if let Some(target_pokemon) = state.in_play_pokemon[target_player][target_pokemon_idx].as_mut()
+    {
+        if !target_pokemon.prevent_first_attack_damage_used {
+            if let Some(AbilityMechanic::PreventFirstAttack) =
+                get_ability_mechanic(&target_pokemon.card)
+            {
+                debug!("PreventFirstAttackDamageAfterEnteringPlay: Preventing first attack damage");
+                target_pokemon.prevent_first_attack_damage_used = true;
+                return true;
+            }
+        }
+    }
+    false
+}
+
 /// NOTE: This function also handles Counter-Attack logic, attack modifiers, and
 ///  queues up promotion actions if any K.O.s happen.
 pub(crate) fn handle_damage(
@@ -268,7 +344,13 @@ pub(crate) fn handle_damage(
 
     // Handle each target individually
     for (damage, target_player, target_pokemon_idx) in modified_targets {
-        if damage == 0 {
+        let applied = checkapply_prevent_first_attack(
+            state,
+            target_player,
+            target_pokemon_idx,
+            is_from_active_attack,
+        );
+        if applied || damage == 0 {
             continue;
         }
 
@@ -414,6 +496,10 @@ pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
     }
 }
 
+fn noop_mutation() -> Mutation {
+    Box::new(|_, _, _| {})
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -437,5 +523,26 @@ mod tests {
 
         // Player 0's active pokemon should take 30 damage (10 base + 10 per Nihilego)
         assert_eq!(get_poison_damage(&state, 0, 0), 30);
+    }
+
+    #[test]
+    fn test_mimikyu_ex_disguise_prevents_first_attack_only() {
+        let mut state = State::default();
+
+        let attacker = get_card_by_enum(CardId::A1001Bulbasaur);
+        let mimikyu_ex = get_card_by_enum(CardId::B2073MimikyuEx);
+
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&mimikyu_ex, false));
+
+        let starting_hp = state.get_active(1).remaining_hp;
+
+        // First attack damage should be prevented
+        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        assert_eq!(state.get_active(1).remaining_hp, starting_hp);
+
+        // Second attack should deal damage normally
+        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        assert_eq!(state.get_active(1).remaining_hp, starting_hp - 30);
     }
 }

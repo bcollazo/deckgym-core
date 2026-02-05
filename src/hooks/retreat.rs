@@ -1,8 +1,9 @@
 use crate::{
     ability_ids::AbilityId,
+    card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
-    tool_ids::ToolId,
+    tools::has_tool,
     State,
 };
 
@@ -26,12 +27,10 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             }
         }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
-        if let Some(tool_id) = card.attached_tool {
-            if tool_id == ToolId::A4a067InflatableBoat
-                && card.get_energy_type() == Some(EnergyType::Water)
-            {
-                normal_cost.pop();
-            }
+        if has_tool(card, CardId::A4a067InflatableBoat)
+            && card.get_energy_type() == Some(EnergyType::Water)
+        {
+            normal_cost.pop();
         }
         // Implement Retreat Cost Modifiers here
         let mut to_subtract = state
@@ -86,7 +85,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
 mod tests {
     use crate::{
         card_ids::CardId, database::get_card_by_enum, effects::TurnEffect,
-        hooks::core::to_playable_card, tool_ids::ToolId,
+        hooks::core::to_playable_card,
     };
 
     use super::*;
@@ -137,7 +136,9 @@ mod tests {
         let state = State::default();
         let card = get_card_by_enum(CardId::A1055Blastoise);
         let mut playable_card = to_playable_card(&card, false);
-        playable_card.attached_tool = Some(ToolId::A4a067InflatableBoat);
+        playable_card.attached_tool = Some(crate::database::get_card_by_enum(
+            CardId::A4a067InflatableBoat,
+        ));
         let retreat_cost = get_retreat_cost(&state, &playable_card);
         assert_eq!(
             retreat_cost,

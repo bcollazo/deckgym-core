@@ -52,6 +52,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Retreat(_) => 2,
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,
+        SimpleAction::HealAndDiscardEnergy { .. } => 5,
         SimpleAction::MoveAllDamage { .. } => 10,
         SimpleAction::Activate { .. } => 1,
         SimpleAction::CommunicatePokemon { .. } => 5,

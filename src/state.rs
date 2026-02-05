@@ -352,15 +352,42 @@ impl State {
         self.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
     }
 
+    /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
+    pub(crate) fn discard_tool(&mut self, player: usize, in_play_idx: usize) {
+        let pokemon = self.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if discarding tool");
+        let tool_card = pokemon
+            .attached_tool
+            .take()
+            .expect("Expected tool to be attached when discarding tool");
+        self.discard_piles[player].push(tool_card);
+    }
+
     pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {
-        self.discard_energies[actor].extend(to_discard.iter().cloned());
-        let active = self.get_active_mut(actor);
+        self.discard_energy_from_in_play(actor, 0, to_discard);
+    }
+
+    pub(crate) fn discard_energy_from_in_play(
+        &mut self,
+        actor: usize,
+        in_play_idx: usize,
+        to_discard: &[EnergyType],
+    ) {
+        let pokemon = self.in_play_pokemon[actor][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if discarding energy");
+        let mut discarded: Vec<EnergyType> = Vec::new();
         for energy in to_discard {
-            if let Some(pos) = active.attached_energy.iter().position(|x| x == energy) {
-                active.attached_energy.swap_remove(pos);
+            if let Some(pos) = pokemon.attached_energy.iter().position(|e| *e == *energy) {
+                pokemon.attached_energy.swap_remove(pos);
+                discarded.push(*energy);
             } else {
-                panic!("Active Pokemon does not have energy to discard");
+                panic!("Pokemon does not have energy to discard");
             }
+        }
+        if !discarded.is_empty() {
+            self.discard_energies[actor].extend(discarded);
         }
     }
 

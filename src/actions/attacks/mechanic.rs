@@ -32,7 +32,9 @@ pub enum Mechanic {
     DamageAllOpponentPokemon {
         damage: u32,
     },
-    DiscardRandomGlobalEnergy,
+    DiscardRandomGlobalEnergy {
+        count: usize,
+    },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,
@@ -73,6 +75,10 @@ pub enum Mechanic {
     },
     SelfChargeActive {
         energies: Vec<EnergyType>,
+    },
+    ChargeYourTypeAnyWay {
+        energy_type: EnergyType,
+        count: usize,
     },
     // Fairly unique mechanics
     ManaphyOceanicGift,

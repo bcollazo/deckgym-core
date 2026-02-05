@@ -6,7 +6,6 @@ use crate::{
     card_ids::CardId,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
-    tool_ids::ToolId,
     AbilityId, State,
 };
 
@@ -18,7 +17,7 @@ pub struct PlayedCard {
     pub remaining_hp: u32,
     pub total_hp: u32,
     pub attached_energy: Vec<EnergyType>,
-    pub attached_tool: Option<ToolId>,
+    pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
     pub ability_used: bool,
     pub poisoned: bool,
@@ -27,6 +26,7 @@ pub struct PlayedCard {
     pub burned: bool,
     pub confused: bool,
     pub cards_behind: Vec<Card>,
+    pub prevent_first_attack_damage_used: bool,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
     /// The second value is the number of turns left for the effect.
@@ -57,6 +57,7 @@ impl PlayedCard {
             burned: false,
             confused: false,
             effects: vec![],
+            prevent_first_attack_damage_used: false,
         }
     }
 

@@ -5,6 +5,9 @@ use crate::{
     actions::{
         apply_action_helpers::handle_damage,
         apply_evolve,
+        attack_helpers::{
+            collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
+        },
         attacks::{BenchSide, Mechanic},
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         mutations::{doutcome, doutcome_from_mutation},
@@ -44,22 +47,19 @@ pub(crate) fn forecast_attack(
         .get_active_effects()
         .iter()
         .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
+    let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
 
     // Handle confusion: 50% chance the attack fails (coin flip)
     if active.confused {
-        let (base_probs, base_mutations) =
-            forecast_attack_inner(state, &active.card, &attack, index);
         return apply_confusion_coin_flip(base_probs, base_mutations);
     }
 
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
     if has_block_effect {
-        let (base_probs, base_mutations) =
-            forecast_attack_inner(state, &active.card, &attack, index);
         return apply_block_attack_coin_flip(base_probs, base_mutations);
     }
 
-    forecast_attack_inner(state, &active.card, &attack, index)
+    (base_probs, base_mutations)
 }
 
 fn forecast_attack_inner(
@@ -301,6 +301,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
         }
+        Mechanic::ChargeYourTypeAnyWay { energy_type, count } => {
+            charge_energy_any_way_to_type(attack.fixed_damage, *energy_type, *count)
+        }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
@@ -459,8 +462,8 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
-        Mechanic::DiscardRandomGlobalEnergy => {
-            discard_random_global_energy_attack(attack.fixed_damage, state)
+        Mechanic::DiscardRandomGlobalEnergy { count } => {
+            discard_random_global_energy_attack(attack.fixed_damage, *count, state)
         }
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
@@ -734,6 +737,20 @@ fn moltres_inferno_dance() -> (Probabilities, Mutations) {
     (probabilities, mutations)
 }
 
+fn charge_energy_any_way_to_type(
+    damage: u32,
+    energy_type: EnergyType,
+    count: usize,
+) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let target_indices = collect_in_play_indices_by_type(state, action.actor, energy_type);
+        let choices = energy_any_way_choices(&target_indices, energy_type, count);
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
 fn move_all_energy_type_to_bench(
     state: &State,
     attack: &Attack,
@@ -828,38 +845,6 @@ fn generate_energy_distributions(fire_bench_idx: &[usize], heads: usize) -> Vec<
     }
 
     all_choices
-}
-
-// Helper function to generate all possible distributions of 'heads' energy
-// across the available Pokémon
-fn generate_distributions(
-    fire_bench_idx: &[usize],
-    remaining: usize,
-    start_idx: usize,
-    current: &mut Vec<usize>,
-    result: &mut Vec<Vec<usize>>,
-) {
-    if remaining == 0 {
-        result.push(current.clone());
-        return;
-    }
-
-    if start_idx >= fire_bench_idx.len() {
-        return;
-    }
-
-    // Try different amounts for the current Pokémon
-    for amount in 0..=remaining {
-        current[start_idx] = amount;
-        generate_distributions(
-            fire_bench_idx,
-            remaining - amount,
-            start_idx + 1,
-            current,
-            result,
-        );
-    }
-    current[start_idx] = 0;
 }
 
 fn damage_for_each_heads_attack(
@@ -1455,50 +1440,53 @@ fn discard_all_energy_of_type_attack(
 
 fn discard_random_global_energy_attack(
     fixed_damage: u32,
+    count: usize,
     _state: &State,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(fixed_damage, move |rng, state, _action| {
-        let mut pokemon_with_energy: Vec<(usize, usize, usize)> = Vec::new();
+        for _ in 0..count {
+            let mut pokemon_with_energy: Vec<(usize, usize, usize)> = Vec::new();
 
-        // Collect all Pokémon in play (yours and opponent's) that have energy attached
-        // Store (player_idx, in_play_idx, energy_count) for weighted selection
-        for player_idx in 0..2 {
-            for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
-                let energy_count = pokemon.attached_energy.len();
-                if energy_count > 0 {
-                    pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
+            // Collect all Pokémon in play (yours and opponent's) that have energy attached
+            // Store (player_idx, in_play_idx, energy_count) for weighted selection
+            for player_idx in 0..2 {
+                for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
+                    let energy_count = pokemon.attached_energy.len();
+                    if energy_count > 0 {
+                        pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
+                    }
                 }
             }
-        }
 
-        if pokemon_with_energy.is_empty() {
-            return; // No Pokémon with energy to discard from
-        }
-
-        // Weight selection by energy count: a Pokemon with 9 energies should be
-        // hit 9x more often than one with 1 energy
-        let total_energy: usize = pokemon_with_energy.iter().map(|(_, _, e)| e).sum();
-        let mut roll = rng.gen_range(0..total_energy);
-        let mut selected_player_idx = 0;
-        let mut selected_in_play_idx = 0;
-        for (player_idx, in_play_idx, energy_count) in &pokemon_with_energy {
-            if roll < *energy_count {
-                selected_player_idx = *player_idx;
-                selected_in_play_idx = *in_play_idx;
-                break;
+            if pokemon_with_energy.is_empty() {
+                return; // No Pokémon with energy to discard from
             }
-            roll -= energy_count;
-        }
 
-        let pokemon = state.in_play_pokemon[selected_player_idx][selected_in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
+            // Weight selection by energy count: a Pokemon with 9 energies should be
+            // hit 9x more often than one with 1 energy
+            let total_energy: usize = pokemon_with_energy.iter().map(|(_, _, e)| e).sum();
+            let mut roll = rng.gen_range(0..total_energy);
+            let mut selected_player_idx = 0;
+            let mut selected_in_play_idx = 0;
+            for (player_idx, in_play_idx, energy_count) in &pokemon_with_energy {
+                if roll < *energy_count {
+                    selected_player_idx = *player_idx;
+                    selected_in_play_idx = *in_play_idx;
+                    break;
+                }
+                roll -= energy_count;
+            }
 
-        // Discard one random energy from the selected Pokémon
-        let energy_count = pokemon.attached_energy.len();
-        if energy_count > 0 {
-            let rand_idx = rng.gen_range(0..energy_count);
-            pokemon.attached_energy.remove(rand_idx);
+            let pokemon = state.in_play_pokemon[selected_player_idx][selected_in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there");
+
+            // Discard one random energy from the selected Pokémon
+            let energy_count = pokemon.attached_energy.len();
+            if energy_count > 0 {
+                let rand_idx = rng.gen_range(0..energy_count);
+                pokemon.attached_energy.remove(rand_idx);
+            }
         }
     })
 }

@@ -19,6 +19,14 @@ struct Args {
     /// Flag to generate only missing attack effect map lines for effect_mechanic_map.rs.
     #[arg(long)]
     incremental_attack_map: bool,
+
+    /// Flag to generate a map of ability effect texts to implementations.
+    #[arg(long)]
+    ability_map: bool,
+
+    /// Flag to generate only missing ability effect map lines for effect_ability_mechanic_map.rs.
+    #[arg(long)]
+    incremental_ability_map: bool,
 }
 
 /// A CLI program to generate card_ids.rs and database.rs from the database.json file.
@@ -60,6 +68,10 @@ fn main() {
         print_attack_map(&card_map);
     } else if args.incremental_attack_map {
         print_incremental_attack_map(&card_map, "src/actions/effect_mechanic_map.rs");
+    } else if args.ability_map {
+        print_ability_map(&card_map);
+    } else if args.incremental_ability_map {
+        print_incremental_ability_map(&card_map, "src/actions/effect_ability_mechanic_map.rs");
     } else {
         print_enums(&card_map, &id_to_enum);
     }
@@ -292,6 +304,83 @@ fn print_incremental_attack_map(card_map: &IndexMap<String, Card>, existing_path
                 if let Some(effect) = &attack.effect {
                     effect_texts.insert(effect.clone(), ());
                 }
+            }
+        }
+    }
+
+    let mut sorted_effects: Vec<&String> = effect_texts.keys().collect();
+    sorted_effects.sort();
+
+    for effect_text in sorted_effects {
+        let escaped = effect_text
+            .replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('\n', "\\n");
+        if !existing_effects.contains(&escaped) {
+            println!("    // map.insert(\"{escaped}\", todo_implementation);");
+        }
+    }
+}
+
+fn print_ability_map(card_map: &IndexMap<String, Card>) {
+    // Collect all unique ability effect texts
+    let mut effect_texts: IndexMap<String, ()> = IndexMap::new();
+
+    for card in card_map.values() {
+        if let Card::Pokemon(pokemon_card) = card {
+            if let Some(ability) = &pokemon_card.ability {
+                effect_texts.insert(ability.effect.clone(), ());
+            }
+        }
+    }
+
+    println!(
+        "// This code is initially generated from the database.json by card_enum_generator.rs."
+    );
+    println!("// but needs to be manually filled in with actual implementations.");
+    println!();
+    println!("use std::collections::HashMap;");
+    println!("use std::sync::LazyLock;");
+    println!();
+    println!("use crate::actions::abilities::AbilityMechanic;");
+    println!();
+    println!("/// Map from ability effect text to its AbilityMechanic.");
+    println!("pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMechanic>> = LazyLock::new(|| {{");
+    println!("    let mut map: HashMap<&'static str, AbilityMechanic> = HashMap::new();");
+
+    // Sort effect texts alphabetically
+    let mut sorted_effects: Vec<&String> = effect_texts.keys().collect();
+    sorted_effects.sort();
+
+    for effect_text in sorted_effects {
+        let escaped = effect_text
+            .replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('\n', "\\n");
+        println!("    // map.insert(\"{escaped}\", todo_implementation);");
+    }
+
+    println!("    map");
+    println!("}});");
+    println!();
+    println!(
+        "pub fn ability_mechanic_from_effect(effect: &str) -> Option<&'static AbilityMechanic> {{"
+    );
+    println!("    EFFECT_ABILITY_MECHANIC_MAP.get(effect)");
+    println!("}}");
+}
+
+fn print_incremental_ability_map(card_map: &IndexMap<String, Card>, existing_path: &str) {
+    let existing_contents = std::fs::read_to_string(existing_path)
+        .expect("expected effect_ability_mechanic_map.rs to be readable");
+    let existing_effects = extract_existing_effect_texts(&existing_contents);
+
+    // Collect all unique ability effect texts
+    let mut effect_texts: IndexMap<String, ()> = IndexMap::new();
+    for card in card_map.values() {
+        if let Card::Pokemon(pokemon_card) = card {
+            if let Some(ability) = &pokemon_card.ability {
+                effect_texts.insert(ability.effect.clone(), ());
             }
         }
     }

@@ -1,10 +1,10 @@
 use crate::{
     actions::SimpleAction,
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
+    card_logic::{can_rare_candy_evolve, diantha_targets, quick_grow_extract_candidates},
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
-    tool_ids::ToolId,
+    tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
 };
 
@@ -39,14 +39,17 @@ pub fn generate_possible_trainer_actions(
 }
 
 /// Returns None instead of panicing if the trainer card is not implemented; this is so that the
-/// WASM module can do "feature detection", and know if a card is implemented.
+/// card_validation module can do "feature detection", and know if a card is implemented.
 pub fn trainer_move_generation_implementation(
     state: &State,
     trainer_card: &TrainerCard,
 ) -> Option<Vec<SimpleAction>> {
     // Pokemon tools can be played if there is a space in the mat for them.
     if trainer_card.trainer_card_type == TrainerType::Tool {
-        return can_play_tool(state, trainer_card);
+        if is_tool_effect_implemented(trainer_card) {
+            return can_play_tool(state, trainer_card);
+        }
+        return None;
     }
 
     // Fossil cards are played as if they were Basic Pokemon
@@ -148,6 +151,9 @@ pub fn trainer_move_generation_implementation(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             can_play_celestic_town_elder(state, trainer_card)
         }
+        CardId::A2a075Adaman | CardId::A2a090Adaman => can_play_trainer(state, trainer_card),
+        CardId::B2149Diantha | CardId::B2190Diantha => can_play_diantha(state, trainer_card),
+        CardId::B2152Piers | CardId::B2193Piers => can_play_piers(state, trainer_card),
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
         CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
@@ -164,6 +170,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b313OldAmber
         | CardId::B1214PlumeFossil
         | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
+        CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
         _ => None,
     }
 }
@@ -191,11 +198,7 @@ fn can_play_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
 
 /// Check if a Pokemon tool can be played (requires at least 1 pokemon in play without a tool)
 fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
-
-    let valid_targets = tool_id
-        .enumerate_choices(state, state.current_player)
-        .count();
+    let valid_targets = enumerate_tool_choices(trainer_card, state, state.current_player).len();
     if valid_targets > 0 {
         Some(vec![SimpleAction::Play {
             trainer_card: trainer_card.clone(),
@@ -216,6 +219,15 @@ fn can_play_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
     } else {
         cannot_play_trainer()
     }
+}
+
+fn can_play_lucky_ice_pop(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if let Some(active) = state.maybe_get_active(state.current_player) {
+        if active.is_damaged() {
+            return can_play_trainer(state, trainer_card);
+        }
+    }
+    cannot_play_trainer()
 }
 
 /// Check if Erika can be played (requires at least 1 damaged Grass pokemon in play)
@@ -512,6 +524,28 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
     let has_fire_energy_in_discard = state.discard_energies[player].contains(&EnergyType::Fire);
 
     if active_is_fire && has_fire_energy_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Piers can be played (requires Galarian Obstagoon in play)
+fn can_play_piers(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_obstagoon = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.get_name() == "Galarian Obstagoon");
+    if has_obstagoon {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Diantha can be played (requires damaged Psychic Pokemon with >= 2 Psychic Energy)
+fn can_play_diantha(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_target = !diantha_targets(state, state.current_player).is_empty();
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
