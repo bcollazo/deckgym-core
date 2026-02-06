@@ -80,20 +80,19 @@ where
                 .collect();
 
             // Extract attack name if this is an attack action
-            let attack_name: Option<String> =
-                if let SimpleAction::Attack(attack_index) = &action.action {
-                    state.in_play_pokemon[action.actor][0]
-                        .as_ref()
-                        .and_then(|pokemon| {
-                            pokemon
-                                .card
-                                .get_attacks()
-                                .get(*attack_index)
-                                .map(|attack| attack.title.clone())
-                        })
-                } else {
-                    None
-                };
+            let SimpleAction::Attack(attack_index) = &action.action else {
+                panic!("This codepath should come from an attack.")
+            };
+            let attack_name: String = state.in_play_pokemon[action.actor][0]
+                .as_ref()
+                .expect("Attacking Pokemon must be there if attacking")
+                .card
+                .get_attacks()
+                .get(*attack_index)
+                .unwrap_or_else(|| panic!("Index must exist if attacking with {}",
+                    attack_index))
+                .title
+                .clone();
 
             let attacking_ref = (action.actor, 0);
             let is_from_active_attack = true;
@@ -102,7 +101,7 @@ where
                 attacking_ref,
                 &targets,
                 is_from_active_attack,
-                attack_name.as_deref(),
+                Some(&attack_name),
             );
             additional_effect(rng, state, action);
             handle_knockouts(state, attacking_ref, is_from_active_attack);
