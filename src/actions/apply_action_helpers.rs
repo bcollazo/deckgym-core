@@ -38,6 +38,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
             return (
                 vec![1.0],
                 vec![Box::new(|_, state, _| {
+                    state.end_turn_pending = false;
                     state.current_player = (state.current_player + 1) % 2;
                 })],
             );
@@ -49,6 +50,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
         let mut outcomes: Mutations = Vec::with_capacity(start_mutations.len());
         for start_mutation in start_mutations {
             outcomes.push(Box::new(move |rng, state, action| {
+                state.end_turn_pending = false;
                 state.current_player = (state.current_player + 1) % 2;
 
                 // Actually start game (no energy generation)
@@ -428,17 +430,7 @@ pub(crate) fn handle_knockouts(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     is_from_active_attack: bool,
 ) {
-    let mut knockouts: Vec<(usize, usize)> = vec![];
-    for (idx, card) in state.enumerate_in_play_pokemon(0) {
-        if card.remaining_hp == 0 {
-            knockouts.push((0, idx));
-        }
-    }
-    for (idx, card) in state.enumerate_in_play_pokemon(1) {
-        if card.remaining_hp == 0 {
-            knockouts.push((1, idx));
-        }
-    }
+    let knockouts = get_knocked_out(state);
 
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
@@ -500,6 +492,21 @@ pub(crate) fn handle_knockouts(
     }
 }
 
+fn get_knocked_out(state: &State) -> Vec<(usize, usize)> {
+    let mut knockouts: Vec<(usize, usize)> = vec![];
+    for (idx, card) in state.enumerate_in_play_pokemon(0) {
+        if card.remaining_hp == 0 {
+            knockouts.push((0, idx));
+        }
+    }
+    for (idx, card) in state.enumerate_in_play_pokemon(1) {
+        if card.remaining_hp == 0 {
+            knockouts.push((1, idx));
+        }
+    }
+    knockouts
+}
+
 // Apply common logic in outcomes
 pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
     Box::new(move |rng, state, action| {
@@ -523,9 +530,11 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
         mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
 
         if let SimpleAction::Attack(_) = &action.action {
-            state
-                .move_generation_stack
-                .insert(0, (action.actor, vec![SimpleAction::EndTurn]));
+            // We use a flag instead of .move_generation_stack to reduce
+            // stack surgery to make sure things happen in order.
+            // This ensures move_generation_stack (effects and promotions)
+            // has priority over ending the turn.
+            state.end_turn_pending = true;
         }
     })
 }

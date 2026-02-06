@@ -83,6 +83,12 @@ impl<'a> Game<'a> {
         self.state.winner
     }
 
+    pub fn play_until_stable(&mut self) {
+        while !self.state.move_generation_stack.is_empty() {
+            self.play_tick();
+        }
+    }
+
     pub fn play_tick(&mut self) -> Action {
         let (actor, actions) = generate_possible_actions(&self.state);
 

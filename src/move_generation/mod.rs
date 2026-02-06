@@ -48,6 +48,17 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
         return (*actor, actions);
     }
 
+    if state.end_turn_pending {
+        return (
+            state.current_player,
+            vec![Action {
+                actor: state.current_player,
+                action: SimpleAction::EndTurn,
+                is_stack: false,
+            }],
+        );
+    }
+
     // Free play actions. User can always end turn.
     let current_player = state.current_player;
     let mut actions = vec![SimpleAction::EndTurn];

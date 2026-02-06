@@ -31,6 +31,7 @@ pub struct State {
     // Player that needs to select from playable actions. Might not be aligned
     // with coin toss and the parity, see Sabrina.
     pub current_player: usize,
+    pub(crate) end_turn_pending: bool,
     pub move_generation_stack: Vec<(usize, Vec<SimpleAction>)>,
 
     // Core state
@@ -58,6 +59,7 @@ impl State {
             points: [0, 0],
             turn_count: 0,
             current_player: 0,
+            end_turn_pending: false,
             move_generation_stack: Vec::new(),
             current_energy: None,
             hands: [Vec::new(), Vec::new()],
@@ -296,6 +298,7 @@ impl State {
             self.current_player,
             (self.current_player + 1) % 2
         );
+        self.end_turn_pending = false;
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
         self.end_turn_maintenance();
@@ -397,6 +400,9 @@ impl State {
             // If we .push, we could make idxs in items of the stack stale. Consider Dialga's
             // user choosing to attach to idx 1, but then Dialga is K.O. by Rocky Helmet.
             // So we .insert(0, looking to have those settle before this one.
+
+            // Using .insert(0, should not have issues with EndTurn mechanics, since those are
+            // done only when move_generation_stack is stable (empty).
             self.move_generation_stack
                 .insert(0, (player_with_empty_active, possible_moves));
         }
