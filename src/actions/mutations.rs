@@ -27,23 +27,16 @@ pub(crate) fn doutcome_from_mutation(mutation: Mutation) -> (Probabilities, Muta
     (vec![1.0], vec![mutation])
 }
 
-// Useful for attacks
+// Useful for deterministic attacks
 pub(crate) fn active_damage_doutcome(damage: u32) -> (Probabilities, Mutations) {
-    damage_doutcome(vec![(damage, 0)])
-}
-
-pub(crate) fn damage_doutcome(targets: Vec<(u32, usize)>) -> (Probabilities, Mutations) {
-    (vec![1.0], vec![damage_mutation(targets)])
+    active_damage_effect_doutcome(damage, |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> (Probabilities, Mutations) {
-    (
-        vec![1.0],
-        vec![active_damage_effect_mutation(damage, additional_effect)],
-    )
+    damage_effect_doutcome(vec![(damage, 0)], additional_effect)
 }
 
 pub(crate) fn damage_effect_doutcome<F>(
@@ -61,11 +54,7 @@ where
 
 // ===== Helper functions for building Mutations
 pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
-    damage_mutation(vec![(damage, 0)])
-}
-
-pub(crate) fn damage_mutation(targets: Vec<(u32, usize)>) -> Mutation {
-    damage_effect_mutation(targets, |_, _, _| {})
+    damage_effect_mutation(vec![(damage, 0)], |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_mutation(
