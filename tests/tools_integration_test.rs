@@ -3,7 +3,6 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    generate_possible_actions,
     models::{Card, PlayedCard},
 };
 
@@ -53,7 +52,7 @@ fn test_giant_cape_attach_increases_hp() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (_actor, choices) = generate_possible_actions(&state);
+    let (_actor, choices) = state.generate_possible_actions();
     let attach_action = Action {
         actor: player,
         action: attach_choice_for_idx(&choices, 0),
@@ -98,7 +97,7 @@ fn test_leaf_cape_only_attaches_to_grass() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (_actor, choices) = generate_possible_actions(&state);
+    let (_actor, choices) = state.generate_possible_actions();
 
     let attachable_indices: Vec<usize> = choices
         .iter()

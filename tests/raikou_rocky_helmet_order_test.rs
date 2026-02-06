@@ -3,7 +3,6 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
 
@@ -44,7 +43,7 @@ fn test_raikou_rocky_helmet_promotion_order() {
     game.apply_action(&attack_action);
 
     // Assert Player has to choose target
-    let (actor, choices) = generate_possible_actions(&game.get_state_clone());
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
     assert_eq!(actor, 0);
     assert!(choices
         .iter()
@@ -54,7 +53,7 @@ fn test_raikou_rocky_helmet_promotion_order() {
     game.apply_action(&apply_damage_action);
 
     // Assert Raikou was K.O. and attacker must activate
-    let (actor, choices) = generate_possible_actions(&game.get_state_clone());
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
     assert_eq!(actor, 0);
     assert!(choices.iter().all(|choice| {
         matches!(
@@ -70,7 +69,7 @@ fn test_raikou_rocky_helmet_promotion_order() {
     game.apply_action(&promote_action);
 
     // TODO: Assert this way, or assert directly it should be the next player's turn.
-    let (actor, choices) = generate_possible_actions(&game.get_state_clone());
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
     assert_eq!(actor, 0);
     assert!(choices
         .iter()

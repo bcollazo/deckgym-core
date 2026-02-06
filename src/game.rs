@@ -5,7 +5,6 @@ use uuid::Uuid;
 
 use crate::{
     actions::{apply_action, Action},
-    generate_possible_actions,
     models::EnergyType,
     players::Player,
     simulation_event_handler::{CompositeSimulationEventHandler, SimulationEventHandler},
@@ -90,7 +89,7 @@ impl<'a> Game<'a> {
     }
 
     pub fn play_tick(&mut self) -> Action {
-        let (actor, actions) = generate_possible_actions(&self.state);
+        let (actor, actions) = self.state.generate_possible_actions();
 
         let player = &self.players[actor];
         let color = self.get_color(actor);

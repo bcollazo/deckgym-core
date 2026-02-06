@@ -57,7 +57,7 @@ fn test_pokemon_center_lady_heals_30_damage() {
 
     // Choose to heal Bulbasaur (index 0)
     let state = game.get_state_clone();
-    let (_actor, actions) = deckgym::generate_possible_actions(&state);
+    let (_actor, actions) = state.generate_possible_actions();
     let heal_action = actions
         .iter()
         .find(|a| matches!(a.action, SimpleAction::Heal { in_play_idx: 0, .. }))
@@ -124,7 +124,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (_actor, actions) = deckgym::generate_possible_actions(&state);
+    let (_actor, actions) = state.generate_possible_actions();
     let heal_action = actions
         .iter()
         .find(|a| matches!(a.action, SimpleAction::Heal { in_play_idx: 0, .. }))
@@ -199,7 +199,7 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (_actor, actions) = deckgym::generate_possible_actions(&state);
+    let (_actor, actions) = state.generate_possible_actions();
     let heal_action = actions
         .iter()
         .find(|a| matches!(a.action, SimpleAction::Heal { in_play_idx: 0, .. }))

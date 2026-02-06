@@ -2,7 +2,6 @@ use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
 
@@ -85,7 +84,7 @@ fn test_magneton_volt_charge_can_only_be_used_once() {
     );
 
     // Verify the ability is not in the available actions anymore
-    let (_actor, available_actions) = generate_possible_actions(&state);
+    let (_actor, available_actions) = state.generate_possible_actions();
     let ability_actions: Vec<_> = available_actions
         .iter()
         .filter(|a| matches!(a.action, SimpleAction::UseAbility { in_play_idx: 0 }))
@@ -119,7 +118,7 @@ fn test_magneton_volt_charge_doesnt_end_turn() {
     // Process any stack items from the ability
     let mut state = game.get_state_clone();
     while !state.move_generation_stack.is_empty() {
-        let (_actor, actions) = generate_possible_actions(&state);
+        let (_actor, actions) = state.generate_possible_actions();
         if !actions.is_empty() {
             game.apply_action(&actions[0]);
             state = game.get_state_clone();
@@ -135,7 +134,7 @@ fn test_magneton_volt_charge_doesnt_end_turn() {
     );
 
     // Verify that other actions are still available (like EndTurn)
-    let (_actor, available_actions) = generate_possible_actions(&state);
+    let (_actor, available_actions) = state.generate_possible_actions();
     let has_end_turn = available_actions
         .iter()
         .any(|a| matches!(a.action, SimpleAction::EndTurn));

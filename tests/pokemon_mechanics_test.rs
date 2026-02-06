@@ -3,7 +3,6 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     effects::CardEffect,
-    generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
 
@@ -661,7 +660,7 @@ fn test_vulpix_tail_whip_attack_prevention() {
 
     // Generate possible actions - attack should NOT be available
     let state = game.get_state_clone();
-    let (actor, actions) = generate_possible_actions(&state);
+    let (actor, actions) = state.generate_possible_actions();
 
     assert_eq!(actor, opponent_player);
 
@@ -720,7 +719,7 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
     let state_after_switch = game.get_state_clone();
 
     // The new active (Squirtle) should be able to attack
-    let (_, actions) = generate_possible_actions(&state_after_switch);
+    let (_, actions) = state_after_switch.generate_possible_actions();
 
     let has_attack_action = actions
         .iter()

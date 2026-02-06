@@ -2,7 +2,6 @@ use common::get_initialized_game;
 use deckgym::{
     actions::SimpleAction,
     card_ids::CardId,
-    generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
 
@@ -37,7 +36,7 @@ fn test_serperior_jungle_totem_ability() {
     game.set_state(state.clone());
 
     // Generate possible actions
-    let (actor, actions) = generate_possible_actions(&state);
+    let (actor, actions) = state.generate_possible_actions();
 
     // Check if attack action is available
     let has_attack_action = actions

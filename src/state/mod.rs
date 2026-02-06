@@ -12,6 +12,7 @@ use crate::{
     deck::Deck,
     effects::TurnEffect,
     models::{Card, EnergyType},
+    move_generation,
 };
 
 pub use played_card::{has_serperior_jungle_totem, PlayedCard};
@@ -430,6 +431,12 @@ impl State {
     /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
         self.knocked_out_by_opponent_attack_last_turn
+    }
+
+    /// Generate all possible actions for the current game state.
+    /// Returns a tuple of (actor, actions) where actor is the player who must act.
+    pub fn generate_possible_actions(&self) -> (usize, Vec<crate::actions::Action>) {
+        move_generation::generate_possible_actions(self)
     }
 }
 
