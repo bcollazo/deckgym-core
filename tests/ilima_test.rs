@@ -24,19 +24,21 @@ fn make_damaged_colorless_active() -> PlayedCard {
 fn test_ilima_last_pokemon_losses_game() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    let current_player = state.current_player;
-    let opponent = (current_player + 1) % 2;
+    state.current_player = 0;
 
-    state.in_play_pokemon[current_player] = [None, None, None, None];
-    state.in_play_pokemon[current_player][0] = Some(make_damaged_colorless_active());
-    state.hands[current_player].clear();
+    // Player 0 has only one Pokemon (active), Player 1 has a normal setup
+    state.set_board(
+        vec![make_damaged_colorless_active()],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.hands[0].clear();
 
     let trainer_card = make_ilima_trainer_card();
-    state.hands[current_player].push(Card::Trainer(trainer_card.clone()));
+    state.hands[0].push(Card::Trainer(trainer_card.clone()));
     game.set_state(state);
 
     let play_action = Action {
-        actor: current_player,
+        actor: 0,
         action: SimpleAction::Play { trainer_card },
         is_stack: false,
     };
@@ -47,11 +49,11 @@ fn test_ilima_last_pokemon_losses_game() {
         .move_generation_stack
         .last()
         .expect("Ilima should prompt for a target");
-    assert_eq!(*actor, current_player);
+    assert_eq!(*actor, 0);
     assert!(!choices.is_empty());
 
     let pick_action = Action {
-        actor: current_player,
+        actor: 0,
         action: choices[0].clone(),
         is_stack: true,
     };
@@ -60,7 +62,7 @@ fn test_ilima_last_pokemon_losses_game() {
     let state = game.get_state_clone();
     assert_eq!(
         state.winner,
-        Some(GameOutcome::Win(opponent)),
+        Some(GameOutcome::Win(1)),
         "Player should lose if they Ilima their last Pokemon in play"
     );
 }
@@ -70,20 +72,24 @@ fn test_ilima_returns_active_and_triggers_promotion() {
     let mut game = get_initialized_game(1);
     let mut state = game.get_state_clone();
     state.move_generation_stack.clear();
-    let current_player = state.current_player;
+    state.current_player = 0;
 
-    state.in_play_pokemon[current_player] = [None, None, None, None];
-    state.in_play_pokemon[current_player][0] = Some(make_damaged_colorless_active());
+    // Player 0 has active + bench, Player 1 has a normal setup
+    state.set_board(
+        vec![
+            make_damaged_colorless_active(),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
 
-    state.in_play_pokemon[current_player][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-
-    state.hands[current_player].clear();
+    state.hands[0].clear();
     let trainer_card = make_ilima_trainer_card();
-    state.hands[current_player].push(Card::Trainer(trainer_card.clone()));
+    state.hands[0].push(Card::Trainer(trainer_card.clone()));
     game.set_state(state);
 
     let play_action = Action {
-        actor: current_player,
+        actor: 0,
         action: SimpleAction::Play { trainer_card },
         is_stack: false,
     };
@@ -96,7 +102,7 @@ fn test_ilima_returns_active_and_triggers_promotion() {
         .expect("Ilima should prompt for a target");
 
     let pick_action = Action {
-        actor: current_player,
+        actor: 0,
         action: choices[0].clone(),
         is_stack: true,
     };
@@ -105,7 +111,7 @@ fn test_ilima_returns_active_and_triggers_promotion() {
     let state = game.get_state_clone();
     let pidgey_card = get_card_by_enum(CardId::A1186Pidgey);
     assert!(
-        state.hands[current_player].contains(&pidgey_card),
+        state.hands[0].contains(&pidgey_card),
         "Returned Pokemon should be in hand"
     );
 
@@ -113,7 +119,7 @@ fn test_ilima_returns_active_and_triggers_promotion() {
         .move_generation_stack
         .last()
         .expect("Promotion choices should be queued after returning active");
-    assert_eq!(*promo_actor, current_player);
+    assert_eq!(*promo_actor, 0);
     assert!(
         promo_choices
             .iter()

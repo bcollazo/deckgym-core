@@ -33,19 +33,21 @@ fn test_giant_cape_attach_increases_hp() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let player = state.current_player;
     let base_total_hp = 70;
     let base_remaining_hp = 70;
 
-    state.in_play_pokemon[player][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
 
-    state.hands[player] = vec![get_card_by_enum(CardId::A2147GiantCape)];
-    state.move_generation_stack.clear();
+    state.hands[0] = vec![get_card_by_enum(CardId::A2147GiantCape)];
     game.set_state(state);
 
     let trainer_card = trainer_from_id(CardId::A2147GiantCape);
     let play_action = Action {
-        actor: player,
+        actor: 0,
         action: SimpleAction::Play { trainer_card },
         is_stack: false,
     };
@@ -54,14 +56,14 @@ fn test_giant_cape_attach_increases_hp() {
     let state = game.get_state_clone();
     let (_actor, choices) = state.generate_possible_actions();
     let attach_action = Action {
-        actor: player,
+        actor: 0,
         action: attach_choice_for_idx(&choices, 0),
         is_stack: false,
     };
     game.apply_action(&attach_action);
 
     let state = game.get_state_clone();
-    let active = state.in_play_pokemon[player][0].as_ref().unwrap();
+    let active = state.get_active(0);
     assert!(active.attached_tool.is_some());
     assert_eq!(active.total_hp, base_total_hp + 20);
     assert_eq!(active.remaining_hp, base_remaining_hp + 20);
@@ -72,25 +74,24 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let player = state.current_player;
     let base_total_hp = 70;
     let base_remaining_hp = 70;
 
     state.set_board(
-        player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1033Charmander),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
+    state.current_player = 0;
 
-    state.hands[player] = vec![get_card_by_enum(CardId::A3147LeafCape)];
-    state.move_generation_stack.clear();
+    state.hands[0] = vec![get_card_by_enum(CardId::A3147LeafCape)];
     game.set_state(state);
 
     let trainer_card = trainer_from_id(CardId::A3147LeafCape);
     let play_action = Action {
-        actor: player,
+        actor: 0,
         action: SimpleAction::Play { trainer_card },
         is_stack: false,
     };
@@ -110,14 +111,14 @@ fn test_leaf_cape_only_attaches_to_grass() {
     assert_eq!(attachable_indices, vec![0]);
 
     let attach_action = Action {
-        actor: player,
+        actor: 0,
         action: attach_choice_for_idx(&choices, 0),
         is_stack: false,
     };
     game.apply_action(&attach_action);
 
     let state = game.get_state_clone();
-    let active = state.in_play_pokemon[player][0].as_ref().unwrap();
+    let active = state.get_active(0);
     assert!(active.attached_tool.is_some());
     assert_eq!(active.total_hp, base_total_hp + 30);
     assert_eq!(active.remaining_hp, base_remaining_hp + 30);

@@ -16,16 +16,12 @@ fn test_raikou_rocky_helmet_promotion_order() {
     // Set Raikou against Rocky Helmet
     let mut state = game.get_state_clone();
     state.set_board(
-        0,
         vec![
             PlayedCard::from_id(CardId::A4a025RaikouEx)
                 .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
                 .with_hp(20),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
-    );
-    state.set_board(
-        1,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur)
                 .with_tool(get_card_by_enum(CardId::A2148RockyHelmet)),

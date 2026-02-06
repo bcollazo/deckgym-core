@@ -15,41 +15,41 @@ fn make_lucky_ice_pop_trainer_card() -> TrainerCard {
     }
 }
 
-fn setup_damaged_active(seed: u64) -> (deckgym::Game<'static>, usize, TrainerCard) {
+fn setup_damaged_active(seed: u64) -> (deckgym::Game<'static>, TrainerCard) {
     let mut game = get_initialized_game(seed);
     let mut state = game.get_state_clone();
-    let current_player = state.current_player;
+    state.current_player = 0;
 
     // Setup: Put a damaged Bulbasaur as active (70 max HP, 50 remaining = 20 damage taken)
-    state.in_play_pokemon[current_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(20));
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(20)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
 
     // Add Lucky Ice Pop to hand
     let trainer_card = make_lucky_ice_pop_trainer_card();
     let card = Card::Trainer(trainer_card.clone());
-    state.hands[current_player].push(card);
+    state.hands[0].push(card);
     game.set_state(state);
 
-    (game, current_player, trainer_card)
+    (game, trainer_card)
 }
 
 #[test]
 fn test_lucky_ice_pop_heals_active_pokemon() {
     // Run across many seeds; every outcome should heal 20 damage
     for seed in 0..50 {
-        let (mut game, current_player, trainer_card) = setup_damaged_active(seed);
+        let (mut game, trainer_card) = setup_damaged_active(seed);
 
         let play_action = Action {
-            actor: current_player,
+            actor: 0,
             action: SimpleAction::Play { trainer_card },
             is_stack: false,
         };
         game.apply_action(&play_action);
 
         let state = game.get_state_clone();
-        let active = state.in_play_pokemon[current_player][0]
-            .as_ref()
-            .expect("Active should exist");
+        let active = state.get_active(0);
         assert_eq!(
             active.remaining_hp, 70,
             "Seed {seed}: Active should be healed by 20 (50 -> 70)"
@@ -63,19 +63,19 @@ fn test_lucky_ice_pop_coin_flip_returns_to_hand_or_stays_in_discard() {
     let mut tails_count = 0;
 
     for seed in 0..200 {
-        let (mut game, current_player, trainer_card) = setup_damaged_active(seed);
+        let (mut game, trainer_card) = setup_damaged_active(seed);
 
         let card = Card::Trainer(trainer_card.clone());
         let play_action = Action {
-            actor: current_player,
+            actor: 0,
             action: SimpleAction::Play { trainer_card },
             is_stack: false,
         };
         game.apply_action(&play_action);
 
         let state = game.get_state_clone();
-        let in_hand = state.hands[current_player].contains(&card);
-        let in_discard = state.discard_piles[current_player].contains(&card);
+        let in_hand = state.hands[0].contains(&card);
+        let in_discard = state.discard_piles[0].contains(&card);
 
         // Card must be in exactly one of: hand or discard
         assert!(

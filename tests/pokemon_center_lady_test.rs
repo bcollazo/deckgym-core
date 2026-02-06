@@ -12,11 +12,13 @@ fn test_pokemon_center_lady_heals_30_damage() {
     // Arrange: Create a game with damaged pokemon
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    let current_player = state.current_player;
+    state.current_player = 0;
 
     // Setup: Put a damaged Bulbasaur in active spot
-    state.in_play_pokemon[current_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20));
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -29,14 +31,12 @@ fn test_pokemon_center_lady_heals_30_damage() {
         rarity: "◊◊".to_string(),
         booster_pack: "Shining Revelry (A2b)".to_string(),
     });
-    state.hands[current_player].push(pokemon_center_lady.clone());
+    state.hands[0].push(pokemon_center_lady.clone());
     game.set_state(state);
 
     // Verify initial state
     let state = game.get_state_clone();
-    let bulbasaur_before = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should be in play");
+    let bulbasaur_before = state.get_active(0);
     assert_eq!(
         bulbasaur_before.remaining_hp, 20,
         "Bulbasaur should have 20 HP (70 - 50 damage)"
@@ -44,7 +44,7 @@ fn test_pokemon_center_lady_heals_30_damage() {
 
     // Act: Play Pokemon Center Lady
     let play_action = Action {
-        actor: current_player,
+        actor: 0,
         action: SimpleAction::Play {
             trainer_card: match pokemon_center_lady {
                 Card::Trainer(tc) => tc,
@@ -66,9 +66,7 @@ fn test_pokemon_center_lady_heals_30_damage() {
 
     // Assert: Bulbasaur should be healed by 30
     let state = game.get_state_clone();
-    let bulbasaur_after = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should still be in play");
+    let bulbasaur_after = state.get_active(0);
     assert_eq!(
         bulbasaur_after.remaining_hp, 50,
         "Bulbasaur should be healed to 50 HP (20 + 30)"
@@ -80,11 +78,13 @@ fn test_pokemon_center_lady_cures_poisoned() {
     // Arrange: Create a game with poisoned pokemon
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    let current_player = state.current_player;
+    state.current_player = 0;
 
     // Setup: Put a poisoned Bulbasaur in active spot
-    state.in_play_pokemon[current_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_status(StatusCondition::Poisoned));
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_status(StatusCondition::Poisoned)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -97,14 +97,12 @@ fn test_pokemon_center_lady_cures_poisoned() {
         rarity: "◊◊".to_string(),
         booster_pack: "Shining Revelry (A2b)".to_string(),
     });
-    state.hands[current_player].push(pokemon_center_lady.clone());
+    state.hands[0].push(pokemon_center_lady.clone());
     game.set_state(state);
 
     // Verify initial state
     let state = game.get_state_clone();
-    let bulbasaur_before = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should be in play");
+    let bulbasaur_before = state.get_active(0);
     assert!(
         bulbasaur_before.poisoned,
         "Bulbasaur should be poisoned initially"
@@ -112,7 +110,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
 
     // Act: Play Pokemon Center Lady and choose Bulbasaur
     let play_action = Action {
-        actor: current_player,
+        actor: 0,
         action: SimpleAction::Play {
             trainer_card: match pokemon_center_lady {
                 Card::Trainer(tc) => tc,
@@ -133,9 +131,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
 
     // Assert: Bulbasaur should no longer be poisoned
     let state = game.get_state_clone();
-    let bulbasaur_after = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should still be in play");
+    let bulbasaur_after = state.get_active(0);
     assert!(
         !bulbasaur_after.poisoned,
         "Bulbasaur should no longer be poisoned"
@@ -147,15 +143,16 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     // Arrange: Create a game with damaged + poisoned pokemon
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    let current_player = state.current_player;
+    state.current_player = 0;
 
     // Setup: Put a damaged and poisoned Bulbasaur in active spot
-    state.in_play_pokemon[current_player][0] = Some(
-        PlayedCard::from_id(CardId::A1001Bulbasaur)
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
             .with_hp(30)
             .with_status(StatusCondition::Poisoned)
             .with_status(StatusCondition::Paralyzed)
-            .with_status(StatusCondition::Asleep),
+            .with_status(StatusCondition::Asleep)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
     // Add Pokemon Center Lady to hand
@@ -169,14 +166,12 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
         rarity: "☆☆".to_string(),
         booster_pack: "Shining Revelry (A2b)".to_string(),
     });
-    state.hands[current_player].push(pokemon_center_lady.clone());
+    state.hands[0].push(pokemon_center_lady.clone());
     game.set_state(state);
 
     // Verify initial state
     let state = game.get_state_clone();
-    let bulbasaur_before = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should be in play");
+    let bulbasaur_before = state.get_active(0);
     assert_eq!(
         bulbasaur_before.remaining_hp, 30,
         "Bulbasaur should have 30 HP"
@@ -187,7 +182,7 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
 
     // Act: Play Pokemon Center Lady and choose Bulbasaur
     let play_action = Action {
-        actor: current_player,
+        actor: 0,
         action: SimpleAction::Play {
             trainer_card: match pokemon_center_lady {
                 Card::Trainer(tc) => tc,
@@ -208,9 +203,7 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
 
     // Assert: Bulbasaur should be healed and cured
     let state = game.get_state_clone();
-    let bulbasaur_after = state.in_play_pokemon[current_player][0]
-        .as_ref()
-        .expect("Bulbasaur should still be in play");
+    let bulbasaur_after = state.get_active(0);
     assert_eq!(
         bulbasaur_after.remaining_hp, 60,
         "Bulbasaur should be healed to 60 HP (30 + 30)"

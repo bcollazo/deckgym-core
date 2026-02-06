@@ -16,11 +16,13 @@ fn test_weedle_multiply_attack() {
     // Initialize with basic decks
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    state.current_player = 0;
 
     // Set up player 0 with Weedle in active position
-    state.in_play_pokemon[0][0] =
-        Some(PlayedCard::from_card(&weedle_card).with_energy(vec![EnergyType::Grass]));
+    state.set_board(
+        vec![PlayedCard::from_card(&weedle_card).with_energy(vec![EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
 
     // Add another Weedle to the deck
     state.decks[0].cards.push(weedle_card.clone());
@@ -68,35 +70,28 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     let mut game = get_initialized_game(42);
     let mut state = game.get_state_clone();
 
-    // Set up Player 0 (acting player) with Dialga ex at low HP
-    state.in_play_pokemon[0][0] = Some(
-        PlayedCard::from_id(CardId::A2119DialgaEx)
-            .with_hp(20)
-            .with_energy(vec![EnergyType::Metal, EnergyType::Metal]),
+    // Set up Player 0 with Dialga ex at low HP + bench vs Squirtle with Rocky Helmet
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A2119DialgaEx)
+                .with_hp(20)
+                .with_energy(vec![EnergyType::Metal, EnergyType::Metal]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A1053Squirtle)
+                .with_tool(get_card_by_enum(CardId::A2148RockyHelmet)),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
     );
-
-    // Add 3 bench Pokémon for Player 0
-    state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-    state.in_play_pokemon[0][2] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-    state.in_play_pokemon[0][3] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-
-    // Set up Player 1 (opponent) with Squirtle with Rocky Helmet
-    state.in_play_pokemon[1][0] = Some(
-        PlayedCard::from_id(CardId::A1053Squirtle)
-            .with_tool(get_card_by_enum(CardId::A2148RockyHelmet)),
-    );
-
-    // Add 1 bench Pokémon for Player 1
-    state.in_play_pokemon[1][1] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
 
     // Both players start at 0 points
     state.points = [0, 0];
-
-    // Set up proper turn state
     state.turn_count = 3;
     state.current_player = 0;
 
-    // Update the game with our modified state
     game.set_state(state);
 
     // Apply the Attack action (index 0 = Metallic Turbo)

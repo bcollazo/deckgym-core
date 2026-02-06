@@ -18,29 +18,23 @@ fn test_marshadow_revenge_base_damage() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Marshadow with enough energy (Fighting + Colorless)
-    state.in_play_pokemon[test_player][0] = Some(
-        PlayedCard::from_id(CardId::A1a047Marshadow)
-            .with_energy(vec![EnergyType::Fighting, EnergyType::Colorless]),
+    // Set up Marshadow vs Bulbasaur
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a047Marshadow)
+            .with_energy(vec![EnergyType::Fighting, EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
-    // Set up opponent's active Pokemon with high HP to survive
-    state.in_play_pokemon[opponent_player][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+    state.current_player = 0;
 
     // Ensure no KO happened last turn
     state.set_knocked_out_by_opponent_attack_last_turn(false);
-
-    // Clear move generation stack
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Revenge attack (attack index 0)
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -49,10 +43,7 @@ fn test_marshadow_revenge_base_damage() {
     let final_state = game.get_state_clone();
 
     // Base damage is 40, so opponent should have 70 - 40 = 30 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
 
     assert_eq!(
         opponent_hp, 30,
@@ -66,34 +57,25 @@ fn test_marshadow_revenge_boosted_damage() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Marshadow with enough energy
-    state.in_play_pokemon[test_player][0] = Some(
-        PlayedCard::from_id(CardId::A1a047Marshadow)
-            .with_energy(vec![EnergyType::Fighting, EnergyType::Colorless]),
+    // Set up Marshadow vs high-HP Bulbasaur
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a047Marshadow)
+            .with_energy(vec![EnergyType::Fighting, EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
     );
-
-    // Set up opponent's active Pokemon with high HP to survive boosted damage
-    state.in_play_pokemon[opponent_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 150;
+    // Fix total_hp
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
+    state.current_player = 0;
 
     // Simulate that a Pokemon was KO'd by opponent's attack last turn
     state.set_knocked_out_by_opponent_attack_last_turn(true);
-
-    // Clear move generation stack
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Revenge attack
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -102,10 +84,7 @@ fn test_marshadow_revenge_boosted_damage() {
     let final_state = game.get_state_clone();
 
     // Boosted damage is 40 + 60 = 100, so opponent should have 150 - 100 = 50 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
 
     assert_eq!(
         opponent_hp, 50,
@@ -123,26 +102,22 @@ fn test_dusknoir_shadow_void_move_damage() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-
-    // Set up Bulbasaur in active (position 0) with damage (40 damage taken, 30 HP remaining)
-    // and Dusknoir on bench (position 1) with full HP
+    // Set up Bulbasaur active with damage + Dusknoir on bench
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(40),
             PlayedCard::from_id(CardId::A2072Dusknoir),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
-    // Clear move generation stack
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Use Dusknoir's Shadow Void ability
     let ability_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 1 },
         is_stack: false,
     };
@@ -157,7 +132,7 @@ fn test_dusknoir_shadow_void_move_damage() {
 
     // Select to move damage from Bulbasaur (index 0) to Dusknoir (index 1)
     let move_damage_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::MoveAllDamage { from: 0, to: 1 },
         is_stack: false,
     };
@@ -166,19 +141,18 @@ fn test_dusknoir_shadow_void_move_damage() {
     let final_state = game.get_state_clone();
 
     // Bulbasaur should now have full HP (70)
-    let bulbasaur_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let bulbasaur_hp = final_state.get_active(0).remaining_hp;
     assert_eq!(
         bulbasaur_hp, 70,
         "Bulbasaur should be fully healed after Shadow Void (70 HP)"
     );
 
     // Dusknoir should have taken the 40 damage (130 - 40 = 90 HP)
-    let dusknoir_hp = final_state.in_play_pokemon[test_player][1]
-        .as_ref()
+    let dusknoir_hp = final_state
+        .enumerate_bench_pokemon(0)
+        .next()
         .unwrap()
+        .1
         .remaining_hp;
     assert_eq!(
         dusknoir_hp, 90,
@@ -192,30 +166,23 @@ fn test_dusknoir_shadow_void_ko() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Bulbasaur in active with damage (50 damage taken)
-    // and Dusknoir on bench with LOW HP (will die from damage transfer)
+    // Set up Bulbasaur active with damage + low-HP Dusknoir on bench
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(50),
             PlayedCard::from_id(CardId::A2072Dusknoir).with_hp(30),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
-    // Reset points
+    state.current_player = 0;
     state.points = [0, 0];
-
-    // Clear move generation stack
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Use Dusknoir's Shadow Void ability
     let ability_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 1 },
         is_stack: false,
     };
@@ -223,7 +190,7 @@ fn test_dusknoir_shadow_void_ko() {
 
     // Select to move damage from Bulbasaur to Dusknoir
     let move_damage_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::MoveAllDamage { from: 0, to: 1 },
         is_stack: false,
     };
@@ -233,13 +200,13 @@ fn test_dusknoir_shadow_void_ko() {
 
     // Dusknoir should be KO'd (removed from play)
     assert!(
-        final_state.in_play_pokemon[test_player][1].is_none(),
+        final_state.enumerate_bench_pokemon(0).next().is_none(),
         "Dusknoir should be KO'd after receiving lethal damage"
     );
 
     // Opponent should receive 1 point for KO'ing a non-ex Pokemon
     assert_eq!(
-        final_state.points[opponent_player], 1,
+        final_state.points[1], 1,
         "Opponent should receive 1 point for KO'ing Dusknoir"
     );
 }
@@ -250,34 +217,30 @@ fn test_dusknoir_shadow_void_multiple_uses() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-
-    // Set up Bulbasaur active with damage, Dusknoir on bench with lots of HP,
-    // and Squirtle on bench with damage
+    // Set up Bulbasaur active with damage, Dusknoir on bench, Squirtle with damage
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(20),
             PlayedCard::from_id(CardId::A2072Dusknoir),
             PlayedCard::from_id(CardId::A1053Squirtle).with_damage(20),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
-    // Clear move generation stack
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // First use: Move damage from Bulbasaur
     let ability_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 1 },
         is_stack: false,
     };
     game.apply_action(&ability_action);
 
     let move_damage_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::MoveAllDamage { from: 0, to: 1 },
         is_stack: false,
     };
@@ -285,14 +248,14 @@ fn test_dusknoir_shadow_void_multiple_uses() {
 
     // Second use: Move damage from Squirtle
     let ability_action2 = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 1 },
         is_stack: false,
     };
     game.apply_action(&ability_action2);
 
     let move_damage_action2 = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::MoveAllDamage { from: 2, to: 1 },
         is_stack: false,
     };
@@ -301,23 +264,24 @@ fn test_dusknoir_shadow_void_multiple_uses() {
     let final_state = game.get_state_clone();
 
     // Bulbasaur should be fully healed
-    let bulbasaur_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let bulbasaur_hp = final_state.get_active(0).remaining_hp;
     assert_eq!(bulbasaur_hp, 70, "Bulbasaur should be fully healed");
 
     // Squirtle should be fully healed
-    let squirtle_hp = final_state.in_play_pokemon[test_player][2]
-        .as_ref()
+    let squirtle_hp = final_state
+        .enumerate_in_play_pokemon(0)
+        .find(|(i, _)| *i == 2)
         .unwrap()
+        .1
         .remaining_hp;
     assert_eq!(squirtle_hp, 60, "Squirtle should be fully healed");
 
     // Dusknoir should have taken both damages (130 - 20 - 20 = 90 HP)
-    let dusknoir_hp = final_state.in_play_pokemon[test_player][1]
-        .as_ref()
+    let dusknoir_hp = final_state
+        .enumerate_bench_pokemon(0)
+        .find(|(_, p)| p.get_name() == "Dusknoir")
         .unwrap()
+        .1
         .remaining_hp;
     assert_eq!(
         dusknoir_hp, 90,
@@ -335,34 +299,23 @@ fn test_lucario_fighting_coach_single() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Riolu in active with energy, Lucario on bench
+    // Set up Riolu active + Lucario on bench vs high-HP opponent
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A2091Riolu).with_energy(vec![EnergyType::Fighting]),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100)],
     );
-
-    // Set up opponent with 100 HP
-    state.in_play_pokemon[opponent_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100));
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 100;
-
-    // Clear move generation stack
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Riolu's Jab attack (20 base damage + 20 from Fighting Coach = 40)
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -371,10 +324,7 @@ fn test_lucario_fighting_coach_single() {
     let final_state = game.get_state_clone();
 
     // With 1 Fighting Coach: 20 + 20 = 40 damage, so 100 - 40 = 60 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
 
     assert_eq!(
         opponent_hp, 60,
@@ -388,36 +338,25 @@ fn test_lucario_fighting_coach_stacked() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Lucario in active with energy, plus TWO Lucarios on bench
+    // Set up active Lucario + TWO bench Lucarios vs high-HP opponent
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A2092Lucario)
                 .with_energy(vec![EnergyType::Fighting, EnergyType::Fighting]),
             PlayedCard::from_id(CardId::A2092Lucario),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
     );
-
-    // Set up opponent with high HP
-    state.in_play_pokemon[opponent_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150));
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 150;
-
-    // Clear move generation stack
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply attack: 40 base + 20 (active Lucario) + 20 (bench1) + 20 (bench2) = 100
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -426,10 +365,7 @@ fn test_lucario_fighting_coach_stacked() {
     let final_state = game.get_state_clone();
 
     // With 3 Lucarios: 40 + (20 * 3) = 100 damage, so 150 - 100 = 50 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
 
     assert_eq!(
         opponent_hp, 50,
@@ -443,35 +379,24 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Bulbasaur (Grass type) in active with energy, Lucario on bench
+    // Set up Bulbasaur (Grass type) active + Lucario bench vs high-HP opponent
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur)
                 .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
+        vec![PlayedCard::from_id(CardId::A1053Squirtle).with_hp(100)],
     );
-
-    // Set up opponent with 100 HP
-    state.in_play_pokemon[opponent_player][0] =
-        Some(PlayedCard::from_id(CardId::A1053Squirtle).with_hp(100));
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 100;
-
-    // Clear move generation stack
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Vine Whip attack (40 damage, should NOT get Fighting Coach boost)
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -480,10 +405,7 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     let final_state = game.get_state_clone();
 
     // No boost: 40 damage, so 100 - 40 = 60 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
 
     assert_eq!(
         opponent_hp, 60,
@@ -501,28 +423,20 @@ fn test_shinx_hide_damage_prevention() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Shinx with energy for Hide attack
-    state.in_play_pokemon[test_player][0] =
-        Some(PlayedCard::from_id(CardId::A2058Shinx).with_energy(vec![EnergyType::Lightning]));
-
-    // Set up opponent with energy for attack
-    state.in_play_pokemon[opponent_player][0] = Some(
-        PlayedCard::from_id(CardId::A1001Bulbasaur)
-            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
+    // Set up Shinx vs Bulbasaur
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A2058Shinx).with_energy(vec![EnergyType::Lightning])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
     );
-
-    // Clear move generation stack
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Manually add the PreventAllDamageAndEffects effect to simulate successful Hide
-    // (In real game, this happens on coin flip heads)
     let mut state = game.get_state_clone();
-    state.in_play_pokemon[test_player][0]
+    state.in_play_pokemon[0][0]
         .as_mut()
         .unwrap()
         .add_effect(CardEffect::PreventAllDamageAndEffects, 1);
@@ -530,13 +444,13 @@ fn test_shinx_hide_damage_prevention() {
 
     // Switch turns to opponent
     let mut state = game.get_state_clone();
-    state.current_player = opponent_player;
+    state.current_player = 1;
     state.move_generation_stack.clear();
     game.set_state(state);
 
     // Opponent attacks Shinx with Vine Whip (40 damage)
     let attack_action = Action {
-        actor: opponent_player,
+        actor: 1,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -545,10 +459,7 @@ fn test_shinx_hide_damage_prevention() {
     let final_state = game.get_state_clone();
 
     // Shinx should still have full HP due to PreventAllDamageAndEffects
-    let shinx_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let shinx_hp = final_state.get_active(0).remaining_hp;
 
     assert_eq!(
         shinx_hp, 60,
@@ -562,30 +473,24 @@ fn test_shinx_hide_effect_prevention() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Shinx with PreventAllDamageAndEffects effect already applied
+    // Set up Shinx with PreventAllDamageAndEffects vs Weezing
     let mut shinx =
         PlayedCard::from_id(CardId::A2058Shinx).with_energy(vec![EnergyType::Lightning]);
     shinx.add_effect(CardEffect::PreventAllDamageAndEffects, 1);
-    state.in_play_pokemon[test_player][0] = Some(shinx);
 
-    // Set up Weezing as opponent (has Poison ability)
-    state.in_play_pokemon[opponent_player][0] = Some(
-        PlayedCard::from_id(CardId::A1177Weezing)
-            .with_energy(vec![EnergyType::Darkness, EnergyType::Colorless]),
+    state.set_board(
+        vec![shinx],
+        vec![PlayedCard::from_id(CardId::A1177Weezing)
+            .with_energy(vec![EnergyType::Darkness, EnergyType::Colorless])],
     );
-
-    // Clear move generation stack and set opponent as current player
-    state.current_player = opponent_player;
+    state.current_player = 1;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Opponent uses Weezing's attack (Tackle: 50 damage)
     let attack_action = Action {
-        actor: opponent_player,
+        actor: 1,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -594,22 +499,14 @@ fn test_shinx_hide_effect_prevention() {
     let final_state = game.get_state_clone();
 
     // Shinx should still have full HP
-    let shinx_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
-
+    let shinx_hp = final_state.get_active(0).remaining_hp;
     assert_eq!(
         shinx_hp, 60,
         "Shinx should not take damage when protected by Hide"
     );
 
     // Shinx should NOT be poisoned (effect prevented)
-    let shinx_poisoned = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .poisoned;
-
+    let shinx_poisoned = final_state.get_active(0).poisoned;
     assert!(
         !shinx_poisoned,
         "Shinx should not be poisoned when protected by Hide"
@@ -626,35 +523,24 @@ fn test_vulpix_tail_whip_attack_prevention() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Vulpix with energy
-    state.in_play_pokemon[test_player][0] =
-        Some(PlayedCard::from_id(CardId::A1037Vulpix).with_energy(vec![EnergyType::Colorless]));
-
-    // Set up opponent with energy
-    state.in_play_pokemon[opponent_player][0] = Some(
-        PlayedCard::from_id(CardId::A1001Bulbasaur)
-            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
+    // Set up Vulpix vs Bulbasaur
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1037Vulpix).with_energy(vec![EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
     );
-
-    // Clear move generation stack
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Manually add CannotAttack effect to opponent's active (simulating successful Tail Whip)
     let mut state = game.get_state_clone();
-    state.in_play_pokemon[opponent_player][0]
+    state.in_play_pokemon[1][0]
         .as_mut()
         .unwrap()
         .add_effect(CardEffect::CannotAttack, 1);
-    game.set_state(state);
-
-    // Switch to opponent's turn
-    let mut state = game.get_state_clone();
-    state.current_player = opponent_player;
+    state.current_player = 1;
     state.move_generation_stack.clear();
     game.set_state(state);
 
@@ -662,7 +548,7 @@ fn test_vulpix_tail_whip_attack_prevention() {
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
 
-    assert_eq!(actor, opponent_player);
+    assert_eq!(actor, 1);
 
     let has_attack_action = actions
         .iter()
@@ -680,36 +566,29 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Vulpix
-    state.in_play_pokemon[test_player][0] =
-        Some(PlayedCard::from_id(CardId::A1037Vulpix).with_energy(vec![EnergyType::Colorless]));
-
-    // Set up opponent's active with CannotAttack effect
+    // Set up Vulpix vs Bulbasaur with CannotAttack + bench Squirtle
     let mut opponent_active = PlayedCard::from_id(CardId::A1001Bulbasaur)
         .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]);
     opponent_active.add_effect(CardEffect::CannotAttack, 1);
-    state.in_play_pokemon[opponent_player][0] = Some(opponent_active);
 
-    // Set up opponent's bench Pokemon
-    state.in_play_pokemon[opponent_player][1] = Some(
-        PlayedCard::from_id(CardId::A1053Squirtle)
-            .with_energy(vec![EnergyType::Water, EnergyType::Colorless]),
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1037Vulpix).with_energy(vec![EnergyType::Colorless])],
+        vec![
+            opponent_active,
+            PlayedCard::from_id(CardId::A1053Squirtle)
+                .with_energy(vec![EnergyType::Water, EnergyType::Colorless]),
+        ],
     );
-
-    // Set opponent as current player
-    state.current_player = opponent_player;
+    state.current_player = 1;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Opponent retreats/switches to bench Pokemon
     let switch_action = Action {
-        actor: opponent_player,
+        actor: 1,
         action: SimpleAction::Activate {
-            player: opponent_player,
+            player: 1,
             in_play_idx: 1,
         },
         is_stack: false,
@@ -729,9 +608,6 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
         has_attack_action,
         "New active Pokemon should be able to attack after switching"
     );
-
-    // The old active (now on bench at position 0 or moved) should have effects cleared
-    // Note: In the game, switching clears status effects and card effects
 }
 
 // ============================================================================
@@ -744,29 +620,20 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Rampardos with enough energy for Head Smash (1 Fighting)
-    state.in_play_pokemon[test_player][0] =
-        Some(PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting]));
-
-    // Set up opponent with HIGH HP so they survive (more than 130)
-    state.in_play_pokemon[opponent_player][0] =
-        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(200));
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 200;
-
-    // Clear move generation stack
+    // Set up Rampardos vs high-HP Bulbasaur
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(200)],
+    );
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 200;
+    state.current_player = 0;
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Head Smash attack (attack index 0)
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -775,20 +642,14 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     let final_state = game.get_state_clone();
 
     // Opponent should have 200 - 130 = 70 HP
-    let opponent_hp = final_state.in_play_pokemon[opponent_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let opponent_hp = final_state.get_active(1).remaining_hp;
     assert_eq!(
         opponent_hp, 70,
         "Rampardos's Head Smash should deal 130 damage (200 - 130 = 70)"
     );
 
     // Rampardos should have full HP (no recoil since no KO)
-    let rampardos_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let rampardos_hp = final_state.get_active(0).remaining_hp;
     assert_eq!(
         rampardos_hp, 150,
         "Rampardos should take no recoil damage when opponent survives"
@@ -801,37 +662,24 @@ fn test_rampardos_head_smash_ko_with_recoil() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Rampardos with enough energy
-    state.in_play_pokemon[test_player][0] =
-        Some(PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting]));
-
-    // Set up opponent with LOW HP so they get KO'd, plus a bench pokemon
+    // Set up Rampardos vs low-HP Bulbasaur + bench
     state.set_board(
-        opponent_player,
+        vec![PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting])],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 100;
-
-    // Reset points
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
+    state.current_player = 0;
     state.points = [0, 0];
-
-    // Clear move generation stack
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Head Smash attack
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -839,18 +687,14 @@ fn test_rampardos_head_smash_ko_with_recoil() {
 
     let final_state = game.get_state_clone();
 
-    // Opponent's active should be KO'd (removed or replaced by promotion)
     // Player should have earned 1 point for the KO
     assert_eq!(
-        final_state.points[test_player], 1,
+        final_state.points[0], 1,
         "Player should earn 1 point for KO'ing opponent's Pokemon"
     );
 
     // Rampardos should have taken 50 recoil damage (150 - 50 = 100)
-    let rampardos_hp = final_state.in_play_pokemon[test_player][0]
-        .as_ref()
-        .unwrap()
-        .remaining_hp;
+    let rampardos_hp = final_state.get_active(0).remaining_hp;
     assert_eq!(
         rampardos_hp, 100,
         "Rampardos should take 50 recoil damage after KO'ing opponent (150 - 50 = 100)"
@@ -863,44 +707,29 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let test_player = state.current_player;
-    let opponent_player = (test_player + 1) % 2;
-
-    // Set up Rampardos with LOW HP and a bench pokemon
+    // Set up low-HP Rampardos + bench vs low-HP Bulbasaur + bench
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A2089Rampardos)
                 .with_hp(30)
                 .with_energy(vec![EnergyType::Fighting]),
             PlayedCard::from_id(CardId::A2089Rampardos),
         ],
-    );
-
-    // Set up opponent with LOW HP so they get KO'd, plus bench
-    state.set_board(
-        opponent_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.in_play_pokemon[opponent_player][0]
-        .as_mut()
-        .unwrap()
-        .total_hp = 100;
-
-    // Reset points
+    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
+    state.current_player = 0;
     state.points = [0, 0];
-
-    // Clear move generation stack
     state.move_generation_stack.clear();
 
     game.set_state(state);
 
     // Apply Head Smash attack
     let attack_action = Action {
-        actor: test_player,
+        actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     };
@@ -910,17 +739,13 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
 
     // Test player should earn 1 point for KO'ing opponent
     assert_eq!(
-        final_state.points[test_player], 1,
+        final_state.points[0], 1,
         "Player should earn 1 point for KO'ing opponent's Pokemon"
     );
 
     // Opponent should earn 1 point for Rampardos self-KO from recoil
     assert_eq!(
-        final_state.points[opponent_player], 1,
+        final_state.points[1], 1,
         "Opponent should earn 1 point when Rampardos KO's itself from recoil"
     );
-
-    // Rampardos should be KO'd (removed from active position)
-    // The bench Pokemon should have been promoted or there's a promotion pending
-    // Since Rampardos was at position 0 and got KO'd, it should be None or promoted
 }

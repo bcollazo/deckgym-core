@@ -414,11 +414,14 @@ impl State {
     // These methods are public for integration tests but should be used carefully
     // =========================================================================
 
-    /// Set up multiple in-play pokemon for a player at once.
-    /// Index 0 = active, 1..3 = bench.
-    pub fn set_board(&mut self, player: usize, pokemon: Vec<PlayedCard>) {
-        for (i, card) in pokemon.into_iter().enumerate() {
-            self.in_play_pokemon[player][i] = Some(card);
+    /// Set up multiple in-play pokemon for both players at once.
+    /// For each side: Index 0 = active, 1..3 = bench.
+    pub fn set_board(&mut self, player_0: Vec<PlayedCard>, player_1: Vec<PlayedCard>) {
+        for (i, card) in player_0.into_iter().enumerate() {
+            self.in_play_pokemon[0][i] = Some(card);
+        }
+        for (i, card) in player_1.into_iter().enumerate() {
+            self.in_play_pokemon[1][i] = Some(card);
         }
     }
 

@@ -17,25 +17,21 @@ fn test_serperior_jungle_totem_ability() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Ensure we're testing with the correct player
-    let test_player = state.current_player;
-
-    // Set up test_player with Bulbasaur in active position with only 1 Grass energy
+    // Set up player 0 with Bulbasaur in active position with only 1 Grass energy
     // and Serperior on the bench
     state.set_board(
-        test_player,
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
             PlayedCard::from_id(CardId::A1a006Serperior),
         ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
+    state.current_player = 0;
 
-    // Clear the move generation stack so we can test attack generation
-    state.move_generation_stack.clear();
-
-    game.set_state(state.clone());
+    game.set_state(state);
 
     // Generate possible actions
+    let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
 
     // Check if attack action is available
@@ -43,10 +39,7 @@ fn test_serperior_jungle_totem_ability() {
         .iter()
         .any(|action| matches!(action.action, SimpleAction::Attack(_)));
 
-    assert_eq!(
-        actor, test_player,
-        "Current player should match test_player"
-    );
+    assert_eq!(actor, 0, "Current player should be player 0");
     assert!(
         has_attack_action,
         "With Serperior's Jungle Totem, Bulbasaur should be able to attack with only 1 Grass energy"

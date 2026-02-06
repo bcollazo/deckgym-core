@@ -83,7 +83,7 @@ impl<'a> Game<'a> {
     }
 
     pub fn play_until_stable(&mut self) {
-        while !self.state.move_generation_stack.is_empty() {
+        while self.state.turn_count == 0 || !self.state.move_generation_stack.is_empty() {
             self.play_tick();
         }
     }

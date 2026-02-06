@@ -13,16 +13,13 @@ fn test_confused_pokemon_can_attack() {
     let mut game = get_initialized_game(42);
     let mut state = game.get_state_clone();
 
-    // Set up Player 0 with a confused Pokémon
-    state.in_play_pokemon[0][0] = Some(
-        PlayedCard::from_id(CardId::A1035Charizard)
+    // Set up confused Charizard vs Squirtle
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1035Charizard)
             .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])
-            .with_status(StatusCondition::Confused),
+            .with_status(StatusCondition::Confused)],
+        vec![PlayedCard::from_id(CardId::A1053Squirtle)],
     );
-
-    // Set up opponent with a basic Pokémon
-    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
-
     state.turn_count = 3;
     state.current_player = 0;
     game.set_state(state);
@@ -50,19 +47,16 @@ fn test_confusion_cleared_on_retreat() {
     let mut game = get_initialized_game(42);
     let mut state = game.get_state_clone();
 
-    // Set up Player 0 with a confused Pokémon with enough energy to retreat
-    state.in_play_pokemon[0][0] = Some(
-        PlayedCard::from_id(CardId::A1035Charizard)
-            .with_energy(vec![EnergyType::Fire, EnergyType::Fire])
-            .with_status(StatusCondition::Confused),
+    // Set up confused Charizard with bench + opponent
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1035Charizard)
+                .with_energy(vec![EnergyType::Fire, EnergyType::Fire])
+                .with_status(StatusCondition::Confused),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
+        vec![PlayedCard::from_id(CardId::A1053Squirtle)],
     );
-
-    // Add a bench Pokémon to retreat to
-    state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
-
-    // Set up opponent
-    state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
-
     state.turn_count = 3;
     state.current_player = 0;
     game.set_state(state);
@@ -70,7 +64,7 @@ fn test_confusion_cleared_on_retreat() {
     // Verify active is confused before retreat
     let state = game.get_state_clone();
     assert!(
-        state.in_play_pokemon[0][0].as_ref().unwrap().confused,
+        state.get_active(0).confused,
         "Active should be confused before retreat"
     );
 
@@ -84,18 +78,16 @@ fn test_confusion_cleared_on_retreat() {
 
     // After retreat, the Charizard (now on bench) should NOT be confused
     let state = game.get_state_clone();
-    let charizard_on_bench = state.in_play_pokemon[0]
-        .iter()
-        .skip(1) // Skip active
-        .flatten()
-        .find(|p| p.get_name() == "Charizard");
+    let charizard_on_bench = state
+        .enumerate_bench_pokemon(0)
+        .find(|(_, p)| p.get_name() == "Charizard");
 
     assert!(
         charizard_on_bench.is_some(),
         "Charizard should be on bench after retreat"
     );
     assert!(
-        !charizard_on_bench.unwrap().confused,
+        !charizard_on_bench.unwrap().1.confused,
         "Charizard should NOT be confused after retreating to bench"
     );
 }
@@ -134,14 +126,12 @@ fn test_confused_attack_can_succeed() {
         let mut game = get_initialized_game(seed);
         let mut state = game.get_state_clone();
 
-        state.in_play_pokemon[0][0] = Some(
-            PlayedCard::from_id(CardId::A1035Charizard)
+        state.set_board(
+            vec![PlayedCard::from_id(CardId::A1035Charizard)
                 .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])
-                .with_status(StatusCondition::Confused),
+                .with_status(StatusCondition::Confused)],
+            vec![PlayedCard::from_id(CardId::A1053Squirtle)],
         );
-
-        state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1053Squirtle));
-
         state.turn_count = 3;
         state.current_player = 0;
         game.set_state(state);
@@ -155,14 +145,14 @@ fn test_confused_attack_can_succeed() {
         game.apply_action(&attack_action);
 
         let state = game.get_state_clone();
-        let opponent_hp = state.in_play_pokemon[1][0]
-            .as_ref()
+        let opponent_hp = state
+            .maybe_get_active(1)
             .map(|p| p.remaining_hp)
             .unwrap_or(0);
 
         // Either the attack succeeded (opponent took damage or was KO'd)
         // or the attack failed (opponent still at full HP)
-        let attack_succeeded = opponent_hp < initial_hp || state.in_play_pokemon[1][0].is_none();
+        let attack_succeeded = opponent_hp < initial_hp || state.maybe_get_active(1).is_none();
         let attack_failed = opponent_hp == initial_hp;
 
         assert!(
@@ -190,12 +180,15 @@ fn test_confusing_attack_inflicts_confusion() {
     assert!(squirtle_played.confused);
 
     // The confusion field should be accessible
-    state.in_play_pokemon[1][0] = Some(squirtle_played);
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![squirtle_played],
+    );
     game.set_state(state);
 
     let state = game.get_state_clone();
     assert!(
-        state.in_play_pokemon[1][0].as_ref().unwrap().confused,
+        state.get_active(1).confused,
         "Confusion should be stored in game state"
     );
 }
