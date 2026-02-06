@@ -69,6 +69,7 @@ fn test_ilima_last_pokemon_losses_game() {
 fn test_ilima_returns_active_and_triggers_promotion() {
     let mut game = get_initialized_game(1);
     let mut state = game.get_state_clone();
+    state.move_generation_stack.clear();
     let current_player = state.current_player;
 
     state.in_play_pokemon[current_player] = [None, None, None, None];
@@ -117,6 +118,7 @@ fn test_ilima_returns_active_and_triggers_promotion() {
         promo_choices
             .iter()
             .any(|action| matches!(action, SimpleAction::Activate { in_play_idx: 1, .. })),
-        "Promotion choices should include the bench Pokemon"
+        "Promotion choices should include Activate for bench index 1, move_generation_stack: {:?}",
+        state.move_generation_stack
     );
 }
