@@ -34,11 +34,9 @@ fn test_confused_pokemon_can_attack() {
 
     // The game should continue (attack was processed)
     let state = game.get_state_clone();
-    // Turn should advance or a stack action should be queued
-    assert!(
-        !state.move_generation_stack.is_empty() || state.current_player != 0,
-        "Game should progress after confused attack"
-    );
+    let (actor, _) = state.generate_possible_actions();
+    // Turn should advance
+    assert!(actor != 0, "Game should progress after confused attack");
 }
 
 /// Test that confusion is cleared when Pokémon retreats/moves to bench

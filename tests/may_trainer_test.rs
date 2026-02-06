@@ -20,6 +20,7 @@ fn test_may_generates_all_combinations() {
 
     // Create state
     let mut state = State::new(&Deck::default(), &Deck::default());
+    state.turn_count = 1; // this is so that move generation is not from setup phase
 
     // Setup player's hand with Pikachu
     state.hands[0] = vec![pikachu.clone()];
@@ -56,9 +57,8 @@ fn test_may_generates_all_combinations() {
     assert_eq!(hand_pokemon.len(), 3);
 
     // Should have move generation stacked with shuffle choices
-    assert_eq!(state_copy.move_generation_stack.len(), 1);
-    let (actor, choices) = &state_copy.move_generation_stack[0];
-    assert_eq!(*actor, 0);
+    let (actor, choices) = state_copy.generate_possible_actions();
+    assert_eq!(actor, 0);
 
     // Should have 3 choices (all 2-combinations of 3 Pokemon)
     // C(3,2) = 3 combinations
@@ -70,7 +70,7 @@ fn test_may_generates_all_combinations() {
 
     // Verify each choice is a ShufflePokemonIntoDeck with 2 cards
     for choice in choices {
-        match choice {
+        match &choice.action {
             SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
                 assert_eq!(
                     hand_pokemon.len(),

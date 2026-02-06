@@ -137,7 +137,6 @@ fn test_darkrai_ex_nightmare_aura_ko_triggers_promotion() {
         ],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
     game.set_state(state);
 
     // Attach Darkness energy from Energy Zone to Darkrai ex
@@ -154,12 +153,11 @@ fn test_darkrai_ex_nightmare_aura_ko_triggers_promotion() {
     let state = game.get_state_clone();
 
     // Promotion should be queued for the opponent (player 1)
-    let has_promotion = state.move_generation_stack.iter().any(|(actor, actions)| {
-        *actor == 1
-            && actions
-                .iter()
-                .any(|a| matches!(a, SimpleAction::Activate { .. }))
-    });
+    let (actor, actions) = state.generate_possible_actions();
+    let has_promotion = actor == 1
+        && actions
+            .iter()
+            .any(|a| matches!(a.action, SimpleAction::Activate { .. }));
 
     assert!(
         has_promotion,

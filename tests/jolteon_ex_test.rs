@@ -24,7 +24,6 @@ fn test_jolteon_ex_electromagnetic_wall_ko_triggers_promotion() {
         vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
     game.set_state(state);
 
     // Actor attaches energy from Energy Zone to their active
@@ -42,12 +41,11 @@ fn test_jolteon_ex_electromagnetic_wall_ko_triggers_promotion() {
     let state = game.get_state_clone();
 
     // Promotion should be queued for player 0
-    let has_promotion = state.move_generation_stack.iter().any(|(player, actions)| {
-        *player == 0
-            && actions
-                .iter()
-                .any(|a| matches!(a, SimpleAction::Activate { .. }))
-    });
+    let (actor, actions) = state.generate_possible_actions();
+    let has_promotion = actor == 0
+        && actions
+            .iter()
+            .any(|a| matches!(a.action, SimpleAction::Activate { .. }));
 
     assert!(
         has_promotion,

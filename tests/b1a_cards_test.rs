@@ -309,28 +309,18 @@ fn test_blastoise_double_splash_with_extra_energy() {
     game.apply_action(&action);
     let state = game.get_state_clone();
 
-    // Check that move_generation_stack has bench target choices
+    // Check that a stack action is queued with bench target choices
+    let (actor, choices) = state.generate_possible_actions();
+    assert_eq!(actor, 0, "Actor should be player 0");
     assert!(
-        !state.move_generation_stack.is_empty(),
-        "Move generation stack should have bench target choices"
-    );
-
-    // Get the choices from the stack
-    let (actor, choices) = state.move_generation_stack.last().unwrap();
-    assert_eq!(*actor, 0, "Actor should be player 0");
-    assert!(
-        !choices.is_empty(),
-        "Should have at least one bench target choice"
+        choices
+            .iter()
+            .any(|a| matches!(a.action, SimpleAction::ApplyDamage { .. })),
+        "Expected bench target ApplyDamage choices"
     );
 
     // Apply the first choice (damage to bench position 1)
-    let bench_damage_action = Action {
-        actor: 0,
-        action: choices[0].clone(),
-        is_stack: true,
-    };
-
-    game.apply_action(&bench_damage_action);
+    game.apply_action(&choices[0]);
     let state = game.get_state_clone();
 
     // Verify active took 90 damage (150 - 90 = 60)
@@ -388,12 +378,11 @@ fn test_blastoise_double_splash_without_extra_energy() {
     game.apply_action(&action);
     let state = game.get_state_clone();
 
-    // Check that move_generation_stack has NO ApplyDamage actions (no bench damage)
-    let has_apply_damage = state.move_generation_stack.iter().any(|(_, choices)| {
-        choices
-            .iter()
-            .any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
-    });
+    // Check that there are NO stacked ApplyDamage actions (no bench damage)
+    let (_actor, actions) = state.generate_possible_actions();
+    let has_apply_damage = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::ApplyDamage { .. }));
     assert!(
         !has_apply_damage,
         "Move generation stack should have no ApplyDamage actions (no extra energy for bench damage)"
@@ -453,12 +442,11 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
     game.apply_action(&action);
     let state = game.get_state_clone();
 
-    // Check that move_generation_stack has NO ApplyDamage actions (no bench to hit)
-    let has_apply_damage = state.move_generation_stack.iter().any(|(_, choices)| {
-        choices
-            .iter()
-            .any(|action| matches!(action, SimpleAction::ApplyDamage { .. }))
-    });
+    // Check that there are NO stacked ApplyDamage actions (no bench to hit)
+    let (_actor, actions) = state.generate_possible_actions();
+    let has_apply_damage = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::ApplyDamage { .. }));
     assert!(
         !has_apply_damage,
         "Move generation stack should have no ApplyDamage actions (no bench Pokemon to hit)"
@@ -659,9 +647,18 @@ fn test_charmeleon_ignition() {
             assert_eq!(pokemon.name, "Charmeleon");
         }
 
-        assert!(!state.move_generation_stack.is_empty());
-        let (_, moves) = state.move_generation_stack.last().unwrap();
+        let (_actor, moves) = state.generate_possible_actions();
         assert_eq!(moves.len(), 2);
+        assert!(
+            moves
+                .iter()
+                .any(|a| matches!(a.action, SimpleAction::Attach { .. })),
+            "Expected an Attach option for the ability"
+        );
+        assert!(
+            moves.iter().any(|a| matches!(a.action, SimpleAction::Noop)),
+            "Expected a Noop option for declining the ability"
+        );
     }
 
     // Test 2: User accepts and attaches Fire energy
@@ -670,12 +667,8 @@ fn test_charmeleon_ignition() {
         evolve(&mut game, charmeleon);
         let state = game.get_state_clone();
 
-        let (_, moves) = state.move_generation_stack.last().unwrap();
-        game.apply_action(&Action {
-            actor: 0,
-            action: moves[0].clone(),
-            is_stack: true,
-        });
+        let (_actor, moves) = state.generate_possible_actions();
+        game.apply_action(&moves[0]);
         let state = game.get_state_clone();
 
         let charmeleon_active = state.get_active(0);
@@ -689,12 +682,8 @@ fn test_charmeleon_ignition() {
         evolve(&mut game, charmeleon);
         let state = game.get_state_clone();
 
-        let (_, moves) = state.move_generation_stack.last().unwrap();
-        game.apply_action(&Action {
-            actor: 0,
-            action: moves[1].clone(),
-            is_stack: true,
-        });
+        let (_actor, moves) = state.generate_possible_actions();
+        game.apply_action(&moves[1]);
         let state = game.get_state_clone();
 
         let charmeleon_active = state.get_active(0);

@@ -121,17 +121,9 @@ fn test_magneton_volt_charge_doesnt_end_turn() {
     };
     game.apply_action(&action);
 
-    // Process any stack items from the ability
-    let mut state = game.get_state_clone();
-    while !state.move_generation_stack.is_empty() {
-        let (_actor, actions) = state.generate_possible_actions();
-        if !actions.is_empty() {
-            game.apply_action(&actions[0]);
-            state = game.get_state_clone();
-        } else {
-            break;
-        }
-    }
+    // Fetch available actions after ability resolves
+    game.play_until_stable();
+    let state = game.get_state_clone();
 
     // Assert: Current player should still be 0 (turn doesn't end)
     assert_eq!(

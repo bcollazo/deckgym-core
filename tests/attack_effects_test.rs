@@ -104,9 +104,12 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
 
     // The attack should queue up an energy attachment action
     let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
     assert!(
-        !state.move_generation_stack.is_empty(),
-        "Move generation stack should have actions queued"
+        actions.iter().any(|a| {
+            matches!(a.action, SimpleAction::Attach { ref attachments, .. } if attachments.iter().any(|(_, energy, idx)| *energy == EnergyType::Metal && *idx != 0))
+        }),
+        "Expected Metal energy Attach choices after Metallic Turbo"
     );
 
     // Continue with play_tick() until the next turn or game over

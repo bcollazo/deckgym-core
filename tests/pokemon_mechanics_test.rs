@@ -28,7 +28,6 @@ fn test_marshadow_revenge_base_damage() {
 
     // Ensure no KO happened last turn
     state.set_knocked_out_by_opponent_attack_last_turn(false);
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -69,7 +68,6 @@ fn test_marshadow_revenge_boosted_damage() {
 
     // Simulate that a Pokemon was KO'd by opponent's attack last turn
     state.set_knocked_out_by_opponent_attack_last_turn(true);
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -111,7 +109,6 @@ fn test_dusknoir_shadow_void_move_damage() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -125,8 +122,11 @@ fn test_dusknoir_shadow_void_move_damage() {
 
     // The ability should queue a move generation for selecting which Pokemon's damage to move
     let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
     assert!(
-        !state.move_generation_stack.is_empty(),
+        actions
+            .iter()
+            .any(|a| matches!(a.action, SimpleAction::MoveAllDamage { .. })),
         "Shadow Void should queue a move generation for selecting damage source"
     );
 
@@ -176,7 +176,6 @@ fn test_dusknoir_shadow_void_ko() {
     );
     state.current_player = 0;
     state.points = [0, 0];
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -227,7 +226,6 @@ fn test_dusknoir_shadow_void_multiple_uses() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -309,7 +307,6 @@ fn test_lucario_fighting_coach_single() {
     );
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -350,7 +347,6 @@ fn test_lucario_fighting_coach_stacked() {
     );
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -390,7 +386,6 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     );
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -430,7 +425,6 @@ fn test_shinx_hide_damage_prevention() {
             .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -445,7 +439,6 @@ fn test_shinx_hide_damage_prevention() {
     // Switch turns to opponent
     let mut state = game.get_state_clone();
     state.current_player = 1;
-    state.move_generation_stack.clear();
     game.set_state(state);
 
     // Opponent attacks Shinx with Vine Whip (40 damage)
@@ -484,7 +477,6 @@ fn test_shinx_hide_effect_prevention() {
             .with_energy(vec![EnergyType::Darkness, EnergyType::Colorless])],
     );
     state.current_player = 1;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -530,7 +522,6 @@ fn test_vulpix_tail_whip_attack_prevention() {
             .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
     );
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -541,7 +532,6 @@ fn test_vulpix_tail_whip_attack_prevention() {
         .unwrap()
         .add_effect(CardEffect::CannotAttack, 1);
     state.current_player = 1;
-    state.move_generation_stack.clear();
     game.set_state(state);
 
     // Generate possible actions - attack should NOT be available
@@ -580,7 +570,6 @@ fn test_vulpix_tail_whip_switch_clears_effect() {
         ],
     );
     state.current_player = 1;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -627,7 +616,6 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     );
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 200;
     state.current_player = 0;
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -673,7 +661,6 @@ fn test_rampardos_head_smash_ko_with_recoil() {
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
     state.points = [0, 0];
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 
@@ -723,7 +710,6 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
     state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
     state.points = [0, 0];
-    state.move_generation_stack.clear();
 
     game.set_state(state);
 

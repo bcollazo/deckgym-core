@@ -45,19 +45,11 @@ fn test_ilima_last_pokemon_losses_game() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (actor, choices) = state
-        .move_generation_stack
-        .last()
-        .expect("Ilima should prompt for a target");
-    assert_eq!(*actor, 0);
+    let (actor, choices) = state.generate_possible_actions();
+    assert_eq!(actor, 0);
     assert!(!choices.is_empty());
 
-    let pick_action = Action {
-        actor: 0,
-        action: choices[0].clone(),
-        is_stack: true,
-    };
-    game.apply_action(&pick_action);
+    game.apply_action(&choices[0]);
 
     let state = game.get_state_clone();
     assert_eq!(
@@ -71,7 +63,6 @@ fn test_ilima_last_pokemon_losses_game() {
 fn test_ilima_returns_active_and_triggers_promotion() {
     let mut game = get_initialized_game(1);
     let mut state = game.get_state_clone();
-    state.move_generation_stack.clear();
     state.current_player = 0;
 
     // Player 0 has active + bench, Player 1 has a normal setup
@@ -96,17 +87,9 @@ fn test_ilima_returns_active_and_triggers_promotion() {
     game.apply_action(&play_action);
 
     let state = game.get_state_clone();
-    let (_actor, choices) = state
-        .move_generation_stack
-        .last()
-        .expect("Ilima should prompt for a target");
+    let (_actor, choices) = state.generate_possible_actions();
 
-    let pick_action = Action {
-        actor: 0,
-        action: choices[0].clone(),
-        is_stack: true,
-    };
-    game.apply_action(&pick_action);
+    game.apply_action(&choices[0]);
 
     let state = game.get_state_clone();
     let pidgey_card = get_card_by_enum(CardId::A1186Pidgey);
@@ -115,16 +98,13 @@ fn test_ilima_returns_active_and_triggers_promotion() {
         "Returned Pokemon should be in hand"
     );
 
-    let (promo_actor, promo_choices) = state
-        .move_generation_stack
-        .last()
-        .expect("Promotion choices should be queued after returning active");
-    assert_eq!(*promo_actor, 0);
+    let (promo_actor, promo_choices) = state.generate_possible_actions();
+    assert_eq!(promo_actor, 0);
     assert!(
         promo_choices
             .iter()
-            .any(|action| matches!(action, SimpleAction::Activate { in_play_idx: 1, .. })),
-        "Promotion choices should include Activate for bench index 1, move_generation_stack: {:?}",
-        state.move_generation_stack
+            .any(|action| matches!(action.action, SimpleAction::Activate { in_play_idx: 1, .. })),
+        "Promotion choices should include Activate for bench index 1, choices: {:?}",
+        promo_choices
     );
 }
