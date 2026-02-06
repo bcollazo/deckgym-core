@@ -394,23 +394,11 @@ impl State {
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {player_with_empty_active}");
 
-            // Insert right next to EndTurn, so that if this was triggered by an attack,
-            // we resolve any move_generation_stack effects from that attack first.
-            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
-            let index_of_end_turn = self
-                .move_generation_stack
-                .iter()
-                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
-
-            if let Some(index_of_end_turn) = index_of_end_turn {
-                self.move_generation_stack.insert(
-                    index_of_end_turn + 1,
-                    (player_with_empty_active, possible_moves),
-                );
-            } else {
-                self.move_generation_stack
-                    .push((player_with_empty_active, possible_moves));
-            }
+            // If we .push, we could make idxs in items of the stack stale. Consider Dialga's
+            // user choosing to attach to idx 1, but then Dialga is K.O. by Rocky Helmet.
+            // So we .insert(0, looking to have those settle before this one.
+            self.move_generation_stack
+                .insert(0, (player_with_empty_active, possible_moves));
         }
     }
 

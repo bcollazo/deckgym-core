@@ -6,7 +6,7 @@ use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 use crate::{
     actions::{
         apply_abilities_action::forecast_ability,
-        apply_action_helpers::{apply_common_mutation, Mutation},
+        apply_action_helpers::{wrap_with_common_logic, Mutation},
     },
     hooks::{get_retreat_cost, on_attach_tool, on_evolve, on_play_to_bench, to_playable_card},
     models::{Card, EnergyType},
@@ -84,13 +84,11 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::EndTurn => forecast_end_turn(state),
     };
 
+    // Wrap with common logic for mutations
     let mut wrapped_mutations: Mutations = vec![];
     for original_mutation in mutas {
         let mutation_closure: Mutation = Box::new(original_mutation);
-        wrapped_mutations.push(Box::new(move |rng, state, action| {
-            apply_common_mutation(state, action);
-            mutation_closure(rng, state, action);
-        }));
+        wrapped_mutations.push(wrap_with_common_logic(mutation_closure));
     }
     (proba, wrapped_mutations)
 }

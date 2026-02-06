@@ -2112,6 +2112,125 @@ fn damage_reduced_by_self_damage_attack(
     active_damage_doutcome(actual_damage)
 }
 
+#[cfg(test)]
+mod tests {
+    use rand::{rngs::StdRng, SeedableRng};
+
+    use crate::{
+        actions::{Action, SimpleAction},
+        card_ids::CardId,
+        models::{EnergyType, PlayedCard},
+        State,
+    };
+
+    use super::extra_or_self_damage_attack;
+
+    #[test]
+    fn test_extra_or_self_damage_attack_double_ko_promotes() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+
+        state.current_player = 0;
+        state.turn_count = 3;
+
+        // Attacker (Electabuzz) at 20 HP, with bench for promotion
+        state.in_play_pokemon[0][0] = Some(
+            PlayedCard::from_id(CardId::A1101Electabuzz)
+                .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
+                .with_hp(20),
+        );
+        state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+
+        // Opponent active at 40 HP so base damage KOs, with bench for promotion
+        state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(40));
+        state.in_play_pokemon[1][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        // Tails outcome: base damage + self damage
+        let mutation = muts.remove(1);
+        mutation(&mut rng, &mut state, &action);
+
+        // Both actives should be knocked out
+        assert!(state.in_play_pokemon[0][0].is_none());
+        assert!(state.in_play_pokemon[1][0].is_none());
+
+        let mut has_promo_0 = false;
+        let mut has_promo_1 = false;
+        for (player, actions) in state.move_generation_stack.iter() {
+            if actions
+                .iter()
+                .any(|a| matches!(a, SimpleAction::Activate { .. }))
+            {
+                if *player == 0 {
+                    has_promo_0 = true;
+                } else if *player == 1 {
+                    has_promo_1 = true;
+                }
+            }
+        }
+
+        assert!(has_promo_0, "Expected promotion for player 0");
+        assert!(has_promo_1, "Expected promotion for player 1");
+    }
+
+    #[test]
+    fn test_extra_or_self_damage_attack_self_ko_promotes_attacker() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+
+        state.current_player = 0;
+        state.turn_count = 3;
+
+        // Attacker (Electabuzz) at 20 HP, with bench for promotion
+        state.in_play_pokemon[0][0] = Some(
+            PlayedCard::from_id(CardId::A1101Electabuzz)
+                .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
+                .with_hp(20),
+        );
+        state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+
+        // Opponent active survives base damage
+        state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        // Tails outcome: base damage + self damage
+        let mutation = muts.remove(1);
+        mutation(&mut rng, &mut state, &action);
+
+        // Attacker active should be knocked out, opponent active should remain
+        assert!(state.in_play_pokemon[0][0].is_none());
+        assert!(state.in_play_pokemon[1][0].is_some());
+
+        let has_promo_0 = state.move_generation_stack.iter().any(|(player, actions)| {
+            *player == 0
+                && actions
+                    .iter()
+                    .any(|a| matches!(a, SimpleAction::Activate { .. }))
+        });
+        let has_promo_1 = state.move_generation_stack.iter().any(|(player, actions)| {
+            *player == 1
+                && actions
+                    .iter()
+                    .any(|a| matches!(a, SimpleAction::Activate { .. }))
+        });
+
+        assert!(has_promo_0, "Expected promotion for player 0");
+        assert!(!has_promo_1, "Did not expect promotion for player 1");
+    }
+}
+
 /// Porygon-Z - Cyberjack: Extra damage per trainer in opponent deck
 fn extra_damage_per_trainer_in_opponent_deck_attack(
     state: &State,

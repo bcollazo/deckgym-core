@@ -1,9 +1,13 @@
 use rand::rngs::StdRng;
 
-use crate::{models::StatusCondition, State};
+use crate::{
+    actions::apply_action_helpers::{handle_damage_only, handle_knockouts},
+    models::StatusCondition,
+    State,
+};
 
 use super::{
-    apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
+    apply_action_helpers::{FnMutation, Mutation, Mutations, Probabilities},
     Action, SimpleAction,
 };
 
@@ -80,7 +84,6 @@ where
 {
     Box::new({
         move |rng, state, action| {
-            additional_effect(rng, state, action);
             let opponent = (action.actor + 1) % 2;
             let targets: Vec<(u32, usize, usize)> = targets
                 .iter()
@@ -103,13 +106,17 @@ where
                     None
                 };
 
-            handle_damage(
+            let attacking_ref = (action.actor, 0);
+            let is_from_active_attack = true;
+            handle_damage_only(
                 state,
-                (action.actor, 0),
+                attacking_ref,
                 &targets,
-                true,
+                is_from_active_attack,
                 attack_name.as_deref(),
             );
+            additional_effect(rng, state, action);
+            handle_knockouts(state, attacking_ref, is_from_active_attack);
         }
     })
 }

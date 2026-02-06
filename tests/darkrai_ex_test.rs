@@ -142,3 +142,54 @@ fn test_darkrai_ex_nightmare_aura_only_turn_energy() {
         "Opponent's active should not have taken damage when energy is not from Energy Zone"
     );
 }
+
+#[test]
+fn test_darkrai_ex_nightmare_aura_ko_triggers_promotion() {
+    // If Nightmare Aura KOs the opponent's Active and they have a bench,
+    // promotion should be queued.
+
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    let test_player = state.current_player;
+    let opponent_player = (test_player + 1) % 2;
+
+    // Darkrai ex in active
+    state.in_play_pokemon[test_player][0] = Some(PlayedCard::from_id(CardId::A2110DarkraiEx));
+
+    // Opponent active at 20 HP so Nightmare Aura KOs it
+    state.in_play_pokemon[opponent_player][0] =
+        Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20));
+    // Opponent has a benched Pokemon to promote
+    state.in_play_pokemon[opponent_player][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+
+    state.move_generation_stack.clear();
+    game.set_state(state);
+
+    // Attach Darkness energy from Energy Zone to Darkrai ex
+    let attach_action = Action {
+        actor: test_player,
+        action: SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Darkness, 0)],
+            is_turn_energy: true,
+        },
+        is_stack: false,
+    };
+
+    game.apply_action(&attach_action);
+
+    let state = game.get_state_clone();
+
+    // Promotion should be queued for the opponent
+    let has_promotion = state.move_generation_stack.iter().any(|(actor, actions)| {
+        *actor == opponent_player
+            && actions
+                .iter()
+                .any(|a| matches!(a, SimpleAction::Activate { .. }))
+    });
+
+    assert!(
+        has_promotion,
+        "Expected promotion to be queued after Darkrai Aura KOs active"
+    );
+}

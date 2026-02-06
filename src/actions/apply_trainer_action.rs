@@ -211,7 +211,7 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);
         }
-        // Card was already discarded by apply_common_mutation, move it back to hand
+        // Card was already discarded by wrap_with_common_logic, move it back to hand
         if let SimpleAction::Play { trainer_card } = &action.action {
             let card = Card::Trainer(trainer_card.clone());
             if let Some(pos) = state.discard_piles[action.actor]
@@ -224,7 +224,7 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
         }
     }));
 
-    // Tails: heal 20 only (card stays in discard via apply_common_mutation)
+    // Tails: heal 20 only (card stays in discard via wrap_with_common_logic)
     outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);

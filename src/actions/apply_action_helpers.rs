@@ -305,8 +305,8 @@ fn checkapply_prevent_first_attack(
     false
 }
 
-/// NOTE: This function also handles Counter-Attack logic, attack modifiers, and
-///  queues up promotion actions if any K.O.s happen.
+/// This function applies damage (with modifiers and counterattacks) and handles K.O.s
+/// and promotions.
 pub(crate) fn handle_damage(
     state: &mut State,
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
@@ -314,8 +314,26 @@ pub(crate) fn handle_damage(
     is_from_active_attack: bool,
     attack_name: Option<&str>,
 ) {
+    handle_damage_only(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        attack_name,
+    );
+    handle_knockouts(state, attacking_ref, is_from_active_attack);
+}
+
+// This function handles Counter-Attacks and Attack Modifiers, but doesn't handle K.O.s or
+// queues up promotion decisions. Use carefully, probably just in a few places
+pub(crate) fn handle_damage_only(
+    state: &mut State,
+    attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+    attack_name: Option<&str>,
+) {
     let attacking_player = attacking_ref.0;
-    let mut knockouts: Vec<(usize, usize)> = vec![];
 
     // Reduce and sum damage for duplicate targets
     let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
@@ -364,9 +382,6 @@ pub(crate) fn handle_damage(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
                 damage, target_pokemon_idx, target_pokemon.remaining_hp
             );
-            if target_pokemon.remaining_hp == 0 {
-                knockouts.push((target_player, target_pokemon_idx));
-            }
         }
 
         // Consider Counter-Attack (only if from Active Attack to Active)
@@ -398,15 +413,30 @@ pub(crate) fn handle_damage(
                     "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
                     counter_damage, attacking_pokemon.remaining_hp
                 );
-                if attacking_pokemon.remaining_hp == 0 {
-                    knockouts.push((attacking_player, 0));
-                }
             }
 
             if should_poison {
                 attacking_pokemon.poisoned = true;
                 debug!("Poison Barb: Poisoned the attacking Pokemon");
             }
+        }
+    }
+}
+
+pub(crate) fn handle_knockouts(
+    state: &mut State,
+    attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
+    is_from_active_attack: bool,
+) {
+    let mut knockouts: Vec<(usize, usize)> = vec![];
+    for (idx, card) in state.enumerate_in_play_pokemon(0) {
+        if card.remaining_hp == 0 {
+            knockouts.push((0, idx));
+        }
+    }
+    for (idx, card) in state.enumerate_in_play_pokemon(1) {
+        if card.remaining_hp == 0 {
+            knockouts.push((1, idx));
         }
     }
 
@@ -470,30 +500,34 @@ pub(crate) fn handle_damage(
     }
 }
 
-// Apply common mutations for all outcomes
-// TODO: Is there a way outcome implementations don't have to remember to call this?
-pub(crate) fn apply_common_mutation(state: &mut State, action: &Action) {
-    if action.is_stack {
-        state.move_generation_stack.pop();
-    }
-    if let SimpleAction::Play { trainer_card } = &action.action {
-        let card = Card::Trainer(trainer_card.clone());
-        state.discard_card_from_hand(action.actor, &card);
-        if card.is_support() {
-            state.has_played_support = true;
+// Apply common logic in outcomes
+pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
+    Box::new(move |rng, state, action| {
+        if action.is_stack {
+            state.move_generation_stack.pop();
         }
-    }
-    if let SimpleAction::UseAbility { in_play_idx } = &action.action {
-        let pokemon = state.in_play_pokemon[action.actor][*in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there if using ability");
-        pokemon.ability_used = true;
-    }
-    if let SimpleAction::Attack(_) = &action.action {
-        state
-            .move_generation_stack
-            .push((action.actor, vec![SimpleAction::EndTurn]));
-    }
+        if let SimpleAction::Play { trainer_card } = &action.action {
+            let card = Card::Trainer(trainer_card.clone());
+            state.discard_card_from_hand(action.actor, &card);
+            if card.is_support() {
+                state.has_played_support = true;
+            }
+        }
+        if let SimpleAction::UseAbility { in_play_idx } = &action.action {
+            let pokemon = state.in_play_pokemon[action.actor][*in_play_idx]
+                .as_mut()
+                .expect("Pokemon should be there if using ability");
+            pokemon.ability_used = true;
+        }
+
+        mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
+
+        if let SimpleAction::Attack(_) = &action.action {
+            state
+                .move_generation_stack
+                .insert(0, (action.actor, vec![SimpleAction::EndTurn]));
+        }
+    })
 }
 
 fn noop_mutation() -> Mutation {

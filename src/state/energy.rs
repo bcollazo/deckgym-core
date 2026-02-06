@@ -1,5 +1,5 @@
 use crate::{
-    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect},
+    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, handle_damage},
     effects::TurnEffect,
     models::EnergyType,
     AbilityId, State,
@@ -107,10 +107,13 @@ impl State {
                     .and_then(|ability| ability_mechanic_from_effect(&ability.effect))
                     .is_some_and(|mechanic| *mechanic == AbilityMechanic::ElectromagneticWall);
                 if has_electromagnetic_wall {
-                    let target = self.in_play_pokemon[actor][in_play_idx]
-                        .as_mut()
-                        .expect("Pokemon should be there if attaching energy to it");
-                    target.apply_damage(20);
+                    handle_damage(
+                        self,
+                        (opponent, 0),
+                        &[(20, actor, in_play_idx)],
+                        false,
+                        None,
+                    );
                 }
             }
         }
@@ -123,9 +126,13 @@ impl State {
             {
                 // Deal 20 damage to opponent's active Pokémon
                 let opponent = (actor + 1) % 2;
-                if let Some(opponent_active) = self.in_play_pokemon[opponent][0].as_mut() {
-                    opponent_active.apply_damage(20);
-                }
+                handle_damage(
+                    self,
+                    (actor, in_play_idx),
+                    &[(20, opponent, 0)],
+                    false,
+                    None,
+                );
             }
 
             // Check for Komala's Comatose ability
