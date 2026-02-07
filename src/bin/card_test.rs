@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{ArgAction, Parser};
 use colored::Colorize;
 use deckgym::database::get_card_by_enum;
 use deckgym::simulate::initialize_logger;
@@ -18,6 +18,18 @@ use std::path::Path;
 struct Args {
     /// Card ID (e.g., "A1 003")
     card_id: String,
+
+    /// Increase verbosity (-v, -vv, -vvv, etc.)
+    #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
+    verbose: u8,
+
+    /// Number of simulations to run
+    #[arg(short, long, default_value_t = 10_000)]
+    num: u32,
+
+    /// Only include decks whose filename contains this substring (case-insensitive)
+    #[arg(long)]
+    deck_filter: Option<String>,
 }
 
 fn main() {
@@ -63,7 +75,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    initialize_logger(1);
+    initialize_logger(args.verbose);
     warn!("Welcome to {} card test!", "deckgym".blue().bold());
     warn!("Temp deck: {}", deck_path.display());
 
@@ -81,19 +93,34 @@ fn main() {
         example_decks
             .to_str()
             .expect("Example decks path should be valid"),
-        10_000,
+        args.num,
+        args.deck_filter.as_deref(),
     );
 }
 
 /// Simulate games between one deck and multiple decks in a folder.
-fn simulate_against_folder(deck_a_path: &str, decks_folder: &str, total_num_simulations: u32) {
+fn simulate_against_folder(
+    deck_a_path: &str,
+    decks_folder: &str,
+    total_num_simulations: u32,
+    deck_filter: Option<&str>,
+) {
     // Read all deck files from the folder
     let deck_paths: Vec<String> = fs::read_dir(decks_folder)
         .expect("Failed to read decks folder")
         .filter_map(|entry| {
             let entry = entry.ok()?;
             if entry.path().is_file() {
-                Some(entry.path().to_str()?.to_string())
+                let path = entry.path();
+                let path_str = path.to_str()?.to_string();
+                if let Some(filter) = deck_filter {
+                    let filter = filter.to_lowercase();
+                    let filename = path.file_name()?.to_string_lossy().to_lowercase();
+                    if !filename.contains(&filter) {
+                        return None;
+                    }
+                }
+                Some(path_str)
             } else {
                 None
             }
