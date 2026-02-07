@@ -119,7 +119,7 @@ pub(crate) fn forecast_ability(
         }
         AbilityId::B1a065FurfrouFurCoat => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A4a032MisdreavusInfiltratingInspection => {
-            panic!("Infiltrating Inspection is triggered when played to bench")
+            unreachable!("Handled by AbilityMechanic")
         }
         AbilityId::A1007Butterfree | AbilityId::A2022ShayminFragrantFlowerGarden => {
             unreachable!("Handled by AbilityMechanic")
@@ -145,6 +145,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         }
         AbilityMechanic::ElectromagneticWall => {
             panic!("ElectromagneticWall is a passive ability")
+        }
+        AbilityMechanic::InfiltratingInspection => {
+            panic!("InfiltratingInspection is triggered when played to bench")
         }
     }
 }

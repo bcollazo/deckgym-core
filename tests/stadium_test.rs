@@ -530,6 +530,100 @@ fn test_starting_plains_ko_on_stadium_replace_promotes() {
 }
 
 #[test]
+fn test_starting_plains_applies_to_pokemon_played_after_stadium() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![
+        get_card_by_enum(CardId::B2154StartingPlains),
+        get_card_by_enum(CardId::A1077Magikarp),
+    ];
+    game.set_state(state);
+
+    // Play Starting Plains
+    let trainer_card = trainer_from_id(CardId::B2154StartingPlains);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Place Magikarp to bench after stadium is active
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let place_action = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                &action.action,
+                SimpleAction::Place(card, _) if card.get_name() == "Magikarp"
+            )
+        })
+        .expect("Expected a Place action for Magikarp");
+    game.apply_action(place_action);
+
+    let state = game.get_state_clone();
+    let magikarp_hp = state
+        .enumerate_bench_pokemon(0)
+        .find(|(_, pokemon)| pokemon.get_name() == "Magikarp")
+        .unwrap()
+        .1
+        .get_remaining_hp();
+    assert_eq!(magikarp_hp, 50);
+}
+
+#[test]
+fn test_starting_plains_applies_to_multiply_bench_pokemon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    let weedle_card = get_card_by_enum(CardId::A2b001Weedle);
+
+    state.set_board(
+        vec![PlayedCard::from_card(&weedle_card).with_energy(vec![EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2154StartingPlains)];
+    state.decks[0].cards.push(weedle_card.clone());
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::B2154StartingPlains);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Use Weedle's Multiply attack to bench another Weedle
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    let benched_weedle = state
+        .enumerate_bench_pokemon(0)
+        .find(|(_, pokemon)| pokemon.get_name() == "Weedle")
+        .expect("Expected Weedle on the bench");
+    assert_eq!(
+        benched_weedle.1.get_remaining_hp(),
+        pokemon_base_hp(CardId::A2b001Weedle) + 20
+    );
+}
+
+#[test]
 fn test_training_area_affects_both_players() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();

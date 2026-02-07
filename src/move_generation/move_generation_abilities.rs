@@ -102,7 +102,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::B1a018WartortleShellShield => false, // Passive ability
         AbilityId::B1a034ReuniclusInfiniteIncrease => false, // Passive ability
         AbilityId::B1a065FurfrouFurCoat => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::A4a032MisdreavusInfiltratingInspection => false, // Triggered when played to bench
+        AbilityId::A4a032MisdreavusInfiltratingInspection => {
+            unreachable!("Handled by AbilityMechanic")
+        }
         AbilityId::A1007Butterfree | AbilityId::A2022ShayminFragrantFlowerGarden => {
             unreachable!("Handled by AbilityMechanic")
         }
@@ -125,6 +127,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::PreventFirstAttack => false,
         AbilityMechanic::ElectromagneticWall => false,
+        AbilityMechanic::InfiltratingInspection => false,
     }
 }
 

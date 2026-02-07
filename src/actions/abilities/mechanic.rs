@@ -9,4 +9,5 @@ pub enum AbilityMechanic {
     StartTurnRandomPokemonToHand { energy_type: EnergyType },
     PreventFirstAttack,
     ElectromagneticWall,
+    InfiltratingInspection,
 }

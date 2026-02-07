@@ -80,7 +80,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put 2 random Pokémon Tool cards from your discard pile into your hand.", todo_implementation);
         // map.insert("Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put a Supporter card from your discard pile into your hand.", todo_implementation);
         // map.insert("Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may take a [R] Energy from your Energy Zone and attach it to your Active [R] Pokémon.", todo_implementation);
-        // map.insert("Once during your turn, when you put this Pokémon from your hand onto your Bench, you may have your opponent reveal their hand.", todo_implementation);
+        map.insert(
+            "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may have your opponent reveal their hand.",
+            AbilityMechanic::InfiltratingInspection,
+        );
         // map.insert("Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may choose either player. Look at the top card of that player's deck.", todo_implementation);
         // map.insert("Once during your turn, you may discard the top card of your opponent's deck.", todo_implementation);
@@ -168,4 +171,8 @@ pub fn get_ability_mechanic(card: &Card) -> Option<&'static AbilityMechanic> {
     } else {
         None
     }
+}
+
+pub fn has_ability_mechanic(card: &Card, mechanic: &AbilityMechanic) -> bool {
+    get_ability_mechanic(card) == Some(mechanic)
 }

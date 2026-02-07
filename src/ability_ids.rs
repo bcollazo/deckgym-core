@@ -156,7 +156,6 @@ lazy_static::lazy_static! {
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
         m.insert("A4a 022", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 025", AbilityId::A4a025RaikouExLegendaryPulse);
-        m.insert("A4a 032", AbilityId::A4a032MisdreavusInfiltratingInspection);
         m.insert("A4a 065", AbilityId::A1061PoliwrathCounterattack);
         m.insert("A4a 072", AbilityId::A4a022MiloticHealingRipples);
         m.insert("A4a 079", AbilityId::A4a010EnteiExLegendaryPulse);

@@ -120,25 +120,6 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
 }
 
 /// Called when a basic Pokémon is played to the bench from hand
-pub(crate) fn on_play_to_bench(_actor: usize, _state: &mut State, card: &Card, in_play_idx: usize) {
-    // Only trigger for bench positions (index > 0)
-    if in_play_idx == 0 {
-        return;
-    }
-
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&card.get_id()[..]) {
-        if ability_id == AbilityId::A4a032MisdreavusInfiltratingInspection {
-            // Infiltrating Inspection: Once during your turn, when you put this Pokémon from your hand onto your Bench,
-            // you may have your opponent reveal their hand.
-            // Note: In this AI context, revealing the hand has no gameplay effect since both players
-            // can see all cards. This is implemented as a no-op but could be extended in the future
-            // for logging or UI purposes.
-            debug!("Misdreavus's Infiltrating Inspection: Opponent's hand is revealed (no-op in AI context)");
-            // No action needed - in a real game, this would show the opponent's hand to the player
-        }
-    }
-}
-
 pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     // Check if active Pokémon has an end-of-turn ability
     let active = state.get_active(player_ending_turn);

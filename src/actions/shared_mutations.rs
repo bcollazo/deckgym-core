@@ -4,10 +4,10 @@ use std::cmp::min;
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
+        apply_place_card,
         mutations::doutcome,
     },
     combinatorics::generate_combinations,
-    hooks::to_playable_card,
     models::{Card, EnergyType},
     State,
 };
@@ -170,25 +170,15 @@ pub(crate) fn search_and_bench_by_name(
                     .expect("Card should be in deck");
 
                 // Put the card onto the bench
-                let deck = &mut state.decks[action.actor];
                 debug!(
                     "Fetched {card:?} from deck for player {} to place on bench",
                     action.actor
                 );
 
-                // Remove card from deck
-                if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
-                    deck.cards.remove(pos);
-                } else {
-                    panic!("Card should be in deck");
-                }
-
-                // Place on bench
                 let bench_idx = bench_space.unwrap();
-                let playable_card = to_playable_card(&card, true);
-                state.in_play_pokemon[action.actor][bench_idx] = Some(playable_card);
+                apply_place_card(state, action.actor, &card, bench_idx, true);
 
-                deck.shuffle(false, rng);
+                state.decks[action.actor].shuffle(false, rng);
             }));
         }
         (probabilities, outcomes)

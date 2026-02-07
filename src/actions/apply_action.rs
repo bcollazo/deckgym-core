@@ -4,11 +4,13 @@ use log::debug;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
+    actions::effect_ability_mechanic_map::has_ability_mechanic,
     actions::{
+        abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{wrap_with_common_logic, Mutation},
     },
-    hooks::{get_retreat_cost, on_evolve, on_play_to_bench, to_playable_card},
+    hooks::{get_retreat_cost, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     state::State,
     tools,
@@ -127,7 +129,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             *energy_type,
             *amount,
         ),
-        SimpleAction::Place(card, index) => apply_place_card(state, action.actor, card, *index),
+        SimpleAction::Place(card, index) => {
+            apply_place_card(state, action.actor, card, *index, false)
+        }
         SimpleAction::Evolve {
             evolution,
             in_play_idx,
@@ -235,12 +239,25 @@ fn apply_move_energy(
     }
 }
 
-fn apply_place_card(state: &mut State, actor: usize, card: &Card, index: usize) {
+pub(crate) fn apply_place_card(
+    state: &mut State,
+    actor: usize,
+    card: &Card,
+    index: usize,
+    from_deck: bool,
+) {
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
     state.refresh_starting_plains_bonus_for_idx(actor, index);
-    state.remove_card_from_hand(actor, card);
-    on_play_to_bench(actor, state, card, index);
+    if from_deck {
+        state.remove_card_from_deck(actor, card);
+    } else {
+        state.remove_card_from_hand(actor, card);
+        let placed_in_bench = index != 0;
+        if placed_in_bench && has_ability_mechanic(card, &AbilityMechanic::InfiltratingInspection) {
+            debug!("Misdreavus's Infiltrating Inspection: Opponent's hand is revealed (no-op in AI context)");
+        }
+    }
 }
 
 fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: usize) {
