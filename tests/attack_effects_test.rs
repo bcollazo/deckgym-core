@@ -9,6 +9,64 @@ use deckgym::{
 mod common;
 
 #[test]
+fn test_metallic_turbo_panics_if_target_ko_by_jolteon() {
+    // Repro: Jolteon ex is active and Electromagnetic Wall KO's the bench target during
+    // Dialga ex's Metallic Turbo attach-from-zone resolution, causing a panic.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::B1081JolteonEx),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A2119DialgaEx)
+                .with_remaining_hp(90)
+                .with_energy(vec![
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                ]),
+            PlayedCard::from_id(CardId::B2113MegaMawileEx).with_remaining_hp(70),
+            PlayedCard::from_id(CardId::B1a065Furfrou).with_remaining_hp(10),
+            PlayedCard::from_id(CardId::B2113MegaMawileEx).with_remaining_hp(170),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 25;
+    game.set_state(state);
+
+    // Dialga ex uses Metallic Turbo to queue attach-to-bench actions
+    let attack_action = Action {
+        actor: 1,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let attach_action = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                &action.action,
+                SimpleAction::Attach { attachments, is_turn_energy: false }
+                    if attachments == &vec![(1, EnergyType::Metal, 2), (1, EnergyType::Metal, 2)]
+            )
+        })
+        .expect("Expected Metallic Turbo attach choice for bench index 2");
+
+    // This should panic due to KO during attach resolution
+    game.apply_action(attach_action);
+}
+
+#[test]
 fn test_weedle_multiply_attack() {
     // Create a custom state with Weedle in active and another in deck
     let weedle_card = get_card_by_enum(CardId::A2b001Weedle);
