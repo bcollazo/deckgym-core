@@ -170,6 +170,9 @@ pub enum Mechanic {
         opponent: bool,
         damage_per_energy: u32,
     },
+    DiscardHandCards {
+        count: usize,
+    },
     ExtraDamagePerSpecificEnergy {
         energy_type: EnergyType,
         damage_per_energy: u32,

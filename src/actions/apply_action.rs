@@ -79,6 +79,9 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::DiscardOwnCard { card } => {
             forecast_discard_own_card(action.actor, card)
         }
+        SimpleAction::DiscardOwnCards { cards } => {
+            forecast_discard_own_cards(action.actor, cards)
+        }
         SimpleAction::AttachFromDiscard {
             in_play_idx,
             num_random_energies,
@@ -554,6 +557,22 @@ fn forecast_discard_own_card(acting_player: usize, card: &Card) -> (Probabilitie
             debug!(
                 "Sableye's Dirty Throw: Discarded {:?} from hand",
                 card_clone
+            );
+        })],
+    )
+}
+
+fn forecast_discard_own_cards(acting_player: usize, cards: &[Card]) -> (Probabilities, Mutations) {
+    let cards_clone = cards.to_vec();
+    (
+        vec![1.0],
+        vec![Box::new(move |_rng, state, _action| {
+            for card in &cards_clone {
+                state.discard_card_from_hand(acting_player, card);
+            }
+            debug!(
+                "Discarded {:?} from hand",
+                cards_clone
             );
         })],
     )
