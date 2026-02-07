@@ -1068,6 +1068,10 @@ fn self_charge_active_from_energies(
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         for energy in &energies {
+            if state.in_play_pokemon[action.actor][0].is_none() {
+                continue; // probably K.O.d from Jolteon Ex in first loop
+            }
+
             state.attach_energy_from_zone(action.actor, 0, *energy, 1, false);
         }
     })

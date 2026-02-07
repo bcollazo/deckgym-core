@@ -321,10 +321,12 @@ fn charge_giratina_and_end_turn(in_play_idx: usize) -> Mutation {
             state.attach_energy_from_zone(action.actor, in_play_idx, EnergyType::Psychic, 1, false);
 
         // End the turn after using this ability
-        if attached {
-            state
-                .move_generation_stack
-                .push((action.actor, vec![SimpleAction::EndTurn]));
+        if let Some(pokemon) = &state.in_play_pokemon[action.actor][in_play_idx] {
+            if attached && !pokemon.is_knocked_out() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, vec![SimpleAction::EndTurn]));
+            }
         }
     })
 }

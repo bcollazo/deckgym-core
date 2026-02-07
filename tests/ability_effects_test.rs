@@ -140,7 +140,7 @@ fn test_hydreigon_roar_in_unison_jolteon_ko_no_panic() {
 }
 
 #[test]
-fn test_giratina_ex_ability_end_turn_panics_if_ko_by_jolteon() {
+fn test_giratina_ex_ability_end_turn_does_not_panic_if_ko_by_jolteon() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -164,13 +164,24 @@ fn test_giratina_ex_ability_end_turn_panics_if_ko_by_jolteon() {
     };
     game.apply_action(&ability_action);
 
+    // Expect Promotion
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let promotion_action = actions
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::Activate { .. }))
+        .expect("Should trigger promotion");
+    game.apply_action(promotion_action);
+
+    // Then End Turn
     let state = game.get_state_clone();
     let (_actor, actions) = state.generate_possible_actions();
     let end_turn_action = actions
         .iter()
         .find(|action| matches!(action.action, SimpleAction::EndTurn))
         .expect("Expected EndTurn action");
-
-    // This should panic because the active slot is empty after the KO.
     game.apply_action(end_turn_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.current_player, 0, "Turn should advance without panic");
 }

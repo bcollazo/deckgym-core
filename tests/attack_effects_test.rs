@@ -9,7 +9,7 @@ use deckgym::{
 mod common;
 
 #[test]
-fn test_metallic_turbo_panics_if_target_ko_by_jolteon() {
+fn test_metallic_turbo_does_not_panic_if_target_ko_by_jolteon() {
     // Repro: Jolteon ex is active and Electromagnetic Wall KO's the bench target during
     // Dialga ex's Metallic Turbo attach-from-zone resolution, causing a panic.
     let mut game = get_initialized_game(0);
@@ -62,8 +62,13 @@ fn test_metallic_turbo_panics_if_target_ko_by_jolteon() {
         })
         .expect("Expected Metallic Turbo attach choice for bench index 2");
 
-    // This should panic due to KO during attach resolution
     game.apply_action(attach_action);
+
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[1][2].is_none(),
+        "Bench target should be knocked out"
+    );
 }
 
 #[test]
