@@ -189,6 +189,12 @@ fn apply_attach_energy(
     is_turn_energy: bool,
 ) {
     for (amount, energy, in_play_idx) in attachments {
+        // it can happen that in the first iteration of for loop the pokemon was K.O.ed
+        // if so, just skip the rest of the attachments.
+        if state.in_play_pokemon[actor][*in_play_idx].is_none() {
+            continue;
+        }
+
         state.attach_energy_from_zone(actor, *in_play_idx, *energy, *amount, is_turn_energy);
     }
 }
