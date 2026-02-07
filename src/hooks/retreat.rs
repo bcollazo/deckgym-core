@@ -3,6 +3,7 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
+    stadiums::get_peculiar_plaza_retreat_reduction,
     tools::has_tool,
     State,
 };
@@ -54,6 +55,11 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                     }
                 }
             }
+        }
+
+        // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
+        if let Some(energy_type) = card.get_energy_type() {
+            to_subtract += get_peculiar_plaza_retreat_reduction(state, energy_type);
         }
 
         // Retreat Effects accumulate so we add them.

@@ -42,6 +42,11 @@ pub fn forecast_trainer_action(
         panic!("Unsupported Trainer Tool");
     }
 
+    // Stadiums: placement is handled in wrap_with_common_logic, no additional effect needed
+    if trainer_card.trainer_card_type == TrainerType::Stadium {
+        return doutcome(|_, _, _| {});
+    }
+
     let trainer_id =
         CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should be known");
     match trainer_id {

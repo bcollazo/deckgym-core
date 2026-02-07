@@ -18,6 +18,7 @@ pub mod optimize;
 pub mod players;
 pub mod simulate;
 pub mod simulation_event_handler;
+pub mod stadiums;
 pub mod state;
 pub mod temp_deck;
 pub mod test_helpers; // TODO: Compile/Expose only in test mode?

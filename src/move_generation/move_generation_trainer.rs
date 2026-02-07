@@ -6,6 +6,7 @@ use crate::{
     },
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
+    stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
 };
@@ -50,6 +51,14 @@ pub fn trainer_move_generation_implementation(
     if trainer_card.trainer_card_type == TrainerType::Tool {
         if is_tool_effect_implemented(trainer_card) {
             return can_play_tool(state, trainer_card);
+        }
+        return None;
+    }
+
+    // Stadium cards can be played if a different stadium is active (or none)
+    if trainer_card.trainer_card_type == TrainerType::Stadium {
+        if is_stadium_effect_implemented(trainer_card) {
+            return can_play_stadium(state, trainer_card);
         }
         return None;
     }
@@ -209,6 +218,17 @@ fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
     } else {
         Some(vec![])
     }
+}
+
+/// Check if a Stadium can be played (cannot play if same-named Stadium is already active)
+fn can_play_stadium(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    // Cannot play same-name stadium
+    if let Some(active_name) = state.get_active_stadium_name() {
+        if active_name == trainer_card.name {
+            return cannot_play_trainer();
+        }
+    }
+    can_play_trainer(state, trainer_card)
 }
 
 /// Check if Potion can be played (requires at least 1 damaged pokemon in play)

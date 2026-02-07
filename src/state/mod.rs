@@ -43,6 +43,8 @@ pub struct State {
     pub discard_energies: [Vec<EnergyType>; 2],
     // 0 index is the active pokemon, 1..4 are the bench
     pub in_play_pokemon: [[Option<PlayedCard>; 4]; 2],
+    // Stadium card currently in play (affects both players)
+    pub active_stadium: Option<Card>,
 
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
@@ -68,6 +70,7 @@ impl State {
             discard_piles: [Vec::new(), Vec::new()],
             discard_energies: [Vec::new(), Vec::new()],
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
+            active_stadium: None,
             has_played_support: false,
             has_retreated: false,
 
@@ -75,6 +78,14 @@ impl State {
             knocked_out_by_opponent_attack_last_turn: false,
             turn_effects: BTreeMap::new(),
         }
+    }
+
+    pub fn get_active_stadium_name(&self) -> Option<String> {
+        self.active_stadium.as_ref().map(|c| c.get_name())
+    }
+
+    pub fn set_active_stadium(&mut self, stadium: Card) -> Option<Card> {
+        self.active_stadium.replace(stadium)
     }
 
     pub fn debug_string(&self) -> String {

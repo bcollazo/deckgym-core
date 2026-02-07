@@ -11,7 +11,7 @@ use crate::{
     hooks::{
         get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
     },
-    models::Card,
+    models::{Card, TrainerType},
     state::GameOutcome,
     State,
 };
@@ -515,7 +515,15 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
         }
         if let SimpleAction::Play { trainer_card } = &action.action {
             let card = Card::Trainer(trainer_card.clone());
-            state.discard_card_from_hand(action.actor, &card);
+            if trainer_card.trainer_card_type == TrainerType::Stadium {
+                // Replace old stadium (discard it if exists)
+                if let Some(old_stadium) = state.set_active_stadium(card.clone()) {
+                    state.discard_piles[action.actor].push(old_stadium);
+                }
+                state.remove_card_from_hand(action.actor, &card);
+            } else {
+                state.discard_card_from_hand(action.actor, &card);
+            }
             if card.is_support() {
                 state.has_played_support = true;
             }

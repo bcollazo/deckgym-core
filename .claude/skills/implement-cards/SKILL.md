@@ -106,6 +106,29 @@ to see what is missing from the specified card.
 
   - Try to keep the `match trainer_id` cases as one-liners (using helper functions if necessary).
 
+## Stadium
+
+- Get the details of the stadium card that you want to implement by using the following script:
+
+  ```bash
+  cargo run --bin search "Peculiar Plaza"
+  ```
+
+- Copy the ids of cards to implement (including full art versions) in the given JSON.
+- In `stadiums.rs`:
+  - Add a static `LazyLock<String>` constant for the stadium's effect text.
+  - Add the stadium to `is_stadium_effect_implemented()`.
+  - Add a helper function to query the stadium's effect (e.g., `get_peculiar_plaza_retreat_reduction`).
+- Add Stadium move generation:
+  - Move generation is already handled generically in `move_generation_trainer.rs` via `can_play_stadium()`.
+  - No per-stadium logic needed unless the stadium has unique play conditions.
+- Hook the stadium effect into the appropriate game mechanic:
+  - Retreat cost effects: `hooks/retreat.rs` in `get_retreat_cost()`
+  - Damage bonuses: `hooks/core.rs` in `modify_damage()`
+  - HP bonuses: May need to modify `get_effective_total_hp()` or damage calculation
+- Stadium effects apply to BOTH players equally.
+- Test using `cargo run --bin card_test -- "CardId"`.
+
 ## Appendix
 
 ### Testing Your Implementation
