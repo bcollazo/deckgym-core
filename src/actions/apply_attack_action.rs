@@ -52,14 +52,16 @@ pub(crate) fn forecast_attack(
         .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
     let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
 
+    let (mut probs, mut mutations) = (base_probs, base_mutations);
+
     // Handle confusion: 50% chance the attack fails (coin flip)
     if active.confused {
-        return apply_confusion_coin_flip(base_probs, base_mutations);
+        (probs, mutations) = apply_confusion_coin_flip(probs, mutations);
     }
 
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
     if has_block_effect {
-        return apply_block_attack_coin_flip(base_probs, base_mutations);
+        (probs, mutations) = apply_block_attack_coin_flip(probs, mutations);
     }
 
     // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
@@ -74,11 +76,11 @@ pub(crate) fn forecast_attack(
             .unwrap_or(false);
 
         if defender_has_coin_flip_prevent {
-            return apply_defender_coin_flip_prevent_damage(base_probs, base_mutations);
+            (probs, mutations) = apply_defender_coin_flip_prevent_damage(probs, mutations);
         }
     }
 
-    (base_probs, base_mutations)
+    (probs, mutations)
 }
 
 fn forecast_attack_inner(
