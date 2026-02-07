@@ -406,15 +406,17 @@ fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 fn piers_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Discard 2 random Energy from your opponent's Active Pokémon.
     let opponent = (action.actor + 1) % 2;
+    let active = state.get_active(opponent);
+    let mut remaining_energy = active.attached_energy.clone();
     let mut to_discard = Vec::new();
 
     for _ in 0..2 {
-        let active = state.get_active(opponent);
-        if active.attached_energy.is_empty() {
+        if let Some(energy) = remaining_energy.pop() {
+            // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
+            to_discard.push(energy);
+        } else {
             break;
         }
-        // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
-        to_discard.push(*active.attached_energy.last().unwrap());
     }
 
     if !to_discard.is_empty() {
