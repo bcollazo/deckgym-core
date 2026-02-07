@@ -26,6 +26,7 @@ pub struct ValueFunctionParams {
     pub turns_until_opponent_wins: f64,
     pub online_pokemon_count: f64,
     pub energy_distance_to_online: f64,
+    pub opponent_discard_size: f64,
 }
 
 impl ValueFunctionParams {
@@ -44,6 +45,7 @@ impl ValueFunctionParams {
             turns_until_opponent_wins: 100.0,
             online_pokemon_count: 0.0,
             energy_distance_to_online: 0.0,
+            opponent_discard_size: 0.1,
         }
     }
 
@@ -62,6 +64,7 @@ impl ValueFunctionParams {
             turns_until_opponent_wins: 100.0,
             online_pokemon_count: 0.0,
             energy_distance_to_online: 0.0,
+            opponent_discard_size: 0.1,
         }
     }
 }
@@ -100,7 +103,8 @@ pub fn parametric_value_function(
             * params.turns_until_opponent_wins
         + (my.online_pokemon_count - opp.online_pokemon_count) * params.online_pokemon_count
         + (my.energy_distance_to_online - opp.energy_distance_to_online)
-            * params.energy_distance_to_online;
+            * params.energy_distance_to_online
+        + opp.discard_size * params.opponent_discard_size;
     trace!("parametric_value_function: {score} (params: {params:?}, my: {my:?}, opp: {opp:?})");
     score
 }
@@ -120,6 +124,7 @@ struct Features {
     active_has_tool: f64,
     is_winner: f64,
     turns_until_opponent_wins: f64,
+    discard_size: f64,
 }
 
 /// Extract features for a single player
@@ -136,6 +141,7 @@ fn extract_features(state: &State, player: usize, active_factor: f64) -> Feature
     let active_has_tool = get_active_has_tool(state, player);
     let is_winner = check_is_winner(state, player);
     let turns_until_opponent_wins = calculate_turns_until_opponent_wins(state, player);
+    let discard_size = state.discard_piles[player].len() as f64;
 
     Features {
         points,
@@ -150,6 +156,7 @@ fn extract_features(state: &State, player: usize, active_factor: f64) -> Feature
         active_has_tool,
         is_winner,
         turns_until_opponent_wins,
+        discard_size,
     }
 }
 
