@@ -17,6 +17,7 @@ pub(crate) use apply_action::apply_evolve;
 pub(crate) use apply_action::apply_place_card;
 pub(crate) use apply_action::forecast_action;
 pub(crate) use apply_action_helpers::handle_damage;
+pub(crate) use apply_action_helpers::handle_damage_only;
 pub(crate) use apply_action_helpers::handle_knockouts;
 pub use apply_trainer_action::may_effect;
 pub use effect_ability_mechanic_map::ability_mechanic_from_effect;

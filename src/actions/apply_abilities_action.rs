@@ -360,15 +360,17 @@ fn charge_hydreigon_and_damage_self(in_play_idx: usize) -> Mutation {
             false,
         );
 
-        // Use handle_damage to properly trigger KO checks
-        if attached {
-            handle_damage(
-                state,
-                (action.actor, in_play_idx),
-                &[(30, action.actor, in_play_idx)],
-                false,
-                None,
-            );
+        // Use handle_damage to properly trigger KO checks, only if not already K.O.s (by say Jolteon ex)
+        if let Some(pokemon) = &state.in_play_pokemon[action.actor][in_play_idx] {
+            if attached && !pokemon.is_knocked_out() {
+                handle_damage(
+                    state,
+                    (action.actor, in_play_idx),
+                    &[(30, action.actor, in_play_idx)],
+                    false,
+                    None,
+                );
+            }
         }
     })
 }

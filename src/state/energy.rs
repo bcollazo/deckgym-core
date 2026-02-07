@@ -1,5 +1,8 @@
 use crate::{
-    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, handle_damage},
+    actions::{
+        abilities::AbilityMechanic, ability_mechanic_from_effect, handle_damage_only,
+        handle_knockouts,
+    },
     effects::TurnEffect,
     models::EnergyType,
     AbilityId, State,
@@ -80,6 +83,7 @@ impl State {
         for _ in 0..amount {
             self.on_attach_energy(actor, in_play_idx, energy, from_zone, is_turn_energy);
         }
+        handle_knockouts(self, (0, 0), false);
         true
     }
 
@@ -107,7 +111,7 @@ impl State {
                     .and_then(|ability| ability_mechanic_from_effect(&ability.effect))
                     .is_some_and(|mechanic| *mechanic == AbilityMechanic::ElectromagneticWall);
                 if has_electromagnetic_wall {
-                    handle_damage(
+                    handle_damage_only(
                         self,
                         (opponent, 0),
                         &[(20, actor, in_play_idx)],
@@ -126,7 +130,7 @@ impl State {
             {
                 // Deal 20 damage to opponent's active Pokémon
                 let opponent = (actor + 1) % 2;
-                handle_damage(
+                handle_damage_only(
                     self,
                     (actor, in_play_idx),
                     &[(20, opponent, 0)],
