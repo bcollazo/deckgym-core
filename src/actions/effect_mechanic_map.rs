@@ -59,7 +59,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Discard 2 [R] Energy from this Pokémon. This attack does 80 damage to 1 of your opponent's Pokémon.", todo_implementation);
-    // map.insert("Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Discard 2 cards from your hand. If you can't discard 2 cards, this attack does nothing.",
+        Mechanic::DiscardHandCards { count: 2 },
+    );
     // map.insert("Discard 2 random Energy from this Pokémon.", todo_implementation);
     map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", Mechanic::PalkiaExDimensionalStorm);
     map.insert(
@@ -97,10 +100,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
         },
     );
-    // map.insert("Discard a card from your hand. If you can't, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Discard a card from your hand. If you can't, this attack does nothing.",
+        Mechanic::DiscardHandCards { count: 1 },
+    );
     map.insert(
         "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
-        Mechanic::DiscardRandomGlobalEnergy,
+        Mechanic::DiscardRandomGlobalEnergy { count: 1 },
     );
     // map.insert("Discard a random Energy from both Active Pokémon.", todo_implementation);
     map.insert(
@@ -128,7 +134,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard the top card of your deck. If that card is a [F] Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("Discard the top card of your opponent's deck.", todo_implementation);
     // map.insert("Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.", todo_implementation);
-    // map.insert("Draw a card.", todo_implementation);
+    map.insert("Draw a card.", Mechanic::DrawCard { amount: 1 });
     // map.insert("Draw cards until you have the same number of cards in your hand as your opponent.", todo_implementation);
     map.insert(
         "During your next turn, this Pokémon can't attack.",
@@ -290,7 +296,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 1,
         },
     );
-    // map.insert("During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.",
+        Mechanic::DamageAndTurnEffect {
+            effect: TurnEffect::NoEnergyFromZoneToActive,
+            duration: 1,
+        },
+    );
     // map.insert("During your opponent's next turn, this Pokémon takes +30 damage from attacks.", todo_implementation);
     map.insert(
         "During your opponent's next turn, this Pokémon takes -20 damage from attacks.",
@@ -706,6 +718,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If your opponent's Active Pokémon has damage on it, this attack does 40 more damage.",
         Mechanic::ExtraDamageIfHurt {
             extra_damage: 40,
+            opponent: true,
+        },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfHurt {
+            extra_damage: 50,
             opponent: true,
         },
     );
@@ -1283,7 +1302,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_opponent: true,
         },
     );
-    map.insert("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", Mechanic::DiscardRandomGlobalEnergy);
+    map.insert(
+        "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
+        Mechanic::DiscardRandomGlobalEnergy { count: 1 },
+    );
     // map.insert("Your opponent's Active Pokémon is now Poisoned. Do 20 damage to this Pokémon instead of the usual amount for this Special Condition.", todo_implementation);
     map.insert(
         "If this Pokémon has at least 2 extra [W] Energy attached, this attack also does 50 damage to 1 of your opponent's Benched Pokémon.",
@@ -1359,8 +1381,16 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // NEW MECHANICS INTRODUCES IN B2
     // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.", todo_implementation);
     // map.insert("Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
-    // map.insert("Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).", todo_implementation);
-    // map.insert("Discard 3 [R] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
+        Mechanic::DiscardRandomGlobalEnergy { count: 2 },
+    );
+    map.insert(
+        "Discard 3 [R] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
+        },
+    );
     // map.insert("Discard Water2 [W] Energy from this Pokémon. Your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("Discard a Stadium in play.", todo_implementation);
     // map.insert("During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.", todo_implementation);
@@ -1393,14 +1423,39 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.", todo_implementation);
     // map.insert("Put a random card that evolves from Spewpa from your deck into your hand.", todo_implementation);
     // map.insert("Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.", todo_implementation);
-    // map.insert("Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.", todo_implementation);
+    map.insert(
+        "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.",
+        Mechanic::ChargeYourTypeAnyWay {
+            energy_type: EnergyType::Psychic,
+            count: 3,
+        },
+    );
     // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
     // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
-    // map.insert("This attack does 20 more damage for each Supporter card in your discard pile.", todo_implementation);
+    map.insert(
+        "This attack does 20 more damage for each Supporter card in your discard pile.",
+        Mechanic::ExtraDamagePerSupporterInDiscard {
+            damage_per_supporter: 20,
+        },
+    );
     // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)", todo_implementation);
+    map.insert(
+        "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)",
+        Mechanic::MegaKangaskhanExDoublePunchingFamily,
+    );
     // map.insert("This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.", todo_implementation);
+    map.insert(
+        "Until this Pokémon leaves the Active Spot, this Pokémon's Heat-Up Crunch attack does +30 damage. This effect stacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Heat-Up Crunch".to_string(),
+                amount: 30,
+            },
+            duration: u8::MAX,
+            probability: None,
+        },
+    );
     // map.insert("You may shuffle this Pokémon and all attached cards into your deck.", todo_implementation);
     // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);

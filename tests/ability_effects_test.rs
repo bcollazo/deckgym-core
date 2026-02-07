@@ -1,9 +1,7 @@
 use common::get_initialized_game;
 use deckgym::{
-    actions::SimpleAction,
+    actions::{Action, SimpleAction},
     card_ids::CardId,
-    database::get_card_by_enum,
-    generate_possible_actions,
     models::{EnergyType, PlayedCard},
 };
 
@@ -15,55 +13,33 @@ fn test_serperior_jungle_totem_ability() {
     // Bulbasaur's Vine Whip requires 1 Grass + 1 Colorless (2 total)
     // With Jungle Totem, 1 Grass energy should count as 2, making the attack usable
 
-    let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-    let serperior_card = get_card_by_enum(CardId::A1a006Serperior);
-
     // Initialize with basic decks
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Ensure we're testing with the correct player
-    let test_player = state.current_player;
-
-    // Set up test_player with Bulbasaur in active position with only 1 Grass energy
-    let bulbasaur = PlayedCard::new(
-        bulbasaur_card.clone(),
-        70,                      // remaining_hp
-        70,                      // total_hp
-        vec![EnergyType::Grass], // Only 1 Grass energy (normally not enough for Vine Whip)
-        false,
-        vec![],
+    // Set up player 0 with Bulbasaur in active position with only 1 Grass energy
+    // and Serperior on the bench
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
+            PlayedCard::from_id(CardId::A1a006Serperior),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.in_play_pokemon[test_player][0] = Some(bulbasaur);
+    state.current_player = 0;
 
-    // Set up Serperior on the bench
-    let serperior = PlayedCard::new(
-        serperior_card.clone(),
-        110,    // remaining_hp
-        110,    // total_hp
-        vec![], // No energy needed for ability
-        false,
-        vec![],
-    );
-    state.in_play_pokemon[test_player][1] = Some(serperior);
-
-    // Clear the move generation stack so we can test attack generation
-    state.move_generation_stack.clear();
-
-    game.set_state(state.clone());
+    game.set_state(state);
 
     // Generate possible actions
-    let (actor, actions) = generate_possible_actions(&state);
+    let state = game.get_state_clone();
+    let (actor, actions) = state.generate_possible_actions();
 
     // Check if attack action is available
     let has_attack_action = actions
         .iter()
         .any(|action| matches!(action.action, SimpleAction::Attack(_)));
 
-    assert_eq!(
-        actor, test_player,
-        "Current player should match test_player"
-    );
+    assert_eq!(actor, 0, "Current player should be player 0");
     assert!(
         has_attack_action,
         "With Serperior's Jungle Totem, Bulbasaur should be able to attack with only 1 Grass energy"
@@ -84,4 +60,128 @@ fn test_serperior_jungle_totem_ability() {
     if let SimpleAction::Attack(index) = attack_actions[0].action {
         assert_eq!(index, 0, "Attack index should be 0 (Vine Whip)");
     }
+}
+
+#[test]
+fn test_hydreigon_roar_in_unison_jolteon_active_damage() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B1157Hydreigon).with_remaining_hp(100),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    let state = game.get_state_clone();
+    let hydreigon = state.in_play_pokemon[1][1]
+        .as_ref()
+        .expect("Hydreigon should still be in play");
+    assert_eq!(hydreigon.get_remaining_hp(), 30);
+    assert_eq!(hydreigon.attached_energy.len(), 2);
+
+    // Attach turn energy to the same Hydreigon to confirm a third Electromagnetic Wall trigger.
+    let attach_action = Action {
+        actor: 1,
+        action: SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Darkness, 1)],
+            is_turn_energy: true,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&attach_action);
+
+    let state = game.get_state_clone();
+    let hydreigon = state.in_play_pokemon[1][1]
+        .as_ref()
+        .expect("Hydreigon should still be in play");
+    assert_eq!(hydreigon.get_remaining_hp(), 10);
+}
+
+#[test]
+fn test_hydreigon_roar_in_unison_jolteon_ko_no_panic() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B1157Hydreigon).with_remaining_hp(20),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][1].is_none());
+    assert_eq!(state.points[0], 1);
+}
+
+#[test]
+fn test_giratina_ex_ability_end_turn_does_not_panic_if_ko_by_jolteon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A2b035GiratinaEx).with_remaining_hp(10),
+            PlayedCard::from_id(CardId::A2b035GiratinaEx),
+            PlayedCard::from_id(CardId::A2110DarkraiEx),
+            PlayedCard::from_id(CardId::A2110DarkraiEx),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 13;
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 0 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    // Expect Promotion
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let promotion_action = actions
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::Activate { .. }))
+        .expect("Should trigger promotion");
+    game.apply_action(promotion_action);
+
+    // Then End Turn
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let end_turn_action = actions
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::EndTurn))
+        .expect("Expected EndTurn action");
+    game.apply_action(end_turn_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.current_player, 0, "Turn should advance without panic");
 }

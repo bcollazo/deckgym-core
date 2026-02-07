@@ -1,9 +1,12 @@
+pub(crate) mod abilities;
 mod apply_abilities_action;
 mod apply_action;
 mod apply_action_helpers;
 mod apply_attack_action;
 mod apply_trainer_action;
+pub(crate) mod attack_helpers;
 mod attacks;
+mod effect_ability_mechanic_map;
 mod effect_mechanic_map;
 mod mutations;
 mod shared_mutations;
@@ -11,9 +14,14 @@ mod types;
 
 pub(crate) use apply_action::apply_action;
 pub(crate) use apply_action::apply_evolve;
+pub(crate) use apply_action::apply_place_card;
 pub(crate) use apply_action::forecast_action;
 pub(crate) use apply_action_helpers::handle_damage;
+pub(crate) use apply_action_helpers::handle_damage_only;
+pub(crate) use apply_action_helpers::handle_knockouts;
 pub use apply_trainer_action::may_effect;
+pub use effect_ability_mechanic_map::ability_mechanic_from_effect;
+pub use effect_ability_mechanic_map::EFFECT_ABILITY_MECHANIC_MAP;
 pub use effect_mechanic_map::EFFECT_MECHANIC_MAP;
 pub use types::Action;
 pub use types::SimpleAction;

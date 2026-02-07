@@ -25,21 +25,19 @@ to see what is missing from the specified card.
   ```
 
 - Copy the ids of cards to implement (including full art versions) in the given JSON. Only choose the ones with the ability you want to implement.
-- In `ability_ids.rs` add the ability to the `AbilityId` enum and the `ABILITY_ID_MAP` map.
-  - Keep the file ordered by set and number.
-- For abilities where the user selects _when_ to use it:
-  - Implement the "move generation" logic. In `move_generation_abilities.rs` implement the `can_use_ability` case for this id.
-    This is the code that checks if an ability can be used (e.g. Weezing's ability can only be used if weezing is in the active spot, and only once per turn).
-    Review file for similar abilities and have them share code when possible.
-    Keep the `match ability` cases as one-liners (using helper functions if necessary).
-  - Implement the "apply action" logic. In `apply_abilities_action.rs` implement the case for this ability.
-    This is the code that actually carries out the logic (e.g. in Weezing's ability, this is the code that would actually poison the opponent's active).
-    Review file for similar abilities and have them share code when possible.
-    Keep the `match ability_id` cases as one-liners (using helper functions if necessary).
-- For others:
-  - Some abilities are fairly unique and might need architectural changes to the engine. For cards with considerable custom logic,
-    try to find a generalizing pattern that can be presented as a "hook" in the `hooks.rs`. The idea of `hooks.rs` is to try to encapsulate
-    most custom logic that goes outside of the normal business logic.
+- Use the new `AbilityMechanic` pathway first.
+  - Find the ability effect text in the JSON and search for it in `effect_ability_mechanic_map.rs`.
+  - Decide whether to re-use an existing `AbilityMechanic` or add a new variant in `src/actions/abilities/mechanic.rs`.
+  - Uncomment all matching `map.insert(...)` lines in `effect_ability_mechanic_map.rs` and map them to the correct `AbilityMechanic` with parameters.
+  - Implement the mechanic logic in `forecast_ability_by_mechanic` in `apply_abilities_action.rs`.
+    Keep the `match` arms as one-liners (use helpers).
+  - Implement move generation logic in `can_use_ability_by_mechanic` in `move_generation_abilities.rs`.
+    Keep the `match` arms as one-liners (use helpers).
+- If the ability is passive or hook-driven:
+  - Prefer a mechanic + hook combo (e.g., hooks in `hooks/core.rs` that apply the effect when damage is calculated).
+  - `forecast_ability_by_mechanic` should `panic!` for passive mechanics, and `can_use_ability_by_mechanic` should return `false`.
+- Only fall back to `AbilityId` for abilities that cannot yet be represented as a mechanic or need custom one-off logic.
+  - If you add `AbilityId`, update both the enum and `ABILITY_ID_MAP` in `ability_ids.rs`, keeping the file ordered by set and number.
 
 
 ## Attack
@@ -70,10 +68,9 @@ to see what is missing from the specified card.
 - In `tool_ids.rs` add the tool to the `ToolId` enum and the `TOOL_ID_MAP` map.
   - Keep the file ordered by set and number.
   - If the tool has attachment restrictions (e.g., only Grass pokémon), implement the `can_attach_to()` method to enforce these restrictions. This counts as the "move generation" for the tool.
-- Implement the "on attach" logic in `on_attach_tool` in `hooks/core.rs`.
-  - This is where you handle immediate effects when the tool is attached (e.g., +HP, stat modifications).
-  - Review similar tools to ensure consistency in implementation.
-  - Keep the `match tool_id` cases as one-liners when possible.
+- Implement any immediate effects in the tool's core logic rather than a dedicated "on attach" hook.
+  - For HP modifiers, prefer dynamic calculation in `PlayedCard::get_effective_total_hp()`.
+  - For other immediate effects, add a focused helper in the relevant hook file and call it from the appropriate action handler.
 - Implement the "forecast action" logic in `forecast_trainer_action` in `apply_trainer_action.rs`.
   - Add the tool's CardId to the match branch that calls `doutcome(attach_tool)`.
   - Tools should be grouped together in a single match arm (e.g., `CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape`).
@@ -108,25 +105,42 @@ to see what is missing from the specified card.
 
   - Try to keep the `match trainer_id` cases as one-liners (using helper functions if necessary).
 
+## Stadium
+
+- Get the details of the stadium card that you want to implement by using the following script:
+
+  ```bash
+  cargo run --bin search "Peculiar Plaza"
+  ```
+
+- Copy the ids of cards to implement (including full art versions) in the given JSON.
+- In `stadiums.rs`:
+  - Add a static `LazyLock<String>` constant for the stadium's effect text.
+  - Add the stadium to `is_stadium_effect_implemented()`.
+  - Add a helper function to query the stadium's effect (e.g., `get_peculiar_plaza_retreat_reduction`).
+- Add Stadium move generation:
+  - Move generation is already handled generically in `move_generation_trainer.rs` via `can_play_stadium()`.
+  - No per-stadium logic needed unless the stadium has unique play conditions.
+- Hook the stadium effect into the appropriate game mechanic:
+  - Retreat cost effects: `hooks/retreat.rs` in `get_retreat_cost()`
+  - Damage bonuses: `hooks/core.rs` in `modify_damage()`
+  - HP bonuses: May need to modify `get_effective_total_hp()` or damage calculation
+- Stadium effects apply to BOTH players equally.
+- Test using `cargo run --bin card_test -- "CardId"`.
+
 ## Appendix
 
 ### Testing Your Implementation
 
 After implementing a card test it like so:
 
-1. Generate a temporary test deck for the card you implemented:
-   ```bash
-   cargo run --bin temp_deck_generator -- "Card ID" > test_deck.txt
-   ```
+Run the integrated card test command (it generates a temp deck and runs 10,000 random games against all decks in `example_decks/`):
 
-2. Run 10,000 random games against all decks in the example_decks folder:
-   ```bash
-   cargo run simulate test_deck.txt example_decks/ --num 10000 --players r,r -v
-   ```
+```bash
+cargo run --bin card_test -- "Card ID"
+```
 
-   This will automatically distribute the 10,000 games evenly across all decks in the folder, testing your implementation against diverse strategies and card combinations.
-
-3. Review the results to ensure the games complete without errors.
+Review the results to ensure the games complete without errors.
 
 ### Code Quality
 

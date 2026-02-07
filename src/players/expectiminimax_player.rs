@@ -5,7 +5,7 @@ use std::fmt::Write;
 use std::vec;
 
 use crate::actions::{forecast_action, Action};
-use crate::{generate_possible_actions, Deck, State};
+use crate::{Deck, State};
 
 use super::Player;
 
@@ -170,7 +170,7 @@ fn expectiminimax(
         return (score, state_node);
     }
 
-    let (actor, actions) = generate_possible_actions(state);
+    let (actor, actions) = state.generate_possible_actions();
     if actor == myself {
         // We are in maximing mode.
         let mut scores: Vec<f64> = Vec::with_capacity(actions.len());

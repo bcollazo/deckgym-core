@@ -1,7 +1,4 @@
-use crate::{
-    models::{Card, EnergyType, TrainerCard},
-    tool_ids::ToolId,
-};
+use crate::models::{Card, EnergyType, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -55,12 +52,17 @@ pub enum SimpleAction {
     },
     AttachTool {
         in_play_idx: usize,
-        tool_id: ToolId,
+        tool_card: Card,
     },
     Heal {
         in_play_idx: usize,
         amount: u32,
         cure_status: bool,
+    },
+    HealAndDiscardEnergy {
+        in_play_idx: usize,
+        heal_amount: u32,
+        discard_energies: Vec<EnergyType>,
     },
     MoveAllDamage {
         from: usize,
@@ -93,9 +95,9 @@ pub enum SimpleAction {
     DiscardOpponentSupporter {
         supporter_card: Card,
     },
-    /// Sableye's Dirty Throw: discard a specific card from own hand
-    DiscardOwnCard {
-        card: Card,
+    /// Discard multiple specific cards from own hand
+    DiscardOwnCards {
+        cards: Vec<Card>,
     },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
@@ -108,6 +110,10 @@ pub enum SimpleAction {
     HealAllEeveeEvolutions,
     /// Discard a Fossil from play (Fossils can be discarded at any time during your turn)
     DiscardFossil {
+        in_play_idx: usize,
+    },
+    /// Return a Pokemon in play to your hand (e.g., Ilima).
+    ReturnPokemonToHand {
         in_play_idx: usize,
     },
     Noop, // No operation, used to have the user say "no" to a question
@@ -159,15 +165,23 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::AttachTool {
                 in_play_idx,
-                tool_id,
+                tool_card,
             } => {
-                write!(f, "AttachTool({in_play_idx}, {tool_id:?})")
+                write!(f, "AttachTool({in_play_idx}, {})", tool_card.get_name())
             }
             SimpleAction::Heal {
                 in_play_idx,
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::HealAndDiscardEnergy {
+                in_play_idx,
+                heal_amount,
+                discard_energies,
+            } => write!(
+                f,
+                "HealAndDiscardEnergy({in_play_idx}, {heal_amount}, {discard_energies:?})"
+            ),
             SimpleAction::MoveAllDamage { from, to } => {
                 write!(f, "MoveAllDamage(from:{from}, to:{to})")
             }
@@ -205,8 +219,8 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardOpponentSupporter { supporter_card } => {
                 write!(f, "DiscardOpponentSupporter({supporter_card})")
             }
-            SimpleAction::DiscardOwnCard { card } => {
-                write!(f, "DiscardOwnCard({card})")
+            SimpleAction::DiscardOwnCards { cards } => {
+                write!(f, "DiscardOwnCards({:?})", cards)
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,
@@ -222,6 +236,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardFossil { in_play_idx } => {
                 write!(f, "DiscardFossil({in_play_idx})")
+            }
+            SimpleAction::ReturnPokemonToHand { in_play_idx } => {
+                write!(f, "ReturnPokemonToHand({in_play_idx})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

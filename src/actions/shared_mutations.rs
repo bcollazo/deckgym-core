@@ -4,10 +4,10 @@ use std::cmp::min;
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
+        apply_place_card,
         mutations::doutcome,
     },
     combinatorics::generate_combinations,
-    hooks::to_playable_card,
     models::{Card, EnergyType},
     State,
 };
@@ -31,7 +31,16 @@ pub(crate) fn pokemon_search_outcomes_by_type(
     basic_only: bool,
     energy_type: EnergyType,
 ) -> (Probabilities, Mutations) {
-    card_search_outcomes_with_filter(state.current_player, state, move |card: &&Card| {
+    pokemon_search_outcomes_by_type_for_player(state.current_player, state, basic_only, energy_type)
+}
+
+pub(crate) fn pokemon_search_outcomes_by_type_for_player(
+    acting_player: usize,
+    state: &State,
+    basic_only: bool,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check
@@ -105,13 +114,13 @@ where
     let mut outcomes: Mutations = vec![];
 
     for combo in draw_combinations {
-        outcomes.push(Box::new(move |rng, state, action| {
+        outcomes.push(Box::new(move |rng, state, _action| {
             // Transfer each Pokemon from the combination to hand
             for pokemon in &combo {
-                state.transfer_card_from_deck_to_hand(action.actor, pokemon);
+                state.transfer_card_from_deck_to_hand(acting_player, pokemon);
             }
 
-            state.decks[action.actor].shuffle(false, rng);
+            state.decks[acting_player].shuffle(false, rng);
         }));
     }
 
@@ -161,25 +170,15 @@ pub(crate) fn search_and_bench_by_name(
                     .expect("Card should be in deck");
 
                 // Put the card onto the bench
-                let deck = &mut state.decks[action.actor];
                 debug!(
                     "Fetched {card:?} from deck for player {} to place on bench",
                     action.actor
                 );
 
-                // Remove card from deck
-                if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
-                    deck.cards.remove(pos);
-                } else {
-                    panic!("Card should be in deck");
-                }
-
-                // Place on bench
                 let bench_idx = bench_space.unwrap();
-                let playable_card = to_playable_card(&card, true);
-                state.in_play_pokemon[action.actor][bench_idx] = Some(playable_card);
+                apply_place_card(state, action.actor, &card, bench_idx, true);
 
-                deck.shuffle(false, rng);
+                state.decks[action.actor].shuffle(false, rng);
             }));
         }
         (probabilities, outcomes)

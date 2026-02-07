@@ -32,7 +32,9 @@ pub enum Mechanic {
     DamageAllOpponentPokemon {
         damage: u32,
     },
-    DiscardRandomGlobalEnergy,
+    DiscardRandomGlobalEnergy {
+        count: usize,
+    },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,
@@ -74,10 +76,15 @@ pub enum Mechanic {
     SelfChargeActive {
         energies: Vec<EnergyType>,
     },
+    ChargeYourTypeAnyWay {
+        energy_type: EnergyType,
+        count: usize,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
     MegaBlazikenExMegaBurningAttack,
+    MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
@@ -111,6 +118,9 @@ pub enum Mechanic {
     ExtraDamagePerTrainerInOpponentDeck {
         damage_per_trainer: u32,
     },
+    ExtraDamagePerSupporterInDiscard {
+        damage_per_supporter: u32,
+    },
     ExtraDamageIfCardInDiscard {
         card_name: String,
         extra_damage: u32,
@@ -121,6 +131,9 @@ pub enum Mechanic {
         effect: CardEffect,
         duration: u8,
         probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
+    },
+    DrawCard {
+        amount: u8,
     },
     SelfDiscardAllEnergy,
     SelfDiscardRandomEnergy,
@@ -162,6 +175,9 @@ pub enum Mechanic {
     DamagePerEnergyAll {
         opponent: bool,
         damage_per_energy: u32,
+    },
+    DiscardHandCards {
+        count: usize,
     },
     ExtraDamagePerSpecificEnergy {
         energy_type: EnergyType,

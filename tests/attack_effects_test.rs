@@ -4,10 +4,72 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    tool_ids::ToolId,
 };
 
 mod common;
+
+#[test]
+fn test_metallic_turbo_does_not_panic_if_target_ko_by_jolteon() {
+    // Repro: Jolteon ex is active and Electromagnetic Wall KO's the bench target during
+    // Dialga ex's Metallic Turbo attach-from-zone resolution, causing a panic.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::B1081JolteonEx),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A2119DialgaEx)
+                .with_remaining_hp(90)
+                .with_energy(vec![
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                ]),
+            PlayedCard::from_id(CardId::B2113MegaMawileEx).with_remaining_hp(70),
+            PlayedCard::from_id(CardId::B1a065Furfrou).with_remaining_hp(10),
+            PlayedCard::from_id(CardId::B2113MegaMawileEx).with_remaining_hp(170),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 25;
+    game.set_state(state);
+
+    // Dialga ex uses Metallic Turbo to queue attach-to-bench actions
+    let attack_action = Action {
+        actor: 1,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let attach_action = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                &action.action,
+                SimpleAction::Attach { attachments, is_turn_energy: false }
+                    if attachments == &vec![(1, EnergyType::Metal, 2), (1, EnergyType::Metal, 2)]
+            )
+        })
+        .expect("Expected Metallic Turbo attach choice for bench index 2");
+
+    game.apply_action(attach_action);
+
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[1][2].is_none(),
+        "Bench target should be knocked out"
+    );
+}
 
 #[test]
 fn test_weedle_multiply_attack() {
@@ -17,18 +79,13 @@ fn test_weedle_multiply_attack() {
     // Initialize with basic decks
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-    state.current_player = 0;
 
     // Set up player 0 with Weedle in active position
-    let active_weedle = PlayedCard::new(
-        weedle_card.clone(),
-        50,                      // remaining_hp
-        50,                      // total_hp
-        vec![EnergyType::Grass], // Has 1 Grass energy to use Multiply
-        false,
-        vec![],
+    state.set_board(
+        vec![PlayedCard::from_card(&weedle_card).with_energy(vec![EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.in_play_pokemon[0][0] = Some(active_weedle);
+    state.current_player = 0;
 
     // Add another Weedle to the deck
     state.decks[0].cards.push(weedle_card.clone());
@@ -76,78 +133,28 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     let mut game = get_initialized_game(42);
     let mut state = game.get_state_clone();
 
-    // Set up Player 0 (acting player) with Dialga ex
-    let dialga = get_card_by_enum(CardId::A2119DialgaEx);
-    let dialga_played = PlayedCard::new(
-        dialga.clone(),
-        20,  // Low HP so Rocky Helmet counterattack will KO it
-        150, // Dialga ex total HP
-        vec![EnergyType::Metal, EnergyType::Metal],
-        false,
-        vec![],
+    // Set up Player 0 with Dialga ex at low HP + bench vs Squirtle with Rocky Helmet
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A2119DialgaEx)
+                .with_remaining_hp(20)
+                .with_energy(vec![EnergyType::Metal, EnergyType::Metal]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A1053Squirtle)
+                .with_tool(get_card_by_enum(CardId::A2148RockyHelmet)),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
     );
-    state.in_play_pokemon[0][0] = Some(dialga_played);
-
-    // Add 3 bench Pokémon for Player 0
-    let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
-    state.in_play_pokemon[0][1] = Some(PlayedCard::new(
-        bulbasaur.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
-    state.in_play_pokemon[0][2] = Some(PlayedCard::new(
-        bulbasaur.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
-    state.in_play_pokemon[0][3] = Some(PlayedCard::new(
-        bulbasaur.clone(),
-        70,
-        70,
-        vec![],
-        false,
-        vec![],
-    ));
-
-    // Set up Player 1 (opponent) with a basic Pokémon with Rocky Helmet
-    let squirtle = get_card_by_enum(CardId::A1053Squirtle);
-    let squirtle_played = PlayedCard::new(
-        squirtle.clone(),
-        50, // HP
-        50,
-        vec![],
-        false,
-        vec![],
-    );
-    // Attach Rocky Helmet
-    let mut squirtle_with_tool = squirtle_played;
-    squirtle_with_tool.attached_tool = Some(ToolId::A2148RockyHelmet);
-    state.in_play_pokemon[1][0] = Some(squirtle_with_tool);
-
-    // Add 1 bench Pokémon for Player 1
-    state.in_play_pokemon[1][1] = Some(PlayedCard::new(
-        squirtle.clone(),
-        50,
-        50,
-        vec![],
-        false,
-        vec![],
-    ));
 
     // Both players start at 0 points
     state.points = [0, 0];
-
-    // Set up proper turn state
     state.turn_count = 3;
     state.current_player = 0;
 
-    // Update the game with our modified state
     game.set_state(state);
 
     // Apply the Attack action (index 0 = Metallic Turbo)
@@ -160,9 +167,12 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
 
     // The attack should queue up an energy attachment action
     let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
     assert!(
-        !state.move_generation_stack.is_empty(),
-        "Move generation stack should have actions queued"
+        actions.iter().any(|a| {
+            matches!(a.action, SimpleAction::Attach { ref attachments, .. } if attachments.iter().any(|(_, energy, idx)| *energy == EnergyType::Metal && *idx != 0))
+        }),
+        "Expected Metal energy Attach choices after Metallic Turbo"
     );
 
     // Continue with play_tick() until the next turn or game over

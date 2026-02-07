@@ -28,8 +28,6 @@ pub fn init_decks(deck_a_path: &str, deck_b_path: &str) -> Vec<Box<dyn Player>> 
 pub fn get_initialized_game(seed: u64) -> Game<'static> {
     let players = init_random_players();
     let mut game = deckgym::Game::new(players, seed);
-    while game.get_state_clone().turn_count == 0 {
-        game.play_tick();
-    }
+    game.play_until_stable();
     game
 }

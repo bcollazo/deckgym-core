@@ -3,7 +3,6 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    generate_possible_actions,
     models::{Card, EnergyType},
 };
 
@@ -32,8 +31,8 @@ fn test_initial_build_phase() {
     assert!(state.discard_piles[0].is_empty());
     assert!(state.discard_piles[1].is_empty());
 
-    // Decks should have 15 cards
-    assert_eq!(state.decks[state.current_player].cards.len(), 15);
+    // Decks should have 14 and 15 cards
+    assert_eq!(state.decks[state.current_player].cards.len(), 14);
     assert_eq!(state.decks[(state.current_player + 1) % 2].cards.len(), 15);
 }
 
@@ -189,7 +188,7 @@ fn test_attach_action() {
     ); // no energy
 
     // Assert no Attach actions are available
-    let (actor, actions) = generate_possible_actions(&state);
+    let (actor, actions) = state.generate_possible_actions();
     assert!(!actions
         .iter()
         .any(|x| matches!(x.action, SimpleAction::Attach { .. })));

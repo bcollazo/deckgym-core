@@ -1,3 +1,6 @@
+mod energy;
+mod played_card;
+
 use log::{debug, trace};
 use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
@@ -5,11 +8,15 @@ use std::collections::BTreeMap;
 use std::hash::Hash;
 
 use crate::{
-    actions::SimpleAction,
+    actions::{self, SimpleAction},
     deck::Deck,
     effects::TurnEffect,
-    models::{Card, EnergyType, PlayedCard},
+    models::{Card, EnergyType},
+    move_generation,
+    stadiums::is_starting_plains_active,
 };
+
+pub use played_card::{has_serperior_jungle_totem, PlayedCard};
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameOutcome {
@@ -26,6 +33,7 @@ pub struct State {
     // Player that needs to select from playable actions. Might not be aligned
     // with coin toss and the parity, see Sabrina.
     pub current_player: usize,
+    pub(crate) end_turn_pending: bool,
     pub move_generation_stack: Vec<(usize, Vec<SimpleAction>)>,
 
     // Core state
@@ -36,6 +44,8 @@ pub struct State {
     pub discard_energies: [Vec<EnergyType>; 2],
     // 0 index is the active pokemon, 1..4 are the bench
     pub in_play_pokemon: [[Option<PlayedCard>; 4]; 2],
+    // Stadium card currently in play (affects both players)
+    pub active_stadium: Option<Card>,
 
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
@@ -53,6 +63,7 @@ impl State {
             points: [0, 0],
             turn_count: 0,
             current_player: 0,
+            end_turn_pending: false,
             move_generation_stack: Vec::new(),
             current_energy: None,
             hands: [Vec::new(), Vec::new()],
@@ -60,12 +71,35 @@ impl State {
             discard_piles: [Vec::new(), Vec::new()],
             discard_energies: [Vec::new(), Vec::new()],
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
+            active_stadium: None,
             has_played_support: false,
             has_retreated: false,
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
             turn_effects: BTreeMap::new(),
+        }
+    }
+
+    pub fn get_active_stadium_name(&self) -> Option<String> {
+        self.active_stadium.as_ref().map(|c| c.get_name())
+    }
+
+    pub fn set_active_stadium(&mut self, stadium: Card) -> Option<Card> {
+        self.active_stadium.replace(stadium)
+    }
+
+    pub(crate) fn refresh_starting_plains_bonus_all(&mut self) {
+        let starting_plains_active = is_starting_plains_active(self);
+        for pokemon in self.in_play_pokemon.iter_mut().flatten().flatten() {
+            pokemon.refresh_starting_plains_bonus(starting_plains_active);
+        }
+    }
+
+    pub(crate) fn refresh_starting_plains_bonus_for_idx(&mut self, player: usize, index: usize) {
+        let starting_plains_active = is_starting_plains_active(self);
+        if let Some(pokemon) = self.in_play_pokemon[player][index].as_mut() {
+            pokemon.refresh_starting_plains_bonus(starting_plains_active);
         }
     }
 
@@ -104,7 +138,7 @@ impl State {
         self.in_play_pokemon[player][index]
             .as_ref()
             .unwrap()
-            .remaining_hp
+            .get_remaining_hp()
     }
 
     pub(crate) fn remove_card_from_hand(&mut self, current_player: usize, card: &Card) {
@@ -291,6 +325,7 @@ impl State {
             self.current_player,
             (self.current_player + 1) % 2
         );
+        self.end_turn_pending = false;
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
         self.end_turn_maintenance();
@@ -312,31 +347,6 @@ impl State {
         self.turn_count <= 2
     }
 
-    /// Attaches energies from the discard pile to a Pokemon in play.
-    /// Removes the specified energies from discard_energies and attaches them to the Pokemon.
-    pub(crate) fn attach_energies_from_discard(
-        &mut self,
-        player: usize,
-        in_play_idx: usize,
-        energies: &[EnergyType],
-    ) {
-        // Remove energies from discard pile
-        for energy in energies {
-            let pos = self.discard_energies[player]
-                .iter()
-                .position(|e| e == energy)
-                .expect("Energy should be in discard pile");
-            self.discard_energies[player].remove(pos);
-        }
-
-        // Attach energies to Pokemon
-        self.in_play_pokemon[player][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there if attaching energy to it")
-            .attached_energy
-            .extend(energies.iter().cloned());
-    }
-
     /// Discards a Pokemon from play, moving it, its evolution chain, and its energies
     ///  to the discard pile.
     pub(crate) fn discard_from_play(&mut self, ko_receiver: usize, ko_pokemon_idx: usize) {
@@ -344,7 +354,9 @@ impl State {
             .as_ref()
             .expect("There should be a Pokemon to discard");
         let mut cards_to_discard = ko_pokemon.cards_behind.clone();
-        // TODO: Include attached Tools
+        if let Some(tool_card) = &ko_pokemon.attached_tool {
+            cards_to_discard.push(tool_card.clone());
+        }
         cards_to_discard.push(ko_pokemon.card.clone());
         debug!("Discarding: {cards_to_discard:?}");
         self.discard_piles[ko_receiver].extend(cards_to_discard);
@@ -352,15 +364,43 @@ impl State {
         self.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
     }
 
+    /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
+    pub(crate) fn discard_tool(&mut self, player: usize, in_play_idx: usize) {
+        let pokemon = self.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if discarding tool");
+        let tool_card = pokemon
+            .attached_tool
+            .take()
+            .expect("Expected tool to be attached when discarding tool");
+        self.discard_piles[player].push(tool_card);
+        actions::handle_knockouts(self, (player, 0), false);
+    }
+
     pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {
-        self.discard_energies[actor].extend(to_discard.iter().cloned());
-        let active = self.get_active_mut(actor);
+        self.discard_energy_from_in_play(actor, 0, to_discard);
+    }
+
+    pub(crate) fn discard_energy_from_in_play(
+        &mut self,
+        actor: usize,
+        in_play_idx: usize,
+        to_discard: &[EnergyType],
+    ) {
+        let pokemon = self.in_play_pokemon[actor][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if discarding energy");
+        let mut discarded: Vec<EnergyType> = Vec::new();
         for energy in to_discard {
-            if let Some(pos) = active.attached_energy.iter().position(|x| x == energy) {
-                active.attached_energy.swap_remove(pos);
+            if let Some(pos) = pokemon.attached_energy.iter().position(|e| *e == *energy) {
+                pokemon.attached_energy.swap_remove(pos);
+                discarded.push(*energy);
             } else {
-                panic!("Active Pokemon does not have energy to discard");
+                panic!("Pokemon does not have energy to discard");
             }
+        }
+        if !discarded.is_empty() {
+            self.discard_energies[actor].extend(discarded);
         }
     }
 
@@ -387,23 +427,14 @@ impl State {
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {player_with_empty_active}");
 
-            // Insert right next to EndTurn, so that if this was triggered by an attack,
-            // we resolve any move_generation_stack effects from that attack first.
-            // If no EndTurn, just append to end (we could be coming through pokemon checkup poison).
-            let index_of_end_turn = self
-                .move_generation_stack
-                .iter()
-                .rposition(|(_, actions)| actions.contains(&SimpleAction::EndTurn));
+            // If we .push, we could make idxs in items of the stack stale. Consider Dialga's
+            // user choosing to attach to idx 1, but then Dialga is K.O. by Rocky Helmet.
+            // So we .insert(0, looking to have those settle before this one.
 
-            if let Some(index_of_end_turn) = index_of_end_turn {
-                self.move_generation_stack.insert(
-                    index_of_end_turn + 1,
-                    (player_with_empty_active, possible_moves),
-                );
-            } else {
-                self.move_generation_stack
-                    .push((player_with_empty_active, possible_moves));
-            }
+            // Using .insert(0, should not have issues with EndTurn mechanics, since those are
+            // done only when move_generation_stack is stable (empty).
+            self.move_generation_stack
+                .insert(0, (player_with_empty_active, possible_moves));
         }
     }
 
@@ -411,6 +442,17 @@ impl State {
     // Test Helper Methods
     // These methods are public for integration tests but should be used carefully
     // =========================================================================
+
+    /// Set up multiple in-play pokemon for both players at once.
+    /// For each side: Index 0 = active, 1..3 = bench.
+    pub fn set_board(&mut self, player_0: Vec<PlayedCard>, player_1: Vec<PlayedCard>) {
+        for (i, card) in player_0.into_iter().enumerate() {
+            self.in_play_pokemon[0][i] = Some(card);
+        }
+        for (i, card) in player_1.into_iter().enumerate() {
+            self.in_play_pokemon[1][i] = Some(card);
+        }
+    }
 
     /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     /// Used for testing Marshadow's Revenge attack and similar mechanics.
@@ -421,6 +463,12 @@ impl State {
     /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
         self.knocked_out_by_opponent_attack_last_turn
+    }
+
+    /// Generate all possible actions for the current game state.
+    /// Returns a tuple of (actor, actions) where actor is the player who must act.
+    pub fn generate_possible_actions(&self) -> (usize, Vec<crate::actions::Action>) {
+        move_generation::generate_possible_actions(self)
     }
 }
 
@@ -433,7 +481,7 @@ fn format_card(x: &Option<PlayedCard>) -> String {
         Some(played_card) => format!(
             "{}({}hp,{:?})",
             played_card.get_name(),
-            played_card.remaining_hp,
+            played_card.get_remaining_hp(),
             played_card.attached_energy.len(),
         ),
         None => "".to_string(),
@@ -494,13 +542,13 @@ mod tests {
         let mut state = State::new(&deck_a, &deck_b);
 
         let bulbasaur_card = get_card_by_enum(CardId::A1001Bulbasaur);
-        let mut played_bulbasaur = to_playable_card(&bulbasaur_card, false);
-
-        // Attach some energy to test energy discard
-        played_bulbasaur.attach_energy(&EnergyType::Grass, 2);
+        let played_bulbasaur = to_playable_card(&bulbasaur_card, false);
 
         // Place Bulbasaur in active slot for player 0
         state.in_play_pokemon[0][0] = Some(played_bulbasaur.clone());
+
+        // Attach some energy to test energy discard
+        state.attach_energy_from_zone(0, 0, EnergyType::Grass, 2, false);
 
         // Verify initial state
         assert!(state.in_play_pokemon[0][0].is_some());

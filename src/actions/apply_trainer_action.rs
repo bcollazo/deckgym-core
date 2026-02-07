@@ -13,12 +13,14 @@ use crate::{
         },
     },
     card_ids::CardId,
-    card_logic::{can_rare_candy_evolve, quick_grow_extract_candidates},
+    card_logic::{
+        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+    },
     combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
-    models::{Card, EnergyType, TrainerCard},
-    tool_ids::ToolId,
+    models::{Card, EnergyType, TrainerCard, TrainerType},
+    tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
 };
 
@@ -33,6 +35,18 @@ pub fn forecast_trainer_action(
     state: &State,
     trainer_card: &TrainerCard,
 ) -> (Probabilities, Mutations) {
+    if trainer_card.trainer_card_type == TrainerType::Tool {
+        if is_tool_effect_implemented(trainer_card) {
+            return doutcome(attach_tool);
+        }
+        panic!("Unsupported Trainer Tool");
+    }
+
+    // Stadiums: placement is handled in wrap_with_common_logic, no additional effect needed
+    if trainer_card.trainer_card_type == TrainerType::Stadium {
+        return doutcome(|_, _, _| {});
+    }
+
     let trainer_id =
         CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should be known");
     match trainer_id {
@@ -63,6 +77,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b348Lillie
         | CardId::A4b349Lillie
         | CardId::A4b374Lillie => doutcome(lillie_effect),
+        CardId::A3151Guzma | CardId::A3193Guzma | CardId::A3208Guzma => doutcome(guzma_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni
         | CardId::A1270Giovanni
@@ -79,19 +94,6 @@ pub fn forecast_trainer_action(
         CardId::A1a068Leaf | CardId::A1a082Leaf | CardId::A4b346Leaf | CardId::A4b347Leaf => {
             doutcome(leaf_effect)
         }
-        CardId::A2147GiantCape
-        | CardId::A2148RockyHelmet
-        | CardId::A3146PoisonBarb
-        | CardId::A3147LeafCape
-        | CardId::A3a065ElectricalCord
-        | CardId::A4a067InflatableBoat
-        | CardId::A4b318ElectricalCord
-        | CardId::A4b319ElectricalCord
-        | CardId::A4b320GiantCape
-        | CardId::A4b321GiantCape
-        | CardId::A4b322RockyHelmet
-        | CardId::A4b323RockyHelmet
-        | CardId::B1219HeavyHelmet => doutcome(attach_tool),
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
             doutcome(cyrus_effect)
         }
@@ -117,6 +119,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => doutcome(lusamine_effect),
+        CardId::A3149Ilima | CardId::A3191Ilima => doutcome(ilima_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             doutcome(lyra_effect)
         }
@@ -138,12 +141,16 @@ pub fn forecast_trainer_action(
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
         }
+        CardId::A2a075Adaman | CardId::A2a090Adaman => doutcome(adaman_effect),
+        CardId::B2149Diantha | CardId::B2190Diantha => doutcome(diantha_effect),
+        CardId::B2152Piers | CardId::B2193Piers => doutcome(piers_effect),
         CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
             quick_grow_extract_effect(acting_player, state)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
+        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -197,8 +204,53 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
+fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let opponent = (action.actor + 1) % 2;
+    let tool_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| pokemon.has_tool_attached())
+        .map(|(idx, _)| idx)
+        .collect();
+
+    for idx in tool_indices {
+        state.discard_tool(opponent, idx);
+    }
+}
+
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
+    let probabilities = vec![0.5, 0.5];
+    let mut outcomes: Mutations = vec![];
+
+    // Heads: heal 20 + return card from discard to hand
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.heal(20);
+        }
+        // Card was already discarded by wrap_with_common_logic, move it back to hand
+        if let SimpleAction::Play { trainer_card } = &action.action {
+            let card = Card::Trainer(trainer_card.clone());
+            if let Some(pos) = state.discard_piles[action.actor]
+                .iter()
+                .position(|c| *c == card)
+            {
+                state.discard_piles[action.actor].remove(pos);
+                state.hands[action.actor].push(card);
+            }
+        }
+    }));
+
+    // Tails: heal 20 only (card stays in discard via wrap_with_common_logic)
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.heal(20);
+        }
+    }));
+
+    (probabilities, outcomes)
 }
 
 // Queues up the decision of healing an in_play pokemon that matches energy (if None, then any)
@@ -339,6 +391,57 @@ fn giovanni_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 }
 
+fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your [M] Pokémon take -20 damage from attacks.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForType {
+            amount: 20,
+            energy_type: EnergyType::Metal,
+            player: action.actor,
+        },
+        1,
+    );
+}
+
+fn piers_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Discard 2 random Energy from your opponent's Active Pokémon.
+    let opponent = (action.actor + 1) % 2;
+    let active = state.get_active(opponent);
+    let mut remaining_energy = active.attached_energy.clone();
+    let mut to_discard = Vec::new();
+
+    for _ in 0..2 {
+        if let Some(energy) = remaining_energy.pop() {
+            // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
+            to_discard.push(energy);
+        } else {
+            break;
+        }
+    }
+
+    if !to_discard.is_empty() {
+        state.discard_from_active(opponent, &to_discard);
+    }
+}
+
+fn diantha_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 90 damage from 1 of your [P] Pokemon with >= 2 [P] Energy. If healed, discard 2 [P].
+    let possible_moves = diantha_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| SimpleAction::HealAndDiscardEnergy {
+            in_play_idx,
+            heal_amount: 90,
+            discard_energies: vec![EnergyType::Psychic; 2],
+        })
+        .collect::<Vec<_>>();
+
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
 fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Ninetales, Rapidash, or Magmar do +30 damage to your opponent's Active Pokémon.
     state.add_turn_effect(
@@ -416,10 +519,7 @@ fn attach_energy_to_all_matching_pokemon(
             "Fantina: Attaching {} Energy to Pokemon at position {}",
             energy_type, in_play_idx
         );
-        let pokemon = state.in_play_pokemon[player][in_play_idx]
-            .as_mut()
-            .expect("Pokemon should be there");
-        pokemon.attach_energy(&energy_type, 1);
+        state.attach_energy_from_zone(player, in_play_idx, energy_type, 1, false);
     }
 }
 
@@ -451,6 +551,18 @@ fn koga_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
     // if no bench pokemon, finish game as a loss
     state.trigger_promotion_or_declare_winner(action.actor);
+}
+
+fn ilima_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Put 1 of your [C] Pokemon that has damage on it into your hand.
+    let choices = ilima_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| SimpleAction::ReturnPokemonToHand { in_play_idx })
+        .collect::<Vec<_>>();
+
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
+    }
 }
 
 // TODO: Problem. With doing 1.0, we are basically giving bots the ability to see the cards in deck.
@@ -495,12 +607,12 @@ fn red_card_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 // Give the choice to the player to attach a tool to one of their pokemon.
 fn attach_tool(_: &mut StdRng, state: &mut State, action: &Action) {
     if let SimpleAction::Play { trainer_card } = &action.action {
-        let &tool_id = ToolId::from_trainer_card(trainer_card).expect("ToolId should exist");
-        let choices = tool_id
-            .enumerate_choices(state, action.actor)
+        let tool_card = Card::Trainer(trainer_card.clone());
+        let choices = enumerate_tool_choices(trainer_card, state, action.actor)
+            .into_iter()
             .map(|(in_play_idx, _)| SimpleAction::AttachTool {
                 in_play_idx,
-                tool_id,
+                tool_card: tool_card.clone(),
             })
             .collect::<Vec<_>>();
         state.move_generation_stack.push((action.actor, choices));
@@ -644,20 +756,7 @@ fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 }
 
 fn flame_patch_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    let player = action.actor;
-
-    // Find and remove a Fire energy from discard pile
-    if let Some(fire_idx) = state.discard_energies[player]
-        .iter()
-        .position(|energy| *energy == EnergyType::Fire)
-    {
-        state.discard_energies[player].remove(fire_idx);
-
-        // Attach it to the active Pokemon
-        if let Some(active_pokemon) = state.in_play_pokemon[player][0].as_mut() {
-            active_pokemon.attached_energy.push(EnergyType::Fire);
-        }
-    }
+    state.attach_energy_from_discard(action.actor, 0, &[EnergyType::Fire]);
 }
 
 fn copycat_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
