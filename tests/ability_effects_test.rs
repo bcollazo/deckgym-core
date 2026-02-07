@@ -1,6 +1,6 @@
 use common::get_initialized_game;
 use deckgym::{
-    actions::SimpleAction,
+    actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
 };
@@ -60,4 +60,81 @@ fn test_serperior_jungle_totem_ability() {
     if let SimpleAction::Attack(index) = attack_actions[0].action {
         assert_eq!(index, 0, "Attack index should be 0 (Vine Whip)");
     }
+}
+
+#[test]
+fn test_hydreigon_roar_in_unison_jolteon_active_damage() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B1157Hydreigon).with_remaining_hp(100),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    let state = game.get_state_clone();
+    let hydreigon = state.in_play_pokemon[1][1]
+        .as_ref()
+        .expect("Hydreigon should still be in play");
+    assert_eq!(hydreigon.get_remaining_hp(), 30);
+    assert_eq!(hydreigon.attached_energy.len(), 2);
+
+    // Attach turn energy to the same Hydreigon to confirm a third Electromagnetic Wall trigger.
+    let attach_action = Action {
+        actor: 1,
+        action: SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Darkness, 1)],
+            is_turn_energy: true,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&attach_action);
+
+    let state = game.get_state_clone();
+    let hydreigon = state.in_play_pokemon[1][1]
+        .as_ref()
+        .expect("Hydreigon should still be in play");
+    assert_eq!(hydreigon.get_remaining_hp(), 10);
+}
+
+#[test]
+fn test_hydreigon_roar_in_unison_jolteon_ko_no_panic() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B1157Hydreigon).with_remaining_hp(20),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][1].is_none());
+    assert_eq!(state.points[0], 1);
 }
