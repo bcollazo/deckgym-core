@@ -32,6 +32,8 @@ fn stadium_effect_text_from_card_id(stadium_card_id: CardId) -> String {
 
 static PECULIAR_PLAZA_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2155PeculiarPlaza));
+static TRAINING_AREA_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2153TrainingArea));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -39,6 +41,7 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     matches!(
         effect,
         e if e == PECULIAR_PLAZA_EFFECT.as_str()
+            || e == TRAINING_AREA_EFFECT.as_str()
     )
 }
 
@@ -56,6 +59,16 @@ pub fn has_stadium(state: &State, reference_stadium_id: CardId) -> bool {
 pub fn get_peculiar_plaza_retreat_reduction(state: &State, energy_type: EnergyType) -> u8 {
     if energy_type == EnergyType::Psychic && has_stadium(state, CardId::B2155PeculiarPlaza) {
         2
+    } else {
+        0
+    }
+}
+
+/// Returns the damage bonus for Training Area.
+/// Training Area: "Attacks used by Stage 1 Pokémon in play (both yours and your opponent's) do +10 damage to the opponent's Active Pokémon."
+pub fn get_training_area_damage_bonus(state: &State, attacker_stage: u8) -> u32 {
+    if attacker_stage == 1 && has_stadium(state, CardId::B2153TrainingArea) {
+        10
     } else {
         0
     }

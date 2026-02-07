@@ -8,6 +8,7 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
+    stadiums::get_training_area_damage_bonus,
     tools::{has_tool, tool_effects_equal},
     AbilityId, State,
 };
@@ -623,8 +624,16 @@ pub(crate) fn modify_damage(
         0
     };
 
+    // Stadium damage bonus (e.g., Training Area for Stage 1 Pokemon)
+    // Only applies to attacks against the opponent's Active Pokemon
+    let stadium_damage_bonus = if is_active_to_active {
+        get_training_area_damage_bonus(state, get_stage(attacking_pokemon))
+    } else {
+        0
+    };
+
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -635,13 +644,15 @@ pub(crate) fn modify_damage(
         metal_core_barrier_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
-        type_boost_bonus
+        type_boost_bonus,
+        stadium_damage_bonus
     );
     (base_damage
         + weakness_modifier
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
-        + type_boost_bonus)
+        + type_boost_bonus
+        + stadium_damage_bonus)
         .saturating_sub(
             reduced_card_effect_modifiers
                 + reduced_turn_effect_modifiers

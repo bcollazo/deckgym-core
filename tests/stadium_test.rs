@@ -3,7 +3,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{Card, PlayedCard},
+    models::{Card, EnergyType, PlayedCard},
 };
 
 mod common;
@@ -251,4 +251,201 @@ fn test_stadium_is_discarded_when_replaced() {
     // Verify old stadium is in discard
     assert_eq!(state.discard_piles[0].len(), 1);
     assert!(matches!(&state.discard_piles[0][0], Card::Trainer(t) if t.name == "Peculiar Plaza"));
+}
+
+// ============================================================================
+// Training Area Tests
+// ============================================================================
+
+#[test]
+fn test_training_area_increases_stage1_damage() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        // Ivysaur is Stage 1, does 60 damage with Razor Leaf
+        // With Training Area, should do 70 damage
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur).with_energy(vec![
+            EnergyType::Grass,
+            EnergyType::Grass,
+            EnergyType::Grass,
+        ])],
+        // Bulbasaur has 70 HP
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2153TrainingArea)];
+
+    game.set_state(state);
+
+    // Play Training Area
+    let trainer_card = trainer_from_id(CardId::B2153TrainingArea);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Verify stadium is active
+    let state = game.get_state_clone();
+    assert!(state.active_stadium.is_some());
+    assert_eq!(
+        state.get_active_stadium_name(),
+        Some("Training Area".to_string())
+    );
+
+    // Attack with Ivysaur's Razor Leaf (60 damage + 10 from Training Area = 70)
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+    game.play_until_stable(); // Handle post-attack effects
+
+    let state = game.get_state_clone();
+
+    // Ivysaur does 60 damage, +10 from Training Area = 70 damage
+    // Bulbasaur has exactly 70 HP, so it should be KO'd
+    assert_eq!(
+        state.points[0], 1,
+        "Player 0 should have 1 point from KO (70 damage dealt to 70 HP Bulbasaur)"
+    );
+}
+
+#[test]
+fn test_training_area_does_not_affect_basic_pokemon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Bulbasaur is Basic (Stage 0), does 40 damage with Vine Whip
+    // Training Area should NOT affect it
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)], // Charmander has 60 HP
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2153TrainingArea)];
+    game.set_state(state);
+
+    // Play Training Area
+    let trainer_card = trainer_from_id(CardId::B2153TrainingArea);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Attack with Bulbasaur's Vine Whip (40 damage, NOT boosted)
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    let defender_hp = state.get_active(1).remaining_hp;
+
+    // Charmander: 60 HP - 40 damage = 20 HP remaining
+    assert_eq!(
+        defender_hp, 20,
+        "Basic Pokemon should deal normal damage (40), not boosted"
+    );
+}
+
+#[test]
+fn test_training_area_does_not_affect_stage2_pokemon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Venusaur is Stage 2, does 80 damage with Mega Drain
+    // Training Area should NOT affect Stage 2
+    // Bulbasaur has 70 HP
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1003Venusaur).with_energy(vec![
+            EnergyType::Grass,
+            EnergyType::Grass,
+            EnergyType::Grass,
+            EnergyType::Grass,
+        ])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2153TrainingArea)];
+
+    game.set_state(state);
+
+    // Play Training Area
+    let trainer_card = trainer_from_id(CardId::B2153TrainingArea);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Attack with Venusaur's Mega Drain (80 damage, NOT boosted)
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    // Bulbasaur should be KO'd (70 HP - 80 damage)
+    // Stage 2 should deal normal damage, not +10
+    assert_eq!(
+        state.points[0], 1,
+        "Stage 2 Pokemon should deal normal damage (80), not boosted to 90"
+    );
+}
+
+#[test]
+fn test_training_area_affects_both_players() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Both players have Stage 1 Pokemon
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur).with_energy(vec![
+            EnergyType::Grass,
+            EnergyType::Grass,
+            EnergyType::Grass,
+        ])],
+        vec![PlayedCard::from_id(CardId::A1034Charmeleon)
+            .with_energy(vec![EnergyType::Fire, EnergyType::Fire])],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+
+    // Set Training Area as active (simulating it was played earlier)
+    state.active_stadium = Some(get_card_by_enum(CardId::B2153TrainingArea));
+    game.set_state(state);
+
+    // Player 0 attacks with Ivysaur (60 + 10 = 70)
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    // Check damage dealt to Charmeleon (90 HP - 70 damage = 20 HP)
+    // Note: Charmeleon is weak to nothing relevant here
+    game.play_until_stable(); // Handle any post-attack effects
+
+    let state = game.get_state_clone();
+    let charmeleon_hp = state.get_active(1).remaining_hp;
+    assert_eq!(
+        charmeleon_hp, 20,
+        "Charmeleon should have 20 HP (90 - 70 from boosted Stage 1 attack)"
+    );
 }
