@@ -3,7 +3,7 @@ use rand::{rngs::StdRng, Rng};
 
 use crate::{
     actions::{
-        apply_action_helpers::handle_damage,
+        apply_action_helpers::{handle_damage, handle_knockouts},
         apply_evolve,
         attack_helpers::{
             collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
@@ -307,6 +307,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
+        Mechanic::MegaKangaskhanExDoublePunchingFamily => {
+            mega_kangaskhan_ex_double_punching_family(attack)
+        }
         Mechanic::MoltresExInfernoDance => moltres_inferno_dance(),
         Mechanic::MagikarpWaterfallEvolution => waterfall_evolution(state),
         Mechanic::MoveAllEnergyTypeToBench { energy_type } => {
@@ -603,6 +606,30 @@ fn binomial_coefficient(n: usize, k: usize) -> usize {
         result = result * (n - i) / (i + 1);
     }
     result
+}
+
+fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(attack.fixed_damage, |_, state, action| {
+        // Force Handle K.O., to maybe .insert(0 promotions to the move_generation_stack
+        let attacking_ref = (action.actor, 0);
+        let is_from_active_attack = true;
+        handle_knockouts(state, attacking_ref, is_from_active_attack);
+
+        // .insert(0 damage to purposely do after the K.O. promotions
+        let opponent = (action.actor + 1) % 2;
+        let targets = vec![(40, opponent, 0)];
+        state.move_generation_stack.insert(
+            0,
+            (
+                action.actor,
+                vec![SimpleAction::ApplyDamage {
+                    attacking_ref,
+                    targets,
+                    is_from_active_attack: true,
+                }],
+            ),
+        )
+    })
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent

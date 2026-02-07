@@ -84,6 +84,7 @@ pub enum Mechanic {
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
     MegaBlazikenExMegaBurningAttack,
+    MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
