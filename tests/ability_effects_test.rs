@@ -138,3 +138,39 @@ fn test_hydreigon_roar_in_unison_jolteon_ko_no_panic() {
     assert!(state.in_play_pokemon[1][1].is_none());
     assert_eq!(state.points[0], 1);
 }
+
+#[test]
+fn test_giratina_ex_ability_end_turn_panics_if_ko_by_jolteon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1081JolteonEx)],
+        vec![
+            PlayedCard::from_id(CardId::A2b035GiratinaEx).with_remaining_hp(10),
+            PlayedCard::from_id(CardId::A2b035GiratinaEx),
+            PlayedCard::from_id(CardId::A2110DarkraiEx),
+            PlayedCard::from_id(CardId::A2110DarkraiEx),
+        ],
+    );
+    state.current_player = 1;
+    state.turn_count = 13;
+    game.set_state(state);
+
+    let ability_action = Action {
+        actor: 1,
+        action: SimpleAction::UseAbility { in_play_idx: 0 },
+        is_stack: false,
+    };
+    game.apply_action(&ability_action);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+    let end_turn_action = actions
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::EndTurn))
+        .expect("Expected EndTurn action");
+
+    // This should panic because the active slot is empty after the KO.
+    game.apply_action(end_turn_action);
+}
