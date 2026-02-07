@@ -18,17 +18,11 @@ fn test_piers_discards_single_energy_without_panic() {
             PlayedCard::from_id(CardId::B2100GalarianObstagoon),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Darkness])],
     );
     state.current_player = 0;
     state.turn_count = 1;
     state.hands[0] = vec![get_card_by_enum(CardId::B2152Piers)];
-
-    state.in_play_pokemon[1][0]
-        .as_mut()
-        .unwrap()
-        .attached_energy = vec![EnergyType::Darkness];
-
     game.set_state(state);
 
     let state = game.get_state_clone();
