@@ -173,6 +173,12 @@ pub(crate) fn render_pokemon_card<'a>(
             if played_card.asleep {
                 status_effects.push("💤SLP");
             }
+            if played_card.burned {
+                status_effects.push("🔥BRN");
+            }
+            if played_card.confused {
+                status_effects.push("🌀CNF");
+            }
 
             let status_line = if !status_effects.is_empty() {
                 status_effects.join(" ")
