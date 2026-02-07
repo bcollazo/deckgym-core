@@ -95,10 +95,6 @@ pub enum SimpleAction {
     DiscardOpponentSupporter {
         supporter_card: Card,
     },
-    /// Sableye's Dirty Throw: discard a specific card from own hand
-    DiscardOwnCard {
-        card: Card,
-    },
     /// Discard multiple specific cards from own hand
     DiscardOwnCards {
         cards: Vec<Card>,
@@ -222,9 +218,6 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardOpponentSupporter { supporter_card } => {
                 write!(f, "DiscardOpponentSupporter({supporter_card})")
-            }
-            SimpleAction::DiscardOwnCard { card } => {
-                write!(f, "DiscardOwnCard({card})")
             }
             SimpleAction::DiscardOwnCards { cards } => {
                 write!(f, "DiscardOwnCards({:?})", cards)

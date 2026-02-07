@@ -284,7 +284,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
-        AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(state),
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
@@ -1846,10 +1845,6 @@ fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities,
 }
 
 /// For Sableye's Dirty Throw (B1 101): Discard a card from hand to deal 70 damage. If can't discard, attack does nothing.
-fn dirty_throw_attack(state: &State) -> (Probabilities, Mutations) {
-    discard_hand_cards_required_attack(state, 70, 1)
-}
-
 fn discard_hand_cards_required_attack(
     state: &State,
     fixed_damage: u32,
@@ -1862,17 +1857,10 @@ fn discard_hand_cards_required_attack(
 
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
         let hand_cards: Vec<Card> = state.hands[action.actor].iter().cloned().collect();
-        let choices: Vec<SimpleAction> = if count == 1 {
-            hand_cards
-                .into_iter()
-                .map(|card| SimpleAction::DiscardOwnCard { card })
-                .collect()
-        } else {
-            generate_combinations(&hand_cards, count)
-                .into_iter()
-                .map(|combo| SimpleAction::DiscardOwnCards { cards: combo })
-                .collect()
-        };
+        let choices: Vec<SimpleAction> = generate_combinations(&hand_cards, count)
+            .into_iter()
+            .map(|combo| SimpleAction::DiscardOwnCards { cards: combo })
+            .collect();
 
         if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
