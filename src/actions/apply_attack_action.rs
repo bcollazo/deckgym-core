@@ -13,6 +13,7 @@ use crate::{
         mutations::{doutcome, doutcome_from_mutation},
         Action,
     },
+    combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, contains_energy, get_retreat_cost, get_stage},
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
@@ -283,7 +284,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
         AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
         AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
-        AttackId::B1101SableyeDirtyThrow => dirty_throw_attack(acting_player, state),
         AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
         AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
     }
@@ -453,6 +453,9 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => damage_per_energy_all(state, *opponent, *damage_per_energy),
+        Mechanic::DiscardHandCards { count } => {
+            discard_hand_cards_required_attack(state, attack.fixed_damage, *count)
+        }
         Mechanic::ExtraDamagePerSpecificEnergy {
             energy_type,
             damage_per_energy,
@@ -1853,26 +1856,27 @@ fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities,
 }
 
 /// For Sableye's Dirty Throw (B1 101): Discard a card from hand to deal 70 damage. If can't discard, attack does nothing.
-fn dirty_throw_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
-    // Check if player has any cards in hand
-    if state.hands[acting_player].is_empty() {
-        // No cards in hand, attack does nothing (no damage)
-        active_damage_doutcome(0)
-    } else {
-        // Player has cards in hand, deal 70 damage and queue discard decision
-        active_damage_effect_doutcome(70, move |_, state, action| {
-            let possible_discards: Vec<SimpleAction> = state.hands[action.actor]
-                .iter()
-                .map(|card| SimpleAction::DiscardOwnCard { card: card.clone() })
-                .collect();
-
-            if !possible_discards.is_empty() {
-                state
-                    .move_generation_stack
-                    .push((action.actor, possible_discards));
-            }
-        })
+fn discard_hand_cards_required_attack(
+    state: &State,
+    fixed_damage: u32,
+    count: usize,
+) -> (Probabilities, Mutations) {
+    let acting_player = state.current_player;
+    if state.hands[acting_player].len() < count {
+        return active_damage_doutcome(0);
     }
+
+    active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
+        let hand_cards: Vec<Card> = state.hands[action.actor].iter().cloned().collect();
+        let choices: Vec<SimpleAction> = generate_combinations(&hand_cards, count)
+            .into_iter()
+            .map(|combo| SimpleAction::DiscardOwnCards { cards: combo })
+            .collect();
+
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 /// For Umbreon's Dark Binding: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.
