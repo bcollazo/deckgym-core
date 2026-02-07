@@ -86,7 +86,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
         AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::B1121IndeedeeExWatchOver => is_active && !card.ability_used,
+        AbilityId::B1121IndeedeeExWatchOver => !card.ability_used,
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
         AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
         AbilityId::B1177GoomyStickyMembrane => false,
