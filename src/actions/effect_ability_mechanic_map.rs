@@ -86,7 +86,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         );
         // map.insert("Once during your turn, you may attach a [R] Energy from your discard pile to this Pokémon. If you do, do 20 damage to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may choose either player. Look at the top card of that player's deck.", todo_implementation);
-        // map.insert("Once during your turn, you may discard the top card of your opponent's deck.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may discard the top card of your opponent's deck.",
+            AbilityMechanic::DiscardTopCardOpponentDeck,
+        );
         map.insert(
             "Once during your turn, you may do 20 damage to 1 of your opponent's Pokémon.",
             AbilityMechanic::DamageOneOpponentPokemon { amount: 20 },

@@ -149,6 +149,7 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::InfiltratingInspection => {
             panic!("InfiltratingInspection is triggered when played to bench")
         }
+        AbilityMechanic::DiscardTopCardOpponentDeck => discard_top_card_opponent_deck(),
     }
 }
 
@@ -195,6 +196,15 @@ fn switch_active_typed_with_bench_outcome() -> (Probabilities, Mutations) {
             })
             .collect::<Vec<_>>();
         state.move_generation_stack.push((acting_player, choices));
+    }))
+}
+
+fn discard_top_card_opponent_deck() -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if let Some(card) = state.decks[opponent].draw() {
+            state.discard_piles[opponent].push(card);
+        }
     }))
 }
 

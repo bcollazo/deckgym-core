@@ -15,7 +15,7 @@ use crate::{
     },
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, contains_energy, get_retreat_cost, get_stage},
-    models::{Attack, Card, EnergyType, StatusCondition},
+    models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     AttackId, State,
 };
 
@@ -520,6 +520,13 @@ fn forecast_effect_attack_by_mechanic(
                 *damage_per_trainer,
             )
         }
+        Mechanic::ExtraDamagePerSupporterInDiscard {
+            damage_per_supporter,
+        } => extra_damage_per_supporter_in_discard_attack(
+            state,
+            attack.fixed_damage,
+            *damage_per_supporter,
+        ),
         Mechanic::ExtraDamageIfCardInDiscard {
             card_name,
             extra_damage,
@@ -2272,6 +2279,25 @@ fn extra_damage_per_trainer_in_opponent_deck_attack(
         .filter(|card| matches!(card, crate::models::Card::Trainer(_)))
         .count() as u32;
     let total_damage = base_damage + (trainer_count * damage_per_trainer);
+    active_damage_doutcome(total_damage)
+}
+
+/// Chandelure - Past Friends: Extra damage per Supporter in your discard pile.
+fn extra_damage_per_supporter_in_discard_attack(
+    state: &State,
+    base_damage: u32,
+    damage_per_supporter: u32,
+) -> (Probabilities, Mutations) {
+    let supporter_count = state.discard_piles[state.current_player]
+        .iter()
+        .filter(|card| {
+            matches!(
+                card,
+                Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Supporter
+            )
+        })
+        .count() as u32;
+    let total_damage = base_damage + (supporter_count * damage_per_supporter);
     active_damage_doutcome(total_damage)
 }
 
