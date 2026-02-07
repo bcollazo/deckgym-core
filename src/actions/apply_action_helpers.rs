@@ -485,6 +485,21 @@ pub(crate) fn handle_knockouts(
         return;
     }
 
+    // If a player has no Pokemon left in play, they immediately lose (even if points < 3)
+    let p0_remaining = state.enumerate_in_play_pokemon(0).count();
+    let p1_remaining = state.enumerate_in_play_pokemon(1).count();
+    if p0_remaining == 0 && p1_remaining == 0 {
+        debug!("Both players have no Pokemon left in play, it's a tie");
+        state.winner = Some(GameOutcome::Tie);
+        return;
+    } else if p0_remaining == 0 {
+        state.winner = Some(GameOutcome::Win(1));
+        return;
+    } else if p1_remaining == 0 {
+        state.winner = Some(GameOutcome::Win(0));
+        return;
+    }
+
     // Queue up promotion actions if the game is still on after a knockout
     for (ko_receiver, ko_pokemon_idx) in knockouts {
         if ko_pokemon_idx != 0 {
