@@ -134,7 +134,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard the top card of your deck. If that card is a [F] Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("Discard the top card of your opponent's deck.", todo_implementation);
     // map.insert("Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.", todo_implementation);
-    // map.insert("Draw a card.", todo_implementation);
+    map.insert("Draw a card.", Mechanic::DrawCard { amount: 1 });
     // map.insert("Draw cards until you have the same number of cards in your hand as your opponent.", todo_implementation);
     map.insert(
         "During your next turn, this Pokémon can't attack.",

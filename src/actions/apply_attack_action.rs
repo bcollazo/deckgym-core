@@ -187,7 +187,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
         AttackId::A1178MawileCrunch => mawile_crunch(),
         AttackId::A1181MeltanAmass => self_charge_active_from_energies(0, vec![EnergyType::Metal]),
-        AttackId::A1196MeowthPayDay => draw_and_damage_outcome(10),
         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
         AttackId::A1203KangaskhanDizzyPunch => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
@@ -295,7 +294,6 @@ fn forecast_effect_attack_by_attack_id(
         AttackId::A3b020VanilluxeDoubleSpin => {
             probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }
-        AttackId::A3b055EeveeCollect => draw_and_damage_outcome(0),
         AttackId::A3b057SnorlaxExFlopDownPunch => {
             damage_and_self_multiple_status_attack(130, vec![StatusCondition::Asleep])
         }
@@ -437,6 +435,7 @@ fn forecast_effect_attack_by_mechanic(
             *duration,
             *probability,
         ),
+        Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
@@ -1344,12 +1343,12 @@ fn damage_and_self_multiple_status_attack(
     })
 }
 
-/// For cards like "Meowth Pay Day" that draw a card and deal damage.
-fn draw_and_damage_outcome(damage: u32) -> (Probabilities, Mutations) {
+/// Draw cards and deal damage in the same attack.
+fn draw_and_damage_outcome(damage: u32, amount: u8) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         state
             .move_generation_stack
-            .push((action.actor, vec![SimpleAction::DrawCard { amount: 1 }]));
+            .push((action.actor, vec![SimpleAction::DrawCard { amount }]));
     })
 }
 

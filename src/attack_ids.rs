@@ -12,7 +12,6 @@ pub enum AttackId {
     A1163GrapploctKnockBack,
     A1178MawileCrunch,
     A1181MeltanAmass,
-    A1196MeowthPayDay,
     A1201LickitungContinuousLick,
     A1203KangaskhanDizzyPunch,
     A1a001ExeggcuteGrowthSpurt,
@@ -55,7 +54,6 @@ pub enum AttackId {
     A3a062CelesteelaMoombahton,
     A3b013IncineroarDarkestLariat,
     A3b020VanilluxeDoubleSpin,
-    A3b055EeveeCollect,
     A3b057SnorlaxExFlopDownPunch,
     A3b058AipomDoubleHit,
     A4021ShuckleExTripleSlap,
@@ -84,11 +82,9 @@ lazy_static::lazy_static! {
         m.insert(("A1 163", 0), AttackId::A1163GrapploctKnockBack);
         m.insert(("A1 178", 0), AttackId::A1178MawileCrunch);
         m.insert(("A1 181", 0), AttackId::A1181MeltanAmass);
-        m.insert(("A1 196", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 201", 0), AttackId::A1201LickitungContinuousLick);
         m.insert(("A1 203", 0), AttackId::A1203KangaskhanDizzyPunch);
         // Full Arts A1
-        m.insert(("A1 246", 0), AttackId::A1196MeowthPayDay);
         m.insert(("A1 264", 0), AttackId::A1153MarowakExBonemerang);
 
         // A1a
@@ -170,10 +166,8 @@ lazy_static::lazy_static! {
         // A3b
         m.insert(("A3b 013", 0), AttackId::A3b013IncineroarDarkestLariat);
         m.insert(("A3b 020", 0), AttackId::A3b020VanilluxeDoubleSpin);
-        m.insert(("A3b 055", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 057", 0), AttackId::A3b057SnorlaxExFlopDownPunch);
         m.insert(("A3b 058", 0), AttackId::A3b058AipomDoubleHit);
-        m.insert(("A3b 078", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A3b 084", 0), AttackId::A3b057SnorlaxExFlopDownPunch);
         m.insert(("A3b 091", 0), AttackId::A3b057SnorlaxExFlopDownPunch);
 
@@ -215,8 +209,6 @@ lazy_static::lazy_static! {
         m.insert(("A4b 248", 0), AttackId::A3a043GuzzlordExGrindcore);
         m.insert(("A4b 251", 0), AttackId::A3a047AlolanDugtrioExTripletHeadbutt);
         m.insert(("A4b 259", 0), AttackId::A3122SolgaleoExSolBreaker);
-        m.insert(("A4b 285", 0), AttackId::A3b055EeveeCollect);
-        m.insert(("A4b 286", 0), AttackId::A3b055EeveeCollect);
         m.insert(("A4b 288", 0), AttackId::A3b057SnorlaxExFlopDownPunch);
         m.insert(("A4b 300", 0), AttackId::A3a060TypeNullQuickBlow);
         m.insert(("A4b 301", 0), AttackId::A3a060TypeNullQuickBlow);
@@ -238,7 +230,6 @@ lazy_static::lazy_static! {
         m.insert(("B1 277", 0), AttackId::B1085MegaAmpharosExLightningLancer);
         m.insert(("B1 280", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 285", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
-        m.insert(("B1 312", 0), AttackId::A1196MeowthPayDay);
         m.insert(("B1 317", 0), AttackId::A3012DecidueyeExPierceThePain);
         m.insert(("B1 319", 1), AttackId::A2049PalkiaExDimensionalStorm);
         m.insert(("B1 322", 0), AttackId::A3a019TapuKokoExPlasmaHurricane);
@@ -249,7 +240,6 @@ lazy_static::lazy_static! {
         m.insert(("B1a 097", 0), AttackId::A3a061SilvallyBraveBuddies);
 
         // Promo
-        m.insert(("P-A 012", 0), AttackId::A1196MeowthPayDay);
         m.insert(("P-A 049", 0), AttackId::A2a063SnorlaxCollapse);
         m.insert(("P-A 060", 0), AttackId::A1a001ExeggcuteGrowthSpurt);
         m.insert(("P-A 067", 0), AttackId::A3085CosmogTeleport);
