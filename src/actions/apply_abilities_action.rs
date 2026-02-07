@@ -150,6 +150,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
             panic!("InfiltratingInspection is triggered when played to bench")
         }
         AbilityMechanic::DiscardTopCardOpponentDeck => discard_top_card_opponent_deck(),
+        AbilityMechanic::CoinFlipToPreventDamage => {
+            panic!("CoinFlipToPreventDamage is a passive ability")
+        }
     }
 }
 

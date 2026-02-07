@@ -44,7 +44,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Each of your Pokémon that has any [P] Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.", todo_implementation);
         // map.insert("Each of your [G] Pokémon gets +20 HP.", todo_implementation);
         // map.insert("If a Stadium is in play, this Pokémon has no Retreat Cost.", todo_implementation);
-        // map.insert("If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage.", todo_implementation);
+        map.insert(
+            "If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage.",
+            AbilityMechanic::CoinFlipToPreventDamage,
+        );
         // map.insert("If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -100 damage from that attack.", todo_implementation);
         // map.insert("If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less [G] Energy.", todo_implementation);
         // map.insert("If this Pokémon has any Energy attached, it has no Retreat Cost.", todo_implementation);

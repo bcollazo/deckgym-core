@@ -3,12 +3,14 @@ use rand::{rngs::StdRng, Rng};
 
 use crate::{
     actions::{
+        abilities::AbilityMechanic,
         apply_action_helpers::{handle_damage, handle_knockouts},
         apply_evolve,
         attack_helpers::{
             collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
         },
         attacks::{BenchSide, Mechanic},
+        effect_ability_mechanic_map::ability_mechanic_from_effect,
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         mutations::{doutcome, doutcome_from_mutation},
         Action,
@@ -58,6 +60,22 @@ pub(crate) fn forecast_attack(
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
     if has_block_effect {
         return apply_block_attack_coin_flip(base_probs, base_mutations);
+    }
+
+    // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
+    if attack.fixed_damage > 0 {
+        let opponent = (acting_player + 1) % 2;
+        let defender = state.get_active(opponent);
+        let defender_has_coin_flip_prevent = defender
+            .card
+            .get_ability()
+            .and_then(|a| ability_mechanic_from_effect(&a.effect))
+            .map(|m| matches!(m, AbilityMechanic::CoinFlipToPreventDamage))
+            .unwrap_or(false);
+
+        if defender_has_coin_flip_prevent {
+            return apply_defender_coin_flip_prevent_damage(base_probs, base_mutations);
+        }
     }
 
     (base_probs, base_mutations)
@@ -121,6 +139,27 @@ fn apply_block_attack_coin_flip(
     })];
 
     // Add all base outcomes with halved probabilities (heads = attack succeeds)
+    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
+        probs.push(prob * 0.5);
+        mutations.push(mutation);
+    }
+
+    (probs, mutations)
+}
+
+/// Applies defender's CoinFlipToPreventDamage ability: 50% chance damage is prevented (heads)
+fn apply_defender_coin_flip_prevent_damage(
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    // 50% heads = damage prevented, 50% tails = damage goes through
+    let mut probs = vec![0.5]; // First outcome: heads (damage prevented)
+    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
+        // TODO: This makes it so that the attack effect doesn't happen,
+        // but in the game it does happen, its just the damage that is reduced to 0.
+    })];
+
+    // Add all base outcomes with halved probabilities (tails = damage goes through)
     for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
         probs.push(prob * 0.5);
         mutations.push(mutation);

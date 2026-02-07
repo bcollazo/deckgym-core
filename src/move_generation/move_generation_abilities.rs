@@ -131,6 +131,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DiscardTopCardOpponentDeck => {
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
+        AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
     }
 }
 

@@ -11,4 +11,5 @@ pub enum AbilityMechanic {
     ElectromagneticWall,
     InfiltratingInspection,
     DiscardTopCardOpponentDeck,
+    CoinFlipToPreventDamage,
 }
