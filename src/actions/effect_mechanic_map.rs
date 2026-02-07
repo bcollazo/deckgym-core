@@ -1426,7 +1426,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
     // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
-    // map.insert("This attack does 20 more damage for each Supporter card in your discard pile.", todo_implementation);
+    map.insert(
+        "This attack does 20 more damage for each Supporter card in your discard pile.",
+        Mechanic::ExtraDamagePerSupporterInDiscard {
+            damage_per_supporter: 20,
+        },
+    );
     // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     map.insert(
         "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)",

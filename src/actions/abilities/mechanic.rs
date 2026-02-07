@@ -10,4 +10,5 @@ pub enum AbilityMechanic {
     PreventFirstAttack,
     ElectromagneticWall,
     InfiltratingInspection,
+    DiscardTopCardOpponentDeck,
 }

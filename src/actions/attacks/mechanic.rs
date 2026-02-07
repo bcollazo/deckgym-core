@@ -118,6 +118,9 @@ pub enum Mechanic {
     ExtraDamagePerTrainerInOpponentDeck {
         damage_per_trainer: u32,
     },
+    ExtraDamagePerSupporterInDiscard {
+        damage_per_supporter: u32,
+    },
     ExtraDamageIfCardInDiscard {
         card_name: String,
         extra_damage: u32,
