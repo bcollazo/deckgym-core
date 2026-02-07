@@ -266,7 +266,12 @@ fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize
 fn get_metal_core_barrier_reduction(
     state: &State,
     (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
 ) -> u32 {
+    if !is_from_active_attack {
+        return 0;
+    }
+
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Metal Core Barrier");
@@ -537,7 +542,7 @@ pub(crate) fn modify_damage(
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
     let metal_core_barrier_reduction =
-        get_metal_core_barrier_reduction(state, (target_player, target_idx));
+        get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
     let ability_damage_reduction =
         get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
