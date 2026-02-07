@@ -34,6 +34,8 @@ static PECULIAR_PLAZA_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2155PeculiarPlaza));
 static TRAINING_AREA_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2153TrainingArea));
+static STARTING_PLAINS_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2154StartingPlains));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -42,6 +44,7 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
         effect,
         e if e == PECULIAR_PLAZA_EFFECT.as_str()
             || e == TRAINING_AREA_EFFECT.as_str()
+            || e == STARTING_PLAINS_EFFECT.as_str()
     )
 }
 
@@ -52,6 +55,10 @@ pub fn has_stadium(state: &State, reference_stadium_id: CardId) -> bool {
     };
     let trainer_card = ensure_stadium_card(active_stadium);
     trainer_card.effect == reference_effect
+}
+
+pub fn is_starting_plains_active(state: &State) -> bool {
+    has_stadium(state, CardId::B2154StartingPlains)
 }
 
 /// Returns the retreat cost reduction for Peculiar Plaza.

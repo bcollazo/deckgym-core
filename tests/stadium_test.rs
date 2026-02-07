@@ -15,6 +15,13 @@ fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
     }
 }
 
+fn pokemon_base_hp(card_id: CardId) -> u32 {
+    match get_card_by_enum(card_id) {
+        Card::Pokemon(pokemon_card) => pokemon_card.hp,
+        _ => panic!("Expected pokemon card"),
+    }
+}
+
 fn has_retreat_action(actions: &[Action]) -> bool {
     actions
         .iter()
@@ -406,6 +413,120 @@ fn test_training_area_does_not_affect_stage2_pokemon() {
         state.points[0], 1,
         "Stage 2 Pokemon should deal normal damage (80), not boosted to 90"
     );
+}
+
+// ============================================================================
+// Starting Plains Tests
+// ============================================================================
+
+#[test]
+fn test_starting_plains_adds_hp_to_basics_only() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2154StartingPlains)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::B2154StartingPlains);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    let bulbasaur_hp = state.get_active(0).get_remaining_hp();
+    let squirtle_hp = state
+        .enumerate_bench_pokemon(0)
+        .next()
+        .unwrap()
+        .1
+        .get_remaining_hp();
+    let ivysaur_hp = state.get_active(1).get_remaining_hp();
+
+    assert_eq!(bulbasaur_hp, pokemon_base_hp(CardId::A1001Bulbasaur) + 20);
+    assert_eq!(squirtle_hp, pokemon_base_hp(CardId::A1053Squirtle) + 20);
+    assert_eq!(ivysaur_hp, pokemon_base_hp(CardId::A1002Ivysaur));
+}
+
+#[test]
+fn test_starting_plains_ko_on_stadium_replace_promotes() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    state.hands[0] = vec![
+        get_card_by_enum(CardId::B2154StartingPlains),
+        get_card_by_enum(CardId::B2153TrainingArea),
+    ];
+    game.set_state(state);
+
+    // Play Starting Plains (+20 HP to basics)
+    let trainer_card = trainer_from_id(CardId::B2154StartingPlains);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Deal 80 damage to opponent's active Bulbasaur (70 base, 90 with Plains)
+    let damage_action = Action {
+        actor: 0,
+        action: SimpleAction::ApplyDamage {
+            attacking_ref: (0, 0),
+            targets: vec![(80, 1, 0)],
+            is_from_active_attack: false,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&damage_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_remaining_hp(), 10);
+
+    // Replace Starting Plains with Training Area (remove +20 HP)
+    let trainer_card = trainer_from_id(CardId::B2153TrainingArea);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][0].is_none());
+    assert_eq!(state.points[0], 1);
+
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 1);
+    let activate_action = actions
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::Activate { .. }))
+        .expect("Expected Activate action for promotion");
+    game.apply_action(activate_action);
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][0].is_some());
 }
 
 #[test]

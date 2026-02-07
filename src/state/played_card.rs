@@ -7,7 +7,7 @@ use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
-    models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
+    models::{Attack, Card, EnergyType, StatusCondition, TrainerType, BASIC_STAGE},
     tools::has_tool,
     AbilityId,
 };
@@ -19,6 +19,7 @@ pub struct PlayedCard {
     pub card: Card,
     damage_counters: u32,
     base_hp: u32,
+    stadium_hp_bonus: u32,
     pub attached_energy: Vec<EnergyType>,
     pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
@@ -48,6 +49,7 @@ impl PlayedCard {
             card,
             damage_counters,
             base_hp,
+            stadium_hp_bonus: 0,
             attached_energy,
             played_this_turn,
             cards_behind,
@@ -174,6 +176,18 @@ impl PlayedCard {
         self.damage_counters > 0
     }
 
+    pub(crate) fn refresh_starting_plains_bonus(&mut self, starting_plains_active: bool) {
+        let is_basic_pokemon = matches!(
+            &self.card,
+            Card::Pokemon(pokemon_card) if pokemon_card.stage == BASIC_STAGE
+        );
+        self.stadium_hp_bonus = if starting_plains_active && is_basic_pokemon {
+            20
+        } else {
+            0
+        };
+    }
+
     pub fn get_remaining_hp(&self) -> u32 {
         self.get_effective_total_hp()
             .saturating_sub(self.damage_counters)
@@ -197,6 +211,8 @@ impl PlayedCard {
         } else if has_tool(self, CardId::A3147LeafCape) {
             effective_hp += 30;
         }
+
+        effective_hp += self.stadium_hp_bonus;
 
         // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
         if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {

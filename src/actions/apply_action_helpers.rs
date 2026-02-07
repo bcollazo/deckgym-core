@@ -524,6 +524,8 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
                     state.discard_piles[action.actor].push(old_stadium);
                 }
                 state.remove_card_from_hand(action.actor, &card);
+                state.refresh_starting_plains_bonus_all();
+                handle_knockouts(state, (action.actor, 0), false);
             } else {
                 state.discard_card_from_hand(action.actor, &card);
             }

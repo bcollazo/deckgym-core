@@ -13,6 +13,7 @@ use crate::{
     effects::TurnEffect,
     models::{Card, EnergyType},
     move_generation,
+    stadiums::is_starting_plains_active,
 };
 
 pub use played_card::{has_serperior_jungle_totem, PlayedCard};
@@ -86,6 +87,20 @@ impl State {
 
     pub fn set_active_stadium(&mut self, stadium: Card) -> Option<Card> {
         self.active_stadium.replace(stadium)
+    }
+
+    pub(crate) fn refresh_starting_plains_bonus_all(&mut self) {
+        let starting_plains_active = is_starting_plains_active(self);
+        for pokemon in self.in_play_pokemon.iter_mut().flatten().flatten() {
+            pokemon.refresh_starting_plains_bonus(starting_plains_active);
+        }
+    }
+
+    pub(crate) fn refresh_starting_plains_bonus_for_idx(&mut self, player: usize, index: usize) {
+        let starting_plains_active = is_starting_plains_active(self);
+        if let Some(pokemon) = self.in_play_pokemon[player][index].as_mut() {
+            pokemon.refresh_starting_plains_bonus(starting_plains_active);
+        }
     }
 
     pub fn debug_string(&self) -> String {
