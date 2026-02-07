@@ -389,6 +389,7 @@ fn generate_trainer_deck(card: &Card, trainer_type: &TrainerType) -> String {
 2 Professor's Research A4b 373
 2 Copycat B1 270
 2 Potion P-A 1
+2 X Speed P-A 2
 {card_line}
 "#
             )
@@ -406,6 +407,7 @@ fn generate_trainer_deck(card: &Card, trainer_type: &TrainerType) -> String {
 2 Professor's Research A4b 373
 2 Copycat B1 270
 2 Potion P-A 1
+2 X Speed P-A 2
 {card_line}
 "#
             )
