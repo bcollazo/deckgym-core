@@ -69,7 +69,6 @@ pub enum AttackId {
     A4a023MantykeSplashyToss,
     B1052MegaGyaradosExMegaBlaster,
     B1085MegaAmpharosExLightningLancer,
-    B1101SableyeDirtyThrow,
     B1150AbsolOminousClaw,
     B1151MegaAbsolExDarknessClaw,
 }
@@ -231,7 +230,6 @@ lazy_static::lazy_static! {
         // B1
         m.insert(("B1 052", 0), AttackId::B1052MegaGyaradosExMegaBlaster);
         m.insert(("B1 085", 0), AttackId::B1085MegaAmpharosExLightningLancer);
-        m.insert(("B1 101", 0), AttackId::B1101SableyeDirtyThrow);
         m.insert(("B1 150", 0), AttackId::B1150AbsolOminousClaw);
         m.insert(("B1 151", 0), AttackId::B1151MegaAbsolExDarknessClaw);
         m.insert(("B1 255", 0), AttackId::B1052MegaGyaradosExMegaBlaster);

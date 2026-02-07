@@ -1867,7 +1867,7 @@ fn discard_hand_cards_required_attack(
     }
 
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
-        let hand_cards: Vec<Card> = state.hands[action.actor].iter().cloned().collect();
+        let hand_cards: Vec<Card> = state.hands[action.actor].to_vec();
         let choices: Vec<SimpleAction> = generate_combinations(&hand_cards, count)
             .into_iter()
             .map(|combo| SimpleAction::DiscardOwnCards { cards: combo })

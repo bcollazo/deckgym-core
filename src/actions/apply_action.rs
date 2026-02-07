@@ -559,10 +559,7 @@ fn forecast_discard_own_cards(acting_player: usize, cards: &[Card]) -> (Probabil
             for card in &cards_clone {
                 state.discard_card_from_hand(acting_player, card);
             }
-            debug!(
-                "Discarded {:?} from hand",
-                cards_clone
-            );
+            debug!("Discarded {:?} from hand", cards_clone);
         })],
     )
 }
