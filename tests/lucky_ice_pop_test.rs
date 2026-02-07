@@ -51,7 +51,8 @@ fn test_lucky_ice_pop_heals_active_pokemon() {
         let state = game.get_state_clone();
         let active = state.get_active(0);
         assert_eq!(
-            active.remaining_hp, 70,
+            active.get_remaining_hp(),
+            70,
             "Seed {seed}: Active should be healed by 20 (50 -> 70)"
         );
     }

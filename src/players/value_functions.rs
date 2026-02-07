@@ -212,7 +212,7 @@ fn calculate_turns_until_opponent_wins(state: &State, player: usize) -> f64 {
 
     // Calculate turns to KO my active pokemon
     if let Some(my_active) = state.maybe_get_active(player) {
-        let turns_to_ko = (my_active.remaining_hp as f64 / max_damage).ceil();
+        let turns_to_ko = (my_active.get_remaining_hp() as f64 / max_damage).ceil();
         total_turns += turns_to_ko;
         opp_points += my_active.card.get_knockout_points();
     }
@@ -226,10 +226,10 @@ fn calculate_turns_until_opponent_wins(state: &State, player: usize) -> f64 {
                 // if missing 1 point, just do by HP. if missing more than 1 point,
                 // do by point yield hp / ko_points
                 if opp_points == 2 {
-                    card.remaining_hp
+                    card.get_remaining_hp()
                 } else {
                     let ko_points = card.card.get_knockout_points().max(1) as u32;
-                    card.remaining_hp * 1000 / ko_points
+                    card.get_remaining_hp() * 1000 / ko_points
                 }
             });
 
@@ -237,7 +237,7 @@ fn calculate_turns_until_opponent_wins(state: &State, player: usize) -> f64 {
             break; // No more bench pokemon
         };
 
-        let turns_to_ko = (safest_pokemon.remaining_hp as f64 / max_damage).ceil();
+        let turns_to_ko = (safest_pokemon.get_remaining_hp() as f64 / max_damage).ceil();
         total_turns += turns_to_ko;
         opp_points += safest_pokemon.card.get_knockout_points();
     }
@@ -282,7 +282,7 @@ fn calculate_pokemon_value(state: &State, player: usize, active_factor: f64) -> 
         .enumerate_in_play_pokemon(player)
         .map(|(pos, card)| {
             let relevant_energy = get_relevant_energy(state, player, card);
-            let hp_energy_product = card.remaining_hp as f64 * (relevant_energy + 1.0);
+            let hp_energy_product = card.get_remaining_hp() as f64 * (relevant_energy + 1.0);
             if pos == 0 {
                 hp_energy_product * active_factor
             } else {
@@ -316,7 +316,7 @@ fn calculate_active_safety(state: &State, player: usize) -> f64 {
     };
 
     let ko_points = active_pokemon.card.get_knockout_points() as f64;
-    let hp = active_pokemon.remaining_hp as f64;
+    let hp = active_pokemon.get_remaining_hp() as f64;
 
     hp / ko_points.max(1.0)
 }

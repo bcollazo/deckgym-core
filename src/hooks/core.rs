@@ -9,7 +9,7 @@ use crate::{
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
     stadiums::get_training_area_damage_bonus,
-    tools::{has_tool, tool_effects_equal},
+    tools::has_tool,
     AbilityId, State,
 };
 
@@ -41,7 +41,7 @@ pub fn is_ultra_beast(pokemon_name: &str) -> bool {
 }
 
 pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
-    let total_hp = match card {
+    let base_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
             if is_fossil(trainer_card) {
@@ -51,14 +51,7 @@ pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> P
             }
         }
     };
-    PlayedCard::new(
-        card.clone(),
-        total_hp,
-        total_hp,
-        vec![],
-        played_this_turn,
-        vec![],
-    )
+    PlayedCard::new(card.clone(), 0, base_hp, vec![], played_this_turn, vec![])
 }
 
 pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
@@ -77,31 +70,6 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
 // TODO: Deprecated. Use PokemonCard::can_evolve_into instead.
 pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
     base_pokemon.card.can_evolve_into(evolution_card)
-}
-
-pub(crate) fn on_attach_tool(
-    state: &mut State,
-    actor: usize,
-    in_play_idx: usize,
-    tool_card: &TrainerCard,
-) {
-    if tool_effects_equal(tool_card, CardId::A2147GiantCape) {
-        // Add +20 to remaining_hp and total_hp
-        let card = state.in_play_pokemon[actor][in_play_idx]
-            .as_mut()
-            .expect("Active Pokemon should be there");
-        card.remaining_hp += 20;
-        card.total_hp += 20;
-        return;
-    }
-    if tool_effects_equal(tool_card, CardId::A3147LeafCape) {
-        // Add +30 to remaining_hp and total_hp (only for Grass pokemon)
-        let card = state.in_play_pokemon[actor][in_play_idx]
-            .as_mut()
-            .expect("Active Pokemon should be there");
-        card.remaining_hp += 30;
-        card.total_hp += 30;
-    }
 }
 
 /// Called when a Pokémon evolves

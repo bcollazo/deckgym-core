@@ -9,6 +9,11 @@ use deckgym::{
 
 mod common;
 
+fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
+    let card = get_card_by_enum(card_id);
+    PlayedCard::new(card, 0, base_hp, vec![], false, vec![])
+}
+
 /// Test Magnezone B1a 026 - Mirror Shot
 /// Should deal 90 damage and apply CoinFlipToBlockAttack effect
 #[test]
@@ -61,10 +66,8 @@ fn test_xerneas_geoburst_full_hp() {
             EnergyType::Psychic,
             EnergyType::Colorless,
         ])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 150)],
     );
-    // Fix total_hp too since with_hp only sets remaining_hp
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     game.set_state(state);
 
@@ -80,7 +83,8 @@ fn test_xerneas_geoburst_full_hp() {
     // At full HP (120), Xerneas has 0 damage, so should deal full 120 damage
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 30,
+        opponent_active.get_remaining_hp(),
+        30,
         "Opponent should have 30 HP remaining (150 - 120)"
     );
 }
@@ -99,9 +103,8 @@ fn test_xerneas_geoburst_damaged() {
                 EnergyType::Psychic,
                 EnergyType::Colorless,
             ])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 100)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
 
     game.set_state(state);
 
@@ -117,7 +120,8 @@ fn test_xerneas_geoburst_damaged() {
     // Xerneas has 50 damage, so attack should do 120 - 50 = 70 damage
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 30,
+        opponent_active.get_remaining_hp(),
+        30,
         "Opponent should have 30 HP remaining (100 - 70)"
     );
 }
@@ -138,9 +142,8 @@ fn test_porygonz_cyberjack() {
                 EnergyType::Colorless,
             ]),
         ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 150)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     // Put 4 Trainer cards in opponent's deck
     state.decks[1].cards = vec![
@@ -164,7 +167,8 @@ fn test_porygonz_cyberjack() {
     // Should deal 20 + (4 * 20) = 20 + 80 = 100 damage
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 50,
+        opponent_active.get_remaining_hp(),
+        50,
         "Opponent should have 50 HP remaining (150 - 100)"
     );
 }
@@ -199,7 +203,8 @@ fn test_sunflora_quick_grow_beam_without_extract() {
     // Should deal only 30 damage (no bonus)
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 40,
+        opponent_active.get_remaining_hp(),
+        40,
         "Opponent should have 40 HP remaining (70 - 30)"
     );
 }
@@ -232,7 +237,8 @@ fn test_sunflora_quick_grow_beam_with_extract() {
     // Should deal 30 + 30 = 60 damage
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 10,
+        opponent_active.get_remaining_hp(),
+        10,
         "Opponent should have 10 HP remaining (70 - 60)"
     );
 }
@@ -291,11 +297,10 @@ fn test_blastoise_double_splash_with_extra_energy() {
             ]),
         ],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150),
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 150),
             PlayedCard::from_id(CardId::A1053Squirtle),
         ],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     game.set_state(state);
 
@@ -326,7 +331,8 @@ fn test_blastoise_double_splash_with_extra_energy() {
     // Verify active took 90 damage (150 - 90 = 60)
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 60,
+        opponent_active.get_remaining_hp(),
+        60,
         "Opponent active should have 60 HP remaining (150 - 90)"
     );
 
@@ -337,7 +343,7 @@ fn test_blastoise_double_splash_with_extra_energy() {
         "Opponent bench Pokemon should still be alive (60 - 50 = 10)"
     );
     assert_eq!(
-        opponent_bench.unwrap().1.remaining_hp,
+        opponent_bench.unwrap().1.get_remaining_hp(),
         10,
         "Opponent bench Pokemon should have 10 HP remaining (60 - 50)"
     );
@@ -360,11 +366,10 @@ fn test_blastoise_double_splash_without_extra_energy() {
             ]),
         ],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150),
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 150),
             PlayedCard::from_id(CardId::A1053Squirtle),
         ],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     game.set_state(state);
 
@@ -391,7 +396,8 @@ fn test_blastoise_double_splash_without_extra_energy() {
     // Verify active took 90 damage (150 - 90 = 60)
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 60,
+        opponent_active.get_remaining_hp(),
+        60,
         "Opponent active should have 60 HP remaining (150 - 90)"
     );
 
@@ -402,7 +408,7 @@ fn test_blastoise_double_splash_without_extra_energy() {
         "Opponent bench Pokemon should still be alive"
     );
     assert_eq!(
-        opponent_bench.unwrap().1.remaining_hp,
+        opponent_bench.unwrap().1.get_remaining_hp(),
         60,
         "Opponent bench should still have 60 HP (no bench damage without extra energy)"
     );
@@ -426,9 +432,8 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
                 EnergyType::Water,
             ]),
         ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 150)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
 
     game.set_state(state);
 
@@ -455,7 +460,8 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
     // Verify active took 90 damage (150 - 90 = 60)
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 60,
+        opponent_active.get_remaining_hp(),
+        60,
         "Opponent active should have 60 HP remaining (150 - 90), even with extra energy but no bench"
     );
 }
@@ -470,10 +476,8 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
 
     // Set up opponent (player 1) with Charmander (Fire type attacker)
     // Give it extra HP to survive Mega Steelix's 120 damage attack
-    let mut charmander_played = PlayedCard::from_id(CardId::A1033Charmander)
+    let charmander_played = played_card_with_base_hp(CardId::A1033Charmander, 150)
         .with_energy(vec![EnergyType::Fire, EnergyType::Fire]);
-    charmander_played.total_hp = 150;
-    charmander_played.remaining_hp = 150;
 
     state.set_board(
         vec![
@@ -508,7 +512,7 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
     game.apply_action(&end_turn);
 
     let state = game.get_state_clone();
-    let steelix_hp_before = state.get_active(0).remaining_hp;
+    let steelix_hp_before = state.get_active(0).get_remaining_hp();
 
     // Player 1: Charmander attacks with Ember (30 damage, Fire type)
     // Normally this would do 30 + 20 = 50 damage (base + Fire weakness)
@@ -524,7 +528,7 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
     game.apply_action(&charmander_attack);
     let state = game.get_state_clone();
 
-    let steelix_hp_after = state.get_active(0).remaining_hp;
+    let steelix_hp_after = state.get_active(0).get_remaining_hp();
     let damage_taken = steelix_hp_before - steelix_hp_after;
 
     // Verify NoWeakness worked: should take only 10 damage (30 - 20), not 50 (30+20) or 30 (30+20-20)

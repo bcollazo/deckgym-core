@@ -145,7 +145,7 @@ fn test_confused_attack_can_succeed() {
         let state = game.get_state_clone();
         let opponent_hp = state
             .maybe_get_active(1)
-            .map(|p| p.remaining_hp)
+            .map(|p| p.get_remaining_hp())
             .unwrap_or(0);
 
         // Either the attack succeeded (opponent took damage or was KO'd)

@@ -16,7 +16,7 @@ fn test_pokemon_center_lady_heals_30_damage() {
 
     // Setup: Put a damaged Bulbasaur in active spot
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(20)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
@@ -38,7 +38,8 @@ fn test_pokemon_center_lady_heals_30_damage() {
     let state = game.get_state_clone();
     let bulbasaur_before = state.get_active(0);
     assert_eq!(
-        bulbasaur_before.remaining_hp, 20,
+        bulbasaur_before.get_remaining_hp(),
+        20,
         "Bulbasaur should have 20 HP (70 - 50 damage)"
     );
 
@@ -68,7 +69,8 @@ fn test_pokemon_center_lady_heals_30_damage() {
     let state = game.get_state_clone();
     let bulbasaur_after = state.get_active(0);
     assert_eq!(
-        bulbasaur_after.remaining_hp, 50,
+        bulbasaur_after.get_remaining_hp(),
+        50,
         "Bulbasaur should be healed to 50 HP (20 + 30)"
     );
 }
@@ -148,7 +150,7 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     // Setup: Put a damaged and poisoned Bulbasaur in active spot
     state.set_board(
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
-            .with_hp(30)
+            .with_remaining_hp(30)
             .with_status(StatusCondition::Poisoned)
             .with_status(StatusCondition::Paralyzed)
             .with_status(StatusCondition::Asleep)],
@@ -173,7 +175,8 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     let state = game.get_state_clone();
     let bulbasaur_before = state.get_active(0);
     assert_eq!(
-        bulbasaur_before.remaining_hp, 30,
+        bulbasaur_before.get_remaining_hp(),
+        30,
         "Bulbasaur should have 30 HP"
     );
     assert!(bulbasaur_before.poisoned, "Should be poisoned");
@@ -205,7 +208,8 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     let state = game.get_state_clone();
     let bulbasaur_after = state.get_active(0);
     assert_eq!(
-        bulbasaur_after.remaining_hp, 60,
+        bulbasaur_after.get_remaining_hp(),
+        60,
         "Bulbasaur should be healed to 60 HP (30 + 30)"
     );
     assert!(

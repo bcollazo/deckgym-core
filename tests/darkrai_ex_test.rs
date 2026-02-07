@@ -44,7 +44,7 @@ fn test_darkrai_ex_nightmare_aura() {
 
     // Check that opponent's active took 20 damage
     assert_eq!(
-        state.get_active(1).remaining_hp,
+        state.get_active(1).get_remaining_hp(),
         50,
         "Opponent's active should have taken 20 damage (70 - 20 = 50)"
     );
@@ -79,7 +79,7 @@ fn test_darkrai_ex_nightmare_aura_only_darkness() {
 
     // Check that opponent's active did NOT take damage
     assert_eq!(
-        state.get_active(1).remaining_hp,
+        state.get_active(1).get_remaining_hp(),
         70,
         "Opponent's active should not have taken damage from non-Darkness energy"
     );
@@ -114,7 +114,7 @@ fn test_darkrai_ex_nightmare_aura_only_turn_energy() {
 
     // Check that opponent's active did NOT take damage
     assert_eq!(
-        state.get_active(1).remaining_hp,
+        state.get_active(1).get_remaining_hp(),
         70,
         "Opponent's active should not have taken damage when energy is not from Energy Zone"
     );
@@ -132,7 +132,7 @@ fn test_darkrai_ex_nightmare_aura_ko_triggers_promotion() {
     state.set_board(
         vec![PlayedCard::from_id(CardId::A2110DarkraiEx)],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20),
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(20),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );

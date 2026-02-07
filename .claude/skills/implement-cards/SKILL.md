@@ -68,10 +68,9 @@ to see what is missing from the specified card.
 - In `tool_ids.rs` add the tool to the `ToolId` enum and the `TOOL_ID_MAP` map.
   - Keep the file ordered by set and number.
   - If the tool has attachment restrictions (e.g., only Grass pokémon), implement the `can_attach_to()` method to enforce these restrictions. This counts as the "move generation" for the tool.
-- Implement the "on attach" logic in `on_attach_tool` in `hooks/core.rs`.
-  - This is where you handle immediate effects when the tool is attached (e.g., +HP, stat modifications).
-  - Review similar tools to ensure consistency in implementation.
-  - Keep the `match tool_id` cases as one-liners when possible.
+- Implement any immediate effects in the tool's core logic rather than a dedicated "on attach" hook.
+  - For HP modifiers, prefer dynamic calculation in `PlayedCard::get_effective_total_hp()`.
+  - For other immediate effects, add a focused helper in the relevant hook file and call it from the appropriate action handler.
 - Implement the "forecast action" logic in `forecast_trainer_action` in `apply_trainer_action.rs`.
   - Add the tool's CardId to the match branch that calls `doutcome(attach_tool)`.
   - Tools should be grouped together in a single match arm (e.g., `CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape`).

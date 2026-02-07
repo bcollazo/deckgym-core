@@ -9,6 +9,11 @@ use deckgym::{
 
 mod common;
 
+fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
+    let card = get_card_by_enum(card_id);
+    PlayedCard::new(card, 0, base_hp, vec![], false, vec![])
+}
+
 fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
     match get_card_by_enum(card_id) {
         Card::Trainer(trainer_card) => trainer_card,
@@ -31,8 +36,8 @@ fn test_mega_kangaskhan_double_punching_family_ko_then_promotion_then_ko() {
             ]),
         ],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(80),
-            PlayedCard::from_id(CardId::A1033Charmander).with_hp(30),
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 80),
+            PlayedCard::from_id(CardId::A1033Charmander).with_remaining_hp(30),
         ],
     );
     state.current_player = 0;
@@ -92,12 +97,14 @@ fn test_mega_kangaskhan_double_punching_family_red_vs_ex_with_rocky_helmet() {
     let state = game.get_state_clone();
     let opponent_active = state.get_active(1);
     assert_eq!(
-        opponent_active.remaining_hp, 20,
+        opponent_active.get_remaining_hp(),
+        20,
         "Expected 160 damage to EX (down from 180hp)"
     );
     let attacker_active = state.get_active(0);
     assert_eq!(
-        attacker_active.remaining_hp, 140,
+        attacker_active.get_remaining_hp(),
+        140,
         "Expected Rocky Helmet twice"
     );
 }

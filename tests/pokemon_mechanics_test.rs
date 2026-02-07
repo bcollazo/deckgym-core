@@ -8,6 +8,11 @@ use deckgym::{
 
 mod common;
 
+fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
+    let card = deckgym::database::get_card_by_enum(card_id);
+    PlayedCard::new(card, 0, base_hp, vec![], false, vec![])
+}
+
 // ============================================================================
 // Marshadow Tests - Revenge Attack
 // ============================================================================
@@ -42,7 +47,7 @@ fn test_marshadow_revenge_base_damage() {
     let final_state = game.get_state_clone();
 
     // Base damage is 40, so opponent should have 70 - 40 = 30 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
 
     assert_eq!(
         opponent_hp, 30,
@@ -60,10 +65,8 @@ fn test_marshadow_revenge_boosted_damage() {
     state.set_board(
         vec![PlayedCard::from_id(CardId::A1a047Marshadow)
             .with_energy(vec![EnergyType::Fighting, EnergyType::Colorless])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 150)],
     );
-    // Fix total_hp
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
     state.current_player = 0;
 
     // Simulate that a Pokemon was KO'd by opponent's attack last turn
@@ -82,7 +85,7 @@ fn test_marshadow_revenge_boosted_damage() {
     let final_state = game.get_state_clone();
 
     // Boosted damage is 40 + 60 = 100, so opponent should have 150 - 100 = 50 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
 
     assert_eq!(
         opponent_hp, 50,
@@ -141,7 +144,7 @@ fn test_dusknoir_shadow_void_move_damage() {
     let final_state = game.get_state_clone();
 
     // Bulbasaur should now have full HP (70)
-    let bulbasaur_hp = final_state.get_active(0).remaining_hp;
+    let bulbasaur_hp = final_state.get_active(0).get_remaining_hp();
     assert_eq!(
         bulbasaur_hp, 70,
         "Bulbasaur should be fully healed after Shadow Void (70 HP)"
@@ -153,7 +156,7 @@ fn test_dusknoir_shadow_void_move_damage() {
         .next()
         .unwrap()
         .1
-        .remaining_hp;
+        .get_remaining_hp();
     assert_eq!(
         dusknoir_hp, 90,
         "Dusknoir should have 90 HP after receiving 40 damage (130 - 40)"
@@ -170,7 +173,7 @@ fn test_dusknoir_shadow_void_ko() {
     state.set_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(50),
-            PlayedCard::from_id(CardId::A2072Dusknoir).with_hp(30),
+            PlayedCard::from_id(CardId::A2072Dusknoir).with_remaining_hp(30),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
@@ -262,7 +265,7 @@ fn test_dusknoir_shadow_void_multiple_uses() {
     let final_state = game.get_state_clone();
 
     // Bulbasaur should be fully healed
-    let bulbasaur_hp = final_state.get_active(0).remaining_hp;
+    let bulbasaur_hp = final_state.get_active(0).get_remaining_hp();
     assert_eq!(bulbasaur_hp, 70, "Bulbasaur should be fully healed");
 
     // Squirtle should be fully healed
@@ -271,7 +274,7 @@ fn test_dusknoir_shadow_void_multiple_uses() {
         .find(|(i, _)| *i == 2)
         .unwrap()
         .1
-        .remaining_hp;
+        .get_remaining_hp();
     assert_eq!(squirtle_hp, 60, "Squirtle should be fully healed");
 
     // Dusknoir should have taken both damages (130 - 20 - 20 = 90 HP)
@@ -280,7 +283,7 @@ fn test_dusknoir_shadow_void_multiple_uses() {
         .find(|(_, p)| p.get_name() == "Dusknoir")
         .unwrap()
         .1
-        .remaining_hp;
+        .get_remaining_hp();
     assert_eq!(
         dusknoir_hp, 90,
         "Dusknoir should have 90 HP after receiving 40 total damage"
@@ -303,9 +306,8 @@ fn test_lucario_fighting_coach_single() {
             PlayedCard::from_id(CardId::A2091Riolu).with_energy(vec![EnergyType::Fighting]),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 100)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
 
     game.set_state(state);
@@ -321,7 +323,7 @@ fn test_lucario_fighting_coach_single() {
     let final_state = game.get_state_clone();
 
     // With 1 Fighting Coach: 20 + 20 = 40 damage, so 100 - 40 = 60 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
 
     assert_eq!(
         opponent_hp, 60,
@@ -343,9 +345,8 @@ fn test_lucario_fighting_coach_stacked() {
             PlayedCard::from_id(CardId::A2092Lucario),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(150)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 150)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 150;
     state.current_player = 0;
 
     game.set_state(state);
@@ -361,7 +362,7 @@ fn test_lucario_fighting_coach_stacked() {
     let final_state = game.get_state_clone();
 
     // With 3 Lucarios: 40 + (20 * 3) = 100 damage, so 150 - 100 = 50 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
 
     assert_eq!(
         opponent_hp, 50,
@@ -382,9 +383,8 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
                 .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
             PlayedCard::from_id(CardId::A2092Lucario),
         ],
-        vec![PlayedCard::from_id(CardId::A1053Squirtle).with_hp(100)],
+        vec![played_card_with_base_hp(CardId::A1053Squirtle, 100)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
 
     game.set_state(state);
@@ -400,7 +400,7 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     let final_state = game.get_state_clone();
 
     // No boost: 40 damage, so 100 - 40 = 60 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
 
     assert_eq!(
         opponent_hp, 60,
@@ -452,7 +452,7 @@ fn test_shinx_hide_damage_prevention() {
     let final_state = game.get_state_clone();
 
     // Shinx should still have full HP due to PreventAllDamageAndEffects
-    let shinx_hp = final_state.get_active(0).remaining_hp;
+    let shinx_hp = final_state.get_active(0).get_remaining_hp();
 
     assert_eq!(
         shinx_hp, 60,
@@ -491,7 +491,7 @@ fn test_shinx_hide_effect_prevention() {
     let final_state = game.get_state_clone();
 
     // Shinx should still have full HP
-    let shinx_hp = final_state.get_active(0).remaining_hp;
+    let shinx_hp = final_state.get_active(0).get_remaining_hp();
     assert_eq!(
         shinx_hp, 60,
         "Shinx should not take damage when protected by Hide"
@@ -612,9 +612,8 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     // Set up Rampardos vs high-HP Bulbasaur
     state.set_board(
         vec![PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(200)],
+        vec![played_card_with_base_hp(CardId::A1001Bulbasaur, 200)],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 200;
     state.current_player = 0;
 
     game.set_state(state);
@@ -630,14 +629,14 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     let final_state = game.get_state_clone();
 
     // Opponent should have 200 - 130 = 70 HP
-    let opponent_hp = final_state.get_active(1).remaining_hp;
+    let opponent_hp = final_state.get_active(1).get_remaining_hp();
     assert_eq!(
         opponent_hp, 70,
         "Rampardos's Head Smash should deal 130 damage (200 - 130 = 70)"
     );
 
     // Rampardos should have full HP (no recoil since no KO)
-    let rampardos_hp = final_state.get_active(0).remaining_hp;
+    let rampardos_hp = final_state.get_active(0).get_remaining_hp();
     assert_eq!(
         rampardos_hp, 150,
         "Rampardos should take no recoil damage when opponent survives"
@@ -654,11 +653,10 @@ fn test_rampardos_head_smash_ko_with_recoil() {
     state.set_board(
         vec![PlayedCard::from_id(CardId::A2089Rampardos).with_energy(vec![EnergyType::Fighting])],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100),
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 100),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
     state.points = [0, 0];
 
@@ -681,7 +679,7 @@ fn test_rampardos_head_smash_ko_with_recoil() {
     );
 
     // Rampardos should have taken 50 recoil damage (150 - 50 = 100)
-    let rampardos_hp = final_state.get_active(0).remaining_hp;
+    let rampardos_hp = final_state.get_active(0).get_remaining_hp();
     assert_eq!(
         rampardos_hp, 100,
         "Rampardos should take 50 recoil damage after KO'ing opponent (150 - 50 = 100)"
@@ -698,16 +696,15 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
     state.set_board(
         vec![
             PlayedCard::from_id(CardId::A2089Rampardos)
-                .with_hp(30)
+                .with_remaining_hp(30)
                 .with_energy(vec![EnergyType::Fighting]),
             PlayedCard::from_id(CardId::A2089Rampardos),
         ],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(100),
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 100),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.in_play_pokemon[1][0].as_mut().unwrap().total_hp = 100;
     state.current_player = 0;
     state.points = [0, 0];
 

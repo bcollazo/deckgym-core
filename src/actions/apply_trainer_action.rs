@@ -77,6 +77,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b348Lillie
         | CardId::A4b349Lillie
         | CardId::A4b374Lillie => doutcome(lillie_effect),
+        CardId::A3151Guzma | CardId::A3193Guzma | CardId::A3208Guzma => doutcome(guzma_effect),
         CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
         CardId::A1223Giovanni
         | CardId::A1270Giovanni
@@ -200,6 +201,19 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, possible_moves));
+    }
+}
+
+fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let opponent = (action.actor + 1) % 2;
+    let tool_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| pokemon.has_tool_attached())
+        .map(|(idx, _)| idx)
+        .collect();
+
+    for idx in tool_indices {
+        state.discard_tool(opponent, idx);
     }
 }
 

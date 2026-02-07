@@ -18,7 +18,7 @@ fn test_jolteon_ex_electromagnetic_wall_ko_triggers_promotion() {
     // Player 0 with weak active + bench vs Jolteon ex
     state.set_board(
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(20),
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(20),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::B1081JolteonEx)],

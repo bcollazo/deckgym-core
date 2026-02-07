@@ -157,7 +157,11 @@ pub(crate) fn render_pokemon_card<'a>(
     match pokemon {
         Some(played_card) => {
             let name = played_card.card.get_name();
-            let hp_text = format!("{}/{}", played_card.remaining_hp, played_card.total_hp);
+            let hp_text = format!(
+                "{}/{}",
+                played_card.get_remaining_hp(),
+                played_card.get_effective_total_hp()
+            );
 
             let mut status_effects = Vec::new();
             if played_card.poisoned {

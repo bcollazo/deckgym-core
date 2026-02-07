@@ -33,7 +33,6 @@ fn test_giant_cape_attach_increases_hp() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let base_total_hp = 70;
     let base_remaining_hp = 70;
 
     state.set_board(
@@ -65,8 +64,7 @@ fn test_giant_cape_attach_increases_hp() {
     let state = game.get_state_clone();
     let active = state.get_active(0);
     assert!(active.attached_tool.is_some());
-    assert_eq!(active.total_hp, base_total_hp + 20);
-    assert_eq!(active.remaining_hp, base_remaining_hp + 20);
+    assert_eq!(active.get_remaining_hp(), base_remaining_hp + 20);
 }
 
 #[test]
@@ -74,7 +72,6 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    let base_total_hp = 70;
     let base_remaining_hp = 70;
 
     state.set_board(
@@ -120,6 +117,55 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let state = game.get_state_clone();
     let active = state.get_active(0);
     assert!(active.attached_tool.is_some());
-    assert_eq!(active.total_hp, base_total_hp + 30);
-    assert_eq!(active.remaining_hp, base_remaining_hp + 30);
+    assert_eq!(active.get_remaining_hp(), base_remaining_hp + 30);
+}
+
+#[test]
+fn test_guzma_kos_pokemon_surviving_on_giant_cape() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_tool(get_card_by_enum(CardId::A2147GiantCape))
+                .with_damage(80),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    state.hands[0] = vec![get_card_by_enum(CardId::A3151Guzma)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::A3151Guzma);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[1][0].is_none(),
+        "Opponent active should be KO'd after Giant Cape is discarded"
+    );
+    assert_eq!(state.points[0], 1, "Player 0 should gain 1 point");
+
+    let (actor, choices) = state.generate_possible_actions();
+    assert_eq!(actor, 1, "Opponent should be prompted to promote");
+    let activate_action = choices
+        .iter()
+        .find(|action| matches!(action.action, SimpleAction::Activate { .. }))
+        .expect("Expected Activate action for promotion");
+    game.apply_action(activate_action);
+
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[1][0].is_some(),
+        "Opponent should have a promoted active Pokemon"
+    );
 }

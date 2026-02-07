@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use std::hash::Hash;
 
 use crate::{
-    actions::SimpleAction,
+    actions::{self, SimpleAction},
     deck::Deck,
     effects::TurnEffect,
     models::{Card, EnergyType},
@@ -123,7 +123,7 @@ impl State {
         self.in_play_pokemon[player][index]
             .as_ref()
             .unwrap()
-            .remaining_hp
+            .get_remaining_hp()
     }
 
     pub(crate) fn remove_card_from_hand(&mut self, current_player: usize, card: &Card) {
@@ -357,6 +357,7 @@ impl State {
             .take()
             .expect("Expected tool to be attached when discarding tool");
         self.discard_piles[player].push(tool_card);
+        actions::handle_knockouts(self, (player, 0), false);
     }
 
     pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {
@@ -463,7 +464,7 @@ fn format_card(x: &Option<PlayedCard>) -> String {
         Some(played_card) => format!(
             "{}({}hp,{:?})",
             played_card.get_name(),
-            played_card.remaining_hp,
+            played_card.get_remaining_hp(),
             played_card.attached_energy.len(),
         ),
         None => "".to_string(),

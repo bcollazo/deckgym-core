@@ -8,6 +8,7 @@ use crate::{
     database::get_card_by_enum,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
+    tools::has_tool,
     AbilityId,
 };
 
@@ -16,8 +17,8 @@ use crate::{
 #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct PlayedCard {
     pub card: Card,
-    pub remaining_hp: u32,
-    pub total_hp: u32,
+    damage_counters: u32,
+    base_hp: u32,
     pub attached_energy: Vec<EnergyType>,
     pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
@@ -37,16 +38,16 @@ pub struct PlayedCard {
 impl PlayedCard {
     pub fn new(
         card: Card,
-        remaining_hp: u32,
-        total_hp: u32,
+        damage_counters: u32,
+        base_hp: u32,
         attached_energy: Vec<EnergyType>,
         played_this_turn: bool,
         cards_behind: Vec<Card>,
     ) -> Self {
         PlayedCard {
             card,
-            remaining_hp,
-            total_hp,
+            damage_counters,
+            base_hp,
             attached_energy,
             played_this_turn,
             cards_behind,
@@ -65,7 +66,7 @@ impl PlayedCard {
 
     /// Create a fresh PlayedCard from a Card at full HP with no energy, tools, or status.
     pub fn from_card(card: &Card) -> Self {
-        let total_hp = match card {
+        let base_hp = match card {
             Card::Pokemon(pokemon_card) => pokemon_card.hp,
             Card::Trainer(trainer_card) => {
                 if trainer_card.trainer_card_type == TrainerType::Fossil {
@@ -78,7 +79,7 @@ impl PlayedCard {
                 }
             }
         };
-        Self::new(card.clone(), total_hp, total_hp, vec![], false, vec![])
+        Self::new(card.clone(), 0, base_hp, vec![], false, vec![])
     }
 
     /// Create a fresh PlayedCard from a CardId at full HP with no energy, tools, or status.
@@ -93,12 +94,14 @@ impl PlayedCard {
     }
 
     pub fn with_damage(mut self, damage: u32) -> Self {
-        self.remaining_hp = self.remaining_hp.saturating_sub(damage);
+        self.damage_counters = self.damage_counters.saturating_add(damage);
         self
     }
 
-    pub fn with_hp(mut self, remaining_hp: u32) -> Self {
-        self.remaining_hp = remaining_hp;
+    pub fn with_remaining_hp(mut self, remaining_hp: u32) -> Self {
+        let effective_hp = self.get_effective_total_hp();
+        let clamped_remaining = remaining_hp.min(effective_hp);
+        self.damage_counters = effective_hp.saturating_sub(clamped_remaining);
         self
     }
 
@@ -142,11 +145,11 @@ impl PlayedCard {
     }
 
     pub(crate) fn heal(&mut self, amount: u32) {
-        self.remaining_hp = (self.remaining_hp + amount).min(self.get_effective_total_hp());
+        self.damage_counters = self.damage_counters.saturating_sub(amount);
     }
 
     pub(crate) fn apply_damage(&mut self, damage: u32) {
-        self.remaining_hp = self.remaining_hp.saturating_sub(damage);
+        self.damage_counters = self.damage_counters.saturating_add(damage);
     }
 
     // Option because if playing an item card... (?)
@@ -168,12 +171,32 @@ impl PlayedCard {
     }
 
     pub(crate) fn is_damaged(&self) -> bool {
-        self.remaining_hp < self.get_effective_total_hp()
+        self.damage_counters > 0
+    }
+
+    pub fn get_remaining_hp(&self) -> u32 {
+        self.get_effective_total_hp()
+            .saturating_sub(self.damage_counters)
+    }
+
+    pub(crate) fn is_knocked_out(&self) -> bool {
+        self.damage_counters >= self.get_effective_total_hp()
+    }
+
+    pub(crate) fn get_damage_counters(&self) -> u32 {
+        self.damage_counters
     }
 
     /// Returns effective total HP considering abilities like Reuniclus Infinite Increase
     pub(crate) fn get_effective_total_hp(&self) -> u32 {
-        let mut effective_hp = self.total_hp;
+        let mut effective_hp = self.base_hp;
+
+        // Tool bonuses
+        if has_tool(self, CardId::A2147GiantCape) {
+            effective_hp += 20;
+        } else if has_tool(self, CardId::A3147LeafCape) {
+            effective_hp += 30;
+        }
 
         // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
         if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
@@ -311,7 +334,7 @@ impl fmt::Debug for PlayedCard {
                 f,
                 "{}({}hp,{:?})",
                 self.get_name(),
-                self.remaining_hp,
+                self.get_remaining_hp(),
                 self.attached_energy
             )
         } else {
@@ -319,7 +342,7 @@ impl fmt::Debug for PlayedCard {
                 f,
                 "{}({}hp,{})",
                 self.get_name(),
-                self.remaining_hp,
+                self.get_remaining_hp(),
                 self.attached_energy.len()
             )
         }

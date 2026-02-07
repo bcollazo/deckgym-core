@@ -382,7 +382,9 @@ pub(crate) fn handle_damage_only(
             target_pokemon.apply_damage(damage); // Applies without surpassing 0 HP
             debug!(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
-                damage, target_pokemon_idx, target_pokemon.remaining_hp
+                damage,
+                target_pokemon_idx,
+                target_pokemon.get_remaining_hp()
             );
         }
 
@@ -413,7 +415,8 @@ pub(crate) fn handle_damage_only(
                 attacking_pokemon.apply_damage(counter_damage);
                 debug!(
                     "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
-                    counter_damage, attacking_pokemon.remaining_hp
+                    counter_damage,
+                    attacking_pokemon.get_remaining_hp()
                 );
             }
 
@@ -495,12 +498,12 @@ pub(crate) fn handle_knockouts(
 fn get_knocked_out(state: &State) -> Vec<(usize, usize)> {
     let mut knockouts: Vec<(usize, usize)> = vec![];
     for (idx, card) in state.enumerate_in_play_pokemon(0) {
-        if card.remaining_hp == 0 {
+        if card.is_knocked_out() {
             knockouts.push((0, idx));
         }
     }
     for (idx, card) in state.enumerate_in_play_pokemon(1) {
-        if card.remaining_hp == 0 {
+        if card.is_knocked_out() {
             knockouts.push((1, idx));
         }
     }
@@ -586,14 +589,14 @@ mod tests {
         state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
         state.in_play_pokemon[1][0] = Some(to_playable_card(&mimikyu_ex, false));
 
-        let starting_hp = state.get_active(1).remaining_hp;
+        let starting_hp = state.get_active(1).get_remaining_hp();
 
         // First attack damage should be prevented
         handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
-        assert_eq!(state.get_active(1).remaining_hp, starting_hp);
+        assert_eq!(state.get_active(1).get_remaining_hp(), starting_hp);
 
         // Second attack should deal damage normally
         handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
-        assert_eq!(state.get_active(1).remaining_hp, starting_hp - 30);
+        assert_eq!(state.get_active(1).get_remaining_hp(), starting_hp - 30);
     }
 }

@@ -8,9 +8,10 @@ use crate::{
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{wrap_with_common_logic, Mutation},
     },
-    hooks::{get_retreat_cost, on_attach_tool, on_evolve, on_play_to_bench, to_playable_card},
+    hooks::{get_retreat_cost, on_evolve, on_play_to_bench, to_playable_card},
     models::{Card, EnergyType},
     state::State,
+    tools,
 };
 
 use super::{
@@ -189,12 +190,11 @@ fn apply_attach_energy(
 }
 
 fn apply_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_card: &Card) {
-    let trainer_card = crate::tools::ensure_tool_card(tool_card);
+    tools::ensure_tool_card(tool_card);
     state.in_play_pokemon[actor][in_play_idx]
         .as_mut()
         .expect("Pokemon should be there if attaching tool to it")
         .attached_tool = Some(tool_card.clone());
-    on_attach_tool(state, actor, in_play_idx, trainer_card);
 }
 
 fn apply_move_energy(
@@ -294,7 +294,7 @@ fn apply_heal_and_discard_energy(
         .expect("Pokemon should be there if healing it");
     let missing_hp = pokemon
         .get_effective_total_hp()
-        .saturating_sub(pokemon.remaining_hp);
+        .saturating_sub(pokemon.get_remaining_hp());
     let healed = heal_amount.min(missing_hp);
     pokemon.heal(heal_amount);
 
@@ -309,7 +309,7 @@ fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize
         let from_pokemon = state.in_play_pokemon[actor][from]
             .as_ref()
             .expect("Pokemon to move damage from should be there");
-        from_pokemon.total_hp - from_pokemon.remaining_hp
+        from_pokemon.get_damage_counters()
     };
 
     if damage_to_move > 0 {
@@ -401,8 +401,8 @@ pub(crate) fn apply_evolve(
             panic!("Basic pokemon do not evolve from others...");
         }
 
-        let damage_taken = from_pokemon.total_hp - from_pokemon.remaining_hp;
-        played_card.remaining_hp -= damage_taken;
+        let damage_taken = from_pokemon.get_damage_counters();
+        played_card.apply_damage(damage_taken);
         played_card.attached_energy = from_pokemon.attached_energy.clone();
         played_card.attached_tool = from_pokemon.attached_tool.clone();
         played_card.cards_behind = from_pokemon.cards_behind.clone();
@@ -639,11 +639,11 @@ mod tests {
         let mankey = get_card_by_enum(CardId::PA017Mankey);
         let primeape = get_card_by_enum(CardId::A1142Primeape);
         let mut base_played_card = to_playable_card(&mankey, false);
-        base_played_card.remaining_hp = 20; // 30 damage taken
+        base_played_card.apply_damage(30); // 30 damage taken
         base_played_card.attached_energy = vec![energy];
         state.in_play_pokemon[0][0] = Some(base_played_card.clone());
         let mut healthy_bench = base_played_card.clone();
-        healthy_bench.remaining_hp = 50;
+        healthy_bench.heal(30);
         healthy_bench.attached_energy = vec![energy, energy, energy];
         state.in_play_pokemon[0][2] = Some(healthy_bench);
         state.hands[0] = vec![primeape.clone(), primeape.clone()];
@@ -654,7 +654,7 @@ mod tests {
             state.in_play_pokemon[0][0],
             Some(PlayedCard::new(
                 primeape.clone(),
-                60, // 90 - 30 = 60
+                30, // 30 damage counters
                 90,
                 vec![energy],
                 true,
@@ -668,7 +668,7 @@ mod tests {
             state.in_play_pokemon[0][0],
             Some(PlayedCard::new(
                 primeape.clone(),
-                60, // 90 - 30 = 60
+                30, // 30 damage counters
                 90,
                 vec![energy],
                 true,
@@ -679,7 +679,7 @@ mod tests {
             state.in_play_pokemon[0][2],
             Some(PlayedCard::new(
                 primeape.clone(),
-                90, // 90 - 0 = 90
+                0, // 0 damage counters
                 90,
                 vec![energy, energy, energy],
                 true,

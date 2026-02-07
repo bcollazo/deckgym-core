@@ -19,7 +19,7 @@ fn test_raikou_rocky_helmet_promotion_order() {
         vec![
             PlayedCard::from_id(CardId::A4a025RaikouEx)
                 .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
-                .with_hp(20),
+                .with_remaining_hp(20),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![

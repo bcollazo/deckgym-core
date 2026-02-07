@@ -74,7 +74,7 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     state.set_board(
         vec![
             PlayedCard::from_id(CardId::A2119DialgaEx)
-                .with_hp(20)
+                .with_remaining_hp(20)
                 .with_energy(vec![EnergyType::Metal, EnergyType::Metal]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1001Bulbasaur),

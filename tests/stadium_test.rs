@@ -350,7 +350,7 @@ fn test_training_area_does_not_affect_basic_pokemon() {
     game.apply_action(&attack_action);
 
     let state = game.get_state_clone();
-    let defender_hp = state.get_active(1).remaining_hp;
+    let defender_hp = state.get_active(1).get_remaining_hp();
 
     // Charmander: 60 HP - 40 damage = 20 HP remaining
     assert_eq!(
@@ -443,7 +443,7 @@ fn test_training_area_affects_both_players() {
     game.play_until_stable(); // Handle any post-attack effects
 
     let state = game.get_state_clone();
-    let charmeleon_hp = state.get_active(1).remaining_hp;
+    let charmeleon_hp = state.get_active(1).get_remaining_hp();
     assert_eq!(
         charmeleon_hp, 20,
         "Charmeleon should have 20 HP (90 - 70 from boosted Stage 1 attack)"

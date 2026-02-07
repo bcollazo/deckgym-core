@@ -547,7 +547,7 @@ fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutatio
         // or if remaining_hp is 0 (before promotion happens)
         let opponent_ko = state.in_play_pokemon[opponent][0]
             .as_ref()
-            .is_none_or(|p| p.remaining_hp == 0);
+            .is_none_or(|p| p.is_knocked_out());
 
         // If opponent was KO'd, apply recoil damage to self using handle_damage
         // so that the attacker can also be properly KO'd if needed
@@ -1104,7 +1104,7 @@ fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
         let mut choices = Vec::new();
         for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
             // Only add as a target if the Pokémon has damage (remaining_hp < total_hp)
-            if pokemon.remaining_hp < pokemon.total_hp {
+            if pokemon.is_damaged() {
                 choices.push(SimpleAction::ApplyDamage {
                     attacking_ref: (action.actor, 0),
                     targets: vec![(damage, opponent, in_play_idx)],
@@ -1567,7 +1567,7 @@ fn extra_damage_if_hurt(
         state.current_player
     };
     let target_active = state.get_active(target);
-    if target_active.remaining_hp < target_active.total_hp {
+    if target_active.is_damaged() {
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)
@@ -1576,7 +1576,7 @@ fn extra_damage_if_hurt(
 
 fn damage_equal_to_self_damage(state: &State) -> (Probabilities, Mutations) {
     let attacker = state.get_active(state.current_player);
-    let damage = attacker.total_hp - attacker.remaining_hp;
+    let damage = attacker.get_damage_counters();
     active_damage_doutcome(damage)
 }
 
@@ -1585,7 +1585,7 @@ fn extra_damage_equal_to_self_damage(
     base_damage: u32,
 ) -> (Probabilities, Mutations) {
     let attacker = state.get_active(state.current_player);
-    let self_damage = attacker.total_hp - attacker.remaining_hp;
+    let self_damage = attacker.get_damage_counters();
     active_damage_doutcome(base_damage + self_damage)
 }
 
@@ -2134,7 +2134,7 @@ fn damage_reduced_by_self_damage_attack(
     attack: &Attack,
 ) -> (Probabilities, Mutations) {
     let active = state.get_active(state.current_player);
-    let damage_taken = active.total_hp - active.remaining_hp;
+    let damage_taken = active.get_damage_counters();
     let actual_damage = attack.fixed_damage.saturating_sub(damage_taken);
     active_damage_doutcome(actual_damage)
 }
@@ -2164,12 +2164,13 @@ mod tests {
         state.in_play_pokemon[0][0] = Some(
             PlayedCard::from_id(CardId::A1101Electabuzz)
                 .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
-                .with_hp(20),
+                .with_remaining_hp(20),
         );
         state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
         // Opponent active at 40 HP so base damage KOs, with bench for promotion
-        state.in_play_pokemon[1][0] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_hp(40));
+        state.in_play_pokemon[1][0] =
+            Some(PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(40));
         state.in_play_pokemon[1][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
         let action = Action {
@@ -2218,7 +2219,7 @@ mod tests {
         state.in_play_pokemon[0][0] = Some(
             PlayedCard::from_id(CardId::A1101Electabuzz)
                 .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])
-                .with_hp(20),
+                .with_remaining_hp(20),
         );
         state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
 
@@ -2339,7 +2340,7 @@ mod test {
             bench_count_damage_attack(&state, 70, true, 20, None, &BenchSide::YourBench);
         lazy_mutations.remove(0)(&mut rng, &mut state, &action);
 
-        assert_eq!(state.get_active(1).remaining_hp, 70);
+        assert_eq!(state.get_active(1).get_remaining_hp(), 70);
     }
 
     #[test]
@@ -2555,6 +2556,6 @@ mod test {
         mutations.remove(0)(&mut rng, &mut state, &action);
 
         // Verify Oricorio did NOT take damage
-        assert_eq!(state.get_active(1).remaining_hp, 70);
+        assert_eq!(state.get_active(1).get_remaining_hp(), 70);
     }
 }

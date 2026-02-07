@@ -52,7 +52,7 @@ fn test_protective_poncho_prevents_bench_damage_from_attack() {
         .next()
         .unwrap()
         .1
-        .remaining_hp;
+        .get_remaining_hp();
     assert_eq!(
         poncho_pokemon_hp, 70,
         "Benched Pokémon with Protective Poncho should take 0 damage from attacks"
@@ -109,7 +109,7 @@ fn test_protective_poncho_prevents_greninja_water_shuriken() {
         .next()
         .unwrap()
         .1
-        .remaining_hp;
+        .get_remaining_hp();
     assert_eq!(
         poncho_pokemon_hp, 70,
         "Benched Pokémon with Protective Poncho should take 0 damage from Water Shuriken ability"
@@ -146,7 +146,7 @@ fn test_protective_poncho_no_protection_when_active() {
     let final_state = game.get_state_clone();
 
     // Active Pokémon with Protective Poncho SHOULD take damage (poncho only protects bench)
-    let active_hp = final_state.get_active(1).remaining_hp;
+    let active_hp = final_state.get_active(1).get_remaining_hp();
     assert_eq!(
         active_hp, 30,
         "Active Pokémon with Protective Poncho should still take damage (70 - 40 = 30)"
