@@ -354,7 +354,9 @@ impl State {
             .as_ref()
             .expect("There should be a Pokemon to discard");
         let mut cards_to_discard = ko_pokemon.cards_behind.clone();
-        // TODO: Include attached Tools
+        if let Some(tool_card) = &ko_pokemon.attached_tool {
+            cards_to_discard.push(tool_card.clone());
+        }
         cards_to_discard.push(ko_pokemon.card.clone());
         debug!("Discarding: {cards_to_discard:?}");
         self.discard_piles[ko_receiver].extend(cards_to_discard);

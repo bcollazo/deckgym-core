@@ -169,3 +169,39 @@ fn test_guzma_kos_pokemon_surviving_on_giant_cape() {
         "Opponent should have a promoted active Pokemon"
     );
 }
+
+#[test]
+fn test_ko_discards_attached_tool() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_tool(get_card_by_enum(CardId::A2147GiantCape))],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    game.set_state(state);
+
+    let damage_action = Action {
+        actor: 0,
+        action: SimpleAction::ApplyDamage {
+            attacking_ref: (0, 0),
+            targets: vec![(100, 1, 0)],
+            is_from_active_attack: true,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&damage_action);
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][0].is_none());
+    assert!(
+        state.discard_piles[1]
+            .iter()
+            .any(|card| *card == get_card_by_enum(CardId::A2147GiantCape)),
+        "Expected attached tool to be discarded on KO"
+    );
+}
