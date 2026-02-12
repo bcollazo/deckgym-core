@@ -65,6 +65,7 @@ pub fn forecast_trainer_action(
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
         CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
         CardId::A1224Brock | CardId::A1271Brock => doutcome(brock_effect),
+        CardId::A3150Kiawe | CardId::A3192Kiawe => doutcome(kiawe_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
             doutcome(irida_effect)
         }
@@ -463,7 +464,22 @@ fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state,
         action.actor,
         EnergyType::Fighting,
+        1,
         &["Golem", "Onix"],
+    );
+}
+
+fn kiawe_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Choose 1 of your Alolan Marowak or Turtonator. Take 2 [R] Energy and attach it. Your turn ends.
+    state
+        .move_generation_stack
+        .push((action.actor, vec![SimpleAction::EndTurn]));
+    attach_energy_from_zone_to_specific_pokemon(
+        state,
+        action.actor,
+        EnergyType::Fire,
+        2,
+        &["Alolan Marowak", "Turtonator"],
     );
 }
 
@@ -473,6 +489,7 @@ fn attach_energy_from_zone_to_specific_pokemon(
     state: &mut State,
     player: usize,
     energy_type: EnergyType,
+    count: u32,
     pokemon_names: &[&str],
 ) {
     // Enumerate all matching Pokemon in play
@@ -483,7 +500,7 @@ fn attach_energy_from_zone_to_specific_pokemon(
             pokemon_names.iter().any(|&target_name| name == target_name)
         })
         .map(|(in_play_idx, _)| SimpleAction::Attach {
-            attachments: vec![(1, energy_type, in_play_idx)],
+            attachments: vec![(count, energy_type, in_play_idx)],
             is_turn_energy: false,
         })
         .collect();

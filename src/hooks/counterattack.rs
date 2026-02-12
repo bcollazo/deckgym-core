@@ -1,4 +1,4 @@
-use crate::{card_ids::CardId, models::PlayedCard, tools::has_tool};
+use crate::{card_ids::CardId, effects::CardEffect, models::PlayedCard, tools::has_tool};
 
 /// Some cards counterattack either because of RockyHelmet or because of their own ability.
 pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
@@ -20,6 +20,13 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
             total_damage += 20;
         }
         _ => {}
+    }
+
+    // Some attacks apply a temporary counter-damage effect (e.g., Shell Trap)
+    for effect in card.get_active_effects() {
+        if let CardEffect::CounterDamage { amount } = effect {
+            total_damage += amount;
+        }
     }
 
     total_damage
