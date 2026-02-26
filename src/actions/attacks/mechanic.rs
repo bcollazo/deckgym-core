@@ -136,6 +136,10 @@ pub enum Mechanic {
         amount: u8,
     },
     SelfDiscardAllEnergy,
+    SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
+        energy_type: EnergyType,
+        damage: u32,
+    },
     SelfDiscardRandomEnergy,
     AlsoBenchDamage {
         opponent: bool,

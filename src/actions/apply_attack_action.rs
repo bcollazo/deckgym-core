@@ -437,6 +437,10 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
+            energy_type,
+            damage,
+        } => discard_all_energy_of_type_then_damage_any_opponent_pokemon(*energy_type, *damage),
         Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
@@ -1175,15 +1179,22 @@ fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
 
 /// Luxray's Volt Bolt: Discard all Lightning energy, then do 120 damage to 1 opponent's Pokémon
 fn luxray_volt_bolt() -> (Probabilities, Mutations) {
+    discard_all_energy_of_type_then_damage_any_opponent_pokemon(EnergyType::Lightning, 120)
+}
+
+fn discard_all_energy_of_type_then_damage_any_opponent_pokemon(
+    energy_type: EnergyType,
+    damage: u32,
+) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
-        // Count and discard all Lightning energy from the attacking Pokémon
+        // Count and discard all matching energy from the attacking Pokémon.
         let active = state.get_active(action.actor);
-        let lightning_count = active
+        let matching_count = active
             .attached_energy
             .iter()
-            .filter(|e| **e == EnergyType::Lightning)
+            .filter(|e| **e == energy_type)
             .count();
-        let to_discard = vec![EnergyType::Lightning; lightning_count];
+        let to_discard = vec![energy_type; matching_count];
         state.discard_from_active(action.actor, &to_discard);
 
         // Create choices for which opponent's Pokémon to damage
@@ -1192,7 +1203,7 @@ fn luxray_volt_bolt() -> (Probabilities, Mutations) {
         for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
                 attacking_ref: (action.actor, 0),
-                targets: vec![(120, opponent, in_play_idx)],
+                targets: vec![(damage, opponent, in_play_idx)],
                 is_from_active_attack: true,
             });
         }
