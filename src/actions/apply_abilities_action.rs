@@ -130,6 +130,9 @@ pub(crate) fn forecast_ability(
 fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, Mutations) {
     match mechanic {
         AbilityMechanic::HealAllYourPokemon { amount } => heal_all_your_pokemon(*amount),
+        AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { amount } => {
+            heal_one_your_pokemon_ex_and_discard_random_energy(*amount)
+        }
         AbilityMechanic::DamageOneOpponentPokemon { amount } => damage_one_opponent(*amount),
         AbilityMechanic::SwitchActiveTypedWithBench { .. } => {
             switch_active_typed_with_bench_outcome()
@@ -161,6 +164,30 @@ fn heal_all_your_pokemon(amount: u32) -> (Probabilities, Mutations) {
         for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
             pokemon.heal(amount);
         }
+    }))
+}
+
+fn heal_one_your_pokemon_ex_and_discard_random_energy(amount: u32) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        let choices = state
+            .enumerate_in_play_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.card.is_ex())
+            .filter(|(_, pokemon)| pokemon.is_damaged())
+            .filter(|(_, pokemon)| !pokemon.attached_energy.is_empty())
+            .map(
+                |(in_play_idx, pokemon)| SimpleAction::HealAndDiscardEnergy {
+                    in_play_idx,
+                    heal_amount: amount,
+                    // Simplification: use last attached energy instead of true random to avoid
+                    // adding extra hidden-random branches to the move tree.
+                    discard_energies: vec![*pokemon
+                        .attached_energy
+                        .last()
+                        .expect("attached energy is not empty by filter")],
+                },
+            )
+            .collect::<Vec<_>>();
+        state.move_generation_stack.push((action.actor, choices));
     }))
 }
 

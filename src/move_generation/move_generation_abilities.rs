@@ -119,6 +119,9 @@ fn can_use_ability_by_mechanic(
 ) -> bool {
     match mechanic {
         AbilityMechanic::HealAllYourPokemon { .. } => !card.ability_used,
+        AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { .. } => {
+            can_use_heal_one_your_pokemon_ex_and_discard_random_energy(state, card)
+        }
         AbilityMechanic::DamageOneOpponentPokemon { .. } => !card.ability_used,
         AbilityMechanic::SwitchActiveTypedWithBench { energy_type } => {
             can_use_switch_active_typed_with_bench(state, card, *energy_type)
@@ -165,6 +168,21 @@ fn can_use_switch_active_typed_with_bench(
         .next()
         .is_some()
 }
+
+fn can_use_heal_one_your_pokemon_ex_and_discard_random_energy(
+    state: &State,
+    card: &PlayedCard,
+) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| {
+            pokemon.card.is_ex() && pokemon.is_damaged() && !pokemon.attached_energy.is_empty()
+        })
+}
+
 fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
     if card.ability_used {
         return false;
