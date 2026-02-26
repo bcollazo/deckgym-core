@@ -122,7 +122,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         map.insert("Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.", AbilityMechanic::SwitchActiveTypedWithBench { energy_type: EnergyType::Water });
         // map.insert("Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
-        // map.insert("Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.",
+            AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
+                energy_type: EnergyType::Psychic,
+            },
+        );
         // map.insert("Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.", todo_implementation);
         // map.insert("Pokémon (both yours and your opponent's) can't be healed.", todo_implementation);
         // map.insert("Prevent all damage done to this Pokémon by attacks from your opponent's Pokémon ex.", todo_implementation);
@@ -166,7 +171,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         );
         // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
         // map.insert("Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
-        // map.insert("Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to the [W] Pokémon in the Active Spot.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to the [W] Pokémon in the Active Spot.",
+            AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
+                energy_type: EnergyType::Water,
+            },
+        );
         // map.insert("This Pokémon takes -30 damage from attacks.", todo_implementation);
         map
     });

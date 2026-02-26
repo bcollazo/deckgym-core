@@ -126,6 +126,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::SwitchActiveTypedWithBench { energy_type } => {
             can_use_switch_active_typed_with_bench(state, card, *energy_type)
         }
+        AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon { energy_type } => {
+            can_use_attach_energy_from_zone_to_active_typed(state, card, *energy_type)
+        }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::PreventFirstAttack => false,
@@ -181,6 +184,18 @@ fn can_use_heal_one_your_pokemon_ex_and_discard_random_energy(
         .any(|(_, pokemon)| {
             pokemon.card.is_ex() && pokemon.is_damaged() && !pokemon.attached_energy.is_empty()
         })
+}
+
+fn can_use_attach_energy_from_zone_to_active_typed(
+    state: &State,
+    card: &PlayedCard,
+    energy_type: EnergyType,
+) -> bool {
+    if card.ability_used || !state.can_attach_energy_from_zone(0) {
+        return false;
+    }
+    let active = state.get_active(state.current_player);
+    active.get_energy_type() == Some(energy_type)
 }
 
 fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {

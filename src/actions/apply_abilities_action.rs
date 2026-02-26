@@ -137,6 +137,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::SwitchActiveTypedWithBench { .. } => {
             switch_active_typed_with_bench_outcome()
         }
+        AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon { energy_type } => {
+            attach_energy_from_zone_to_active_typed_outcome(*energy_type)
+        }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => {
             panic!("ReduceDamageFromAttacks is a passive ability")
         }
@@ -226,6 +229,14 @@ fn switch_active_typed_with_bench_outcome() -> (Probabilities, Mutations) {
             })
             .collect::<Vec<_>>();
         state.move_generation_stack.push((acting_player, choices));
+    }))
+}
+
+fn attach_energy_from_zone_to_active_typed_outcome(
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        state.attach_energy_from_zone(action.actor, 0, energy_type, 1, false);
     }))
 }
 
