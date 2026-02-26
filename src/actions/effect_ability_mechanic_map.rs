@@ -155,6 +155,16 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon.", todo_implementation);
         // map.insert("Your opponent's Active Pokémon takes +10 damage from being Poisoned.", todo_implementation);
         // map.insert("Your opponent's Active Pokémon's Retreat Cost is 1 more.", todo_implementation);
+
+        // B2 and B2a mechanics
+        // map.insert("Basic Pokémon in play (both yours and your opponent's) have no Abilities.", todo_implementation);
+        // map.insert("If this Pokémon's remaining HP is 50 or less, attacks used by this Pokémon do +60 damage to your opponent's Active Pokémon.", todo_implementation);
+        // map.insert("Once during your turn, you may discard 1 [R] Energy from this Pokémon in order to use this Ability. During this turn, attacks used by your [R] Pokémon do +50 damage to your opponent's Active Pokémon.", todo_implementation);
+        // map.insert("Once during your turn, you may heal 60 damage from 1 of your Pokémon ex that has any Energy attached. If you do, discard a random Energy from that Pokémon.", todo_implementation);
+        // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
+        // map.insert("Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
+        // map.insert("Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to the [W] Pokémon in the Active Spot.", todo_implementation);
+        // map.insert("This Pokémon takes -30 damage from attacks.", todo_implementation);
         map
     });
 

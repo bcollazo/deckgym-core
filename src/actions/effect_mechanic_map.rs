@@ -1460,5 +1460,23 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Your opponent reveals a random card from their hand and shuffles it into their deck. Shuffle this Pokémon into your deck.", todo_implementation);
     // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);
 
+    // New Mechanics from B2a
+    // map.insert("1 of your opponent's Pokémon is chosen at random for each [M] Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it.", todo_implementation);
+    // map.insert("Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.", todo_implementation);
+    // map.insert("Discard 2 [F] Energy from this Pokémon.", todo_implementation);
+    // map.insert("Discard all [W] Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon.", todo_implementation);
+    // map.insert("During your next turn, this Pokémon can't use Gigaton Hammer.", todo_implementation);
+    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.", todo_implementation);
+    // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("If this Pokémon's remaining HP is 60 or less, this attack does nothing.", todo_implementation);
+    // map.insert("If you have 4 or more [L] Energy in play, this attack does 70 more damage.", todo_implementation);
+    // map.insert("If you have no cards in your deck, this attack can be used for 1 [W] Energy.", todo_implementation);
+    // map.insert("If you played a Supporter card from your hand during this turn, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If your Pokémon in play have 3 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon is a [G] or [M] Pokémon, this attack does 40 more damage.", todo_implementation);
+    // map.insert("Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    // map.insert("This attack also does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("This attack does 20 more damage for each [P] Pokémon in your discard pile.", todo_implementation);
+
     map
 });
