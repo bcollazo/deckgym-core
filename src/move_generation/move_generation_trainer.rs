@@ -186,6 +186,9 @@ pub fn trainer_move_generation_implementation(
         | CardId::B1214PlumeFossil
         | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
         CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
+        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
+            can_play_trainer(state, trainer_card)
+        }
         _ => None,
     }
 }

@@ -151,6 +151,9 @@ pub fn forecast_trainer_action(
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
+        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
+            arven_effect(acting_player, state)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -950,6 +953,53 @@ fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutatio
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
     card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+}
+
+fn arven_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    // Flip a coin. If heads, put a random Item card from your deck into your hand.
+    // If tails, put a random Pokémon Tool card from your deck into your hand.
+    let item_cards: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|c| matches!(c, Card::Trainer(t) if t.trainer_card_type == TrainerType::Item))
+        .cloned()
+        .collect();
+    let tool_cards: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|c| matches!(c, Card::Trainer(t) if t.trainer_card_type == TrainerType::Tool))
+        .cloned()
+        .collect();
+
+    let num_items = item_cards.len();
+    let num_tools = tool_cards.len();
+
+    let mut probabilities: Probabilities = vec![];
+    let mut outcomes: Mutations = vec![];
+
+    let (item_prob, tool_prob) = match (num_items > 0, num_tools > 0) {
+        (true, true) => (0.5 / num_items as f64, 0.5 / num_tools as f64),
+        (true, false) => (1.0 / num_items as f64, 0.0),
+        (false, true) => (0.0, 1.0 / num_tools as f64),
+        (false, false) => return doutcome(|_, _, _| {}),
+    };
+
+    for card in item_cards {
+        probabilities.push(item_prob);
+        outcomes.push(Box::new(move |rng, state: &mut State, _action| {
+            state.transfer_card_from_deck_to_hand(acting_player, &card);
+            state.decks[acting_player].shuffle(false, rng);
+        }));
+    }
+    for card in tool_cards {
+        probabilities.push(tool_prob);
+        outcomes.push(Box::new(move |rng, state: &mut State, _action| {
+            state.transfer_card_from_deck_to_hand(acting_player, &card);
+            state.decks[acting_player].shuffle(false, rng);
+        }));
+    }
+
+    (probabilities, outcomes)
 }
 
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
