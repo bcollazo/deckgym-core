@@ -150,6 +150,7 @@ pub fn forecast_trainer_action(
             quick_grow_extract_effect(acting_player, state)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
+        CardId::B2a090Nemona | CardId::B2a107Nemona => doutcome(nemona_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -925,6 +926,17 @@ fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabili
     }
 
     (probabilities, outcomes)
+}
+
+fn nemona_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemonAgainstEx {
+            amount: 80,
+            pokemon_names: vec!["Pawmot".to_string()],
+        },
+        0,
+    );
 }
 
 fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
