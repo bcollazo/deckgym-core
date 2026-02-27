@@ -358,6 +358,20 @@ fn get_increased_turn_effect_modifiers(
                     0
                 }
             }
+            TurnEffect::IncreasedDamageForSpecificPokemonAgainstEx {
+                amount,
+                pokemon_names,
+            } if target_is_ex => {
+                let attacker_name = attacking_pokemon.get_name();
+                if pokemon_names
+                    .iter()
+                    .any(|name| name.as_str() == attacker_name)
+                {
+                    *amount
+                } else {
+                    0
+                }
+            }
             _ => 0,
         })
         .sum::<u32>()

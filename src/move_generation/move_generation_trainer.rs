@@ -175,6 +175,7 @@ pub fn trainer_move_generation_implementation(
             can_play_quick_grow_extract(state, trainer_card)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
+        CardId::B2a090Nemona | CardId::B2a107Nemona => can_play_trainer(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
