@@ -33,6 +33,10 @@ pub enum TurnEffect {
     IncreasedDamage {
         amount: u32,
     },
+    IncreasedDamageForType {
+        amount: u32,
+        energy_type: EnergyType,
+    },
     IncreasedDamageAgainstEx {
         amount: u32,
     },

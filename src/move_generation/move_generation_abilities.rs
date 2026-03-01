@@ -132,6 +132,9 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
+        AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
+            !card.ability_used && card.attached_energy.contains(discard_energy)
+        }
     }
 }
 

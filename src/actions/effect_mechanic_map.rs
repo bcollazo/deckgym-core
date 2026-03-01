@@ -781,7 +781,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
-    // map.insert("Put 1 random Basic Pokémon from your deck onto your Bench.", todo_implementation);
+    map.insert(
+        "Put 1 random Basic Pokémon from your deck onto your Bench.",
+        Mechanic::SearchToBenchBasic,
+    );
     map.insert(
         "Put 1 random Koffing from your deck onto your Bench.",
         Mechanic::SearchToBenchByName {

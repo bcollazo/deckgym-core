@@ -21,6 +21,7 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
+    SearchToBenchBasic,
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,

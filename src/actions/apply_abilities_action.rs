@@ -13,6 +13,7 @@ use crate::{
         shared_mutations::pokemon_search_outcomes,
         Action, SimpleAction,
     },
+    effects::TurnEffect,
     hooks::is_ultra_beast,
     models::EnergyType,
     State,
@@ -153,7 +154,32 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::CoinFlipToPreventDamage => {
             panic!("CoinFlipToPreventDamage is a passive ability")
         }
+        AbilityMechanic::DiscardEnergyToIncreaseTypeDamage {
+            discard_energy,
+            attack_type,
+            amount,
+        } => discard_energy_to_increase_type_damage(*discard_energy, *attack_type, *amount),
     }
+}
+
+fn discard_energy_to_increase_type_damage(
+    discard_energy: EnergyType,
+    attack_type: EnergyType,
+    amount: u32,
+) -> (Probabilities, Mutations) {
+    doutcome_from_mutation(Box::new(move |_rng, state, action| {
+        let SimpleAction::UseAbility { in_play_idx } = action.action else {
+            panic!("Ability should be triggered by UseAbility action");
+        };
+        state.discard_energy_from_in_play(action.actor, in_play_idx, &[discard_energy]);
+        state.add_turn_effect(
+            TurnEffect::IncreasedDamageForType {
+                amount,
+                energy_type: attack_type,
+            },
+            0,
+        );
+    }))
 }
 
 fn heal_all_your_pokemon(amount: u32) -> (Probabilities, Mutations) {

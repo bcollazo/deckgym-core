@@ -29,8 +29,8 @@ use super::{
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
     },
     shared_mutations::{
-        pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_by_name,
-        supporter_search_outcomes,
+        pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
+        search_and_bench_by_name, supporter_search_outcomes,
     },
     SimpleAction,
 };
@@ -366,6 +366,7 @@ fn forecast_effect_attack_by_mechanic(
             supporter_search_outcomes(state.current_player, state)
         }
         Mechanic::SearchToBenchByName { name } => search_and_bench_by_name(state, name.clone()),
+        Mechanic::SearchToBenchBasic => search_and_bench_basic(state),
         Mechanic::InflictStatusConditions {
             conditions,
             target_opponent,

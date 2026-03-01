@@ -338,6 +338,10 @@ fn get_increased_turn_effect_modifiers(
         .iter()
         .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageForType {
+                amount,
+                energy_type,
+            } if attacking_pokemon.get_energy_type() == Some(*energy_type) => *amount,
             TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
             TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
                 if attacker_is_eevee_evolution =>

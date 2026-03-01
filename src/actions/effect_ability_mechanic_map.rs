@@ -159,7 +159,14 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // B2 and B2a mechanics
         // map.insert("Basic Pokémon in play (both yours and your opponent's) have no Abilities.", todo_implementation);
         // map.insert("If this Pokémon's remaining HP is 50 or less, attacks used by this Pokémon do +60 damage to your opponent's Active Pokémon.", todo_implementation);
-        // map.insert("Once during your turn, you may discard 1 [R] Energy from this Pokémon in order to use this Ability. During this turn, attacks used by your [R] Pokémon do +50 damage to your opponent's Active Pokémon.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may discard 1 [R] Energy from this Pokémon in order to use this Ability. During this turn, attacks used by your [R] Pokémon do +50 damage to your opponent's Active Pokémon.",
+            AbilityMechanic::DiscardEnergyToIncreaseTypeDamage {
+                discard_energy: EnergyType::Fire,
+                attack_type: EnergyType::Fire,
+                amount: 50,
+            },
+        );
         // map.insert("Once during your turn, you may heal 60 damage from 1 of your Pokémon ex that has any Energy attached. If you do, discard a random Energy from that Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
         // map.insert("Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
