@@ -254,7 +254,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.", todo_implementation);
-    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::IncreasedAttackCost { amount: 1 },
+            duration: 1,
+            probability: None,
+        },
+    );
     map.insert(
         "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.",
         Mechanic::DamageAndCardEffect {
@@ -1466,7 +1474,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard 2 [F] Energy from this Pokémon.", todo_implementation);
     // map.insert("Discard all [W] Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon.", todo_implementation);
     // map.insert("During your next turn, this Pokémon can't use Gigaton Hammer.", todo_implementation);
-    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::IncreasedAttackCost { amount: 2 },
+            duration: 1,
+            probability: None,
+        },
+    );
     // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("If this Pokémon's remaining HP is 60 or less, this attack does nothing.", todo_implementation);
     // map.insert("If you have 4 or more [L] Energy in play, this attack does 70 more damage.", todo_implementation);

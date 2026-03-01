@@ -659,7 +659,7 @@ fn calculate_type_boost_bonus(
     bonus
 }
 
-// Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
+// Get the attack cost, considering abilities and active card effects that modify attack costs.
 pub(crate) fn get_attack_cost(
     base_cost: &[EnergyType],
     state: &State,
@@ -678,6 +678,22 @@ pub(crate) fn get_attack_cost(
             }
         }
     }
+
+    // Check if attacking active has an effect that increases attack cost
+    let extra_colorless = state.in_play_pokemon[attacking_player][0]
+        .as_ref()
+        .map(|active| {
+            active
+                .get_active_effects()
+                .into_iter()
+                .map(|effect| match effect {
+                    CardEffect::IncreasedAttackCost { amount } => amount as usize,
+                    _ => 0,
+                })
+                .sum::<usize>()
+        })
+        .unwrap_or_default();
+    modified_cost.extend(vec![EnergyType::Colorless; extra_colorless]);
 
     modified_cost
 }
@@ -800,6 +816,29 @@ mod tests {
         pokemon.attached_energy = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
         let cost = vec![EnergyType::Colorless, EnergyType::Fire];
         assert!(contains_energy(&pokemon, &cost, &state, 0));
+    }
+
+    #[test]
+    fn test_get_attack_cost_with_increased_attack_cost_effect() {
+        let mut state = State::default();
+        let mut attacker = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+        attacker.add_effect(CardEffect::IncreasedAttackCost { amount: 2 }, 1);
+        state.in_play_pokemon[0][0] = Some(attacker);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(
+            &get_card_by_enum(CardId::A1005Caterpie),
+            false,
+        ));
+
+        let base_cost = vec![EnergyType::Grass];
+        let modified = get_attack_cost(&base_cost, &state, 0);
+        assert_eq!(
+            modified,
+            vec![
+                EnergyType::Grass,
+                EnergyType::Colorless,
+                EnergyType::Colorless
+            ]
+        );
     }
 
     #[test]
