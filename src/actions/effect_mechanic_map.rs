@@ -1422,7 +1422,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If this Pokémon has any [P] Energy attached, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If you have 5 or more [P] Energy in play, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If you have 5 or more [P] Energy in play, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfTypeEnergyInPlay {
+            energy_type: EnergyType::Psychic,
+            minimum_count: 5,
+            extra_damage: 60,
+        },
+    );
     // map.insert("If you have fewer Pokémon in play than your opponent, this attack does 80 more damage.", todo_implementation);
     // map.insert("If your opponent has gotten exactly 1 points, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);
@@ -1481,7 +1488,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.", todo_implementation);
     // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("If this Pokémon's remaining HP is 60 or less, this attack does nothing.", todo_implementation);
-    // map.insert("If you have 4 or more [L] Energy in play, this attack does 70 more damage.", todo_implementation);
+    map.insert(
+        "If you have 4 or more [L] Energy in play, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfTypeEnergyInPlay {
+            energy_type: EnergyType::Lightning,
+            minimum_count: 4,
+            extra_damage: 70,
+        },
+    );
     // map.insert("If you have no cards in your deck, this attack can be used for 1 [W] Energy.", todo_implementation);
     // map.insert("If you played a Supporter card from your hand during this turn, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your Pokémon in play have 3 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);

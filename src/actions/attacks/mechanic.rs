@@ -62,6 +62,11 @@ pub enum Mechanic {
         required_extra_energy: Vec<EnergyType>,
         extra_damage: u32,
     },
+    ExtraDamageIfTypeEnergyInPlay {
+        energy_type: EnergyType,
+        minimum_count: usize,
+        extra_damage: u32,
+    },
     ExtraDamageIfBothHeads {
         extra_damage: u32,
     },
