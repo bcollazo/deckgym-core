@@ -527,6 +527,12 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DiscardRandomGlobalEnergy { count } => {
             discard_random_global_energy_attack(attack.fixed_damage, *count, state)
         }
+        Mechanic::RandomDamageToOpponentPokemonPerSelfEnergy {
+            energy_type,
+            damage_per_hit,
+        } => {
+            random_damage_to_opponent_pokemon_per_self_energy(state, *energy_type, *damage_per_hit)
+        }
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
@@ -2020,34 +2026,64 @@ fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
     // For each time a Pokémon was chosen, also do 20 damage to it.
     doutcome(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> = generate_random_spread_indices(rng, state, true, 3)
-            .into_iter()
-            .map(|idx| (20, opponent, idx))
-            .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
-            .collect();
+        let targets: Vec<(u32, usize, usize)> =
+            generate_random_spread_indices(rng, state, opponent, true, 3)
+                .into_iter()
+                .map(|idx| (20, opponent, idx))
+                .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
+                .collect();
 
         let attacking_ref = (action.actor, 0);
         handle_damage(state, attacking_ref, &targets, true, None);
     })
 }
 
+fn random_damage_to_opponent_pokemon_per_self_energy(
+    state: &State,
+    energy_type: EnergyType,
+    damage_per_hit: u32,
+) -> (Probabilities, Mutations) {
+    let energy_count = state
+        .get_active(state.current_player)
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count();
+
+    if energy_count == 0 {
+        return active_damage_doutcome(0);
+    }
+
+    doutcome_from_mutation(Box::new(move |rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let targets: Vec<(u32, usize, usize)> =
+            generate_random_spread_indices(rng, state, opponent, false, energy_count)
+                .into_iter()
+                .map(|idx| (damage_per_hit, opponent, idx))
+                .collect();
+
+        let attacking_ref = (action.actor, 0);
+        handle_damage(state, attacking_ref, &targets, true, None);
+    }))
+}
+
 fn generate_random_spread_indices(
     rng: &mut StdRng,
     state: &State,
+    player: usize,
     bench_only: bool,
     count: usize,
 ) -> Vec<usize> {
-    let opponent = (state.current_player + 1) % 2;
     let mut targets = vec![];
     for _ in 0..count {
         let possible_indices: Vec<usize> = if bench_only {
             state
-                .enumerate_bench_pokemon(opponent)
+                .enumerate_bench_pokemon(player)
                 .map(|(idx, _)| idx)
                 .collect()
         } else {
             state
-                .enumerate_in_play_pokemon(opponent)
+                .enumerate_in_play_pokemon(player)
                 .map(|(idx, _)| idx)
                 .collect()
         };

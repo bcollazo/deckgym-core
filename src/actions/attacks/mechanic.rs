@@ -36,6 +36,10 @@ pub enum Mechanic {
     DiscardRandomGlobalEnergy {
         count: usize,
     },
+    RandomDamageToOpponentPokemonPerSelfEnergy {
+        energy_type: EnergyType,
+        damage_per_hit: u32,
+    },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
         extra_damage: u32,

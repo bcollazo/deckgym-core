@@ -1485,7 +1485,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);
 
     // New Mechanics from B2a
-    // map.insert("1 of your opponent's Pokémon is chosen at random for each [M] Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it.", todo_implementation);
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random for each [M] Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it.",
+        Mechanic::RandomDamageToOpponentPokemonPerSelfEnergy {
+            energy_type: EnergyType::Metal,
+            damage_per_hit: 40,
+        },
+    );
     // map.insert("Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.", todo_implementation);
     // map.insert("Discard 2 [F] Energy from this Pokémon.", todo_implementation);
     map.insert(
