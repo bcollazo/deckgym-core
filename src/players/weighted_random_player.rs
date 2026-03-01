@@ -49,6 +49,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::UseAbility { .. } => 10,
         SimpleAction::Attack(_) => 10,
         SimpleAction::ApplyDamage { .. } => 10,
+        SimpleAction::ScheduleDelayedSpotDamage { .. } => 10,
         SimpleAction::Retreat(_) => 2,
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,

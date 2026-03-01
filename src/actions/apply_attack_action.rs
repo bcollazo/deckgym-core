@@ -604,6 +604,7 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipToBlockAttackNextTurn => {
             coin_flip_to_block_attack_next_turn(attack.fixed_damage)
         }
+        Mechanic::DelayedSpotDamage { amount } => delayed_spot_damage(*amount),
     }
 }
 
@@ -1167,6 +1168,24 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
         }
         if choices.is_empty() {
             return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+        }
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn delayed_spot_damage(damage: u32) -> (Probabilities, Mutations) {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
+            choices.push(SimpleAction::ScheduleDelayedSpotDamage {
+                target_player: opponent,
+                target_in_play_idx: in_play_idx,
+                amount: damage,
+            });
+        }
+        if choices.is_empty() {
+            return;
         }
         state.move_generation_stack.push((action.actor, choices));
     })

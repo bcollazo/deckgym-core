@@ -135,6 +135,9 @@ pub enum Mechanic {
         card_name: String,
         extra_damage: u32,
     },
+    DelayedSpotDamage {
+        amount: u32,
+    },
     // End Unique mechanics
     DamageAndCardEffect {
         opponent: bool,

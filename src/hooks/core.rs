@@ -174,6 +174,42 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         );
     }
 
+    // Process delayed spot damage effects from turn effects (e.g. Meowscarada ex's Flower Trick).
+    // These target a board position, so they hit whichever Pokémon occupies the spot at trigger time.
+    let triggered_spot_damages: Vec<(usize, usize, usize, u32)> = state
+        .get_current_turn_effects()
+        .into_iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::DelayedSpotDamage {
+                source_player,
+                target_player,
+                target_in_play_idx,
+                amount,
+            } if target_player == player_ending_turn => {
+                Some((source_player, target_player, target_in_play_idx, amount))
+            }
+            _ => None,
+        })
+        .collect();
+
+    for (source_player, target_player, target_in_play_idx, amount) in triggered_spot_damages {
+        if state.in_play_pokemon[target_player][target_in_play_idx].is_none() {
+            continue;
+        }
+
+        debug!(
+            "Delayed spot damage: Applying {} damage to player {} slot {}",
+            amount, target_player, target_in_play_idx
+        );
+        crate::actions::handle_damage(
+            state,
+            (source_player, 0),
+            &[(amount, target_player, target_in_play_idx)],
+            false,
+            None,
+        );
+    }
+
     // Discard Metal Core Barrier from the opponent's Pokémon at the end of this player's turn.
     // ("discard it at the end of your opponent's turn" — the tool owner is the other player)
     let tool_owner = (player_ending_turn + 1) % 2;
