@@ -50,6 +50,7 @@ pub struct State {
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
     pub(crate) has_retreated: bool,
+    pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
     pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
@@ -74,6 +75,7 @@ impl State {
             active_stadium: None,
             has_played_support: false,
             has_retreated: false,
+            has_used_stadium: [false, false],
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
@@ -242,6 +244,7 @@ impl State {
 
         self.has_played_support = false;
         self.has_retreated = false;
+        self.has_used_stadium[self.current_player] = false;
     }
 
     /// Adds an effect card that will remain active for a specified number of turns.

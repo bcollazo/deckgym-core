@@ -416,6 +416,17 @@ fn forecast_effect_attack_by_mechanic(
             required_extra_energy,
             extra_damage,
         } => extra_energy_attack(state, attack, required_extra_energy.clone(), *extra_damage),
+        Mechanic::ExtraDamageIfTypeEnergyInPlay {
+            energy_type,
+            minimum_count,
+            extra_damage,
+        } => extra_damage_if_type_energy_in_play_attack(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *minimum_count,
+            *extra_damage,
+        ),
         Mechanic::ExtraDamageIfBothHeads { extra_damage } => probabilistic_damage_attack(
             vec![0.25, 0.75],
             vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
@@ -438,6 +449,10 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
+            energy_type,
+            damage,
+        } => discard_all_energy_of_type_then_damage_any_opponent_pokemon(*energy_type, *damage),
         Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
         Mechanic::AlsoBenchDamage {
             opponent,
@@ -1176,15 +1191,22 @@ fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
 
 /// Luxray's Volt Bolt: Discard all Lightning energy, then do 120 damage to 1 opponent's Pokémon
 fn luxray_volt_bolt() -> (Probabilities, Mutations) {
+    discard_all_energy_of_type_then_damage_any_opponent_pokemon(EnergyType::Lightning, 120)
+}
+
+fn discard_all_energy_of_type_then_damage_any_opponent_pokemon(
+    energy_type: EnergyType,
+    damage: u32,
+) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(0, move |_, state, action| {
-        // Count and discard all Lightning energy from the attacking Pokémon
+        // Count and discard all matching energy from the attacking Pokémon.
         let active = state.get_active(action.actor);
-        let lightning_count = active
+        let matching_count = active
             .attached_energy
             .iter()
-            .filter(|e| **e == EnergyType::Lightning)
+            .filter(|e| **e == energy_type)
             .count();
-        let to_discard = vec![EnergyType::Lightning; lightning_count];
+        let to_discard = vec![energy_type; matching_count];
         state.discard_from_active(action.actor, &to_discard);
 
         // Create choices for which opponent's Pokémon to damage
@@ -1193,7 +1215,7 @@ fn luxray_volt_bolt() -> (Probabilities, Mutations) {
         for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
                 attacking_ref: (action.actor, 0),
-                targets: vec![(120, opponent, in_play_idx)],
+                targets: vec![(damage, opponent, in_play_idx)],
                 is_from_active_attack: true,
             });
         }
@@ -1710,6 +1732,31 @@ fn extra_damage_per_specific_energy(
         .count() as u32;
     let damage = base_damage + matching_energy_count * damage_per_energy;
     active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_type_energy_in_play_attack(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    minimum_count: usize,
+    extra_damage: u32,
+) -> (Probabilities, Mutations) {
+    let total_in_play_type_energy: usize = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .map(|(_, pokemon)| {
+            pokemon
+                .attached_energy
+                .iter()
+                .filter(|energy| **energy == energy_type)
+                .count()
+        })
+        .sum();
+
+    if total_in_play_type_energy >= minimum_count {
+        active_damage_doutcome(base_damage + extra_damage)
+    } else {
+        active_damage_doutcome(base_damage)
+    }
 }
 
 fn teleport_attack() -> (Probabilities, Mutations) {
@@ -2632,5 +2679,53 @@ mod test {
 
         // Verify Oricorio did NOT take damage
         assert_eq!(state.get_active(1).get_remaining_hp(), 70);
+    }
+
+    #[test]
+    fn test_extra_damage_if_type_energy_in_play_attack() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let attacker = get_card_by_enum(CardId::B2a042BelliboltEx);
+        let bench_lightning = get_card_by_enum(CardId::A2058Shinx);
+        let receiver = get_card_by_enum(CardId::A1003Venusaur); // 160 HP
+
+        let mut below_threshold = State::default();
+        below_threshold.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+        below_threshold.in_play_pokemon[0][1] = Some(to_playable_card(&bench_lightning, false));
+        below_threshold.in_play_pokemon[1][0] = Some(to_playable_card(&receiver, false));
+        below_threshold.attach_energy_from_zone(0, 0, EnergyType::Lightning, 2, false);
+        below_threshold.attach_energy_from_zone(0, 1, EnergyType::Lightning, 1, false);
+
+        let (_, mut below_mutations) = extra_damage_if_type_energy_in_play_attack(
+            &below_threshold,
+            70,
+            EnergyType::Lightning,
+            4,
+            70,
+        );
+        below_mutations.remove(0)(&mut rng, &mut below_threshold, &action);
+        assert_eq!(below_threshold.get_active(1).get_remaining_hp(), 90);
+
+        let mut at_threshold = State::default();
+        at_threshold.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+        at_threshold.in_play_pokemon[0][1] = Some(to_playable_card(&bench_lightning, false));
+        at_threshold.in_play_pokemon[1][0] = Some(to_playable_card(&receiver, false));
+        at_threshold.attach_energy_from_zone(0, 0, EnergyType::Lightning, 2, false);
+        at_threshold.attach_energy_from_zone(0, 1, EnergyType::Lightning, 2, false);
+
+        let (_, mut threshold_mutations) = extra_damage_if_type_energy_in_play_attack(
+            &at_threshold,
+            70,
+            EnergyType::Lightning,
+            4,
+            70,
+        );
+        threshold_mutations.remove(0)(&mut rng, &mut at_threshold, &action);
+        assert_eq!(at_threshold.get_active(1).get_remaining_hp(), 20);
     }
 }

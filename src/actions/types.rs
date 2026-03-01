@@ -112,6 +112,8 @@ pub enum SimpleAction {
     DiscardFossil {
         in_play_idx: usize,
     },
+    /// Use an activated stadium effect (once per turn per player)
+    UseStadium,
     /// Return a Pokemon in play to your hand (e.g., Ilima).
     ReturnPokemonToHand {
         in_play_idx: usize,
@@ -240,6 +242,7 @@ impl fmt::Display for SimpleAction {
             SimpleAction::ReturnPokemonToHand { in_play_idx } => {
                 write!(f, "ReturnPokemonToHand({in_play_idx})")
             }
+            SimpleAction::UseStadium => write!(f, "UseStadium"),
             SimpleAction::Noop => write!(f, "Noop"),
         }
     }

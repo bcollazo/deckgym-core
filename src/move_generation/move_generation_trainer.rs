@@ -175,6 +175,14 @@ pub fn trainer_move_generation_implementation(
             can_play_quick_grow_extract(state, trainer_card)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
+        CardId::B2a090Nemona | CardId::B2a107Nemona => can_play_trainer(state, trainer_card),
+        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
+            can_play_trainer(state, trainer_card)
+        }
+        CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
+            can_play_electric_generator(state, trainer_card)
+        }
+        CardId::B2a088Team | CardId::B2a105Team => can_play_team(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
@@ -565,6 +573,22 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
     }
 }
 
+/// Check if Electric Generator can be played (requires at least 1 Benched Lightning Pokemon)
+fn can_play_electric_generator(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let has_lightning_bench_target = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning));
+
+    if has_lightning_bench_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
 /// Check if Piers can be played (requires Galarian Obstagoon in play)
 fn can_play_piers(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let has_obstagoon = state
@@ -597,6 +621,22 @@ fn can_play_celestic_town_elder(
         .iter()
         .any(|card| card.is_basic());
     if has_basic_pokemon_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Team can be played (requires opponent to have any Ability Pokemon with attached Energy)
+fn can_play_team(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_target = state
+        .enumerate_in_play_pokemon(opponent)
+        .any(|(_, pokemon)| {
+            pokemon.card.get_ability().is_some() && !pokemon.attached_energy.is_empty()
+        });
+
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

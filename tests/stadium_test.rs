@@ -664,3 +664,162 @@ fn test_training_area_affects_both_players() {
         "Charmeleon should have 20 HP (90 - 70 from boosted Stage 1 attack)"
     );
 }
+
+// ============================================================================
+// Mesagoza Tests
+// ============================================================================
+
+#[test]
+fn test_mesagoza_use_stadium_action_available() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    // Set Mesagoza as active stadium
+    state.active_stadium = Some(get_card_by_enum(CardId::B2a093Mesagoza));
+    // Put Pokemon in deck for the effect to work
+    state.decks[0]
+        .cards
+        .push(get_card_by_enum(CardId::A1033Charmander));
+
+    game.set_state(state);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+
+    let has_use_stadium = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::UseStadium));
+
+    assert!(
+        has_use_stadium,
+        "UseStadium action should be available when Mesagoza is active"
+    );
+}
+
+#[test]
+fn test_mesagoza_cannot_use_twice_same_turn() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.active_stadium = Some(get_card_by_enum(CardId::B2a093Mesagoza));
+    state.decks[0]
+        .cards
+        .push(get_card_by_enum(CardId::A1033Charmander));
+
+    game.set_state(state);
+
+    // Use the stadium once
+    let use_stadium_action = Action {
+        actor: 0,
+        action: SimpleAction::UseStadium,
+        is_stack: false,
+    };
+    game.apply_action(&use_stadium_action);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+
+    let has_use_stadium = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::UseStadium));
+
+    assert!(
+        !has_use_stadium,
+        "UseStadium should NOT be available after using once this turn"
+    );
+}
+
+#[test]
+fn test_mesagoza_both_players_can_use() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    state.active_stadium = Some(get_card_by_enum(CardId::B2a093Mesagoza));
+    state.decks[0]
+        .cards
+        .push(get_card_by_enum(CardId::A1033Charmander));
+    state.decks[1]
+        .cards
+        .push(get_card_by_enum(CardId::A1053Squirtle));
+
+    game.set_state(state);
+
+    // Player 0 uses the stadium
+    let use_stadium_action = Action {
+        actor: 0,
+        action: SimpleAction::UseStadium,
+        is_stack: false,
+    };
+    game.apply_action(&use_stadium_action);
+
+    // End player 0's turn
+    let end_turn_action = Action {
+        actor: 0,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    };
+    game.apply_action(&end_turn_action);
+    game.play_until_stable(); // Handle DrawCard for player 1
+
+    let state = game.get_state_clone();
+    assert_eq!(state.current_player, 1, "Should be player 1's turn now");
+
+    let (_actor, actions) = state.generate_possible_actions();
+
+    let has_use_stadium = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::UseStadium));
+
+    assert!(
+        has_use_stadium,
+        "Player 1 should be able to use Mesagoza on their turn"
+    );
+}
+
+#[test]
+fn test_mesagoza_not_available_without_pokemon_in_deck() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.active_stadium = Some(get_card_by_enum(CardId::B2a093Mesagoza));
+    // Empty deck - no Pokemon
+    state.decks[0].cards.clear();
+
+    game.set_state(state);
+
+    let state = game.get_state_clone();
+    let (_actor, actions) = state.generate_possible_actions();
+
+    let has_use_stadium = actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::UseStadium));
+
+    assert!(
+        !has_use_stadium,
+        "UseStadium should NOT be available when no Pokemon in deck"
+    );
+}

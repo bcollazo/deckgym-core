@@ -2,6 +2,7 @@ use std::cmp::min;
 
 use log::debug;
 use rand::rngs::StdRng;
+use rand::Rng;
 
 use crate::{
     actions::{
@@ -9,7 +10,7 @@ use crate::{
         mutations::doutcome,
         shared_mutations::{
             card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
-            pokemon_search_outcomes,
+            item_search_outcomes, pokemon_search_outcomes, tool_search_outcomes,
         },
     },
     card_ids::CardId,
@@ -150,6 +151,14 @@ pub fn forecast_trainer_action(
             quick_grow_extract_effect(acting_player, state)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
+        CardId::B2a090Nemona | CardId::B2a107Nemona => doutcome(nemona_effect),
+        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
+            arven_outcomes(acting_player, state)
+        }
+        CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
+            electric_generator_outcomes()
+        }
+        CardId::B2a088Team | CardId::B2a105Team => doutcome(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -221,6 +230,46 @@ fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
 }
 
+// Coin flip: heads = random Item from deck to hand, tails = random Tool from deck to hand
+fn arven_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let (item_probs, item_mutations) = item_search_outcomes(acting_player, state);
+    let (tool_probs, tool_mutations) = tool_search_outcomes(acting_player, state);
+
+    let mut probabilities = vec![];
+    let mut outcomes: Mutations = vec![];
+
+    for (p, m) in item_probs.into_iter().zip(item_mutations) {
+        probabilities.push(p * 0.5);
+        outcomes.push(m);
+    }
+    for (p, m) in tool_probs.into_iter().zip(tool_mutations) {
+        probabilities.push(p * 0.5);
+        outcomes.push(m);
+    }
+
+    (probabilities, outcomes)
+}
+
+fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Discard a random Energy from among all Energy attached to opponent Pokémon with an Ability.
+    let opponent = (action.actor + 1) % 2;
+    let mut eligible_energy: Vec<(usize, EnergyType)> = Vec::new();
+
+    for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
+        if pokemon.card.get_ability().is_some() {
+            for energy in pokemon.attached_energy.iter().copied() {
+                eligible_energy.push((in_play_idx, energy));
+            }
+        }
+    }
+
+    if !eligible_energy.is_empty() {
+        let random_idx = rng.gen_range(0..eligible_energy.len());
+        let (in_play_idx, energy) = eligible_energy[random_idx];
+        state.discard_energy_from_in_play(opponent, in_play_idx, &[energy]);
+    }
+}
+
 fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
     let probabilities = vec![0.5, 0.5];
     let mut outcomes: Mutations = vec![];
@@ -247,6 +296,34 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
     outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);
+        }
+    }));
+
+    (probabilities, outcomes)
+}
+
+fn electric_generator_outcomes() -> (Probabilities, Mutations) {
+    let probabilities = vec![0.5, 0.5];
+    let mut outcomes: Mutations = vec![];
+
+    // Tails: no effect
+    outcomes.push(Box::new(|_, _, _| {}));
+
+    // Heads: attach 1 Lightning Energy from zone to 1 Benched Lightning Pokemon
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        let possible_moves = state
+            .enumerate_bench_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning))
+            .map(|(in_play_idx, _)| SimpleAction::Attach {
+                attachments: vec![(1, EnergyType::Lightning, in_play_idx)],
+                is_turn_energy: false,
+            })
+            .collect::<Vec<_>>();
+
+        if !possible_moves.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, possible_moves));
         }
     }));
 
@@ -925,6 +1002,17 @@ fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabili
     }
 
     (probabilities, outcomes)
+}
+
+fn nemona_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Pawmot do +80 damage to your opponent's Active Pokémon ex.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemonAgainstEx {
+            amount: 80,
+            pokemon_names: vec!["Pawmot".to_string()],
+        },
+        0,
+    );
 }
 
 fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {

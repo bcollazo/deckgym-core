@@ -36,6 +36,8 @@ static TRAINING_AREA_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2153TrainingArea));
 static STARTING_PLAINS_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2154StartingPlains));
+static MESAGOZA_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2a093Mesagoza));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -45,7 +47,28 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
         e if e == PECULIAR_PLAZA_EFFECT.as_str()
             || e == TRAINING_AREA_EFFECT.as_str()
             || e == STARTING_PLAINS_EFFECT.as_str()
+            || e == MESAGOZA_EFFECT.as_str()
     )
+}
+
+/// Returns true if Mesagoza stadium is active
+pub fn is_mesagoza_active(state: &State) -> bool {
+    has_stadium(state, CardId::B2a093Mesagoza)
+}
+
+/// Returns true if the player can use Mesagoza's effect (stadium is active, not used this turn, deck has Pokemon)
+pub fn can_use_mesagoza(state: &State, player: usize) -> bool {
+    if !is_mesagoza_active(state) {
+        return false;
+    }
+    if state.has_used_stadium[player] {
+        return false;
+    }
+    // Must have at least one Pokemon in deck
+    state.decks[player]
+        .cards
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(_)))
 }
 
 pub fn has_stadium(state: &State, reference_stadium_id: CardId) -> bool {
