@@ -2,6 +2,7 @@ use std::cmp::min;
 
 use log::debug;
 use rand::rngs::StdRng;
+use rand::Rng;
 
 use crate::{
     actions::{
@@ -157,6 +158,7 @@ pub fn forecast_trainer_action(
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
             electric_generator_outcomes()
         }
+        CardId::B2a088Team | CardId::B2a105Team => doutcome(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -246,6 +248,26 @@ fn arven_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mutati
     }
 
     (probabilities, outcomes)
+}
+
+fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Discard a random Energy from among all Energy attached to opponent Pokémon with an Ability.
+    let opponent = (action.actor + 1) % 2;
+    let mut eligible_energy: Vec<(usize, EnergyType)> = Vec::new();
+
+    for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
+        if pokemon.card.get_ability().is_some() {
+            for energy in pokemon.attached_energy.iter().copied() {
+                eligible_energy.push((in_play_idx, energy));
+            }
+        }
+    }
+
+    if !eligible_energy.is_empty() {
+        let random_idx = rng.gen_range(0..eligible_energy.len());
+        let (in_play_idx, energy) = eligible_energy[random_idx];
+        state.discard_energy_from_in_play(opponent, in_play_idx, &[energy]);
+    }
 }
 
 fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {

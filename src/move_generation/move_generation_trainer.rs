@@ -182,6 +182,7 @@ pub fn trainer_move_generation_implementation(
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
             can_play_electric_generator(state, trainer_card)
         }
+        CardId::B2a088Team | CardId::B2a105Team => can_play_team(state, trainer_card),
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
@@ -620,6 +621,22 @@ fn can_play_celestic_town_elder(
         .iter()
         .any(|card| card.is_basic());
     if has_basic_pokemon_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Team can be played (requires opponent to have any Ability Pokemon with attached Energy)
+fn can_play_team(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_target = state
+        .enumerate_in_play_pokemon(opponent)
+        .any(|(_, pokemon)| {
+            pokemon.card.get_ability().is_some() && !pokemon.attached_energy.is_empty()
+        });
+
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
