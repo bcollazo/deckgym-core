@@ -130,6 +130,7 @@ fn can_use_ability_by_mechanic(
             can_use_attach_energy_from_zone_to_active_typed(state, card, *energy_type)
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
+        AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::PreventFirstAttack => false,
         AbilityMechanic::ElectromagneticWall => false,
@@ -138,6 +139,9 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
+        AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
+            !card.ability_used && card.attached_energy.contains(discard_energy)
+        }
     }
 }
 

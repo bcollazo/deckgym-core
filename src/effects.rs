@@ -7,6 +7,7 @@ use crate::models::EnergyType;
 pub enum CardEffect {
     NoRetreat,
     ReducedDamage { amount: u32 },
+    IncreasedAttackCost { amount: u8 },
     CannotAttack,
     CannotUseAttack(String),
     IncreasedDamageForAttack { attack_name: String, amount: u32 },
@@ -32,6 +33,10 @@ pub enum TurnEffect {
     IncreasedDamage {
         amount: u32,
     },
+    IncreasedDamageForType {
+        amount: u32,
+        energy_type: EnergyType,
+    },
     IncreasedDamageAgainstEx {
         amount: u32,
     },
@@ -45,5 +50,11 @@ pub enum TurnEffect {
     IncreasedDamageForSpecificPokemonAgainstEx {
         amount: u32,
         pokemon_names: Vec<String>,
+    },
+    DelayedSpotDamage {
+        source_player: usize,
+        target_player: usize,
+        target_in_play_idx: usize,
+        amount: u32,
     },
 }

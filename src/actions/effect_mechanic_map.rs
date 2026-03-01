@@ -260,7 +260,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more, and its Retreat Cost is 1 [C] more.", todo_implementation);
-    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::IncreasedAttackCost { amount: 1 },
+            duration: 1,
+            probability: None,
+        },
+    );
     map.insert(
         "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.",
         Mechanic::DamageAndCardEffect {
@@ -779,7 +787,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
-    // map.insert("Put 1 random Basic Pokémon from your deck onto your Bench.", todo_implementation);
+    map.insert(
+        "Put 1 random Basic Pokémon from your deck onto your Bench.",
+        Mechanic::SearchToBenchBasic,
+    );
     map.insert(
         "Put 1 random Koffing from your deck onto your Bench.",
         Mechanic::SearchToBenchByName {
@@ -1474,8 +1485,17 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Your opponent's Active Pokémon is now Poisoned. During your opponent's next turn, that Pokémon can't retreat.", todo_implementation);
 
     // New Mechanics from B2a
-    // map.insert("1 of your opponent's Pokémon is chosen at random for each [M] Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it.", todo_implementation);
-    // map.insert("Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.", todo_implementation);
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random for each [M] Energy attached to this Pokémon. For each time a Pokémon was chosen, do 40 damage to it.",
+        Mechanic::RandomDamageToOpponentPokemonPerSelfEnergy {
+            energy_type: EnergyType::Metal,
+            damage_per_hit: 40,
+        },
+    );
+    map.insert(
+        "Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.",
+        Mechanic::DelayedSpotDamage { amount: 70 },
+    );
     // map.insert("Discard 2 [F] Energy from this Pokémon.", todo_implementation);
     map.insert(
         "Discard all [W] Energy from this Pokémon. This attack does 130 damage to 1 of your opponent's Pokémon.",
@@ -1485,7 +1505,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("During your next turn, this Pokémon can't use Gigaton Hammer.", todo_implementation);
-    // map.insert("During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, attacks used by the Defending Pokémon cost 2 [C] more.",
+        Mechanic::DamageAndCardEffect {
+            opponent: true,
+            effect: CardEffect::IncreasedAttackCost { amount: 2 },
+            duration: 1,
+            probability: None,
+        },
+    );
     // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("If this Pokémon's remaining HP is 60 or less, this attack does nothing.", todo_implementation);
     map.insert(

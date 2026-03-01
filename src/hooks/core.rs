@@ -174,6 +174,42 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         );
     }
 
+    // Process delayed spot damage effects from turn effects (e.g. Meowscarada ex's Flower Trick).
+    // These target a board position, so they hit whichever Pokémon occupies the spot at trigger time.
+    let triggered_spot_damages: Vec<(usize, usize, usize, u32)> = state
+        .get_current_turn_effects()
+        .into_iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::DelayedSpotDamage {
+                source_player,
+                target_player,
+                target_in_play_idx,
+                amount,
+            } if target_player == player_ending_turn => {
+                Some((source_player, target_player, target_in_play_idx, amount))
+            }
+            _ => None,
+        })
+        .collect();
+
+    for (source_player, target_player, target_in_play_idx, amount) in triggered_spot_damages {
+        if state.in_play_pokemon[target_player][target_in_play_idx].is_none() {
+            continue;
+        }
+
+        debug!(
+            "Delayed spot damage: Applying {} damage to player {} slot {}",
+            amount, target_player, target_in_play_idx
+        );
+        crate::actions::handle_damage(
+            state,
+            (source_player, 0),
+            &[(amount, target_player, target_in_play_idx)],
+            false,
+            None,
+        );
+    }
+
     // Discard Metal Core Barrier from the opponent's Pokémon at the end of this player's turn.
     // ("discard it at the end of your opponent's turn" — the tool owner is the other player)
     let tool_owner = (player_ending_turn + 1) % 2;
@@ -323,6 +359,35 @@ fn get_ability_damage_reduction(
     0
 }
 
+fn get_ability_damage_increase(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_active_to_active: bool,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+
+    let Some(ability) = attacking_pokemon.card.get_ability() else {
+        return 0;
+    };
+
+    if let Some(AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost {
+        amount,
+        hp_threshold,
+    }) = ability_mechanic_from_effect(&ability.effect)
+    {
+        if attacking_pokemon.get_remaining_hp() <= *hp_threshold {
+            debug!(
+                "IncreaseDamageWhenRemainingHpAtMost: Increasing damage by {}",
+                amount
+            );
+            return *amount;
+        }
+    }
+
+    0
+}
+
 fn get_increased_turn_effect_modifiers(
     state: &State,
     is_active_to_active: bool,
@@ -338,6 +403,10 @@ fn get_increased_turn_effect_modifiers(
         .iter()
         .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageForType {
+                amount,
+                energy_type,
+            } if attacking_pokemon.get_energy_type() == Some(*energy_type) => *amount,
             TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
             TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
                 if attacker_is_eevee_evolution =>
@@ -559,6 +628,8 @@ pub(crate) fn modify_damage(
         get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
     let ability_damage_reduction =
         get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
+    let ability_damage_increase =
+        get_ability_damage_increase(attacking_pokemon, is_active_to_active);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
@@ -601,7 +672,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}, StadiumBonus: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -612,11 +683,13 @@ pub(crate) fn modify_damage(
         metal_core_barrier_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
+        ability_damage_increase,
         type_boost_bonus,
         stadium_damage_bonus
     );
     (base_damage
         + weakness_modifier
+        + ability_damage_increase
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
         + type_boost_bonus
@@ -673,7 +746,7 @@ fn calculate_type_boost_bonus(
     bonus
 }
 
-// Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
+// Get the attack cost, considering abilities and active card effects that modify attack costs.
 pub(crate) fn get_attack_cost(
     base_cost: &[EnergyType],
     state: &State,
@@ -692,6 +765,22 @@ pub(crate) fn get_attack_cost(
             }
         }
     }
+
+    // Check if attacking active has an effect that increases attack cost
+    let extra_colorless = state.in_play_pokemon[attacking_player][0]
+        .as_ref()
+        .map(|active| {
+            active
+                .get_active_effects()
+                .into_iter()
+                .map(|effect| match effect {
+                    CardEffect::IncreasedAttackCost { amount } => amount as usize,
+                    _ => 0,
+                })
+                .sum::<usize>()
+        })
+        .unwrap_or_default();
+    modified_cost.extend(vec![EnergyType::Colorless; extra_colorless]);
 
     modified_cost
 }
@@ -814,6 +903,29 @@ mod tests {
         pokemon.attached_energy = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
         let cost = vec![EnergyType::Colorless, EnergyType::Fire];
         assert!(contains_energy(&pokemon, &cost, &state, 0));
+    }
+
+    #[test]
+    fn test_get_attack_cost_with_increased_attack_cost_effect() {
+        let mut state = State::default();
+        let mut attacker = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+        attacker.add_effect(CardEffect::IncreasedAttackCost { amount: 2 }, 1);
+        state.in_play_pokemon[0][0] = Some(attacker);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(
+            &get_card_by_enum(CardId::A1005Caterpie),
+            false,
+        ));
+
+        let base_cost = vec![EnergyType::Grass];
+        let modified = get_attack_cost(&base_cost, &state, 0);
+        assert_eq!(
+            modified,
+            vec![
+                EnergyType::Grass,
+                EnergyType::Colorless,
+                EnergyType::Colorless
+            ]
+        );
     }
 
     #[test]

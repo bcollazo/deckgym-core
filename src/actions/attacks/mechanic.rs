@@ -21,6 +21,7 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
+    SearchToBenchBasic,
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
@@ -34,6 +35,10 @@ pub enum Mechanic {
     },
     DiscardRandomGlobalEnergy {
         count: usize,
+    },
+    RandomDamageToOpponentPokemonPerSelfEnergy {
+        energy_type: EnergyType,
+        damage_per_hit: u32,
     },
     DiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
@@ -129,6 +134,9 @@ pub enum Mechanic {
     ExtraDamageIfCardInDiscard {
         card_name: String,
         extra_damage: u32,
+    },
+    DelayedSpotDamage {
+        amount: u32,
     },
     // End Unique mechanics
     DamageAndCardEffect {

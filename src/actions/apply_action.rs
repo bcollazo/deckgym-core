@@ -11,6 +11,7 @@ use crate::{
         apply_action_helpers::{wrap_with_common_logic, Mutation},
         shared_mutations::pokemon_search_outcomes,
     },
+    effects::TurnEffect,
     hooks::{get_retreat_cost, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     stadiums::is_mesagoza_active,
@@ -53,6 +54,7 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
         | SimpleAction::ApplyDamage { .. }
+        | SimpleAction::ScheduleDelayedSpotDamage { .. }
         | SimpleAction::Heal { .. }
         | SimpleAction::HealAndDiscardEnergy { .. }
         | SimpleAction::MoveAllDamage { .. }
@@ -150,6 +152,17 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             targets,
             is_from_active_attack,
         } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack, None),
+        SimpleAction::ScheduleDelayedSpotDamage {
+            target_player,
+            target_in_play_idx,
+            amount,
+        } => apply_schedule_delayed_spot_damage(
+            state,
+            action.actor,
+            *target_player,
+            *target_in_play_idx,
+            *amount,
+        ),
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,
@@ -307,6 +320,24 @@ fn apply_healing(
     if cure_status {
         pokemon.cure_status_conditions();
     }
+}
+
+fn apply_schedule_delayed_spot_damage(
+    state: &mut State,
+    source_player: usize,
+    target_player: usize,
+    target_in_play_idx: usize,
+    amount: u32,
+) {
+    state.add_turn_effect(
+        TurnEffect::DelayedSpotDamage {
+            source_player,
+            target_player,
+            target_in_play_idx,
+            amount,
+        },
+        1,
+    );
 }
 
 fn apply_heal_and_discard_energy(

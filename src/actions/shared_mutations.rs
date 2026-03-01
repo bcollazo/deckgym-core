@@ -153,10 +153,33 @@ pub(crate) fn search_and_bench_by_name(
     state: &State,
     card_name: String,
 ) -> (Probabilities, Mutations) {
+    search_and_bench_with_filter(
+        state,
+        move |card: &Card| card.get_name() == card_name,
+        "Card should be in deck",
+    )
+}
+
+pub(crate) fn search_and_bench_basic(state: &State) -> (Probabilities, Mutations) {
+    search_and_bench_with_filter(
+        state,
+        |card: &Card| card.is_basic(),
+        "Basic card should be in deck",
+    )
+}
+
+fn search_and_bench_with_filter<F>(
+    state: &State,
+    card_filter: F,
+    missing_card_msg: &'static str,
+) -> (Probabilities, Mutations)
+where
+    F: Fn(&Card) -> bool + Clone + 'static,
+{
     let num_cards_in_deck = state.decks[state.current_player]
         .cards
         .iter()
-        .filter(|c| c.get_name() == card_name)
+        .filter(|c| card_filter(c))
         .count();
 
     if num_cards_in_deck == 0 {
@@ -171,9 +194,8 @@ pub(crate) fn search_and_bench_by_name(
         let mut outcomes: Mutations = vec![];
 
         for i in 0..num_cards_in_deck {
-            let card_name = card_name.clone();
+            let card_filter = card_filter.clone();
             outcomes.push(Box::new(move |rng, state, action| {
-                // Check if there's bench space first
                 let bench_space = state.in_play_pokemon[action.actor]
                     .iter()
                     .position(|x| x.is_none());
@@ -186,12 +208,11 @@ pub(crate) fn search_and_bench_by_name(
                 let card = state.decks[action.actor]
                     .cards
                     .iter()
-                    .filter(|c| c.get_name() == card_name)
+                    .filter(|c| card_filter(c))
                     .nth(i)
                     .cloned()
-                    .expect("Card should be in deck");
+                    .expect(missing_card_msg);
 
-                // Put the card onto the bench
                 debug!(
                     "Fetched {card:?} from deck for player {} to place on bench",
                     action.actor
