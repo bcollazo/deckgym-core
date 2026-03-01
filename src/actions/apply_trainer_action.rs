@@ -9,7 +9,7 @@ use crate::{
         mutations::doutcome,
         shared_mutations::{
             card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
-            pokemon_search_outcomes,
+            item_search_outcomes, pokemon_search_outcomes, tool_search_outcomes,
         },
     },
     card_ids::CardId,
@@ -151,6 +151,9 @@ pub fn forecast_trainer_action(
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
         CardId::B2a090Nemona | CardId::B2a107Nemona => doutcome(nemona_effect),
+        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
+            arven_outcomes(acting_player, state)
+        }
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -220,6 +223,26 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+// Coin flip: heads = random Item from deck to hand, tails = random Tool from deck to hand
+fn arven_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+    let (item_probs, item_mutations) = item_search_outcomes(acting_player, state);
+    let (tool_probs, tool_mutations) = tool_search_outcomes(acting_player, state);
+
+    let mut probabilities = vec![];
+    let mut outcomes: Mutations = vec![];
+
+    for (p, m) in item_probs.into_iter().zip(item_mutations) {
+        probabilities.push(p * 0.5);
+        outcomes.push(m);
+    }
+    for (p, m) in tool_probs.into_iter().zip(tool_mutations) {
+        probabilities.push(p * 0.5);
+        outcomes.push(m);
+    }
+
+    (probabilities, outcomes)
 }
 
 fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {

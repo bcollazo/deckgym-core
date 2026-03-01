@@ -8,7 +8,7 @@ use crate::{
         mutations::doutcome,
     },
     combinatorics::generate_combinations,
-    models::{Card, EnergyType},
+    models::{Card, EnergyType, TrainerType},
     State,
 };
 
@@ -45,6 +45,28 @@ pub(crate) fn pokemon_search_outcomes_by_type_for_player(
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check
     })
+}
+
+pub(crate) fn item_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        |card: &&Card| matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Item),
+    )
+}
+
+pub(crate) fn tool_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        |card: &&Card| matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Tool),
+    )
 }
 
 pub(crate) fn gladion_search_outcomes(
