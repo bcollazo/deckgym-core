@@ -179,6 +179,9 @@ pub fn trainer_move_generation_implementation(
         CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
             can_play_trainer(state, trainer_card)
         }
+        CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
+            can_play_electric_generator(state, trainer_card)
+        }
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber
@@ -563,6 +566,22 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
     let has_fire_energy_in_discard = state.discard_energies[player].contains(&EnergyType::Fire);
 
     if active_is_fire && has_fire_energy_in_discard {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Electric Generator can be played (requires at least 1 Benched Lightning Pokemon)
+fn can_play_electric_generator(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let has_lightning_bench_target = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning));
+
+    if has_lightning_bench_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
