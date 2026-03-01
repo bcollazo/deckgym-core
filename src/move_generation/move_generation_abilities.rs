@@ -130,6 +130,7 @@ fn can_use_ability_by_mechanic(
             can_use_attach_energy_from_zone_to_active_typed(state, card, *energy_type)
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
+        AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::PreventFirstAttack => false,
         AbilityMechanic::ElectromagneticWall => false,

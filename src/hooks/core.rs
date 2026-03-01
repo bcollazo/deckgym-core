@@ -323,6 +323,35 @@ fn get_ability_damage_reduction(
     0
 }
 
+fn get_ability_damage_increase(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_active_to_active: bool,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+
+    let Some(ability) = attacking_pokemon.card.get_ability() else {
+        return 0;
+    };
+
+    if let Some(AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost {
+        amount,
+        hp_threshold,
+    }) = ability_mechanic_from_effect(&ability.effect)
+    {
+        if attacking_pokemon.get_remaining_hp() <= *hp_threshold {
+            debug!(
+                "IncreaseDamageWhenRemainingHpAtMost: Increasing damage by {}",
+                amount
+            );
+            return *amount;
+        }
+    }
+
+    0
+}
+
 fn get_increased_turn_effect_modifiers(
     state: &State,
     is_active_to_active: bool,
@@ -563,6 +592,8 @@ pub(crate) fn modify_damage(
         get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
     let ability_damage_reduction =
         get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
+    let ability_damage_increase =
+        get_ability_damage_increase(attacking_pokemon, is_active_to_active);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
@@ -605,7 +636,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, TypeBoost: {}, StadiumBonus: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -616,11 +647,13 @@ pub(crate) fn modify_damage(
         metal_core_barrier_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
+        ability_damage_increase,
         type_boost_bonus,
         stadium_damage_bonus
     );
     (base_damage
         + weakness_modifier
+        + ability_damage_increase
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
         + type_boost_bonus

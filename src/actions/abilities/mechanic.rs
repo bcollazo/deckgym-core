@@ -20,6 +20,10 @@ pub enum AbilityMechanic {
     ReduceDamageFromAttacks {
         amount: u32,
     },
+    IncreaseDamageWhenRemainingHpAtMost {
+        amount: u32,
+        hp_threshold: u32,
+    },
     StartTurnRandomPokemonToHand {
         energy_type: EnergyType,
     },
