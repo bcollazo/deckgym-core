@@ -154,6 +154,9 @@ pub fn forecast_trainer_action(
         CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
             arven_outcomes(acting_player, state)
         }
+        CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
+            electric_generator_outcomes()
+        }
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -271,6 +274,34 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
     outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);
+        }
+    }));
+
+    (probabilities, outcomes)
+}
+
+fn electric_generator_outcomes() -> (Probabilities, Mutations) {
+    let probabilities = vec![0.5, 0.5];
+    let mut outcomes: Mutations = vec![];
+
+    // Tails: no effect
+    outcomes.push(Box::new(|_, _, _| {}));
+
+    // Heads: attach 1 Lightning Energy from zone to 1 Benched Lightning Pokemon
+    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+        let possible_moves = state
+            .enumerate_bench_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning))
+            .map(|(in_play_idx, _)| SimpleAction::Attach {
+                attachments: vec![(1, EnergyType::Lightning, in_play_idx)],
+                is_turn_energy: false,
+            })
+            .collect::<Vec<_>>();
+
+        if !possible_moves.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, possible_moves));
         }
     }));
 
