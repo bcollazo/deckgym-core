@@ -165,6 +165,7 @@ lazy_static::lazy_static! {
         m.insert("A4a 088", AbilityId::A4a025RaikouExLegendaryPulse);
         m.insert("A4a 090", AbilityId::A4a020SuicuneExLegendaryPulse);
         //A4b
+        m.insert("A4b 029", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
         m.insert("A4b 099", AbilityId::A1a019VaporeonWashOut);
         m.insert("A4b 100", AbilityId::A1a019VaporeonWashOut);
