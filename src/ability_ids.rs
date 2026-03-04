@@ -174,6 +174,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 155", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A4b 147", AbilityId::A3066OricoricSafeguard);
         m.insert("A4b 149", AbilityId::A3a021ZeraoraThunderclapFlash);
+        m.insert("A4b 172", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A4b 197", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
@@ -198,6 +199,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 369", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
         m.insert("A4b 372", AbilityId::A2a071Arceus);
+        m.insert("A4b 377", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         // B1
         m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
