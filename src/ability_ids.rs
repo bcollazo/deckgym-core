@@ -178,6 +178,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 197", AbilityId::A1a046AerodactylExPrimevalLaw);
         m.insert("A4b 150", AbilityId::A3a021ZeraoraThunderclapFlash);
         m.insert("A4b 160", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("A4b 177", AbilityId::A3b034SylveonExHappyRibbon);
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 213", AbilityId::A2092LucarioFightingCoach);
         m.insert("A4b 212", AbilityId::A2092LucarioFightingCoach);
@@ -228,6 +229,7 @@ lazy_static::lazy_static! {
         m.insert("B1a 102", AbilityId::B1172AegislashCursedMetal);
         // B2
         m.insert("B2 228", AbilityId::A4083EspeonExPsychicHealing);
+        m.insert("B2 229", AbilityId::A3b034SylveonExHappyRibbon);
         // B2a
         m.insert("B2a 126", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("B2a 127", AbilityId::A4a020SuicuneExLegendaryPulse);
