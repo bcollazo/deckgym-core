@@ -192,10 +192,12 @@ lazy_static::lazy_static! {
         m.insert("A4b 288", AbilityId::A3b057SnorlaxExFullMouthManner);
         m.insert("A4b 297", AbilityId::A2a069ShayminSkySupport);
         m.insert("A4b 298", AbilityId::A2a069ShayminSkySupport);
+        m.insert("A4b 299", AbilityId::A2a071Arceus);
         m.insert("A4b 304", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 305", AbilityId::A3a062CelesteelaUltraThrusters);
         m.insert("A4b 369", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("A4b 370", AbilityId::A3b056EeveeExVeeveeVolve);
+        m.insert("A4b 372", AbilityId::A2a071Arceus);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         // B1
         m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
@@ -212,6 +214,7 @@ lazy_static::lazy_static! {
         m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 289", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);
+        m.insert("B1 328", AbilityId::A2a071Arceus);
         // B1a
         m.insert("B1a 006", AbilityId::B1a006AriadosTrapTerritory);
         m.insert("B1a 012", AbilityId::B1a012CharmeleonIgnition);

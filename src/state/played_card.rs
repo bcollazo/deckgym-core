@@ -282,6 +282,9 @@ impl PlayedCard {
             CardId::A2a086ArceusEx,
             CardId::A2a095ArceusEx,
             CardId::A2a096ArceusEx,
+            CardId::A4b299ArceusEx,
+            CardId::A4b372ArceusEx,
+            CardId::B1328ArceusEx,
         ];
         let card_id = CardId::from_card_id(&string_id).unwrap();
         if arceus_ids.contains(&card_id) {
