@@ -226,6 +226,9 @@ lazy_static::lazy_static! {
         m.insert("B1a 072", AbilityId::B1a034ReuniclusInfiniteIncrease);  // Rare variant
         m.insert("B1a 101", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("B1a 102", AbilityId::B1172AegislashCursedMetal);
+        // B2a
+        m.insert("B2a 126", AbilityId::A4a010EnteiExLegendaryPulse);
+
         // P-A
 
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
