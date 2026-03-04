@@ -222,15 +222,14 @@ lazy_static::lazy_static! {
         m.insert("B1a 012", AbilityId::B1a012CharmeleonIgnition);
         m.insert("B1a 018", AbilityId::B1a018WartortleShellShield);
         m.insert("B1a 034", AbilityId::B1a034ReuniclusInfiniteIncrease);
-        m.insert("B1a 070", AbilityId::B1a006AriadosTrapTerritory);  // Rare variant
-        m.insert("B1a 072", AbilityId::B1a034ReuniclusInfiniteIncrease);  // Rare variant
+        m.insert("B1a 070", AbilityId::B1a006AriadosTrapTerritory);
+        m.insert("B1a 072", AbilityId::B1a034ReuniclusInfiniteIncrease);
         m.insert("B1a 101", AbilityId::A3122SolgaleoExRisingRoad);
         m.insert("B1a 102", AbilityId::B1172AegislashCursedMetal);
         // B2a
         m.insert("B2a 126", AbilityId::A4a010EnteiExLegendaryPulse);
 
         // P-A
-
         m.insert("P-A 037", AbilityId::PA037CresseliaExLunarPlumage);
         m.insert("P-A 042", AbilityId::A2110DarkraiExNightmareAura);
         m.insert("P-A 054", AbilityId::A1061PoliwrathCounterattack);
