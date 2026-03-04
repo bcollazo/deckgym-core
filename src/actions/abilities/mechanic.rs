@@ -32,6 +32,9 @@ pub enum AbilityMechanic {
     InfiltratingInspection,
     DiscardTopCardOpponentDeck,
     CoinFlipToPreventDamage,
+    CheckupDamageToOpponentActive {
+        amount: u32,
+    },
     DiscardEnergyToIncreaseTypeDamage {
         discard_energy: EnergyType,
         attack_type: EnergyType,

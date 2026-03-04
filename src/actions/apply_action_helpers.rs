@@ -262,11 +262,53 @@ fn apply_pokemon_checkup(
         );
     }
 
+    apply_snowy_terrain_checkup_damage(mutated_state);
+
     // Advance turn
     mutated_state.knocked_out_by_opponent_attack_last_turn =
         mutated_state.knocked_out_by_opponent_attack_this_turn;
     mutated_state.knocked_out_by_opponent_attack_this_turn = false;
     mutated_state.advance_turn();
+}
+
+fn apply_snowy_terrain_checkup_damage(state: &mut State) {
+    let mut source_players_with_damage: Vec<(usize, u32)> = vec![];
+
+    for player in 0..2 {
+        let Some(active) = state.in_play_pokemon[player][0].as_ref() else {
+            continue;
+        };
+
+        let checkup_damage = get_ability_mechanic(&active.card)
+            .and_then(|m| match m {
+                AbilityMechanic::CheckupDamageToOpponentActive { amount } => Some(*amount),
+                _ => None,
+            })
+            .unwrap_or(0);
+
+        if checkup_damage > 0 && !active.is_knocked_out() {
+            source_players_with_damage.push((player, checkup_damage));
+        }
+    }
+
+    for (source_player, checkup_damage) in source_players_with_damage {
+        let target_player = (source_player + 1) % 2;
+
+        if state.in_play_pokemon[target_player][0].is_some() {
+            debug!(
+                "Snowy Terrain: Player {} active Pokémon deals {} checkup damage to opponent active",
+                source_player,
+                checkup_damage
+            );
+            handle_damage(
+                state,
+                (source_player, 0),
+                &[(checkup_damage, target_player, 0)],
+                false,
+                None,
+            );
+        }
+    }
 }
 
 fn generate_boolean_vectors(n: usize) -> Vec<Vec<bool>> {

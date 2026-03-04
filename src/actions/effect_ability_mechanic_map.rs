@@ -37,7 +37,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Attacks used by your [F] Pokémon do +20 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("Attacks used by your [P] Pokémon and [M] Pokémon do +30 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("Basic Pokémon in play (both yours and your opponent's) have no Abilities.", todo_implementation);
-        // map.insert("During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to your opponent's Active Pokémon.", todo_implementation);
+        map.insert(
+            "During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to your opponent's Active Pokémon.",
+            AbilityMechanic::CheckupDamageToOpponentActive { amount: 10 },
+        );
         // map.insert("During your first turn, this Pokémon has no Retreat Cost.", todo_implementation);
         // map.insert("Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.", todo_implementation);
         // map.insert("Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.", todo_implementation);

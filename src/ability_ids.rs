@@ -16,6 +16,7 @@ pub enum AbilityId {
     A1a046AerodactylExPrimevalLaw,
     A1a019VaporeonWashOut,
     A2a010LeafeonExForestBreath,
+    A2a022GlaceonExSnowyTerrain,
     A2a050CrobatCunningLink,
     A2a071Arceus,
     A2022ShayminFragrantFlowerGarden,
@@ -99,6 +100,9 @@ lazy_static::lazy_static! {
         m.insert("A2a 081", AbilityId::A2a069ShayminSkySupport);
         m.insert("A2a 082", AbilityId::A2a010LeafeonExForestBreath);
         m.insert("A2a 091", AbilityId::A2a010LeafeonExForestBreath);
+        m.insert("A2a 022", AbilityId::A2a022GlaceonExSnowyTerrain);
+        m.insert("A2a 083", AbilityId::A2a022GlaceonExSnowyTerrain);
+        m.insert("A2a 092", AbilityId::A2a022GlaceonExSnowyTerrain);
         m.insert("A2a 050", AbilityId::A2a050CrobatCunningLink);
         m.insert("A2a 071", AbilityId::A2a071Arceus);
         m.insert("A2a 086", AbilityId::A2a071Arceus);
@@ -151,6 +155,7 @@ lazy_static::lazy_static! {
         m.insert("A4 208", AbilityId::A4112UmbreonExDarkChase);
         m.insert("A4 218", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4 233", AbilityId::A2a010LeafeonExForestBreath);
+        m.insert("A4 235", AbilityId::A2a022GlaceonExSnowyTerrain);
         // A4a
         m.insert("A4a 010", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("A4a 020", AbilityId::A4a020SuicuneExLegendaryPulse);
@@ -169,6 +174,7 @@ lazy_static::lazy_static! {
         m.insert("A4b 066", AbilityId::A3b009FlareonExCombust);
         m.insert("A4b 099", AbilityId::A1a019VaporeonWashOut);
         m.insert("A4b 100", AbilityId::A1a019VaporeonWashOut);
+        m.insert("A4b 106", AbilityId::A2a022GlaceonExSnowyTerrain);
         m.insert("A4b 135", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 136", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A4b 146", AbilityId::A3066OricoricSafeguard);

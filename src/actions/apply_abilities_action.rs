@@ -55,6 +55,7 @@ pub(crate) fn forecast_ability(
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
         AbilityId::A1a019VaporeonWashOut => doutcome(vaporeon_wash_out),
         AbilityId::A2a010LeafeonExForestBreath => doutcome(leafon_ex_ability),
+        AbilityId::A2a022GlaceonExSnowyTerrain => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
         AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
         AbilityId::A2072DusknoirShadowVoid => {
@@ -162,6 +163,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> (Probabilities, M
         AbilityMechanic::DiscardTopCardOpponentDeck => discard_top_card_opponent_deck(),
         AbilityMechanic::CoinFlipToPreventDamage => {
             panic!("CoinFlipToPreventDamage is a passive ability")
+        }
+        AbilityMechanic::CheckupDamageToOpponentActive { .. } => {
+            panic!("CheckupDamageToOpponentActive is a passive ability")
         }
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage {
             discard_energy,
