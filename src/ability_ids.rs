@@ -230,6 +230,7 @@ lazy_static::lazy_static! {
         // B2
         m.insert("B2 228", AbilityId::A4083EspeonExPsychicHealing);
         m.insert("B2 229", AbilityId::A3b034SylveonExHappyRibbon);
+        m.insert("B2 231", AbilityId::A4112UmbreonExDarkChase);
         // B2a
         m.insert("B2a 126", AbilityId::A4a010EnteiExLegendaryPulse);
         m.insert("B2a 127", AbilityId::A4a020SuicuneExLegendaryPulse);
