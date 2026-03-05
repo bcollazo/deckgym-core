@@ -57,6 +57,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
         AbilityId::A1a019VaporeonWashOut => can_use_vaporeon_wash_out(state),
         AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
+        AbilityId::A2a022GlaceonExSnowyTerrain => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2a069ShayminSkySupport => false, // Passive ability
         AbilityId::A2a071Arceus => false,
         AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
@@ -139,6 +140,7 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
+        AbilityMechanic::CheckupDamageToOpponentActive { .. } => false, // Passive ability
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
             !card.ability_used && card.attached_energy.contains(discard_energy)
         }

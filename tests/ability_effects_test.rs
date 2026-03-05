@@ -185,3 +185,36 @@ fn test_giratina_ex_ability_end_turn_does_not_panic_if_ko_by_jolteon() {
     let state = game.get_state_clone();
     assert_eq!(state.current_player, 0, "Turn should advance without panic");
 }
+
+#[test]
+fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A2a022GlaceonEx)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    let end_turn_action = Action {
+        actor: 0,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    };
+    game.apply_action(&end_turn_action);
+
+    let state = game.get_state_clone();
+    let opponent_active = state.in_play_pokemon[1][0]
+        .as_ref()
+        .expect("Opponent active should still be in play");
+
+    assert_eq!(state.current_player, 1, "Turn should pass to opponent");
+    assert_eq!(
+        opponent_active.get_remaining_hp(),
+        60,
+        "Snowy Terrain should deal 10 damage during Pokémon Checkup"
+    );
+}
