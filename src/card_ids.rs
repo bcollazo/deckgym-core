@@ -2907,6 +2907,22 @@ pub enum CardId {
     PB022Hawlucha,
     PB023Genesect,
     PB024MegaLatiosEx,
+    PB025Jirachi,
+    PB026Mudkip,
+    PB027Plusle,
+    PB028Ralts,
+    PB029MegaMedichamEx,
+    PB030Tornadus,
+    PB031Cinderace,
+    PB032AlolanVulpix,
+    PB033Quaxly,
+    PB034Smoliv,
+    PB035Charcadet,
+    PB036Tatsugiri,
+    PB037Frigibax,
+    PB038Tinkaton,
+    PB039Pawmi,
+    PB040PaldeanClodsire,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -5811,6 +5827,22 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 022", CardId::PB022Hawlucha);
     map.insert("P-B 023", CardId::PB023Genesect);
     map.insert("P-B 024", CardId::PB024MegaLatiosEx);
+    map.insert("P-B 025", CardId::PB025Jirachi);
+    map.insert("P-B 026", CardId::PB026Mudkip);
+    map.insert("P-B 027", CardId::PB027Plusle);
+    map.insert("P-B 028", CardId::PB028Ralts);
+    map.insert("P-B 029", CardId::PB029MegaMedichamEx);
+    map.insert("P-B 030", CardId::PB030Tornadus);
+    map.insert("P-B 031", CardId::PB031Cinderace);
+    map.insert("P-B 032", CardId::PB032AlolanVulpix);
+    map.insert("P-B 033", CardId::PB033Quaxly);
+    map.insert("P-B 034", CardId::PB034Smoliv);
+    map.insert("P-B 035", CardId::PB035Charcadet);
+    map.insert("P-B 036", CardId::PB036Tatsugiri);
+    map.insert("P-B 037", CardId::PB037Frigibax);
+    map.insert("P-B 038", CardId::PB038Tinkaton);
+    map.insert("P-B 039", CardId::PB039Pawmi);
+    map.insert("P-B 040", CardId::PB040PaldeanClodsire);
     map
 });
 

@@ -166,6 +166,8 @@ cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/data
 To generate attacks do (first time):
 ```bash
 cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/effect_mechanic_map.rs && cargo fmt
+```
+
 then with each new set of new mechanics, use:
 ```bash
 cargo run --bin card_enum_generator -- --incremental-attack-map

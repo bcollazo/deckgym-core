@@ -65380,5 +65380,373 @@
       "rarity": "◊◊◊◊",
       "booster_pack": "Promo B (P-B)"
     }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 025",
+      "name": "Jirachi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Star Drop",
+          "fixed_damage": 0,
+          "effect": "This attack does 30 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 026",
+      "name": "Mudkip",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Surprise Attack",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 027",
+      "name": "Plusle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electric Tail",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 028",
+      "name": "Ralts",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Draining Kiss",
+          "fixed_damage": 10,
+          "effect": "Heal 10 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 029",
+      "name": "Mega Medicham ex",
+      "stage": 1,
+      "evolves_from": "Meditite",
+      "hp": 180,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Chakra Fist",
+          "fixed_damage": 100,
+          "effect": "If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 030",
+      "name": "Tornadus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Blow Through",
+          "fixed_damage": 40,
+          "effect": "If a Stadium is in play, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 031",
+      "name": "Cinderace",
+      "stage": 2,
+      "evolves_from": "Raboot",
+      "hp": 130,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Fireball Shot",
+          "fixed_damage": 120,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 032",
+      "name": "Alolan Vulpix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 033",
+      "name": "Quaxly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Splashing Dodge",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 034",
+      "name": "Smoliv",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Nutrients",
+          "fixed_damage": 0,
+          "effect": "Heal 20 damage from 1 of your Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 035",
+      "name": "Charcadet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Punch",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 036",
+      "name": "Tatsugiri",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Rally Back",
+          "fixed_damage": 20,
+          "effect": "If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 037",
+      "name": "Frigibax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Stiffen",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 038",
+      "name": "Tinkaton",
+      "stage": 2,
+      "evolves_from": "Tinkatuff",
+      "hp": 150,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Gigaton Hammer",
+          "fixed_damage": 140,
+          "effect": "During your next turn, this Pokémon can't use Gigaton Hammer."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 039",
+      "name": "Pawmi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Random Spark",
+          "fixed_damage": 0,
+          "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 040",
+      "name": "Paldean Clodsire",
+      "stage": 1,
+      "evolves_from": "Paldean Wooper",
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Muddy Hammer",
+          "fixed_damage": 70,
+          "effect": "Discard the top card of your opponent's deck."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
   }
 ]

@@ -1532,5 +1532,8 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("This attack also does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each [P] Pokémon in your discard pile.", todo_implementation);
 
+    // Promo-B
+    // map.insert("If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.", todo_implementation);
+
     map
 });
