@@ -50,6 +50,3 @@ jobs:
 
       - name: Generate database.rs
         run: cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
-
-      - name: Run Benchmark
-        run: cargo bench --bench play_benchmark -- --noplot --sample-size 10 --warm-up-time 0.5 --measurement-time 1
