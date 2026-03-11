@@ -734,9 +734,9 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
     );
 }
 
-/// Reproduces the Rocky Helmet ordering bug for Rampardos's Head Smash.
+/// Rampardos's Head Smash should resolve Rocky Helmet and recoil before promotions.
 #[test]
-fn test_rampardos_head_smash_rocky_helmet_panics_after_attacker_ko() {
+fn test_rampardos_head_smash_rocky_helmet_promotion_order() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -764,4 +764,44 @@ fn test_rampardos_head_smash_rocky_helmet_panics_after_attacker_ko() {
         is_stack: false,
     };
     game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+
+    assert_eq!(state.points, [1, 1], "Both players should earn 1 point");
+    assert!(
+        state.in_play_pokemon[0][0].is_none(),
+        "Rampardos should be KO'd"
+    );
+    assert!(
+        state.in_play_pokemon[1][0].is_none(),
+        "Defending active should be KO'd"
+    );
+
+    let (actor, choices) = state.generate_possible_actions();
+    assert!(actor == 0 || actor == 1);
+    assert!(choices.iter().all(|choice| {
+        matches!(
+            choice.action,
+            SimpleAction::Activate {
+                player: _,
+                in_play_idx: _
+            }
+        )
+    }));
+
+    let first_player = actor;
+    let first_promotion = choices[0].clone();
+    game.apply_action(&first_promotion);
+
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
+    assert_eq!(actor, (first_player + 1) % 2);
+    assert!(choices.iter().all(|choice| {
+        matches!(
+            choice.action,
+            SimpleAction::Activate {
+                player: _,
+                in_play_idx: _
+            }
+        )
+    }));
 }
