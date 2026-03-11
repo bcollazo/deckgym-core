@@ -2,6 +2,7 @@ use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
+    database::get_card_by_enum,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
 };
@@ -731,4 +732,76 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
         final_state.points[1], 1,
         "Opponent should earn 1 point when Rampardos KO's itself from recoil"
     );
+}
+
+/// Rampardos's Head Smash should resolve Rocky Helmet and recoil before promotions.
+#[test]
+fn test_rampardos_head_smash_rocky_helmet_promotion_order() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A2089Rampardos)
+                .with_remaining_hp(20)
+                .with_energy(vec![EnergyType::Fighting]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            played_card_with_base_hp(CardId::A1001Bulbasaur, 100)
+                .with_tool(get_card_by_enum(CardId::A2148RockyHelmet)),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+    );
+    state.current_player = 0;
+    state.points = [0, 0];
+
+    game.set_state(state);
+
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+
+    assert_eq!(state.points, [1, 1], "Both players should earn 1 point");
+    assert!(
+        state.in_play_pokemon[0][0].is_none(),
+        "Rampardos should be KO'd"
+    );
+    assert!(
+        state.in_play_pokemon[1][0].is_none(),
+        "Defending active should be KO'd"
+    );
+
+    let (actor, choices) = state.generate_possible_actions();
+    assert!(actor == 0 || actor == 1);
+    assert!(choices.iter().all(|choice| {
+        matches!(
+            choice.action,
+            SimpleAction::Activate {
+                player: _,
+                in_play_idx: _
+            }
+        )
+    }));
+
+    let first_player = actor;
+    let first_promotion = choices[0].clone();
+    game.apply_action(&first_promotion);
+
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
+    assert_eq!(actor, (first_player + 1) % 2);
+    assert!(choices.iter().all(|choice| {
+        matches!(
+            choice.action,
+            SimpleAction::Activate {
+                player: _,
+                in_play_idx: _
+            }
+        )
+    }));
 }

@@ -4,7 +4,7 @@ use rand::{rngs::StdRng, Rng};
 use crate::{
     actions::{
         abilities::AbilityMechanic,
-        apply_action_helpers::{handle_damage, handle_knockouts},
+        apply_action_helpers::{handle_damage, handle_damage_only, handle_knockouts},
         apply_evolve,
         attack_helpers::{
             collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
@@ -613,26 +613,23 @@ fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutatio
         let opponent = (action.actor + 1) % 2;
         let attacking_ref = (action.actor, 0);
 
-        // First, deal damage to opponent's active
-        handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+        // Resolve attack damage and any immediate counter-damage before knockout handling.
+        handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
 
-        // Check if opponent's active was knocked out (it will be None if KO'd and discarded)
-        // or if remaining_hp is 0 (before promotion happens)
+        // Check knockout status before any discard/promotion resolution happens.
         let opponent_ko = state.in_play_pokemon[opponent][0]
             .as_ref()
-            .is_none_or(|p| p.is_knocked_out());
+            .is_some_and(|p| p.is_knocked_out());
 
-        // If opponent was KO'd, apply recoil damage to self using handle_damage
-        // so that the attacker can also be properly KO'd if needed
+        // If the attack knocked out the opponent, Head Smash deals recoil to the attacker.
         if opponent_ko {
-            handle_damage(
-                state,
-                attacking_ref,
-                &[(self_damage, action.actor, 0)],
-                false, // Not from active attack (it's self-damage)
-                None,
-            );
+            let attacker = state.in_play_pokemon[action.actor][0]
+                .as_mut()
+                .expect("Attacker should still be present before knockout resolution");
+            attacker.apply_damage(self_damage);
         }
+
+        handle_knockouts(state, attacking_ref, true);
     }))
 }
 
