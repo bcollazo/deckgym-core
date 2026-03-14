@@ -67,6 +67,83 @@ fn test_genome_hacking_copies_simple_damage_attack() {
 }
 
 #[test]
+fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
+                EnergyType::Psychic,
+                EnergyType::Psychic,
+                EnergyType::Psychic,
+            ]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1115Abra)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(1),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 0);
+
+    let copied_teleport = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 0,
+                    attack_index: 0,
+                    require_attacker_energy_match: false,
+                }
+            )
+        })
+        .expect("Expected copied choice for Abra's Teleport")
+        .clone();
+
+    game.apply_action(&copied_teleport);
+
+    let state = game.get_state_clone();
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 0);
+    assert!(
+        actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::Activate {
+                    player: 0,
+                    in_play_idx: 1,
+                }
+            )
+        }),
+        "Copied Teleport should queue a switch choice for Mew ex's controller"
+    );
+    assert!(
+        !actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::Activate {
+                    player: 1,
+                    ..
+                }
+            )
+        }),
+        "Copied Teleport should not create switch choices for the opponent"
+    );
+}
+
+#[test]
 fn test_copy_anything_can_choose_opponent_bench_attack_and_do_nothing_if_energy_does_not_match() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
