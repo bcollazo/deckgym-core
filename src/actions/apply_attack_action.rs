@@ -9,7 +9,7 @@ use crate::{
         attack_helpers::{
             collect_in_play_indices_by_type, energy_any_way_choices, generate_distributions,
         },
-        attacks::{BenchSide, Mechanic},
+        attacks::{BenchSide, CopyAttackSource, Mechanic},
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         mutations::{doutcome, doutcome_from_mutation},
@@ -17,7 +17,7 @@ use crate::{
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
-    hooks::{can_evolve_into, contains_energy, get_retreat_cost, get_stage},
+    hooks::{can_evolve_into, contains_energy, get_attack_cost, get_retreat_cost, get_stage},
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     AttackId, State,
 };
@@ -45,12 +45,59 @@ pub(crate) fn forecast_attack(
     let attack = active.card.get_attacks()[index].clone();
     trace!("Forecasting attack: {active:?} {attack:?}");
 
-    // Check for CoinFlipToBlockAttack effect
+    let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
+
+    apply_attack_common_modifiers(acting_player, state, &attack, base_probs, base_mutations)
+}
+
+pub(crate) fn forecast_copied_attack(
+    acting_player: usize,
+    state: &State,
+    source_player: usize,
+    source_in_play_idx: usize,
+    attack_index: usize,
+    require_attacker_energy_match: bool,
+) -> (Probabilities, Mutations) {
+    let source = state.in_play_pokemon[source_player][source_in_play_idx]
+        .as_ref()
+        .expect("Copied-attack source Pokemon should exist");
+    let attack = source
+        .card
+        .get_attacks()
+        .get(attack_index)
+        .cloned()
+        .unwrap_or_else(|| {
+            panic!(
+                "Copied attack index {} should exist for source {}:{}",
+                attack_index, source_player, source_in_play_idx
+            )
+        });
+
+    if require_attacker_energy_match {
+        let active = state.get_active(acting_player);
+        let modified_cost = get_attack_cost(&attack.energy_required, state, acting_player);
+        if !contains_energy(active, &modified_cost, state, acting_player) {
+            return doutcome(|_, _, _| {});
+        }
+    }
+
+    let (base_probs, base_mutations) = forecast_attack_inner(state, &source.card, &attack, attack_index);
+
+    apply_copied_attack_modifiers(acting_player, state, &attack, base_probs, base_mutations)
+}
+
+fn apply_attack_common_modifiers(
+    acting_player: usize,
+    state: &State,
+    attack: &Attack,
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    let active = state.get_active(acting_player);
     let has_block_effect = active
         .get_active_effects()
         .iter()
         .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
-    let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
 
     let (mut probs, mut mutations) = (base_probs, base_mutations);
 
@@ -64,6 +111,32 @@ pub(crate) fn forecast_attack(
         (probs, mutations) = apply_block_attack_coin_flip(probs, mutations);
     }
 
+    apply_defender_damage_prevention_if_needed(acting_player, state, attack, probs, mutations)
+}
+
+fn apply_copied_attack_modifiers(
+    acting_player: usize,
+    state: &State,
+    attack: &Attack,
+    base_probs: Probabilities,
+    base_mutations: Mutations,
+) -> (Probabilities, Mutations) {
+    apply_defender_damage_prevention_if_needed(
+        acting_player,
+        state,
+        attack,
+        base_probs,
+        base_mutations,
+    )
+}
+
+fn apply_defender_damage_prevention_if_needed(
+    acting_player: usize,
+    state: &State,
+    attack: &Attack,
+    mut probs: Probabilities,
+    mut mutations: Mutations,
+) -> (Probabilities, Mutations) {
     // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
     if attack.fixed_damage > 0 {
         let opponent = (acting_player + 1) % 2;
@@ -605,7 +678,82 @@ fn forecast_effect_attack_by_mechanic(
             coin_flip_to_block_attack_next_turn(attack.fixed_damage)
         }
         Mechanic::DelayedSpotDamage { amount } => delayed_spot_damage(*amount),
+        Mechanic::CopyAttack {
+            source,
+            require_attacker_energy_match,
+        } => copy_attack(state, source, *require_attacker_energy_match),
     }
+}
+
+fn copy_attack(
+    _state: &State,
+    source: &CopyAttackSource,
+    require_attacker_energy_match: bool,
+) -> (Probabilities, Mutations) {
+    let source = source.clone();
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let choices = copied_attack_choices(state, action.actor, &source, require_attacker_energy_match);
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn copied_attack_choices(
+    state: &State,
+    acting_player: usize,
+    source: &CopyAttackSource,
+    require_attacker_energy_match: bool,
+) -> Vec<SimpleAction> {
+    let opponent = (acting_player + 1) % 2;
+    match source {
+        CopyAttackSource::OpponentActive => copied_attack_choices_from_slots(
+            state,
+            opponent,
+            std::iter::once(0),
+            require_attacker_energy_match,
+        ),
+        CopyAttackSource::OpponentInPlay => copied_attack_choices_from_slots(
+            state,
+            opponent,
+            state.enumerate_in_play_pokemon(opponent).map(|(idx, _)| idx),
+            require_attacker_energy_match,
+        ),
+        CopyAttackSource::OwnBenchNonEx => copied_attack_choices_from_slots(
+            state,
+            acting_player,
+            state.enumerate_bench_pokemon(acting_player)
+                .filter(|(_, pokemon)| !pokemon.card.is_ex())
+                .map(|(idx, _)| idx),
+            require_attacker_energy_match,
+        ),
+    }
+}
+
+fn copied_attack_choices_from_slots<I>(
+    state: &State,
+    source_player: usize,
+    source_slots: I,
+    require_attacker_energy_match: bool,
+) -> Vec<SimpleAction>
+where
+    I: IntoIterator<Item = usize>,
+{
+    let mut choices = Vec::new();
+    for source_in_play_idx in source_slots {
+        let Some(source) = state.in_play_pokemon[source_player][source_in_play_idx].as_ref() else {
+            continue;
+        };
+        for (attack_index, _) in source.card.get_attacks().iter().enumerate() {
+            choices.push(SimpleAction::UseCopiedAttack {
+                source_player,
+                source_in_play_idx,
+                attack_index,
+                require_attacker_energy_match,
+            });
+        }
+    }
+    choices
 }
 
 fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
