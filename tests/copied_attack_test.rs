@@ -381,25 +381,20 @@ fn test_copy_a_friend_uses_own_non_ex_bench_attacks_only() {
 }
 
 #[test]
-fn test_genome_hacking_can_copy_a_copy_attack() {
+fn test_genome_hacking_filters_out_opponent_mew_ex_genome_hacking() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
     state.set_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
-            EnergyType::Grass,
             EnergyType::Psychic,
-            EnergyType::Water,
+            EnergyType::Psychic,
+            EnergyType::Psychic,
         ])],
-        vec![
-            PlayedCard::from_id(CardId::A1205Ditto),
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
-        ],
+        vec![PlayedCard::from_id(CardId::A1a032MewEx)],
     );
     state.current_player = 0;
     state.turn_count = 3;
-
-    let hp_before = state.get_active(1).get_remaining_hp();
     game.set_state(state);
 
     game.apply_action(&Action {
@@ -411,10 +406,8 @@ fn test_genome_hacking_can_copy_a_copy_attack() {
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
-
-    let copied_copy_anything = actions
-        .iter()
-        .find(|action| {
+    assert!(
+        actions.iter().any(|action| {
             matches!(
                 action.action,
                 SimpleAction::UseCopiedAttack {
@@ -424,18 +417,102 @@ fn test_genome_hacking_can_copy_a_copy_attack() {
                     require_attacker_energy_match: false,
                 }
             )
-        })
-        .expect("Genome Hacking should offer Ditto's Copy Anything")
-        .clone();
+        }),
+        "Genome Hacking should still offer Mew ex's non-copy attack"
+    );
+    assert!(
+        !actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 0,
+                    attack_index: 1,
+                    ..
+                }
+            )
+        }),
+        "Genome Hacking should filter out the opponent Mew ex's Genome Hacking option"
+    );
+}
 
-    game.apply_action(&copied_copy_anything);
+#[test]
+fn test_genome_hacking_does_not_offer_opponent_ditto_copy_anything() {
+    let mut game = get_initialized_game(0);
+    let state = game.get_state_clone();
+    let mut state = state;
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
+            EnergyType::Psychic,
+            EnergyType::Psychic,
+            EnergyType::Psychic,
+        ])],
+        vec![PlayedCard::from_id(CardId::A1205Ditto)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(1),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert!(
+        state.move_generation_stack.is_empty(),
+        "Genome Hacking should not queue copied-attack choices when the opponent Active only has Copy Anything"
+    );
+}
+
+#[test]
+fn test_copy_anything_does_not_offer_copy_attacks() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1205Ditto)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless, EnergyType::Colorless])],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1a032MewEx),
+            PlayedCard::from_id(CardId::A1205Ditto),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
 
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
-    let nested_copied_attack = actions
-        .iter()
-        .find(|action| {
+    assert_eq!(
+        actions
+            .iter()
+            .filter(|action| matches!(action.action, SimpleAction::UseCopiedAttack { .. }))
+            .count(),
+        2,
+        "Copy Anything should filter out copy-attack options while keeping the opponent's non-copy attacks"
+    );
+    assert!(
+        actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 0,
+                    attack_index: 0,
+                    require_attacker_energy_match: true,
+                }
+            )
+        }) && actions.iter().any(|action| {
             matches!(
                 action.action,
                 SimpleAction::UseCopiedAttack {
@@ -445,16 +522,86 @@ fn test_genome_hacking_can_copy_a_copy_attack() {
                     require_attacker_energy_match: true,
                 }
             )
-        })
-        .expect("Copied Copy Anything should offer nested copy choices")
-        .clone();
+        }),
+        "Copy Anything should keep the opponent's ordinary attacks"
+    );
+    assert!(
+        !actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 1,
+                    attack_index: 1,
+                    ..
+                }
+            )
+        }) && !actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 2,
+                    ..
+                }
+            )
+        }),
+        "Copy Anything should not offer Genome Hacking or Copy Anything as copied attacks"
+    );
+}
 
-    game.apply_action(&nested_copied_attack);
+#[test]
+fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::B1a055Ditto)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1205Ditto),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
 
     let state = game.get_state_clone();
-    assert_eq!(
-        state.get_active(1).get_remaining_hp(),
-        hp_before - 40,
-        "Genome Hacking should be able to resolve a nested copied attack through Ditto"
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 0);
+    assert!(
+        actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 0,
+                    source_in_play_idx: 1,
+                    attack_index: 0,
+                    require_attacker_energy_match: true,
+                }
+            )
+        }),
+        "Copy a Friend should still offer non-copy attacks from your bench"
+    );
+    assert!(
+        !actions.iter().any(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 0,
+                    source_in_play_idx: 2,
+                    ..
+                }
+            )
+        }),
+        "Copy a Friend should not offer copied attacks from your bench Ditto"
     );
 }

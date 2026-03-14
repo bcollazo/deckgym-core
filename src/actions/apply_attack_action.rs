@@ -744,7 +744,10 @@ where
         let Some(source) = state.in_play_pokemon[source_player][source_in_play_idx].as_ref() else {
             continue;
         };
-        for (attack_index, _) in source.card.get_attacks().iter().enumerate() {
+        for (attack_index, attack) in source.card.get_attacks().iter().enumerate() {
+            if is_copy_attack(attack) {
+                continue;
+            }
             choices.push(SimpleAction::UseCopiedAttack {
                 source_player,
                 source_in_play_idx,
@@ -754,6 +757,14 @@ where
         }
     }
     choices
+}
+
+fn is_copy_attack(attack: &Attack) -> bool {
+    attack
+        .effect
+        .as_deref()
+        .and_then(|effect_text| EFFECT_MECHANIC_MAP.get(effect_text))
+        .is_some_and(|mechanic| matches!(mechanic, Mechanic::CopyAttack { .. }))
 }
 
 fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
