@@ -6,6 +6,7 @@ use deckgym::{
     models::{Card, PlayedCard, TrainerCard},
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 fn make_lucky_ice_pop_trainer_card() -> TrainerCard {

@@ -5,6 +5,7 @@ use deckgym::{
     models::{EnergyType, PlayedCard, StatusCondition},
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 /// Test that a confused Pokémon can still attack but has different outcomes

@@ -5,6 +5,7 @@ use deckgym::{
     test_helpers::load_test_decks,
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 #[test]

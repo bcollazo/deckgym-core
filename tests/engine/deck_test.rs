@@ -1,5 +1,6 @@
 use common::init_decks;
 
+#[path = "../common/mod.rs"]
 mod common;
 
 #[test]

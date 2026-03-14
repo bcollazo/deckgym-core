@@ -4,6 +4,7 @@ use deckgym::{
     models::{PlayedCard, StatusCondition},
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 #[test]

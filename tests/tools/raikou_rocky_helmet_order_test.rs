@@ -6,6 +6,7 @@ use deckgym::{
     models::{EnergyType, PlayedCard},
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 #[test]
