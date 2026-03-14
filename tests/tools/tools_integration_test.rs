@@ -6,6 +6,7 @@ use deckgym::{
     models::{Card, PlayedCard},
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {

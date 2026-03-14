@@ -7,6 +7,7 @@ use deckgym::{
     state::GameOutcome,
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 fn make_ilima_trainer_card() -> TrainerCard {

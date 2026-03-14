@@ -7,6 +7,7 @@ use deckgym::{
     state::GameOutcome,
 };
 
+#[path = "../common/mod.rs"]
 mod common;
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
