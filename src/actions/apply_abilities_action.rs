@@ -340,10 +340,6 @@ fn victreebel_ability(_: &mut StdRng, state: &mut State, action: &Action) {
             in_play_idx,
         })
         .collect::<Vec<_>>();
-    debug_assert!(
-        !possible_moves.is_empty(),
-        "Victreebel ability should only be used when there is a basic bench target"
-    );
     if possible_moves.is_empty() {
         return;
     }
@@ -470,10 +466,6 @@ fn espeon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
             cure_status: false,
         })
         .collect::<Vec<_>>();
-    debug_assert!(
-        !possible_moves.is_empty(),
-        "Espeon ex ability should only be used when at least one Pokemon is damaged"
-    );
     if possible_moves.is_empty() {
         return;
     }
