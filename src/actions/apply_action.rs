@@ -21,7 +21,7 @@ use crate::{
 
 use super::{
     apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
-    apply_attack_action::forecast_attack,
+    apply_attack_action::{forecast_attack, forecast_copied_attack},
     apply_trainer_action::forecast_trainer_action,
     Action, SimpleAction,
 };
@@ -65,6 +65,19 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
+        SimpleAction::UseCopiedAttack {
+            source_player,
+            source_in_play_idx,
+            attack_index,
+            require_attacker_energy_match,
+        } => forecast_copied_attack(
+            action.actor,
+            state,
+            *source_player,
+            *source_in_play_idx,
+            *attack_index,
+            *require_attacker_energy_match,
+        ),
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
         }
@@ -163,6 +176,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             *target_in_play_idx,
             *amount,
         ),
+        SimpleAction::UseCopiedAttack { .. } => {
+            panic!("Copied attacks should not be applied through deterministic actions")
+        }
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,
