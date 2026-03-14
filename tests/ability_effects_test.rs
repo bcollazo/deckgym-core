@@ -218,3 +218,55 @@ fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
         "Snowy Terrain should deal 10 damage during Pokémon Checkup"
     );
 }
+
+#[test]
+fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A4083EspeonEx),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    let (_actor, actions) = game.get_state_clone().generate_possible_actions();
+
+    assert!(
+        !actions
+            .iter()
+            .any(|action| matches!(action.action, SimpleAction::UseAbility { in_play_idx: 0 })),
+        "Espeon ex should not offer Psychic Healing when no Pokemon is damaged"
+    );
+}
+
+#[test]
+fn test_victreebel_fragrance_trap_not_available_without_benched_basic_target() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1020Victreebel)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1002Ivysaur),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    let (_actor, actions) = game.get_state_clone().generate_possible_actions();
+
+    assert!(
+        !actions
+            .iter()
+            .any(|action| matches!(action.action, SimpleAction::UseAbility { in_play_idx: 0 })),
+        "Victreebel should not offer Fragrance Trap when opponent has no benched Basic Pokemon"
+    );
+}
