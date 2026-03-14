@@ -46,7 +46,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         )
     });
     match ability {
-        AbilityId::A1020VictreebelFragranceTrap => is_active && !card.ability_used,
+        AbilityId::A1020VictreebelFragranceTrap => {
+            is_active && can_use_victreebel_fragrance_trap(state, card)
+        }
         AbilityId::A1089GreninjaWaterShuriken => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1123GengarExShadowySpellbind => false,
@@ -81,7 +83,9 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A3b034SylveonExHappyRibbon => false,
         AbilityId::A3b056EeveeExVeeveeVolve => false,
         AbilityId::A3b057SnorlaxExFullMouthManner => false,
-        AbilityId::A4083EspeonExPsychicHealing => is_active && !card.ability_used,
+        AbilityId::A4083EspeonExPsychicHealing => {
+            is_active && can_use_espeon_ex_psychic_healing(state, card)
+        }
         AbilityId::A4a010EnteiExLegendaryPulse => false,
         AbilityId::A4a020SuicuneExLegendaryPulse => false,
         AbilityId::A4a022MiloticHealingRipples => false,
@@ -257,4 +261,23 @@ fn can_use_vaporeon_wash_out(state: &State) -> bool {
             pokemon.card.get_type() == Some(EnergyType::Water)
                 && pokemon.attached_energy.contains(&EnergyType::Water)
         })
+}
+
+fn can_use_victreebel_fragrance_trap(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    let opponent = (state.current_player + 1) % 2;
+    state
+        .enumerate_bench_pokemon(opponent)
+        .any(|(_, pokemon)| pokemon.card.is_basic())
+}
+
+fn can_use_espeon_ex_psychic_healing(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used {
+        return false;
+    }
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.is_damaged())
 }
