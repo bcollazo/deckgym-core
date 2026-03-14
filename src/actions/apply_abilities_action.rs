@@ -340,6 +340,9 @@ fn victreebel_ability(_: &mut StdRng, state: &mut State, action: &Action) {
             in_play_idx,
         })
         .collect::<Vec<_>>();
+    if possible_moves.is_empty() {
+        return;
+    }
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
@@ -463,6 +466,9 @@ fn espeon_ex_ability(_: &mut StdRng, state: &mut State, action: &Action) {
             cure_status: false,
         })
         .collect::<Vec<_>>();
+    if possible_moves.is_empty() {
+        return;
+    }
     state
         .move_generation_stack
         .push((action.actor, possible_moves));
