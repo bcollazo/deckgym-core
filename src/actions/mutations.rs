@@ -86,7 +86,9 @@ where
                     .card
                     .get_attacks()
                     .get(*attack_index)
-                    .unwrap_or_else(|| panic!("Index must exist if attacking with {}", attack_index))
+                    .unwrap_or_else(|| {
+                        panic!("Index must exist if attacking with {}", attack_index)
+                    })
                     .title
                     .clone(),
                 SimpleAction::UseCopiedAttack {
