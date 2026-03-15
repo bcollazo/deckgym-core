@@ -130,15 +130,9 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
         "Copied Teleport should queue a switch choice for Mew ex's controller"
     );
     assert!(
-        !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::Activate {
-                    player: 1,
-                    ..
-                }
-            )
-        }),
+        !actions
+            .iter()
+            .any(|action| { matches!(action.action, SimpleAction::Activate { player: 1, .. }) }),
         "Copied Teleport should not create switch choices for the opponent"
     );
 }
@@ -472,8 +466,11 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
     let mut state = game.get_state_clone();
 
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1205Ditto)
-            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless, EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1205Ditto).with_energy(vec![
+            EnergyType::Colorless,
+            EnergyType::Colorless,
+            EnergyType::Colorless,
+        ])],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1a032MewEx),
@@ -603,5 +600,158 @@ fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
             )
         }),
         "Copy a Friend should not offer copied attacks from your bench Ditto"
+    );
+}
+
+#[test]
+fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
+            EnergyType::Psychic,
+            EnergyType::Psychic,
+            EnergyType::Psychic,
+        ])],
+        vec![
+            PlayedCard::from_id(CardId::A1036CharizardEx),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(1),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    let copied_crimson_storm = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 0,
+                    attack_index: 1,
+                    require_attacker_energy_match: false,
+                }
+            )
+        })
+        .expect("Expected copied choice for Charizard ex's Crimson Storm")
+        .clone();
+
+    game.apply_action(&copied_crimson_storm);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(0).attached_energy,
+        vec![EnergyType::Psychic, EnergyType::Psychic, EnergyType::Psychic],
+        "Genome Hacking should not discard non-matching energy when the copied attack wants typed self-discard"
+    );
+    assert!(
+        state.discard_energies[0].is_empty(),
+        "Genome Hacking should not send unrelated energy to the discard pile"
+    );
+    assert_eq!(
+        state.points[0], 2,
+        "Copied Crimson Storm should still resolve its damage and KO the opponent Charizard ex"
+    );
+}
+
+#[test]
+fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
+                EnergyType::Water,
+                EnergyType::Psychic,
+                EnergyType::Psychic,
+            ]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A2049PalkiaEx),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(1),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    let copied_dimensional_storm = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                action.action,
+                SimpleAction::UseCopiedAttack {
+                    source_player: 1,
+                    source_in_play_idx: 0,
+                    attack_index: 1,
+                    require_attacker_energy_match: false,
+                }
+            )
+        })
+        .expect("Expected copied choice for Palkia ex's Dimensional Storm")
+        .clone();
+
+    game.apply_action(&copied_dimensional_storm);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(0).attached_energy,
+        vec![EnergyType::Psychic, EnergyType::Psychic],
+        "Copied legacy typed-discard attacks should only remove matching attached energy"
+    );
+    assert_eq!(
+        state.discard_energies[0],
+        vec![EnergyType::Water],
+        "Only the matching Water energy should be discarded from Mew ex"
+    );
+    assert_eq!(
+        state.points[0], 2,
+        "Copied Dimensional Storm should still KO the opponent active"
+    );
+
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 1);
+    let promote_bulbasaur = actions
+        .iter()
+        .find(|action| {
+            matches!(
+                action.action,
+                SimpleAction::Activate {
+                    player: 1,
+                    in_play_idx: 1,
+                }
+            )
+        })
+        .expect("Opponent should need to promote the damaged bench Bulbasaur")
+        .clone();
+
+    game.apply_action(&promote_bulbasaur);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(1).card.get_name(),
+        "Bulbasaur",
+        "The opponent bench should be promoted after the copied attack knocks out Palkia ex"
     );
 }

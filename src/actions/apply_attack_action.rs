@@ -81,7 +81,8 @@ pub(crate) fn forecast_copied_attack(
         }
     }
 
-    let (base_probs, base_mutations) = forecast_attack_inner(state, &source.card, &attack, attack_index);
+    let (base_probs, base_mutations) =
+        forecast_attack_inner(state, &source.card, &attack, attack_index);
 
     apply_copied_attack_modifiers(acting_player, state, &attack, base_probs, base_mutations)
 }
@@ -692,7 +693,8 @@ fn copy_attack(
 ) -> (Probabilities, Mutations) {
     let source = source.clone();
     active_damage_effect_doutcome(0, move |_, state, action| {
-        let choices = copied_attack_choices(state, action.actor, &source, require_attacker_energy_match);
+        let choices =
+            copied_attack_choices(state, action.actor, &source, require_attacker_energy_match);
         if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
         }
@@ -716,13 +718,16 @@ fn copied_attack_choices(
         CopyAttackSource::OpponentInPlay => copied_attack_choices_from_slots(
             state,
             opponent,
-            state.enumerate_in_play_pokemon(opponent).map(|(idx, _)| idx),
+            state
+                .enumerate_in_play_pokemon(opponent)
+                .map(|(idx, _)| idx),
             require_attacker_energy_match,
         ),
         CopyAttackSource::OwnBenchNonEx => copied_attack_choices_from_slots(
             state,
             acting_player,
-            state.enumerate_bench_pokemon(acting_player)
+            state
+                .enumerate_bench_pokemon(acting_player)
                 .filter(|(_, pokemon)| !pokemon.card.is_ex())
                 .map(|(idx, _)| idx),
             require_attacker_energy_match,
@@ -864,8 +869,8 @@ fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> (Probabilities,
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
 fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
-        // Discard one Fire energy
-        state.discard_from_active(action.actor, &[EnergyType::Fire]);
+        // Discard one Fire energy if present.
+        discard_requested_energy_from_active_best_effort(state, action.actor, &[EnergyType::Fire]);
 
         // Apply burned status
         let opponent = (action.actor + 1) % 2;
@@ -954,7 +959,11 @@ fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
         .chain(std::iter::once((150, 0))) // Add active Pokémon directly
         .collect();
     damage_effect_doutcome(targets, |_, state, action| {
-        state.discard_from_active(action.actor, &[EnergyType::Water; 3]);
+        discard_requested_energy_from_active_best_effort(
+            state,
+            action.actor,
+            &[EnergyType::Water; 3],
+        );
     })
 }
 
@@ -1406,13 +1415,42 @@ fn discard_all_energy_of_type_then_damage_any_opponent_pokemon(
     })
 }
 
+fn available_requested_energy_to_discard(
+    active: &crate::models::PlayedCard,
+    requested: &[EnergyType],
+) -> Vec<EnergyType> {
+    let mut remaining = active.attached_energy.clone();
+    let mut actual = Vec::new();
+    for energy in requested {
+        if let Some(pos) = remaining.iter().position(|e| *e == *energy) {
+            remaining.swap_remove(pos);
+            actual.push(*energy);
+        }
+    }
+    actual
+}
+
+fn discard_requested_energy_from_active_best_effort(
+    state: &mut State,
+    actor: usize,
+    requested: &[EnergyType],
+) {
+    let actual = {
+        let active = state.get_active(actor);
+        available_requested_energy_to_discard(active, requested)
+    };
+    if !actual.is_empty() {
+        state.discard_from_active(actor, &actual);
+    }
+}
+
 /// Discard energy from the active (attacking) Pokémon.
 fn self_energy_discard_attack(
     fixed_damage: u32,
     to_discard: Vec<EnergyType>,
 ) -> (Probabilities, Mutations) {
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
-        state.discard_from_active(action.actor, &to_discard);
+        discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
     })
 }
 
