@@ -506,7 +506,7 @@ fn to_canonical_names(cards: &[Card]) -> Vec<&String> {
 mod tests {
     use crate::{
         card_ids::CardId, database::get_card_by_enum, deck::is_basic, hooks::to_playable_card,
-        test_helpers::load_test_decks,
+        test_support::load_test_decks,
     };
 
     use super::*;

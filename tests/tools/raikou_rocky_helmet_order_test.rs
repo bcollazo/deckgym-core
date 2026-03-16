@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[test]
 fn test_raikou_rocky_helmet_promotion_order() {

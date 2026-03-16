@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Sunflora B1a 008 - Quick-Grow Beam
 /// Should deal 30 damage, or 60 if Quick-Grow Extract is in discard pile

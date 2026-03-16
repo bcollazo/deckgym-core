@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Charmeleon B1a 012 - Ignition ability
 /// Should trigger on evolution, offering to attach Fire energy

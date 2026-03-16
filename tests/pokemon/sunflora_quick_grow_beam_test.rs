@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Quick-Grow Extract B1a 067 - Evolution from deck
 /// Should evolve a Grass Pokemon in play with a random Grass evolution from deck

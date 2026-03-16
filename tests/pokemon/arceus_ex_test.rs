@@ -1,10 +1,8 @@
-use common::get_initialized_game;
 use deckgym::{
     card_ids::CardId,
     models::{PlayedCard, StatusCondition},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[test]
 fn test_arceus_ex_fabled_luster_immunity() {

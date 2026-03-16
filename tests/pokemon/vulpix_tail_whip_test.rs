@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Vulpix's Tail Whip prevents opponent from attacking (on heads)
 #[test]

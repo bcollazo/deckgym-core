@@ -1,13 +1,11 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, PlayedCard, TrainerCard},
     state::GameOutcome,
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 fn make_ilima_trainer_card() -> TrainerCard {
     match get_card_by_enum(CardId::A3149Ilima) {

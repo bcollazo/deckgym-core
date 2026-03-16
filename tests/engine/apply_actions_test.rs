@@ -1,12 +1,10 @@
-use common::{get_initialized_game, init_random_players};
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType},
+    test_support::{get_initialized_game, init_random_players},
 };
-
-mod common;
 
 #[test]
 fn test_initial_build_phase() {

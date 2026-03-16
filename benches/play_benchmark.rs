@@ -1,7 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use deckgym::{
     players::{Player, RandomPlayer},
-    test_helpers::load_test_decks,
+    test_support::load_test_decks,
 };
 
 fn play_random_game(seed: u64) {

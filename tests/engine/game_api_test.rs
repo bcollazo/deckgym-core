@@ -1,11 +1,8 @@
-use common::init_random_players;
 use deckgym::{
     players::{AttachAttackPlayer, EndTurnPlayer, MctsPlayer, Player, RandomPlayer},
     state::GameOutcome,
-    test_helpers::load_test_decks,
+    test_support::{init_random_players, load_test_decks},
 };
-
-mod common;
 
 #[test]
 fn test_game_api() {
