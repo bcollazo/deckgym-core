@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use std::hash::Hash;
 
 use crate::{
-    actions::{self, SimpleAction},
+    actions::SimpleAction,
     deck::Deck,
     effects::TurnEffect,
     models::{Card, EnergyType},
@@ -368,6 +368,7 @@ impl State {
     }
 
     /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
+    /// Callers are responsible for resolving any knockouts caused by losing HP bonuses.
     pub(crate) fn discard_tool(&mut self, player: usize, in_play_idx: usize) {
         let pokemon = self.in_play_pokemon[player][in_play_idx]
             .as_mut()
@@ -377,7 +378,6 @@ impl State {
             .take()
             .expect("Expected tool to be attached when discarding tool");
         self.discard_piles[player].push(tool_card);
-        actions::handle_knockouts(self, (player, 0), false);
     }
 
     pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {

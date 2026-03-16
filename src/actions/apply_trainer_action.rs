@@ -27,7 +27,7 @@ use crate::{
 
 use super::{
     apply_action_helpers::{Mutations, Probabilities},
-    Action, SimpleAction,
+    handle_knockouts, Action, SimpleAction,
 };
 
 // This is a reducer of all actions relating to trainer cards.
@@ -224,6 +224,9 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     for idx in tool_indices {
         state.discard_tool(opponent, idx);
     }
+
+    // Resolve knockouts only after Guzma has discarded every opponent tool.
+    handle_knockouts(state, (action.actor, 0), false);
 }
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
