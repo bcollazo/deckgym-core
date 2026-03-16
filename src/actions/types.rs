@@ -35,6 +35,14 @@ pub enum SimpleAction {
     // Its given it is with the active pokemon, to the other active.
     // usize is the index of the attack in the pokemon's attacks
     Attack(usize),
+    /// Use another Pokemon's attack definition as the current attack.
+    /// This is used as a stack sub-action after copy-attack effects.
+    UseCopiedAttack {
+        source_player: usize,
+        source_in_play_idx: usize,
+        attack_index: usize,
+        require_attacker_energy_match: bool,
+    },
     // usize is in_play_pokemon index to retreat to. Can't Retreat(0)
     Retreat(usize),
     EndTurn,
@@ -144,6 +152,15 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
             SimpleAction::Attack(index) => write!(f, "Attack({index})"),
+            SimpleAction::UseCopiedAttack {
+                source_player,
+                source_in_play_idx,
+                attack_index,
+                require_attacker_energy_match,
+            } => write!(
+                f,
+                "UseCopiedAttack(source:{source_player}:{source_in_play_idx}, attack:{attack_index}, require_energy:{require_attacker_energy_match})"
+            ),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
             SimpleAction::Attach {

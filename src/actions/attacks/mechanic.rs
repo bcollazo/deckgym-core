@@ -11,6 +11,13 @@ pub enum BenchSide {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum CopyAttackSource {
+    OpponentActive,
+    OpponentInPlay,
+    OwnBenchNonEx,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Mechanic {
     SelfHeal {
         amount: u32,
@@ -209,4 +216,8 @@ pub enum Mechanic {
     ShuffleOpponentActiveIntoDeck,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    CopyAttack {
+        source: CopyAttackSource,
+        require_attacker_energy_match: bool,
+    },
 }

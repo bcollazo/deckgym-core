@@ -48,6 +48,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Evolve { .. } => 10,
         SimpleAction::UseAbility { .. } => 10,
         SimpleAction::Attack(_) => 10,
+        SimpleAction::UseCopiedAttack { .. } => 10,
         SimpleAction::ApplyDamage { .. } => 10,
         SimpleAction::ScheduleDelayedSpotDamage { .. } => 10,
         SimpleAction::Retreat(_) => 2,
