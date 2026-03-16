@@ -79,19 +79,39 @@ where
                 .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
                 .collect();
 
-            // Extract attack name if this is an attack action
-            let SimpleAction::Attack(attack_index) = &action.action else {
-                panic!("This codepath should come from an attack.")
+            let attack_name: String = match &action.action {
+                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
+                    .as_ref()
+                    .expect("Attacking Pokemon must be there if attacking")
+                    .card
+                    .get_attacks()
+                    .get(*attack_index)
+                    .unwrap_or_else(|| {
+                        panic!("Index must exist if attacking with {}", attack_index)
+                    })
+                    .title
+                    .clone(),
+                SimpleAction::UseCopiedAttack {
+                    source_player,
+                    source_in_play_idx,
+                    attack_index,
+                    ..
+                } => state.in_play_pokemon[*source_player][*source_in_play_idx]
+                    .as_ref()
+                    .expect("Copied-attack source Pokemon must exist")
+                    .card
+                    .get_attacks()
+                    .get(*attack_index)
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Copied attack index must exist for source {}:{}",
+                            source_player, source_in_play_idx
+                        )
+                    })
+                    .title
+                    .clone(),
+                _ => panic!("This codepath should come from an attack."),
             };
-            let attack_name: String = state.in_play_pokemon[action.actor][0]
-                .as_ref()
-                .expect("Attacking Pokemon must be there if attacking")
-                .card
-                .get_attacks()
-                .get(*attack_index)
-                .unwrap_or_else(|| panic!("Index must exist if attacking with {}", attack_index))
-                .title
-                .clone();
 
             let attacking_ref = (action.actor, 0);
             let is_from_active_attack = true;

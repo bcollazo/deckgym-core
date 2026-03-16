@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::{
-    actions::attacks::{BenchSide, Mechanic},
+    actions::attacks::{BenchSide, CopyAttackSource, Mechanic},
     effects::{CardEffect, TurnEffect},
     models::{EnergyType, StatusCondition},
 };
@@ -35,8 +35,20 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Both Active Pokémon are now Confused.", todo_implementation);
     // map.insert("Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
     // map.insert("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
-    // map.insert("Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.", todo_implementation);
-    // map.insert("Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.",
+        Mechanic::CopyAttack {
+            source: CopyAttackSource::OpponentActive,
+            require_attacker_energy_match: false,
+        },
+    );
+    map.insert(
+        "Choose 1 of your opponent's Pokémon's attacks and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.",
+        Mechanic::CopyAttack {
+            source: CopyAttackSource::OpponentInPlay,
+            require_attacker_energy_match: true,
+        },
+    );
     map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", Mechanic::ManaphyOceanicGift);
     // map.insert("Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.", todo_implementation);
     map.insert(
@@ -1397,7 +1409,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // NEW MECHANICS INTRODUCES IN B2
     // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.", todo_implementation);
-    // map.insert("Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.",
+        Mechanic::CopyAttack {
+            source: CopyAttackSource::OwnBenchNonEx,
+            require_attacker_energy_match: true,
+        },
+    );
     map.insert(
         "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).",
         Mechanic::DiscardRandomGlobalEnergy { count: 2 },
