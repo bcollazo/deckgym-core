@@ -226,7 +226,7 @@ fn apply_pokemon_checkup(
         );
     }
 
-    // Burn damage happens before the recovery coin flip.
+    // Burn always deals 20 damage, then coin flip for healing
     for (i, (player, in_play_idx)) in checkup_targets.burned.iter().copied().enumerate() {
         if mutated_state.in_play_pokemon[player][in_play_idx].is_none() {
             continue;
