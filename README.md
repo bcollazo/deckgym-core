@@ -62,13 +62,13 @@ Once you have Rust installed (see https://www.rust-lang.org/tools/install) you s
 **Running Automated Test Suite**
 
 ```bash
-cargo test
+cargo test --features "tui test-utils"
 ```
 
 **Running Benchmarks**
 
 ```bash
-cargo bench
+cargo bench --features test-utils
 ```
 
 **Running Main Script**
@@ -144,7 +144,7 @@ The pre-commit hook runs:
 1. `cargo clippy --fix --allow-dirty --features tui -- -D warnings` - Auto-fixes linting issues
 2. `cargo fmt` - Auto-formats code
 3. `git add -u` - Adds clippy and formatting fixes to the commit
-4. `cargo test --features tui` - Runs the full test suite (fails commit if tests fail)
+4. `cargo test --features "tui test-utils"` - Runs the full test suite (fails commit if tests fail)
 
 This helps maintain code quality and prevents broken commits, but it's optional and each developer can choose whether to enable it.
 

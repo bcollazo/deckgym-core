@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::SimpleAction,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[test]
 fn test_team_discards_from_opponent_ability_pokemon_only() {

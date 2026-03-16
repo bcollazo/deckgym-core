@@ -1,6 +1,4 @@
-use common::init_decks;
-
-mod common;
+use deckgym::test_support::init_decks;
 
 #[test]
 fn test_hitmonlee_blastoise() {

@@ -1,11 +1,9 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[test]
 fn test_jolteon_ex_electromagnetic_wall_ko_triggers_promotion() {

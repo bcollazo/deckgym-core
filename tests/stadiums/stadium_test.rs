@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
     match get_card_by_enum(card_id) {

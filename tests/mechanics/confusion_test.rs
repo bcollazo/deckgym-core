@@ -1,11 +1,9 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard, StatusCondition},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test that a confused Pokémon can still attack but has different outcomes
 #[test]

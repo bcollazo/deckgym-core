@@ -1,11 +1,9 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Magnezone B1a 026 - Mirror Shot
 /// Should deal 90 damage and apply CoinFlipToBlockAttack effect

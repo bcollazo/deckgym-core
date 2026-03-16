@@ -30,6 +30,7 @@ crossterm = { version = "0.28", optional = true }
 
 [features]
 default = []
+test-utils = []
 python = ["pyo3"]
 tui = ["ratatui", "crossterm"]
 csv-export = ["csv"]

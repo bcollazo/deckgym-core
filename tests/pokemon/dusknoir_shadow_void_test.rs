@@ -1,11 +1,9 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 /// Test Dusknoir's Shadow Void ability moving damage correctly
 #[test]

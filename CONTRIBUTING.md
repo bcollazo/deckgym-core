@@ -73,7 +73,7 @@ cargo clippy --features tui -- -D warnings
 
 **Run the test suite:**
 ```sh
-cargo test --features tui
+cargo test --features "tui test-utils"
 ```
 
 Thank you for your contributions!

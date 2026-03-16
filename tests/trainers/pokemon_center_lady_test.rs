@@ -1,11 +1,9 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{Card, PlayedCard, StatusCondition, TrainerCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[test]
 fn test_pokemon_center_lady_heals_30_damage() {

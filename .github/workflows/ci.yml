@@ -31,7 +31,7 @@ jobs:
         run: cargo clippy --features tui -- -D warnings
 
       - name: Run tests
-        run: cargo test --features tui --all-targets
+        run: cargo test --features "tui test-utils" --all-targets
 
       - name: Run example 1
         run: cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 10 -v

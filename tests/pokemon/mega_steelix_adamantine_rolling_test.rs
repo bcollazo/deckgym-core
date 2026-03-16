@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{PlayedCard, EnergyType},
+    models::{EnergyType, PlayedCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
     let card = get_card_by_enum(card_id);
