@@ -1,5 +1,5 @@
 use log::trace;
-use rand::{rngs::StdRng, Rng};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 
 use crate::{
     actions::{
@@ -104,7 +104,7 @@ fn apply_attack_common_modifiers(
 
     // Handle confusion: 50% chance the attack fails (coin flip)
     if active.confused {
-        (probs, mutations) = apply_confusion_coin_flip(probs, mutations);
+        (probs, mutations) = apply_confusion_coin_flip(state, probs, mutations);
     }
 
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
@@ -184,10 +184,29 @@ fn forecast_attack_inner(
 }
 
 /// Applies confusion coin flip: 50% chance the attack fails (does nothing)
+/// If Will (FirstCoinFlipHeads) is active, confusion flip is guaranteed heads (attack succeeds)
 fn apply_confusion_coin_flip(
+    state: &State,
     base_probs: Probabilities,
     base_mutations: Mutations,
 ) -> (Probabilities, Mutations) {
+    // If Will is active, confusion flip is guaranteed heads - attack succeeds
+    if state.has_first_coin_flip_heads() {
+        // Wrap all base mutations to consume Will
+        let wrapped_mutations: Mutations = base_mutations
+            .into_iter()
+            .map(|mutation| {
+                let wrapper: super::apply_action_helpers::Mutation =
+                    Box::new(move |rng, state, action| {
+                        state.consume_first_coin_flip_heads();
+                        mutation(rng, state, action);
+                    });
+                wrapper
+            })
+            .collect();
+        return (base_probs, wrapped_mutations);
+    }
+
     // Confusion: 50% tails = attack fails, 50% heads = attack succeeds
     let mut probs = vec![0.5]; // First outcome: tails (confusion - attack fails)
     let mut mutations: Mutations = vec![Box::new(|_, _, _| {
@@ -252,23 +271,23 @@ fn forecast_effect_attack_by_attack_id(
     match attack_id {
         AttackId::A1115AbraTeleport => teleport_attack(),
         AttackId::A1136GolurkDoubleLariat => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
+            // 2 coins: outcomes [0 heads, 1 head, 2 heads] = [0, 100, 200] damage
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 100, 200])
         }
         AttackId::A1149GolemDoubleEdge => self_damage_attack(150, 50),
         AttackId::A1153MarowakExBonemerang => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }
         AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
         AttackId::A1178MawileCrunch => mawile_crunch(),
         AttackId::A1181MeltanAmass => self_charge_active_from_energies(0, vec![EnergyType::Metal]),
         AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
         AttackId::A1203KangaskhanDizzyPunch => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
+            // 2 coins: outcomes [0 heads, 1 head, 2 heads] = [0, 30, 60] damage
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
-        AttackId::A1a010PonytaStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![10, 40]),
-        AttackId::A1a011RapidashRisingLunge => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
-        }
+        AttackId::A1a010PonytaStomp => single_coin_damage_attack_with_will(state, 10, 40),
+        AttackId::A1a011RapidashRisingLunge => single_coin_damage_attack_with_will(state, 40, 100),
         AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
         AttackId::A1a026RaichuGigashock => {
             let opponent = (state.current_player + 1) % 2;
@@ -290,20 +309,24 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
         AttackId::A2084GliscorAcrobatics => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![20, 40, 60])
         }
         AttackId::A2098SneaselDoubleScratch => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A2118ProbopassTripleNose => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
-        }
+        AttackId::A2118ProbopassTripleNose => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![30, 80, 130, 180],
+        ),
         AttackId::A2131AmbipomDoubleHit => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 40, 80])
         }
-        AttackId::A2141ChatotFuryAttack => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
-        }
+        AttackId::A2141ChatotFuryAttack => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![0, 20, 40, 60],
+        ),
         AttackId::A2a001HeracrossSingleHornThrow => {
             probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
         }
@@ -315,18 +338,20 @@ fn forecast_effect_attack_by_attack_id(
             vec![0, 20, 40, 60, 80],
         ),
         AttackId::A2b044FlamigoDoubleKick => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 50, 100])
         }
         AttackId::A3002AlolanExeggutorTropicalHammer => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
+            single_coin_damage_attack_with_will(state, 0, 150)
         }
         AttackId::A3012DecidueyeExPierceThePain => direct_damage_if_damaged(100),
         AttackId::A3019SteeneeDoubleSpin => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
-        AttackId::A3020TsareenaThreeKickCombo => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
-        }
+        AttackId::A3020TsareenaThreeKickCombo => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![0, 50, 100, 150],
+        ),
         AttackId::A3040AlolanVulpixCallForthCold => {
             self_charge_active_from_energies(0, vec![EnergyType::Water])
         }
@@ -337,46 +362,48 @@ fn forecast_effect_attack_by_attack_id(
             vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
             vec![0, 20, 40, 60, 80],
         ),
-        AttackId::A3a003RowletFuryAttack => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
-        }
+        AttackId::A3a003RowletFuryAttack => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![0, 10, 20, 30],
+        ),
         AttackId::A3a019TapuKokoExPlasmaHurricane => {
             self_charge_active_from_energies(20, vec![EnergyType::Lightning])
         }
         AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
         AttackId::A3a044Poipole2Step => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
-        }
-        AttackId::A3a060TypeNullQuickBlow => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
-        }
+        AttackId::A3a047AlolanDugtrioExTripletHeadbutt => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![0, 60, 120, 180],
+        ),
+        AttackId::A3a060TypeNullQuickBlow => single_coin_damage_attack_with_will(state, 20, 40),
         AttackId::A3a061SilvallyBraveBuddies => brave_buddies_attack(state),
-        AttackId::A3a062CelesteelaMoombahton => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
-        }
+        AttackId::A3a062CelesteelaMoombahton => single_coin_damage_attack_with_will(state, 0, 100),
         AttackId::A1a001ExeggcuteGrowthSpurt => {
             self_charge_active_from_energies(0, vec![EnergyType::Grass])
         }
         AttackId::A3085CosmogTeleport => teleport_attack(),
         AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
         AttackId::A3b013IncineroarDarkestLariat => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 100, 200])
         }
         AttackId::A3b020VanilluxeDoubleSpin => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 80, 160])
         }
         AttackId::A3b057SnorlaxExFlopDownPunch => {
             damage_and_self_multiple_status_attack(130, vec![StatusCondition::Asleep])
         }
         AttackId::A3b058AipomDoubleHit => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 20, 40])
         }
-        AttackId::A4021ShuckleExTripleSlap => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
-        }
+        AttackId::A4021ShuckleExTripleSlap => multi_coin_damage_attack_with_will(
+            state,
+            vec![0.125, 0.375, 0.375, 0.125],
+            vec![0, 20, 40, 60],
+        ),
         AttackId::A4032MagbyToastyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
         }
@@ -385,11 +412,12 @@ fn forecast_effect_attack_by_attack_id(
         }
         AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4105BinacleDualChop => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![0, 30, 60])
         }
         AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
         AttackId::A4146UrsaringSwingAround => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
+            // Note: This is different - 60 base, +20 per head
+            multi_coin_damage_attack_with_will(state, vec![0.25, 0.5, 0.25], vec![60, 80, 100])
         }
         AttackId::A4a023MantykeSplashyToss => {
             attach_energy_to_benched_basic(acting_player, EnergyType::Water)
@@ -452,7 +480,7 @@ fn forecast_effect_attack_by_mechanic(
             }
         }
         Mechanic::ChanceStatusAttack { condition } => {
-            damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
+            damage_chance_status_attack(state, attack.fixed_damage, 0.5, *condition)
         }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
@@ -464,25 +492,30 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
         Mechanic::SelfDamage { amount } => self_damage_attack(attack.fixed_damage, *amount),
-        Mechanic::CoinFlipExtraDamage { extra_damage } => probabilistic_damage_attack(
-            vec![0.5, 0.5],
-            vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
-        ),
+        Mechanic::CoinFlipExtraDamage { extra_damage } => {
+            // Single coin: tails = base damage, heads = base + extra
+            single_coin_damage_attack_with_will(
+                state,
+                attack.fixed_damage,
+                attack.fixed_damage + extra_damage,
+            )
+        }
         Mechanic::CoinFlipExtraDamageOrSelfDamage {
             extra_damage,
             self_damage,
-        } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
+        } => extra_or_self_damage_attack(state, attack.fixed_damage, *extra_damage, *self_damage),
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
             damage_per_head,
             num_coins,
         } => damage_for_each_heads_attack(
+            state,
             *include_fixed_damage,
             *damage_per_head,
             *num_coins,
             attack,
         ),
-        Mechanic::CoinFlipNoEffect => coinflip_no_effect(attack.fixed_damage),
+        Mechanic::CoinFlipNoEffect => coinflip_no_effect(state, attack.fixed_damage),
         Mechanic::SelfDiscardEnergy { energies } => {
             self_energy_discard_attack(attack.fixed_damage, energies.clone())
         }
@@ -797,8 +830,24 @@ fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutatio
     }))
 }
 
-fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {
-    probabilistic_damage_attack(vec![0.5, 0.5], vec![fixed_damage, 0])
+fn coinflip_no_effect(state: &State, fixed_damage: u32) -> (Probabilities, Mutations) {
+    // CoinFlipNoEffect: heads = damage, tails = no damage
+    // Outcomes: [heads (damage), tails (no damage)]
+    if state.has_first_coin_flip_heads() {
+        // Will active: first flip guaranteed heads, so always do damage
+        // Also need to consume Will after use
+        let mutation: super::apply_action_helpers::Mutation = Box::new(move |_, state, action| {
+            state.consume_first_coin_flip_heads();
+            active_damage_mutation(fixed_damage)(
+                &mut rand::rngs::StdRng::from_entropy(),
+                state,
+                action,
+            );
+        });
+        (vec![1.0], vec![mutation])
+    } else {
+        probabilistic_damage_attack(vec![0.5, 0.5], vec![fixed_damage, 0])
+    }
 }
 
 fn celebi_powerful_bloom(state: &State) -> (Probabilities, Mutations) {
@@ -1113,6 +1162,7 @@ fn generate_energy_distributions(fire_bench_idx: &[usize], heads: usize) -> Vec<
 }
 
 fn damage_for_each_heads_attack(
+    state: &State,
     include_fixed_damage: bool,
     damage_per_head: u32,
     num_coins: usize,
@@ -1135,7 +1185,7 @@ fn damage_for_each_heads_attack(
         damages.push(fixed_damage + damage_per_head * heads_count as u32);
     }
 
-    probabilistic_damage_attack(probabilities, damages)
+    multi_coin_damage_attack_with_will(state, probabilities, damages)
 }
 
 /// Deal damage and attach energy to a pokemon of choice in the bench.
@@ -1169,11 +1219,22 @@ pub(crate) fn energy_bench_attack(
 }
 
 /// Used for attacks that on heads deal extra damage, on tails deal self damage.
+/// Outcomes: [heads (extra damage), tails (self damage)]
 fn extra_or_self_damage_attack(
+    state: &State,
     base_damage: u32,
     extra_damage: u32,
     self_damage: u32,
 ) -> (Probabilities, Mutations) {
+    if state.has_first_coin_flip_heads() {
+        // Will active: first flip guaranteed heads, always extra damage
+        let mutations: Mutations = vec![Box::new(move |rng, state, action| {
+            state.consume_first_coin_flip_heads();
+            active_damage_mutation(base_damage + extra_damage)(rng, state, action);
+        })];
+        return (vec![1.0], mutations);
+    }
+
     let probabilities = vec![0.5, 0.5];
     let mutations: Mutations = vec![
         active_damage_mutation(base_damage + extra_damage),
@@ -1186,10 +1247,25 @@ fn extra_or_self_damage_attack(
 }
 
 fn damage_chance_status_attack(
+    state: &State,
     damage: u32,
     probability_of_status: f64,
     status: StatusCondition,
 ) -> (Probabilities, Mutations) {
+    // Outcomes: [heads (apply status), tails (no status)]
+    if state.has_first_coin_flip_heads() && probability_of_status == 0.5 {
+        // Will active: first flip guaranteed heads, always apply status
+        let status_effect = build_status_effect(status);
+        let mutations: Mutations = vec![active_damage_effect_mutation(
+            damage,
+            move |rng, state, action| {
+                state.consume_first_coin_flip_heads();
+                status_effect(rng, state, action);
+            },
+        )];
+        return (vec![1.0], mutations);
+    }
+
     let probabilities = vec![probability_of_status, 1.0 - probability_of_status];
     let mutations: Mutations = vec![
         active_damage_effect_mutation(damage, build_status_effect(status)),
@@ -1718,6 +1794,63 @@ fn damage_and_card_effect_attack(
             ];
             (probabilities, mutations)
         }
+    }
+}
+
+/// Multi-coin damage attack with Will support.
+/// Outcomes are indexed by number of heads: [0 heads, 1 head, 2 heads, ...]
+/// With Will active, removes the 0-heads outcome and consumes Will.
+fn multi_coin_damage_attack_with_will(
+    state: &State,
+    probabilities: Vec<f64>,
+    damages: Vec<u32>,
+) -> (Probabilities, Mutations) {
+    if state.has_first_coin_flip_heads() && probabilities.len() > 1 {
+        // Remove 0-heads outcome (first element)
+        let filtered_probs: Vec<f64> = probabilities.iter().skip(1).copied().collect();
+        let filtered_damages: Vec<u32> = damages.iter().skip(1).copied().collect();
+
+        // Renormalize probabilities
+        let total: f64 = filtered_probs.iter().sum();
+        let normalized: Vec<f64> = filtered_probs.iter().map(|p| p / total).collect();
+
+        // Create mutations that consume Will
+        let mutations: Mutations = filtered_damages
+            .into_iter()
+            .map(|damage| {
+                let m: super::apply_action_helpers::Mutation =
+                    Box::new(move |rng, state, action| {
+                        state.consume_first_coin_flip_heads();
+                        active_damage_mutation(damage)(rng, state, action);
+                    });
+                m
+            })
+            .collect();
+
+        (normalized, mutations)
+    } else {
+        probabilistic_damage_attack(probabilities, damages)
+    }
+}
+
+/// Single coin damage attack with Will support.
+/// Outcomes: [tails_damage, heads_damage] - heads is index 1
+/// With Will active, only the heads outcome is possible.
+fn single_coin_damage_attack_with_will(
+    state: &State,
+    tails_damage: u32,
+    heads_damage: u32,
+) -> (Probabilities, Mutations) {
+    if state.has_first_coin_flip_heads() {
+        // Only heads outcome
+        let mutation: super::apply_action_helpers::Mutation =
+            Box::new(move |rng, state, action| {
+                state.consume_first_coin_flip_heads();
+                active_damage_mutation(heads_damage)(rng, state, action);
+            });
+        (vec![1.0], vec![mutation])
+    } else {
+        probabilistic_damage_attack(vec![0.5, 0.5], vec![tails_damage, heads_damage])
     }
 }
 
@@ -2531,7 +2664,7 @@ mod tests {
             is_stack: false,
         };
 
-        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        let (_probs, mut muts) = extra_or_self_damage_attack(&state, 40, 40, 20);
         // Tails outcome: base damage + self damage
         let mutation = muts.remove(1);
         mutation(&mut rng, &mut state, &action);
@@ -2584,7 +2717,7 @@ mod tests {
             is_stack: false,
         };
 
-        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        let (_probs, mut muts) = extra_or_self_damage_attack(&state, 40, 40, 20);
         // Tails outcome: base damage + self damage
         let mutation = muts.remove(1);
         mutation(&mut rng, &mut state, &action);

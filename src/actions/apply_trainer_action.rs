@@ -156,10 +156,11 @@ pub fn forecast_trainer_action(
             arven_outcomes(acting_player, state)
         }
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
-            electric_generator_outcomes()
+            electric_generator_outcomes(state)
         }
         CardId::B2a088Team | CardId::B2a105Team => doutcome(team_effect),
-        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
+        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state),
+        CardId::A4156Will => doutcome(will_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -270,7 +271,32 @@ fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
-fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
+fn lucky_ice_pop_outcomes(state: &State) -> (Probabilities, Mutations) {
+    // Lucky Ice Pop: Heal 20 damage. Flip a coin - heads = return to hand, tails = stay in discard
+    // Outcomes: [heads (return to hand), tails (stay in discard)]
+    if state.has_first_coin_flip_heads() {
+        // Will active: first flip guaranteed heads, always return to hand
+        let mut outcomes: Mutations = vec![];
+        outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+            state.consume_first_coin_flip_heads();
+            if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+                active.heal(20);
+            }
+            // Return card to hand (heads)
+            if let SimpleAction::Play { trainer_card } = &action.action {
+                let card = Card::Trainer(trainer_card.clone());
+                if let Some(pos) = state.discard_piles[action.actor]
+                    .iter()
+                    .position(|c| *c == card)
+                {
+                    state.discard_piles[action.actor].remove(pos);
+                    state.hands[action.actor].push(card);
+                }
+            }
+        }));
+        return (vec![1.0], outcomes);
+    }
+
     let probabilities = vec![0.5, 0.5];
     let mut outcomes: Mutations = vec![];
 
@@ -302,7 +328,32 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
     (probabilities, outcomes)
 }
 
-fn electric_generator_outcomes() -> (Probabilities, Mutations) {
+fn electric_generator_outcomes(state: &State) -> (Probabilities, Mutations) {
+    // Electric Generator: Flip a coin - heads = attach Lightning energy, tails = nothing
+    // Outcomes: [tails (nothing), heads (attach)]
+    if state.has_first_coin_flip_heads() {
+        // Will active: first flip guaranteed heads, always attach
+        let mut outcomes: Mutations = vec![];
+        outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+            state.consume_first_coin_flip_heads();
+            let possible_moves = state
+                .enumerate_bench_pokemon(action.actor)
+                .filter(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning))
+                .map(|(in_play_idx, _)| SimpleAction::Attach {
+                    attachments: vec![(1, EnergyType::Lightning, in_play_idx)],
+                    is_turn_energy: false,
+                })
+                .collect::<Vec<_>>();
+
+            if !possible_moves.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, possible_moves));
+            }
+        }));
+        return (vec![1.0], outcomes);
+    }
+
     let probabilities = vec![0.5, 0.5];
     let mut outcomes: Mutations = vec![];
 
@@ -1068,4 +1119,12 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
     }
 
     (probabilities, outcomes)
+}
+
+/// Will trainer card effect:
+/// "The next time you flip any number of coins for the effect of an attack,
+/// Ability, or Trainer card after using this card on this turn, the first
+/// coin flip will definitely be heads."
+fn will_effect(_: &mut StdRng, state: &mut State, _action: &Action) {
+    state.add_turn_effect(TurnEffect::FirstCoinFlipHeads, 0);
 }

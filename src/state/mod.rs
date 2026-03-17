@@ -280,6 +280,21 @@ impl State {
             .unwrap_or_default()
     }
 
+    /// Checks if the current player has the FirstCoinFlipHeads (Will) effect active
+    pub(crate) fn has_first_coin_flip_heads(&self) -> bool {
+        self.get_current_turn_effects()
+            .iter()
+            .any(|e| matches!(e, TurnEffect::FirstCoinFlipHeads))
+    }
+
+    /// Removes the FirstCoinFlipHeads (Will) effect from the current turn.
+    /// Called when the player's first coin flip sequence completes.
+    pub(crate) fn consume_first_coin_flip_heads(&mut self) {
+        if let Some(effects) = self.turn_effects.get_mut(&self.turn_count) {
+            effects.retain(|e| !matches!(e, TurnEffect::FirstCoinFlipHeads));
+        }
+    }
+
     pub fn enumerate_in_play_pokemon(
         &self,
         player: usize,

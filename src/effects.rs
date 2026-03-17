@@ -57,4 +57,8 @@ pub enum TurnEffect {
         target_in_play_idx: usize,
         amount: u32,
     },
+    /// Will trainer card effect: The next time this player flips any number of coins
+    /// for the effect of an attack, Ability, or Trainer card, the first coin flip
+    /// will definitely be heads. Consumed after the first coin flip sequence.
+    FirstCoinFlipHeads,
 }
