@@ -4,9 +4,12 @@ use log::warn;
 use num_format::{Locale, ToFormattedString};
 use rayon::prelude::*;
 use std::io::Write;
+use std::path::PathBuf;
 use uuid::Uuid;
 
 use crate::{
+    data_exporter::DataExporter,
+    optimize::{ParallelConfig, SimulationConfig},
     players::{create_players, fill_code_array, PlayerCode},
     simulation_event_handler::{
         CompositeSimulationEventHandler, SimulationEventHandler, StatsCollector,
@@ -58,7 +61,7 @@ pub struct Simulation {
     player_codes: Vec<PlayerCode>,
     num_simulations: u32,
     seed: Option<u64>,
-    handler_factories: Vec<fn() -> Box<dyn SimulationEventHandler>>,
+    handler_factories: Vec<Box<dyn Fn() -> Box<dyn SimulationEventHandler> + Send + Sync>>,
     parallel: bool,
     num_threads: Option<usize>,
     event_handler: Option<CompositeSimulationEventHandler>,
@@ -141,7 +144,16 @@ impl Simulation {
     }
 
     pub fn register<T: SimulationEventHandler + Default + 'static>(mut self) -> Self {
-        self.handler_factories.push(|| Box::new(T::default()));
+        self.handler_factories
+            .push(Box::new(|| Box::new(T::default())));
+        self
+    }
+
+    pub fn register_with_closure<F>(mut self, factory: F) -> Self
+    where
+        F: Fn() -> Box<dyn SimulationEventHandler> + Send + Sync + 'static,
+    {
+        self.handler_factories.push(Box::new(factory));
         self
     }
 
@@ -249,44 +261,66 @@ impl Simulation {
     }
 }
 
-/// Legacy functional API for backwards compatibility
+/// Registers DataExporter with the given output folder
+fn register_data_exporter(simulation: Simulation, output_folder: String) -> Simulation {
+    let output_path = PathBuf::from(output_folder);
+
+    // Create the output folder if it doesn't exist
+    if let Err(e) = std::fs::create_dir_all(&output_path) {
+        panic!(
+            "Failed to create data output folder {:?}: {}",
+            output_path, e
+        );
+    }
+
+    warn!("Exporting simulation data to: {:?}", output_path);
+
+    simulation.register_with_closure(move || Box::new(DataExporter::new(output_path.clone())))
+}
+
+/// Functional API for running simulations
 pub fn simulate(
     deck_a_path: &str,
     deck_b_path: &str,
-    players: Option<Vec<PlayerCode>>,
-    num_simulations: u32,
-    seed: Option<u64>,
-    parallel: bool,
-    num_threads: Option<usize>,
+    sim_config: SimulationConfig,
+    parallel_config: ParallelConfig,
 ) {
-    let player_codes = fill_code_array(players);
+    let player_codes = fill_code_array(sim_config.players);
 
     warn!(
         "Running {} games with players{}:",
-        num_simulations.to_formatted_string(&Locale::en),
-        if parallel { " (parallel)" } else { "" }
+        sim_config.num_games.to_formatted_string(&Locale::en),
+        if parallel_config.enabled {
+            " (parallel)"
+        } else {
+            ""
+        }
     );
     warn!("\tPlayer 0: {:?}({})", player_codes[0], deck_a_path);
     warn!("\tPlayer 1: {:?}({})", player_codes[1], deck_b_path);
-    if let Some(threads) = num_threads {
+    if let Some(threads) = parallel_config.num_threads {
         warn!("\tThreads: {}", threads);
     }
 
     // Create progress bar
-    let pb = create_progress_bar(num_simulations as u64);
+    let pb = create_progress_bar(sim_config.num_games as u64);
     pb.tick(); // Ensure progress bar is drawn immediately
 
     let mut simulation = Simulation::new(
         deck_a_path,
         deck_b_path,
         player_codes,
-        num_simulations,
-        seed,
-        parallel,
-        num_threads,
+        sim_config.num_games,
+        sim_config.seed,
+        parallel_config.enabled,
+        parallel_config.num_threads,
     )
     .expect("Failed to create simulation");
+
     simulation = simulation.register::<StatsCollector>();
+    if let Some(output_folder) = sim_config.data_output {
+        simulation = register_data_exporter(simulation, output_folder);
+    }
 
     let pb_clone = pb.clone();
     simulation = simulation.with_callback(move || pb_clone.inc(1));
