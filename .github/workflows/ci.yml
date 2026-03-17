@@ -22,13 +22,13 @@ jobs:
           toolchain: stable
 
       - name: Build artifacts
-        run: cargo build --features tui --all-targets
+        run: cargo build --features "tui test-utils" --all-targets
 
       - name: Check formatting
         run: cargo fmt -- --check
 
       - name: Run clippy
-        run: cargo clippy --features tui -- -D warnings
+        run: cargo clippy --features "tui test-utils" -- -D warnings
 
       - name: Run tests
         run: cargo test --features "tui test-utils" --all-targets
