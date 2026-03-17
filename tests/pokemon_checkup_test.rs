@@ -1,15 +1,13 @@
 use std::panic::{catch_unwind, AssertUnwindSafe};
 
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     effects::CardEffect,
     models::{PlayedCard, StatusCondition},
     state::GameOutcome,
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 #[derive(Clone, Copy, Debug)]
 enum RemovalSource {
