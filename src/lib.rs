@@ -20,8 +20,10 @@ pub mod simulation_event_handler;
 pub mod stadiums;
 pub mod state;
 pub mod temp_deck;
-pub mod test_helpers; // TODO: Compile/Expose only in test mode?
 pub mod tools;
+
+#[cfg(any(test, feature = "test-utils"))]
+pub mod test_support;
 
 pub use ability_ids::AbilityId;
 pub use deck::Deck;
