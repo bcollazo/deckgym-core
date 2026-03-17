@@ -29,6 +29,7 @@ pub enum Mechanic {
         name: String,
     },
     SearchToBenchBasic,
+    SearchRandomPokemonToHand,
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
@@ -48,7 +49,14 @@ pub enum Mechanic {
         damage_per_hit: u32,
     },
     DiscardEnergyFromOpponentActive,
+    CoinFlipDiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
+        extra_damage: u32,
+    },
+    ExtraDamageIfOpponentHasSpecialCondition {
+        extra_damage: u32,
+    },
+    ExtraDamageIfSupportPlayedThisTurn {
         extra_damage: u32,
     },
     SelfDamage {
@@ -156,6 +164,9 @@ pub enum Mechanic {
         amount: u8,
     },
     SelfDiscardAllEnergy,
+    SelfDiscardAllTypeEnergy {
+        energy_type: EnergyType,
+    },
     SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
         energy_type: EnergyType,
         damage: u32,
@@ -214,6 +225,23 @@ pub enum Mechanic {
         self_damage: u32,
     },
     ShuffleOpponentActiveIntoDeck,
+    KnockBackOpponentActive,
+    FlipUntilTailsDamage {
+        damage_per_heads: u32,
+    },
+    DirectDamageIfDamaged {
+        damage: u32,
+    },
+    AttachEnergyToBenchedBasic {
+        energy_type: EnergyType,
+    },
+    DamageAndDiscardOpponentDeck {
+        damage: u32,
+        discard_count: usize,
+    },
+    MegaAmpharosExLightningLancer,
+    OminousClaw,
+    DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
     CopyAttack {
