@@ -22,9 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v6
         with:
@@ -36,7 +33,7 @@ jobs:
         run: uv sync --no-install-project
 
       - name: Build and install deckgym bindings
-        run: uv run --with maturin maturin develop --features python
+        run: uv run --no-project --with maturin maturin develop --features python
 
       - name: Run tests
-        run: uv run pytest python/deckgym/tests
+        run: uv run --no-project pytest python/deckgym/tests
