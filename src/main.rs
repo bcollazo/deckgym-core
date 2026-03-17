@@ -95,17 +95,19 @@ enum Commands {
 }
 
 /// Simulate games between one deck and multiple decks in a folder
-#[allow(clippy::too_many_arguments)]
 fn simulate_against_folder(
     deck_a_path: &str,
     decks_folder: &str,
-    players: Option<Vec<PlayerCode>>,
-    total_num_simulations: u32,
-    seed: Option<u64>,
-    parallel: bool,
-    num_threads: Option<usize>,
-    data_output: Option<String>,
+    sim_config: SimulationConfig,
+    parallel_config: ParallelConfig,
 ) {
+    let total_num_simulations = sim_config.num_games;
+    let players = sim_config.players;
+    let seed = sim_config.seed;
+    let data_output = sim_config.data_output;
+    let parallel = parallel_config.enabled;
+    let num_threads = parallel_config.num_threads;
+
     // Read all deck files from the folder
     let deck_paths: Vec<String> = fs::read_dir(decks_folder)
         .expect("Failed to read decks folder")
@@ -223,12 +225,16 @@ fn main() {
                 simulate_against_folder(
                     &deck_a,
                     &deck_b_or_folder,
-                    players,
-                    num,
-                    seed,
-                    parallel,
-                    threads,
-                    data_output,
+                    SimulationConfig {
+                        num_games: num,
+                        players,
+                        seed,
+                        data_output,
+                    },
+                    ParallelConfig {
+                        enabled: parallel,
+                        num_threads: threads,
+                    },
                 );
             } else {
                 simulate(
