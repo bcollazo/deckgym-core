@@ -32,8 +32,11 @@ jobs:
       - name: Install Python dependencies
         run: uv sync --no-install-project
 
-      - name: Build and install deckgym bindings
-        run: uv run --no-project --with maturin maturin develop --features python
+      - name: Install maturin into test venv
+        run: uv pip install --python .venv/bin/python maturin
+
+      - name: Build and install deckgym bindings into venv
+        run: .venv/bin/maturin develop --features python
 
       - name: Run tests
-        run: uv run --no-project pytest python/deckgym/tests
+        run: .venv/bin/pytest python/deckgym/tests
