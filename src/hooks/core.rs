@@ -222,13 +222,9 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         })
         .map(|(i, _)| i)
         .collect();
-    for &idx in &barrier_indices {
+    for idx in barrier_indices {
         debug!("Metal Core Barrier: Discarding at end of opponent's turn");
         state.discard_tool(tool_owner, idx);
-    }
-    if !barrier_indices.is_empty() {
-        // Resolve knockouts only after all end-of-turn barrier discards have finished.
-        crate::actions::handle_knockouts(state, (tool_owner, 0), false);
     }
 
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)
