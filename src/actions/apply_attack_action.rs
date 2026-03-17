@@ -1362,17 +1362,17 @@ fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> (Probabilities, Muta
             move |_, state, action| {
                 let opponent = (action.actor + 1) % 2;
                 let mut to_discard = Vec::new();
+                let mut remaining = state.get_active(opponent).attached_energy.clone();
 
                 // Collect energies to discard
                 for _ in 0..energies_to_remove {
-                    let active = state.get_active(opponent);
-                    if active.attached_energy.is_empty() {
+                    if remaining.is_empty() {
                         break; // No more energy to discard
                     }
                     // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
                     // This is a simplification - the card text says "random Energy" but we always
                     // remove the last one for performance reasons.
-                    to_discard.push(*active.attached_energy.last().unwrap());
+                    to_discard.push(remaining.pop().expect("already checked non-empty"));
                 }
 
                 // Discard collected energies properly (moves to discard pile)
@@ -2807,5 +2807,30 @@ mod test {
         );
         threshold_mutations.remove(0)(&mut rng, &mut at_threshold, &action);
         assert_eq!(at_threshold.get_active(1).get_remaining_hp(), 20);
+    }
+
+    #[test]
+    fn test_vaporeon_hyper_whirlpool_discards_without_duplicate_energy_panic() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let attacker = get_card_by_enum(CardId::A1080Vaporeon);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+
+        let defender = get_card_by_enum(CardId::A1001Bulbasaur);
+        state.in_play_pokemon[1][0] = Some(
+            to_playable_card(&defender, false)
+                .with_energy(vec![EnergyType::Water, EnergyType::Lightning]),
+        );
+
+        let (_probs, mut mutations) = vaporeon_hyper_whirlpool(&state, 60);
+        mutations.remove(2)(&mut rng, &mut state, &action);
+
+        assert_eq!(state.get_active(1).attached_energy.len(), 0);
     }
 }
