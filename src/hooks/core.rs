@@ -4,10 +4,12 @@ use std::vec;
 use log::debug;
 
 use crate::{
-    actions::SimpleAction,
+    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, SimpleAction},
+    card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
-    tool_ids::ToolId,
+    stadiums::get_training_area_damage_bonus,
+    tools::has_tool,
     AbilityId, State,
 };
 
@@ -39,7 +41,7 @@ pub fn is_ultra_beast(pokemon_name: &str) -> bool {
 }
 
 pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> PlayedCard {
-    let total_hp = match card {
+    let base_hp = match card {
         Card::Pokemon(pokemon_card) => pokemon_card.hp,
         Card::Trainer(trainer_card) => {
             if is_fossil(trainer_card) {
@@ -49,14 +51,7 @@ pub fn to_playable_card(card: &crate::models::Card, played_this_turn: bool) -> P
             }
         }
     };
-    PlayedCard::new(
-        card.clone(),
-        total_hp,
-        total_hp,
-        vec![],
-        played_this_turn,
-        vec![],
-    )
+    PlayedCard::new(card.clone(), 0, base_hp, vec![], played_this_turn, vec![])
 }
 
 pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
@@ -72,103 +67,9 @@ pub(crate) fn get_stage(played_card: &PlayedCard) -> u8 {
     }
 }
 
-/// Check if a Pokemon in play can evolve into a card from hand
-/// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+// TODO: Deprecated. Use PokemonCard::can_evolve_into instead.
 pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) -> bool {
-    if let Card::Pokemon(evolution_pokemon) = evolution_card {
-        if let Some(evolves_from) = &evolution_pokemon.evolves_from {
-            // Normal evolution: the card evolves from the base Pokemon's name
-            if base_pokemon.get_name() == *evolves_from {
-                return true;
-            }
-
-            // Special case: Eevee ex's Veevee 'volve ability
-            // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
-            if let Some(ability_id) = AbilityId::from_pokemon_id(&base_pokemon.card.get_id()[..]) {
-                if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee" {
-                    return true;
-                }
-            }
-        }
-    }
-    false
-}
-
-pub(crate) fn on_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_id: ToolId) {
-    match tool_id {
-        ToolId::A2147GiantCape => {
-            // Add +20 to remaining_hp and total_hp
-            let card = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Active Pokemon should be there");
-            card.remaining_hp += 20;
-            card.total_hp += 20;
-        }
-        ToolId::A3147LeafCape => {
-            // Add +30 to remaining_hp and total_hp (only for Grass pokemon)
-            let card = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Active Pokemon should be there");
-            card.remaining_hp += 30;
-            card.total_hp += 30;
-        }
-        // Many tools do nothing on attach
-        ToolId::A2148RockyHelmet
-        | ToolId::A3146PoisonBarb
-        | ToolId::A3a065ElectricalCord
-        | ToolId::A4a067InflatableBoat
-        | ToolId::A4b318ElectricalCord
-        | ToolId::A4b319ElectricalCord
-        | ToolId::B1219HeavyHelmet => {}
-    }
-}
-
-/// Called when energy is attached to a Pokémon
-pub(crate) fn on_attach_energy(
-    state: &mut State,
-    actor: usize,
-    in_play_idx: usize,
-    energy_type: EnergyType,
-    is_turn_energy: bool,
-) {
-    let pokemon = state.in_play_pokemon[actor][in_play_idx]
-        .as_ref()
-        .expect("Pokemon should be there if attaching energy to it");
-
-    // Check for Darkrai ex's Nightmare Aura ability
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
-        if ability_id == AbilityId::A2110DarkraiExNightmareAura
-            && energy_type == EnergyType::Darkness
-            && is_turn_energy
-        {
-            // Deal 20 damage to opponent's active Pokémon
-            debug!("Darkrai ex's Nightmare Aura: Dealing 20 damage to opponent's active Pokemon");
-            let opponent = (actor + 1) % 2;
-            if let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_mut() {
-                opponent_active.apply_damage(20);
-            }
-        }
-
-        // Check for Komala's Comatose ability
-        if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 {
-            // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
-            debug!("Komala's Comatose: Putting Komala to sleep");
-            let komala = state.get_active_mut(actor);
-            komala.asleep = true;
-        }
-
-        // Check for Cresselia ex's Lunar Plumage ability
-        if ability_id == AbilityId::PA037CresseliaExLunarPlumage
-            && energy_type == EnergyType::Psychic
-        {
-            // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
-            debug!("Cresselia ex's Lunar Plumage: Healing 20 damage");
-            let pokemon = state.in_play_pokemon[actor][in_play_idx]
-                .as_mut()
-                .expect("Pokemon should be there if attaching energy to it");
-            pokemon.heal(20);
-        }
-    }
+    base_pokemon.card.can_evolve_into(evolution_card)
 }
 
 /// Called when a Pokémon evolves
@@ -200,9 +101,25 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                 state.move_generation_stack.push((actor, possible_moves));
             }
         }
+        if ability_id == AbilityId::B1a012CharmeleonIgnition {
+            // Ignition: When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn,
+            // you may take 1 [R] Energy from your Energy Zone and attach it to this Pokémon.
+            // Find the active Pokémon (where evolution just happened) and attach energy
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::Attach {
+                        attachments: vec![(1, EnergyType::Fire, 0)], // Attach to active (index 0)
+                        is_turn_energy: false, // From ability, not turn energy
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
+        }
     }
 }
 
+/// Called when a basic Pokémon is played to the bench from hand
 pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     // Check if active Pokémon has an end-of-turn ability
     let active = state.get_active(player_ending_turn);
@@ -226,6 +143,90 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         }
     }
 
+    // Process delayed damage effects on active Pokemon
+    // Delayed damage triggers at the end of the opponent's turn (when their turn ends, the effect expires)
+    let total_delayed_damage: u32 = state
+        .get_active(player_ending_turn)
+        .get_effects()
+        .iter()
+        .filter_map(|(effect, _)| {
+            if let CardEffect::DelayedDamage { amount } = effect {
+                Some(*amount)
+            } else {
+                None
+            }
+        })
+        .sum();
+
+    if total_delayed_damage > 0 {
+        debug!(
+            "Delayed damage: Applying {} damage to active Pokemon",
+            total_delayed_damage
+        );
+        // The opponent is the source of the delayed damage (they used the attack that caused it)
+        let opponent = (player_ending_turn + 1) % 2;
+        crate::actions::handle_damage(
+            state,
+            (opponent, 0), // Opponent's active Pokemon as the source
+            &[(total_delayed_damage, player_ending_turn, 0)], // Target is current player's active
+            false,         // Not from an active attack (it's a delayed effect)
+            None,          // No attack name
+        );
+    }
+
+    // Process delayed spot damage effects from turn effects (e.g. Meowscarada ex's Flower Trick).
+    // These target a board position, so they hit whichever Pokémon occupies the spot at trigger time.
+    let triggered_spot_damages: Vec<(usize, usize, usize, u32)> = state
+        .get_current_turn_effects()
+        .into_iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::DelayedSpotDamage {
+                source_player,
+                target_player,
+                target_in_play_idx,
+                amount,
+            } if target_player == player_ending_turn => {
+                Some((source_player, target_player, target_in_play_idx, amount))
+            }
+            _ => None,
+        })
+        .collect();
+
+    for (source_player, target_player, target_in_play_idx, amount) in triggered_spot_damages {
+        if state.in_play_pokemon[target_player][target_in_play_idx].is_none() {
+            continue;
+        }
+
+        debug!(
+            "Delayed spot damage: Applying {} damage to player {} slot {}",
+            amount, target_player, target_in_play_idx
+        );
+        crate::actions::handle_damage(
+            state,
+            (source_player, 0),
+            &[(amount, target_player, target_in_play_idx)],
+            false,
+            None,
+        );
+    }
+
+    // Discard Metal Core Barrier from the opponent's Pokémon at the end of this player's turn.
+    // ("discard it at the end of your opponent's turn" — the tool owner is the other player)
+    let tool_owner = (player_ending_turn + 1) % 2;
+    let barrier_indices: Vec<usize> = state.in_play_pokemon[tool_owner]
+        .iter()
+        .enumerate()
+        .filter(|(_, slot)| {
+            slot.as_ref()
+                .is_some_and(|p| has_tool(p, CardId::B2148MetalCoreBarrier))
+        })
+        .map(|(i, _)| i)
+        .collect();
+    for idx in barrier_indices {
+        debug!("Metal Core Barrier: Discarding at end of opponent's turn");
+        state.discard_tool(tool_owner, idx);
+    }
+
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)
     // Turn 1 is player 0's first turn, turn 2 is player 1's first turn
     if state.turn_count == 1 || state.turn_count == 2 {
@@ -246,10 +247,13 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         for in_play_idx in zeraora_indices {
             // At the end of your first turn, take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
             debug!("Zeraora's Thunderclap Flash: Attaching 1 Lightning Energy");
-            let zeraora = state.in_play_pokemon[player_ending_turn][in_play_idx]
-                .as_mut()
-                .expect("Zeraora should be there");
-            zeraora.attach_energy(&EnergyType::Lightning, 1);
+            state.attach_energy_from_zone(
+                player_ending_turn,
+                in_play_idx,
+                EnergyType::Lightning,
+                1,
+                false,
+            );
         }
     }
 }
@@ -284,15 +288,32 @@ fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Heavy Helmet");
-    if let Some(tool_id) = defending_pokemon.attached_tool {
-        if tool_id == ToolId::B1219HeavyHelmet {
-            if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
-                if pokemon_card.retreat_cost.len() >= 3 {
-                    debug!("Heavy Helmet: Reducing damage by 20");
-                    return 20;
-                }
+    if has_tool(defending_pokemon, CardId::B1219HeavyHelmet) {
+        if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
+            if pokemon_card.retreat_cost.len() >= 3 {
+                debug!("Heavy Helmet: Reducing damage by 20");
+                return 20;
             }
         }
+    }
+    0
+}
+
+fn get_metal_core_barrier_reduction(
+    state: &State,
+    (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack {
+        return 0;
+    }
+
+    let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
+        .as_ref()
+        .expect("Defending Pokemon should be there when checking Metal Core Barrier");
+    if has_tool(defending_pokemon, CardId::B2148MetalCoreBarrier) {
+        debug!("Metal Core Barrier: Reducing damage by 50");
+        return 50;
     }
     0
 }
@@ -321,15 +342,49 @@ fn get_intimidating_fang_reduction(
     0
 }
 
-fn get_exoskeleton_reduction(
+fn get_ability_damage_reduction(
     receiving_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
 ) -> u32 {
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
-        if ability_id == AbilityId::A4a044DonphanExoskeleton && is_from_active_attack {
-            return 20;
+    if let Some(ability) = receiving_pokemon.card.get_ability() {
+        if let Some(AbilityMechanic::ReduceDamageFromAttacks { amount }) =
+            ability_mechanic_from_effect(&ability.effect)
+        {
+            if is_from_active_attack {
+                debug!("ReduceDamageFromAttacks: Reducing damage by {}", amount);
+                return *amount;
+            }
         }
     }
+    0
+}
+
+fn get_ability_damage_increase(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_active_to_active: bool,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+
+    let Some(ability) = attacking_pokemon.card.get_ability() else {
+        return 0;
+    };
+
+    if let Some(AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost {
+        amount,
+        hp_threshold,
+    }) = ability_mechanic_from_effect(&ability.effect)
+    {
+        if attacking_pokemon.get_remaining_hp() <= *hp_threshold {
+            debug!(
+                "IncreaseDamageWhenRemainingHpAtMost: Increasing damage by {}",
+                amount
+            );
+            return *amount;
+        }
+    }
+
     0
 }
 
@@ -348,6 +403,10 @@ fn get_increased_turn_effect_modifiers(
         .iter()
         .map(|effect| match effect {
             TurnEffect::IncreasedDamage { amount } => *amount,
+            TurnEffect::IncreasedDamageForType {
+                amount,
+                energy_type,
+            } if attacking_pokemon.get_energy_type() == Some(*energy_type) => *amount,
             TurnEffect::IncreasedDamageAgainstEx { amount } if target_is_ex => *amount,
             TurnEffect::IncreasedDamageForEeveeEvolutions { amount }
                 if attacker_is_eevee_evolution =>
@@ -358,6 +417,20 @@ fn get_increased_turn_effect_modifiers(
                 amount,
                 pokemon_names,
             } => {
+                let attacker_name = attacking_pokemon.get_name();
+                if pokemon_names
+                    .iter()
+                    .any(|name| name.as_str() == attacker_name)
+                {
+                    *amount
+                } else {
+                    0
+                }
+            }
+            TurnEffect::IncreasedDamageForSpecificPokemonAgainstEx {
+                amount,
+                pokemon_names,
+            } if target_is_ex => {
                 let attacker_name = attacking_pokemon.get_name();
                 if pokemon_names
                     .iter()
@@ -424,6 +497,33 @@ fn get_reduced_card_effect_modifiers(
         .sum::<u32>()
 }
 
+fn get_turn_effect_damage_reduction(
+    state: &State,
+    target_player: usize,
+    target_pokemon: &crate::models::PlayedCard,
+    attacking_player: usize,
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+    let target_energy_type = target_pokemon.get_energy_type();
+    state
+        .get_current_turn_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::ReducedDamageForType {
+                amount,
+                energy_type,
+                player,
+            } if *player == target_player && target_energy_type == Some(*energy_type) => {
+                Some(*amount)
+            }
+            _ => None,
+        })
+        .sum::<u32>()
+}
+
 fn get_weakness_modifier(
     state: &State,
     is_active_to_active: bool,
@@ -434,6 +534,17 @@ fn get_weakness_modifier(
         return 0;
     }
     let receiving = state.get_active(target_player);
+
+    // Check if defender has NoWeakness effect active
+    if receiving
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::NoWeakness))
+    {
+        debug!("NoWeakness: Ignoring weakness damage");
+        return 0;
+    }
+
     if let Card::Pokemon(pokemon_card) = &receiving.card {
         if pokemon_card.weakness == attacking_pokemon.card.get_type() {
             debug!(
@@ -479,6 +590,20 @@ pub(crate) fn modify_damage(
             debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
             return 0;
         }
+        // Wartortle Shell Shield: prevent all damage when on bench
+        if ability_id == AbilityId::B1a018WartortleShellShield
+            && is_from_active_attack
+            && target_idx != 0
+        {
+            debug!("Shell Shield: Preventing all damage to benched Wartortle");
+            return 0;
+        }
+    }
+
+    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
+    if target_idx != 0 && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho) {
+        debug!("Protective Poncho: Preventing all damage to benched Pokémon");
+        return 0;
     }
 
     // Check for PreventAllDamageAndEffects (Shinx's Hide)
@@ -499,7 +624,12 @@ pub(crate) fn modify_damage(
     let intimidating_fang_reduction =
         get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
-    let exoskeleton_reduction = get_exoskeleton_reduction(receiving_pokemon, is_from_active_attack);
+    let metal_core_barrier_reduction =
+        get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
+    let ability_damage_reduction =
+        get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
+    let ability_damage_increase =
+        get_ability_damage_increase(attacking_pokemon, is_active_to_active);
     let increased_turn_effect_modifiers = get_increased_turn_effect_modifiers(
         state,
         is_active_to_active,
@@ -514,6 +644,13 @@ pub(crate) fn modify_damage(
     );
     let reduced_card_effect_modifiers =
         get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
+    let reduced_turn_effect_modifiers = get_turn_effect_damage_reduction(
+        state,
+        target_player,
+        receiving_pokemon,
+        attacking_player,
+        is_from_active_attack,
+    );
     let weakness_modifier =
         get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
 
@@ -526,28 +663,44 @@ pub(crate) fn modify_damage(
         0
     };
 
+    // Stadium damage bonus (e.g., Training Area for Stage 1 Pokemon)
+    // Only applies to attacks against the opponent's Active Pokemon
+    let stadium_damage_bonus = if is_active_to_active {
+        get_training_area_damage_bonus(state, get_stage(attacking_pokemon))
+    } else {
+        0
+    };
+
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, HeavyHelmet: {}, IntimidatingFang: {}, Exoskeleton: {}, TypeBoost: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
         increased_attack_specific_modifiers,
         reduced_card_effect_modifiers,
+        reduced_turn_effect_modifiers,
         heavy_helmet_reduction,
+        metal_core_barrier_reduction,
         intimidating_fang_reduction,
-        exoskeleton_reduction,
-        type_boost_bonus
+        ability_damage_reduction,
+        ability_damage_increase,
+        type_boost_bonus,
+        stadium_damage_bonus
     );
     (base_damage
         + weakness_modifier
+        + ability_damage_increase
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
-        + type_boost_bonus)
+        + type_boost_bonus
+        + stadium_damage_bonus)
         .saturating_sub(
             reduced_card_effect_modifiers
+                + reduced_turn_effect_modifiers
                 + heavy_helmet_reduction
+                + metal_core_barrier_reduction
                 + intimidating_fang_reduction
-                + exoskeleton_reduction,
+                + ability_damage_reduction,
         )
 }
 
@@ -593,7 +746,7 @@ fn calculate_type_boost_bonus(
     bonus
 }
 
-// Get the attack cost, considering opponent's abilities that modify attack costs (like Goomy's Sticky Membrane)
+// Get the attack cost, considering abilities and active card effects that modify attack costs.
 pub(crate) fn get_attack_cost(
     base_cost: &[EnergyType],
     state: &State,
@@ -612,6 +765,22 @@ pub(crate) fn get_attack_cost(
             }
         }
     }
+
+    // Check if attacking active has an effect that increases attack cost
+    let extra_colorless = state.in_play_pokemon[attacking_player][0]
+        .as_ref()
+        .map(|active| {
+            active
+                .get_active_effects()
+                .into_iter()
+                .map(|effect| match effect {
+                    CardEffect::IncreasedAttackCost { amount } => amount as usize,
+                    _ => 0,
+                })
+                .sum::<usize>()
+        })
+        .unwrap_or_default();
+    modified_cost.extend(vec![EnergyType::Colorless; extra_colorless]);
 
     modified_cost
 }
@@ -668,12 +837,7 @@ pub(crate) fn on_knockout(
         .expect("Pokemon should be there if knocked out");
 
     // Handle Electrical Cord
-    if matches!(
-        knocked_out_pokemon.attached_tool,
-        Some(ToolId::A3a065ElectricalCord)
-            | Some(ToolId::A4b318ElectricalCord)
-            | Some(ToolId::A4b319ElectricalCord)
-    ) {
+    if has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord) {
         // Only triggers if knocked out in active spot from an active attack
         if knocked_out_idx != 0 || !is_from_active_attack {
             return;
@@ -739,6 +903,29 @@ mod tests {
         pokemon.attached_energy = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
         let cost = vec![EnergyType::Colorless, EnergyType::Fire];
         assert!(contains_energy(&pokemon, &cost, &state, 0));
+    }
+
+    #[test]
+    fn test_get_attack_cost_with_increased_attack_cost_effect() {
+        let mut state = State::default();
+        let mut attacker = to_playable_card(&get_card_by_enum(CardId::A1001Bulbasaur), false);
+        attacker.add_effect(CardEffect::IncreasedAttackCost { amount: 2 }, 1);
+        state.in_play_pokemon[0][0] = Some(attacker);
+        state.in_play_pokemon[1][0] = Some(to_playable_card(
+            &get_card_by_enum(CardId::A1005Caterpie),
+            false,
+        ));
+
+        let base_cost = vec![EnergyType::Grass];
+        let modified = get_attack_cost(&base_cost, &state, 0);
+        assert_eq!(
+            modified,
+            vec![
+                EnergyType::Grass,
+                EnergyType::Colorless,
+                EnergyType::Colorless
+            ]
+        );
     }
 
     #[test]

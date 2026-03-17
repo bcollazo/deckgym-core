@@ -1,6 +1,5 @@
 use crate::{
     actions::Action,
-    generate_possible_actions,
     players::{create_players, Player, PlayerCode},
     Deck, Game, State,
 };
@@ -63,7 +62,7 @@ impl App {
 
             // Get initial state and possible actions
             let (current_actor, possible_actions) =
-                generate_possible_actions(&game.get_state_clone());
+                game.get_state_clone().generate_possible_actions();
 
             AppMode::Interactive {
                 game,
@@ -388,7 +387,7 @@ impl App {
 
                     // Refresh game state and possible actions for next turn
                     let (new_actor, new_actions) =
-                        generate_possible_actions(&game.get_state_clone());
+                        game.get_state_clone().generate_possible_actions();
                     *current_actor = new_actor;
                     *possible_actions = new_actions;
                 }
@@ -405,7 +404,7 @@ impl App {
 
                         // Refresh for next turn
                         let (new_actor, new_actions) =
-                            generate_possible_actions(&game.get_state_clone());
+                            game.get_state_clone().generate_possible_actions();
                         *current_actor = new_actor;
                         *possible_actions = new_actions;
                     }
@@ -428,7 +427,7 @@ impl App {
                 states,
                 current_index,
                 ..
-            } => generate_possible_actions(&states[*current_index]).1,
+            } => states[*current_index].generate_possible_actions().1,
             AppMode::Interactive {
                 possible_actions, ..
             } => possible_actions.clone(),
@@ -441,7 +440,7 @@ impl App {
                 states,
                 current_index,
                 ..
-            } => generate_possible_actions(&states[*current_index]).0,
+            } => states[*current_index].generate_possible_actions().0,
             AppMode::Interactive { current_actor, .. } => *current_actor,
         }
     }

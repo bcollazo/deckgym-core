@@ -11,6 +11,13 @@ pub enum BenchSide {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum CopyAttackSource {
+    OpponentActive,
+    OpponentInPlay,
+    OwnBenchNonEx,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Mechanic {
     SelfHeal {
         amount: u32,
@@ -21,15 +28,35 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
-    InflictStatusCondition {
-        condition: StatusCondition,
+    SearchToBenchBasic,
+    SearchRandomPokemonToHand,
+    SearchToHandSupporterCard,
+    InflictStatusConditions {
+        conditions: Vec<StatusCondition>,
+        target_opponent: bool,
     },
     ChanceStatusAttack {
         condition: StatusCondition,
     },
-    DiscardRandomGlobalEnergy,
+    DamageAllOpponentPokemon {
+        damage: u32,
+    },
+    DiscardRandomGlobalEnergy {
+        count: usize,
+    },
+    RandomDamageToOpponentPokemonPerSelfEnergy {
+        energy_type: EnergyType,
+        damage_per_hit: u32,
+    },
     DiscardEnergyFromOpponentActive,
+    CoinFlipDiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
+        extra_damage: u32,
+    },
+    ExtraDamageIfOpponentHasSpecialCondition {
+        extra_damage: u32,
+    },
+    ExtraDamageIfSupportPlayedThisTurn {
         extra_damage: u32,
     },
     SelfDamage {
@@ -55,6 +82,11 @@ pub enum Mechanic {
         required_extra_energy: Vec<EnergyType>,
         extra_damage: u32,
     },
+    ExtraDamageIfTypeEnergyInPlay {
+        energy_type: EnergyType,
+        minimum_count: usize,
+        extra_damage: u32,
+    },
     ExtraDamageIfBothHeads {
         extra_damage: u32,
     },
@@ -66,18 +98,61 @@ pub enum Mechanic {
         effect: TurnEffect,
         duration: u8,
     },
+    SelfChargeActive {
+        energies: Vec<EnergyType>,
+    },
+    ChargeYourTypeAnyWay {
+        energy_type: EnergyType,
+        count: usize,
+    },
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
     MegaBlazikenExMegaBurningAttack,
+    MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
     MagikarpWaterfallEvolution,
+    CoinFlipToBlockAttackNextTurn,
+    MoveAllEnergyTypeToBench {
+        energy_type: EnergyType,
+    },
     ChargeBench {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
     },
     VaporeonHyperWhirlpool,
+    ConditionalBenchDamage {
+        required_extra_energy: Vec<EnergyType>,
+        bench_damage: u32,
+        num_bench_targets: usize,
+        opponent: bool,
+    },
+    ExtraDamageForEachHeadsWithStatus {
+        include_fixed_damage: bool,
+        damage_per_head: u32,
+        num_coins: usize,
+        status: StatusCondition,
+    },
+    DamageAndMultipleCardEffects {
+        opponent: bool,
+        effects: Vec<CardEffect>,
+        duration: u8,
+    },
+    DamageReducedBySelfDamage,
+    ExtraDamagePerTrainerInOpponentDeck {
+        damage_per_trainer: u32,
+    },
+    ExtraDamagePerSupporterInDiscard {
+        damage_per_supporter: u32,
+    },
+    ExtraDamageIfCardInDiscard {
+        card_name: String,
+        extra_damage: u32,
+    },
+    DelayedSpotDamage {
+        amount: u32,
+    },
     // End Unique mechanics
     DamageAndCardEffect {
         opponent: bool,
@@ -85,7 +160,17 @@ pub enum Mechanic {
         duration: u8,
         probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
     },
+    DrawCard {
+        amount: u8,
+    },
     SelfDiscardAllEnergy,
+    SelfDiscardAllTypeEnergy {
+        energy_type: EnergyType,
+    },
+    SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
+        energy_type: EnergyType,
+        damage: u32,
+    },
     SelfDiscardRandomEnergy,
     AlsoBenchDamage {
         opponent: bool,
@@ -119,8 +204,18 @@ pub enum Mechanic {
         opponent: bool,
         damage_per_energy: u32,
     },
+    ExtraDamagePerRetreatCost {
+        damage_per_energy: u32,
+    },
     DamagePerEnergyAll {
         opponent: bool,
+        damage_per_energy: u32,
+    },
+    DiscardHandCards {
+        count: usize,
+    },
+    ExtraDamagePerSpecificEnergy {
+        energy_type: EnergyType,
         damage_per_energy: u32,
     },
     ExtraDamageIfToolAttached {
@@ -130,6 +225,27 @@ pub enum Mechanic {
         self_damage: u32,
     },
     ShuffleOpponentActiveIntoDeck,
+    KnockBackOpponentActive,
+    FlipUntilTailsDamage {
+        damage_per_heads: u32,
+    },
+    DirectDamageIfDamaged {
+        damage: u32,
+    },
+    AttachEnergyToBenchedBasic {
+        energy_type: EnergyType,
+    },
+    DamageAndDiscardOpponentDeck {
+        damage: u32,
+        discard_count: usize,
+    },
+    MegaAmpharosExLightningLancer,
+    OminousClaw,
+    DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    CopyAttack {
+        source: CopyAttackSource,
+        require_attacker_energy_match: bool,
+    },
 }

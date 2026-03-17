@@ -225,7 +225,7 @@ fn generate_grid_combinations(
         current: value_functions::ValueFunctionParams,
         remaining_params: &[&str],
         grid_values: &[f64],
-        baseline: &value_functions::ValueFunctionParams,
+        _baseline: &value_functions::ValueFunctionParams,
         combinations: &mut Vec<value_functions::ValueFunctionParams>,
     ) {
         if remaining_params.is_empty() {
@@ -252,7 +252,7 @@ fn generate_grid_combinations(
                 "energy_distance_to_online" => new_params.energy_distance_to_online = value,
                 _ => continue,
             }
-            generate_recursive(new_params, rest, grid_values, baseline, combinations);
+            generate_recursive(new_params, rest, grid_values, _baseline, combinations);
         }
     }
 
@@ -393,7 +393,7 @@ fn run_successive_halving(
 
         // Keep top half of candidates
         round_results.sort_by_key(|r| std::cmp::Reverse(r.total_variant_wins));
-        let keep_n = (candidates.len() + 1) / 2; // Round up for odd numbers
+        let keep_n = candidates.len().div_ceil(2); // Round up for odd numbers
         candidates = round_results
             .iter()
             .take(keep_n)

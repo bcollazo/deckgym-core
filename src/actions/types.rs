@@ -1,7 +1,4 @@
-use crate::{
-    models::{Card, EnergyType, TrainerCard},
-    tool_ids::ToolId,
-};
+use crate::models::{Card, EnergyType, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -26,7 +23,11 @@ pub enum SimpleAction {
     // Card because of the fossil Trainer Cards...
     // usize is bench 1-based index, with 0 meaning Active pokemon, 1..4 meaning Bench
     Place(Card, usize),
-    Evolve(Card, usize),
+    Evolve {
+        evolution: Card,
+        in_play_idx: usize,
+        from_deck: bool,
+    },
     UseAbility {
         in_play_idx: usize,
     },
@@ -34,6 +35,14 @@ pub enum SimpleAction {
     // Its given it is with the active pokemon, to the other active.
     // usize is the index of the attack in the pokemon's attacks
     Attack(usize),
+    /// Use another Pokemon's attack definition as the current attack.
+    /// This is used as a stack sub-action after copy-attack effects.
+    UseCopiedAttack {
+        source_player: usize,
+        source_in_play_idx: usize,
+        attack_index: usize,
+        require_attacker_energy_match: bool,
+    },
     // usize is in_play_pokemon index to retreat to. Can't Retreat(0)
     Retreat(usize),
     EndTurn,
@@ -46,16 +55,22 @@ pub enum SimpleAction {
     MoveEnergy {
         from_in_play_idx: usize,
         to_in_play_idx: usize,
-        energy: EnergyType,
+        energy_type: EnergyType,
+        amount: u32,
     },
     AttachTool {
         in_play_idx: usize,
-        tool_id: ToolId,
+        tool_card: Card,
     },
     Heal {
         in_play_idx: usize,
         amount: u32,
         cure_status: bool,
+    },
+    HealAndDiscardEnergy {
+        in_play_idx: usize,
+        heal_amount: u32,
+        discard_energies: Vec<EnergyType>,
     },
     MoveAllDamage {
         from: usize,
@@ -65,6 +80,11 @@ pub enum SimpleAction {
         attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
         targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
         is_from_active_attack: bool,
+    },
+    ScheduleDelayedSpotDamage {
+        target_player: usize,
+        target_in_play_idx: usize,
+        amount: u32,
     },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
@@ -88,9 +108,9 @@ pub enum SimpleAction {
     DiscardOpponentSupporter {
         supporter_card: Card,
     },
-    /// Sableye's Dirty Throw: discard a specific card from own hand
-    DiscardOwnCard {
-        card: Card,
+    /// Discard multiple specific cards from own hand
+    DiscardOwnCards {
+        cards: Vec<Card>,
     },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
@@ -105,6 +125,12 @@ pub enum SimpleAction {
     DiscardFossil {
         in_play_idx: usize,
     },
+    /// Use an activated stadium effect (once per turn per player)
+    UseStadium,
+    /// Return a Pokemon in play to your hand (e.g., Ilima).
+    ReturnPokemonToHand {
+        in_play_idx: usize,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -114,9 +140,27 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DrawCard { amount } => write!(f, "DrawCard({amount})"),
             SimpleAction::Play { trainer_card } => write!(f, "Play({trainer_card:?})"),
             SimpleAction::Place(card, index) => write!(f, "Place({card}, {index})"),
-            SimpleAction::Evolve(card, index) => write!(f, "Evolve({card}, {index})"),
+            SimpleAction::Evolve {
+                evolution,
+                in_play_idx,
+                from_deck,
+            } => {
+                write!(
+                    f,
+                    "Evolve({evolution}, {in_play_idx}, from_deck: {from_deck})"
+                )
+            }
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
             SimpleAction::Attack(index) => write!(f, "Attack({index})"),
+            SimpleAction::UseCopiedAttack {
+                source_player,
+                source_in_play_idx,
+                attack_index,
+                require_attacker_energy_match,
+            } => write!(
+                f,
+                "UseCopiedAttack(source:{source_player}:{source_in_play_idx}, attack:{attack_index}, require_energy:{require_attacker_energy_match})"
+            ),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
             SimpleAction::Attach {
@@ -135,24 +179,33 @@ impl fmt::Display for SimpleAction {
             SimpleAction::MoveEnergy {
                 from_in_play_idx,
                 to_in_play_idx,
-                energy,
+                energy_type,
+                amount,
             } => {
                 write!(
                     f,
-                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {energy:?})"
+                    "MoveEnergy(from:{from_in_play_idx}, to:{to_in_play_idx}, {amount}x {energy_type:?})"
                 )
             }
             SimpleAction::AttachTool {
                 in_play_idx,
-                tool_id,
+                tool_card,
             } => {
-                write!(f, "AttachTool({in_play_idx}, {tool_id:?})")
+                write!(f, "AttachTool({in_play_idx}, {})", tool_card.get_name())
             }
             SimpleAction::Heal {
                 in_play_idx,
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::HealAndDiscardEnergy {
+                in_play_idx,
+                heal_amount,
+                discard_energies,
+            } => write!(
+                f,
+                "HealAndDiscardEnergy({in_play_idx}, {heal_amount}, {discard_energies:?})"
+            ),
             SimpleAction::MoveAllDamage { from, to } => {
                 write!(f, "MoveAllDamage(from:{from}, to:{to})")
             }
@@ -174,6 +227,14 @@ impl fmt::Display for SimpleAction {
                     attacking_ref, targets_str, is_from_active_attack
                 )
             }
+            SimpleAction::ScheduleDelayedSpotDamage {
+                target_player,
+                target_in_play_idx,
+                amount,
+            } => write!(
+                f,
+                "ScheduleDelayedSpotDamage(target:{target_player}:{target_in_play_idx}, amount:{amount})"
+            ),
             SimpleAction::Activate {
                 player,
                 in_play_idx,
@@ -190,8 +251,8 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardOpponentSupporter { supporter_card } => {
                 write!(f, "DiscardOpponentSupporter({supporter_card})")
             }
-            SimpleAction::DiscardOwnCard { card } => {
-                write!(f, "DiscardOwnCard({card})")
+            SimpleAction::DiscardOwnCards { cards } => {
+                write!(f, "DiscardOwnCards({:?})", cards)
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,
@@ -208,6 +269,10 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardFossil { in_play_idx } => {
                 write!(f, "DiscardFossil({in_play_idx})")
             }
+            SimpleAction::ReturnPokemonToHand { in_play_idx } => {
+                write!(f, "ReturnPokemonToHand({in_play_idx})")
+            }
+            SimpleAction::UseStadium => write!(f, "UseStadium"),
             SimpleAction::Noop => write!(f, "Noop"),
         }
     }

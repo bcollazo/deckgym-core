@@ -1,12 +1,12 @@
 use crate::{
-    actions::EFFECT_MECHANIC_MAP,
+    actions::{ability_mechanic_from_effect, EFFECT_MECHANIC_MAP},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, TrainerType},
     move_generation::trainer_move_generation_implementation,
     state::State,
-    tool_ids::ToolId,
-    AbilityId, AttackId,
+    tools::is_tool_effect_implemented,
+    AbilityId,
 };
 use serde::{Deserialize, Serialize};
 
@@ -44,24 +44,26 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
     match card {
         Card::Pokemon(pokemon) => {
             // Verify attacks have no effects or effects are implemented
-            for (index, attack) in pokemon.attacks.iter().enumerate() {
+            for attack in &pokemon.attacks {
                 if let Some(effect_text) = &attack.effect {
-                    if AttackId::from_pokemon_index(&card_id_string, index).is_none()
-                        && EFFECT_MECHANIC_MAP.get(&effect_text[..]).is_none()
-                    {
+                    if EFFECT_MECHANIC_MAP.get(&effect_text[..]).is_none() {
                         return ImplementationStatus::MissingAttack;
                     }
                 }
             }
 
             // Verify ability is implemented
-            if pokemon.ability.is_some() && AbilityId::from_pokemon_id(&card_id_string).is_none() {
-                return ImplementationStatus::MissingAbility;
+            if let Some(ability) = &pokemon.ability {
+                if AbilityId::from_pokemon_id(&card_id_string).is_none()
+                    && ability_mechanic_from_effect(&ability.effect).is_none()
+                {
+                    return ImplementationStatus::MissingAbility;
+                }
             }
         }
         Card::Trainer(trainer_card) => {
             if trainer_card.trainer_card_type == TrainerType::Tool
-                && ToolId::from_trainer_card(&trainer_card).is_none()
+                && !is_tool_effect_implemented(&trainer_card)
             {
                 return ImplementationStatus::MissingTool;
             }

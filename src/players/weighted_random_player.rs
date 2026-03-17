@@ -45,24 +45,29 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Attach { .. } => 10,
         SimpleAction::MoveEnergy { .. } => 10,
         SimpleAction::AttachTool { .. } => 10,
-        SimpleAction::Evolve(_, _) => 10,
+        SimpleAction::Evolve { .. } => 10,
         SimpleAction::UseAbility { .. } => 10,
         SimpleAction::Attack(_) => 10,
+        SimpleAction::UseCopiedAttack { .. } => 10,
         SimpleAction::ApplyDamage { .. } => 10,
+        SimpleAction::ScheduleDelayedSpotDamage { .. } => 10,
         SimpleAction::Retreat(_) => 2,
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,
+        SimpleAction::HealAndDiscardEnergy { .. } => 5,
         SimpleAction::MoveAllDamage { .. } => 10,
         SimpleAction::Activate { .. } => 1,
         SimpleAction::CommunicatePokemon { .. } => 5,
         SimpleAction::ShufflePokemonIntoDeck { .. } => 5,
         SimpleAction::ShuffleOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOpponentSupporter { .. } => 5,
-        SimpleAction::DiscardOwnCard { .. } => 5,
+        SimpleAction::DiscardOwnCards { .. } => 5,
         SimpleAction::AttachFromDiscard { .. } => 10,
         SimpleAction::ApplyEeveeBagDamageBoost => 5,
         SimpleAction::HealAllEeveeEvolutions => 5,
         SimpleAction::DiscardFossil { .. } => 1, // Low weight to discard fossils
-        SimpleAction::Noop => 0,                 // No operation has no weight
+        SimpleAction::ReturnPokemonToHand { .. } => 5,
+        SimpleAction::UseStadium => 5, // Stadium abilities like Mesagoza
+        SimpleAction::Noop => 0,       // No operation has no weight
     }
 }

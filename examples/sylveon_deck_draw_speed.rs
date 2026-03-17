@@ -5,9 +5,7 @@ use deckgym::{
     actions::Action,
     players::PlayerCode,
     simulate::initialize_logger,
-    simulation_event_handler::{
-        CompositeSimulationEventHandler, SimulationEventHandler, StatsCollector,
-    },
+    simulation_event_handler::{SimulationEventHandler, StatsCollector},
     Simulation, State,
 };
 
@@ -20,20 +18,19 @@ fn main() {
     initialize_logger(1);
     println!("This will count how fast the user cant draw cards from the deck.");
 
-    let stats_collector = Box::new(StatsCollector::new());
-    let first_turn_seen_collector = Box::new(FirstTurnSeenCollector::new());
-    let mut composite_handler = CompositeSimulationEventHandler::new();
-    composite_handler.add_handler(stats_collector);
-    composite_handler.add_handler(first_turn_seen_collector);
     let mut simulation = Simulation::new(
         deck_a_path,
         deck_b_path,
         player_codes,
         num_simulations,
         None,
-        composite_handler,
+        false, // parallel
+        None,  // num_threads
     )
-    .expect("Failed to create simulation");
+    .expect("Failed to create simulation")
+    .register::<StatsCollector>()
+    .register::<FirstTurnSeenCollector>();
+
     simulation.run();
 }
 
@@ -60,6 +57,18 @@ impl FirstTurnSeenCollector {
 }
 
 impl SimulationEventHandler for FirstTurnSeenCollector {
+    fn merge(&mut self, other: &dyn SimulationEventHandler) {
+        if let Some(other) = (other as &dyn std::any::Any).downcast_ref::<Self>() {
+            for (key, &turn) in &other.first_turn_seen {
+                self.first_turn_seen
+                    .entry(key.clone())
+                    .and_modify(|existing| *existing = (*existing).min(turn))
+                    .or_insert(turn);
+            }
+            self.game_ids.extend(&other.game_ids);
+        }
+    }
+
     fn on_action(
         &mut self,
         game_id: Uuid,
@@ -69,12 +78,10 @@ impl SimulationEventHandler for FirstTurnSeenCollector {
         _action: &Action,
     ) {
         let turn = state_before_action.turn_count;
-        for card in state_before_action.in_play_pokemon[actor].iter() {
-            if let Some(card) = card {
-                let card_name = card.get_name();
-                let key = (game_id, actor, card_name.clone());
-                self.first_turn_seen.entry(key).or_insert(turn);
-            }
+        for card in state_before_action.in_play_pokemon[actor].iter().flatten() {
+            let card_name = card.get_name();
+            let key = (game_id, actor, card_name.clone());
+            self.first_turn_seen.entry(key).or_insert(turn);
         }
     }
 
@@ -85,7 +92,7 @@ impl SimulationEventHandler for FirstTurnSeenCollector {
         _state: State,
         _result: Option<deckgym::state::GameOutcome>,
     ) {
-        if self.game_ids.len() % 1000 == 0 {
+        if self.game_ids.len().is_multiple_of(1000) {
             println!(
                 "Processed {} games so far. First turn seen: {}",
                 self.game_ids.len(),

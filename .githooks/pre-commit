@@ -17,6 +17,6 @@ cargo fmt -- --check
 
 # 3. Run all tests
 echo "→ Running cargo test..."
-cargo test --features tui
+cargo test --features "tui test-utils"
 
 echo "✓ All pre-commit checks passed!"

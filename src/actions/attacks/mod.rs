@@ -1,3 +1,3 @@
 mod mechanic;
 
-pub use mechanic::{BenchSide, Mechanic};
+pub use mechanic::{BenchSide, CopyAttackSource, Mechanic};

@@ -4,11 +4,11 @@ use std::cmp::min;
 use crate::{
     actions::{
         apply_action_helpers::{Mutations, Probabilities},
+        apply_place_card,
         mutations::doutcome,
     },
     combinatorics::generate_combinations,
-    hooks::to_playable_card,
-    models::{Card, EnergyType},
+    models::{Card, EnergyType, TrainerType},
     State,
 };
 
@@ -17,7 +17,7 @@ pub(crate) fn pokemon_search_outcomes(
     state: &State,
     basic_only: bool,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         if basic_only {
             card.is_basic()
         } else {
@@ -31,24 +31,66 @@ pub(crate) fn pokemon_search_outcomes_by_type(
     basic_only: bool,
     energy_type: EnergyType,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(state.current_player, state, move |card: &&Card| {
+    pokemon_search_outcomes_by_type_for_player(state.current_player, state, basic_only, energy_type)
+}
+
+pub(crate) fn pokemon_search_outcomes_by_type_for_player(
+    acting_player: usize,
+    state: &State,
+    basic_only: bool,
+    energy_type: EnergyType,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check
     })
 }
 
+pub(crate) fn item_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        |card: &&Card| matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Item),
+    )
+}
+
+pub(crate) fn tool_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        |card: &&Card| matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Tool),
+    )
+}
+
 pub(crate) fn gladion_search_outcomes(
     acting_player: usize,
     state: &State,
 ) -> (Probabilities, Mutations) {
-    pokemon_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
+    card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let name = card.get_name();
         name == "Type: Null" || name == "Silvally"
     })
 }
 
-fn pokemon_search_outcomes_with_filter<F>(
+pub(crate) fn supporter_search_outcomes(
+    acting_player: usize,
+    state: &State,
+) -> (Probabilities, Mutations) {
+    card_search_outcomes_with_filter(
+        acting_player,
+        state,
+        move |card: &&Card| matches!(card, Card::Trainer(trainer_card) if trainer_card.trainer_card_type == crate::models::TrainerType::Supporter),
+    )
+}
+
+fn card_search_outcomes_with_filter<F>(
     acting_player: usize,
     state: &State,
     card_filter: F,
@@ -56,11 +98,11 @@ fn pokemon_search_outcomes_with_filter<F>(
 where
     F: Fn(&&Card) -> bool + Clone + 'static,
 {
-    pokemon_search_outcomes_with_filter_multiple(acting_player, state, 1, card_filter)
+    card_search_outcomes_with_filter_multiple(acting_player, state, 1, card_filter)
 }
 
-/// Draw up to `num_to_draw` Pokemon from deck that match the filter, using unordered combinations
-pub(crate) fn pokemon_search_outcomes_with_filter_multiple<F>(
+/// Draw up to `num_to_draw` cards from deck that match the filter, using unordered combinations
+pub(crate) fn card_search_outcomes_with_filter_multiple<F>(
     acting_player: usize,
     state: &State,
     num_to_draw: usize,
@@ -94,13 +136,13 @@ where
     let mut outcomes: Mutations = vec![];
 
     for combo in draw_combinations {
-        outcomes.push(Box::new(move |rng, state, action| {
+        outcomes.push(Box::new(move |rng, state, _action| {
             // Transfer each Pokemon from the combination to hand
             for pokemon in &combo {
-                state.transfer_card_from_deck_to_hand(action.actor, pokemon);
+                state.transfer_card_from_deck_to_hand(acting_player, pokemon);
             }
 
-            state.decks[action.actor].shuffle(false, rng);
+            state.decks[acting_player].shuffle(false, rng);
         }));
     }
 
@@ -111,10 +153,33 @@ pub(crate) fn search_and_bench_by_name(
     state: &State,
     card_name: String,
 ) -> (Probabilities, Mutations) {
+    search_and_bench_with_filter(
+        state,
+        move |card: &Card| card.get_name() == card_name,
+        "Card should be in deck",
+    )
+}
+
+pub(crate) fn search_and_bench_basic(state: &State) -> (Probabilities, Mutations) {
+    search_and_bench_with_filter(
+        state,
+        |card: &Card| card.is_basic(),
+        "Basic card should be in deck",
+    )
+}
+
+fn search_and_bench_with_filter<F>(
+    state: &State,
+    card_filter: F,
+    missing_card_msg: &'static str,
+) -> (Probabilities, Mutations)
+where
+    F: Fn(&Card) -> bool + Clone + 'static,
+{
     let num_cards_in_deck = state.decks[state.current_player]
         .cards
         .iter()
-        .filter(|c| c.get_name() == card_name)
+        .filter(|c| card_filter(c))
         .count();
 
     if num_cards_in_deck == 0 {
@@ -129,9 +194,8 @@ pub(crate) fn search_and_bench_by_name(
         let mut outcomes: Mutations = vec![];
 
         for i in 0..num_cards_in_deck {
-            let card_name = card_name.clone();
+            let card_filter = card_filter.clone();
             outcomes.push(Box::new(move |rng, state, action| {
-                // Check if there's bench space first
                 let bench_space = state.in_play_pokemon[action.actor]
                     .iter()
                     .position(|x| x.is_none());
@@ -144,31 +208,20 @@ pub(crate) fn search_and_bench_by_name(
                 let card = state.decks[action.actor]
                     .cards
                     .iter()
-                    .filter(|c| c.get_name() == card_name)
+                    .filter(|c| card_filter(c))
                     .nth(i)
                     .cloned()
-                    .expect("Card should be in deck");
+                    .expect(missing_card_msg);
 
-                // Put the card onto the bench
-                let deck = &mut state.decks[action.actor];
                 debug!(
                     "Fetched {card:?} from deck for player {} to place on bench",
                     action.actor
                 );
 
-                // Remove card from deck
-                if let Some(pos) = deck.cards.iter().position(|x| x == &card) {
-                    deck.cards.remove(pos);
-                } else {
-                    panic!("Card should be in deck");
-                }
-
-                // Place on bench
                 let bench_idx = bench_space.unwrap();
-                let playable_card = to_playable_card(&card, true);
-                state.in_play_pokemon[action.actor][bench_idx] = Some(playable_card);
+                apply_place_card(state, action.actor, &card, bench_idx, true);
 
-                deck.shuffle(false, rng);
+                state.decks[action.actor].shuffle(false, rng);
             }));
         }
         (probabilities, outcomes)

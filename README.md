@@ -2,7 +2,7 @@
 
 # deckgym-core: Pokémon TCG Pocket Simulator
 
-![Card Implemented](https://img.shields.io/badge/Cards_Implemented-1709_%2F_2408_%2871.0%25%29-yellow)
+![Card Implemented](https://img.shields.io/badge/Cards_Implemented-2263_%2F_2900_%2878.0%25%29-yellow)
 
 **deckgym-core** is a high-performance Rust library designed for simulating Pokémon TCG Pocket games. It features a command-line interface (CLI) capable of running 10,000 simulations in approximately 3 seconds. This is the library that powers https://www.deckgym.com.
 
@@ -18,6 +18,13 @@ We already provide several example decks in the repo you can use to get started.
 
 ```bash
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 -v
+```
+
+You can also simulate one deck against multiple decks in a folder. The total games will be distributed evenly across all decks:
+
+```bash
+# Simulate your deck against all decks in example_decks folder (1000 games total)
+cargo run simulate my_deck.txt example_decks/ --num 1000 -v
 ```
 
 ## Terminal User Interface (TUI)
@@ -108,21 +115,27 @@ Once you have Rust installed (see https://www.rust-lang.org/tools/install) you s
 **Running Automated Test Suite**
 
 ```bash
-cargo test
+cargo test --features "tui test-utils"
 ```
 
 **Running Benchmarks**
 
 ```bash
-cargo bench
+cargo bench --features test-utils
 ```
 
 **Running Main Script**
 
 ```bash
+# Simulate between two specific decks
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 --players r,r
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vv
 cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1 --players r,r -vvvv
+
+# Simulate one deck against all decks in a folder (games distributed evenly)
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/ --num 1000 --players r,r -v
+
+# Optimize incomplete decks
 cargo run optimize example_decks/incomplete-chari.txt A2147,A2148 example_decks/ --num 10 --players e,e -v
 cargo run optimize example_decks/incomplete-chari.txt A2147,A2147,A2148,A2148 example_decks/ --num 1000 --players r,r -v --parallel
 ```
@@ -156,6 +169,22 @@ cargo run --bin card_status -- --first-incomplete
 
 The tool displays a summary showing total cards, completion percentage, and a breakdown of missing implementations by type (attacks, abilities, tools, trainer logic).
 
+**Temporary Deck Generator**
+
+Generate a valid temporary test deck for a specific card id (it considers the evolution chain of a card and the required energy types if its a pokemon card).
+
+```bash
+cargo run --bin temp_deck_generator -- "A1 035"
+```
+
+**Card Test Command**
+
+Generate a temporary test deck and run 10,000 games against all decks in `example_decks/` (games distributed evenly) using random players.
+
+```bash
+cargo run --bin card_test -- "A1 035"
+```
+
 **Setting Up Git Hooks (Optional)**
 
 The repository includes a pre-commit hook that ensures code quality by automatically fixing issues and running tests before each commit. To enable it:
@@ -168,7 +197,7 @@ The pre-commit hook runs:
 1. `cargo clippy --fix --allow-dirty --features tui -- -D warnings` - Auto-fixes linting issues
 2. `cargo fmt` - Auto-formats code
 3. `git add -u` - Adds clippy and formatting fixes to the commit
-4. `cargo test --features tui` - Runs the full test suite (fails commit if tests fail)
+4. `cargo test --features "tui test-utils"` - Runs the full test suite (fails commit if tests fail)
 
 This helps maintain code quality and prevents broken commits, but it's optional and each developer can choose whether to enable it.
 
@@ -187,14 +216,23 @@ Then temporarily edit `database.rs` for `_` to match Bulbasaur (this is so that 
 cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
 ```
 
-To generate attacks do:
+To generate attacks do (first time):
 ```bash
 cargo run --bin card_enum_generator -- --attack-map > tmp.rs && mv tmp.rs src/actions/effect_mechanic_map.rs && cargo fmt
 ```
 
-**Profiling Main Script**
-
+then with each new set of new mechanics, use:
 ```bash
-cargo install flamegraph
+cargo run --bin card_enum_generator -- --incremental-attack-map
+```
+and manually copy-paste into the ever changing `src/actions/effect_mechanic_map.rs`.
+
+For abilities incremental updates, use:
+```bash
+cargo run --bin card_enum_generator -- --incremental-ability-map
+```
+and manually copy-paste into `src/actions/effect_ability_mechanic_map.rs`.
+
+**Profiling Main Script**
 sudo cargo flamegraph --root --dev -- simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --num 1000 && open flamegraph.svg
 ```

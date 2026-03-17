@@ -1,6 +1,5 @@
 mod ability_ids;
 pub mod actions;
-mod attack_ids;
 pub mod card_ids;
 pub mod card_logic;
 pub mod card_validation;
@@ -19,16 +18,18 @@ pub mod optimize;
 pub mod players;
 pub mod simulate;
 pub mod simulation_event_handler;
+pub mod stadiums;
 pub mod state;
-pub mod test_helpers; // TODO: Compile/Expose only in test mode?
-pub mod tool_ids;
+pub mod temp_deck;
+pub mod tools;
+
+#[cfg(any(test, feature = "test-utils"))]
+pub mod test_support;
 
 pub use ability_ids::AbilityId;
-pub use attack_ids::AttackId;
 pub use deck::Deck;
 pub use game::Game;
 pub use hooks::to_playable_card;
-pub use move_generation::generate_possible_actions;
 pub use move_generation::generate_possible_trainer_actions;
 pub use optimize::{
     cli_optimize, optimize, optimize_with_configs, EnemyDeckConfig, OptimizationConfig,

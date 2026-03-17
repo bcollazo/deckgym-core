@@ -1,25 +1,41 @@
 use serde::{Deserialize, Serialize};
 
+use crate::models::EnergyType;
+
 /// I believe these are the "clearable" ones by retreating...
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CardEffect {
     NoRetreat,
     ReducedDamage { amount: u32 },
+    IncreasedAttackCost { amount: u8 },
     CannotAttack,
     CannotUseAttack(String),
     IncreasedDamageForAttack { attack_name: String, amount: u32 },
     PreventAllDamageAndEffects,
+    NoWeakness,
+    CoinFlipToBlockAttack,
+    DelayedDamage { amount: u32 },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TurnEffect {
     NoSupportCards,
     NoItemCards,
+    NoEnergyFromZoneToActive,
     ReducedRetreatCost {
         amount: u8,
     },
+    ReducedDamageForType {
+        amount: u32,
+        energy_type: EnergyType,
+        player: usize,
+    },
     IncreasedDamage {
         amount: u32,
+    },
+    IncreasedDamageForType {
+        amount: u32,
+        energy_type: EnergyType,
     },
     IncreasedDamageAgainstEx {
         amount: u32,
@@ -30,5 +46,15 @@ pub enum TurnEffect {
     IncreasedDamageForSpecificPokemon {
         amount: u32,
         pokemon_names: Vec<String>,
+    },
+    IncreasedDamageForSpecificPokemonAgainstEx {
+        amount: u32,
+        pokemon_names: Vec<String>,
+    },
+    DelayedSpotDamage {
+        source_player: usize,
+        target_player: usize,
+        target_in_play_idx: usize,
+        amount: u32,
     },
 }

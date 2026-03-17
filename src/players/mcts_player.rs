@@ -5,7 +5,6 @@ use std::{collections::HashMap, fmt::Debug};
 use super::{Player, RandomPlayer};
 use crate::{
     actions::{apply_action, Action},
-    generate_possible_actions,
     state::GameOutcome,
     Deck, Game, State,
 };
@@ -116,7 +115,7 @@ impl MctsNode {
             // will take the actor from the action itself. This is different
             // than how .play_tick does it, because there we need the actor
             // to choose who plays.
-            let (_, new_actions) = generate_possible_actions(&new_state);
+            let (_, new_actions) = new_state.generate_possible_actions();
             self.children.push(MctsNode::new(new_state, new_actions));
         }
     }

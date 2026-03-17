@@ -5,6 +5,7 @@ mod move_generation_trainer;
 use crate::actions::{Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
+use crate::stadiums::can_use_mesagoza;
 use crate::state::State;
 use crate::AbilityId;
 
@@ -48,6 +49,17 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
         return (*actor, actions);
     }
 
+    if state.end_turn_pending {
+        return (
+            state.current_player,
+            vec![Action {
+                actor: state.current_player,
+                action: SimpleAction::EndTurn,
+                is_stack: false,
+            }],
+        );
+    }
+
     // Free play actions. User can always end turn.
     let current_player = state.current_player;
     let mut actions = vec![SimpleAction::EndTurn];
@@ -63,6 +75,9 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
             .enumerate()
             .for_each(|(i, x)| {
                 if x.is_some() {
+                    if !state.can_attach_energy_from_zone(i) {
+                        return;
+                    }
                     actions.push(SimpleAction::Attach {
                         attachments: vec![(1, energy, i)],
                         is_turn_energy: true,
@@ -94,6 +109,11 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
     // Add actions given by abilities
     let ability_actions = generate_ability_actions(state);
     actions.extend(ability_actions);
+
+    // Add actions given by active stadium (activated stadiums like Mesagoza)
+    if can_use_mesagoza(state, current_player) {
+        actions.push(SimpleAction::UseStadium);
+    }
 
     let possible_actions = actions
         .iter()
@@ -158,7 +178,6 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
                     // Exception: Eevee with Boosted Evolution ability can evolve on first turn
                     // or turn it was played, if it's in the active spot.
-                    use crate::ability_ids::AbilityId;
 
                     // Check if we should skip evolution checks due to first turn
                     // (unless there's a Boosted Evolution Eevee in active spot)
@@ -187,7 +206,11 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                                 && can_evolve_into(hand_card, pokemon)
                                 && can_evolve_at_position(state, current_player, i)
                             {
-                                actions.push(SimpleAction::Evolve(hand_card.clone(), i));
+                                actions.push(SimpleAction::Evolve {
+                                    evolution: hand_card.clone(),
+                                    in_play_idx: i,
+                                    from_deck: false, // Normal evolution from hand
+                                });
                             }
                         });
                 }
@@ -286,7 +309,7 @@ mod tests {
         let has_evolve_action = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 0) if card.get_id() == aerodactyl.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 0, .. } if evolution.get_id() == aerodactyl.get_id()
             )
         });
 
@@ -318,7 +341,7 @@ mod tests {
         let has_evolve_action = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 1) if card.get_id() == aerodactyl_ex.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 1, .. } if evolution.get_id() == aerodactyl_ex.get_id()
             )
         });
 
@@ -356,7 +379,7 @@ mod tests {
         let has_active_evolve = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 0) if card.get_id() == ivysaur.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 0, .. } if evolution.get_id() == ivysaur.get_id()
             )
         });
 
@@ -398,7 +421,7 @@ mod tests {
         let has_bench_evolve = hand_actions.iter().any(|action| {
             matches!(
                 action,
-                SimpleAction::Evolve(card, 1) if card.get_id() == ivysaur.get_id()
+                SimpleAction::Evolve { evolution, in_play_idx: 1, .. } if evolution.get_id() == ivysaur.get_id()
             )
         });
 

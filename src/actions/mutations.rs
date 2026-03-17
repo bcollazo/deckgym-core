@@ -1,9 +1,13 @@
 use rand::rngs::StdRng;
 
-use crate::{models::StatusCondition, State};
+use crate::{
+    actions::apply_action_helpers::{handle_damage_only, handle_knockouts},
+    models::StatusCondition,
+    State,
+};
 
 use super::{
-    apply_action_helpers::{handle_damage, FnMutation, Mutation, Mutations, Probabilities},
+    apply_action_helpers::{FnMutation, Mutation, Mutations, Probabilities},
     Action, SimpleAction,
 };
 
@@ -23,23 +27,16 @@ pub(crate) fn doutcome_from_mutation(mutation: Mutation) -> (Probabilities, Muta
     (vec![1.0], vec![mutation])
 }
 
-// Useful for attacks
+// Useful for deterministic attacks
 pub(crate) fn active_damage_doutcome(damage: u32) -> (Probabilities, Mutations) {
-    damage_doutcome(vec![(damage, 0)])
-}
-
-pub(crate) fn damage_doutcome(targets: Vec<(u32, usize)>) -> (Probabilities, Mutations) {
-    (vec![1.0], vec![damage_mutation(targets)])
+    active_damage_effect_doutcome(damage, |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> (Probabilities, Mutations) {
-    (
-        vec![1.0],
-        vec![active_damage_effect_mutation(damage, additional_effect)],
-    )
+    damage_effect_doutcome(vec![(damage, 0)], additional_effect)
 }
 
 pub(crate) fn damage_effect_doutcome<F>(
@@ -57,11 +54,7 @@ where
 
 // ===== Helper functions for building Mutations
 pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
-    damage_mutation(vec![(damage, 0)])
-}
-
-pub(crate) fn damage_mutation(targets: Vec<(u32, usize)>) -> Mutation {
-    damage_effect_mutation(targets, |_, _, _| {})
+    damage_effect_mutation(vec![(damage, 0)], |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_mutation(
@@ -80,36 +73,57 @@ where
 {
     Box::new({
         move |rng, state, action| {
-            additional_effect(rng, state, action);
             let opponent = (action.actor + 1) % 2;
             let targets: Vec<(u32, usize, usize)> = targets
                 .iter()
                 .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
                 .collect();
 
-            // Extract attack name if this is an attack action
-            let attack_name: Option<String> =
-                if let SimpleAction::Attack(attack_index) = &action.action {
-                    state.in_play_pokemon[action.actor][0]
-                        .as_ref()
-                        .and_then(|pokemon| {
-                            pokemon
-                                .card
-                                .get_attacks()
-                                .get(*attack_index)
-                                .map(|attack| attack.title.clone())
-                        })
-                } else {
-                    None
-                };
+            let attack_name: String = match &action.action {
+                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
+                    .as_ref()
+                    .expect("Attacking Pokemon must be there if attacking")
+                    .card
+                    .get_attacks()
+                    .get(*attack_index)
+                    .unwrap_or_else(|| {
+                        panic!("Index must exist if attacking with {}", attack_index)
+                    })
+                    .title
+                    .clone(),
+                SimpleAction::UseCopiedAttack {
+                    source_player,
+                    source_in_play_idx,
+                    attack_index,
+                    ..
+                } => state.in_play_pokemon[*source_player][*source_in_play_idx]
+                    .as_ref()
+                    .expect("Copied-attack source Pokemon must exist")
+                    .card
+                    .get_attacks()
+                    .get(*attack_index)
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Copied attack index must exist for source {}:{}",
+                            source_player, source_in_play_idx
+                        )
+                    })
+                    .title
+                    .clone(),
+                _ => panic!("This codepath should come from an attack."),
+            };
 
-            handle_damage(
+            let attacking_ref = (action.actor, 0);
+            let is_from_active_attack = true;
+            handle_damage_only(
                 state,
-                (action.actor, 0),
+                attacking_ref,
                 &targets,
-                true,
-                attack_name.as_deref(),
+                is_from_active_attack,
+                Some(&attack_name),
             );
+            additional_effect(rng, state, action);
+            handle_knockouts(state, attacking_ref, is_from_active_attack);
         }
     })
 }

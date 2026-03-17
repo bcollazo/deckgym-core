@@ -222,12 +222,12 @@ impl PyPlayedCard {
 
     #[getter]
     fn remaining_hp(&self) -> u32 {
-        self.played_card.remaining_hp
+        self.played_card.get_remaining_hp()
     }
 
     #[getter]
     fn total_hp(&self) -> u32 {
-        self.played_card.total_hp
+        self.played_card.get_effective_total_hp()
     }
 
     #[getter]
@@ -302,8 +302,8 @@ impl PyPlayedCard {
         format!(
             "PlayedCard(name='{}', hp={}/{}, energy={})",
             self.played_card.get_name(),
-            self.played_card.remaining_hp,
-            self.played_card.total_hp,
+            self.played_card.get_remaining_hp(),
+            self.played_card.get_effective_total_hp(),
             self.played_card.attached_energy.len()
         )
     }
@@ -534,7 +534,7 @@ impl PyState {
             ));
         }
         if let Some(pokemon) = &self.state.in_play_pokemon[player][position] {
-            Ok(pokemon.remaining_hp)
+            Ok(pokemon.get_remaining_hp())
         } else {
             Err(PyErr::new::<pyo3::exceptions::PyValueError, _>(
                 "No pokemon at this position",
