@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CARGO_BUILD_JOBS: 1
 
     strategy:
       matrix:
@@ -20,6 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Install uv and set the python version
         uses: astral-sh/setup-uv@v6
         with:
@@ -27,8 +32,11 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "pyproject.toml"
 
-      - name: Install python bindings
-        run: uv sync
+      - name: Install Python dependencies
+        run: uv sync --no-install-project
+
+      - name: Build and install deckgym bindings
+        run: uv run --with maturin maturin develop --features python
 
       - name: Run tests
         run: uv run pytest python/deckgym/tests
