@@ -19,11 +19,32 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::MegaAmpharosExLightningLancer,
     );
     // map.insert("1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.", todo_implementation);
-    // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.", todo_implementation);
+    // Draco Meteor variants (opponent only)
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.",
+        Mechanic::RandomSpreadDamage { times: 3, damage_per_hit: 50, include_own_bench: false },
+    );
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 40 damage to it.",
+        Mechanic::RandomSpreadDamage { times: 4, damage_per_hit: 40, include_own_bench: false },
+    );
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random 4 times. For each time a Pokémon was chosen, do 50 damage to it.",
+        Mechanic::RandomSpreadDamage { times: 4, damage_per_hit: 50, include_own_bench: false },
+    );
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random. Do 30 damage to it.",
+        Mechanic::RandomSpreadDamage {
+            times: 1,
+            damage_per_hit: 30,
+            include_own_bench: false,
+        },
+    );
+    // Magcargo Spurt Fire (any other Pokemon, including own bench)
+    map.insert(
+        "1 other Pokémon (either yours or your opponent's) is chosen at random 3 times. For each time a Pokémon was chosen, do 50 damage to it.",
+        Mechanic::RandomSpreadDamage { times: 3, damage_per_hit: 50, include_own_bench: true },
+    );
     map.insert(
         "At the end of your opponent's next turn, do 90 damage to the Defending Pokémon.",
         Mechanic::DamageAndCardEffect {
@@ -1466,7 +1487,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::CoinFlipToBlockAttackNextTurn,
     );
     // NEW MECHANICS INTRODUCES IN B2
-    // map.insert("1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.", todo_implementation);
+    map.insert(
+        "1 other Pokémon (either yours or your opponent's) is chosen at random 1 time. Do 100 damage to the chosen Pokémon.",
+        Mechanic::RandomSpreadDamage { times: 1, damage_per_hit: 100, include_own_bench: true },
+    );
     map.insert(
         "Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.",
         Mechanic::CopyAttack {

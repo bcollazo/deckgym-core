@@ -10,9 +10,11 @@ are not implemented if they are a Pokemon that is missing an Ability or Attack i
 or a Trainer card (be it a tool or a normal one) missig implementation.
 
 If the user hasn't specified what card to implement, you can use the tool:
-  ```bash
-  cargo run --bin card_status
-  ```
+
+```bash
+cargo run --bin card_status
+```
+
 to see what cards are missing, and choose one. You can also that tool
 to see what is missing from the specified card.
 
@@ -30,7 +32,13 @@ to see what is missing from the specified card.
   - Decide whether to re-use an existing `AbilityMechanic` or add a new variant in `src/actions/abilities/mechanic.rs`.
   - Uncomment all matching `map.insert(...)` lines in `effect_ability_mechanic_map.rs` and map them to the correct `AbilityMechanic` with parameters.
   - Implement the mechanic logic in `forecast_ability_by_mechanic` in `apply_abilities_action.rs`.
-    Keep the `match` arms as one-liners (use helpers).
+    - Return an `Outcomes` struct (see `src/actions/outcomes.rs`).
+    - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
+    - For coin-flip effects, use the appropriate `Outcomes` constructor:
+      - `Outcomes::binary_coin(heads_mutation, tails_mutation)` - single coin flip
+      - `Outcomes::binomial_by_heads(n, |heads| mutation)` - flip N coins, group by heads count
+      - `Outcomes::geometric_until_tails(max, |heads| mutation)` - flip until tails
+    - Keep the `match` arms as one-liners (use helpers).
   - Implement move generation logic in `can_use_ability_by_mechanic` in `move_generation_abilities.rs`.
     Keep the `match` arms as one-liners (use helpers).
 - If the ability is passive or hook-driven:
@@ -38,7 +46,6 @@ to see what is missing from the specified card.
   - `forecast_ability_by_mechanic` should `panic!` for passive mechanics, and `can_use_ability_by_mechanic` should return `false`.
 - Only fall back to `AbilityId` for abilities that cannot yet be represented as a mechanic or need custom one-off logic.
   - If you add `AbilityId`, update both the enum and `ABILITY_ID_MAP` in `ability_ids.rs`, keeping the file ordered by set and number.
-
 
 ## Attack
 
@@ -53,6 +60,12 @@ to see what is missing from the specified card.
 - Identify all the cards that have the same effect text template, and just differ by parameters.
 - Uncomment all the `// map.insert("` lines that pertain to the mechanic, and add the correct value (an `Mechanic` enum variant with the corresponding parameters).
 - Implement the mechanic logic in `forecast_effect_attack_by_mechanic` in `apply_attack_action.rs`.
+  - Return an `Outcomes` struct (see `src/actions/outcomes.rs`).
+  - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
+  - For coin-flip effects, use the appropriate `Outcomes` constructor:
+    - `Outcomes::binary_coin(heads_mutation, tails_mutation)` - single coin flip
+    - `Outcomes::binomial_by_heads(n, |heads| mutation)` - flip N coins, group by heads count
+    - `Outcomes::geometric_until_tails(max, |heads| mutation)` - flip until tails
   - Keep the code as a simple one-liner in the match statement by using helper functions
   - Review similar attacks in `apply_attack_action.rs` to ensure consistency in implementation.
 
@@ -65,17 +78,17 @@ to see what is missing from the specified card.
   ```
 
 - Copy the ids of cards to implement (including full art versions) in the given JSON.
-- In `tool_ids.rs` add the tool to the `ToolId` enum and the `TOOL_ID_MAP` map.
-  - Keep the file ordered by set and number.
-  - If the tool has attachment restrictions (e.g., only Grass pokémon), implement the `can_attach_to()` method to enforce these restrictions. This counts as the "move generation" for the tool.
+- In `tools.rs`:
+  - Add a `static EFFECT_NAME_EFFECT: LazyLock<String>` constant using `tool_effect_text_from_card_id(CardId::...)`.
+  - Add the effect to `is_tool_effect_implemented()` match expression.
+  - If the tool has attachment restrictions (e.g., only Grass pokemon), add a check in `can_attach_tool_to()`.
 - Implement any immediate effects in the tool's core logic rather than a dedicated "on attach" hook.
   - For HP modifiers, prefer dynamic calculation in `PlayedCard::get_effective_total_hp()`.
   - For other immediate effects, add a focused helper in the relevant hook file and call it from the appropriate action handler.
-- Implement the "forecast action" logic in `forecast_trainer_action` in `apply_trainer_action.rs`.
-  - Add the tool's CardId to the match branch that calls `doutcome(attach_tool)`.
-  - Tools should be grouped together in a single match arm (e.g., `CardId::A2147GiantCape | CardId::A2148RockyHelmet | CardId::A3147LeafCape`).
+- Ensure Tool is correctly handled by `forecast_trainer_action`.
 - For tools with ongoing effects (not just on-attach):
   - Implement hooks in `hooks/core.rs` or other appropriate hook files.
+  - Use `has_tool(played_card, CardId::...)` to check if a pokemon has a specific tool attached.
   - Examples: Rocky Helmet deals damage when the holder is attacked.
 
 ## Trainer Cards
@@ -90,11 +103,12 @@ to see what is missing from the specified card.
 - Implement the "move generation" logic.
   - In `move_generation_trainer.rs` implement the switch branch. Its often the case the Trainer/Support can always be played, so just add to this case in the switch.
 - Implement the "apply action" logic.
-
   - This is the code that actually runs when the card is played.
   - Visit `apply_trainer_action.rs`.
+  - Return an `Outcomes` struct (see `src/actions/outcomes.rs`):
+    - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
+    - For coin-flip effects, use `Outcomes::binary_coin(...)` or other coin constructors
   - Often its just "applying an effect" in the field (like Leaf).
-
     - If the turn is something that affects all pokemon in play for a given turn use
       the `.turn_effects` field in the state. You can use to for effects that apply to
       this turn, or a future one.
@@ -144,4 +158,4 @@ Review the results to ensure the games complete without errors.
 
 ### Code Quality
 
-Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui` still work.
+Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui,test-utils` still work.
