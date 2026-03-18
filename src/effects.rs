@@ -57,4 +57,5 @@ pub enum TurnEffect {
         target_in_play_idx: usize,
         amount: u32,
     },
+    ForceFirstHeads,
 }

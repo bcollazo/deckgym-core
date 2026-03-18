@@ -7,7 +7,8 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{FnMutation, Mutation, Mutations, Probabilities},
+    apply_action_helpers::{FnMutation, Mutation},
+    outcomes::Outcomes,
     Action, SimpleAction,
 };
 
@@ -15,41 +16,26 @@ use super::{
 // forcing the end of the turn, applying damage with calculations, forcing enemy
 // to promote pokemon after knockout, etc... apply to all attacks.
 
-// === Helper functions to build Outcomes = (Probabilities, Mutations)
-// Doutcome means deterministic outcome
-pub(crate) fn doutcome(
-    mutation: fn(&mut StdRng, &mut State, &Action),
-) -> (Probabilities, Mutations) {
-    doutcome_from_mutation(Box::new(mutation))
-}
-
-pub(crate) fn doutcome_from_mutation(mutation: Mutation) -> (Probabilities, Mutations) {
-    (vec![1.0], vec![mutation])
-}
-
 // Useful for deterministic attacks
-pub(crate) fn active_damage_doutcome(damage: u32) -> (Probabilities, Mutations) {
+pub(crate) fn active_damage_doutcome(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     damage_effect_doutcome(vec![(damage, 0)], additional_effect)
 }
 
 pub(crate) fn damage_effect_doutcome<F>(
     targets: Vec<(u32, usize)>,
     additional_effect: F,
-) -> (Probabilities, Mutations)
+) -> Outcomes
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
-    (
-        vec![1.0],
-        vec![damage_effect_mutation(targets, additional_effect)],
-    )
+    Outcomes::single(damage_effect_mutation(targets, additional_effect))
 }
 
 // ===== Helper functions for building Mutations

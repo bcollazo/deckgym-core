@@ -7,7 +7,6 @@ use rand::Rng;
 use crate::{
     actions::{
         apply_evolve,
-        mutations::doutcome,
         shared_mutations::{
             card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
             item_search_outcomes, pokemon_search_outcomes, tool_search_outcomes,
@@ -26,7 +25,8 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{Mutations, Probabilities},
+    apply_action_helpers::Mutations,
+    outcomes::{CoinSeq, Outcomes},
     Action, SimpleAction,
 };
 
@@ -35,83 +35,85 @@ pub fn forecast_trainer_action(
     acting_player: usize,
     state: &State,
     trainer_card: &TrainerCard,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     if trainer_card.trainer_card_type == TrainerType::Tool {
         if is_tool_effect_implemented(trainer_card) {
-            return doutcome(attach_tool);
+            return Outcomes::single_fn(attach_tool);
         }
         panic!("Unsupported Trainer Tool");
     }
 
     // Stadiums: placement is handled in wrap_with_common_logic, no additional effect needed
     if trainer_card.trainer_card_type == TrainerType::Stadium {
-        return doutcome(|_, _, _| {});
+        return Outcomes::single_fn(|_, _, _| {});
     }
 
     let trainer_id =
         CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should be known");
     match trainer_id {
-        CardId::PA001Potion => doutcome(potion_effect),
-        CardId::PA002XSpeed => doutcome(x_speed_effect),
+        CardId::PA001Potion => Outcomes::single_fn(potion_effect),
+        CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
         CardId::PA005PokeBall | CardId::A2b111PokeBall => {
             pokemon_search_outcomes(acting_player, state, true)
         }
-        CardId::PA006RedCard => doutcome(red_card_effect),
+        CardId::PA006RedCard => Outcomes::single_fn(red_card_effect),
         CardId::PA007ProfessorsResearch | CardId::A4b373ProfessorsResearch => {
-            doutcome(professor_oak_effect)
+            Outcomes::single_fn(professor_oak_effect)
         }
         CardId::A1219Erika | CardId::A1266Erika | CardId::A4b328Erika | CardId::A4b329Erika => {
-            doutcome(erika_effect)
+            Outcomes::single_fn(erika_effect)
         }
         CardId::A1220Misty | CardId::A1267Misty => misty_outcomes(),
-        CardId::A1221Blaine | CardId::A1268Blaine => doutcome(blaine_effect),
-        CardId::A1224Brock | CardId::A1271Brock => doutcome(brock_effect),
+        CardId::A1221Blaine | CardId::A1268Blaine => Outcomes::single_fn(blaine_effect),
+        CardId::A1224Brock | CardId::A1271Brock => Outcomes::single_fn(brock_effect),
         CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
-            doutcome(irida_effect)
+            Outcomes::single_fn(irida_effect)
         }
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
-            doutcome(pokemon_center_lady_effect)
+            Outcomes::single_fn(pokemon_center_lady_effect)
         }
         CardId::A3155Lillie
         | CardId::A3197Lillie
         | CardId::A3209Lillie
         | CardId::A4b348Lillie
         | CardId::A4b349Lillie
-        | CardId::A4b374Lillie => doutcome(lillie_effect),
-        CardId::A3151Guzma | CardId::A3193Guzma | CardId::A3208Guzma => doutcome(guzma_effect),
-        CardId::A1222Koga | CardId::A1269Koga => doutcome(koga_effect),
+        | CardId::A4b374Lillie => Outcomes::single_fn(lillie_effect),
+        CardId::A3151Guzma | CardId::A3193Guzma | CardId::A3208Guzma => {
+            Outcomes::single_fn(guzma_effect)
+        }
+        CardId::A1222Koga | CardId::A1269Koga => Outcomes::single_fn(koga_effect),
         CardId::A1223Giovanni
         | CardId::A1270Giovanni
         | CardId::A4b334Giovanni
-        | CardId::A4b335Giovanni => doutcome(giovanni_effect),
+        | CardId::A4b335Giovanni => Outcomes::single_fn(giovanni_effect),
         CardId::A2b071Red | CardId::A2b090Red | CardId::A4b352Red | CardId::A4b353Red => {
-            doutcome(red_effect)
+            Outcomes::single_fn(red_effect)
         }
         CardId::A1225Sabrina
         | CardId::A1272Sabrina
         | CardId::A4b338Sabrina
-        | CardId::A4b339Sabrina => doutcome(sabrina_effect),
-        CardId::A1a065MythicalSlab => doutcome(mythical_slab_effect),
+        | CardId::A4b339Sabrina => Outcomes::single_fn(sabrina_effect),
+        CardId::A1a065MythicalSlab => Outcomes::single_fn(mythical_slab_effect),
         CardId::A1a068Leaf | CardId::A1a082Leaf | CardId::A4b346Leaf | CardId::A4b347Leaf => {
-            doutcome(leaf_effect)
+            Outcomes::single_fn(leaf_effect)
         }
         CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
-            doutcome(cyrus_effect)
+            Outcomes::single_fn(cyrus_effect)
         }
         CardId::A2155Mars | CardId::A2195Mars | CardId::A4b344Mars | CardId::A4b345Mars => {
-            doutcome(mars_effect)
+            Outcomes::single_fn(mars_effect)
         }
         CardId::A3144RareCandy
         | CardId::A4b314RareCandy
         | CardId::A4b315RareCandy
-        | CardId::A4b379RareCandy => doutcome(rare_candy_effect),
-        CardId::A3a064Repel => doutcome(repel_effect),
+        | CardId::A4b379RareCandy => Outcomes::single_fn(rare_candy_effect),
+        CardId::A3a064Repel => Outcomes::single_fn(repel_effect),
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
-        | CardId::A4b317PokemonCommunication => doutcome(pokemon_communication_effect),
+        | CardId::A4b317PokemonCommunication => Outcomes::single_fn(pokemon_communication_effect),
         CardId::A4151ElementalSwitch
         | CardId::A4b310ElementalSwitch
-        | CardId::A4b311ElementalSwitch => doutcome(elemental_switch_effect),
+        | CardId::A4b311ElementalSwitch => Outcomes::single_fn(elemental_switch_effect),
         CardId::A3a067Gladion | CardId::A3a081Gladion => {
             gladion_search_outcomes(acting_player, state)
         }
@@ -119,47 +121,50 @@ pub fn forecast_trainer_action(
         | CardId::A3a083Lusamine
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
-        | CardId::A4b375Lusamine => doutcome(lusamine_effect),
-        CardId::A3149Ilima | CardId::A3191Ilima => doutcome(ilima_effect),
+        | CardId::A4b375Lusamine => Outcomes::single_fn(lusamine_effect),
+        CardId::A3149Ilima | CardId::A3191Ilima => Outcomes::single_fn(ilima_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
-            doutcome(lyra_effect)
+            Outcomes::single_fn(lyra_effect)
         }
+        CardId::A4156Will | CardId::A4196Will => Outcomes::single_fn(will_effect),
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
-            doutcome(silver_effect)
+            Outcomes::single_fn(silver_effect)
         }
         CardId::A3b066EeveeBag
         | CardId::A3b107EeveeBag
         | CardId::A4b308EeveeBag
-        | CardId::A4b309EeveeBag => doutcome(eevee_bag_effect),
-        CardId::B1217FlamePatch | CardId::B1331FlamePatch => doutcome(flame_patch_effect),
-        CardId::B1225Copycat | CardId::B1270Copycat => doutcome(copycat_effect),
+        | CardId::A4b309EeveeBag => Outcomes::single_fn(eevee_bag_effect),
+        CardId::B1217FlamePatch | CardId::B1331FlamePatch => {
+            Outcomes::single_fn(flame_patch_effect)
+        }
+        CardId::B1225Copycat | CardId::B1270Copycat => Outcomes::single_fn(copycat_effect),
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
-            doutcome(iono_effect)
+            Outcomes::single_fn(iono_effect)
         }
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
-        CardId::B1224Fantina | CardId::B1269Fantina => doutcome(fantina_effect),
+        CardId::B1224Fantina | CardId::B1269Fantina => Outcomes::single_fn(fantina_effect),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
         CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
             celestic_town_elder_effect(acting_player, state)
         }
-        CardId::A2a075Adaman | CardId::A2a090Adaman => doutcome(adaman_effect),
-        CardId::B2149Diantha | CardId::B2190Diantha => doutcome(diantha_effect),
-        CardId::B2152Piers | CardId::B2193Piers => doutcome(piers_effect),
-        CardId::B1a066ClemontsBackpack => doutcome(clemonts_backpack_effect),
+        CardId::A2a075Adaman | CardId::A2a090Adaman => Outcomes::single_fn(adaman_effect),
+        CardId::B2149Diantha | CardId::B2190Diantha => Outcomes::single_fn(diantha_effect),
+        CardId::B2152Piers | CardId::B2193Piers => Outcomes::single_fn(piers_effect),
+        CardId::B1a066ClemontsBackpack => Outcomes::single_fn(clemonts_backpack_effect),
         CardId::B1a068Clemont | CardId::B1a081Clemont => clemont_effect(acting_player, state),
         CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
             quick_grow_extract_effect(acting_player, state)
         }
         CardId::B1a069Serena | CardId::B1a082Serena => serena_effect(acting_player, state),
-        CardId::B2a090Nemona | CardId::B2a107Nemona => doutcome(nemona_effect),
+        CardId::B2a090Nemona | CardId::B2a107Nemona => Outcomes::single_fn(nemona_effect),
         CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
             arven_outcomes(acting_player, state)
         }
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
             electric_generator_outcomes()
         }
-        CardId::B2a088Team | CardId::B2a105Team => doutcome(team_effect),
-        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(),
+        CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
+        CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -231,23 +236,21 @@ fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 }
 
 // Coin flip: heads = random Item from deck to hand, tails = random Tool from deck to hand
-fn arven_outcomes(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
-    let (item_probs, item_mutations) = item_search_outcomes(acting_player, state);
-    let (tool_probs, tool_mutations) = tool_search_outcomes(acting_player, state);
+fn arven_outcomes(acting_player: usize, state: &State) -> Outcomes {
+    let (item_probs, item_mutations) = item_search_outcomes(acting_player, state).into_branches();
+    let (tool_probs, tool_mutations) = tool_search_outcomes(acting_player, state).into_branches();
 
-    let mut probabilities = vec![];
-    let mut outcomes: Mutations = vec![];
+    let mut branches = vec![];
 
     for (p, m) in item_probs.into_iter().zip(item_mutations) {
-        probabilities.push(p * 0.5);
-        outcomes.push(m);
+        branches.push((p * 0.5, m, vec![CoinSeq(vec![true])]));
     }
     for (p, m) in tool_probs.into_iter().zip(tool_mutations) {
-        probabilities.push(p * 0.5);
-        outcomes.push(m);
+        branches.push((p * 0.5, m, vec![CoinSeq(vec![false])]));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_coin_branches(branches)
+        .expect("arven_outcomes should produce valid coin branches")
 }
 
 fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -270,12 +273,8 @@ fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
-fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
-    let probabilities = vec![0.5, 0.5];
-    let mut outcomes: Mutations = vec![];
-
-    // Heads: heal 20 + return card from discard to hand
-    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+fn lucky_ice_pop_outcomes(_state: &State, _acting_player: usize) -> Outcomes {
+    let heads_mutation = Box::new(|_: &mut StdRng, state: &mut State, action: &Action| {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);
         }
@@ -290,27 +289,23 @@ fn lucky_ice_pop_outcomes() -> (Probabilities, Mutations) {
                 state.hands[action.actor].push(card);
             }
         }
-    }));
+    });
 
-    // Tails: heal 20 only (card stays in discard via wrap_with_common_logic)
-    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+    let tails_mutation = Box::new(|_: &mut StdRng, state: &mut State, action: &Action| {
         if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
             active.heal(20);
         }
-    }));
+    });
 
-    (probabilities, outcomes)
+    Outcomes::binary_coin(heads_mutation, tails_mutation)
 }
 
-fn electric_generator_outcomes() -> (Probabilities, Mutations) {
-    let probabilities = vec![0.5, 0.5];
-    let mut outcomes: Mutations = vec![];
+fn will_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    state.set_pending_will_first_heads();
+}
 
-    // Tails: no effect
-    outcomes.push(Box::new(|_, _, _| {}));
-
-    // Heads: attach 1 Lightning Energy from zone to 1 Benched Lightning Pokemon
-    outcomes.push(Box::new(|_, state: &mut State, action: &Action| {
+fn electric_generator_outcomes() -> Outcomes {
+    let heads_mutation = Box::new(|_: &mut StdRng, state: &mut State, action: &Action| {
         let possible_moves = state
             .enumerate_bench_pokemon(action.actor)
             .filter(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning))
@@ -325,9 +320,10 @@ fn electric_generator_outcomes() -> (Probabilities, Mutations) {
                 .move_generation_stack
                 .push((action.actor, possible_moves));
         }
-    }));
+    });
+    let tails_mutation = Box::new(|_: &mut StdRng, _: &mut State, _: &Action| {});
 
-    (probabilities, outcomes)
+    Outcomes::binary_coin(heads_mutation, tails_mutation)
 }
 
 // Queues up the decision of healing an in_play pokemon that matches energy (if None, then any)
@@ -356,32 +352,24 @@ fn inner_healing_effect(
 
 // Will return 6 outputs, one that attaches no energy, one that
 //  queues decision of attaching 1 energy to in_play waters.
-fn misty_outcomes() -> (Probabilities, Mutations) {
-    // probabilistic attach energy to water pokemon
-    // 50% no energy, 25% 1 energy, 12.5% 2 energy, 6.75% 3 energy, 3.125% 4 energy, 1.5625% 5 energy
-    let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
-    let mut outcomes: Mutations = vec![];
-    for j in 0..6 {
-        outcomes.push(Box::new({
-            move |_, state, action| {
-                // For each in_play water pokemon
-                let possible_moves = state
-                    .enumerate_in_play_pokemon(action.actor)
-                    .filter(|(_, x)| x.get_energy_type() == Some(EnergyType::Water))
-                    .map(|(i, _)| SimpleAction::Attach {
-                        attachments: vec![(j, EnergyType::Water, i)],
-                        is_turn_energy: false,
-                    })
-                    .collect::<Vec<_>>();
-                if !possible_moves.is_empty() {
-                    state
-                        .move_generation_stack
-                        .push((action.actor, possible_moves));
-                }
+fn misty_outcomes() -> Outcomes {
+    Outcomes::geometric_until_tails(5, move |heads| {
+        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let possible_moves = state
+                .enumerate_in_play_pokemon(action.actor)
+                .filter(|(_, x)| x.get_energy_type() == Some(EnergyType::Water))
+                .map(|(i, _)| SimpleAction::Attach {
+                    attachments: vec![(heads as u32, EnergyType::Water, i)],
+                    is_turn_energy: false,
+                })
+                .collect::<Vec<_>>();
+            if !possible_moves.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, possible_moves));
             }
-        }));
-    }
-    (probabilities, outcomes)
+        })
+    })
 }
 
 // Remember to implement these in the main controller / hooks.
@@ -892,14 +880,14 @@ fn iono_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
-pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+pub fn may_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put 2 random Pokémon from your deck into your hand.
     // For each Pokémon you put into your hand in this way, choose a Pokémon to shuffle from your hand into your deck.
     let deck_pokemon: Vec<Card> = state.iter_deck_pokemon(acting_player).cloned().collect();
     let num_pokemon = deck_pokemon.len();
     if num_pokemon == 0 {
         // No Pokemon in deck, just shuffle
-        return doutcome(|rng, state, action| {
+        return Outcomes::single_fn(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
         });
     }
@@ -926,7 +914,7 @@ pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
                 }],
             ));
         }));
-        return (probabilities, outcomes);
+        return Outcomes::from_parts(probabilities, outcomes);
     }
 
     // Drawing 2 Pokemon - generate all possible unordered combinations
@@ -956,10 +944,10 @@ pub fn may_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
-fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn lisia_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put 2 random Basic Pokémon with 50 HP or less from your deck into your hand.
     card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         if let Card::Pokemon(pokemon_card) = card {
@@ -970,7 +958,7 @@ fn lisia_effect(acting_player: usize, state: &State) -> (Probabilities, Mutation
     })
 }
 
-fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn celestic_town_elder_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put 1 random Basic Pokémon from your discard pile into your hand.
     let basic_pokemon: Vec<Card> = state.discard_piles[acting_player]
         .iter()
@@ -980,7 +968,7 @@ fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabili
 
     if basic_pokemon.is_empty() {
         // No basic Pokemon in discard, nothing to do
-        return doutcome(|_, _, _| {});
+        return Outcomes::single_fn(|_, _, _| {});
     }
 
     // Create one outcome for each possible basic Pokemon that could be selected
@@ -1001,7 +989,7 @@ fn celestic_town_elder_effect(acting_player: usize, state: &State) -> (Probabili
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 fn nemona_effect(_: &mut StdRng, state: &mut State, _: &Action) {
@@ -1026,7 +1014,7 @@ fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     );
 }
 
-fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn clemont_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put 2 random cards from among Magneton, Heliolisk, and Clemont's Backpack from your deck into your hand.
     card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
         let name = card.get_name();
@@ -1034,13 +1022,13 @@ fn clemont_effect(acting_player: usize, state: &State) -> (Probabilities, Mutati
     })
 }
 
-fn serena_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn serena_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
     card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
 }
 
-fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [G] Pokémon in play. Put a random [G] Pokémon from your deck
     // that evolves from that Pokémon onto that Pokémon to evolve it.
     // Similar to rare candy but automatic random evolution from deck
@@ -1050,7 +1038,7 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
 
     if evolution_choices.is_empty() {
         // No valid evolution targets
-        return doutcome(|rng, state, action| {
+        return Outcomes::single_fn(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
         });
     }
@@ -1067,5 +1055,5 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> (Probabilit
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }

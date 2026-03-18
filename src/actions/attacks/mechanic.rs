@@ -158,7 +158,7 @@ pub enum Mechanic {
         opponent: bool,
         effect: CardEffect,
         duration: u8,
-        probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
+        coin_flip: bool, // false = always apply, true = apply on heads
     },
     DrawCard {
         amount: u8,

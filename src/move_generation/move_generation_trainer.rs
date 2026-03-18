@@ -125,6 +125,8 @@ pub fn trainer_move_generation_implementation(
         // Simple cases: always can play
         CardId::A4158Silver
         | CardId::A4198Silver
+        | CardId::A4156Will
+        | CardId::A4196Will
         | CardId::A4b336Silver
         | CardId::A4b337Silver
         | CardId::PA002XSpeed
