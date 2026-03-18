@@ -1,12 +1,10 @@
-use common::get_initialized_game;
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
+    test_support::get_initialized_game,
 };
-
-mod common;
 
 fn trainer_from_id(card_id: CardId) -> TrainerCard {
     match get_card_by_enum(card_id) {
@@ -168,13 +166,13 @@ fn test_will_only_forces_first_coin_on_multi_coin_attack() {
 
         let hp = game.get_state_clone().get_active(1).get_remaining_hp();
         assert_ne!(
-            hp, 50,
+            hp, 70,
             "Seed {seed}: First coin should never be tails after Will"
         );
-        if hp == 30 {
+        if hp == 50 {
             saw_one_heads = true;
         }
-        if hp == 10 {
+        if hp == 30 {
             saw_two_heads = true;
         }
     }
@@ -201,10 +199,8 @@ fn test_will_forces_heads_for_coin_flip_effect_attack() {
         state.turn_count = 1;
         state.set_board(
             vec![PlayedCard::from_id(CardId::A1140Dugtrio).with_energy(vec![EnergyType::Fighting])],
-            vec![
-                PlayedCard::from_id(CardId::A1001Bulbasaur)
-                    .with_energy(vec![EnergyType::Grass, EnergyType::Grass]),
-            ],
+            vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Grass])],
         );
         state.hands[0] = vec![Card::Trainer(will.clone())];
         game.set_state(state);
@@ -253,10 +249,8 @@ fn test_will_does_not_force_enemy_coin_flips_meowth() {
         state.current_player = 0;
         state.turn_count = 1;
         state.set_board(
-            vec![
-                PlayedCard::from_id(CardId::A1001Bulbasaur)
-                    .with_energy(vec![EnergyType::Grass, EnergyType::Grass]),
-            ],
+            vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Grass])],
             vec![PlayedCard::from_id(CardId::B2124Meowth)],
         );
         state.hands[0] = vec![Card::Trainer(will.clone())];
@@ -288,4 +282,53 @@ fn test_will_does_not_force_enemy_coin_flips_meowth() {
         damaged_count > 0,
         "Expected some seeds where enemy Meowth flips tails and takes damage"
     );
+}
+
+#[test]
+fn test_will_not_consumed_by_non_coin_trainer_then_forces_electric_generator() {
+    let will = trainer_from_id(CardId::A4156Will);
+    let potion = trainer_from_id(CardId::PA001Potion);
+    let electric_generator = trainer_from_id(CardId::B2a086ElectricGenerator);
+
+    for seed in 0..80 {
+        let mut game = get_initialized_game(seed);
+        let mut state = game.get_state_clone();
+
+        state.current_player = 0;
+        state.turn_count = 1;
+        state.set_board(
+            vec![
+                PlayedCard::from_id(CardId::A1001Bulbasaur)
+                    .with_energy(vec![EnergyType::Grass])
+                    .with_damage(20),
+                PlayedCard::from_id(CardId::A1a025Pikachu),
+            ],
+            vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        );
+        state.hands[0] = vec![
+            Card::Trainer(will.clone()),
+            Card::Trainer(potion.clone()),
+            Card::Trainer(electric_generator.clone()),
+        ];
+        game.set_state(state);
+
+        play_trainer(&mut game, 0, will.clone());
+        play_trainer(&mut game, 0, potion.clone());
+        play_trainer(&mut game, 0, electric_generator.clone());
+        game.play_until_stable();
+
+        let state = game.get_state_clone();
+        let pikachu = state.in_play_pokemon[0][1]
+            .as_ref()
+            .expect("Pikachu should still be in play");
+        let attached_lightning = pikachu
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == EnergyType::Lightning)
+            .count();
+        assert_eq!(
+            attached_lightning, 1,
+            "Seed {seed}: Electric Generator should be forced heads after Will even after Potion"
+        );
+    }
 }

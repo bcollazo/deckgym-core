@@ -41,7 +41,7 @@ impl Player for ValueFunctionPlayer {
 }
 
 fn expected_value_function(rng: &mut StdRng, state: &State, action: &Action, myself: usize) -> f64 {
-    let (probabilities, mutations) = forecast_action(state, action);
+    let (probabilities, mutations) = forecast_action(state, action).into_branches();
     let mut outcomes: Vec<State> = vec![];
     for mutation in mutations {
         let mut state = state.clone();
