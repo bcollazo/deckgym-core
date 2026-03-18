@@ -226,6 +226,13 @@ pub enum Mechanic {
     },
     ShuffleOpponentActiveIntoDeck,
     KnockBackOpponentActive,
+    /// Random spread damage attack (e.g., Draco Meteor, Spurt Fire)
+    /// Always targets opponent's active + bench. Optionally includes own bench.
+    RandomSpreadDamage {
+        times: usize,
+        damage_per_hit: u32,
+        include_own_bench: bool,
+    },
     FlipUntilTailsDamage {
         damage_per_heads: u32,
     },

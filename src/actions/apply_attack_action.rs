@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use log::trace;
 use rand::{rngs::StdRng, Rng};
 
@@ -409,6 +411,11 @@ fn forecast_effect_attack_by_mechanic(
         } => {
             random_damage_to_opponent_pokemon_per_self_energy(state, *energy_type, *damage_per_hit)
         }
+        Mechanic::RandomSpreadDamage {
+            times,
+            damage_per_hit,
+            include_own_bench,
+        } => random_spread_damage(state, *times, *damage_per_hit, *include_own_bench),
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
@@ -1953,6 +1960,111 @@ fn generate_random_spread_indices(
     targets
 }
 
+/// Damage distribution: Vec of (player, in_play_idx, total_damage)
+type DamageDistribution = Vec<(usize, usize, u32)>;
+/// Enumerated outcome: (probability, damage_distribution)
+type EnumeratedOutcome = (f64, DamageDistribution);
+
+/// Generates forecastable outcomes for random multi-target damage attacks.
+/// Given a list of possible targets, enumerates all possible targeting combinations
+/// and groups them by damage distribution with correct probabilities.
+///
+/// Returns a Vec of (probability, damage_distribution) where damage_distribution
+/// is a sorted Vec of (player, in_play_idx, total_damage).
+pub(crate) fn enumerate_random_damage_outcomes(
+    possible_targets: &[(usize, usize)],
+    times: usize,
+    damage_per_hit: u32,
+) -> Vec<EnumeratedOutcome> {
+    let n = possible_targets.len();
+    if n == 0 {
+        return vec![];
+    }
+
+    let total_sequences = n.pow(times as u32);
+    let prob_per_sequence = 1.0 / total_sequences as f64;
+
+    let mut outcome_groups: HashMap<Vec<(usize, usize, u32)>, f64> = HashMap::new();
+
+    for seq_idx in 0..total_sequences {
+        let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+        let mut remaining = seq_idx;
+        for _ in 0..times {
+            let target_idx = remaining % n;
+            remaining /= n;
+            let target = possible_targets[target_idx];
+            *damage_map.entry(target).or_insert(0) += damage_per_hit;
+        }
+
+        let mut key: Vec<(usize, usize, u32)> = damage_map
+            .into_iter()
+            .map(|((p, i), d)| (p, i, d))
+            .collect();
+        key.sort();
+
+        *outcome_groups.entry(key).or_insert(0.0) += prob_per_sequence;
+    }
+
+    outcome_groups
+        .into_iter()
+        .map(|(dist, prob)| (prob, dist))
+        .collect()
+}
+
+/// Converts enumerated damage outcomes into Outcomes struct for forecasting.
+fn random_damage_outcomes_to_outcomes(outcomes: Vec<EnumeratedOutcome>) -> Outcomes {
+    if outcomes.is_empty() {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let mut probabilities = Vec::with_capacity(outcomes.len());
+    let mut mutations: Mutations = Vec::with_capacity(outcomes.len());
+
+    for (prob, damage_dist) in outcomes {
+        probabilities.push(prob);
+        mutations.push(Box::new(
+            move |_: &mut StdRng, state: &mut State, action: &Action| {
+                let attacking_ref = (action.actor, 0);
+                let targets: Vec<(u32, usize, usize)> = damage_dist
+                    .iter()
+                    .map(|&(player, idx, damage)| (damage, player, idx))
+                    .collect();
+                handle_damage(state, attacking_ref, &targets, true, None);
+            },
+        ));
+    }
+
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+/// Random spread damage attack (e.g., Draco Meteor, Spurt Fire).
+/// Always targets all opponent Pokemon. Optionally includes own bench.
+fn random_spread_damage(
+    state: &State,
+    times: usize,
+    damage_per_hit: u32,
+    include_own_bench: bool,
+) -> Outcomes {
+    let actor = state.current_player;
+    let opponent = (actor + 1) % 2;
+
+    // Always include all opponent Pokemon
+    let mut possible_targets: Vec<(usize, usize)> = state
+        .enumerate_in_play_pokemon(opponent)
+        .map(|(idx, _)| (opponent, idx))
+        .collect();
+
+    // Optionally add own bench (never own active - that's the attacker)
+    if include_own_bench {
+        for (idx, _) in state.enumerate_bench_pokemon(actor) {
+            possible_targets.push((actor, idx));
+        }
+    }
+
+    let outcomes = enumerate_random_damage_outcomes(&possible_targets, times, damage_per_hit);
+    random_damage_outcomes_to_outcomes(outcomes)
+}
+
 fn switch_self_with_bench(state: &State, damage: u32) -> Outcomes {
     let choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
@@ -2637,5 +2749,101 @@ mod test {
         mutations.remove(2)(&mut rng, &mut state, &action);
 
         assert_eq!(state.get_active(1).attached_energy.len(), 0);
+    }
+
+    mod random_damage_outcomes_tests {
+        use super::super::enumerate_random_damage_outcomes;
+
+        #[test]
+        fn test_one_target_three_hits_single_outcome() {
+            // With 1 target and 3 hits, there's only 1 possible outcome: all hits go to that target
+            let targets = vec![(1, 0)]; // opponent's active
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+
+            assert_eq!(outcomes.len(), 1);
+            let (prob, damage_dist) = &outcomes[0];
+            assert!((prob - 1.0).abs() < 1e-9);
+            assert_eq!(damage_dist, &vec![(1, 0, 150)]); // 3 * 50 = 150 damage
+        }
+
+        #[test]
+        fn test_two_targets_three_hits_outcomes() {
+            // With 2 targets (A, B) and 3 hits, there are 4 unique damage distributions:
+            // - All 3 to A: (150, 0) - 1 way (AAA)
+            // - 2 to A, 1 to B: (100, 50) - 3 ways (AAB, ABA, BAA)
+            // - 1 to A, 2 to B: (50, 100) - 3 ways (ABB, BAB, BBA)
+            // - All 3 to B: (0, 150) - 1 way (BBB)
+            // Total: 8 sequences (2^3)
+            let targets = vec![(1, 0), (1, 1)]; // opponent's active and bench
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+
+            assert_eq!(outcomes.len(), 4);
+
+            // Sort outcomes by damage distribution for easier comparison
+            let mut sorted_outcomes: Vec<_> =
+                outcomes.iter().map(|(p, d)| (*p, d.clone())).collect();
+            sorted_outcomes.sort_by(|a, b| a.1.cmp(&b.1));
+
+            // Check probabilities: 1/8, 3/8, 3/8, 1/8
+            let prob_sum: f64 = sorted_outcomes.iter().map(|(p, _)| p).sum();
+            assert!((prob_sum - 1.0).abs() < 1e-9);
+
+            // Verify the 4 distributions exist with correct probabilities
+            // Distribution with all damage to first target
+            let all_to_first = sorted_outcomes
+                .iter()
+                .find(|(_, d)| d == &vec![(1, 0, 150)]);
+            assert!(all_to_first.is_some());
+            assert!((all_to_first.unwrap().0 - 0.125).abs() < 1e-9); // 1/8
+
+            // Distribution with 2 to first, 1 to second
+            let two_one = sorted_outcomes
+                .iter()
+                .find(|(_, d)| d == &vec![(1, 0, 100), (1, 1, 50)]);
+            assert!(two_one.is_some());
+            assert!((two_one.unwrap().0 - 0.375).abs() < 1e-9); // 3/8
+        }
+
+        #[test]
+        fn test_three_targets_single_hit() {
+            // With 3 targets and 1 hit, there are 3 outcomes, each with probability 1/3
+            let targets = vec![(0, 1), (1, 0), (1, 1)]; // own bench, opponent active, opponent bench
+            let outcomes = enumerate_random_damage_outcomes(&targets, 1, 100);
+
+            assert_eq!(outcomes.len(), 3);
+
+            for (prob, damage_dist) in &outcomes {
+                assert!((prob - 1.0 / 3.0).abs() < 1e-9);
+                assert_eq!(damage_dist.len(), 1);
+                assert_eq!(damage_dist[0].2, 100);
+            }
+        }
+
+        #[test]
+        fn test_empty_targets() {
+            let targets: Vec<(usize, usize)> = vec![];
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+            assert!(outcomes.is_empty());
+        }
+
+        #[test]
+        fn test_probability_sum_always_one() {
+            // Test various configurations to ensure probabilities always sum to 1
+            for num_targets in 1..=5 {
+                for times in 1..=4 {
+                    let targets: Vec<(usize, usize)> = (0..num_targets).map(|i| (0, i)).collect();
+                    let outcomes = enumerate_random_damage_outcomes(&targets, times, 10);
+
+                    let prob_sum: f64 = outcomes.iter().map(|(p, _)| p).sum();
+                    assert!(
+                        (prob_sum - 1.0).abs() < 1e-9,
+                        "Probability sum {} != 1.0 for {} targets, {} times",
+                        prob_sum,
+                        num_targets,
+                        times
+                    );
+                }
+            }
+        }
     }
 }
