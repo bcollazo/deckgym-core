@@ -1,5 +1,5 @@
 use crate::{
-    actions::Action,
+    actions::{Action, SimpleAction},
     players::{create_players, Player, PlayerCode},
     Deck, Game, State,
 };
@@ -35,6 +35,30 @@ pub struct App {
     pub lock_actions_center: bool,
 }
 
+fn action_priority_for_tui(action: &SimpleAction) -> u8 {
+    match action {
+        SimpleAction::Place(_, _) => 0,
+        SimpleAction::Evolve { .. } => 1,
+        SimpleAction::Play { .. } => 2,
+        SimpleAction::Attach { .. }
+        | SimpleAction::AttachFromDiscard { .. }
+        | SimpleAction::AttachTool { .. } => 3,
+        SimpleAction::Attack(_) | SimpleAction::UseCopiedAttack { .. } => 4,
+        SimpleAction::Retreat(_) => 5,
+        SimpleAction::EndTurn => 255,
+        _ => 6,
+    }
+}
+
+fn sort_actions_for_tui(actions: &mut Vec<Action>) {
+    let mut indexed_actions: Vec<(usize, Action)> = actions.drain(..).enumerate().collect();
+    indexed_actions.sort_by_key(|(idx, action)| (action_priority_for_tui(&action.action), *idx));
+    *actions = indexed_actions
+        .into_iter()
+        .map(|(_, action)| action)
+        .collect();
+}
+
 impl App {
     pub fn new(
         deck_a_path: &str,
@@ -61,8 +85,9 @@ impl App {
             let game = Box::new(Game::new(players, seed));
 
             // Get initial state and possible actions
-            let (current_actor, possible_actions) =
+            let (current_actor, mut possible_actions) =
                 game.get_state_clone().generate_possible_actions();
+            sort_actions_for_tui(&mut possible_actions);
 
             AppMode::Interactive {
                 game,
@@ -386,8 +411,9 @@ impl App {
                     self.selection_state = SelectionState::AwaitingActionSelection;
 
                     // Refresh game state and possible actions for next turn
-                    let (new_actor, new_actions) =
+                    let (new_actor, mut new_actions) =
                         game.get_state_clone().generate_possible_actions();
+                    sort_actions_for_tui(&mut new_actions);
                     *current_actor = new_actor;
                     *possible_actions = new_actions;
                 }
@@ -403,8 +429,9 @@ impl App {
                         turn_history.push(current_turn);
 
                         // Refresh for next turn
-                        let (new_actor, new_actions) =
+                        let (new_actor, mut new_actions) =
                             game.get_state_clone().generate_possible_actions();
+                        sort_actions_for_tui(&mut new_actions);
                         *current_actor = new_actor;
                         *possible_actions = new_actions;
                     }
@@ -427,7 +454,11 @@ impl App {
                 states,
                 current_index,
                 ..
-            } => states[*current_index].generate_possible_actions().1,
+            } => {
+                let mut actions = states[*current_index].generate_possible_actions().1;
+                sort_actions_for_tui(&mut actions);
+                actions
+            }
             AppMode::Interactive {
                 possible_actions, ..
             } => possible_actions.clone(),
@@ -471,5 +502,78 @@ impl App {
             AppMode::Interactive { turn_history, .. } => Some(turn_history.clone()),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::sort_actions_for_tui;
+    use crate::{
+        actions::{Action, SimpleAction},
+        models::{Card, EnergyType, PokemonCard, TrainerCard, TrainerType},
+    };
+
+    fn action(action: SimpleAction) -> Action {
+        Action {
+            actor: 1,
+            action,
+            is_stack: false,
+        }
+    }
+
+    fn test_pokemon(name: &str) -> Card {
+        Card::Pokemon(PokemonCard {
+            id: format!("test-{name}"),
+            name: name.to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![],
+            weakness: None,
+            retreat_cost: vec![],
+            rarity: String::new(),
+            booster_pack: String::new(),
+        })
+    }
+
+    #[test]
+    fn sorts_actions_for_tui_in_expected_priority_order() {
+        let mut actions = vec![
+            action(SimpleAction::EndTurn),
+            action(SimpleAction::Retreat(1)),
+            action(SimpleAction::Attack(0)),
+            action(SimpleAction::Attach {
+                attachments: vec![],
+                is_turn_energy: true,
+            }),
+            action(SimpleAction::Play {
+                trainer_card: TrainerCard {
+                    id: "potion".to_string(),
+                    trainer_card_type: TrainerType::Item,
+                    name: "Potion".to_string(),
+                    effect: String::new(),
+                    rarity: String::new(),
+                    booster_pack: String::new(),
+                },
+            }),
+            action(SimpleAction::Evolve {
+                evolution: test_pokemon("Ivysaur"),
+                in_play_idx: 0,
+                from_deck: false,
+            }),
+            action(SimpleAction::Place(test_pokemon("Bulbasaur"), 1)),
+        ];
+
+        sort_actions_for_tui(&mut actions);
+
+        assert!(matches!(actions[0].action, SimpleAction::Place(_, _)));
+        assert!(matches!(actions[1].action, SimpleAction::Evolve { .. }));
+        assert!(matches!(actions[2].action, SimpleAction::Play { .. }));
+        assert!(matches!(actions[3].action, SimpleAction::Attach { .. }));
+        assert!(matches!(actions[4].action, SimpleAction::Attack(_)));
+        assert!(matches!(actions[5].action, SimpleAction::Retreat(_)));
+        assert!(matches!(actions[6].action, SimpleAction::EndTurn));
     }
 }
