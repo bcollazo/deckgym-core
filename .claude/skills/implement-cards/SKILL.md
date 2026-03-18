@@ -158,4 +158,4 @@ Review the results to ensure the games complete without errors.
 
 ### Code Quality
 
-Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui` still work.
+Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui,test-utils` still work.
