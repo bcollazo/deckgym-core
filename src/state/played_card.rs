@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 
 use super::State;
 use crate::{
+    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect},
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType, BASIC_STAGE},
     tools::has_tool,
-    AbilityId,
 };
 
 /// This represents a card in the mat. Has a pointer to the card
@@ -214,16 +214,18 @@ impl PlayedCard {
 
         effective_hp += self.stadium_hp_bonus;
 
-        // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
-            if ability_id == AbilityId::B1a034ReuniclusInfiniteIncrease {
-                let psychic_count = self
-                    .attached_energy
-                    .iter()
-                    .filter(|e| **e == EnergyType::Psychic)
-                    .count() as u32;
-                effective_hp += psychic_count * 30;
-            }
+        // HpBonusPerEnergy: +HP for each matching energy attached
+        if let Some(AbilityMechanic::HpBonusPerEnergy { energy_type, per_energy_hp }) = self
+            .card
+            .get_ability()
+            .and_then(|a| ability_mechanic_from_effect(&a.effect))
+        {
+            let energy_count = self
+                .attached_energy
+                .iter()
+                .filter(|e| *e == energy_type)
+                .count() as u32;
+            effective_hp += energy_count * per_energy_hp;
         }
 
         effective_hp
@@ -370,9 +372,11 @@ impl fmt::Debug for PlayedCard {
 
 pub fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
     state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
-        AbilityId::from_pokemon_id(&pokemon.get_id()[..])
-            .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
-            .unwrap_or(false)
+        pokemon
+            .card
+            .get_ability()
+            .and_then(|a| ability_mechanic_from_effect(&a.effect))
+            .is_some_and(|m| *m == AbilityMechanic::GrassEnergyDoubling)
     })
 }
 

@@ -5,7 +5,7 @@ use crate::{
     },
     effects::TurnEffect,
     models::EnergyType,
-    AbilityId, State,
+    State,
 };
 
 impl State {
@@ -95,11 +95,15 @@ impl State {
         from_zone: bool,
         is_turn_energy: bool,
     ) {
-        let ability_id = {
+        let mechanic = {
             let pokemon = self.in_play_pokemon[actor][in_play_idx]
                 .as_ref()
                 .expect("Pokemon should be there if attaching energy to it");
-            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+            pokemon
+                .card
+                .get_ability()
+                .and_then(|a| ability_mechanic_from_effect(&a.effect))
+                .cloned()
         };
 
         if from_zone {
@@ -122,40 +126,38 @@ impl State {
             }
         }
 
-        // Check for Darkrai ex's Nightmare Aura ability
-        if let Some(ability_id) = ability_id {
-            if ability_id == AbilityId::A2110DarkraiExNightmareAura
-                && energy_type == EnergyType::Darkness
-                && is_turn_energy
-            {
-                // Deal 20 damage to opponent's active Pokémon
-                let opponent = (actor + 1) % 2;
-                handle_damage_only(
-                    self,
-                    (actor, in_play_idx),
-                    &[(20, opponent, 0)],
-                    false,
-                    None,
-                );
+        if let Some(mechanic) = mechanic {
+            // DamageOpponentActiveOnEnergyAttachFromZone: do damage when turn energy is attached
+            if let AbilityMechanic::DamageOpponentActiveOnEnergyAttachFromZone { energy_type: et, amount } = mechanic {
+                if energy_type == et && is_turn_energy {
+                    let opponent = (actor + 1) % 2;
+                    handle_damage_only(
+                        self,
+                        (actor, in_play_idx),
+                        &[(amount, opponent, 0)],
+                        false,
+                        None,
+                    );
+                }
             }
 
-            // Check for Komala's Comatose ability
-            if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 && from_zone {
-                // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
-                let komala = self.get_active_mut(actor);
-                komala.asleep = true;
-            }
-
-            // Check for Cresselia ex's Lunar Plumage ability
-            if ability_id == AbilityId::PA037CresseliaExLunarPlumage
-                && energy_type == EnergyType::Psychic
+            // AsleepOnEnergyAttachFromZoneWhenActive: put to sleep when energy attached from zone
+            if mechanic == AbilityMechanic::AsleepOnEnergyAttachFromZoneWhenActive
+                && in_play_idx == 0
                 && from_zone
             {
-                // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.
-                let pokemon = self.in_play_pokemon[actor][in_play_idx]
-                    .as_mut()
-                    .expect("Pokemon should be there if attaching energy to it");
-                pokemon.heal(20);
+                let pokemon = self.get_active_mut(actor);
+                pokemon.asleep = true;
+            }
+
+            // HealOnEnergyAttachFromZone: heal when matching energy attached from zone
+            if let AbilityMechanic::HealOnEnergyAttachFromZone { energy_type: et, amount } = mechanic {
+                if energy_type == et && from_zone {
+                    let pokemon = self.in_play_pokemon[actor][in_play_idx]
+                        .as_mut()
+                        .expect("Pokemon should be there if attaching energy to it");
+                    pokemon.heal(amount);
+                }
             }
         }
     }

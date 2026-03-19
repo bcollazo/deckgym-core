@@ -6,7 +6,6 @@ use crate::{
     move_generation::trainer_move_generation_implementation,
     state::State,
     tools::is_tool_effect_implemented,
-    AbilityId,
 };
 use serde::{Deserialize, Serialize};
 
@@ -54,9 +53,7 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
 
             // Verify ability is implemented
             if let Some(ability) = &pokemon.ability {
-                if AbilityId::from_pokemon_id(&card_id_string).is_none()
-                    && ability_mechanic_from_effect(&ability.effect).is_none()
-                {
+                if ability_mechanic_from_effect(&ability.effect).is_none() {
                     return ImplementationStatus::MissingAbility;
                 }
             }

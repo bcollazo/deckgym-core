@@ -1,5 +1,4 @@
 use crate::{
-    ability_ids::AbilityId,
     actions::abilities::AbilityMechanic,
     actions::{ability_mechanic_from_effect, SimpleAction},
     hooks::is_ultra_beast,
@@ -28,92 +27,14 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         return false;
     }
 
-    // Try AbilityMechanic first
-    if let Some(mechanic) = card
+    let Some(mechanic) = card
         .card
         .get_ability()
         .and_then(|a| ability_mechanic_from_effect(&a.effect))
-    {
-        return can_use_ability_by_mechanic(state, mechanic, in_play_index, card);
-    }
-
-    // Existing AbilityId fallback
-    let is_active = in_play_index == 0;
-    let ability = AbilityId::from_pokemon_id(&card.card.get_id()[..]).unwrap_or_else(|| {
-        panic!(
-            "Ability seems not implemented for card ID: {}",
-            card.card.get_id()
-        )
-    });
-    match ability {
-        AbilityId::A1020VictreebelFragranceTrap => {
-            is_active && can_use_victreebel_fragrance_trap(state, card)
-        }
-        AbilityId::A1089GreninjaWaterShuriken => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
-        AbilityId::A1123GengarExShadowySpellbind => false,
-        AbilityId::A1177Weezing => is_active && !card.ability_used,
-        AbilityId::A1188PidgeotDriveOff => can_use_pidgeot_drive_off(state, card),
-        AbilityId::A1132Gardevoir => !card.ability_used,
-        AbilityId::A1a006SerperiorJungleTotem => false,
-        AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
-        AbilityId::A1a019VaporeonWashOut => can_use_vaporeon_wash_out(state),
-        AbilityId::A2a010LeafeonExForestBreath => is_active && !card.ability_used,
-        AbilityId::A2a022GlaceonExSnowyTerrain => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::A2a069ShayminSkySupport => false, // Passive ability
-        AbilityId::A2a071Arceus => false,
-        AbilityId::A2072DusknoirShadowVoid => can_use_dusknoir_shadow_void(state, in_play_index),
-        AbilityId::A2078GiratinaLevitate => false, // Passive ability
-        AbilityId::A2092LucarioFightingCoach => false, // Passive ability, triggers via hooks
-        AbilityId::A2110DarkraiExNightmareAura => false,
-        AbilityId::A2b035GiratinaExBrokenSpaceBellow => !card.ability_used,
-        AbilityId::A3066OricoricSafeguard => false,
-        AbilityId::A3122SolgaleoExRisingRoad => !is_active && !card.ability_used,
-        AbilityId::A3141KomalaComatose => false,
-        AbilityId::A3a015LuxrayIntimidatingFang => false,
-        AbilityId::A3a021ZeraoraThunderclapFlash => false,
-        AbilityId::A3a027ShiinoticIlluminate => !card.ability_used,
-        AbilityId::A3a062CelesteelaUltraThrusters => {
-            can_use_celesteela_ultra_thrusters(state, card)
-        }
-        AbilityId::A3b009FlareonExCombust => {
-            !card.ability_used
-                && state.discard_energies[state.current_player].contains(&EnergyType::Fire)
-        }
-        AbilityId::A3b034SylveonExHappyRibbon => false,
-        AbilityId::A3b056EeveeExVeeveeVolve => false,
-        AbilityId::A3b057SnorlaxExFullMouthManner => false,
-        AbilityId::A4083EspeonExPsychicHealing => {
-            is_active && can_use_espeon_ex_psychic_healing(state, card)
-        }
-        AbilityId::A4a010EnteiExLegendaryPulse => false,
-        AbilityId::A4a020SuicuneExLegendaryPulse => false,
-        AbilityId::A4a022MiloticHealingRipples => false,
-        AbilityId::A4a025RaikouExLegendaryPulse => false,
-        AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::B1121IndeedeeExWatchOver => !card.ability_used,
-        AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
-        AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
-        AbilityId::B1177GoomyStickyMembrane => false,
-        AbilityId::B1184EeveeBoostedEvolution => false, // Passive ability, triggers via hooks
-        AbilityId::PA037CresseliaExLunarPlumage => false,
-        AbilityId::A3a042NihilegoMorePoison => false, // Passive ability, triggers via hooks
-        AbilityId::A1061PoliwrathCounterattack => false, // Passive ability, triggers via hooks
-        AbilityId::A2a050CrobatCunningLink => can_use_crobat_cunning_link(state, card),
-        AbilityId::A4112UmbreonExDarkChase => is_active && can_use_umbreon_dark_chase(state, card),
-        AbilityId::B1160DragalgeExPoisonPoint => false, // Passive ability, triggers via hooks
-        AbilityId::B1a006AriadosTrapTerritory => false, // Passive ability
-        AbilityId::B1a012CharmeleonIgnition => false,   // Triggered on evolve
-        AbilityId::B1a018WartortleShellShield => false, // Passive ability
-        AbilityId::B1a034ReuniclusInfiniteIncrease => false, // Passive ability
-        AbilityId::B1a065FurfrouFurCoat => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::A4a032MisdreavusInfiltratingInspection => {
-            unreachable!("Handled by AbilityMechanic")
-        }
-        AbilityId::A1007Butterfree | AbilityId::A2022ShayminFragrantFlowerGarden => {
-            unreachable!("Handled by AbilityMechanic")
-        }
-    }
+    else {
+        return false;
+    };
+    can_use_ability_by_mechanic(state, mechanic, in_play_index, card)
 }
 
 fn can_use_ability_by_mechanic(
@@ -148,6 +69,130 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
             !card.ability_used && card.attached_energy.contains(discard_energy)
         }
+        // ── Active (on-demand) abilities ──────────────────────────────────────
+        AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::SwitchOutOpponentActive => {
+            if card.ability_used {
+                return false;
+            }
+            let opponent = (state.current_player + 1) % 2;
+            state.enumerate_bench_pokemon(opponent).next().is_some()
+        }
+        AbilityMechanic::SwitchInOpponentBenchedBasic => {
+            if card.ability_used || _in_play_index != 0 {
+                return false;
+            }
+            let opponent = (state.current_player + 1) % 2;
+            state
+                .enumerate_bench_pokemon(opponent)
+                .any(|(_, pokemon)| pokemon.card.is_basic())
+        }
+        AbilityMechanic::AttachEnergyFromZoneToSelf { .. } => !card.ability_used,
+        AbilityMechanic::AttachEnergyFromZoneToSelfEndTurn { .. } => !card.ability_used,
+        AbilityMechanic::AttachMultipleEnergyFromZoneToSelfAndSelfDamage { .. } => {
+            !card.ability_used
+        }
+        AbilityMechanic::AttachEnergyFromDiscardToSelfAndSelfDamage { energy_type, .. } => {
+            !card.ability_used
+                && state.discard_energies[state.current_player].contains(energy_type)
+        }
+        AbilityMechanic::HealActivePokemon { .. } => !card.ability_used,
+        AbilityMechanic::HealOneOfYourPokemon { .. } => {
+            if card.ability_used || _in_play_index != 0 {
+                return false;
+            }
+            state
+                .enumerate_in_play_pokemon(state.current_player)
+                .any(|(_, pokemon)| pokemon.is_damaged())
+        }
+        AbilityMechanic::SwitchInOpponentDamagedBenched => {
+            if card.ability_used || _in_play_index != 0 {
+                return false;
+            }
+            let opponent = (state.current_player + 1) % 2;
+            state
+                .enumerate_bench_pokemon(opponent)
+                .any(|(_, pokemon)| pokemon.is_damaged())
+        }
+        AbilityMechanic::SwitchBenchedSelfToActive => {
+            _in_play_index != 0 && !card.ability_used
+        }
+        AbilityMechanic::DrawRandomPokemonFromDeck => !card.ability_used,
+        AbilityMechanic::MoveAllDamageToSelf => {
+            state
+                .enumerate_in_play_pokemon(state.current_player)
+                .any(|(i, p)| p.is_damaged() && i != _in_play_index)
+        }
+        AbilityMechanic::DamageOpponentActiveIfArceusInPlay { .. } => {
+            if card.ability_used {
+                return false;
+            }
+            state
+                .enumerate_in_play_pokemon(state.current_player)
+                .any(|(_, pokemon)| {
+                    let name = pokemon.get_name();
+                    name == "Arceus" || name == "Arceus ex"
+                })
+        }
+        AbilityMechanic::AttachEnergyFromZoneToTypedPokemon { .. } => {
+            _in_play_index == 0 && !card.ability_used
+        }
+        AbilityMechanic::MoveEnergyFromBenchedTypedToActiveTyped { energy_type } => {
+            if card.ability_used {
+                return false;
+            }
+            let active = state.get_active(state.current_player);
+            if active.get_energy_type() != Some(*energy_type) {
+                return false;
+            }
+            state
+                .enumerate_bench_pokemon(state.current_player)
+                .any(|(_, pokemon)| {
+                    pokemon.card.get_type() == Some(*energy_type)
+                        && pokemon.attached_energy.contains(energy_type)
+                })
+        }
+        AbilityMechanic::SwitchUltraBeast => {
+            if card.ability_used {
+                return false;
+            }
+            let active = state.get_active(state.current_player);
+            if !is_ultra_beast(&active.get_name()) {
+                return false;
+            }
+            state
+                .enumerate_bench_pokemon(state.current_player)
+                .any(|(_, pokemon)| is_ultra_beast(&pokemon.get_name()))
+        }
+        // ── Passive (hook-driven) abilities ───────────────────────────────────
+        AbilityMechanic::BlockSupportCards => false,
+        AbilityMechanic::GrassEnergyDoubling => false,
+        AbilityMechanic::BlockOpponentEvolution => false,
+        AbilityMechanic::BenchReduceBasicRetreatCost => false,
+        AbilityMechanic::NoRetreatCostWithEnergy => false,
+        AbilityMechanic::TypeDamageBoost { .. } => false,
+        AbilityMechanic::DamageOpponentActiveOnEnergyAttachFromZone { .. } => false,
+        AbilityMechanic::SafeguardFromEx => false,
+        AbilityMechanic::AsleepOnEnergyAttachFromZoneWhenActive => false,
+        AbilityMechanic::ReduceOpponentAttackDamage { .. } => false,
+        AbilityMechanic::AttachEnergyFromZoneToSelfOnFirstTurn { .. } => false,
+        AbilityMechanic::MorePoisonDamage { .. } => false,
+        AbilityMechanic::CounterattackOnDamage { .. } => false,
+        AbilityMechanic::PoisonAttackerOnDamage => false,
+        AbilityMechanic::ImmuneToSpecialConditions => false,
+        AbilityMechanic::OnEvolveDraw { .. } => false,
+        AbilityMechanic::VeeveeVolve => false,
+        AbilityMechanic::EndTurnHealSelf { .. } => false,
+        AbilityMechanic::EndTurnDrawCard => false,
+        AbilityMechanic::OnEvolveHealTypedPokemon { .. } => false,
+        AbilityMechanic::MultiTypeDamageBoost { .. } => false,
+        AbilityMechanic::IncreaseOpponentAttackCost => false,
+        AbilityMechanic::BoostedEvolution => false,
+        AbilityMechanic::IncreaseOpponentRetreatCost => false,
+        AbilityMechanic::OnEvolveAttachEnergyFromZoneToActiveTypedPokemon { .. } => false,
+        AbilityMechanic::BenchSafeguard => false,
+        AbilityMechanic::HpBonusPerEnergy { .. } => false,
+        AbilityMechanic::HealOnEnergyAttachFromZone { .. } => false,
     }
 }
 

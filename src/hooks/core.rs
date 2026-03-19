@@ -10,7 +10,7 @@ use crate::{
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
     stadiums::get_training_area_damage_bonus,
     tools::has_tool,
-    AbilityId, State,
+    State,
 };
 
 fn is_fossil(trainer_card: &TrainerCard) -> bool {
@@ -74,24 +74,28 @@ pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) 
 
 /// Called when a Pokémon evolves
 pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&to_card.get_id()[..]) {
-        if ability_id == AbilityId::A3b034SylveonExHappyRibbon {
-            // Give the user the option to draw 2 cards
+    let Some(ability) = to_card.get_ability() else {
+        return;
+    };
+    let Some(mechanic) = ability_mechanic_from_effect(&ability.effect) else {
+        return;
+    };
+    match mechanic {
+        AbilityMechanic::OnEvolveDraw { amount } => {
             state.move_generation_stack.push((
                 actor,
-                vec![SimpleAction::DrawCard { amount: 2 }, SimpleAction::Noop],
+                vec![SimpleAction::DrawCard { amount: *amount as u8 }, SimpleAction::Noop],
             ));
         }
-        if ability_id == AbilityId::A4a022MiloticHealingRipples {
-            // Healing Ripples: heal 60 damage from 1 of your [W] Pokémon
+        AbilityMechanic::OnEvolveHealTypedPokemon { energy_type, amount } => {
             let possible_moves: Vec<SimpleAction> = state
                 .enumerate_in_play_pokemon(actor)
                 .filter(|(_, pokemon)| {
-                    pokemon.is_damaged() && pokemon.get_energy_type() == Some(EnergyType::Water)
+                    pokemon.is_damaged() && pokemon.get_energy_type() == Some(*energy_type)
                 })
                 .map(|(in_play_idx, _)| SimpleAction::Heal {
                     in_play_idx,
-                    amount: 60,
+                    amount: *amount,
                     cure_status: false,
                 })
                 .chain(std::iter::once(SimpleAction::Noop))
@@ -101,21 +105,19 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                 state.move_generation_stack.push((actor, possible_moves));
             }
         }
-        if ability_id == AbilityId::B1a012CharmeleonIgnition {
-            // Ignition: When you play this Pokémon from your hand to evolve 1 of your Pokémon during your turn,
-            // you may take 1 [R] Energy from your Energy Zone and attach it to this Pokémon.
-            // Find the active Pokémon (where evolution just happened) and attach energy
+        AbilityMechanic::OnEvolveAttachEnergyFromZoneToActiveTypedPokemon { energy_type } => {
             state.move_generation_stack.push((
                 actor,
                 vec![
                     SimpleAction::Attach {
-                        attachments: vec![(1, EnergyType::Fire, 0)], // Attach to active (index 0)
-                        is_turn_energy: false, // From ability, not turn energy
+                        attachments: vec![(1, *energy_type, 0)],
+                        is_turn_energy: false,
                     },
                     SimpleAction::Noop,
                 ],
             ));
         }
+        _ => {}
     }
 }
 
@@ -123,24 +125,24 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
 pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     // Check if active Pokémon has an end-of-turn ability
     let active = state.get_active(player_ending_turn);
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&active.card.get_id()[..]) {
-        if ability_id == AbilityId::A4a010EnteiExLegendaryPulse
-            || ability_id == AbilityId::A4a020SuicuneExLegendaryPulse
-            || ability_id == AbilityId::A4a025RaikouExLegendaryPulse
-        {
-            // At the end of your turn, if this Pokémon is in the Active Spot, draw a card.
-            debug!("Legendary Pulse: Drawing a card");
+    let active_mechanic = active
+        .card
+        .get_ability()
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+        .cloned();
+    match active_mechanic {
+        Some(AbilityMechanic::EndTurnDrawCard) => {
+            debug!("EndTurnDrawCard: Drawing a card");
             state.move_generation_stack.push((
                 player_ending_turn,
                 vec![SimpleAction::DrawCard { amount: 1 }],
             ));
         }
-        if ability_id == AbilityId::A3b057SnorlaxExFullMouthManner {
-            // At the end of your turn, if this Pokémon is in the Active Spot, heal 20 damage from it.
-            debug!("Full-Mouth Manner: Healing 20 damage from active");
-            let active = state.get_active_mut(player_ending_turn);
-            active.heal(20);
+        Some(AbilityMechanic::EndTurnHealSelf { amount }) => {
+            debug!("EndTurnHealSelf: Healing {} damage from active", amount);
+            state.get_active_mut(player_ending_turn).heal(amount);
         }
+        _ => {}
     }
 
     // Process delayed damage effects on active Pokemon
@@ -227,30 +229,31 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         state.discard_tool(tool_owner, idx);
     }
 
-    // Check for Zeraora's Thunderclap Flash ability (on first turn only)
+    // Check for first-turn energy attachment abilities (e.g. Zeraora's Thunderclap Flash)
     // Turn 1 is player 0's first turn, turn 2 is player 1's first turn
     if state.turn_count == 1 || state.turn_count == 2 {
-        // Collect indices first to avoid borrow checker issues
-        let zeraora_indices: Vec<usize> = state
+        let first_turn_indices: Vec<(usize, EnergyType)> = state
             .enumerate_in_play_pokemon(player_ending_turn)
             .filter_map(|(in_play_idx, pokemon)| {
-                if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.card.get_id()[..]) {
-                    if ability_id == AbilityId::A3a021ZeraoraThunderclapFlash {
-                        return Some(in_play_idx);
-                    }
+                if let Some(AbilityMechanic::AttachEnergyFromZoneToSelfOnFirstTurn {
+                    energy_type,
+                }) = pokemon
+                    .card
+                    .get_ability()
+                    .and_then(|a| ability_mechanic_from_effect(&a.effect))
+                {
+                    return Some((in_play_idx, *energy_type));
                 }
                 None
             })
             .collect();
 
-        // Now attach energy to all Zeraora pokemon
-        for in_play_idx in zeraora_indices {
-            // At the end of your first turn, take a Lightning Energy from your Energy Zone and attach it to this Pokémon.
-            debug!("Zeraora's Thunderclap Flash: Attaching 1 Lightning Energy");
+        for (in_play_idx, energy_type) in first_turn_indices {
+            debug!("AttachEnergyFromZoneToSelfOnFirstTurn: Attaching 1 {:?} Energy", energy_type);
             state.attach_energy_from_zone(
                 player_ending_turn,
                 in_play_idx,
-                EnergyType::Lightning,
+                energy_type,
                 1,
                 false,
             );
@@ -264,13 +267,13 @@ pub(crate) fn can_play_support(state: &State) -> bool {
         .iter()
         .any(|x| matches!(x, TurnEffect::NoSupportCards));
 
-    // Check if opponent has Gengar ex with Shadowy Spellbind in active spot
+    // Check if opponent has BlockSupportCards ability in active spot
     let opponent = (state.current_player + 1) % 2;
     let blocked_by_gengar = state.in_play_pokemon[opponent][0]
         .as_ref()
-        .and_then(|opponent_active| AbilityId::from_pokemon_id(&opponent_active.get_id()))
-        .map(|id| id == AbilityId::A1123GengarExShadowySpellbind)
-        .unwrap_or(false);
+        .and_then(|p| p.card.get_ability())
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+        .is_some_and(|m| *m == AbilityMechanic::BlockSupportCards);
 
     !state.has_played_support && !has_modifiers && !blocked_by_gengar
 }
@@ -333,11 +336,13 @@ fn get_intimidating_fang_reduction(
     let defenders_active = &state.in_play_pokemon[target_player][0]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Intimidating Fang");
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&defenders_active.card.get_id()[..]) {
-        if ability_id == AbilityId::A3a015LuxrayIntimidatingFang {
-            debug!("Intimidating Fang: Reducing opponent's attack damage by 20");
-            return 20;
-        }
+    if let Some(AbilityMechanic::ReduceOpponentAttackDamage { amount }) = defenders_active
+        .card
+        .get_ability()
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+    {
+        debug!("ReduceOpponentAttackDamage: Reducing damage by {}", amount);
+        return *amount;
     }
     0
 }
@@ -581,21 +586,24 @@ pub(crate) fn modify_damage(
         .as_ref()
         .expect("Receiving Pokemon should be there when modifying damage");
 
-    // Check for Safeguard ability (prevents all damage from opponent's Pokémon ex)
-    if let Some(ability_id) = AbilityId::from_pokemon_id(&receiving_pokemon.card.get_id()[..]) {
-        if ability_id == AbilityId::A3066OricoricSafeguard
+    // Check for ability-based damage prevention
+    if let Some(mechanic) = receiving_pokemon
+        .card
+        .get_ability()
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+    {
+        if *mechanic == AbilityMechanic::SafeguardFromEx
             && is_from_active_attack
             && attacking_pokemon.card.is_ex()
         {
-            debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
+            debug!("SafeguardFromEx: Preventing all damage from opponent's Pokémon ex");
             return 0;
         }
-        // Wartortle Shell Shield: prevent all damage when on bench
-        if ability_id == AbilityId::B1a018WartortleShellShield
+        if *mechanic == AbilityMechanic::BenchSafeguard
             && is_from_active_attack
             && target_idx != 0
         {
-            debug!("Shell Shield: Preventing all damage to benched Wartortle");
+            debug!("BenchSafeguard: Preventing all damage to benched Pokémon");
             return 0;
         }
     }
@@ -720,26 +728,26 @@ fn calculate_type_boost_bonus(
 
     // Check each Pokemon in play for type-boosting abilities
     for (_, pokemon) in state.enumerate_in_play_pokemon(attacking_player) {
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
-            match ability_id {
-                // Lucario's Fighting Coach: +20 damage to Fighting-type attacks
-                AbilityId::A2092LucarioFightingCoach => {
-                    if attacker_energy_type == EnergyType::Fighting {
-                        debug!("Fighting Coach (Lucario): Increasing damage by 20");
-                        bonus += 20;
-                    }
+        let Some(ability) = pokemon.card.get_ability() else {
+            continue;
+        };
+        let Some(mechanic) = ability_mechanic_from_effect(&ability.effect) else {
+            continue;
+        };
+        match mechanic {
+            AbilityMechanic::TypeDamageBoost { energy_type, amount } => {
+                if attacker_energy_type == *energy_type {
+                    debug!("TypeDamageBoost: Increasing damage by {}", amount);
+                    bonus += amount;
                 }
-                // Aegislash's Cursed Metal: +30 damage to Psychic and Metal-type attacks
-                AbilityId::B1172AegislashCursedMetal => {
-                    if attacker_energy_type == EnergyType::Psychic
-                        || attacker_energy_type == EnergyType::Metal
-                    {
-                        debug!("Cursed Metal (Aegislash): Increasing damage by 30");
-                        bonus += 30;
-                    }
-                }
-                _ => {}
             }
+            AbilityMechanic::MultiTypeDamageBoost { energy_types, amount } => {
+                if energy_types.contains(&attacker_energy_type) {
+                    debug!("MultiTypeDamageBoost: Increasing damage by {}", amount);
+                    bonus += amount;
+                }
+            }
+            _ => {}
         }
     }
 
@@ -752,17 +760,18 @@ pub(crate) fn get_attack_cost(
     state: &State,
     attacking_player: usize,
 ) -> Vec<EnergyType> {
-    use crate::ability_ids::AbilityId;
     let mut modified_cost = base_cost.to_vec();
 
-    // Check if opponent has Goomy with Sticky Membrane in the active spot
+    // Check if opponent has IncreaseOpponentAttackCost ability in the active spot
     let opponent = (attacking_player + 1) % 2;
     if let Some(opponent_active) = &state.in_play_pokemon[opponent][0] {
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&opponent_active.get_id()[..]) {
-            if ability_id == AbilityId::B1177GoomyStickyMembrane {
-                // Add 1 Colorless energy to the attack cost
-                modified_cost.push(EnergyType::Colorless);
-            }
+        if opponent_active
+            .card
+            .get_ability()
+            .and_then(|a| ability_mechanic_from_effect(&a.effect))
+            .is_some_and(|m| *m == AbilityMechanic::IncreaseOpponentAttackCost)
+        {
+            modified_cost.push(EnergyType::Colorless);
         }
     }
 
