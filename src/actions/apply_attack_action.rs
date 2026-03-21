@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use log::trace;
 use rand::{rngs::StdRng, Rng};
 
@@ -12,22 +14,22 @@ use crate::{
         attacks::{BenchSide, CopyAttackSource, Mechanic},
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
-        mutations::{doutcome, doutcome_from_mutation},
         Action,
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, contains_energy, get_attack_cost, get_retreat_cost, get_stage},
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
-    AttackId, State,
+    State,
 };
 
 use super::{
-    apply_action_helpers::{Mutations, Probabilities},
+    apply_action_helpers::{Mutation, Mutations},
     mutations::{
         active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
     },
+    outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
         search_and_bench_by_name, supporter_search_outcomes,
@@ -36,18 +38,14 @@ use super::{
 };
 
 // This is a reducer of all actions relating to attacks.
-pub(crate) fn forecast_attack(
-    acting_player: usize,
-    state: &State,
-    index: usize,
-) -> (Probabilities, Mutations) {
+pub(crate) fn forecast_attack(acting_player: usize, state: &State, index: usize) -> Outcomes {
     let active = state.get_active(acting_player);
     let attack = active.card.get_attacks()[index].clone();
     trace!("Forecasting attack: {active:?} {attack:?}");
 
-    let (base_probs, base_mutations) = forecast_attack_inner(state, &active.card, &attack, index);
+    let base_outcomes = forecast_attack_inner(state, &active.card, &attack, index);
 
-    apply_attack_common_modifiers(acting_player, state, &attack, base_probs, base_mutations)
+    apply_attack_common_modifiers(acting_player, state, &attack, base_outcomes)
 }
 
 pub(crate) fn forecast_copied_attack(
@@ -57,7 +55,7 @@ pub(crate) fn forecast_copied_attack(
     source_in_play_idx: usize,
     attack_index: usize,
     require_attacker_energy_match: bool,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let source = state.in_play_pokemon[source_player][source_in_play_idx]
         .as_ref()
         .expect("Copied-attack source Pokemon should exist");
@@ -77,67 +75,57 @@ pub(crate) fn forecast_copied_attack(
         let active = state.get_active(acting_player);
         let modified_cost = get_attack_cost(&attack.energy_required, state, acting_player);
         if !contains_energy(active, &modified_cost, state, acting_player) {
-            return doutcome(|_, _, _| {});
+            return Outcomes::single_fn(|_, _, _| {});
         }
     }
 
-    let (base_probs, base_mutations) =
-        forecast_attack_inner(state, &source.card, &attack, attack_index);
+    let base_outcomes = forecast_attack_inner(state, &source.card, &attack, attack_index);
 
-    apply_copied_attack_modifiers(acting_player, state, &attack, base_probs, base_mutations)
+    apply_copied_attack_modifiers(acting_player, state, &attack, base_outcomes)
 }
 
 fn apply_attack_common_modifiers(
     acting_player: usize,
     state: &State,
     attack: &Attack,
-    base_probs: Probabilities,
-    base_mutations: Mutations,
-) -> (Probabilities, Mutations) {
+    base_outcomes: Outcomes,
+) -> Outcomes {
     let active = state.get_active(acting_player);
     let has_block_effect = active
         .get_active_effects()
         .iter()
         .any(|effect| matches!(effect, CardEffect::CoinFlipToBlockAttack));
 
-    let (mut probs, mut mutations) = (base_probs, base_mutations);
+    let mut outcomes = base_outcomes;
 
     // Handle confusion: 50% chance the attack fails (coin flip)
     if active.confused {
-        (probs, mutations) = apply_confusion_coin_flip(probs, mutations);
+        outcomes = apply_confusion_coin_flip(outcomes);
     }
 
     // Handle CoinFlipToBlockAttack: 50% chance attack is blocked
     if has_block_effect {
-        (probs, mutations) = apply_block_attack_coin_flip(probs, mutations);
+        outcomes = apply_block_attack_coin_flip(outcomes);
     }
 
-    apply_defender_damage_prevention_if_needed(acting_player, state, attack, probs, mutations)
+    apply_defender_damage_prevention_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_copied_attack_modifiers(
     acting_player: usize,
     state: &State,
     attack: &Attack,
-    base_probs: Probabilities,
-    base_mutations: Mutations,
-) -> (Probabilities, Mutations) {
-    apply_defender_damage_prevention_if_needed(
-        acting_player,
-        state,
-        attack,
-        base_probs,
-        base_mutations,
-    )
+    base_outcomes: Outcomes,
+) -> Outcomes {
+    apply_defender_damage_prevention_if_needed(acting_player, state, attack, base_outcomes)
 }
 
 fn apply_defender_damage_prevention_if_needed(
     acting_player: usize,
     state: &State,
     attack: &Attack,
-    mut probs: Probabilities,
-    mut mutations: Mutations,
-) -> (Probabilities, Mutations) {
+    outcomes: Outcomes,
+) -> Outcomes {
     // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
     if attack.fixed_damage > 0 {
         let opponent = (acting_player + 1) % 2;
@@ -150,256 +138,58 @@ fn apply_defender_damage_prevention_if_needed(
             .unwrap_or(false);
 
         if defender_has_coin_flip_prevent {
-            (probs, mutations) = apply_defender_coin_flip_prevent_damage(probs, mutations);
+            return apply_defender_coin_flip_prevent_damage(outcomes);
         }
     }
 
-    (probs, mutations)
+    outcomes
 }
 
-fn forecast_attack_inner(
-    state: &State,
-    card: &Card,
-    attack: &Attack,
-    index: usize,
-) -> (Probabilities, Mutations) {
-    let card_id = card.get_id();
-
+fn forecast_attack_inner(state: &State, card: &Card, attack: &Attack, _index: usize) -> Outcomes {
     let Some(effect_text) = &attack.effect else {
         return active_damage_doutcome(attack.fixed_damage);
     };
-    // Try AttackId first, if not, fallback to mechanic map
-    if let Some(attack_id) = AttackId::from_pokemon_index(&card_id[..], index) {
-        forecast_effect_attack_by_attack_id(state, attack_id)
-    } else {
-        let mechanic = EFFECT_MECHANIC_MAP.get(&effect_text[..]);
-        let Some(mechanic) = mechanic else {
-            panic!(
-                "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
-                effect_text, attack, card
-            );
-        };
-        forecast_effect_attack_by_mechanic(state, attack, mechanic)
-    }
+    let mechanic = EFFECT_MECHANIC_MAP.get(&effect_text[..]);
+    let Some(mechanic) = mechanic else {
+        panic!(
+            "No implementation found for attack effect: {:?} on attack {:?} of Pokemon {:?}",
+            effect_text, attack, card
+        );
+    };
+    forecast_effect_attack_by_mechanic(state, attack, mechanic)
 }
 
 /// Applies confusion coin flip: 50% chance the attack fails (does nothing)
-fn apply_confusion_coin_flip(
-    base_probs: Probabilities,
-    base_mutations: Mutations,
-) -> (Probabilities, Mutations) {
-    // Confusion: 50% tails = attack fails, 50% heads = attack succeeds
-    let mut probs = vec![0.5]; // First outcome: tails (confusion - attack fails)
-    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
-        // Attack fails due to confusion - do nothing
-    })];
-
-    // Add all base outcomes with halved probabilities (heads = attack succeeds)
-    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
-        probs.push(prob * 0.5);
-        mutations.push(mutation);
-    }
-
-    (probs, mutations)
+fn apply_confusion_coin_flip(base_outcomes: Outcomes) -> Outcomes {
+    prepend_coin_gate(base_outcomes, Box::new(|_, _, _| {}))
 }
 
 /// Applies CoinFlipToBlockAttack effect: 50% chance the attack is blocked (tails)
-fn apply_block_attack_coin_flip(
-    base_probs: Probabilities,
-    base_mutations: Mutations,
-) -> (Probabilities, Mutations) {
-    // 50% tails = attack blocked, 50% heads = attack succeeds
-    let mut probs = vec![0.5]; // First outcome: tails (attack blocked)
-    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
-        // Attack blocked - do nothing
-    })];
+fn apply_block_attack_coin_flip(base_outcomes: Outcomes) -> Outcomes {
+    prepend_coin_gate(base_outcomes, Box::new(|_, _, _| {}))
+}
 
-    // Add all base outcomes with halved probabilities (heads = attack succeeds)
-    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
-        probs.push(prob * 0.5);
-        mutations.push(mutation);
-    }
-
-    (probs, mutations)
+fn prepend_coin_gate(base_outcomes: Outcomes, gate_mutation: Mutation) -> Outcomes {
+    let (base_probs, base_mutations) = base_outcomes.into_branches();
+    Outcomes::from_parts(
+        std::iter::once(0.5)
+            .chain(base_probs.into_iter().map(|p| p * 0.5))
+            .collect(),
+        std::iter::once(gate_mutation)
+            .chain(base_mutations)
+            .collect(),
+    )
 }
 
 /// Applies defender's CoinFlipToPreventDamage ability: 50% chance damage is prevented (heads)
-fn apply_defender_coin_flip_prevent_damage(
-    base_probs: Probabilities,
-    base_mutations: Mutations,
-) -> (Probabilities, Mutations) {
-    // 50% heads = damage prevented, 50% tails = damage goes through
-    let mut probs = vec![0.5]; // First outcome: heads (damage prevented)
-    let mut mutations: Mutations = vec![Box::new(|_, _, _| {
-        // TODO: This makes it so that the attack effect doesn't happen,
-        // but in the game it does happen, its just the damage that is reduced to 0.
-    })];
-
-    // Add all base outcomes with halved probabilities (tails = damage goes through)
-    for (prob, mutation) in base_probs.into_iter().zip(base_mutations) {
-        probs.push(prob * 0.5);
-        mutations.push(mutation);
-    }
-
-    (probs, mutations)
-}
-
-fn forecast_effect_attack_by_attack_id(
-    state: &State,
-    attack_id: AttackId,
-) -> (Probabilities, Mutations) {
-    let acting_player = state.current_player;
-    match attack_id {
-        AttackId::A1115AbraTeleport => teleport_attack(),
-        AttackId::A1136GolurkDoubleLariat => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
-        }
-        AttackId::A1149GolemDoubleEdge => self_damage_attack(150, 50),
-        AttackId::A1153MarowakExBonemerang => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
-        }
-        AttackId::A1163GrapploctKnockBack => knock_back_attack(60),
-        AttackId::A1178MawileCrunch => mawile_crunch(),
-        AttackId::A1181MeltanAmass => self_charge_active_from_energies(0, vec![EnergyType::Metal]),
-        AttackId::A1201LickitungContinuousLick => flip_until_tails_attack(60),
-        AttackId::A1203KangaskhanDizzyPunch => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
-        }
-        AttackId::A1a010PonytaStomp => probabilistic_damage_attack(vec![0.5, 0.5], vec![10, 40]),
-        AttackId::A1a011RapidashRisingLunge => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![40, 100])
-        }
-        AttackId::A1a017MagikarpLeapOut | AttackId::A4a021FeebasLeapOut => teleport_attack(),
-        AttackId::A1a026RaichuGigashock => {
-            let opponent = (state.current_player + 1) % 2;
-            let targets: Vec<(u32, usize)> = state
-                .enumerate_bench_pokemon(opponent)
-                .map(|(idx, _)| (20, idx))
-                .chain(std::iter::once((60, 0)))
-                .collect();
-            damage_effect_doutcome(targets, |_, _, _| {})
-        }
-        AttackId::A1a061EeveeContinuousSteps => flip_until_tails_attack(20),
-        AttackId::A2023MagmarStoke => self_charge_active_from_energies(0, vec![EnergyType::Fire]),
-        AttackId::A2029InfernapeExFlareBlitz => {
-            discard_all_energy_of_type_attack(140, EnergyType::Fire)
-        }
-        AttackId::A2049PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
-        AttackId::A2056ElectabuzzCharge => {
-            self_charge_active_from_energies(0, vec![EnergyType::Lightning])
-        }
-        AttackId::A2060LuxrayVoltBolt => luxray_volt_bolt(),
-        AttackId::A2084GliscorAcrobatics => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![20, 40, 60])
-        }
-        AttackId::A2098SneaselDoubleScratch => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
-        }
-        AttackId::A2118ProbopassTripleNose => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![30, 80, 130, 180])
-        }
-        AttackId::A2131AmbipomDoubleHit => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 40, 80])
-        }
-        AttackId::A2141ChatotFuryAttack => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
-        }
-        AttackId::A2a001HeracrossSingleHornThrow => {
-            probabilistic_damage_attack(vec![0.25, 0.75], vec![120, 50])
-        }
-        AttackId::A2a063SnorlaxCollapse => {
-            damage_and_self_multiple_status_attack(100, vec![StatusCondition::Asleep])
-        }
-        AttackId::A2b032MrMimeJuggling => probabilistic_damage_attack(
-            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
-            vec![0, 20, 40, 60, 80],
-        ),
-        AttackId::A2b044FlamigoDoubleKick => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 50, 100])
-        }
-        AttackId::A3002AlolanExeggutorTropicalHammer => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 150])
-        }
-        AttackId::A3012DecidueyeExPierceThePain => direct_damage_if_damaged(100),
-        AttackId::A3019SteeneeDoubleSpin => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
-        }
-        AttackId::A3020TsareenaThreeKickCombo => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 50, 100, 150])
-        }
-        AttackId::A3040AlolanVulpixCallForthCold => {
-            self_charge_active_from_energies(0, vec![EnergyType::Water])
-        }
-        AttackId::A3071SpoinkPsycharge => {
-            self_charge_active_from_energies(0, vec![EnergyType::Psychic])
-        }
-        AttackId::A3116ToxapexSpikeCannon => probabilistic_damage_attack(
-            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
-            vec![0, 20, 40, 60, 80],
-        ),
-        AttackId::A3a003RowletFuryAttack => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 10, 20, 30])
-        }
-        AttackId::A3a019TapuKokoExPlasmaHurricane => {
-            self_charge_active_from_energies(20, vec![EnergyType::Lightning])
-        }
-        AttackId::A3a043GuzzlordExGrindcore => guzzlord_ex_grindcore_attack(),
-        AttackId::A3a044Poipole2Step => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
-        }
-        AttackId::A3a047AlolanDugtrioExTripletHeadbutt => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 60, 120, 180])
-        }
-        AttackId::A3a060TypeNullQuickBlow => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![20, 40])
-        }
-        AttackId::A3a061SilvallyBraveBuddies => brave_buddies_attack(state),
-        AttackId::A3a062CelesteelaMoombahton => {
-            probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 100])
-        }
-        AttackId::A1a001ExeggcuteGrowthSpurt => {
-            self_charge_active_from_energies(0, vec![EnergyType::Grass])
-        }
-        AttackId::A3085CosmogTeleport => teleport_attack(),
-        AttackId::A3122SolgaleoExSolBreaker => self_damage_attack(120, 10),
-        AttackId::A3b013IncineroarDarkestLariat => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 100, 200])
-        }
-        AttackId::A3b020VanilluxeDoubleSpin => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 80, 160])
-        }
-        AttackId::A3b057SnorlaxExFlopDownPunch => {
-            damage_and_self_multiple_status_attack(130, vec![StatusCondition::Asleep])
-        }
-        AttackId::A3b058AipomDoubleHit => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 20, 40])
-        }
-        AttackId::A4021ShuckleExTripleSlap => {
-            probabilistic_damage_attack(vec![0.125, 0.375, 0.375, 0.125], vec![0, 20, 40, 60])
-        }
-        AttackId::A4032MagbyToastyToss => {
-            attach_energy_to_benched_basic(acting_player, EnergyType::Fire)
-        }
-        AttackId::A4066PichuCracklyToss => {
-            attach_energy_to_benched_basic(acting_player, EnergyType::Lightning)
-        }
-        AttackId::A4077CleffaTwinklyCall => pokemon_search_outcomes(acting_player, state, false),
-        AttackId::A4105BinacleDualChop => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![0, 30, 60])
-        }
-        AttackId::A4134EeveeFindAFriend => pokemon_search_outcomes(acting_player, state, false),
-        AttackId::A4146UrsaringSwingAround => {
-            probabilistic_damage_attack(vec![0.25, 0.5, 0.25], vec![60, 80, 100])
-        }
-        AttackId::A4a023MantykeSplashyToss => {
-            attach_energy_to_benched_basic(acting_player, EnergyType::Water)
-        }
-        AttackId::A3112AbsolUnseenClaw => unseen_claw_attack(acting_player, state),
-        AttackId::B1052MegaGyaradosExMegaBlaster => damage_and_discard_opponent_deck(140, 3),
-        AttackId::B1085MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
-        AttackId::B1150AbsolOminousClaw => ominous_claw_attack(acting_player, state),
-        AttackId::B1151MegaAbsolExDarknessClaw => darkness_claw_attack(acting_player, state),
-    }
+fn apply_defender_coin_flip_prevent_damage(base_outcomes: Outcomes) -> Outcomes {
+    prepend_coin_gate(
+        base_outcomes,
+        Box::new(|_, _, _| {
+            // TODO: This makes it so that the attack effect doesn't happen,
+            // but in the game it does happen, its just the damage that is reduced to 0.
+        }),
+    )
 }
 
 // Handles attacks that have effects.
@@ -407,7 +197,7 @@ fn forecast_effect_attack_by_mechanic(
     state: &State,
     attack: &Attack,
     mechanic: &Mechanic,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     match mechanic {
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
@@ -436,6 +226,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SearchToHandByEnergy { energy_type } => {
             pokemon_search_outcomes_by_type(state, false, *energy_type)
         }
+        Mechanic::SearchRandomPokemonToHand => {
+            pokemon_search_outcomes(state.current_player, state, false)
+        }
         Mechanic::SearchToHandSupporterCard => {
             supporter_search_outcomes(state.current_player, state)
         }
@@ -452,7 +245,7 @@ fn forecast_effect_attack_by_mechanic(
             }
         }
         Mechanic::ChanceStatusAttack { condition } => {
-            damage_chance_status_attack(attack.fixed_damage, 0.5, *condition)
+            damage_chance_status_attack(attack.fixed_damage, *condition)
         }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
@@ -460,14 +253,23 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
+        Mechanic::CoinFlipDiscardEnergyFromOpponentActive => mawile_crunch(),
         Mechanic::ExtraDamageIfEx { extra_damage } => {
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
-        Mechanic::SelfDamage { amount } => self_damage_attack(attack.fixed_damage, *amount),
-        Mechanic::CoinFlipExtraDamage { extra_damage } => probabilistic_damage_attack(
-            vec![0.5, 0.5],
-            vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
+        Mechanic::ExtraDamageIfOpponentHasSpecialCondition { extra_damage } => unseen_claw_attack(
+            state.current_player,
+            state,
+            *extra_damage,
+            attack.fixed_damage,
         ),
+        Mechanic::ExtraDamageIfSupportPlayedThisTurn { extra_damage } => {
+            brave_buddies_attack(state, attack.fixed_damage, *extra_damage)
+        }
+        Mechanic::SelfDamage { amount } => self_damage_attack(attack.fixed_damage, *amount),
+        Mechanic::CoinFlipExtraDamage { extra_damage } => {
+            coinflip_extra_damage_attack(attack.fixed_damage, *extra_damage)
+        }
         Mechanic::CoinFlipExtraDamageOrSelfDamage {
             extra_damage,
             self_damage,
@@ -501,10 +303,9 @@ fn forecast_effect_attack_by_mechanic(
             *minimum_count,
             *extra_damage,
         ),
-        Mechanic::ExtraDamageIfBothHeads { extra_damage } => probabilistic_damage_attack(
-            vec![0.25, 0.75],
-            vec![attack.fixed_damage, attack.fixed_damage + extra_damage],
-        ),
+        Mechanic::ExtraDamageIfBothHeads { extra_damage } => {
+            both_heads_bonus_damage_attack(attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
             damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
@@ -513,16 +314,19 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             effect,
             duration,
-            probability,
+            coin_flip,
         } => damage_and_card_effect_attack(
             attack.fixed_damage,
             *opponent,
             effect.clone(),
             *duration,
-            *probability,
+            *coin_flip,
         ),
         Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardAllTypeEnergy { energy_type } => {
+            discard_all_energy_of_type_attack(attack.fixed_damage, *energy_type)
+        }
         Mechanic::SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
             energy_type,
             damage,
@@ -607,6 +411,11 @@ fn forecast_effect_attack_by_mechanic(
         } => {
             random_damage_to_opponent_pokemon_per_self_energy(state, *energy_type, *damage_per_hit)
         }
+        Mechanic::RandomSpreadDamage {
+            times,
+            damage_per_hit,
+            include_own_bench,
+        } => random_spread_damage(state, *times, *damage_per_hit, *include_own_bench),
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
@@ -614,6 +423,21 @@ fn forecast_effect_attack_by_mechanic(
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
         Mechanic::ShuffleOpponentActiveIntoDeck => shuffle_opponent_active_into_deck(),
+        Mechanic::KnockBackOpponentActive => knock_back_attack(attack.fixed_damage),
+        Mechanic::FlipUntilTailsDamage { damage_per_heads } => {
+            flip_until_tails_attack(*damage_per_heads)
+        }
+        Mechanic::DirectDamageIfDamaged { damage } => direct_damage_if_damaged(*damage),
+        Mechanic::AttachEnergyToBenchedBasic { energy_type } => {
+            attach_energy_to_benched_basic(state.current_player, *energy_type)
+        }
+        Mechanic::DamageAndDiscardOpponentDeck {
+            damage,
+            discard_count,
+        } => damage_and_discard_opponent_deck(*damage, *discard_count),
+        Mechanic::MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
+        Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
+        Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
         Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
         Mechanic::ConditionalBenchDamage {
@@ -690,7 +514,7 @@ fn copy_attack(
     _state: &State,
     source: &CopyAttackSource,
     require_attacker_energy_match: bool,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let source = source.clone();
     active_damage_effect_doutcome(0, move |_, state, action| {
         let choices =
@@ -772,8 +596,8 @@ fn is_copy_attack(attack: &Attack) -> bool {
         .is_some_and(|mechanic| matches!(mechanic, Mechanic::CopyAttack { .. }))
 }
 
-fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
-    doutcome_from_mutation(Box::new(move |_, state, action| {
+fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> Outcomes {
+    Outcomes::single(Box::new(move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let attacking_ref = (action.actor, 0);
 
@@ -797,52 +621,55 @@ fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutatio
     }))
 }
 
-fn coinflip_no_effect(fixed_damage: u32) -> (Probabilities, Mutations) {
-    probabilistic_damage_attack(vec![0.5, 0.5], vec![fixed_damage, 0])
+fn coinflip_no_effect(fixed_damage: u32) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_mutation(fixed_damage),
+        active_damage_mutation(0),
+    )
 }
 
-fn celebi_powerful_bloom(state: &State) -> (Probabilities, Mutations) {
+fn coinflip_extra_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_mutation(base_damage + extra_damage),
+        active_damage_mutation(base_damage),
+    )
+}
+
+fn both_heads_bonus_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes {
+    Outcomes::from_coin_branches(vec![
+        (
+            0.25,
+            active_damage_mutation(base_damage + extra_damage),
+            vec![CoinSeq(vec![true, true])],
+        ),
+        (
+            0.75,
+            active_damage_mutation(base_damage),
+            vec![
+                CoinSeq(vec![true, false]),
+                CoinSeq(vec![false, true]),
+                CoinSeq(vec![false, false]),
+            ],
+        ),
+    ])
+    .expect("ExtraDamageIfBothHeads branches should be valid")
+}
+
+fn celebi_powerful_bloom(state: &State) -> Outcomes {
     let active_pokemon = state.get_active(state.current_player);
     let total_energy = active_pokemon.attached_energy.len();
 
     if total_energy == 0 {
         // No energy attached, no coins to flip
-        return probabilistic_damage_attack(vec![1.0], vec![0]);
+        return Outcomes::single(active_damage_mutation(0));
     }
 
-    // Generate all possible outcomes for flipping N coins
-    // Each coin can be heads (1) or tails (0)
-    let num_outcomes = 2_usize.pow(total_energy as u32);
-    let mut probabilities = vec![0.0; total_energy + 1]; // 0 to total_energy heads
-    let mut damages = Vec::new();
-
-    // For each possible outcome (0 to total_energy heads)
-    for (heads, prob) in probabilities.iter_mut().enumerate() {
-        // Probability of getting exactly 'heads' heads out of 'total_energy' coins
-        // This follows a binomial distribution: C(n,k) * (1/2)^n
-        *prob = binomial_coefficient(total_energy, heads) as f64 / (num_outcomes as f64);
-        damages.push((heads as u32) * 50); // 50 damage per heads
-    }
-
-    probabilistic_damage_attack(probabilities, damages)
+    Outcomes::binomial_by_heads(total_energy, move |heads| {
+        active_damage_mutation((heads as u32) * 50)
+    })
 }
 
-fn binomial_coefficient(n: usize, k: usize) -> usize {
-    if k > n {
-        return 0;
-    }
-    if k == 0 || k == n {
-        return 1;
-    }
-
-    let mut result = 1;
-    for i in 0..k {
-        result = result * (n - i) / (i + 1);
-    }
-    result
-}
-
-fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> (Probabilities, Mutations) {
+fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, |_, state, action| {
         // Force Handle K.O., to maybe .insert(0 promotions to the move_generation_stack
         let attacking_ref = (action.actor, 0);
@@ -867,7 +694,7 @@ fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> (Probabilities,
 }
 
 /// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
+fn mega_burning_attack(attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         // Discard one Fire energy if present.
         discard_requested_energy_from_active_best_effort(state, action.actor, &[EnergyType::Fire]);
@@ -880,7 +707,7 @@ fn mega_burning_attack(attack: &Attack) -> (Probabilities, Mutations) {
 }
 
 /// For Magikarp's Waterfall Evolution: Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.
-fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
+fn waterfall_evolution(state: &State) -> Outcomes {
     let active_pokemon = state.get_active(state.current_player);
 
     // Find all cards in deck that can evolve from the active Pokemon
@@ -892,7 +719,7 @@ fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
         .collect();
     if evolution_cards.is_empty() {
         // No evolution cards in deck, just shuffle
-        return doutcome(|rng, state, action| {
+        return Outcomes::single_fn(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
         });
     }
@@ -911,11 +738,11 @@ fn waterfall_evolution(state: &State) -> (Probabilities, Mutations) {
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 /// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
-fn manaphy_oceanic() -> (Probabilities, Mutations) {
+fn manaphy_oceanic() -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let benched_pokemon: Vec<usize> = state
             .enumerate_bench_pokemon(action.actor)
@@ -950,7 +777,7 @@ fn manaphy_oceanic() -> (Probabilities, Mutations) {
     })
 }
 
-fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
+fn palkia_dimensional_storm(state: &State) -> Outcomes {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
     let targets: Vec<(u32, usize)> = state
@@ -967,46 +794,36 @@ fn palkia_dimensional_storm(state: &State) -> (Probabilities, Mutations) {
     })
 }
 
-fn moltres_inferno_dance() -> (Probabilities, Mutations) {
-    let probabilities = vec![0.125, 0.375, 0.375, 0.125]; // 0,1,2,3 heads
-    let mutations = probabilities
-        .iter()
-        .enumerate()
-        .map(|(heads, _)| {
-            active_damage_effect_mutation(0, move |_, state, action| {
-                if heads == 0 {
-                    return;
-                }
+fn moltres_inferno_dance() -> Outcomes {
+    Outcomes::binomial_by_heads(3, move |heads| {
+        active_damage_effect_mutation(0, move |_, state, action| {
+            if heads == 0 {
+                return;
+            }
 
-                // First collect all eligible fire pokemon in bench
-                let mut fire_bench_idx = Vec::new();
-                for (in_play_idx, pokemon) in state.enumerate_bench_pokemon(action.actor) {
-                    if pokemon.get_energy_type() == Some(EnergyType::Fire) {
-                        fire_bench_idx.push(in_play_idx);
-                    }
+            // First collect all eligible fire pokemon in bench
+            let mut fire_bench_idx = Vec::new();
+            for (in_play_idx, pokemon) in state.enumerate_bench_pokemon(action.actor) {
+                if pokemon.get_energy_type() == Some(EnergyType::Fire) {
+                    fire_bench_idx.push(in_play_idx);
                 }
+            }
 
-                if fire_bench_idx.is_empty() {
-                    return;
-                }
+            if fire_bench_idx.is_empty() {
+                return;
+            }
 
-                let all_choices = generate_energy_distributions(&fire_bench_idx, heads);
-                if !all_choices.is_empty() {
-                    state
-                        .move_generation_stack
-                        .push((action.actor, all_choices));
-                }
-            })
+            let all_choices = generate_energy_distributions(&fire_bench_idx, heads);
+            if !all_choices.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, all_choices));
+            }
         })
-        .collect();
-    (probabilities, mutations)
+    })
 }
 
-fn charge_energy_any_way_to_type(
-    damage: u32,
-    energy_type: EnergyType,
-    count: usize,
-) -> (Probabilities, Mutations) {
+fn charge_energy_any_way_to_type(damage: u32, energy_type: EnergyType, count: usize) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let target_indices = collect_in_play_indices_by_type(state, action.actor, energy_type);
         let choices = energy_any_way_choices(&target_indices, energy_type, count);
@@ -1020,7 +837,7 @@ fn move_all_energy_type_to_bench(
     state: &State,
     attack: &Attack,
     energy_type: EnergyType,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     // Count how many of the specified energy type the active Pokemon has
     let active = state.get_active(state.current_player);
     let energy_count = active
@@ -1117,25 +934,15 @@ fn damage_for_each_heads_attack(
     damage_per_head: u32,
     num_coins: usize,
     attack: &Attack,
-) -> (Probabilities, Mutations) {
-    let mut probabilities: Vec<f64> = vec![];
-    let mut damages: Vec<u32> = vec![];
+) -> Outcomes {
     let fixed_damage = if include_fixed_damage {
         attack.fixed_damage
     } else {
         0
     };
-
-    for heads_count in 0..=num_coins {
-        let tails_count = num_coins - heads_count;
-        let probability = (0.5f64).powi(heads_count as i32)
-            * (0.5f64).powi(tails_count as i32)
-            * binomial_coefficient(num_coins, heads_count) as f64;
-        probabilities.push(probability);
-        damages.push(fixed_damage + damage_per_head * heads_count as u32);
-    }
-
-    probabilistic_damage_attack(probabilities, damages)
+    Outcomes::binomial_by_heads(num_coins, move |heads_count| {
+        active_damage_mutation(fixed_damage + damage_per_head * heads_count as u32)
+    })
 }
 
 /// Deal damage and attach energy to a pokemon of choice in the bench.
@@ -1144,7 +951,7 @@ pub(crate) fn energy_bench_attack(
     target_benched_type: Option<EnergyType>,
     state: &State,
     attack: &Attack,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let choices = state
         .enumerate_bench_pokemon(state.current_player)
         .filter(|(_, played_card)| {
@@ -1169,33 +976,21 @@ pub(crate) fn energy_bench_attack(
 }
 
 /// Used for attacks that on heads deal extra damage, on tails deal self damage.
-fn extra_or_self_damage_attack(
-    base_damage: u32,
-    extra_damage: u32,
-    self_damage: u32,
-) -> (Probabilities, Mutations) {
-    let probabilities = vec![0.5, 0.5];
-    let mutations: Mutations = vec![
+fn extra_or_self_damage_attack(base_damage: u32, extra_damage: u32, self_damage: u32) -> Outcomes {
+    Outcomes::binary_coin(
         active_damage_mutation(base_damage + extra_damage),
         active_damage_effect_mutation(base_damage, move |_, state, action| {
             let active = state.get_active_mut(action.actor);
             active.apply_damage(self_damage);
         }),
-    ];
-    (probabilities, mutations)
+    )
 }
 
-fn damage_chance_status_attack(
-    damage: u32,
-    probability_of_status: f64,
-    status: StatusCondition,
-) -> (Probabilities, Mutations) {
-    let probabilities = vec![probability_of_status, 1.0 - probability_of_status];
-    let mutations: Mutations = vec![
+fn damage_chance_status_attack(damage: u32, status: StatusCondition) -> Outcomes {
+    Outcomes::binary_coin(
         active_damage_effect_mutation(damage, build_status_effect(status)),
         active_damage_mutation(damage),
-    ];
-    (probabilities, mutations)
+    )
 }
 
 /// For attacks that do damage based on benched Pokemon count (new Mechanic-based approach).
@@ -1206,7 +1001,7 @@ fn bench_count_damage_attack(
     damage_per: u32,
     energy_type: Option<EnergyType>,
     bench_side: &BenchSide,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let current_player = state.current_player;
     let opponent = (current_player + 1) % 2;
 
@@ -1237,7 +1032,7 @@ fn evolution_bench_count_damage_attack(
     base_damage: u32,
     include_base_damage: bool,
     damage_per: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let current_player = state.current_player;
     let evolution_count = state
         .enumerate_bench_pokemon(current_player)
@@ -1263,7 +1058,7 @@ fn also_choice_bench_damage(
     opponent: bool,
     active_damage: u32,
     bench_damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let opponent_player = (state.current_player + 1) % 2;
     let bench_target = if opponent {
         opponent_player
@@ -1284,7 +1079,7 @@ fn also_choice_bench_damage(
             }
         })
         .collect();
-    doutcome_from_mutation(Box::new(
+    Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
             if !choices.is_empty() {
                 state.move_generation_stack.push((action.actor, choices));
@@ -1293,10 +1088,7 @@ fn also_choice_bench_damage(
     ))
 }
 
-fn self_charge_active_from_energies(
-    damage: u32,
-    energies: Vec<EnergyType>,
-) -> (Probabilities, Mutations) {
+fn self_charge_active_from_energies(damage: u32, energies: Vec<EnergyType>) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         for energy in &energies {
             if state.in_play_pokemon[action.actor][0].is_none() {
@@ -1310,7 +1102,7 @@ fn self_charge_active_from_energies(
 
 /// Used for attacks that can go directly to bench.
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
-fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
+fn direct_damage(damage: u32, bench_only: bool) -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
@@ -1338,7 +1130,7 @@ fn direct_damage(damage: u32, bench_only: bool) -> (Probabilities, Mutations) {
     })
 }
 
-fn delayed_spot_damage(damage: u32) -> (Probabilities, Mutations) {
+fn delayed_spot_damage(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
@@ -1358,7 +1150,7 @@ fn delayed_spot_damage(damage: u32) -> (Probabilities, Mutations) {
 
 /// For attacks that can target opponent's Pokémon that have damage on them.
 /// e.g. Decidueye ex's Pierce the Pain
-fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
+fn direct_damage_if_damaged(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
@@ -1379,15 +1171,10 @@ fn direct_damage_if_damaged(damage: u32) -> (Probabilities, Mutations) {
     })
 }
 
-/// Luxray's Volt Bolt: Discard all Lightning energy, then do 120 damage to 1 opponent's Pokémon
-fn luxray_volt_bolt() -> (Probabilities, Mutations) {
-    discard_all_energy_of_type_then_damage_any_opponent_pokemon(EnergyType::Lightning, 120)
-}
-
 fn discard_all_energy_of_type_then_damage_any_opponent_pokemon(
     energy_type: EnergyType,
     damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         // Count and discard all matching energy from the attacking Pokémon.
         let active = state.get_active(action.actor);
@@ -1445,17 +1232,14 @@ fn discard_requested_energy_from_active_best_effort(
 }
 
 /// Discard energy from the active (attacking) Pokémon.
-fn self_energy_discard_attack(
-    fixed_damage: u32,
-    to_discard: Vec<EnergyType>,
-) -> (Probabilities, Mutations) {
+fn self_energy_discard_attack(fixed_damage: u32, to_discard: Vec<EnergyType>) -> Outcomes {
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
         discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
     })
 }
 
 /// For attacks that deal damage and discard random energy from opponent's active Pokémon
-fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilities, Mutations) {
+fn damage_and_discard_energy(damage: u32, discard_count: usize) -> Outcomes {
     active_damage_effect_doutcome(damage, move |rng, state, action| {
         let opponent = (action.actor + 1) % 2;
         let active = state.get_active_mut(opponent);
@@ -1474,10 +1258,7 @@ fn damage_and_discard_energy(damage: u32, discard_count: usize) -> (Probabilitie
 }
 
 /// For attacks that deal damage and discard cards from the top of opponent's deck
-fn damage_and_discard_opponent_deck(
-    damage: u32,
-    discard_count: usize,
-) -> (Probabilities, Mutations) {
+fn damage_and_discard_opponent_deck(damage: u32, discard_count: usize) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
 
@@ -1491,67 +1272,35 @@ fn damage_and_discard_opponent_deck(
     })
 }
 
-fn guzzlord_ex_grindcore_attack() -> (Probabilities, Mutations) {
+fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> Outcomes {
     // Flip coins until tails - capped at 5 heads for practicality
-    let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
-    let mut outcomes: Mutations = vec![];
-    for energies_to_remove in 0..6 {
-        outcomes.push(active_damage_effect_mutation(
-            30,
-            move |_, state, action| {
-                let opponent = (action.actor + 1) % 2;
-                let active = state.get_active_mut(opponent);
+    Outcomes::geometric_until_tails(5, move |energies_to_remove| {
+        active_damage_effect_mutation(damage, move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            let mut to_discard = Vec::new();
+            let mut remaining = state.get_active(opponent).attached_energy.clone();
 
-                for _ in 0..energies_to_remove {
-                    if active.attached_energy.is_empty() {
-                        break; // No more energy to discard
-                    }
-                    // NOTE: Using pop() instead of random selection to avoid expanding the game tree.
-                    // This is a simplification - the card text says "random Energy" but we always
-                    // remove the last one for performance reasons.
-                    active.attached_energy.pop();
+            // Collect energies to discard
+            for _ in 0..energies_to_remove {
+                if remaining.is_empty() {
+                    break; // No more energy to discard
                 }
-            },
-        ));
-    }
-    (probabilities, outcomes)
-}
+                // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
+                // This is a simplification - the card text says "random Energy" but we always
+                // remove the last one for performance reasons.
+                to_discard.push(remaining.pop().expect("already checked non-empty"));
+            }
 
-fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> (Probabilities, Mutations) {
-    // Flip coins until tails - capped at 5 heads for practicality
-    let probabilities = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625];
-    let mut outcomes: Mutations = vec![];
-    for energies_to_remove in 0..6 {
-        outcomes.push(active_damage_effect_mutation(
-            damage,
-            move |_, state, action| {
-                let opponent = (action.actor + 1) % 2;
-                let mut to_discard = Vec::new();
-
-                // Collect energies to discard
-                for _ in 0..energies_to_remove {
-                    let active = state.get_active(opponent);
-                    if active.attached_energy.is_empty() {
-                        break; // No more energy to discard
-                    }
-                    // NOTE: Using last energy instead of random selection to avoid expanding the game tree.
-                    // This is a simplification - the card text says "random Energy" but we always
-                    // remove the last one for performance reasons.
-                    to_discard.push(*active.attached_energy.last().unwrap());
-                }
-
-                // Discard collected energies properly (moves to discard pile)
-                if !to_discard.is_empty() {
-                    state.discard_from_active(opponent, &to_discard);
-                }
-            },
-        ));
-    }
-    (probabilities, outcomes)
+            // Discard collected energies properly (moves to discard pile)
+            if !to_discard.is_empty() {
+                state.discard_from_active(opponent, &to_discard);
+            }
+        })
+    })
 }
 
 /// For attacks that deal damage to opponent and also damage themselves
-fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutations) {
+fn self_damage_attack(damage: u32, self_damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.apply_damage(self_damage);
@@ -1559,10 +1308,7 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> (Probabilities, Mutation
 }
 
 /// For attacks that deal damage and apply multiple status effects to opponent (e.g. Mega Venusaur Critical Bloom)
-fn damage_multiple_status_attack(
-    statuses: Vec<StatusCondition>,
-    attack: &Attack,
-) -> (Probabilities, Mutations) {
+fn damage_multiple_status_attack(statuses: Vec<StatusCondition>, attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let opponent_active = state.get_active_mut(opponent);
@@ -1573,10 +1319,7 @@ fn damage_multiple_status_attack(
 }
 
 /// For attacks that deal damage to opponent and apply multiple status effects to the attacker (e.g. Snorlax Collapse)
-fn damage_and_self_multiple_status_attack(
-    damage: u32,
-    statuses: Vec<StatusCondition>,
-) -> (Probabilities, Mutations) {
+fn damage_and_self_multiple_status_attack(damage: u32, statuses: Vec<StatusCondition>) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         for status in &statuses {
@@ -1586,7 +1329,7 @@ fn damage_and_self_multiple_status_attack(
 }
 
 /// Draw cards and deal damage in the same attack.
-fn draw_and_damage_outcome(damage: u32, amount: u8) -> (Probabilities, Mutations) {
+fn draw_and_damage_outcome(damage: u32, amount: u8) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         state
             .move_generation_stack
@@ -1601,7 +1344,7 @@ fn extra_energy_attack(
     attack: &Attack,
     required_extra_energy: Vec<EnergyType>,
     extra_damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let pokemon = state.in_play_pokemon[state.current_player][0]
         .as_ref()
         .expect("Active Pokemon should be there if attacking");
@@ -1625,54 +1368,23 @@ fn extra_energy_attack(
     }
 }
 
-/// For attacks that given coin flips, deal different damage.
-fn probabilistic_damage_attack(
-    probabilities: Vec<f64>,
-    damages: Vec<u32>,
-) -> (Probabilities, Mutations) {
-    let mutations = damages
-        .into_iter()
-        .map(|damage| active_damage_mutation(damage))
-        .collect();
-    (probabilities, mutations)
-}
-
 /// For attacks that flip a coin until tails, dealing damage for each heads.
 /// Uses geometric distribution truncated at a reasonable number to avoid infinite outcomes.
-fn flip_until_tails_attack(damage_per_heads: u32) -> (Probabilities, Mutations) {
-    // Truncate at 8 heads to keep the probability space manageable
-    // P(k heads) = (1/2)^(k+1) for k = 0, 1, 2, ...
-    let max_heads = 8;
-    let mut probabilities = Vec::new();
-    let mut damages = Vec::new();
-
-    for heads in 0..=max_heads {
-        let probability = 0.5_f64.powi(heads as i32 + 1);
-        probabilities.push(probability);
-        damages.push(heads * damage_per_heads);
-    }
-
-    // Ensure probabilities sum to 1 by adjusting the last one for any floating point errors
-    let sum: f64 = probabilities.iter().sum();
-    if let Some(last) = probabilities.last_mut() {
-        *last += 1.0 - sum;
-    }
-
-    probabilistic_damage_attack(probabilities, damages)
+fn flip_until_tails_attack(damage_per_heads: u32) -> Outcomes {
+    // Truncate at 8 heads to keep the probability space manageable.
+    Outcomes::geometric_until_tails(8, move |heads| {
+        active_damage_mutation((heads as u32) * damage_per_heads)
+    })
 }
 
-fn self_heal_attack(heal: u32, attack: &Attack) -> (Probabilities, Mutations) {
+fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.heal(heal);
     })
 }
 
-fn damage_and_turn_effect_attack(
-    damage: u32,
-    effect: TurnEffect,
-    effect_duration: u8,
-) -> (Probabilities, Mutations) {
+fn damage_and_turn_effect_attack(damage: u32, effect: TurnEffect, effect_duration: u8) -> Outcomes {
     let effect_clone = effect.clone();
     active_damage_effect_doutcome(damage, move |_, state, _| {
         state.add_turn_effect(effect_clone.clone(), effect_duration);
@@ -1684,52 +1396,38 @@ fn damage_and_card_effect_attack(
     opponent: bool,
     effect: CardEffect,
     effect_duration: u8,
-    probability: Option<f32>,
-) -> (Probabilities, Mutations) {
-    match probability {
-        None => {
-            // 100% chance - always apply effect
-            active_damage_effect_doutcome(damage, move |_, state, action| {
-                let player = if opponent {
-                    (action.actor + 1) % 2
-                } else {
-                    action.actor
-                };
-                state
-                    .get_active_mut(player)
-                    .add_effect(effect.clone(), effect_duration);
-            })
-        }
-        Some(prob) => {
-            // Coin flip probability
-            let probabilities = vec![prob as f64, 1.0 - prob as f64];
-            let mutations: Mutations = vec![
-                active_damage_effect_mutation(damage, move |_, state, action| {
-                    let player = if opponent {
-                        (action.actor + 1) % 2
-                    } else {
-                        action.actor
-                    };
-                    state
-                        .get_active_mut(player)
-                        .add_effect(effect.clone(), effect_duration);
-                }),
-                active_damage_mutation(damage),
-            ];
-            (probabilities, mutations)
-        }
+    coin_flip: bool,
+) -> Outcomes {
+    let effect_on_target = move |_: &mut StdRng, state: &mut State, action: &Action| {
+        let player = if opponent {
+            (action.actor + 1) % 2
+        } else {
+            action.actor
+        };
+        state
+            .get_active_mut(player)
+            .add_effect(effect.clone(), effect_duration);
+    };
+
+    if coin_flip {
+        Outcomes::binary_coin(
+            active_damage_effect_mutation(damage, effect_on_target),
+            active_damage_mutation(damage),
+        )
+    } else {
+        active_damage_effect_doutcome(damage, effect_on_target)
     }
 }
 
 /// Discard all energy from this Pokemon
-fn damage_and_discard_all_energy(damage: u32) -> (Probabilities, Mutations) {
+fn damage_and_discard_all_energy(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
     })
 }
 
-fn damage_and_discard_random_energy(damage: u32) -> (Probabilities, Mutations) {
+fn damage_and_discard_random_energy(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |rng, state, action| {
         let active = state.get_active(action.actor);
         if !active.attached_energy.is_empty() {
@@ -1741,10 +1439,7 @@ fn damage_and_discard_random_energy(damage: u32) -> (Probabilities, Mutations) {
 }
 
 /// For attacks that discard all energy of a specific type after dealing damage.
-fn discard_all_energy_of_type_attack(
-    damage: u32,
-    energy_type: EnergyType,
-) -> (Probabilities, Mutations) {
+fn discard_all_energy_of_type_attack(damage: u32, energy_type: EnergyType) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         // Collect all energy of the specified type from the active Pokémon
         let to_discard: Vec<EnergyType> = state
@@ -1764,7 +1459,7 @@ fn discard_random_global_energy_attack(
     fixed_damage: u32,
     count: usize,
     _state: &State,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     active_damage_effect_doutcome(fixed_damage, move |rng, state, _action| {
         for _ in 0..count {
             let mut pokemon_with_energy: Vec<(usize, usize, usize)> = Vec::new();
@@ -1819,7 +1514,7 @@ fn also_bench_damage(
     active_damage: u32,
     bench_damage: u32,
     must_have_energy: bool,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let player = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -1841,7 +1536,7 @@ fn also_bench_damage(
 }
 
 /// Deals the same damage to all of opponent's Pokémon (active and bench) - like Spiritomb/Clawitzer
-fn damage_all_opponent_pokemon(state: &State, damage: u32) -> (Probabilities, Mutations) {
+fn damage_all_opponent_pokemon(state: &State, damage: u32) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     // Collect all opponent's Pokémon (active at index 0, plus bench)
     let targets: Vec<(u32, usize)> = state
@@ -1851,12 +1546,7 @@ fn damage_all_opponent_pokemon(state: &State, damage: u32) -> (Probabilities, Mu
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
-fn extra_damage_if_hurt(
-    state: &State,
-    base: u32,
-    extra: u32,
-    opponent: bool,
-) -> (Probabilities, Mutations) {
+fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> Outcomes {
     let target = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -1870,16 +1560,13 @@ fn extra_damage_if_hurt(
     }
 }
 
-fn damage_equal_to_self_damage(state: &State) -> (Probabilities, Mutations) {
+fn damage_equal_to_self_damage(state: &State) -> Outcomes {
     let attacker = state.get_active(state.current_player);
     let damage = attacker.get_damage_counters();
     active_damage_doutcome(damage)
 }
 
-fn extra_damage_equal_to_self_damage(
-    state: &State,
-    base_damage: u32,
-) -> (Probabilities, Mutations) {
+fn extra_damage_equal_to_self_damage(state: &State, base_damage: u32) -> Outcomes {
     let attacker = state.get_active(state.current_player);
     let self_damage = attacker.get_damage_counters();
     active_damage_doutcome(base_damage + self_damage)
@@ -1890,7 +1577,7 @@ fn extra_damage_per_energy(
     base_damage: u32,
     opponent: bool,
     damage_per_energy: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let target = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -1909,7 +1596,7 @@ fn extra_damage_per_retreat_cost(
     state: &State,
     base_damage: u32,
     damage_per_energy: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let retreat_cost = get_retreat_cost(state, opponent_active);
@@ -1917,11 +1604,7 @@ fn extra_damage_per_retreat_cost(
     active_damage_doutcome(damage)
 }
 
-fn damage_per_energy_all(
-    state: &State,
-    opponent: bool,
-    damage_per_energy: u32,
-) -> (Probabilities, Mutations) {
+fn damage_per_energy_all(state: &State, opponent: bool, damage_per_energy: u32) -> Outcomes {
     let target = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -1942,7 +1625,7 @@ fn extra_damage_per_specific_energy(
     base_damage: u32,
     energy_type: EnergyType,
     damage_per_energy: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let active = state.get_active(state.current_player);
     let matching_energy_count = active
         .attached_energy
@@ -1959,7 +1642,7 @@ fn extra_damage_if_type_energy_in_play_attack(
     energy_type: EnergyType,
     minimum_count: usize,
     extra_damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let total_in_play_type_energy: usize = state
         .enumerate_in_play_pokemon(state.current_player)
         .map(|(_, pokemon)| {
@@ -1978,27 +1661,7 @@ fn extra_damage_if_type_energy_in_play_attack(
     }
 }
 
-fn teleport_attack() -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(0, move |_, state, action| {
-        let mut choices = Vec::new();
-        for (in_play_idx, _) in state.enumerate_bench_pokemon(action.actor) {
-            choices.push(SimpleAction::Activate {
-                player: action.actor,
-                in_play_idx,
-            });
-        }
-        if choices.is_empty() {
-            return; // No benched pokemon to switch with
-        }
-        state.move_generation_stack.push((action.actor, choices));
-    })
-}
-
-fn extra_damage_if_opponent_is_ex(
-    state: &State,
-    base_damage: u32,
-    extra_damage: u32,
-) -> (Probabilities, Mutations) {
+fn extra_damage_if_opponent_is_ex(state: &State, base_damage: u32, extra_damage: u32) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = if opponent_active.card.is_ex() {
@@ -2009,11 +1672,7 @@ fn extra_damage_if_opponent_is_ex(
     active_damage_doutcome(damage)
 }
 
-fn extra_damage_if_tool_attached(
-    state: &State,
-    base_damage: u32,
-    extra_damage: u32,
-) -> (Probabilities, Mutations) {
+fn extra_damage_if_tool_attached(state: &State, base_damage: u32, extra_damage: u32) -> Outcomes {
     let active = state.get_active(state.current_player);
     let damage = if active.has_tool_attached() {
         base_damage + extra_damage
@@ -2027,7 +1686,7 @@ fn extra_damage_if_knocked_out_last_turn_attack(
     state: &State,
     base_damage: u32,
     extra_damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let damage = if state.knocked_out_by_opponent_attack_last_turn {
         base_damage + extra_damage
     } else {
@@ -2036,7 +1695,7 @@ fn extra_damage_if_knocked_out_last_turn_attack(
     active_damage_doutcome(damage)
 }
 
-fn knock_back_attack(damage: u32) -> (Probabilities, Mutations) {
+fn knock_back_attack(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let mut choices = Vec::new();
@@ -2054,10 +1713,8 @@ fn knock_back_attack(damage: u32) -> (Probabilities, Mutations) {
 }
 
 /// For Mawile's Crunch attack: deals 20 damage, flip a coin, if heads discard a random energy from opponent's active
-fn mawile_crunch() -> (Probabilities, Mutations) {
-    let probabilities = vec![0.5, 0.5]; // 50% tails (no discard), 50% heads (discard)
-    let mutations = vec![
-        active_damage_mutation(20), // Tails: just damage
+fn mawile_crunch() -> Outcomes {
+    Outcomes::binary_coin(
         active_damage_effect_mutation(20, move |rng, state, action| {
             // Heads: damage + discard random energy
             let opponent = (action.actor + 1) % 2;
@@ -2069,15 +1726,12 @@ fn mawile_crunch() -> (Probabilities, Mutations) {
                 active.attached_energy.remove(rand_idx);
             }
         }),
-    ];
-    (probabilities, mutations)
+        active_damage_mutation(20), // Tails: just damage
+    )
 }
 
 /// For baby pokémon attacks: Attach an energy from Energy Zone to a benched Basic pokémon
-fn attach_energy_to_benched_basic(
-    acting_player: usize,
-    energy_type: EnergyType,
-) -> (Probabilities, Mutations) {
+fn attach_energy_to_benched_basic(acting_player: usize, energy_type: EnergyType) -> Outcomes {
     active_damage_effect_doutcome(0, move |_, state, _| {
         let possible_moves = state
             .enumerate_bench_pokemon(acting_player)
@@ -2096,33 +1750,36 @@ fn attach_energy_to_benched_basic(
 }
 
 /// For Silvally's Brave Buddies attack: 50 damage, or 100 damage if a Supporter was played this turn
-fn brave_buddies_attack(state: &State) -> (Probabilities, Mutations) {
+fn brave_buddies_attack(state: &State, fixed_damage: u32, extra_damage: u32) -> Outcomes {
     if state.has_played_support {
-        active_damage_doutcome(100)
+        active_damage_doutcome(fixed_damage + extra_damage)
     } else {
-        active_damage_doutcome(50)
+        active_damage_doutcome(fixed_damage)
     }
 }
 
 /// For Absol's Unseen Claw (A3 112): Deals 20 damage, +60 if opponent's Active has a Special Condition
-fn unseen_claw_attack(acting_player: usize, state: &State) -> (Probabilities, Mutations) {
+fn unseen_claw_attack(
+    acting_player: usize,
+    state: &State,
+    extra_damage: u32,
+    fixed_damage: u32,
+) -> Outcomes {
     let opponent = (acting_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = if opponent_active.has_status_condition() {
-        80 // 20 + 60
+        fixed_damage + extra_damage
     } else {
-        20
+        fixed_damage
     };
     active_damage_doutcome(damage)
 }
 
 /// For Absol's Ominous Claw (B1 150): Deals 50 damage, flip coin, if heads discard a Supporter from opponent's hand
-fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
+fn ominous_claw_attack(acting_player: usize, fixed_damage: u32) -> Outcomes {
     // 50% chance for heads (discard supporter), 50% for tails (just damage)
-    let probabilities = vec![0.5, 0.5];
-    let mutations: Mutations = vec![
-        // Heads: damage + discard supporter
-        active_damage_effect_mutation(50, move |_, state, _action| {
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(fixed_damage, move |_, state, _action| {
             let opponent = (acting_player + 1) % 2;
             let possible_discards: Vec<SimpleAction> = state
                 .iter_hand_supporters(opponent)
@@ -2138,14 +1795,13 @@ fn ominous_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, 
             }
         }),
         // Tails: just damage
-        active_damage_mutation(50),
-    ];
-    (probabilities, mutations)
+        active_damage_mutation(fixed_damage),
+    )
 }
 
 /// For Mega Absol ex's Darkness Claw: Deals 80 damage and lets player discard a Supporter from opponent's hand
-fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities, Mutations) {
-    active_damage_effect_doutcome(80, move |_, state, _action| {
+fn darkness_claw_attack(acting_player: usize, fixed_damage: u32) -> Outcomes {
+    active_damage_effect_doutcome(fixed_damage, move |_, state, _action| {
         let opponent = (acting_player + 1) % 2;
         let possible_discards: Vec<SimpleAction> = state
             .iter_hand_supporters(opponent)
@@ -2163,11 +1819,7 @@ fn darkness_claw_attack(acting_player: usize, _state: &State) -> (Probabilities,
 }
 
 /// For Sableye's Dirty Throw (B1 101): Discard a card from hand to deal 70 damage. If can't discard, attack does nothing.
-fn discard_hand_cards_required_attack(
-    state: &State,
-    fixed_damage: u32,
-    count: usize,
-) -> (Probabilities, Mutations) {
+fn discard_hand_cards_required_attack(state: &State, fixed_damage: u32, count: usize) -> Outcomes {
     let acting_player = state.current_player;
     if state.hands[acting_player].len() < count {
         return active_damage_doutcome(0);
@@ -2187,7 +1839,7 @@ fn discard_hand_cards_required_attack(
 }
 
 /// For Umbreon's Dark Binding: If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.
-fn block_basic_attack(damage: u32) -> (Probabilities, Mutations) {
+fn block_basic_attack(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         let opponent_active = state.get_active_mut(opponent);
@@ -2200,9 +1852,8 @@ fn block_basic_attack(damage: u32) -> (Probabilities, Mutations) {
 }
 
 /// For Aerodactyl's Primal Wingbeat: Flip a coin. If heads, opponent shuffles their Active Pokémon into their deck.
-fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
-    let probabilities = vec![0.5, 0.5]; // 50% heads (shuffle), 50% tails (nothing)
-    let mutations: Mutations = vec![
+fn shuffle_opponent_active_into_deck() -> Outcomes {
+    Outcomes::binary_coin(
         // Heads: shuffle opponent's active into deck
         active_damage_effect_mutation(0, move |rng, state, action| {
             let opponent = (action.actor + 1) % 2;
@@ -2230,14 +1881,13 @@ fn shuffle_opponent_active_into_deck() -> (Probabilities, Mutations) {
         }),
         // Tails: just do nothing
         active_damage_mutation(0),
-    ];
-    (probabilities, mutations)
+    )
 }
 
-fn mega_ampharos_lightning_lancer() -> (Probabilities, Mutations) {
+fn mega_ampharos_lightning_lancer() -> Outcomes {
     // 1 of your opponent's Benched Pokémon is chosen at random 3 times.
     // For each time a Pokémon was chosen, also do 20 damage to it.
-    doutcome(|rng, state, action| {
+    Outcomes::single_fn(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
         let targets: Vec<(u32, usize, usize)> =
             generate_random_spread_indices(rng, state, opponent, true, 3)
@@ -2255,7 +1905,7 @@ fn random_damage_to_opponent_pokemon_per_self_energy(
     state: &State,
     energy_type: EnergyType,
     damage_per_hit: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let energy_count = state
         .get_active(state.current_player)
         .attached_energy
@@ -2267,7 +1917,7 @@ fn random_damage_to_opponent_pokemon_per_self_energy(
         return active_damage_doutcome(0);
     }
 
-    doutcome_from_mutation(Box::new(move |rng, state, action| {
+    Outcomes::single(Box::new(move |rng, state, action| {
         let opponent = (action.actor + 1) % 2;
         let targets: Vec<(u32, usize, usize)> =
             generate_random_spread_indices(rng, state, opponent, false, energy_count)
@@ -2310,7 +1960,112 @@ fn generate_random_spread_indices(
     targets
 }
 
-fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutations) {
+/// Damage distribution: Vec of (player, in_play_idx, total_damage)
+type DamageDistribution = Vec<(usize, usize, u32)>;
+/// Enumerated outcome: (probability, damage_distribution)
+type EnumeratedOutcome = (f64, DamageDistribution);
+
+/// Generates forecastable outcomes for random multi-target damage attacks.
+/// Given a list of possible targets, enumerates all possible targeting combinations
+/// and groups them by damage distribution with correct probabilities.
+///
+/// Returns a Vec of (probability, damage_distribution) where damage_distribution
+/// is a sorted Vec of (player, in_play_idx, total_damage).
+pub(crate) fn enumerate_random_damage_outcomes(
+    possible_targets: &[(usize, usize)],
+    times: usize,
+    damage_per_hit: u32,
+) -> Vec<EnumeratedOutcome> {
+    let n = possible_targets.len();
+    if n == 0 {
+        return vec![];
+    }
+
+    let total_sequences = n.pow(times as u32);
+    let prob_per_sequence = 1.0 / total_sequences as f64;
+
+    let mut outcome_groups: HashMap<Vec<(usize, usize, u32)>, f64> = HashMap::new();
+
+    for seq_idx in 0..total_sequences {
+        let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+        let mut remaining = seq_idx;
+        for _ in 0..times {
+            let target_idx = remaining % n;
+            remaining /= n;
+            let target = possible_targets[target_idx];
+            *damage_map.entry(target).or_insert(0) += damage_per_hit;
+        }
+
+        let mut key: Vec<(usize, usize, u32)> = damage_map
+            .into_iter()
+            .map(|((p, i), d)| (p, i, d))
+            .collect();
+        key.sort();
+
+        *outcome_groups.entry(key).or_insert(0.0) += prob_per_sequence;
+    }
+
+    outcome_groups
+        .into_iter()
+        .map(|(dist, prob)| (prob, dist))
+        .collect()
+}
+
+/// Converts enumerated damage outcomes into Outcomes struct for forecasting.
+fn random_damage_outcomes_to_outcomes(outcomes: Vec<EnumeratedOutcome>) -> Outcomes {
+    if outcomes.is_empty() {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let mut probabilities = Vec::with_capacity(outcomes.len());
+    let mut mutations: Mutations = Vec::with_capacity(outcomes.len());
+
+    for (prob, damage_dist) in outcomes {
+        probabilities.push(prob);
+        mutations.push(Box::new(
+            move |_: &mut StdRng, state: &mut State, action: &Action| {
+                let attacking_ref = (action.actor, 0);
+                let targets: Vec<(u32, usize, usize)> = damage_dist
+                    .iter()
+                    .map(|&(player, idx, damage)| (damage, player, idx))
+                    .collect();
+                handle_damage(state, attacking_ref, &targets, true, None);
+            },
+        ));
+    }
+
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+/// Random spread damage attack (e.g., Draco Meteor, Spurt Fire).
+/// Always targets all opponent Pokemon. Optionally includes own bench.
+fn random_spread_damage(
+    state: &State,
+    times: usize,
+    damage_per_hit: u32,
+    include_own_bench: bool,
+) -> Outcomes {
+    let actor = state.current_player;
+    let opponent = (actor + 1) % 2;
+
+    // Always include all opponent Pokemon
+    let mut possible_targets: Vec<(usize, usize)> = state
+        .enumerate_in_play_pokemon(opponent)
+        .map(|(idx, _)| (opponent, idx))
+        .collect();
+
+    // Optionally add own bench (never own active - that's the attacker)
+    if include_own_bench {
+        for (idx, _) in state.enumerate_bench_pokemon(actor) {
+            possible_targets.push((actor, idx));
+        }
+    }
+
+    let outcomes = enumerate_random_damage_outcomes(&possible_targets, times, damage_per_hit);
+    random_damage_outcomes_to_outcomes(outcomes)
+}
+
+fn switch_self_with_bench(state: &State, damage: u32) -> Outcomes {
     let choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
         .map(|(in_play_idx, _)| SimpleAction::Activate {
@@ -2319,7 +2074,7 @@ fn switch_self_with_bench(state: &State, damage: u32) -> (Probabilities, Mutatio
         })
         .collect();
 
-    doutcome_from_mutation(Box::new(
+    Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
             let opponent = (action.actor + 1) % 2;
             let attacking_ref = (action.actor, 0);
@@ -2342,7 +2097,7 @@ fn damage_and_multiple_card_effects_attack(
     opponent: bool,
     effects: Vec<CardEffect>,
     effect_duration: u8,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let player = if opponent {
             (action.actor + 1) % 2
@@ -2363,30 +2118,15 @@ fn damage_for_each_heads_with_status_attack(
     num_coins: usize,
     attack: &Attack,
     status: StatusCondition,
-) -> (Probabilities, Mutations) {
-    let probabilities = calculate_binomial_probabilities(num_coins);
-    let mutations: Mutations = (0..=num_coins)
-        .map(|heads| {
-            let damage = if include_fixed_damage {
-                attack.fixed_damage + (heads as u32 * damage_per_head)
-            } else {
-                heads as u32 * damage_per_head
-            };
-            active_damage_effect_mutation(damage, build_status_effect(status))
-        })
-        .collect();
-    (probabilities, mutations)
-}
-
-/// Calculate binomial probabilities for n coin flips
-fn calculate_binomial_probabilities(n: usize) -> Vec<f64> {
-    let mut probs = Vec::new();
-    for k in 0..=n {
-        let coef = binomial_coefficient(n, k);
-        let prob = coef as f64 / (1 << n) as f64;
-        probs.push(prob);
-    }
-    probs
+) -> Outcomes {
+    Outcomes::binomial_by_heads(num_coins, move |heads| {
+        let damage = if include_fixed_damage {
+            attack.fixed_damage + (heads as u32 * damage_per_head)
+        } else {
+            heads as u32 * damage_per_head
+        };
+        active_damage_effect_mutation(damage, build_status_effect(status))
+    })
 }
 
 /// Mega Blastoise ex - Triple Bombardment: Conditional bench damage based on extra energy
@@ -2397,7 +2137,7 @@ fn conditional_bench_damage_attack(
     bench_damage: u32,
     num_bench_targets: usize,
     opponent: bool,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let pokemon = state.get_active(state.current_player);
     let cost_with_extra_energy = attack
         .energy_required
@@ -2464,7 +2204,7 @@ fn conditional_bench_damage_attack(
                 vec![]
             };
 
-            doutcome_from_mutation(Box::new(
+            Outcomes::single(Box::new(
                 move |_: &mut StdRng, state: &mut State, action: &Action| {
                     if !choices.is_empty() {
                         state.move_generation_stack.push((action.actor, choices));
@@ -2481,10 +2221,7 @@ fn conditional_bench_damage_attack(
 }
 
 /// Xerneas - Geoburst: Damage reduced by self damage
-fn damage_reduced_by_self_damage_attack(
-    state: &State,
-    attack: &Attack,
-) -> (Probabilities, Mutations) {
+fn damage_reduced_by_self_damage_attack(state: &State, attack: &Attack) -> Outcomes {
     let active = state.get_active(state.current_player);
     let damage_taken = active.get_damage_counters();
     let actual_damage = attack.fixed_damage.saturating_sub(damage_taken);
@@ -2531,7 +2268,7 @@ mod tests {
             is_stack: false,
         };
 
-        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20).into_branches();
         // Tails outcome: base damage + self damage
         let mutation = muts.remove(1);
         mutation(&mut rng, &mut state, &action);
@@ -2584,7 +2321,7 @@ mod tests {
             is_stack: false,
         };
 
-        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20);
+        let (_probs, mut muts) = extra_or_self_damage_attack(40, 40, 20).into_branches();
         // Tails outcome: base damage + self damage
         let mutation = muts.remove(1);
         mutation(&mut rng, &mut state, &action);
@@ -2616,7 +2353,7 @@ fn extra_damage_per_trainer_in_opponent_deck_attack(
     state: &State,
     base_damage: u32,
     damage_per_trainer: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     let trainer_count = state.decks[opponent]
         .cards
@@ -2632,7 +2369,7 @@ fn extra_damage_per_supporter_in_discard_attack(
     state: &State,
     base_damage: u32,
     damage_per_supporter: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let supporter_count = state.discard_piles[state.current_player]
         .iter()
         .filter(|card| {
@@ -2652,7 +2389,7 @@ fn extra_damage_if_card_in_discard_attack(
     base_damage: u32,
     card_name: String,
     extra_damage: u32,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let has_card_in_discard = state.discard_piles[state.current_player]
         .iter()
         .any(|card| {
@@ -2671,7 +2408,7 @@ fn extra_damage_if_card_in_discard_attack(
 }
 
 /// Magnezone - Mirror Shot: Coin flip to block opponent attack next turn
-fn coin_flip_to_block_attack_next_turn(damage: u32) -> (Probabilities, Mutations) {
+fn coin_flip_to_block_attack_next_turn(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         state
@@ -2708,7 +2445,8 @@ mod test {
         state.in_play_pokemon[0][1] = Some(to_playable_card(&some_base_pokemon, false));
 
         let (_, mut lazy_mutations) =
-            bench_count_damage_attack(&state, 70, true, 20, None, &BenchSide::YourBench);
+            bench_count_damage_attack(&state, 70, true, 20, None, &BenchSide::YourBench)
+                .into_branches();
         lazy_mutations.remove(0)(&mut rng, &mut state, &action);
 
         assert_eq!(state.get_active(1).get_remaining_hp(), 70);
@@ -2793,7 +2531,7 @@ mod test {
     #[test]
     fn test_flip_until_tails_probabilities() {
         // Test that flip_until_tails_attack generates correct probabilities
-        let (probabilities, _mutations) = flip_until_tails_attack(20);
+        let (probabilities, _mutations) = flip_until_tails_attack(20).into_branches();
 
         // Check that we have 9 outcomes (0 to 8 heads)
         assert_eq!(probabilities.len(), 9);
@@ -2812,10 +2550,9 @@ mod test {
     #[test]
     fn test_fixed_coin_probabilistic_attack() {
         // Test Jolteon Pin Missile (4 coins, 40 damage each)
-        let (probabilities, _mutations) = probabilistic_damage_attack(
-            vec![0.0625, 0.25, 0.375, 0.25, 0.0625],
-            vec![0, 40, 80, 120, 160],
-        );
+        let (probabilities, _mutations) =
+            Outcomes::binomial_by_heads(4, |heads| active_damage_mutation((heads as u32) * 40))
+                .into_branches();
 
         // Check we have 5 outcomes (0 to 4 heads)
         assert_eq!(probabilities.len(), 5);
@@ -2840,7 +2577,7 @@ mod test {
         state.attach_energy_from_zone(0, 0, EnergyType::Grass, 1, false);
         state.attach_energy_from_zone(0, 0, EnergyType::Fire, 1, false);
 
-        let (probabilities, _mutations) = celebi_powerful_bloom(&state);
+        let (probabilities, _mutations) = celebi_powerful_bloom(&state).into_branches();
 
         // Should have 3 outcomes (0, 1, 2 heads)
         assert_eq!(probabilities.len(), 3);
@@ -2853,7 +2590,7 @@ mod test {
         // Test with no energy attached
         let mut state_no_energy = State::default();
         state_no_energy.in_play_pokemon[0][0] = Some(to_playable_card(&celebi, false));
-        let (probabilities_no_energy, _) = celebi_powerful_bloom(&state_no_energy);
+        let (probabilities_no_energy, _) = celebi_powerful_bloom(&state_no_energy).into_branches();
 
         // Should have 1 outcome (0 damage)
         assert_eq!(probabilities_no_energy.len(), 1);
@@ -2862,33 +2599,39 @@ mod test {
 
     #[test]
     fn test_binomial_coefficient() {
-        assert_eq!(binomial_coefficient(0, 0), 1);
-        assert_eq!(binomial_coefficient(1, 0), 1);
-        assert_eq!(binomial_coefficient(1, 1), 1);
-        assert_eq!(binomial_coefficient(2, 0), 1);
-        assert_eq!(binomial_coefficient(2, 1), 2);
-        assert_eq!(binomial_coefficient(2, 2), 1);
-        assert_eq!(binomial_coefficient(4, 2), 6);
-        assert_eq!(binomial_coefficient(5, 3), 10);
-        assert_eq!(binomial_coefficient(6, 2), 15);
+        assert_eq!(Outcomes::binomial_coefficient(0, 0), 1);
+        assert_eq!(Outcomes::binomial_coefficient(1, 0), 1);
+        assert_eq!(Outcomes::binomial_coefficient(1, 1), 1);
+        assert_eq!(Outcomes::binomial_coefficient(2, 0), 1);
+        assert_eq!(Outcomes::binomial_coefficient(2, 1), 2);
+        assert_eq!(Outcomes::binomial_coefficient(2, 2), 1);
+        assert_eq!(Outcomes::binomial_coefficient(4, 2), 6);
+        assert_eq!(Outcomes::binomial_coefficient(5, 3), 10);
+        assert_eq!(Outcomes::binomial_coefficient(6, 2), 15);
     }
 
     #[test]
     fn test_single_coin_attacks() {
         // Test Ponyta Stomp (1 coin, 0 or 30 damage)
-        let (probabilities, _mutations) = probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 30]);
+        let (probabilities, _mutations) =
+            Outcomes::binary_coin(active_damage_mutation(30), active_damage_mutation(0))
+                .into_branches();
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
 
         // Test Rapidash Rising Lunge (1 coin, 0 or 60 damage)
-        let (probabilities, _mutations) = probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 60]);
+        let (probabilities, _mutations) =
+            Outcomes::binary_coin(active_damage_mutation(60), active_damage_mutation(0))
+                .into_branches();
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
 
         // Test Mankey Focus Fist (1 coin, 0 or 50 damage)
-        let (probabilities, _mutations) = probabilistic_damage_attack(vec![0.5, 0.5], vec![0, 50]);
+        let (probabilities, _mutations) =
+            Outcomes::binary_coin(active_damage_mutation(50), active_damage_mutation(0))
+                .into_branches();
         assert_eq!(probabilities.len(), 2);
         assert!((probabilities[0] - 0.5).abs() < 0.001);
         assert!((probabilities[1] - 0.5).abs() < 0.001);
@@ -2915,15 +2658,18 @@ mod test {
         let guzzlord = get_card_by_enum(CardId::A3a043GuzzlordEx); // 170 HP ex Pokemon
         state.in_play_pokemon[0][0] = Some(to_playable_card(&guzzlord, false));
 
-        // Get the mutations from guzzlord_ex_grindcore_attack
-        let (probabilities, mut mutations) = guzzlord_ex_grindcore_attack();
+        let attack = state.get_active(0).get_attacks()[0].clone();
+        let effect = attack
+            .effect
+            .as_ref()
+            .expect("Guzzlord ex attack should have effect text");
+        let mechanic = EFFECT_MECHANIC_MAP
+            .get(effect.as_str())
+            .expect("Guzzlord ex effect should be mapped");
+        let (_probabilities, mut mutations) =
+            forecast_effect_attack_by_mechanic(&state, &attack, mechanic).into_branches();
 
-        // Verify we have the expected number of outcomes
-        assert_eq!(probabilities.len(), 6);
-        assert_eq!(mutations.len(), 6);
-
-        // Apply the first mutation (0 heads, immediate tails)
-        // This should do 30 damage despite Oricorio's Safeguard ability
+        // Apply the first outcome mutation and ensure Oricorio's Safeguard still blocks ex damage.
         mutations.remove(0)(&mut rng, &mut state, &action);
 
         // Verify Oricorio did NOT take damage
@@ -2956,7 +2702,8 @@ mod test {
             EnergyType::Lightning,
             4,
             70,
-        );
+        )
+        .into_branches();
         below_mutations.remove(0)(&mut rng, &mut below_threshold, &action);
         assert_eq!(below_threshold.get_active(1).get_remaining_hp(), 90);
 
@@ -2973,8 +2720,130 @@ mod test {
             EnergyType::Lightning,
             4,
             70,
-        );
+        )
+        .into_branches();
         threshold_mutations.remove(0)(&mut rng, &mut at_threshold, &action);
         assert_eq!(at_threshold.get_active(1).get_remaining_hp(), 20);
+    }
+
+    #[test]
+    fn test_vaporeon_hyper_whirlpool_discards_without_duplicate_energy_panic() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(0),
+            is_stack: false,
+        };
+
+        let attacker = get_card_by_enum(CardId::A1080Vaporeon);
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+
+        let defender = get_card_by_enum(CardId::A1001Bulbasaur);
+        state.in_play_pokemon[1][0] = Some(
+            to_playable_card(&defender, false)
+                .with_energy(vec![EnergyType::Water, EnergyType::Lightning]),
+        );
+
+        let (_probs, mut mutations) = vaporeon_hyper_whirlpool(&state, 60).into_branches();
+        mutations.remove(2)(&mut rng, &mut state, &action);
+
+        assert_eq!(state.get_active(1).attached_energy.len(), 0);
+    }
+
+    mod random_damage_outcomes_tests {
+        use super::super::enumerate_random_damage_outcomes;
+
+        #[test]
+        fn test_one_target_three_hits_single_outcome() {
+            // With 1 target and 3 hits, there's only 1 possible outcome: all hits go to that target
+            let targets = vec![(1, 0)]; // opponent's active
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+
+            assert_eq!(outcomes.len(), 1);
+            let (prob, damage_dist) = &outcomes[0];
+            assert!((prob - 1.0).abs() < 1e-9);
+            assert_eq!(damage_dist, &vec![(1, 0, 150)]); // 3 * 50 = 150 damage
+        }
+
+        #[test]
+        fn test_two_targets_three_hits_outcomes() {
+            // With 2 targets (A, B) and 3 hits, there are 4 unique damage distributions:
+            // - All 3 to A: (150, 0) - 1 way (AAA)
+            // - 2 to A, 1 to B: (100, 50) - 3 ways (AAB, ABA, BAA)
+            // - 1 to A, 2 to B: (50, 100) - 3 ways (ABB, BAB, BBA)
+            // - All 3 to B: (0, 150) - 1 way (BBB)
+            // Total: 8 sequences (2^3)
+            let targets = vec![(1, 0), (1, 1)]; // opponent's active and bench
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+
+            assert_eq!(outcomes.len(), 4);
+
+            // Sort outcomes by damage distribution for easier comparison
+            let mut sorted_outcomes: Vec<_> =
+                outcomes.iter().map(|(p, d)| (*p, d.clone())).collect();
+            sorted_outcomes.sort_by(|a, b| a.1.cmp(&b.1));
+
+            // Check probabilities: 1/8, 3/8, 3/8, 1/8
+            let prob_sum: f64 = sorted_outcomes.iter().map(|(p, _)| p).sum();
+            assert!((prob_sum - 1.0).abs() < 1e-9);
+
+            // Verify the 4 distributions exist with correct probabilities
+            // Distribution with all damage to first target
+            let all_to_first = sorted_outcomes
+                .iter()
+                .find(|(_, d)| d == &vec![(1, 0, 150)]);
+            assert!(all_to_first.is_some());
+            assert!((all_to_first.unwrap().0 - 0.125).abs() < 1e-9); // 1/8
+
+            // Distribution with 2 to first, 1 to second
+            let two_one = sorted_outcomes
+                .iter()
+                .find(|(_, d)| d == &vec![(1, 0, 100), (1, 1, 50)]);
+            assert!(two_one.is_some());
+            assert!((two_one.unwrap().0 - 0.375).abs() < 1e-9); // 3/8
+        }
+
+        #[test]
+        fn test_three_targets_single_hit() {
+            // With 3 targets and 1 hit, there are 3 outcomes, each with probability 1/3
+            let targets = vec![(0, 1), (1, 0), (1, 1)]; // own bench, opponent active, opponent bench
+            let outcomes = enumerate_random_damage_outcomes(&targets, 1, 100);
+
+            assert_eq!(outcomes.len(), 3);
+
+            for (prob, damage_dist) in &outcomes {
+                assert!((prob - 1.0 / 3.0).abs() < 1e-9);
+                assert_eq!(damage_dist.len(), 1);
+                assert_eq!(damage_dist[0].2, 100);
+            }
+        }
+
+        #[test]
+        fn test_empty_targets() {
+            let targets: Vec<(usize, usize)> = vec![];
+            let outcomes = enumerate_random_damage_outcomes(&targets, 3, 50);
+            assert!(outcomes.is_empty());
+        }
+
+        #[test]
+        fn test_probability_sum_always_one() {
+            // Test various configurations to ensure probabilities always sum to 1
+            for num_targets in 1..=5 {
+                for times in 1..=4 {
+                    let targets: Vec<(usize, usize)> = (0..num_targets).map(|i| (0, i)).collect();
+                    let outcomes = enumerate_random_damage_outcomes(&targets, times, 10);
+
+                    let prob_sum: f64 = outcomes.iter().map(|(p, _)| p).sum();
+                    assert!(
+                        (prob_sum - 1.0).abs() < 1e-9,
+                        "Probability sum {} != 1.0 for {} targets, {} times",
+                        prob_sum,
+                        num_targets,
+                        times
+                    );
+                }
+            }
+        }
     }
 }

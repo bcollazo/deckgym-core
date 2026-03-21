@@ -9,6 +9,7 @@ mod attacks;
 mod effect_ability_mechanic_map;
 mod effect_mechanic_map;
 mod mutations;
+mod outcomes;
 mod shared_mutations;
 mod types;
 

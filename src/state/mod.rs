@@ -247,6 +247,29 @@ impl State {
         self.has_used_stadium[self.current_player] = false;
     }
 
+    pub(crate) fn set_pending_will_first_heads(&mut self) {
+        self.add_turn_effect(TurnEffect::ForceFirstHeads, 0);
+    }
+
+    pub(crate) fn has_pending_will_first_heads(&self) -> bool {
+        self.get_current_turn_effects()
+            .iter()
+            .any(|effect| matches!(effect, TurnEffect::ForceFirstHeads))
+    }
+
+    pub(crate) fn consume_pending_will_first_heads(&mut self) -> bool {
+        if let Some(turn_effects) = self.turn_effects.get_mut(&self.turn_count) {
+            if let Some(pos) = turn_effects
+                .iter()
+                .position(|effect| matches!(effect, TurnEffect::ForceFirstHeads))
+            {
+                turn_effects.remove(pos);
+                return true;
+            }
+        }
+        false
+    }
+
     /// Adds an effect card that will remain active for a specified number of turns.
     ///
     /// # Arguments
@@ -506,7 +529,7 @@ fn to_canonical_names(cards: &[Card]) -> Vec<&String> {
 mod tests {
     use crate::{
         card_ids::CardId, database::get_card_by_enum, deck::is_basic, hooks::to_playable_card,
-        test_helpers::load_test_decks,
+        test_support::load_test_decks,
     };
 
     use super::*;

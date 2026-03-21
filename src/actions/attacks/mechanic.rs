@@ -29,6 +29,7 @@ pub enum Mechanic {
         name: String,
     },
     SearchToBenchBasic,
+    SearchRandomPokemonToHand,
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
@@ -48,7 +49,14 @@ pub enum Mechanic {
         damage_per_hit: u32,
     },
     DiscardEnergyFromOpponentActive,
+    CoinFlipDiscardEnergyFromOpponentActive,
     ExtraDamageIfEx {
+        extra_damage: u32,
+    },
+    ExtraDamageIfOpponentHasSpecialCondition {
+        extra_damage: u32,
+    },
+    ExtraDamageIfSupportPlayedThisTurn {
         extra_damage: u32,
     },
     SelfDamage {
@@ -150,12 +158,15 @@ pub enum Mechanic {
         opponent: bool,
         effect: CardEffect,
         duration: u8,
-        probability: Option<f32>, // None = 100%, Some(0.5) = coin flip
+        coin_flip: bool, // false = always apply, true = apply on heads
     },
     DrawCard {
         amount: u8,
     },
     SelfDiscardAllEnergy,
+    SelfDiscardAllTypeEnergy {
+        energy_type: EnergyType,
+    },
     SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
         energy_type: EnergyType,
         damage: u32,
@@ -214,6 +225,30 @@ pub enum Mechanic {
         self_damage: u32,
     },
     ShuffleOpponentActiveIntoDeck,
+    KnockBackOpponentActive,
+    /// Random spread damage attack (e.g., Draco Meteor, Spurt Fire)
+    /// Always targets opponent's active + bench. Optionally includes own bench.
+    RandomSpreadDamage {
+        times: usize,
+        damage_per_hit: u32,
+        include_own_bench: bool,
+    },
+    FlipUntilTailsDamage {
+        damage_per_heads: u32,
+    },
+    DirectDamageIfDamaged {
+        damage: u32,
+    },
+    AttachEnergyToBenchedBasic {
+        energy_type: EnergyType,
+    },
+    DamageAndDiscardOpponentDeck {
+        damage: u32,
+        discard_count: usize,
+    },
+    MegaAmpharosExLightningLancer,
+    OminousClaw,
+    DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
     CopyAttack {

@@ -3,7 +3,7 @@ use colored::Colorize;
 use deckgym::database::get_card_by_enum;
 use deckgym::simulate::initialize_logger;
 use deckgym::temp_deck::{find_card_id, generate_temp_deck};
-use deckgym::{simulate, Deck};
+use deckgym::{simulate, Deck, ParallelConfig, SimulationConfig};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
 use std::fs;
@@ -187,11 +187,16 @@ fn simulate_against_folder(
         simulate(
             deck_a_path,
             deck_path,
-            None,
-            games_for_this_deck,
-            None,
-            false,
-            None,
+            SimulationConfig {
+                num_games: games_for_this_deck,
+                players: None,
+                seed: None,
+                data_output: None,
+            },
+            ParallelConfig {
+                enabled: false,
+                num_threads: None,
+            },
         );
     }
 

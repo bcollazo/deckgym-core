@@ -182,7 +182,7 @@ mod tests {
     use crate::{
         players::{AttachAttackPlayer, EndTurnPlayer, Player},
         state::GameOutcome,
-        test_helpers::load_test_decks,
+        test_support::load_test_decks,
         Game,
     };
 

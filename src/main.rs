@@ -50,6 +50,10 @@ enum Commands {
         /// Increase verbosity (-v, -vv, -vvv, etc.)
         #[arg(short, long, action = ArgAction::Count, default_value_t = 1)]
         verbose: u8,
+
+        /// Output folder for exporting (state, action) pairs in JSON format
+        #[arg(long)]
+        data_output: Option<String>,
     },
     /// Optimize an incomplete deck against enemy decks
     Optimize {
@@ -94,12 +98,16 @@ enum Commands {
 fn simulate_against_folder(
     deck_a_path: &str,
     decks_folder: &str,
-    players: Option<Vec<PlayerCode>>,
-    total_num_simulations: u32,
-    seed: Option<u64>,
-    parallel: bool,
-    num_threads: Option<usize>,
+    sim_config: SimulationConfig,
+    parallel_config: ParallelConfig,
 ) {
+    let total_num_simulations = sim_config.num_games;
+    let players = sim_config.players;
+    let seed = sim_config.seed;
+    let data_output = sim_config.data_output;
+    let parallel = parallel_config.enabled;
+    let num_threads = parallel_config.num_threads;
+
     // Read all deck files from the folder
     let deck_paths: Vec<String> = fs::read_dir(decks_folder)
         .expect("Failed to read decks folder")
@@ -173,11 +181,16 @@ fn simulate_against_folder(
         simulate(
             deck_a_path,
             deck_path,
-            players.clone(),
-            games_for_this_deck,
-            seed,
-            parallel,
-            num_threads,
+            SimulationConfig {
+                num_games: games_for_this_deck,
+                players: players.clone(),
+                seed,
+                data_output: data_output.clone(),
+            },
+            ParallelConfig {
+                enabled: parallel,
+                num_threads,
+            },
         );
     }
 
@@ -200,6 +213,7 @@ fn main() {
             parallel,
             threads,
             verbose,
+            data_output,
         } => {
             initialize_logger(verbose);
 
@@ -211,21 +225,31 @@ fn main() {
                 simulate_against_folder(
                     &deck_a,
                     &deck_b_or_folder,
-                    players,
-                    num,
-                    seed,
-                    parallel,
-                    threads,
+                    SimulationConfig {
+                        num_games: num,
+                        players,
+                        seed,
+                        data_output,
+                    },
+                    ParallelConfig {
+                        enabled: parallel,
+                        num_threads: threads,
+                    },
                 );
             } else {
                 simulate(
                     &deck_a,
                     &deck_b_or_folder,
-                    players,
-                    num,
-                    seed,
-                    parallel,
-                    threads,
+                    SimulationConfig {
+                        num_games: num,
+                        players,
+                        seed,
+                        data_output,
+                    },
+                    ParallelConfig {
+                        enabled: parallel,
+                        num_threads: threads,
+                    },
                 );
             }
         }
@@ -248,6 +272,7 @@ fn main() {
                 num_games: num,
                 players,
                 seed,
+                data_output: None,
             };
             let parallel_config = ParallelConfig {
                 enabled: parallel,

@@ -20,9 +20,10 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations, Probabilities},
+    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations},
     apply_attack_action::{forecast_attack, forecast_copied_attack},
     apply_trainer_action::forecast_trainer_action,
+    outcomes::{CoinSeq, Outcomes},
     Action, SimpleAction,
 };
 
@@ -30,7 +31,7 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
-    let (probabilities, mut lazy_mutations) = forecast_action(state, action);
+    let (probabilities, mut lazy_mutations) = forecast_action(state, action).into_branches();
     if probabilities.len() == 1 {
         lazy_mutations.remove(0)(rng, state, action);
     } else {
@@ -42,8 +43,8 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
 
 /// This should be mostly a "router" function that calls the appropriate forecast function
 /// based on the action type.
-pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutations) {
-    let (proba, mutas) = match &action.action {
+pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
+    let mut outcomes = match &action.action {
         // Deterministic Actions
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
@@ -93,34 +94,57 @@ pub fn forecast_action(state: &State, action: &Action) -> (Probabilities, Mutati
         SimpleAction::DiscardOpponentSupporter { supporter_card } => {
             forecast_discard_opponent_supporter(action.actor, supporter_card)
         }
-        SimpleAction::DiscardOwnCards { cards } => {
-            forecast_discard_own_cards(action.actor, cards)
-        }
+        SimpleAction::DiscardOwnCards { cards } => forecast_discard_own_cards(action.actor, cards),
         SimpleAction::AttachFromDiscard {
             in_play_idx,
             num_random_energies,
-        } => forecast_attach_from_discard(state, action.actor, *in_play_idx, *num_random_energies),
+        } => forecast_attach_from_discard(
+            state,
+            action.actor,
+            *in_play_idx,
+            *num_random_energies,
+        ),
         SimpleAction::UseStadium => forecast_use_stadium(state, action.actor),
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
-        SimpleAction::EndTurn => forecast_end_turn(state),
+        SimpleAction::EndTurn => {
+            let (probabilities, mutations) = forecast_end_turn(state);
+            Outcomes::from_parts(probabilities, mutations)
+        }
     };
 
-    // Wrap with common logic for mutations
-    let mut wrapped_mutations: Mutations = vec![];
-    for original_mutation in mutas {
-        let mutation_closure: Mutation = Box::new(original_mutation);
-        wrapped_mutations.push(wrap_with_common_logic(mutation_closure));
+    // This is where we basically "apply" Will in a way that is forecasteable.
+    // (The player should know if they have an upcoming Will).
+    if is_will_eligible_action(&action.action) && state.has_pending_will_first_heads() {
+        outcomes = match outcomes.force_first_heads() {
+            Ok(forced_outcomes) => forced_outcomes.map_mutations(|mutation| {
+                Box::new(move |rng, state, action| {
+                    state.consume_pending_will_first_heads();
+                    mutation(rng, state, action);
+                })
+            }),
+            Err(original_outcomes) => original_outcomes,
+        };
     }
-    (proba, wrapped_mutations)
+
+    // Wrap with common logic for mutations
+    outcomes.map_mutations(wrap_with_common_logic)
 }
 
-fn forecast_deterministic_action() -> (Probabilities, Mutations) {
-    (
-        vec![1.0],
-        vec![Box::new(move |_, state, action| {
-            apply_deterministic_action(state, action);
-        })],
+fn is_will_eligible_action(action: &SimpleAction) -> bool {
+    matches!(
+        action,
+        SimpleAction::Attack(_)
+            | SimpleAction::UseCopiedAttack { .. }
+            | SimpleAction::UseAbility { .. }
+            | SimpleAction::Play { .. }
+            | SimpleAction::UseStadium
     )
+}
+
+fn forecast_deterministic_action() -> Outcomes {
+    Outcomes::single_fn(move |_, state, action| {
+        apply_deterministic_action(state, action);
+    })
 }
 
 fn apply_deterministic_action(state: &mut State, action: &Action) {
@@ -502,18 +526,15 @@ fn forecast_pokemon_communication(
     acting_player: usize,
     state: &State,
     hand_pokemon: &Card,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let deck_pokemon: Vec<_> = state.iter_deck_pokemon(acting_player).collect();
 
     let num_deck_pokemon = deck_pokemon.len();
     if num_deck_pokemon == 0 {
         // Should not happen if move generation is correct, but just shuffle deck
-        return (
-            vec![1.0],
-            vec![Box::new(|rng, state, action| {
-                state.decks[action.actor].shuffle(false, rng);
-            })],
-        );
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
     }
 
     // Create uniform probability for each deck Pokemon (1/N for each)
@@ -544,74 +565,53 @@ fn forecast_pokemon_communication(
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
-fn forecast_shuffle_pokemon_into_deck(
-    acting_player: usize,
-    hand_pokemon: &[Card],
-) -> (Probabilities, Mutations) {
+fn forecast_shuffle_pokemon_into_deck(acting_player: usize, hand_pokemon: &[Card]) -> Outcomes {
     let pokemon_list = hand_pokemon.to_vec();
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, _action| {
-            for pokemon in &pokemon_list {
-                state.transfer_card_from_hand_to_deck(acting_player, pokemon);
-            }
-            state.decks[acting_player].shuffle(false, rng);
-            debug!("May: Shuffled {:?} from hand into deck", pokemon_list);
-        })],
-    )
+    Outcomes::single_fn(move |rng, state, _action| {
+        for pokemon in &pokemon_list {
+            state.transfer_card_from_hand_to_deck(acting_player, pokemon);
+        }
+        state.decks[acting_player].shuffle(false, rng);
+        debug!("May: Shuffled {:?} from hand into deck", pokemon_list);
+    })
 }
 
-fn forecast_shuffle_opponent_supporter(
-    acting_player: usize,
-    supporter_card: &Card,
-) -> (Probabilities, Mutations) {
+fn forecast_shuffle_opponent_supporter(acting_player: usize, supporter_card: &Card) -> Outcomes {
     let supporter_clone = supporter_card.clone();
-    (
-        vec![1.0],
-        vec![Box::new(move |rng, state, _action| {
-            let opponent = (acting_player + 1) % 2;
-            state.transfer_card_from_hand_to_deck(opponent, &supporter_clone);
-            state.decks[opponent].shuffle(false, rng);
-            debug!(
-                "Silver: Shuffled {:?} from opponent's hand into their deck",
-                supporter_clone
-            );
-        })],
-    )
+    Outcomes::single_fn(move |rng, state, _action| {
+        let opponent = (acting_player + 1) % 2;
+        state.transfer_card_from_hand_to_deck(opponent, &supporter_clone);
+        state.decks[opponent].shuffle(false, rng);
+        debug!(
+            "Silver: Shuffled {:?} from opponent's hand into their deck",
+            supporter_clone
+        );
+    })
 }
 
-fn forecast_discard_opponent_supporter(
-    acting_player: usize,
-    supporter_card: &Card,
-) -> (Probabilities, Mutations) {
+fn forecast_discard_opponent_supporter(acting_player: usize, supporter_card: &Card) -> Outcomes {
     let supporter_clone = supporter_card.clone();
-    (
-        vec![1.0],
-        vec![Box::new(move |_rng, state, _action| {
-            let opponent = (acting_player + 1) % 2;
-            state.discard_card_from_hand(opponent, &supporter_clone);
-            debug!(
-                "Mega Absol Ex: Discarded {:?} from opponent's hand",
-                supporter_clone
-            );
-        })],
-    )
+    Outcomes::single_fn(move |_rng, state, _action| {
+        let opponent = (acting_player + 1) % 2;
+        state.discard_card_from_hand(opponent, &supporter_clone);
+        debug!(
+            "Mega Absol Ex: Discarded {:?} from opponent's hand",
+            supporter_clone
+        );
+    })
 }
 
-fn forecast_discard_own_cards(acting_player: usize, cards: &[Card]) -> (Probabilities, Mutations) {
+fn forecast_discard_own_cards(acting_player: usize, cards: &[Card]) -> Outcomes {
     let cards_clone = cards.to_vec();
-    (
-        vec![1.0],
-        vec![Box::new(move |_rng, state, _action| {
-            for card in &cards_clone {
-                state.discard_card_from_hand(acting_player, card);
-            }
-            debug!("Discarded {:?} from hand", cards_clone);
-        })],
-    )
+    Outcomes::single_fn(move |_rng, state, _action| {
+        for card in &cards_clone {
+            state.discard_card_from_hand(acting_player, card);
+        }
+        debug!("Discarded {:?} from hand", cards_clone);
+    })
 }
 
 fn forecast_attach_from_discard(
@@ -619,26 +619,23 @@ fn forecast_attach_from_discard(
     acting_player: usize,
     in_play_idx: usize,
     num_random_energies: usize,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     let discard_energies = &state.discard_energies[acting_player];
     let actual_num = std::cmp::min(num_random_energies, discard_energies.len());
 
     if actual_num == 0 {
-        return (vec![1.0], vec![Box::new(|_, _, _| {})]);
+        return Outcomes::single_fn(|_, _, _| {});
     }
     if actual_num == 1 {
         // Deterministic: just attach the first energy
         let energy = discard_energies[0];
-        return (
-            vec![1.0],
-            vec![Box::new(move |_rng, state, action| {
-                state.attach_energy_from_discard(action.actor, in_play_idx, &[energy]);
-                debug!(
-                    "Lusamine: Attached {:?} from discard to Pokemon at index {}",
-                    energy, in_play_idx
-                );
-            })],
-        );
+        return Outcomes::single_fn(move |_rng, state, action| {
+            state.attach_energy_from_discard(action.actor, in_play_idx, &[energy]);
+            debug!(
+                "Lusamine: Attached {:?} from discard to Pokemon at index {}",
+                energy, in_play_idx
+            );
+        });
     }
 
     // For 2 energies, generate all combinations and deduplicate
@@ -659,7 +656,7 @@ fn forecast_attach_from_discard(
         }));
     }
 
-    (probabilities, mutations)
+    Outcomes::from_parts(probabilities, mutations)
 }
 
 /// Generate all unique 2-energy combinations from a list of energies in discard pile.
@@ -694,44 +691,40 @@ fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
 }
 
 /// Forecasts the UseStadium action for activated stadiums like Mesagoza.
-fn forecast_use_stadium(state: &State, acting_player: usize) -> (Probabilities, Mutations) {
+fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
     // Currently only Mesagoza has an activated effect
     if is_mesagoza_active(state) {
         return forecast_mesagoza_effect(state, acting_player);
     }
     // No other activated stadiums for now, just mark as used
-    (vec![1.0], vec![Box::new(|_, _, _| {})])
+    Outcomes::single_fn(|_, _, _| {})
 }
 
 /// Mesagoza: Once during each player's turn, that player may flip a coin.
 /// If heads, that player puts a random Pokémon from their deck into their hand.
-fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> (Probabilities, Mutations) {
+fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> Outcomes {
     // Get the search outcomes for any Pokemon (reusing existing logic)
-    let (search_probs, search_mutations) = pokemon_search_outcomes(acting_player, state, false);
+    let (search_probs, search_mutations) =
+        pokemon_search_outcomes(acting_player, state, false).into_branches();
 
-    // Wrap each search outcome with "mark stadium as used" and scale by 50% for heads
-    let num_search_outcomes = search_probs.len();
-    let mut probabilities = Vec::with_capacity(num_search_outcomes + 1);
-    let mut outcomes: Mutations = Vec::with_capacity(num_search_outcomes + 1);
-
-    // Heads outcomes: 50% total, distributed among all possible Pokemon draws
+    let mut branches: Vec<(f64, Mutation, Vec<CoinSeq>)> =
+        Vec::with_capacity(search_probs.len() + 1);
     for (prob, mutation) in search_probs.into_iter().zip(search_mutations.into_iter()) {
-        probabilities.push(0.5 * prob);
-        outcomes.push(Box::new(move |rng, state, action| {
+        let wrapped: Mutation = Box::new(move |rng, state, action| {
             state.has_used_stadium[action.actor] = true;
             mutation(rng, state, action);
             debug!("Mesagoza: Flipped heads, searched for Pokemon");
-        }));
+        });
+        branches.push((0.5 * prob, wrapped, vec![CoinSeq(vec![true])]));
     }
-
-    // Tails outcome: 50% - nothing happens
-    probabilities.push(0.5);
-    outcomes.push(Box::new(move |_, state, action| {
+    let tails_mutation: Mutation = Box::new(move |_, state, action| {
         state.has_used_stadium[action.actor] = true;
         debug!("Mesagoza: Flipped tails, nothing happens");
-    }));
+    });
+    branches.push((0.5, tails_mutation, vec![CoinSeq(vec![false])]));
 
-    (probabilities, outcomes)
+    // Not `binary_coin`: heads fans out into many weighted search outcomes, not one mutation.
+    Outcomes::from_coin_branches(branches).expect("Mesagoza coin branches should be valid")
 }
 
 // Test that when evolving a damanged pokemon, damage stays.

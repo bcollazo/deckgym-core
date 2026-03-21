@@ -18,6 +18,9 @@ The codebase is in a dirty state, don't try to eliminate compilation warnings, o
 - Decide if we should introduce a new `AbilityMechanic` variant in `src/actions/abilities/mechanic.rs` or re-use or generalize an existing one. Try to re-use existing ones first.
 - Uncomment all the effect lines in `effect_ability_mechanic_map.rs` that just require different parameters on the decided AbilityMechanic variant, and map to the correct AbilityMechanic variant instance.
 - Implement the mechanic logic in `forecast_ability_by_mechanic` in `apply_abilities_action.rs`.
+  - Return an `Outcomes` struct (see `src/actions/outcomes.rs`):
+    - `Outcomes::single_fn(...)` for deterministic effects
+    - `Outcomes::binary_coin(...)` or other coin constructors for coin-flip abilities
   - Identify how it was implemented before. Refactor the old function to be usable with the new structure.
   - Keep the code as a simple one-liner in the match statement by using helper functions
 - Implement the move generation logic in `can_use_ability_by_mechanic` in `move_generation_abilities.rs`.

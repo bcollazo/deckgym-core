@@ -34,6 +34,7 @@ pub struct SimulationConfig {
     pub num_games: u32,
     pub players: Option<Vec<PlayerCode>>,
     pub seed: Option<u64>,
+    pub data_output: Option<String>,
 }
 
 /// Configuration for parallelism
@@ -527,6 +528,7 @@ mod tests {
             num_games: 1,
             players: Some(vec![PlayerCode::R, PlayerCode::R]),
             seed: None,
+            data_output: None,
         };
         let parallel_config = ParallelConfig {
             enabled: false,

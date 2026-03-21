@@ -2,11 +2,7 @@ use log::debug;
 use std::cmp::min;
 
 use crate::{
-    actions::{
-        apply_action_helpers::{Mutations, Probabilities},
-        apply_place_card,
-        mutations::doutcome,
-    },
+    actions::{apply_action_helpers::Mutations, apply_place_card, outcomes::Outcomes},
     combinatorics::generate_combinations,
     models::{Card, EnergyType, TrainerType},
     State,
@@ -16,7 +12,7 @@ pub(crate) fn pokemon_search_outcomes(
     acting_player: usize,
     state: &State,
     basic_only: bool,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         if basic_only {
             card.is_basic()
@@ -30,7 +26,7 @@ pub(crate) fn pokemon_search_outcomes_by_type(
     state: &State,
     basic_only: bool,
     energy_type: EnergyType,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     pokemon_search_outcomes_by_type_for_player(state.current_player, state, basic_only, energy_type)
 }
 
@@ -39,7 +35,7 @@ pub(crate) fn pokemon_search_outcomes_by_type_for_player(
     state: &State,
     basic_only: bool,
     energy_type: EnergyType,
-) -> (Probabilities, Mutations) {
+) -> Outcomes {
     card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
         let basic_check = !basic_only || card.is_basic();
@@ -47,10 +43,7 @@ pub(crate) fn pokemon_search_outcomes_by_type_for_player(
     })
 }
 
-pub(crate) fn item_search_outcomes(
-    acting_player: usize,
-    state: &State,
-) -> (Probabilities, Mutations) {
+pub(crate) fn item_search_outcomes(acting_player: usize, state: &State) -> Outcomes {
     card_search_outcomes_with_filter(
         acting_player,
         state,
@@ -58,10 +51,7 @@ pub(crate) fn item_search_outcomes(
     )
 }
 
-pub(crate) fn tool_search_outcomes(
-    acting_player: usize,
-    state: &State,
-) -> (Probabilities, Mutations) {
+pub(crate) fn tool_search_outcomes(acting_player: usize, state: &State) -> Outcomes {
     card_search_outcomes_with_filter(
         acting_player,
         state,
@@ -69,20 +59,14 @@ pub(crate) fn tool_search_outcomes(
     )
 }
 
-pub(crate) fn gladion_search_outcomes(
-    acting_player: usize,
-    state: &State,
-) -> (Probabilities, Mutations) {
+pub(crate) fn gladion_search_outcomes(acting_player: usize, state: &State) -> Outcomes {
     card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
         let name = card.get_name();
         name == "Type: Null" || name == "Silvally"
     })
 }
 
-pub(crate) fn supporter_search_outcomes(
-    acting_player: usize,
-    state: &State,
-) -> (Probabilities, Mutations) {
+pub(crate) fn supporter_search_outcomes(acting_player: usize, state: &State) -> Outcomes {
     card_search_outcomes_with_filter(
         acting_player,
         state,
@@ -94,7 +78,7 @@ fn card_search_outcomes_with_filter<F>(
     acting_player: usize,
     state: &State,
     card_filter: F,
-) -> (Probabilities, Mutations)
+) -> Outcomes
 where
     F: Fn(&&Card) -> bool + Clone + 'static,
 {
@@ -107,7 +91,7 @@ pub(crate) fn card_search_outcomes_with_filter_multiple<F>(
     state: &State,
     num_to_draw: usize,
     card_filter: F,
-) -> (Probabilities, Mutations)
+) -> Outcomes
 where
     F: Fn(&&Card) -> bool + Clone + 'static,
 {
@@ -122,7 +106,7 @@ where
 
     if num_eligible == 0 {
         // No eligible Pokemon in deck, just shuffle
-        return doutcome(|rng, state, action| {
+        return Outcomes::single_fn(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
         });
     }
@@ -146,13 +130,10 @@ where
         }));
     }
 
-    (probabilities, outcomes)
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
-pub(crate) fn search_and_bench_by_name(
-    state: &State,
-    card_name: String,
-) -> (Probabilities, Mutations) {
+pub(crate) fn search_and_bench_by_name(state: &State, card_name: String) -> Outcomes {
     search_and_bench_with_filter(
         state,
         move |card: &Card| card.get_name() == card_name,
@@ -160,7 +141,7 @@ pub(crate) fn search_and_bench_by_name(
     )
 }
 
-pub(crate) fn search_and_bench_basic(state: &State) -> (Probabilities, Mutations) {
+pub(crate) fn search_and_bench_basic(state: &State) -> Outcomes {
     search_and_bench_with_filter(
         state,
         |card: &Card| card.is_basic(),
@@ -172,7 +153,7 @@ fn search_and_bench_with_filter<F>(
     state: &State,
     card_filter: F,
     missing_card_msg: &'static str,
-) -> (Probabilities, Mutations)
+) -> Outcomes
 where
     F: Fn(&Card) -> bool + Clone + 'static,
 {
@@ -183,7 +164,7 @@ where
         .count();
 
     if num_cards_in_deck == 0 {
-        doutcome({
+        Outcomes::single_fn({
             |rng, state, action| {
                 // If there are no matching cards in the deck, just shuffle it
                 state.decks[action.actor].shuffle(false, rng);
@@ -224,6 +205,6 @@ where
                 state.decks[action.actor].shuffle(false, rng);
             }));
         }
-        (probabilities, outcomes)
+        Outcomes::from_parts(probabilities, outcomes)
     }
 }

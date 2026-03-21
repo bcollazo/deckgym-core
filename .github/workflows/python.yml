@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CARGO_BUILD_JOBS: 1
 
     strategy:
       matrix:
@@ -27,8 +29,14 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "pyproject.toml"
 
-      - name: Install python bindings
-        run: uv sync
+      - name: Install Python dependencies
+        run: uv sync --no-install-project
+
+      - name: Install maturin into test venv
+        run: uv pip install --python .venv/bin/python maturin
+
+      - name: Build and install deckgym bindings into venv
+        run: .venv/bin/maturin develop --features python
 
       - name: Run tests
-        run: uv run pytest python/deckgym/tests
+        run: .venv/bin/pytest python/deckgym/tests

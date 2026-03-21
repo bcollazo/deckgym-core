@@ -119,7 +119,7 @@ fn expected_value_function(
     let indent = "\t".repeat(10 - depth.min(10));
     trace!("{indent}E({myself}) depth left: {depth} action: {action:?}");
 
-    let (probabilities, mutations) = forecast_action(state, action);
+    let (probabilities, mutations) = forecast_action(state, action).into_branches();
     let mut outcomes: Vec<State> = vec![];
     for mutation in mutations {
         let mut state_copy = state.clone();

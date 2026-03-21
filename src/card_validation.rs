@@ -6,7 +6,7 @@ use crate::{
     move_generation::trainer_move_generation_implementation,
     state::State,
     tools::is_tool_effect_implemented,
-    AbilityId, AttackId,
+    AbilityId,
 };
 use serde::{Deserialize, Serialize};
 
@@ -44,11 +44,9 @@ pub fn get_implementation_status(card_id: CardId) -> ImplementationStatus {
     match card {
         Card::Pokemon(pokemon) => {
             // Verify attacks have no effects or effects are implemented
-            for (index, attack) in pokemon.attacks.iter().enumerate() {
+            for attack in &pokemon.attacks {
                 if let Some(effect_text) = &attack.effect {
-                    if AttackId::from_pokemon_index(&card_id_string, index).is_none()
-                        && EFFECT_MECHANIC_MAP.get(&effect_text[..]).is_none()
-                    {
+                    if EFFECT_MECHANIC_MAP.get(&effect_text[..]).is_none() {
                         return ImplementationStatus::MissingAttack;
                     }
                 }
