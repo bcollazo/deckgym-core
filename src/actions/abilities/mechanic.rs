@@ -40,4 +40,9 @@ pub enum AbilityMechanic {
         attack_type: EnergyType,
         amount: u32,
     },
+    PoisonOpponentActive,
+    HealActiveYourPokemon {
+        amount: u32,
+    },
+    SwitchOutOpponentActiveToBench,
 }

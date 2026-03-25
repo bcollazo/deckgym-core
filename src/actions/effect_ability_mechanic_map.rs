@@ -73,7 +73,7 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("If your opponent's Pokémon is Knocked Out by damage from this Pokémon's attacks, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", todo_implementation);
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon.", todo_implementation);
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability.", todo_implementation);
-        // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned.", todo_implementation);
+        map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned.", AbilityMechanic::PoisonOpponentActive);
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may switch in 1 of your opponent's Benched Pokémon that has damage on it to the Active Spot.", todo_implementation);
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may take a [G] Energy from your Energy Zone and attach it to 1 of your [G] Pokémon.", todo_implementation);
         // map.insert("Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon.", todo_implementation);
@@ -111,7 +111,7 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, you may heal 20 damage from each of your Pokémon.",
             AbilityMechanic::HealAllYourPokemon { amount: 20 },
         );
-        // map.insert("Once during your turn, you may heal 20 damage from your Active Pokémon.", todo_implementation);
+        map.insert("Once during your turn, you may heal 20 damage from your Active Pokémon.", AbilityMechanic::HealActiveYourPokemon { amount: 20 });
         // map.insert("Once during your turn, you may heal 30 damage from each of your [W] Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may look at the top card of your deck.", todo_implementation);
         // map.insert("Once during your turn, you may make your opponent's Active Pokémon Burned.", todo_implementation);
@@ -120,7 +120,7 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Once during your turn, you may put a random Pokémon Tool card from your deck into your hand.", todo_implementation);
         // map.insert("Once during your turn, you may put a random Pokémon from your deck into your hand.", todo_implementation);
         // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
-        // map.insert("Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
+        map.insert("Once during your turn, you may switch out your opponent's Active Pok\u{e9}mon to the Bench.\u{a0}(Your opponent chooses the new Active Pok\u{e9}mon.)", AbilityMechanic::SwitchOutOpponentActiveToBench);
         // map.insert("Once during your turn, you may switch your Active Ultra Beast with 1 of your Benched Ultra Beasts.", todo_implementation);
         map.insert("Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon.", AbilityMechanic::SwitchActiveTypedWithBench { energy_type: EnergyType::Water });
         // map.insert("Once during your turn, you may take 2 [D] Energy from your Energy Zone and attach it to this Pokémon. If you do, do 30 damage to this Pokémon.", todo_implementation);
