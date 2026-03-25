@@ -111,7 +111,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, you may heal 20 damage from each of your Pokémon.",
             AbilityMechanic::HealAllYourPokemon { amount: 20 },
         );
-        map.insert("Once during your turn, you may heal 20 damage from your Active Pokémon.", AbilityMechanic::HealActiveYourPokemon { amount: 20 });
+        map.insert(
+            "Once during your turn, you may heal 20 damage from your Active Pokémon.",
+            AbilityMechanic::HealActiveYourPokemon { amount: 20 },
+        );
         // map.insert("Once during your turn, you may heal 30 damage from each of your [W] Pokémon.", todo_implementation);
         // map.insert("Once during your turn, you may look at the top card of your deck.", todo_implementation);
         // map.insert("Once during your turn, you may make your opponent's Active Pokémon Burned.", todo_implementation);
