@@ -1648,7 +1648,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("If Magmortar is on your Bench, this attack does 70 more damage.", todo_implementation);
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
-    // map.insert("If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage.",
+        Mechanic::ExtraDamageIfSelfHpAtMost {
+            threshold: 110,
+            extra_damage: 80,
+        },
+    );
     // map.insert("If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
