@@ -313,33 +313,6 @@ fn switch_out_opponent_active_to_bench() -> Outcomes {
     })
 }
 
-fn weezing_ability(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Your opponent's Active Pokémon is now Poisoned.
-    debug!("Weezing's ability: Poisoning opponent's active Pokemon");
-    let opponent = (action.actor + 1) % 2;
-    let opponent_active = state.in_play_pokemon[opponent][0]
-        .as_mut()
-        .expect("Opponent should have active pokemon");
-    opponent_active.poisoned = true;
-}
-
-fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
-    debug!("Pidgeot's Drive Off: Forcing opponent to switch active");
-    let opponent = (action.actor + 1) % 2;
-    let mut choices = Vec::new();
-    for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-        choices.push(SimpleAction::Activate {
-            player: opponent,
-            in_play_idx,
-        });
-    }
-    if choices.is_empty() {
-        return; // No benched pokemon to switch with
-    }
-    state.move_generation_stack.push((opponent, choices));
-}
-
 fn gardevoir_ability(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, you may attach a Psychic Energy to your Active Pokémon.
     debug!("Gardevoir's ability: Attaching Psychic Energy to active Pokemon");

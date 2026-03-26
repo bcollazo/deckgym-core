@@ -214,15 +214,6 @@ fn can_use_attach_energy_from_zone_to_active_typed(
     active.get_energy_type() == Some(energy_type)
 }
 
-fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
-    if card.ability_used {
-        return false;
-    }
-    // Opponent must have a benched Pokémon to switch to
-    let opponent = (state.current_player + 1) % 2;
-    state.enumerate_bench_pokemon(opponent).next().is_some()
-}
-
 fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
     state
         .enumerate_in_play_pokemon(state.current_player)
