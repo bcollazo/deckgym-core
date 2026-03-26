@@ -1053,7 +1053,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_opponent: false,
         },
     );
-    // map.insert("This Pokémon is now Asleep. Heal 30 damage from it.", todo_implementation);
+    map.insert(
+        "This Pokémon is now Asleep. Heal 30 damage from it.",
+        Mechanic::SelfAsleepAndHeal { amount: 30 },
+    );
     map.insert(
         "This Pokémon is now Confused.",
         Mechanic::InflictStatusConditions {
@@ -1638,7 +1641,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // B2b
     // map.insert("Discard a [W] and a [L] Energy from this Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, they can't play any Trainer cards from their hand.", todo_implementation);
-    // map.insert("Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon.",
+        Mechanic::FlipCoinsBenchDamagePerHead { num_coins: 3, bench_damage_per_head: 20 },
+    );
     // map.insert("If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("If Magmortar is on your Bench, this attack does 70 more damage.", todo_implementation);
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);

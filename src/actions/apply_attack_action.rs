@@ -507,6 +507,18 @@ fn forecast_effect_attack_by_mechanic(
             source,
             require_attacker_energy_match,
         } => copy_attack(state, source, *require_attacker_energy_match),
+        Mechanic::SelfAsleepAndHeal { amount } => {
+            self_asleep_and_heal_attack(*amount, attack.fixed_damage)
+        }
+        Mechanic::FlipCoinsBenchDamagePerHead {
+            num_coins,
+            bench_damage_per_head,
+        } => flip_coins_bench_damage_per_head(
+            state,
+            attack.fixed_damage,
+            *num_coins,
+            *bench_damage_per_head,
+        ),
     }
 }
 
@@ -1381,6 +1393,45 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.heal(heal);
+    })
+}
+
+/// For attacks that put this Pokémon to sleep and heal it (e.g. Slowpoke's Rest).
+fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> Outcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.apply_status_condition(StatusCondition::Asleep);
+        active.heal(heal);
+    })
+}
+
+/// For attacks that flip coins and deal damage per head to each of the opponent's Benched Pokémon.
+/// (e.g. Mega Slowbro ex's Laundry-Go-Round)
+fn flip_coins_bench_damage_per_head(
+    state: &State,
+    fixed_damage: u32,
+    num_coins: usize,
+    bench_damage_per_head: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let bench_indices: Vec<usize> = state
+        .enumerate_bench_pokemon(opponent)
+        .map(|(idx, _)| idx)
+        .collect();
+    Outcomes::binomial_by_heads(num_coins, move |heads| {
+        let bench_dmg = heads as u32 * bench_damage_per_head;
+        let bench_indices = bench_indices.clone();
+        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
+            let opponent = (action.actor + 1) % 2;
+            let attacking_ref = (action.actor, 0);
+            let mut targets = vec![(fixed_damage, opponent, 0usize)];
+            if bench_dmg > 0 {
+                for &idx in &bench_indices {
+                    targets.push((bench_dmg, opponent, idx));
+                }
+            }
+            handle_damage(state, attacking_ref, &targets, true, None);
+        })
     })
 }
 
