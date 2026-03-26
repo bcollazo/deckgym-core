@@ -111,7 +111,12 @@ fn print_enums(card_map: &IndexMap<String, Card>, id_to_enum: &IndexMap<String, 
 }
 
 fn print_database(card_map: &IndexMap<String, Card>) {
+    const CHUNK_SIZE: usize = 128;
+
     println!("// This is code generated from the database.json by card_enum_generator.rs. Do not edit manually.");
+    println!();
+    println!("use std::collections::HashMap;");
+    println!("use std::sync::LazyLock;");
     println!();
     println!("use crate::{{");
     println!("    card_ids::CardId,");
@@ -120,19 +125,39 @@ fn print_database(card_map: &IndexMap<String, Card>) {
     );
     println!("}};");
     println!();
-    println!("pub fn get_card_by_enum(id: CardId) -> Card {{");
-    println!("    match id {{");
-    for (enum_name, card) in card_map.iter() {
-        print_card(enum_name, card);
+    println!("static DATABASE: LazyLock<HashMap<CardId, Card>> = LazyLock::new(|| {{");
+    println!("    let mut map = HashMap::new();");
+    for chunk_idx in 0..card_map.len().div_ceil(CHUNK_SIZE) {
+        println!("    populate_database_chunk_{chunk_idx}(&mut map);");
     }
-    println!("    }}");
+    println!("    map");
+    println!("}});");
+    println!();
+    for (chunk_idx, chunk) in card_map
+        .iter()
+        .collect::<Vec<_>>()
+        .chunks(CHUNK_SIZE)
+        .enumerate()
+    {
+        println!("fn populate_database_chunk_{chunk_idx}(map: &mut HashMap<CardId, Card>) {{");
+        for (enum_name, card) in chunk {
+            print_card_insert(enum_name, card);
+        }
+        println!("}}");
+        println!();
+    }
+    println!("pub fn get_card_by_enum(id: CardId) -> Card {{");
+    println!("    DATABASE");
+    println!("        .get(&id)");
+    println!("        .unwrap_or_else(|| panic!(\"Missing generated card for {{:?}}\", id))");
+    println!("        .clone()");
     println!("}}");
 }
 
-fn print_card(enum_name: &str, card: &Card) {
+fn print_card_insert(enum_name: &str, card: &Card) {
     match card {
         Card::Pokemon(pokemon_card) => {
-            println!("        CardId::{enum_name} => Card::Pokemon(PokemonCard {{");
+            println!("    map.insert(CardId::{enum_name}, Card::Pokemon(PokemonCard {{");
             println!("            id: \"{}\".to_string(),", pokemon_card.id);
             println!("            name: \"{}\".to_string(),", pokemon_card.name);
             println!("            stage: {},", pokemon_card.stage);
@@ -166,10 +191,10 @@ fn print_card(enum_name: &str, card: &Card) {
                 "            booster_pack: \"{}\".to_string(),",
                 pokemon_card.booster_pack
             );
-            println!("        }}),");
+            println!("        }}));");
         }
         Card::Trainer(trainer_card) => {
-            println!("        CardId::{enum_name} => Card::Trainer(TrainerCard {{");
+            println!("    map.insert(CardId::{enum_name}, Card::Trainer(TrainerCard {{");
             println!("            id: \"{}\".to_string(),", trainer_card.id);
             println!("            name: \"{}\".to_string(),", trainer_card.name);
             println!(
@@ -188,7 +213,7 @@ fn print_card(enum_name: &str, card: &Card) {
                 "            trainer_card_type: TrainerType::{:?},",
                 trainer_card.trainer_card_type
             );
-            println!("        }}),");
+            println!("        }}));");
         }
     }
     // TODO: AttackIds and AbilitiesIds

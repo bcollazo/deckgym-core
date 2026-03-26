@@ -200,6 +200,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "This Pokémon takes -30 damage from attacks.",
             AbilityMechanic::ReduceDamageFromAttacks { amount: 30 },
         );
+
+        // b2b mechanics
+        // map.insert("At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon.", todo_implementation);
+        // map.insert("Once during your turn, you may switch your Active [M] Pokémon with 1 of your Benched Pokémon.", todo_implementation);
         map
     });
 

@@ -2766,6 +2766,123 @@ pub enum CardId {
     B2a129TinkatonEx,
     B2a130Baxcalibur,
     B2a131ElectricGenerator,
+    B2b001Scyther,
+    B2b002Pineco,
+    B2b003Volbeat,
+    B2b004Illumise,
+    B2b005Phantump,
+    B2b006Trevenant,
+    B2b007Charmander,
+    B2b008Charmeleon,
+    B2b009MegaCharizardXEx,
+    B2b010Ponyta,
+    B2b011Rapidash,
+    B2b012Magmar,
+    B2b013Magmortar,
+    B2b014PaldeanTauros,
+    B2b015Slowpoke,
+    B2b016MegaSlowbroEx,
+    B2b017Lapras,
+    B2b018Piplup,
+    B2b019Prinplup,
+    B2b020Empoleon,
+    B2b021Phione,
+    B2b022Pikachu,
+    B2b023Raichu,
+    B2b024Electabuzz,
+    B2b025Electivire,
+    B2b026Electrike,
+    B2b027MegaManectricEx,
+    B2b028Drowzee,
+    B2b029Hypno,
+    B2b030Mew,
+    B2b031Spoink,
+    B2b032Grumpig,
+    B2b033Diglett,
+    B2b034Dugtrio,
+    B2b035Groudon,
+    B2b036Hawlucha,
+    B2b037Gastly,
+    B2b038Haunter,
+    B2b039MegaGengarEx,
+    B2b040Darkrai,
+    B2b041Trubbish,
+    B2b042Garbodor,
+    B2b043Zorua,
+    B2b044Zoroark,
+    B2b045Morpeko,
+    B2b046Forretress,
+    B2b047MegaScizorEx,
+    B2b048Kartana,
+    B2b049Varoom,
+    B2b050Revavroom,
+    B2b051Dratini,
+    B2b052Dragonair,
+    B2b053Dragonite,
+    B2b054Axew,
+    B2b055Fraxure,
+    B2b056Haxorus,
+    B2b057Druddigon,
+    B2b058Jigglypuff,
+    B2b059Wigglytuff,
+    B2b060Miltank,
+    B2b061Chatot,
+    B2b062Minccino,
+    B2b063Cinccino,
+    B2b064Furfrou,
+    B2b065NastyNotice,
+    B2b066Maintenance,
+    B2b067Iris,
+    B2b068Calem,
+    B2b069HikingTrail,
+    B2b070Lapras,
+    B2b071Empoleon,
+    B2b072Groudon,
+    B2b073Morpeko,
+    B2b074Revavroom,
+    B2b075Miltank,
+    B2b076MegaCharizardXEx,
+    B2b077MegaSlowbroEx,
+    B2b078MegaManectricEx,
+    B2b079MegaGengarEx,
+    B2b080MegaScizorEx,
+    B2b081Iris,
+    B2b082Calem,
+    B2b083MegaSlowbroEx,
+    B2b084MegaManectricEx,
+    B2b085Mew,
+    B2b086Mew,
+    B2b087Scyther,
+    B2b088Pineco,
+    B2b089Phantump,
+    B2b090Trevenant,
+    B2b091Charmander,
+    B2b092Charmeleon,
+    B2b093Ponyta,
+    B2b094Rapidash,
+    B2b095Slowpoke,
+    B2b096Pikachu,
+    B2b097Raichu,
+    B2b098Electrike,
+    B2b099Hawlucha,
+    B2b100Gastly,
+    B2b101Haunter,
+    B2b102Zorua,
+    B2b103Zoroark,
+    B2b104Forretress,
+    B2b105Dratini,
+    B2b106Dragonair,
+    B2b107Dragonite,
+    B2b108Axew,
+    B2b109Fraxure,
+    B2b110Haxorus,
+    B2b111MegaCharizardXEx,
+    B2b112MegaSlowbroEx,
+    B2b113MegaManectricEx,
+    B2b114MegaGengarEx,
+    B2b115MegaScizorEx,
+    B2b116Arboliva,
+    B2b117MetalCoreBarrier,
     PA001Potion,
     PA002XSpeed,
     PA003HandScope,
@@ -2923,6 +3040,14 @@ pub enum CardId {
     PB038Tinkaton,
     PB039Pawmi,
     PB040PaldeanClodsire,
+    PB041ChienPaoEx,
+    PB042Slowpoke,
+    PB043Electrike,
+    PB044Varoom,
+    PB045Haxorus,
+    PB046Chatot,
+    PB047Gastly,
+    PB048Wigglytuff,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -5686,6 +5811,123 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2a 129", CardId::B2a129TinkatonEx);
     map.insert("B2a 130", CardId::B2a130Baxcalibur);
     map.insert("B2a 131", CardId::B2a131ElectricGenerator);
+    map.insert("B2b 001", CardId::B2b001Scyther);
+    map.insert("B2b 002", CardId::B2b002Pineco);
+    map.insert("B2b 003", CardId::B2b003Volbeat);
+    map.insert("B2b 004", CardId::B2b004Illumise);
+    map.insert("B2b 005", CardId::B2b005Phantump);
+    map.insert("B2b 006", CardId::B2b006Trevenant);
+    map.insert("B2b 007", CardId::B2b007Charmander);
+    map.insert("B2b 008", CardId::B2b008Charmeleon);
+    map.insert("B2b 009", CardId::B2b009MegaCharizardXEx);
+    map.insert("B2b 010", CardId::B2b010Ponyta);
+    map.insert("B2b 011", CardId::B2b011Rapidash);
+    map.insert("B2b 012", CardId::B2b012Magmar);
+    map.insert("B2b 013", CardId::B2b013Magmortar);
+    map.insert("B2b 014", CardId::B2b014PaldeanTauros);
+    map.insert("B2b 015", CardId::B2b015Slowpoke);
+    map.insert("B2b 016", CardId::B2b016MegaSlowbroEx);
+    map.insert("B2b 017", CardId::B2b017Lapras);
+    map.insert("B2b 018", CardId::B2b018Piplup);
+    map.insert("B2b 019", CardId::B2b019Prinplup);
+    map.insert("B2b 020", CardId::B2b020Empoleon);
+    map.insert("B2b 021", CardId::B2b021Phione);
+    map.insert("B2b 022", CardId::B2b022Pikachu);
+    map.insert("B2b 023", CardId::B2b023Raichu);
+    map.insert("B2b 024", CardId::B2b024Electabuzz);
+    map.insert("B2b 025", CardId::B2b025Electivire);
+    map.insert("B2b 026", CardId::B2b026Electrike);
+    map.insert("B2b 027", CardId::B2b027MegaManectricEx);
+    map.insert("B2b 028", CardId::B2b028Drowzee);
+    map.insert("B2b 029", CardId::B2b029Hypno);
+    map.insert("B2b 030", CardId::B2b030Mew);
+    map.insert("B2b 031", CardId::B2b031Spoink);
+    map.insert("B2b 032", CardId::B2b032Grumpig);
+    map.insert("B2b 033", CardId::B2b033Diglett);
+    map.insert("B2b 034", CardId::B2b034Dugtrio);
+    map.insert("B2b 035", CardId::B2b035Groudon);
+    map.insert("B2b 036", CardId::B2b036Hawlucha);
+    map.insert("B2b 037", CardId::B2b037Gastly);
+    map.insert("B2b 038", CardId::B2b038Haunter);
+    map.insert("B2b 039", CardId::B2b039MegaGengarEx);
+    map.insert("B2b 040", CardId::B2b040Darkrai);
+    map.insert("B2b 041", CardId::B2b041Trubbish);
+    map.insert("B2b 042", CardId::B2b042Garbodor);
+    map.insert("B2b 043", CardId::B2b043Zorua);
+    map.insert("B2b 044", CardId::B2b044Zoroark);
+    map.insert("B2b 045", CardId::B2b045Morpeko);
+    map.insert("B2b 046", CardId::B2b046Forretress);
+    map.insert("B2b 047", CardId::B2b047MegaScizorEx);
+    map.insert("B2b 048", CardId::B2b048Kartana);
+    map.insert("B2b 049", CardId::B2b049Varoom);
+    map.insert("B2b 050", CardId::B2b050Revavroom);
+    map.insert("B2b 051", CardId::B2b051Dratini);
+    map.insert("B2b 052", CardId::B2b052Dragonair);
+    map.insert("B2b 053", CardId::B2b053Dragonite);
+    map.insert("B2b 054", CardId::B2b054Axew);
+    map.insert("B2b 055", CardId::B2b055Fraxure);
+    map.insert("B2b 056", CardId::B2b056Haxorus);
+    map.insert("B2b 057", CardId::B2b057Druddigon);
+    map.insert("B2b 058", CardId::B2b058Jigglypuff);
+    map.insert("B2b 059", CardId::B2b059Wigglytuff);
+    map.insert("B2b 060", CardId::B2b060Miltank);
+    map.insert("B2b 061", CardId::B2b061Chatot);
+    map.insert("B2b 062", CardId::B2b062Minccino);
+    map.insert("B2b 063", CardId::B2b063Cinccino);
+    map.insert("B2b 064", CardId::B2b064Furfrou);
+    map.insert("B2b 065", CardId::B2b065NastyNotice);
+    map.insert("B2b 066", CardId::B2b066Maintenance);
+    map.insert("B2b 067", CardId::B2b067Iris);
+    map.insert("B2b 068", CardId::B2b068Calem);
+    map.insert("B2b 069", CardId::B2b069HikingTrail);
+    map.insert("B2b 070", CardId::B2b070Lapras);
+    map.insert("B2b 071", CardId::B2b071Empoleon);
+    map.insert("B2b 072", CardId::B2b072Groudon);
+    map.insert("B2b 073", CardId::B2b073Morpeko);
+    map.insert("B2b 074", CardId::B2b074Revavroom);
+    map.insert("B2b 075", CardId::B2b075Miltank);
+    map.insert("B2b 076", CardId::B2b076MegaCharizardXEx);
+    map.insert("B2b 077", CardId::B2b077MegaSlowbroEx);
+    map.insert("B2b 078", CardId::B2b078MegaManectricEx);
+    map.insert("B2b 079", CardId::B2b079MegaGengarEx);
+    map.insert("B2b 080", CardId::B2b080MegaScizorEx);
+    map.insert("B2b 081", CardId::B2b081Iris);
+    map.insert("B2b 082", CardId::B2b082Calem);
+    map.insert("B2b 083", CardId::B2b083MegaSlowbroEx);
+    map.insert("B2b 084", CardId::B2b084MegaManectricEx);
+    map.insert("B2b 085", CardId::B2b085Mew);
+    map.insert("B2b 086", CardId::B2b086Mew);
+    map.insert("B2b 087", CardId::B2b087Scyther);
+    map.insert("B2b 088", CardId::B2b088Pineco);
+    map.insert("B2b 089", CardId::B2b089Phantump);
+    map.insert("B2b 090", CardId::B2b090Trevenant);
+    map.insert("B2b 091", CardId::B2b091Charmander);
+    map.insert("B2b 092", CardId::B2b092Charmeleon);
+    map.insert("B2b 093", CardId::B2b093Ponyta);
+    map.insert("B2b 094", CardId::B2b094Rapidash);
+    map.insert("B2b 095", CardId::B2b095Slowpoke);
+    map.insert("B2b 096", CardId::B2b096Pikachu);
+    map.insert("B2b 097", CardId::B2b097Raichu);
+    map.insert("B2b 098", CardId::B2b098Electrike);
+    map.insert("B2b 099", CardId::B2b099Hawlucha);
+    map.insert("B2b 100", CardId::B2b100Gastly);
+    map.insert("B2b 101", CardId::B2b101Haunter);
+    map.insert("B2b 102", CardId::B2b102Zorua);
+    map.insert("B2b 103", CardId::B2b103Zoroark);
+    map.insert("B2b 104", CardId::B2b104Forretress);
+    map.insert("B2b 105", CardId::B2b105Dratini);
+    map.insert("B2b 106", CardId::B2b106Dragonair);
+    map.insert("B2b 107", CardId::B2b107Dragonite);
+    map.insert("B2b 108", CardId::B2b108Axew);
+    map.insert("B2b 109", CardId::B2b109Fraxure);
+    map.insert("B2b 110", CardId::B2b110Haxorus);
+    map.insert("B2b 111", CardId::B2b111MegaCharizardXEx);
+    map.insert("B2b 112", CardId::B2b112MegaSlowbroEx);
+    map.insert("B2b 113", CardId::B2b113MegaManectricEx);
+    map.insert("B2b 114", CardId::B2b114MegaGengarEx);
+    map.insert("B2b 115", CardId::B2b115MegaScizorEx);
+    map.insert("B2b 116", CardId::B2b116Arboliva);
+    map.insert("B2b 117", CardId::B2b117MetalCoreBarrier);
     map.insert("P-A 001", CardId::PA001Potion);
     map.insert("P-A 002", CardId::PA002XSpeed);
     map.insert("P-A 003", CardId::PA003HandScope);
@@ -5843,6 +6085,14 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 038", CardId::PB038Tinkaton);
     map.insert("P-B 039", CardId::PB039Pawmi);
     map.insert("P-B 040", CardId::PB040PaldeanClodsire);
+    map.insert("P-B 041", CardId::PB041ChienPaoEx);
+    map.insert("P-B 042", CardId::PB042Slowpoke);
+    map.insert("P-B 043", CardId::PB043Electrike);
+    map.insert("P-B 044", CardId::PB044Varoom);
+    map.insert("P-B 045", CardId::PB045Haxorus);
+    map.insert("P-B 046", CardId::PB046Chatot);
+    map.insert("P-B 047", CardId::PB047Gastly);
+    map.insert("P-B 048", CardId::PB048Wigglytuff);
     map
 });
 
