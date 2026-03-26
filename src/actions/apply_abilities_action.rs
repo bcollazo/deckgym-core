@@ -498,13 +498,6 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
     );
 }
 
-fn indeedee_ex_watch_over(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may heal 20 damage from your Active Pokémon.
-    debug!("Indeedee ex's Watch Over: Healing 20 damage from Active Pokemon");
-    let active = state.get_active_mut(action.actor);
-    active.heal(20);
-}
-
 fn crobat_cunning_link(_: &mut StdRng, state: &mut State, action: &Action) {
     // Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.
     debug!("Crobat's Cunning Link: Dealing 30 damage to opponent's active Pokemon");
