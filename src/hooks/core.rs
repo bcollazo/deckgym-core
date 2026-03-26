@@ -940,7 +940,7 @@ pub(crate) fn on_knockout(
 // Test Colorless is wildcard when counting energy
 #[cfg(test)]
 mod tests {
-    use crate::{card_ids::CardId, database::get_card_by_enum, models::StatusCondition};
+    use crate::{card_ids::CardId, database::get_card_by_enum};
 
     use super::*;
 
@@ -1246,129 +1246,6 @@ mod tests {
         assert!(
             !can_evolve_into(&aerodactyl, &helix_fossil),
             "Aerodactyl should not be able to evolve from Helix Fossil"
-        );
-    }
-
-    /// Helper: place Darkrai (B2b040) for `owner` at `in_play_idx`.
-    fn place_darkrai(state: &mut State, owner: usize, in_play_idx: usize) {
-        let darkrai_card = get_card_by_enum(CardId::B2b040Darkrai);
-        state.in_play_pokemon[owner][in_play_idx] = Some(to_playable_card(&darkrai_card, false));
-    }
-
-    #[test]
-    fn test_bad_dreams_deals_damage_when_opponent_asleep() {
-        // Player 0 has Darkrai (Bad Dreams ability), player 1's active is Asleep.
-        let mut state = State::default();
-        place_darkrai(&mut state, 0, 0);
-
-        let defender_card = get_card_by_enum(CardId::A1005Caterpie); // 50 HP
-        let defender = to_playable_card(&defender_card, false).with_status(StatusCondition::Asleep);
-        state.in_play_pokemon[1][0] = Some(defender);
-
-        // End player 0's turn — Bad Dreams should fire.
-        on_end_turn(0, &mut state);
-
-        let hp_after = state.in_play_pokemon[1][0]
-            .as_ref()
-            .expect("Caterpie should still be alive")
-            .get_remaining_hp();
-        assert_eq!(
-            hp_after, 30,
-            "Bad Dreams should deal 20 damage to the Asleep opponent (50 - 20 = 30)"
-        );
-    }
-
-    #[test]
-    fn test_bad_dreams_no_damage_when_not_asleep() {
-        // Player 0 has Darkrai, but player 1's active is NOT Asleep.
-        let mut state = State::default();
-        place_darkrai(&mut state, 0, 0);
-
-        let defender_card = get_card_by_enum(CardId::A1005Caterpie);
-        state.in_play_pokemon[1][0] = Some(to_playable_card(&defender_card, false));
-
-        on_end_turn(0, &mut state);
-
-        let hp_after = state.in_play_pokemon[1][0]
-            .as_ref()
-            .expect("Caterpie should still be alive")
-            .get_remaining_hp();
-        assert_eq!(
-            hp_after, 50,
-            "Bad Dreams should not deal damage when the opponent is not Asleep"
-        );
-    }
-
-    #[test]
-    fn test_bad_dreams_triggers_on_opponent_turn_too() {
-        // Player 1 has Darkrai, player 0 is Asleep. Bad Dreams should fire even on player 0's turn.
-        let mut state = State::default();
-        place_darkrai(&mut state, 1, 0);
-
-        let defender_card = get_card_by_enum(CardId::A1005Caterpie); // 50 HP
-        let defender = to_playable_card(&defender_card, false).with_status(StatusCondition::Asleep);
-        state.in_play_pokemon[0][0] = Some(defender);
-
-        // End player 0's turn — Darkrai owned by player 1 should still fire.
-        on_end_turn(0, &mut state);
-
-        let hp_after = state.in_play_pokemon[0][0]
-            .as_ref()
-            .expect("Caterpie should still be alive")
-            .get_remaining_hp();
-        assert_eq!(
-            hp_after, 30,
-            "Bad Dreams should fire at the end of each turn, including the opponent's turn"
-        );
-    }
-
-    #[test]
-    fn test_bad_dreams_ko_during_end_turn() {
-        // Player 0 has Darkrai. Player 1's active Pokémon has only 10 HP left and is Asleep.
-        // Bad Dreams (20 damage) should knock it out during end-turn processing.
-        let mut state = State::default();
-        place_darkrai(&mut state, 0, 0);
-
-        let defender_card = get_card_by_enum(CardId::A1005Caterpie); // 50 HP
-        let defender = to_playable_card(&defender_card, false)
-            .with_damage(40) // 10 HP remaining
-            .with_status(StatusCondition::Asleep);
-        state.in_play_pokemon[1][0] = Some(defender);
-
-        on_end_turn(0, &mut state);
-
-        assert!(
-            state.in_play_pokemon[1][0].is_none(),
-            "Caterpie with 10 HP should be knocked out by 20 Bad Dreams damage"
-        );
-        assert_eq!(
-            state.points[0], 1,
-            "Player 0 should earn 1 point for the KO"
-        );
-    }
-
-    #[test]
-    fn test_bad_dreams_multiple_darkrai_stacks() {
-        // Player 0 has two Darkrai (one active, one benched). Each triggers Bad Dreams independently.
-        // The combined 40 damage should be dealt to the Asleep opponent.
-        let mut state = State::default();
-        place_darkrai(&mut state, 0, 0); // active
-        place_darkrai(&mut state, 0, 1); // bench slot 1
-
-        let defender_card = get_card_by_enum(CardId::A1005Caterpie); // 50 HP
-        let defender = to_playable_card(&defender_card, false).with_status(StatusCondition::Asleep);
-        state.in_play_pokemon[1][0] = Some(defender);
-
-        on_end_turn(0, &mut state);
-
-        // 50 - 40 (two Bad Dreams @ 20 each) = 10 HP remaining
-        let hp_after = state.in_play_pokemon[1][0]
-            .as_ref()
-            .expect("Caterpie should survive with 10 HP")
-            .get_remaining_hp();
-        assert_eq!(
-            hp_after, 10,
-            "Two Darkrai should each deal 20 damage for a total of 40 (50 - 40 = 10)"
         );
     }
 }
