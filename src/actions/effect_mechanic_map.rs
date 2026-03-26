@@ -1653,7 +1653,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
     // map.insert("Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Water],
+            target_benched_type: Some(EnergyType::Water),
+        },
+    );
     // map.insert("Take a [W] and a [L] Energy from your Energy Zone and attach them to this Pokémon.", todo_implementation);
     // map.insert("This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).", todo_implementation);
     // map.insert("This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
