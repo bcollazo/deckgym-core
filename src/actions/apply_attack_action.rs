@@ -522,6 +522,10 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             *bench_damage_per_head,
         ),
+        Mechanic::ExtraDamageIfSelfHpAtMost {
+            threshold,
+            extra_damage,
+        } => extra_damage_if_self_hp_at_most(state, attack.fixed_damage, *threshold, *extra_damage),
     }
 }
 
@@ -1598,6 +1602,20 @@ fn damage_all_opponent_pokemon(state: &State, damage: u32) -> Outcomes {
         .map(|(idx, _)| (damage, idx))
         .collect();
     damage_effect_doutcome(targets, |_, _, _| {})
+}
+
+fn extra_damage_if_self_hp_at_most(
+    state: &State,
+    base: u32,
+    threshold: u32,
+    extra: u32,
+) -> Outcomes {
+    let attacker = state.get_active(state.current_player);
+    if attacker.get_remaining_hp() <= threshold {
+        active_damage_doutcome(base + extra)
+    } else {
+        active_damage_doutcome(base)
+    }
 }
 
 fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> Outcomes {

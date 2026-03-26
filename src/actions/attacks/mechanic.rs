@@ -265,4 +265,8 @@ pub enum Mechanic {
         num_coins: usize,
         bench_damage_per_head: u32,
     },
+    ExtraDamageIfSelfHpAtMost {
+        threshold: u32,
+        extra_damage: u32,
+    },
 }
