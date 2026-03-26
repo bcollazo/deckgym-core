@@ -52,8 +52,8 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A1089GreninjaWaterShuriken => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1098MagnetonVoltCharge => !card.ability_used,
         AbilityId::A1123GengarExShadowySpellbind => false,
-        AbilityId::A1177Weezing => is_active && !card.ability_used,
-        AbilityId::A1188PidgeotDriveOff => can_use_pidgeot_drive_off(state, card),
+        AbilityId::A1177Weezing => unreachable!("Handled by AbilityMechanic"),
+        AbilityId::A1188PidgeotDriveOff => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1132Gardevoir => !card.ability_used,
         AbilityId::A1a006SerperiorJungleTotem => false,
         AbilityId::A1a046AerodactylExPrimevalLaw => false, // Passive
@@ -91,7 +91,7 @@ fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -
         AbilityId::A4a022MiloticHealingRipples => false,
         AbilityId::A4a025RaikouExLegendaryPulse => false,
         AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::B1121IndeedeeExWatchOver => !card.ability_used,
+        AbilityId::B1121IndeedeeExWatchOver => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1157HydreigonRoarInUnison => !card.ability_used,
         AbilityId::B1172AegislashCursedMetal => false, // Passive ability, triggers via hooks
         AbilityId::B1177GoomyStickyMembrane => false,
@@ -147,6 +147,12 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::CheckupDamageToOpponentActive { .. } => false, // Passive ability
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
             !card.ability_used && card.attached_energy.contains(discard_energy)
+        }
+        AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::HealActiveYourPokemon { .. } => !card.ability_used,
+        AbilityMechanic::SwitchOutOpponentActiveToBench => {
+            let opponent = (state.current_player + 1) % 2;
+            !card.ability_used && state.enumerate_bench_pokemon(opponent).next().is_some()
         }
     }
 }
@@ -206,15 +212,6 @@ fn can_use_attach_energy_from_zone_to_active_typed(
     }
     let active = state.get_active(state.current_player);
     active.get_energy_type() == Some(energy_type)
-}
-
-fn can_use_pidgeot_drive_off(state: &State, card: &PlayedCard) -> bool {
-    if card.ability_used {
-        return false;
-    }
-    // Opponent must have a benched Pokémon to switch to
-    let opponent = (state.current_player + 1) % 2;
-    state.enumerate_bench_pokemon(opponent).next().is_some()
 }
 
 fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {

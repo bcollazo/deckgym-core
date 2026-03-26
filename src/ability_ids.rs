@@ -70,9 +70,6 @@ lazy_static::lazy_static! {
 
         m.insert("A1 098", AbilityId::A1098MagnetonVoltCharge);
         m.insert("A1 123", AbilityId::A1123GengarExShadowySpellbind);
-        m.insert("A1 177", AbilityId::A1177Weezing);
-        m.insert("A1 188", AbilityId::A1188PidgeotDriveOff);
-        m.insert("A1 245", AbilityId::A1188PidgeotDriveOff);
         m.insert("A1 132", AbilityId::A1132Gardevoir);
         m.insert("A1 261", AbilityId::A1123GengarExShadowySpellbind);
         m.insert("A1 277", AbilityId::A1123GengarExShadowySpellbind);
@@ -210,7 +207,6 @@ lazy_static::lazy_static! {
         m.insert("A4b 377", AbilityId::A2b035GiratinaExBrokenSpaceBellow);
         m.insert("A4b 378", AbilityId::A2110DarkraiExNightmareAura);
         // B1
-        m.insert("B1 121", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 157", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 160", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 172", AbilityId::B1172AegislashCursedMetal);
@@ -218,9 +214,7 @@ lazy_static::lazy_static! {
         m.insert("B1 184", AbilityId::B1184EeveeBoostedEvolution);
         m.insert("B1 245", AbilityId::B1157HydreigonRoarInUnison);
         m.insert("B1 247", AbilityId::B1177GoomyStickyMembrane);
-        m.insert("B1 260", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 263", AbilityId::B1160DragalgeExPoisonPoint);
-        m.insert("B1 278", AbilityId::B1121IndeedeeExWatchOver);
         m.insert("B1 281", AbilityId::B1160DragalgeExPoisonPoint);
         m.insert("B1 289", AbilityId::A1020VictreebelFragranceTrap);
         m.insert("B1 297", AbilityId::A1061PoliwrathCounterattack);

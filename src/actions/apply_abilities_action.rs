@@ -44,8 +44,8 @@ pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usiz
         AbilityId::A1123GengarExShadowySpellbind => {
             panic!("Shadowy Spellbind is a passive ability")
         }
-        AbilityId::A1177Weezing => Outcomes::single_fn(weezing_ability),
-        AbilityId::A1188PidgeotDriveOff => Outcomes::single_fn(pidgeot_drive_off),
+        AbilityId::A1177Weezing => unreachable!("Handled by AbilityMechanic"),
+        AbilityId::A1188PidgeotDriveOff => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A1132Gardevoir => Outcomes::single_fn(gardevoir_ability),
         AbilityId::A1a006SerperiorJungleTotem => panic!("Serperior's ability is passive"),
         AbilityId::A1a046AerodactylExPrimevalLaw => panic!("Primeval Law is a passive ability"),
@@ -92,7 +92,7 @@ pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usiz
             panic!("Legendary Pulse is triggered at end of turn")
         }
         AbilityId::B1073GreninjaExShiftingStream => unreachable!("Handled by AbilityMechanic"),
-        AbilityId::B1121IndeedeeExWatchOver => Outcomes::single_fn(indeedee_ex_watch_over),
+        AbilityId::B1121IndeedeeExWatchOver => unreachable!("Handled by AbilityMechanic"),
         AbilityId::B1157HydreigonRoarInUnison => {
             Outcomes::single(charge_hydreigon_and_damage_self(in_play_idx))
         }
@@ -168,6 +168,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
             attack_type,
             amount,
         } => discard_energy_to_increase_type_damage(*discard_energy, *attack_type, *amount),
+        AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
+        AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
+        AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
     }
 }
 
@@ -276,31 +279,38 @@ fn discard_top_card_opponent_deck() -> Outcomes {
     })
 }
 
-fn weezing_ability(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Your opponent's Active Pokémon is now Poisoned.
-    debug!("Weezing's ability: Poisoning opponent's active Pokemon");
-    let opponent = (action.actor + 1) % 2;
-    let opponent_active = state.in_play_pokemon[opponent][0]
-        .as_mut()
-        .expect("Opponent should have active pokemon");
-    opponent_active.poisoned = true;
+fn poison_opponent_active() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let opponent_active = state.in_play_pokemon[opponent][0]
+            .as_mut()
+            .expect("Opponent should have active pokemon");
+        opponent_active.poisoned = true;
+    })
 }
 
-fn pidgeot_drive_off(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
-    debug!("Pidgeot's Drive Off: Forcing opponent to switch active");
-    let opponent = (action.actor + 1) % 2;
-    let mut choices = Vec::new();
-    for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-        choices.push(SimpleAction::Activate {
-            player: opponent,
-            in_play_idx,
-        });
-    }
-    if choices.is_empty() {
-        return; // No benched pokemon to switch with
-    }
-    state.move_generation_stack.push((opponent, choices));
+fn heal_active_your_pokemon(amount: u32) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.heal(amount);
+    })
+}
+
+fn switch_out_opponent_active_to_bench() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = Vec::new();
+        for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
+            choices.push(SimpleAction::Activate {
+                player: opponent,
+                in_play_idx,
+            });
+        }
+        if choices.is_empty() {
+            return;
+        }
+        state.move_generation_stack.push((opponent, choices));
+    })
 }
 
 fn gardevoir_ability(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -486,13 +496,6 @@ fn combust(_: &mut StdRng, state: &mut State, action: &Action) {
         false,
         None,
     );
-}
-
-fn indeedee_ex_watch_over(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Once during your turn, you may heal 20 damage from your Active Pokémon.
-    debug!("Indeedee ex's Watch Over: Healing 20 damage from Active Pokemon");
-    let active = state.get_active_mut(action.actor);
-    active.heal(20);
 }
 
 fn crobat_cunning_link(_: &mut StdRng, state: &mut State, action: &Action) {
