@@ -1635,5 +1635,22 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // Promo-B
     // map.insert("If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.", todo_implementation);
 
+    // B2b
+    // map.insert("Discard a [W] and a [L] Energy from this Pokémon.", todo_implementation);
+    // map.insert("During your opponent's next turn, they can't play any Trainer cards from their hand.", todo_implementation);
+    // map.insert("Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("If Magmortar is on your Bench, this attack does 70 more damage.", todo_implementation);
+    // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
+    // map.insert("If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage.", todo_implementation);
+    // map.insert("If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
+    // map.insert("Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
+    // map.insert("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.", todo_implementation);
+    // map.insert("Take a [W] and a [L] Energy from your Energy Zone and attach them to this Pokémon.", todo_implementation);
+    // map.insert("This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).", todo_implementation);
+    // map.insert("This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
+    // map.insert("This attack does 30 more damage for each point you have gotten.", todo_implementation);
     map
 });
