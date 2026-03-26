@@ -255,4 +255,11 @@ pub enum Mechanic {
         source: CopyAttackSource,
         require_attacker_energy_match: bool,
     },
+    SelfAsleepAndHeal {
+        amount: u32,
+    },
+    FlipCoinsBenchDamagePerHead {
+        num_coins: usize,
+        bench_damage_per_head: u32,
+    },
 }
