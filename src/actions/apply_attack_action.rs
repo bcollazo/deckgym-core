@@ -490,6 +490,9 @@ fn forecast_effect_attack_by_mechanic(
             attack.fixed_damage,
             *damage_per_supporter,
         ),
+        Mechanic::ExtraDamagePerOwnPoint { damage_per_point } => {
+            extra_damage_per_own_point_attack(state, attack.fixed_damage, *damage_per_point)
+        }
         Mechanic::ExtraDamageIfCardInDiscard {
             card_name,
             extra_damage,
@@ -2380,6 +2383,17 @@ fn extra_damage_per_supporter_in_discard_attack(
         })
         .count() as u32;
     let total_damage = base_damage + (supporter_count * damage_per_supporter);
+    active_damage_doutcome(total_damage)
+}
+
+/// Mega Manectric ex - Lightning Accelerator: Extra damage per point you have gotten
+fn extra_damage_per_own_point_attack(
+    state: &State,
+    base_damage: u32,
+    damage_per_point: u32,
+) -> Outcomes {
+    let points = state.points[state.current_player] as u32;
+    let total_damage = base_damage + (points * damage_per_point);
     active_damage_doutcome(total_damage)
 }
 

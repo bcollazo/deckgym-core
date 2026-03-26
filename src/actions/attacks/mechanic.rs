@@ -146,6 +146,9 @@ pub enum Mechanic {
     ExtraDamagePerSupporterInDiscard {
         damage_per_supporter: u32,
     },
+    ExtraDamagePerOwnPoint {
+        damage_per_point: u32,
+    },
     ExtraDamageIfCardInDiscard {
         card_name: String,
         extra_damage: u32,
