@@ -4,6 +4,7 @@ use crate::{
     card_logic::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
     },
+    effects::TurnEffect,
     hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     stadiums::is_stadium_effect_implemented,
@@ -30,6 +31,13 @@ pub fn generate_possible_trainer_actions(
 ) -> Option<Vec<SimpleAction>> {
     if state.turn_count == 0 {
         return cannot_play_trainer(); // No trainers on initial setup phase
+    }
+    let no_trainers = state
+        .get_current_turn_effects()
+        .iter()
+        .any(|x| matches!(x, TurnEffect::NoTrainerCards));
+    if no_trainers {
+        return cannot_play_trainer();
     }
     if trainer_card.trainer_card_type == TrainerType::Supporter && !can_play_support(state) {
         return cannot_play_trainer(); // dont even check which type it is
