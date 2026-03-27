@@ -82,9 +82,10 @@ fn test_pokemon_center_lady_cures_poisoned() {
 
     // Setup: Put a poisoned Bulbasaur in active spot
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_status(StatusCondition::Poisoned)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -104,7 +105,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
     let state = game.get_state_clone();
     let bulbasaur_before = state.get_active(0);
     assert!(
-        bulbasaur_before.poisoned,
+        bulbasaur_before.is_poisoned(),
         "Bulbasaur should be poisoned initially"
     );
 
@@ -133,7 +134,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
     let state = game.get_state_clone();
     let bulbasaur_after = state.get_active(0);
     assert!(
-        !bulbasaur_after.poisoned,
+        !bulbasaur_after.is_poisoned(),
         "Bulbasaur should no longer be poisoned"
     );
 }
@@ -147,13 +148,12 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
 
     // Setup: Put a damaged and poisoned Bulbasaur in active spot
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
-            .with_remaining_hp(30)
-            .with_status(StatusCondition::Poisoned)
-            .with_status(StatusCondition::Paralyzed)
-            .with_status(StatusCondition::Asleep)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(30)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
+    state.apply_status_condition(0, 0, StatusCondition::Paralyzed);
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
 
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
@@ -177,9 +177,9 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
         30,
         "Bulbasaur should have 30 HP"
     );
-    assert!(bulbasaur_before.poisoned, "Should be poisoned");
-    assert!(bulbasaur_before.paralyzed, "Should be paralyzed");
-    assert!(bulbasaur_before.asleep, "Should be asleep");
+    assert!(bulbasaur_before.is_poisoned(), "Should be poisoned");
+    assert!(bulbasaur_before.is_paralyzed(), "Should be paralyzed");
+    assert!(bulbasaur_before.is_asleep(), "Should be asleep");
 
     // Act: Play Pokemon Center Lady and choose Bulbasaur
     let play_action = Action {
@@ -211,15 +211,15 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
         "Bulbasaur should be healed to 60 HP (30 + 30)"
     );
     assert!(
-        !bulbasaur_after.poisoned,
+        !bulbasaur_after.is_poisoned(),
         "Bulbasaur should no longer be poisoned"
     );
     assert!(
-        !bulbasaur_after.paralyzed,
+        !bulbasaur_after.is_paralyzed(),
         "Bulbasaur should no longer be paralyzed"
     );
     assert!(
-        !bulbasaur_after.asleep,
+        !bulbasaur_after.is_asleep(),
         "Bulbasaur should no longer be asleep"
     );
 }

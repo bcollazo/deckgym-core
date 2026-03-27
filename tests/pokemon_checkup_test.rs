@@ -15,13 +15,6 @@ enum RemovalSource {
     MeowscaradaFlowerTrickActive,
 }
 
-fn apply_statuses(mut pokemon: PlayedCard, statuses: &[StatusCondition]) -> PlayedCard {
-    for status in statuses {
-        pokemon = pokemon.with_status(*status);
-    }
-    pokemon
-}
-
 fn run_active_case(
     seed: u64,
     statuses: &[StatusCondition],
@@ -33,13 +26,10 @@ fn run_active_case(
     state.move_generation_stack.clear();
     state.winner = None;
 
-    let doomed = apply_statuses(PlayedCard::from_id(CardId::A1001Bulbasaur), statuses);
-
     match source {
         RemovalSource::MismagiusCursedProse => {
-            let mut doomed = doomed;
+            let mut doomed = PlayedCard::from_id(CardId::A1001Bulbasaur);
             doomed.add_effect(CardEffect::DelayedDamage { amount: 100 }, 1);
-
             state.set_board(
                 vec![doomed],
                 vec![PlayedCard::from_id(CardId::A4a033Mismagius)],
@@ -47,10 +37,13 @@ fn run_active_case(
         }
         RemovalSource::MeowscaradaFlowerTrickActive => {
             state.set_board(
-                vec![doomed],
+                vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
                 vec![PlayedCard::from_id(CardId::B2a003MeowscaradaEx)],
             );
         }
+    }
+    for &status in statuses {
+        state.apply_status_condition(0, 0, status);
     }
 
     state.turn_count = 3;

@@ -180,6 +180,7 @@ impl<'a> Game<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{
+        models::StatusCondition,
         players::{AttachAttackPlayer, EndTurnPlayer, Player},
         state::GameOutcome,
         test_support::load_test_decks,
@@ -201,7 +202,7 @@ mod tests {
 
         // Manually poison the opponent's Koffing
         let mut state = game.get_state_clone();
-        state.in_play_pokemon[1][0].as_mut().unwrap().poisoned = true;
+        state.apply_status_condition(1, 0, StatusCondition::Poisoned);
         game.set_state(state);
 
         // The game starts with AA playing. After each turn 10 damage should be subtracted.
@@ -244,7 +245,7 @@ mod tests {
 
         // Artificially poison Exeggcute
         let mut state = game.get_state_clone();
-        state.in_play_pokemon[0][0].as_mut().unwrap().poisoned = true;
+        state.apply_status_condition(0, 0, StatusCondition::Poisoned);
         game.set_state(state);
 
         // Turn 45, AA attacks. After ending, AA should win since no bench.

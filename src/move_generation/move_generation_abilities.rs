@@ -156,6 +156,10 @@ fn can_use_ability_by_mechanic(
             let opponent = (state.current_player + 1) % 2;
             !card.ability_used && state.enumerate_bench_pokemon(opponent).next().is_some()
         }
+        AbilityMechanic::DiscardFromHandToDrawCard => {
+            !card.ability_used && !state.hands[state.current_player].is_empty()
+        }
+        AbilityMechanic::ImmuneToStatusConditions => false, // Passive ability
     }
 }
 

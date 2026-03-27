@@ -142,7 +142,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("This Ability works if you have any Unown in play with an Ability other than POWER. Attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("This Pokémon can evolve into any Pokémon that evolves from Eevee if you play it from your hand onto this Pokémon. (This Pokémon can't evolve during your first turn or the turn you play it.)", todo_implementation);
         // map.insert("This Pokémon can't be Asleep.", todo_implementation);
-        // map.insert("This Pokémon can't be affected by any Special Conditions.", todo_implementation);
+        map.insert(
+            "This Pokémon can't be affected by any Special Conditions.",
+            AbilityMechanic::ImmuneToStatusConditions,
+        );
         // map.insert("This Pokémon gets +30 HP for each [P] Energy attached to it.", todo_implementation);
         // map.insert("This Pokémon takes -10 damage from attacks.", todo_implementation);
         // map.insert("This Pokémon takes -20 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
@@ -160,7 +163,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("Whenever you attach a [P] Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.", todo_implementation);
         // map.insert("Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", todo_implementation);
-        // map.insert("You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.", todo_implementation);
+        map.insert(
+            "You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.",
+            AbilityMechanic::DiscardFromHandToDrawCard,
+        );
         // map.insert("Your Active Dondozo has no Retreat Cost.", todo_implementation);
         // map.insert("Your Active Pokémon has no Retreat Cost.", todo_implementation);
         // map.insert("Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon.", todo_implementation);

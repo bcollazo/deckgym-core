@@ -548,7 +548,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", Mechanic::CelebiExPowerfulBloom);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.", todo_implementation);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.", todo_implementation);
-    // map.insert("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.",
+        Mechanic::CoinFlipPerSpecificEnergyType {
+            energy_type: EnergyType::Metal,
+            damage_per_heads: 50,
+        },
+    );
     map.insert("Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.", Mechanic::VaporeonHyperWhirlpool);
     map.insert(
         "Flip a coin until you get tails. This attack does 20 damage for each heads.",
@@ -689,7 +695,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 40 });
     map.insert("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.", Mechanic::BlockBasicAttack);
     // map.insert("If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.", todo_implementation);
-    // map.insert("If this Pokémon evolved during this turn, this attack does 20 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon evolved during this turn, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage: 20 },
+    );
     // map.insert("If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
     map.insert(
         "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
@@ -1646,7 +1655,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If you played a Supporter card from your hand during this turn, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your Pokémon in play have 3 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a [G] or [M] Pokémon, this attack does 40 more damage.", todo_implementation);
-    // map.insert("Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Metal],
+            target_benched_type: None,
+        },
+    );
     // map.insert("This attack also does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each [P] Pokémon in your discard pile.", todo_implementation);
 

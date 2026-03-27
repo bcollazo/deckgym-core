@@ -99,7 +99,7 @@ fn apply_attack_common_modifiers(
     let mut outcomes = base_outcomes;
 
     // Handle confusion: 50% chance the attack fails (coin flip)
-    if active.confused {
+    if active.is_confused() {
         outcomes = apply_confusion_coin_flip(outcomes);
     }
 
@@ -200,6 +200,10 @@ fn forecast_effect_attack_by_mechanic(
 ) -> Outcomes {
     match mechanic {
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
+        Mechanic::CoinFlipPerSpecificEnergyType {
+            energy_type,
+            damage_per_heads,
+        } => coin_flip_per_specific_energy_type(state, *energy_type, *damage_per_heads),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
@@ -421,6 +425,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ExtraDamageIfMovedFromBench { extra_damage } => {
             extra_damage_if_moved_from_bench_attack(state, attack.fixed_damage, *extra_damage)
+        }
+        Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage } => {
+            extra_damage_if_evolved_this_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
@@ -700,6 +707,27 @@ fn celebi_powerful_bloom(state: &State) -> Outcomes {
     })
 }
 
+fn coin_flip_per_specific_energy_type(
+    state: &State,
+    energy_type: EnergyType,
+    damage_per_heads: u32,
+) -> Outcomes {
+    let active_pokemon = state.get_active(state.current_player);
+    let energy_count = active_pokemon
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count();
+
+    if energy_count == 0 {
+        return Outcomes::single(active_damage_mutation(0));
+    }
+
+    Outcomes::binomial_by_heads(energy_count, move |heads| {
+        active_damage_mutation((heads as u32) * damage_per_heads)
+    })
+}
+
 fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, |_, state, action| {
         // Force Handle K.O., to maybe .insert(0 promotions to the move_generation_stack
@@ -732,8 +760,7 @@ fn mega_burning_attack(attack: &Attack) -> Outcomes {
 
         // Apply burned status
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.get_active_mut(opponent);
-        opponent_active.apply_status_condition(StatusCondition::Burned);
+        state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
 }
 
@@ -1342,9 +1369,8 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> Outcomes {
 fn damage_multiple_status_attack(statuses: Vec<StatusCondition>, attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.get_active_mut(opponent);
         for status in &statuses {
-            opponent_active.apply_status_condition(*status);
+            state.apply_status_condition(opponent, 0, *status);
         }
     })
 }
@@ -1352,9 +1378,8 @@ fn damage_multiple_status_attack(statuses: Vec<StatusCondition>, attack: &Attack
 /// For attacks that deal damage to opponent and apply multiple status effects to the attacker (e.g. Snorlax Collapse)
 fn damage_and_self_multiple_status_attack(damage: u32, statuses: Vec<StatusCondition>) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
         for status in &statuses {
-            active.apply_status_condition(*status);
+            state.apply_status_condition(action.actor, 0, *status);
         }
     })
 }
@@ -1418,9 +1443,8 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
 /// For attacks that put this Pokémon to sleep and heal it (e.g. Slowpoke's Rest).
 fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.apply_status_condition(StatusCondition::Asleep);
-        active.heal(heal);
+        state.apply_status_condition(action.actor, 0, StatusCondition::Asleep);
+        state.get_active_mut(action.actor).heal(heal);
     })
 }
 
@@ -1810,6 +1834,23 @@ fn extra_damage_if_moved_from_bench_attack(
         .map(|p| p.moved_to_active_this_turn)
         .unwrap_or(false);
     let damage = if moved {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_evolved_this_turn_attack(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> Outcomes {
+    let evolved = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .map(|p| p.played_this_turn)
+        .unwrap_or(false);
+    let damage = if evolved {
         base_damage + extra_damage
     } else {
         base_damage

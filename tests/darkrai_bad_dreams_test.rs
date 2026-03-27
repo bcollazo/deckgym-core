@@ -16,8 +16,9 @@ fn test_bad_dreams_deals_damage_when_opponent_asleep() {
     // Darkrai (Bad Dreams) active for player 0; Caterpie (50 HP) asleep for player 1.
     state.set_board(
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
-        vec![PlayedCard::from_id(CardId::A1005Caterpie).with_status(StatusCondition::Asleep)],
+        vec![PlayedCard::from_id(CardId::A1005Caterpie)],
     );
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
     state.current_player = 0;
     state.turn_count = 3;
     game.set_state(state);
@@ -71,9 +72,10 @@ fn test_bad_dreams_triggers_at_end_of_each_turn() {
     let mut state = game.get_state_clone();
 
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1005Caterpie).with_status(StatusCondition::Asleep)],
+        vec![PlayedCard::from_id(CardId::A1005Caterpie)],
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
     );
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
     state.current_player = 0;
     state.turn_count = 3;
     game.set_state(state);
@@ -104,13 +106,12 @@ fn test_bad_dreams_ko_during_end_turn_queues_promotion() {
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
         vec![
             // Caterpie with only 10 HP left and Asleep — Bad Dreams (20 dmg) will KO it.
-            PlayedCard::from_id(CardId::A1005Caterpie)
-                .with_remaining_hp(10)
-                .with_status(StatusCondition::Asleep),
+            PlayedCard::from_id(CardId::A1005Caterpie).with_remaining_hp(10),
             // Bench Pokémon that must be promoted after the KO.
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
     state.current_player = 0;
     state.turn_count = 3;
     game.set_state(state);
@@ -156,8 +157,9 @@ fn test_bad_dreams_multiple_darkrai_each_trigger_independently() {
             PlayedCard::from_id(CardId::B2b040Darkrai), // active
             PlayedCard::from_id(CardId::B2b040Darkrai), // bench
         ],
-        vec![PlayedCard::from_id(CardId::A1005Caterpie).with_status(StatusCondition::Asleep)],
+        vec![PlayedCard::from_id(CardId::A1005Caterpie)],
     );
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
     state.current_player = 0;
     state.turn_count = 3;
     game.set_state(state);

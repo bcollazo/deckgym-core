@@ -32,7 +32,7 @@ fn test_weezing_gas_leak_poisons_opponent_active() {
         .as_ref()
         .expect("Opponent active should be in play");
     assert!(
-        opponent_active.poisoned,
+        opponent_active.is_poisoned(),
         "Weezing's Gas Leak should poison the opponent's Active Pokémon"
     );
 }

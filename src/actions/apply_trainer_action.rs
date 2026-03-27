@@ -174,6 +174,9 @@ pub fn forecast_trainer_action(
         CardId::A3b068Hau | CardId::A3b085Hau => Outcomes::single_fn(hau_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
+        CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
+            team_rocket_grunt_outcomes()
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -183,24 +186,18 @@ fn big_malasada_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
         active.heal(10);
         let conditions: Vec<StatusCondition> = [
-            active.poisoned.then_some(StatusCondition::Poisoned),
-            active.paralyzed.then_some(StatusCondition::Paralyzed),
-            active.asleep.then_some(StatusCondition::Asleep),
-            active.burned.then_some(StatusCondition::Burned),
-            active.confused.then_some(StatusCondition::Confused),
+            active.is_poisoned().then_some(StatusCondition::Poisoned),
+            active.is_paralyzed().then_some(StatusCondition::Paralyzed),
+            active.is_asleep().then_some(StatusCondition::Asleep),
+            active.is_burned().then_some(StatusCondition::Burned),
+            active.is_confused().then_some(StatusCondition::Confused),
         ]
         .into_iter()
         .flatten()
         .collect();
         if !conditions.is_empty() {
-            let chosen = &conditions[rng.gen_range(0..conditions.len())];
-            match chosen {
-                StatusCondition::Poisoned => active.poisoned = false,
-                StatusCondition::Paralyzed => active.paralyzed = false,
-                StatusCondition::Asleep => active.asleep = false,
-                StatusCondition::Burned => active.burned = false,
-                StatusCondition::Confused => active.confused = false,
-            }
+            let chosen = conditions[rng.gen_range(0..conditions.len())];
+            active.clear_status_condition(chosen);
         }
     }
 }
@@ -1212,6 +1209,32 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     Outcomes::from_parts(probabilities, outcomes)
 }
 
+fn team_rocket_grunt_outcomes() -> Outcomes {
+    // Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.
+    Outcomes::geometric_until_tails(5, move |heads| {
+        Box::new(
+            move |rng: &mut StdRng, state: &mut State, action: &Action| {
+                let opponent = (action.actor + 1) % 2;
+                for _ in 0..heads {
+                    let energy_len = state.in_play_pokemon[opponent][0]
+                        .as_ref()
+                        .map(|p| p.attached_energy.len())
+                        .unwrap_or(0);
+                    if energy_len == 0 {
+                        break;
+                    }
+                    let random_idx = rng.gen_range(0..energy_len);
+                    let energy = state.in_play_pokemon[opponent][0]
+                        .as_ref()
+                        .unwrap()
+                        .attached_energy[random_idx];
+                    state.discard_from_active(opponent, &[energy]);
+                }
+            },
+        )
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use rand::{rngs::StdRng, SeedableRng};
@@ -1251,54 +1274,54 @@ mod tests {
     fn test_big_malasada_cures_poisoned() {
         let mut rng = StdRng::seed_from_u64(0);
         let mut state = make_state_with_damaged_active();
-        state.in_play_pokemon[0][0].as_mut().unwrap().poisoned = true;
+        state.apply_status_condition(0, 0, StatusCondition::Poisoned);
 
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
-        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().poisoned);
+        assert!(!state.get_active(0).is_poisoned());
     }
 
     #[test]
     fn test_big_malasada_cures_paralyzed() {
         let mut rng = StdRng::seed_from_u64(0);
         let mut state = make_state_with_damaged_active();
-        state.in_play_pokemon[0][0].as_mut().unwrap().paralyzed = true;
+        state.apply_status_condition(0, 0, StatusCondition::Paralyzed);
 
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
-        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().paralyzed);
+        assert!(!state.get_active(0).is_paralyzed());
     }
 
     #[test]
     fn test_big_malasada_cures_asleep() {
         let mut rng = StdRng::seed_from_u64(0);
         let mut state = make_state_with_damaged_active();
-        state.in_play_pokemon[0][0].as_mut().unwrap().asleep = true;
+        state.apply_status_condition(0, 0, StatusCondition::Asleep);
 
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
-        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().asleep);
+        assert!(!state.get_active(0).is_asleep());
     }
 
     #[test]
     fn test_big_malasada_cures_burned() {
         let mut rng = StdRng::seed_from_u64(0);
         let mut state = make_state_with_damaged_active();
-        state.in_play_pokemon[0][0].as_mut().unwrap().burned = true;
+        state.apply_status_condition(0, 0, StatusCondition::Burned);
 
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
-        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().burned);
+        assert!(!state.get_active(0).is_burned());
     }
 
     #[test]
     fn test_big_malasada_cures_confused() {
         let mut rng = StdRng::seed_from_u64(0);
         let mut state = make_state_with_damaged_active();
-        state.in_play_pokemon[0][0].as_mut().unwrap().confused = true;
+        state.apply_status_condition(0, 0, StatusCondition::Confused);
 
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
-        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().confused);
+        assert!(!state.get_active(0).is_confused());
     }
 }

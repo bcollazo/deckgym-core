@@ -15,7 +15,7 @@ use crate::{
     },
     effects::TurnEffect,
     hooks::is_ultra_beast,
-    models::{EnergyType, StatusCondition},
+    models::{Card, EnergyType, StatusCondition},
     State,
 };
 
@@ -53,7 +53,7 @@ pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usiz
         AbilityId::A2a010LeafeonExForestBreath => Outcomes::single_fn(leafon_ex_ability),
         AbilityId::A2a022GlaceonExSnowyTerrain => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
-        AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2a071Arceus => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2072DusknoirShadowVoid => Outcomes::single(dusknoir_shadow_void(in_play_idx)),
         AbilityId::A2078GiratinaLevitate => panic!("Levitate is a passive ability"),
         AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),
@@ -175,6 +175,10 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
         AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
         AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
+        AbilityMechanic::DiscardFromHandToDrawCard => discard_from_hand_to_draw_card(),
+        AbilityMechanic::ImmuneToStatusConditions => {
+            panic!("ImmuneToStatusConditions is a passive ability")
+        }
     }
 }
 
@@ -286,10 +290,7 @@ fn discard_top_card_opponent_deck() -> Outcomes {
 fn poison_opponent_active() -> Outcomes {
     Outcomes::single_fn(|_rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.in_play_pokemon[opponent][0]
-            .as_mut()
-            .expect("Opponent should have active pokemon");
-        opponent_active.poisoned = true;
+        state.apply_status_condition(opponent, 0, StatusCondition::Poisoned);
     })
 }
 
@@ -297,10 +298,7 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
     Outcomes::binary_coin(
         Box::new(|_, state, action| {
             let opponent = (action.actor + 1) % 2;
-            let opponent_active = state.in_play_pokemon[opponent][0]
-                .as_mut()
-                .expect("Opponent should have active pokemon");
-            opponent_active.apply_status_condition(StatusCondition::Asleep);
+            state.apply_status_condition(opponent, 0, StatusCondition::Asleep);
         }),
         Box::new(|_, _, _| {}),
     )
@@ -546,6 +544,24 @@ fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
+}
+
+fn discard_from_hand_to_draw_card() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        // Queue draw first (LIFO: will execute after the discard choice resolves)
+        state.queue_draw_action(action.actor, 1);
+        // Push discard choices (executed first since pushed last onto LIFO stack)
+        let hand_cards: Vec<Card> = state.hands[action.actor].to_vec();
+        let mut seen = std::collections::HashSet::new();
+        let choices: Vec<SimpleAction> = hand_cards
+            .into_iter()
+            .filter(|card| seen.insert(card.clone()))
+            .map(|card| SimpleAction::DiscardOwnCards { cards: vec![card] })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
