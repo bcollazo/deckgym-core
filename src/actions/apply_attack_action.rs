@@ -28,6 +28,7 @@ use super::{
     mutations::{
         active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
+        full_targets_damage_doutcome,
     },
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
@@ -529,6 +530,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
+        Mechanic::SelfAndBothBenchDamage {
+            self_damage,
+            bench_damage,
+        } => self_and_both_bench_damage_attack(
+            state,
+            attack.fixed_damage,
+            *self_damage,
+            *bench_damage,
+        ),
     }
 }
 
@@ -1327,6 +1337,31 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> Outcomes {
         let active = state.get_active_mut(action.actor);
         active.apply_damage(self_damage);
     })
+}
+
+/// For attacks like Enormous Explosion: deal damage to opponent's active,
+/// self-damage, and splash damage to all Benched Pokémon on both sides.
+fn self_and_both_bench_damage_attack(
+    state: &State,
+    active_damage: u32,
+    self_damage: u32,
+    bench_damage: u32,
+) -> Outcomes {
+    let attacker = state.current_player;
+    let opponent = (attacker + 1) % 2;
+    let mut targets: Vec<(u32, usize, usize)> =
+        vec![(active_damage, opponent, 0), (self_damage, attacker, 0)];
+    targets.extend(
+        state
+            .enumerate_bench_pokemon(opponent)
+            .map(|(idx, _)| (bench_damage, opponent, idx)),
+    );
+    targets.extend(
+        state
+            .enumerate_bench_pokemon(attacker)
+            .map(|(idx, _)| (bench_damage, attacker, idx)),
+    );
+    full_targets_damage_doutcome(targets)
 }
 
 /// For attacks that deal damage and apply multiple status effects to opponent (e.g. Mega Venusaur Critical Bloom)

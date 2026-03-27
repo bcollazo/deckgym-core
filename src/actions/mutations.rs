@@ -38,6 +38,12 @@ where
     Outcomes::single(damage_effect_mutation(targets, additional_effect))
 }
 
+/// Like `damage_effect_doutcome` but targets include an explicit player index,
+/// allowing damage to be dealt to any player's Pokémon (e.g. self-damage, own bench).
+pub(crate) fn full_targets_damage_doutcome(targets: Vec<(u32, usize, usize)>) -> Outcomes {
+    Outcomes::single(full_targets_damage_mutation(targets))
+}
+
 // ===== Helper functions for building Mutations
 pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
     damage_effect_mutation(vec![(damage, 0)], |_, _, _| {})
@@ -109,6 +115,37 @@ where
                 Some(&attack_name),
             );
             additional_effect(rng, state, action);
+            handle_knockouts(state, attacking_ref, is_from_active_attack);
+        }
+    })
+}
+
+fn full_targets_damage_mutation(targets: Vec<(u32, usize, usize)>) -> Mutation {
+    Box::new({
+        move |_, state, action| {
+            let attack_name: String = match &action.action {
+                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
+                    .as_ref()
+                    .expect("Attacking Pokemon must be there if attacking")
+                    .card
+                    .get_attacks()
+                    .get(*attack_index)
+                    .unwrap_or_else(|| {
+                        panic!("Index must exist if attacking with {}", attack_index)
+                    })
+                    .title
+                    .clone(),
+                _ => panic!("This codepath should come from an attack."),
+            };
+            let attacking_ref = (action.actor, 0);
+            let is_from_active_attack = true;
+            handle_damage_only(
+                state,
+                attacking_ref,
+                &targets,
+                is_from_active_attack,
+                Some(&attack_name),
+            );
             handle_knockouts(state, attacking_ref, is_from_active_attack);
         }
     })
