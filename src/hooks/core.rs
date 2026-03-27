@@ -11,7 +11,7 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
-    stadiums::get_training_area_damage_bonus,
+    stadiums::{get_training_area_damage_bonus, is_hiking_trail_active},
     tools::has_tool,
     AbilityId, State,
 };
@@ -257,6 +257,21 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 1,
                 false,
             );
+        }
+    }
+
+    // Hiking Trail: At the end of each player's turn, draw cards until they have 3 in hand.
+    if is_hiking_trail_active(state) {
+        let hand_size = state.hands[player_ending_turn].len();
+        if hand_size < 3 {
+            let amount = 3 - hand_size;
+            debug!(
+                "Hiking Trail: Player {} drawing {} card(s) to reach 3 in hand",
+                player_ending_turn, amount
+            );
+            for _ in 0..amount {
+                state.maybe_draw_card(player_ending_turn);
+            }
         }
     }
 
