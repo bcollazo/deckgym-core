@@ -48,4 +48,5 @@ pub enum AbilityMechanic {
     BadDreamsEndOfTurn {
         amount: u32,
     },
+    CoinFlipSleepOpponentActive,
 }
