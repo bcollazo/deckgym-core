@@ -169,6 +169,7 @@ pub fn forecast_trainer_action(
         CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
+        CardId::A3b068Hau | CardId::A3b085Hau => Outcomes::single_fn(hau_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
@@ -555,6 +556,21 @@ fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
                 "Ninetales".to_string(),
                 "Rapidash".to_string(),
                 "Magmar".to_string(),
+            ],
+        },
+        0,
+    );
+}
+
+fn hau_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Decidueye ex, Incineroar ex, or Primarina ex do +30 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Decidueye ex".to_string(),
+                "Incineroar ex".to_string(),
+                "Primarina ex".to_string(),
             ],
         },
         0,
