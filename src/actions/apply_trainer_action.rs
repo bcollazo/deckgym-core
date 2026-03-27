@@ -166,6 +166,7 @@ pub fn forecast_trainer_action(
         CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
+        CardId::B2b068Calem | CardId::B2b082Calem => Outcomes::single_fn(calem_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -202,6 +203,24 @@ fn iris_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, if your opponent's Active Pokémon is Knocked Out by damage from
     // an attack used by your Haxorus, you get 1 more point.
     state.add_turn_effect(TurnEffect::BonusPointForHaxorusActiveKO, 0);
+}
+
+fn calem_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Draw a card for each Mega Evolution Pokémon ex in play (both yours and your opponent's).
+    let mega_count = state
+        .in_play_pokemon
+        .iter()
+        .flat_map(|player_pokemon| player_pokemon.iter())
+        .flatten()
+        .filter(|p| p.card.is_mega())
+        .count();
+    debug!(
+        "Calem: {} Mega Evolution Pokemon ex in play, drawing {} cards",
+        mega_count, mega_count
+    );
+    for _ in 0..mega_count {
+        state.maybe_draw_card(action.actor);
+    }
 }
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
