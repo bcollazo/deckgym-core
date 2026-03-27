@@ -9,9 +9,10 @@ use std::hash::Hash;
 
 use crate::{
     actions::{self, SimpleAction},
+    card_ids::CardId,
     deck::Deck,
     effects::TurnEffect,
-    models::{Card, EnergyType},
+    models::{Card, EnergyType, StatusCondition},
     move_generation,
     stadiums::is_starting_plains_active,
 };
@@ -342,6 +343,41 @@ impl State {
         self.in_play_pokemon[player][0]
             .as_mut()
             .expect("Active Pokemon should be there")
+    }
+
+    /// Apply a status condition to a Pokémon in play, enforcing all immunity rules.
+    /// This is the single authoritative path for setting status conditions.
+    pub fn apply_status_condition(
+        &mut self,
+        player: usize,
+        in_play_idx: usize,
+        status: StatusCondition,
+    ) {
+        let Some(pokemon) = self.in_play_pokemon[player][in_play_idx].as_ref() else {
+            return;
+        };
+
+        // Arceus ex is immune to all status conditions.
+        let arceus_ids = [
+            CardId::A2a071ArceusEx,
+            CardId::A2a086ArceusEx,
+            CardId::A2a095ArceusEx,
+            CardId::A2a096ArceusEx,
+            CardId::A4b299ArceusEx,
+            CardId::A4b372ArceusEx,
+            CardId::B1328ArceusEx,
+        ];
+        let string_id = pokemon.get_id();
+        let card_id = CardId::from_card_id(&string_id).unwrap();
+        if arceus_ids.contains(&card_id) {
+            log::debug!("Arceus ex avoids status effect");
+            return;
+        }
+
+        self.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .unwrap()
+            .set_status_raw(status);
     }
 
     // This function should be called only from turn 1 onwards

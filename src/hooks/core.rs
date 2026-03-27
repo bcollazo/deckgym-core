@@ -305,7 +305,7 @@ fn apply_bad_dreams_damage(state: &mut State) {
         let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_ref() else {
             continue;
         };
-        if !opponent_active.asleep {
+        if !opponent_active.is_asleep() {
             continue;
         }
         debug!(

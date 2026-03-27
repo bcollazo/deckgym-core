@@ -1,5 +1,4 @@
 use core::fmt;
-use log::debug;
 use serde::{Deserialize, Serialize};
 
 use super::State;
@@ -25,11 +24,11 @@ pub struct PlayedCard {
     pub played_this_turn: bool,
     pub moved_to_active_this_turn: bool,
     pub ability_used: bool,
-    pub poisoned: bool,
-    pub paralyzed: bool,
-    pub asleep: bool,
-    pub burned: bool,
-    pub confused: bool,
+    poisoned: bool,
+    paralyzed: bool,
+    asleep: bool,
+    burned: bool,
+    confused: bool,
     pub cards_behind: Vec<Card>,
     pub prevent_first_attack_damage_used: bool,
 
@@ -111,11 +110,6 @@ impl PlayedCard {
 
     pub fn with_tool(mut self, tool: Card) -> Self {
         self.attached_tool = Some(tool);
-        self
-    }
-
-    pub fn with_status(mut self, status: StatusCondition) -> Self {
-        self.apply_status_condition(status);
         self
     }
 
@@ -231,8 +225,28 @@ impl PlayedCard {
         effective_hp
     }
 
+    pub fn is_poisoned(&self) -> bool {
+        self.poisoned
+    }
+
+    pub fn is_paralyzed(&self) -> bool {
+        self.paralyzed
+    }
+
+    pub fn is_asleep(&self) -> bool {
+        self.asleep
+    }
+
+    pub fn is_burned(&self) -> bool {
+        self.burned
+    }
+
+    pub fn is_confused(&self) -> bool {
+        self.confused
+    }
+
     pub(crate) fn has_status_condition(&self) -> bool {
-        self.poisoned || self.paralyzed || self.asleep || self.confused
+        self.poisoned || self.paralyzed || self.asleep || self.burned || self.confused
     }
 
     pub(crate) fn has_tool_attached(&self) -> bool {
@@ -275,25 +289,18 @@ impl PlayedCard {
         self.confused = false;
     }
 
-    /// Apply a status condition to this Pokémon, respecting Arceus ex immunity
-    pub(crate) fn apply_status_condition(&mut self, status: StatusCondition) {
-        // Arceus Ex avoids status effects
-        let string_id = self.get_id();
-        let arceus_ids = [
-            CardId::A2a071ArceusEx,
-            CardId::A2a086ArceusEx,
-            CardId::A2a095ArceusEx,
-            CardId::A2a096ArceusEx,
-            CardId::A4b299ArceusEx,
-            CardId::A4b372ArceusEx,
-            CardId::B1328ArceusEx,
-        ];
-        let card_id = CardId::from_card_id(&string_id).unwrap();
-        if arceus_ids.contains(&card_id) {
-            debug!("Arceus Ex avoids status effect");
-            return;
+    pub(crate) fn clear_status_condition(&mut self, status: StatusCondition) {
+        match status {
+            StatusCondition::Poisoned => self.poisoned = false,
+            StatusCondition::Paralyzed => self.paralyzed = false,
+            StatusCondition::Asleep => self.asleep = false,
+            StatusCondition::Burned => self.burned = false,
+            StatusCondition::Confused => self.confused = false,
         }
+    }
 
+    /// Raw status setter — does NOT check immunity. Use `State::apply_status_condition` instead.
+    pub(crate) fn set_status_raw(&mut self, status: StatusCondition) {
         match status {
             StatusCondition::Asleep => self.asleep = true,
             StatusCondition::Paralyzed => self.paralyzed = true,

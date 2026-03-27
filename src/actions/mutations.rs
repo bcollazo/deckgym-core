@@ -119,8 +119,7 @@ pub(crate) fn build_status_effect(status: StatusCondition) -> FnMutation {
     Box::new({
         move |_, state: &mut State, action: &Action| {
             let opponent = (action.actor + 1) % 2;
-            let opponent_active = state.get_active_mut(opponent);
-            opponent_active.apply_status_condition(status);
+            state.apply_status_condition(opponent, 0, status);
         }
     })
 }
@@ -149,7 +148,7 @@ mod test {
         state.in_play_pokemon[1][0] = Some(to_playable_card(&bulbasuar, false));
         let effect = build_status_effect(StatusCondition::Asleep);
         effect(&mut rng, &mut state, &action);
-        assert!(state.get_active(1).asleep);
+        assert!(state.get_active(1).is_asleep());
     }
 
     #[test]
@@ -165,6 +164,6 @@ mod test {
         state.in_play_pokemon[1][0] = Some(to_playable_card(&arceus, false));
         let effect = build_status_effect(StatusCondition::Asleep);
         effect(&mut rng, &mut state, &action);
-        assert!(!state.get_active(1).asleep);
+        assert!(!state.get_active(1).is_asleep());
     }
 }

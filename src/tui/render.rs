@@ -164,19 +164,19 @@ pub(crate) fn render_pokemon_card<'a>(
             );
 
             let mut status_effects = Vec::new();
-            if played_card.poisoned {
+            if played_card.is_poisoned() {
                 status_effects.push("🟣PSN");
             }
-            if played_card.paralyzed {
+            if played_card.is_paralyzed() {
                 status_effects.push("🟡PAR");
             }
-            if played_card.asleep {
+            if played_card.is_asleep() {
                 status_effects.push("💤SLP");
             }
-            if played_card.burned {
+            if played_card.is_burned() {
                 status_effects.push("🔥BRN");
             }
-            if played_card.confused {
+            if played_card.is_confused() {
                 status_effects.push("🌀CNF");
             }
 

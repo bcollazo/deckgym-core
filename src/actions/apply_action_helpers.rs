@@ -13,7 +13,7 @@ use crate::{
     hooks::{
         get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
     },
-    models::{Card, TrainerType},
+    models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
     State,
 };
@@ -183,17 +183,17 @@ fn collect_checkup_targets(state: &State) -> CheckupTargets {
 
     for player in 0..2 {
         for (i, pokemon) in state.enumerate_in_play_pokemon(player) {
-            if pokemon.asleep {
+            if pokemon.is_asleep() {
                 targets.sleeps.push((player, i));
             }
-            if pokemon.paralyzed {
+            if pokemon.is_paralyzed() {
                 targets.paralyzed.push((player, i));
             }
-            if pokemon.poisoned {
+            if pokemon.is_poisoned() {
                 targets.poisoned.push((player, i));
                 debug!("{player}'s Pokemon {i} is poisoned");
             }
-            if pokemon.burned {
+            if pokemon.is_burned() {
                 targets.burned.push((player, i));
                 debug!("{player}'s Pokemon {i} is burned");
             }
@@ -251,7 +251,7 @@ fn apply_pokemon_checkup(
         let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
             continue;
         };
-        pokemon.burned = false;
+        pokemon.clear_status_condition(StatusCondition::Burned);
         debug!("{player}'s Pokemon {in_play_idx} healed from burn");
     }
 
@@ -268,7 +268,7 @@ fn apply_pokemon_checkup(
         let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
             continue;
         };
-        pokemon.asleep = false;
+        pokemon.clear_status_condition(StatusCondition::Asleep);
         debug!("{player}'s Pokemon {in_play_idx} woke up");
     }
 
@@ -276,7 +276,7 @@ fn apply_pokemon_checkup(
         let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
             continue;
         };
-        pokemon.paralyzed = false;
+        pokemon.clear_status_condition(StatusCondition::Paralyzed);
         debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
     }
 
@@ -466,24 +466,21 @@ pub(crate) fn handle_damage_only(
         let should_poison = should_poison_attacker(target_pokemon);
 
         // Apply counterattack damage and poison
-        if counter_damage > 0 || should_poison {
+        if counter_damage > 0 {
             let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
                 .as_mut()
                 .expect("Active Pokemon should be there");
+            attacking_pokemon.apply_damage(counter_damage);
+            debug!(
+                "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
+                counter_damage,
+                attacking_pokemon.get_remaining_hp()
+            );
+        }
 
-            if counter_damage > 0 {
-                attacking_pokemon.apply_damage(counter_damage);
-                debug!(
-                    "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
-                    counter_damage,
-                    attacking_pokemon.get_remaining_hp()
-                );
-            }
-
-            if should_poison {
-                attacking_pokemon.poisoned = true;
-                debug!("Poison Barb: Poisoned the attacking Pokemon");
-            }
+        if should_poison {
+            state.apply_status_condition(attacking_player, 0, StatusCondition::Poisoned);
+            debug!("Poison Barb: Poisoned the attacking Pokemon");
         }
     }
 }
