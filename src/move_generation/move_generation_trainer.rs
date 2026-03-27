@@ -130,6 +130,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
         CardId::A3149Ilima | CardId::A3191Ilima => can_play_ilima(state, trainer_card),
+        CardId::A3150Kiawe | CardId::A3192Kiawe => can_play_kiawe(state, trainer_card),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             can_play_lyra(state, trainer_card)
         }
@@ -557,6 +558,18 @@ fn can_play_lusamine(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Si
     }
 
     can_play_trainer(state, trainer_card)
+}
+
+/// Check if Kiawe can be played (requires Alolan Marowak or Turtonator in play)
+fn can_play_kiawe(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_valid_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| matches!(pokemon.get_name().as_str(), "Alolan Marowak" | "Turtonator"));
+    if has_valid_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
 }
 
 /// Check if Lyra can be played (requires active pokemon to have damage and at least 1 benched pokemon)

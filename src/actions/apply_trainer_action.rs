@@ -126,6 +126,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => Outcomes::single_fn(lusamine_effect),
         CardId::A3149Ilima | CardId::A3191Ilima => Outcomes::single_fn(ilima_effect),
+        CardId::A3150Kiawe | CardId::A3192Kiawe => Outcomes::single_fn(kiawe_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             Outcomes::single_fn(lyra_effect)
         }
@@ -585,6 +586,28 @@ fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         EnergyType::Fighting,
         &["Golem", "Onix"],
     );
+}
+
+fn kiawe_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Choose 1 of your Alolan Marowak or Turtonator. Take 2 [R] Energy from your Energy Zone and attach it to that Pokémon. Your turn ends.
+    let possible_targets: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, pokemon)| {
+            matches!(pokemon.get_name().as_str(), "Alolan Marowak" | "Turtonator")
+        })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(2, EnergyType::Fire, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect();
+    if !possible_targets.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, vec![SimpleAction::EndTurn]));
+        state
+            .move_generation_stack
+            .push((action.actor, possible_targets));
+    }
 }
 
 /// Generic helper to attach energy from Energy Zone (unlimited) to specific Pokemon by name
