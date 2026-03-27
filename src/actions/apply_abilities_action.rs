@@ -15,7 +15,7 @@ use crate::{
     },
     effects::TurnEffect,
     hooks::is_ultra_beast,
-    models::EnergyType,
+    models::{EnergyType, StatusCondition},
     State,
 };
 
@@ -174,6 +174,7 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
         AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
         AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
+        AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
     }
 }
 
@@ -290,6 +291,19 @@ fn poison_opponent_active() -> Outcomes {
             .expect("Opponent should have active pokemon");
         opponent_active.poisoned = true;
     })
+}
+
+fn coin_flip_sleep_opponent_active() -> Outcomes {
+    Outcomes::binary_coin(
+        Box::new(|_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            let opponent_active = state.in_play_pokemon[opponent][0]
+                .as_mut()
+                .expect("Opponent should have active pokemon");
+            opponent_active.apply_status_condition(StatusCondition::Asleep);
+        }),
+        Box::new(|_, _, _| {}),
+    )
 }
 
 fn heal_active_your_pokemon(amount: u32) -> Outcomes {
