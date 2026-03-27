@@ -205,6 +205,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
         CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
         CardId::B2b067Iris | CardId::B2b081Iris => can_play_trainer(state, trainer_card),
+        CardId::A3142BigMalasada => can_play_big_malasada(state, trainer_card),
         _ => None,
     }
 }
@@ -670,6 +671,16 @@ fn can_place_fossil(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
         });
 
     Some(actions)
+}
+
+/// Check if Big Malasada can be played (requires active pokemon to be damaged or have a special condition)
+fn can_play_big_malasada(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if let Some(active) = state.maybe_get_active(state.current_player) {
+        if active.is_damaged() || active.has_status_condition() {
+            return can_play_trainer(state, trainer_card);
+        }
+    }
+    cannot_play_trainer()
 }
 
 /// Check if Quick-Grow Extract can be played
