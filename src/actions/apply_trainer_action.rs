@@ -19,7 +19,7 @@ use crate::{
     combinatorics::generate_combinations,
     effects::TurnEffect,
     hooks::{get_stage, is_ultra_beast},
-    models::{Card, EnergyType, TrainerCard, TrainerType},
+    models::{Card, EnergyType, StatusCondition, TrainerCard, TrainerType},
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
 };
@@ -166,7 +166,35 @@ pub fn forecast_trainer_action(
         CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
+        CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         _ => panic!("Unsupported Trainer Card"),
+    }
+}
+
+fn big_malasada_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 10 damage and remove a random Special Condition from your Active Pokémon.
+    if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+        active.heal(10);
+        let conditions: Vec<StatusCondition> = [
+            active.poisoned.then_some(StatusCondition::Poisoned),
+            active.paralyzed.then_some(StatusCondition::Paralyzed),
+            active.asleep.then_some(StatusCondition::Asleep),
+            active.burned.then_some(StatusCondition::Burned),
+            active.confused.then_some(StatusCondition::Confused),
+        ]
+        .into_iter()
+        .flatten()
+        .collect();
+        if !conditions.is_empty() {
+            let chosen = &conditions[rng.gen_range(0..conditions.len())];
+            match chosen {
+                StatusCondition::Poisoned => active.poisoned = false,
+                StatusCondition::Paralyzed => active.paralyzed = false,
+                StatusCondition::Asleep => active.asleep = false,
+                StatusCondition::Burned => active.burned = false,
+                StatusCondition::Confused => active.confused = false,
+            }
+        }
     }
 }
 
