@@ -50,4 +50,5 @@ pub enum AbilityMechanic {
     },
     CoinFlipSleepOpponentActive,
     DiscardFromHandToDrawCard,
+    ImmuneToStatusConditions,
 }
