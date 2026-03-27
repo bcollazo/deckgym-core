@@ -286,10 +286,7 @@ fn discard_top_card_opponent_deck() -> Outcomes {
 fn poison_opponent_active() -> Outcomes {
     Outcomes::single_fn(|_rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.in_play_pokemon[opponent][0]
-            .as_mut()
-            .expect("Opponent should have active pokemon");
-        opponent_active.poisoned = true;
+        state.apply_status_condition(opponent, 0, StatusCondition::Poisoned);
     })
 }
 
@@ -297,10 +294,7 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
     Outcomes::binary_coin(
         Box::new(|_, state, action| {
             let opponent = (action.actor + 1) % 2;
-            let opponent_active = state.in_play_pokemon[opponent][0]
-                .as_mut()
-                .expect("Opponent should have active pokemon");
-            opponent_active.apply_status_condition(StatusCondition::Asleep);
+            state.apply_status_condition(opponent, 0, StatusCondition::Asleep);
         }),
         Box::new(|_, _, _| {}),
     )

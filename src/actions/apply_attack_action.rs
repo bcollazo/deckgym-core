@@ -99,7 +99,7 @@ fn apply_attack_common_modifiers(
     let mut outcomes = base_outcomes;
 
     // Handle confusion: 50% chance the attack fails (coin flip)
-    if active.confused {
+    if active.is_confused() {
         outcomes = apply_confusion_coin_flip(outcomes);
     }
 
@@ -729,8 +729,7 @@ fn mega_burning_attack(attack: &Attack) -> Outcomes {
 
         // Apply burned status
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.get_active_mut(opponent);
-        opponent_active.apply_status_condition(StatusCondition::Burned);
+        state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
 }
 
@@ -1339,9 +1338,8 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> Outcomes {
 fn damage_multiple_status_attack(statuses: Vec<StatusCondition>, attack: &Attack) -> Outcomes {
     active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let opponent_active = state.get_active_mut(opponent);
         for status in &statuses {
-            opponent_active.apply_status_condition(*status);
+            state.apply_status_condition(opponent, 0, *status);
         }
     })
 }
@@ -1349,9 +1347,8 @@ fn damage_multiple_status_attack(statuses: Vec<StatusCondition>, attack: &Attack
 /// For attacks that deal damage to opponent and apply multiple status effects to the attacker (e.g. Snorlax Collapse)
 fn damage_and_self_multiple_status_attack(damage: u32, statuses: Vec<StatusCondition>) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
         for status in &statuses {
-            active.apply_status_condition(*status);
+            state.apply_status_condition(action.actor, 0, *status);
         }
     })
 }
@@ -1415,9 +1412,8 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
 /// For attacks that put this Pokémon to sleep and heal it (e.g. Slowpoke's Rest).
 fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.apply_status_condition(StatusCondition::Asleep);
-        active.heal(heal);
+        state.apply_status_condition(action.actor, 0, StatusCondition::Asleep);
+        state.get_active_mut(action.actor).heal(heal);
     })
 }
 

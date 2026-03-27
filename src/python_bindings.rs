@@ -251,17 +251,17 @@ impl PyPlayedCard {
 
     #[getter]
     fn poisoned(&self) -> bool {
-        self.played_card.poisoned
+        self.played_card.is_poisoned()
     }
 
     #[getter]
     fn paralyzed(&self) -> bool {
-        self.played_card.paralyzed
+        self.played_card.is_paralyzed()
     }
 
     #[getter]
     fn asleep(&self) -> bool {
-        self.played_card.asleep
+        self.played_card.is_asleep()
     }
 
     #[getter]

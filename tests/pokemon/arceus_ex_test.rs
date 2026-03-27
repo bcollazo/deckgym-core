@@ -10,34 +10,46 @@ fn test_arceus_ex_fabled_luster_immunity() {
     let mut state = game.get_state_clone();
 
     // Test the original Arceus ex
-    let arceus_original =
-        PlayedCard::from_id(CardId::A2a071ArceusEx).with_status(StatusCondition::Poisoned);
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A2a071ArceusEx)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
     assert!(
-        !arceus_original.poisoned,
+        !state.get_active(0).is_poisoned(),
         "Original Arceus ex should be immune to poison"
     );
 
     // Test the new Arceus ex reprint (A4b 299)
-    let arceus_reprint =
-        PlayedCard::from_id(CardId::A4b299ArceusEx).with_status(StatusCondition::Confused);
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4b299ArceusEx)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Confused);
     assert!(
-        !arceus_reprint.confused,
+        !state.get_active(0).is_confused(),
         "Reprinted Arceus ex should be immune to confusion"
     );
 
     // Test A4b 372 Arceus ex
-    let arceus_a4b372 =
-        PlayedCard::from_id(CardId::A4b372ArceusEx).with_status(StatusCondition::Asleep);
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4b372ArceusEx)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
     assert!(
-        !arceus_a4b372.asleep,
+        !state.get_active(0).is_asleep(),
         "A4b 372 Arceus ex should be immune to sleep"
     );
 
     // Test B1 328 Arceus ex
-    let arceus_b1328 =
-        PlayedCard::from_id(CardId::B1328ArceusEx).with_status(StatusCondition::Paralyzed);
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B1328ArceusEx)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Paralyzed);
     assert!(
-        !arceus_b1328.paralyzed,
+        !state.get_active(0).is_paralyzed(),
         "B1 328 Arceus ex should be immune to paralysis"
     );
 
@@ -49,14 +61,10 @@ fn test_arceus_ex_fabled_luster_immunity() {
     state.current_player = 0;
     game.set_state(state);
 
-    let active = game
-        .get_state_clone()
-        .get_active(0)
-        .clone()
-        .with_status(StatusCondition::Burned);
-
+    let mut state = game.get_state_clone();
+    state.apply_status_condition(0, 0, StatusCondition::Burned);
     assert!(
-        !active.burned,
+        !state.get_active(0).is_burned(),
         "Arceus ex in game state should be immune to burn"
     );
 }

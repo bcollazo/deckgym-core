@@ -92,7 +92,7 @@ fn test_shinx_hide_effect_prevention() {
     );
 
     // Shinx should NOT be poisoned (effect prevented)
-    let shinx_poisoned = final_state.get_active(0).poisoned;
+    let shinx_poisoned = final_state.get_active(0).is_poisoned();
     assert!(
         !shinx_poisoned,
         "Shinx should not be poisoned when protected by Hide"

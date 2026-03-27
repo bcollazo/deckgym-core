@@ -4,7 +4,7 @@ use crate::{
         handle_knockouts,
     },
     effects::TurnEffect,
-    models::EnergyType,
+    models::{EnergyType, StatusCondition},
     AbilityId, State,
 };
 
@@ -142,8 +142,7 @@ impl State {
             // Check for Komala's Comatose ability
             if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 && from_zone {
                 // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
-                let komala = self.get_active_mut(actor);
-                komala.asleep = true;
+                self.apply_status_condition(actor, 0, StatusCondition::Asleep);
             }
 
             // Check for Cresselia ex's Lunar Plumage ability
