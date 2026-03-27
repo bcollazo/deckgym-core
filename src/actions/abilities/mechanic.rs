@@ -45,4 +45,7 @@ pub enum AbilityMechanic {
         amount: u32,
     },
     SwitchOutOpponentActiveToBench,
+    BadDreamsEndOfTurn {
+        amount: u32,
+    },
 }

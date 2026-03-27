@@ -202,7 +202,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         );
 
         // b2b mechanics
-        // map.insert("At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon.", todo_implementation);
+        map.insert(
+            "At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon.",
+            AbilityMechanic::BadDreamsEndOfTurn { amount: 20 },
+        );
         map.insert("Once during your turn, you may switch your Active [M] Pokémon with 1 of your Benched Pokémon.", AbilityMechanic::SwitchActiveTypedWithBench { energy_type: EnergyType::Metal });
         map
     });

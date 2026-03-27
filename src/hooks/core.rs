@@ -4,7 +4,10 @@ use std::vec;
 use log::debug;
 
 use crate::{
-    actions::{abilities::AbilityMechanic, ability_mechanic_from_effect, SimpleAction},
+    actions::{
+        abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
+        SimpleAction,
+    },
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
@@ -255,6 +258,52 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
                 false,
             );
         }
+    }
+
+    apply_bad_dreams_damage(state);
+}
+
+/// Apply Bad Dreams ability damage: for each player's Darkrai in play, if that player's
+/// opponent has an Asleep Active Pokémon, deal 20 damage to it.
+fn apply_bad_dreams_damage(state: &mut State) {
+    let mut sources: Vec<(usize, u32)> = vec![];
+
+    for player in 0..2 {
+        let bad_dreams_amount: u32 = state
+            .enumerate_in_play_pokemon(player)
+            .filter(|(_, pokemon)| !pokemon.is_knocked_out())
+            .filter_map(|(_, pokemon)| {
+                get_ability_mechanic(&pokemon.card).and_then(|m| match m {
+                    AbilityMechanic::BadDreamsEndOfTurn { amount } => Some(amount),
+                    _ => None,
+                })
+            })
+            .sum();
+
+        if bad_dreams_amount > 0 {
+            sources.push((player, bad_dreams_amount));
+        }
+    }
+
+    for (darkrai_owner, amount) in sources {
+        let opponent = (darkrai_owner + 1) % 2;
+        let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_ref() else {
+            continue;
+        };
+        if !opponent_active.asleep {
+            continue;
+        }
+        debug!(
+            "Bad Dreams: Player {}'s Darkrai deals {} damage to opponent's Asleep active",
+            darkrai_owner, amount
+        );
+        crate::actions::handle_damage(
+            state,
+            (darkrai_owner, 0),
+            &[(amount, opponent, 0)],
+            false,
+            None,
+        );
     }
 }
 

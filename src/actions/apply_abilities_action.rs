@@ -163,6 +163,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::CheckupDamageToOpponentActive { .. } => {
             panic!("CheckupDamageToOpponentActive is a passive ability")
         }
+        AbilityMechanic::BadDreamsEndOfTurn { .. } => {
+            panic!("BadDreamsEndOfTurn is a passive ability")
+        }
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage {
             discard_energy,
             attack_type,
