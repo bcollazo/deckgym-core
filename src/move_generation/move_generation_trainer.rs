@@ -113,6 +113,9 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
             can_play_pokemon_center_lady(state, trainer_card)
         }
+        CardId::A2154Dawn | CardId::A2194Dawn | CardId::A4b342Dawn | CardId::A4b343Dawn => {
+            can_play_dawn(state, trainer_card)
+        }
         CardId::A4151ElementalSwitch
         | CardId::A4b310ElementalSwitch
         | CardId::A4b311ElementalSwitch => can_play_elemental_switch(state, trainer_card),
@@ -306,6 +309,21 @@ fn can_play_irida(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.attached_energy.contains(&EnergyType::Water))
         .count();
     if damaged_water_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Dawn can be played (requires active pokemon and at least 1 benched pokemon with energy)
+fn can_play_dawn(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state.maybe_get_active(state.current_player).is_none() {
+        return cannot_play_trainer();
+    }
+    let has_bench_with_energy = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| !pokemon.attached_energy.is_empty());
+    if has_bench_with_energy {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
