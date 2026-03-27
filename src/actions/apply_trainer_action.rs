@@ -111,6 +111,9 @@ pub fn forecast_trainer_action(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => Outcomes::single_fn(pokemon_communication_effect),
+        CardId::A2154Dawn | CardId::A2194Dawn | CardId::A4b342Dawn | CardId::A4b343Dawn => {
+            Outcomes::single_fn(dawn_effect)
+        }
         CardId::A4151ElementalSwitch
         | CardId::A4b310ElementalSwitch
         | CardId::A4b311ElementalSwitch => Outcomes::single_fn(elemental_switch_effect),
@@ -760,6 +763,34 @@ fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Acti
 
     if !possible_swaps.is_empty() {
         state.move_generation_stack.push((player, possible_swaps));
+    }
+}
+
+fn dawn_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    if state.maybe_get_active(player).is_none() {
+        return;
+    }
+    let mut possible_transfers = Vec::new();
+
+    for (from_idx, pokemon) in state.enumerate_bench_pokemon(player) {
+        for &energy in &pokemon.attached_energy {
+            let move_action = SimpleAction::MoveEnergy {
+                from_in_play_idx: from_idx,
+                to_in_play_idx: 0,
+                energy_type: energy,
+                amount: 1,
+            };
+            if !possible_transfers.contains(&move_action) {
+                possible_transfers.push(move_action);
+            }
+        }
+    }
+
+    if !possible_transfers.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_transfers));
     }
 }
 
