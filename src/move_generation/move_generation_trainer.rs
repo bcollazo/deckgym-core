@@ -36,12 +36,7 @@ pub fn generate_possible_trainer_actions(
         .get_current_turn_effects()
         .iter()
         .any(|x| matches!(x, TurnEffect::NoTrainerCards));
-    if no_trainers
-        && matches!(
-            trainer_card.trainer_card_type,
-            TrainerType::Item | TrainerType::Supporter | TrainerType::Tool
-        )
-    {
+    if no_trainers {
         return cannot_play_trainer();
     }
     if trainer_card.trainer_card_type == TrainerType::Supporter && !can_play_support(state) {
