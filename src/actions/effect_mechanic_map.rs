@@ -548,7 +548,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Flip a coin for each Energy attached to this Pokémon. This attack does 50 damage for each heads.", Mechanic::CelebiExPowerfulBloom);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 20 damage for each heads.", todo_implementation);
     // map.insert("Flip a coin for each Pokémon you have in play. This attack does 40 damage for each heads.", todo_implementation);
-    // map.insert("Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.",
+        Mechanic::CoinFlipPerSpecificEnergyType {
+            energy_type: EnergyType::Metal,
+            damage_per_heads: 50,
+        },
+    );
     map.insert("Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.", Mechanic::VaporeonHyperWhirlpool);
     map.insert(
         "Flip a coin until you get tails. This attack does 20 damage for each heads.",

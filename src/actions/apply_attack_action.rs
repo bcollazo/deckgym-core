@@ -200,6 +200,10 @@ fn forecast_effect_attack_by_mechanic(
 ) -> Outcomes {
     match mechanic {
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
+        Mechanic::CoinFlipPerSpecificEnergyType {
+            energy_type,
+            damage_per_heads,
+        } => coin_flip_per_specific_energy_type(state, *energy_type, *damage_per_heads),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
@@ -694,6 +698,27 @@ fn celebi_powerful_bloom(state: &State) -> Outcomes {
 
     Outcomes::binomial_by_heads(total_energy, move |heads| {
         active_damage_mutation((heads as u32) * 50)
+    })
+}
+
+fn coin_flip_per_specific_energy_type(
+    state: &State,
+    energy_type: EnergyType,
+    damage_per_heads: u32,
+) -> Outcomes {
+    let active_pokemon = state.get_active(state.current_player);
+    let energy_count = active_pokemon
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count();
+
+    if energy_count == 0 {
+        return Outcomes::single(active_damage_mutation(0));
+    }
+
+    Outcomes::binomial_by_heads(energy_count, move |heads| {
+        active_damage_mutation((heads as u32) * damage_per_heads)
     })
 }
 
