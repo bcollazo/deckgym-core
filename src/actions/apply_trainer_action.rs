@@ -1092,3 +1092,94 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
 
     Outcomes::from_parts(probabilities, outcomes)
 }
+
+#[cfg(test)]
+mod tests {
+    use rand::{rngs::StdRng, SeedableRng};
+
+    use super::*;
+    use crate::{card_ids::CardId, database::get_card_by_enum, hooks::to_playable_card};
+
+    fn make_action() -> Action {
+        Action {
+            actor: 0,
+            action: SimpleAction::Noop,
+            is_stack: false,
+        }
+    }
+
+    fn make_state_with_damaged_active() -> State {
+        let mut state = State::default();
+        let bulbasaur = get_card_by_enum(CardId::A1001Bulbasaur);
+        let mut played = to_playable_card(&bulbasaur, false);
+        played.apply_damage(30);
+        state.in_play_pokemon[0][0] = Some(played);
+        state
+    }
+
+    #[test]
+    fn test_big_malasada_heals_10_damage() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        let hp_before = state.get_active(0).get_remaining_hp();
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert_eq!(state.get_active(0).get_remaining_hp(), hp_before + 10);
+    }
+
+    #[test]
+    fn test_big_malasada_cures_poisoned() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        state.in_play_pokemon[0][0].as_mut().unwrap().poisoned = true;
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().poisoned);
+    }
+
+    #[test]
+    fn test_big_malasada_cures_paralyzed() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        state.in_play_pokemon[0][0].as_mut().unwrap().paralyzed = true;
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().paralyzed);
+    }
+
+    #[test]
+    fn test_big_malasada_cures_asleep() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        state.in_play_pokemon[0][0].as_mut().unwrap().asleep = true;
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().asleep);
+    }
+
+    #[test]
+    fn test_big_malasada_cures_burned() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        state.in_play_pokemon[0][0].as_mut().unwrap().burned = true;
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().burned);
+    }
+
+    #[test]
+    fn test_big_malasada_cures_confused() {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = make_state_with_damaged_active();
+        state.in_play_pokemon[0][0].as_mut().unwrap().confused = true;
+
+        big_malasada_effect(&mut rng, &mut state, &make_action());
+
+        assert!(!state.in_play_pokemon[0][0].as_ref().unwrap().confused);
+    }
+}
