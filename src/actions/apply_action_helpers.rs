@@ -8,6 +8,8 @@ use crate::{
         abilities::AbilityMechanic, ability_mechanic_from_effect,
         effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
     },
+    card_ids::CardId,
+    effects::TurnEffect,
     hooks::{
         get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
     },
@@ -493,6 +495,30 @@ pub(crate) fn handle_knockouts(
 ) {
     let knockouts = get_knocked_out(state);
 
+    // Pre-check: Is Iris bonus active (attacker is Haxorus and effect is set)?
+    let iris_bonus_active = is_from_active_attack && {
+        let has_iris_effect = state
+            .get_current_turn_effects()
+            .iter()
+            .any(|e| matches!(e, TurnEffect::BonusPointForHaxorusActiveKO));
+        if has_iris_effect {
+            state.in_play_pokemon[attacking_ref.0][attacking_ref.1]
+                .as_ref()
+                .map(|attacker| {
+                    matches!(
+                        CardId::from_card_id(match &attacker.card {
+                            Card::Pokemon(p) => p.id.as_str(),
+                            Card::Trainer(t) => t.id.as_str(),
+                        }),
+                        Some(CardId::B2b056Haxorus | CardId::B2b110Haxorus | CardId::PB045Haxorus)
+                    )
+                })
+                .unwrap_or(false)
+        } else {
+            false
+        }
+    };
+
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
         // Call knockout hook (e.g., for Electrical Cord)
@@ -510,6 +536,14 @@ pub(crate) fn handle_knockouts(
                 "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
                 ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
             );
+            // Iris bonus: 1 extra point if Haxorus KOs opponent's Active Pokemon
+            if iris_bonus_active && ko_pokemon_idx == 0 && ko_receiver != attacking_ref.0 {
+                state.points[ko_initiator] += 1;
+                debug!(
+                    "Iris: Player {} gets 1 bonus point for Haxorus KO",
+                    ko_initiator
+                );
+            }
         }
 
         state.discard_from_play(ko_receiver, ko_pokemon_idx);

@@ -59,4 +59,5 @@ pub enum TurnEffect {
         amount: u32,
     },
     ForceFirstHeads,
+    BonusPointForHaxorusActiveKO,
 }
