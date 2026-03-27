@@ -16,8 +16,11 @@ fn test_iris_haxorus_ko_ex_pokemon_wins_game() {
 
     // Haxorus with energy for Frenzied Blade; Mewtwo ex with only 10 HP remaining
     state.set_board(
-        vec![PlayedCard::from_id(CardId::B2b056Haxorus)
-            .with_energy(vec![EnergyType::Fighting, EnergyType::Metal, EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::B2b056Haxorus).with_energy(vec![
+            EnergyType::Fighting,
+            EnergyType::Metal,
+            EnergyType::Colorless,
+        ])],
         vec![PlayedCard::from_id(CardId::A1129MewtwoEx).with_remaining_hp(10)],
     );
     state.hands[0] = vec![get_card_by_enum(CardId::B2b067Iris)];
