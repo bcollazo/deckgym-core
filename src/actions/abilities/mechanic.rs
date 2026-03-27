@@ -49,4 +49,5 @@ pub enum AbilityMechanic {
         amount: u32,
     },
     CoinFlipSleepOpponentActive,
+    DiscardFromHandToDrawCard,
 }
