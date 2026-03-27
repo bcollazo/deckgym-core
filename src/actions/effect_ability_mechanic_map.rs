@@ -160,7 +160,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Whenever you attach a [D] Energy from your Energy Zone to this Pokémon, do 20 damage to your opponent's Active Pokémon.", todo_implementation);
         // map.insert("Whenever you attach a [P] Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.", todo_implementation);
         // map.insert("Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", todo_implementation);
-        // map.insert("You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.", todo_implementation);
+        map.insert(
+            "You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.",
+            AbilityMechanic::DiscardFromHandToDrawCard,
+        );
         // map.insert("Your Active Dondozo has no Retreat Cost.", todo_implementation);
         // map.insert("Your Active Pokémon has no Retreat Cost.", todo_implementation);
         // map.insert("Your opponent can't play any Pokémon from their hand to evolve their Active Pokémon.", todo_implementation);

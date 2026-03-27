@@ -15,7 +15,7 @@ use crate::{
     },
     effects::TurnEffect,
     hooks::is_ultra_beast,
-    models::{EnergyType, StatusCondition},
+    models::{Card, EnergyType, StatusCondition},
     State,
 };
 
@@ -175,6 +175,7 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
         AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
         AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
+        AbilityMechanic::DiscardFromHandToDrawCard => discard_from_hand_to_draw_card(),
     }
 }
 
@@ -540,6 +541,24 @@ fn umbreon_dark_chase(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
+}
+
+fn discard_from_hand_to_draw_card() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        // Queue draw first (LIFO: will execute after the discard choice resolves)
+        state.queue_draw_action(action.actor, 1);
+        // Push discard choices (executed first since pushed last onto LIFO stack)
+        let hand_cards: Vec<Card> = state.hands[action.actor].to_vec();
+        let mut seen = std::collections::HashSet::new();
+        let choices: Vec<SimpleAction> = hand_cards
+            .into_iter()
+            .filter(|card| seen.insert(card.clone()))
+            .map(|card| SimpleAction::DiscardOwnCards { cards: vec![card] })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
