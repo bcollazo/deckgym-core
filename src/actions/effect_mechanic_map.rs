@@ -625,7 +625,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin. If heads, this attack does 80 more damage.",
         Mechanic::CoinFlipExtraDamage { extra_damage: 80 },
     );
-    // map.insert("Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck.", todo_implementation);
+    map.insert("Flip a coin. If heads, your opponent reveals a random card from their hand and shuffles it into their deck.", Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck);
     map.insert(
         "Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it.",
         Mechanic::OminousClaw,
@@ -1640,7 +1640,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
 
     // B2b
     // map.insert("Discard a [W] and a [L] Energy from this Pokémon.", todo_implementation);
-    // map.insert("During your opponent's next turn, they can't play any Trainer cards from their hand.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, they can't play any Trainer cards from their hand.",
+        Mechanic::DamageAndTurnEffect {
+            effect: TurnEffect::NoTrainerCards,
+            duration: 1,
+        },
+    );
     map.insert(
         "Flip 3 coins. This attack also does 20 damage for each heads to each of your opponent's Benched Pokémon.",
         Mechanic::FlipCoinsBenchDamagePerHead { num_coins: 3, bench_damage_per_head: 20 },

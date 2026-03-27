@@ -526,6 +526,9 @@ fn forecast_effect_attack_by_mechanic(
             threshold,
             extra_damage,
         } => extra_damage_if_self_hp_at_most(state, attack.fixed_damage, *threshold, *extra_damage),
+        Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
+            coin_flip_shuffle_random_opponent_hand_card_into_deck()
+        }
     }
 }
 
@@ -1952,6 +1955,24 @@ fn shuffle_opponent_active_into_deck() -> Outcomes {
             state.trigger_promotion_or_declare_winner(opponent);
         }),
         // Tails: just do nothing
+        active_damage_mutation(0),
+    )
+}
+
+fn coin_flip_shuffle_random_opponent_hand_card_into_deck() -> Outcomes {
+    Outcomes::binary_coin(
+        // Heads: shuffle a random card from opponent's hand into their deck
+        active_damage_effect_mutation(0, move |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            if state.hands[opponent].is_empty() {
+                return;
+            }
+            let idx = rng.gen_range(0..state.hands[opponent].len());
+            let card = state.hands[opponent].remove(idx);
+            state.decks[opponent].cards.push(card);
+            state.decks[opponent].shuffle(false, rng);
+        }),
+        // Tails: do nothing
         active_damage_mutation(0),
     )
 }
