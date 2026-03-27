@@ -167,6 +167,7 @@ pub fn forecast_trainer_action(
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
+        CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1061,6 +1062,35 @@ fn serena_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
     card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+}
+
+fn sightseer_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Look at the top 4 cards of your deck. Put all Stage 1 Pokémon you find there into your
+    // hand. Shuffle the other cards back into your deck.
+    let deck_cards: Vec<Card> = state.decks[acting_player].cards.to_vec();
+    let look_count = min(4, deck_cards.len());
+
+    if look_count == 0 {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let top_combinations = generate_combinations(&deck_cards, look_count);
+    let num_outcomes = top_combinations.len();
+    let probabilities = vec![1.0 / num_outcomes as f64; num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for top_cards in top_combinations {
+        outcomes.push(Box::new(move |rng, state, _action| {
+            for card in &top_cards {
+                if matches!(card, Card::Pokemon(p) if p.stage == 1) {
+                    state.transfer_card_from_deck_to_hand(acting_player, card);
+                }
+            }
+            state.decks[acting_player].shuffle(false, rng);
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
