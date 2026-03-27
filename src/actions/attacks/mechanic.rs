@@ -112,6 +112,10 @@ pub enum Mechanic {
     MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
+    CoinFlipPerSpecificEnergyType {
+        energy_type: EnergyType,
+        damage_per_heads: u32,
+    },
     MagikarpWaterfallEvolution,
     CoinFlipToBlockAttackNextTurn,
     MoveAllEnergyTypeToBench {
