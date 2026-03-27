@@ -111,6 +111,9 @@ pub fn forecast_trainer_action(
         CardId::A2146PokemonCommunication
         | CardId::A4b316PokemonCommunication
         | CardId::A4b317PokemonCommunication => Outcomes::single_fn(pokemon_communication_effect),
+        CardId::A2154Dawn | CardId::A2194Dawn | CardId::A4b342Dawn | CardId::A4b343Dawn => {
+            Outcomes::single_fn(dawn_effect)
+        }
         CardId::A4151ElementalSwitch
         | CardId::A4b310ElementalSwitch
         | CardId::A4b311ElementalSwitch => Outcomes::single_fn(elemental_switch_effect),
@@ -167,7 +170,9 @@ pub fn forecast_trainer_action(
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
         CardId::B2b068Calem | CardId::B2b082Calem => Outcomes::single_fn(calem_effect),
+        CardId::A3b068Hau | CardId::A3b085Hau => Outcomes::single_fn(hau_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
+        CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -576,6 +581,21 @@ fn blaine_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     );
 }
 
+fn hau_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your Decidueye ex, Incineroar ex, or Primarina ex do +30 damage to your opponent's Active Pokémon.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Decidueye ex".to_string(),
+                "Incineroar ex".to_string(),
+                "Primarina ex".to_string(),
+            ],
+        },
+        0,
+    );
+}
+
 fn brock_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Take a [F] Energy from your Energy Zone and attach it to Golem or Onix.
     attach_energy_from_zone_to_specific_pokemon(
@@ -779,6 +799,34 @@ fn pokemon_communication_effect(_: &mut StdRng, state: &mut State, action: &Acti
 
     if !possible_swaps.is_empty() {
         state.move_generation_stack.push((player, possible_swaps));
+    }
+}
+
+fn dawn_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    if state.maybe_get_active(player).is_none() {
+        return;
+    }
+    let mut possible_transfers = Vec::new();
+
+    for (from_idx, pokemon) in state.enumerate_bench_pokemon(player) {
+        for &energy in &pokemon.attached_energy {
+            let move_action = SimpleAction::MoveEnergy {
+                from_in_play_idx: from_idx,
+                to_in_play_idx: 0,
+                energy_type: energy,
+                amount: 1,
+            };
+            if !possible_transfers.contains(&move_action) {
+                possible_transfers.push(move_action);
+            }
+        }
+    }
+
+    if !possible_transfers.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_transfers));
     }
 }
 
@@ -1080,6 +1128,35 @@ fn serena_effect(acting_player: usize, state: &State) -> Outcomes {
     // Put a random Mega Evolution Pokémon ex from your deck into your hand.
     // All Mega evolutions are ex by definition
     card_search_outcomes_with_filter_multiple(acting_player, state, 1, |card| card.is_mega())
+}
+
+fn sightseer_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Look at the top 4 cards of your deck. Put all Stage 1 Pokémon you find there into your
+    // hand. Shuffle the other cards back into your deck.
+    let deck_cards: Vec<Card> = state.decks[acting_player].cards.to_vec();
+    let look_count = min(4, deck_cards.len());
+
+    if look_count == 0 {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let top_combinations = generate_combinations(&deck_cards, look_count);
+    let num_outcomes = top_combinations.len();
+    let probabilities = vec![1.0 / num_outcomes as f64; num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for top_cards in top_combinations {
+        outcomes.push(Box::new(move |rng, state, _action| {
+            for card in &top_cards {
+                if matches!(card, Card::Pokemon(p) if p.stage == 1) {
+                    state.transfer_card_from_deck_to_hand(acting_player, card);
+                }
+            }
+            state.decks[acting_player].shuffle(false, rng);
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
