@@ -19,8 +19,11 @@ fn fat_bulbasaur() -> PlayedCard {
 }
 
 fn mega_scizor_ex_with_energy() -> PlayedCard {
-    PlayedCard::from_id(CardId::B2b047MegaScizorEx)
-        .with_energy(vec![EnergyType::Metal, EnergyType::Metal, EnergyType::Colorless])
+    PlayedCard::from_id(CardId::B2b047MegaScizorEx).with_energy(vec![
+        EnergyType::Metal,
+        EnergyType::Metal,
+        EnergyType::Colorless,
+    ])
 }
 
 /// Mega Scizor ex that was already in the active spot deals base 100 damage.
@@ -29,10 +32,7 @@ fn test_bullet_slugger_no_bonus_when_not_moved_from_bench() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    state.set_board(
-        vec![mega_scizor_ex_with_energy()],
-        vec![fat_bulbasaur()],
-    );
+    state.set_board(vec![mega_scizor_ex_with_energy()], vec![fat_bulbasaur()]);
     state.current_player = 0;
     game.set_state(state);
 
