@@ -196,6 +196,9 @@ pub enum Mechanic {
     ExtraDamageIfMovedFromBench {
         extra_damage: u32,
     },
+    ExtraDamageIfEvolvedThisTurn {
+        extra_damage: u32,
+    },
     BenchCountDamage {
         include_fixed_damage: bool,
         damage_per: u32,

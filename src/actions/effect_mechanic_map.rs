@@ -689,7 +689,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 40 });
     map.insert("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.", Mechanic::BlockBasicAttack);
     // map.insert("If the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen. This effect lasts until the Defending Pokémon leaves the Active Spot, and it doesn't stack.", todo_implementation);
-    // map.insert("If this Pokémon evolved during this turn, this attack does 20 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon evolved during this turn, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage: 20 },
+    );
     // map.insert("If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
     map.insert(
         "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
