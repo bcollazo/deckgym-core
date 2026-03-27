@@ -1693,7 +1693,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).", todo_implementation);
-    // map.insert("This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
+    map.insert(
+        "This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).",
+        Mechanic::BenchCountDamage {
+            include_fixed_damage: true,
+            damage_per: 20,
+            energy_type: None,
+            bench_side: BenchSide::BothBenches,
+        },
+    );
     map.insert(
         "This attack does 30 more damage for each point you have gotten.",
         Mechanic::ExtraDamagePerOwnPoint {
