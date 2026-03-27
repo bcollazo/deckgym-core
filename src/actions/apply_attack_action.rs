@@ -529,6 +529,9 @@ fn forecast_effect_attack_by_mechanic(
             threshold,
             extra_damage,
         } => extra_damage_if_self_hp_at_most(state, attack.fixed_damage, *threshold, *extra_damage),
+        Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage } => {
+            extra_damage_if_opponent_hp_more_than_self(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
@@ -1618,6 +1621,16 @@ fn extra_damage_if_self_hp_at_most(
 ) -> Outcomes {
     let attacker = state.get_active(state.current_player);
     if attacker.get_remaining_hp() <= threshold {
+        active_damage_doutcome(base + extra)
+    } else {
+        active_damage_doutcome(base)
+    }
+}
+
+fn extra_damage_if_opponent_hp_more_than_self(state: &State, base: u32, extra: u32) -> Outcomes {
+    let attacker = state.get_active(state.current_player);
+    let opponent = state.get_active((state.current_player + 1) % 2);
+    if opponent.get_remaining_hp() > attacker.get_remaining_hp() {
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)
