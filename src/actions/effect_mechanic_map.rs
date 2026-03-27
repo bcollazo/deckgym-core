@@ -821,7 +821,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: true,
         },
     );
-    // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 50 },
+    );
     // map.insert("If your opponent's Active Pokémon is Burned, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.", todo_implementation);
@@ -1676,7 +1679,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("If your opponent has exactly 2, 4, or 6 cards in their hand, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon has more remaining HP than this Pokémon, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 60 },
+    );
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
     // map.insert("Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
     map.insert(

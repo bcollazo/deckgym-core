@@ -272,5 +272,8 @@ pub enum Mechanic {
         threshold: u32,
         extra_damage: u32,
     },
+    ExtraDamageIfOpponentHpMoreThanSelf {
+        extra_damage: u32,
+    },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
 }
