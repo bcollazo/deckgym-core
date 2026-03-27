@@ -213,6 +213,9 @@ pub fn trainer_move_generation_implementation(
         CardId::A3b068Hau | CardId::A3b085Hau => can_play_trainer(state, trainer_card),
         CardId::A3142BigMalasada => can_play_big_malasada(state, trainer_card),
         CardId::B2150Sightseer | CardId::B2191Sightseer => can_play_trainer(state, trainer_card),
+        CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
+            can_play_team_rocket_grunt(state, trainer_card)
+        }
         _ => None,
     }
 }
@@ -734,5 +737,22 @@ fn can_play_quick_grow_extract(
         cannot_play_trainer()
     } else {
         can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Check if Team Rocket Grunt can be played (requires opponent's Active Pokémon to have energy)
+fn can_play_team_rocket_grunt(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_energy = state
+        .maybe_get_active(opponent)
+        .map(|p| !p.attached_energy.is_empty())
+        .unwrap_or(false);
+    if has_energy {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
     }
 }

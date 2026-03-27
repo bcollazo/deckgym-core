@@ -174,6 +174,9 @@ pub fn forecast_trainer_action(
         CardId::A3b068Hau | CardId::A3b085Hau => Outcomes::single_fn(hau_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
+        CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
+            team_rocket_grunt_outcomes()
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1210,6 +1213,32 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     }
 
     Outcomes::from_parts(probabilities, outcomes)
+}
+
+fn team_rocket_grunt_outcomes() -> Outcomes {
+    // Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.
+    Outcomes::geometric_until_tails(5, move |heads| {
+        Box::new(
+            move |rng: &mut StdRng, state: &mut State, action: &Action| {
+                let opponent = (action.actor + 1) % 2;
+                for _ in 0..heads {
+                    let energy_len = state.in_play_pokemon[opponent][0]
+                        .as_ref()
+                        .map(|p| p.attached_energy.len())
+                        .unwrap_or(0);
+                    if energy_len == 0 {
+                        break;
+                    }
+                    let random_idx = rng.gen_range(0..energy_len);
+                    let energy = state.in_play_pokemon[opponent][0]
+                        .as_ref()
+                        .unwrap()
+                        .attached_energy[random_idx];
+                    state.discard_from_active(opponent, &[energy]);
+                }
+            },
+        )
+    })
 }
 
 #[cfg(test)]
