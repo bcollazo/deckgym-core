@@ -1639,7 +1639,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.", todo_implementation);
 
     // B2b
-    // map.insert("Discard a [W] and a [L] Energy from this Pokémon.", todo_implementation);
+    map.insert(
+        "Discard a [W] and a [L] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Water, EnergyType::Lightning],
+        },
+    );
     map.insert(
         "During your opponent's next turn, they can't play any Trainer cards from their hand.",
         Mechanic::DamageAndTurnEffect {
@@ -1672,7 +1677,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             target_benched_type: Some(EnergyType::Water),
         },
     );
-    // map.insert("Take a [W] and a [L] Energy from your Energy Zone and attach them to this Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [W] and a [L] Energy from your Energy Zone and attach them to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Water, EnergyType::Lightning],
+        },
+    );
     // map.insert("This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).", todo_implementation);
     // map.insert("This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
     map.insert(
