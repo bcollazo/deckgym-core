@@ -159,6 +159,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DiscardFromHandToDrawCard => {
             !card.ability_used && !state.hands[state.current_player].is_empty()
         }
+        AbilityMechanic::ImmuneToStatusConditions => false, // Passive ability
     }
 }
 

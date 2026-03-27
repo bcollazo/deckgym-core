@@ -8,8 +8,8 @@ use std::collections::BTreeMap;
 use std::hash::Hash;
 
 use crate::{
-    actions::{self, SimpleAction},
-    card_ids::CardId,
+    actions::abilities::AbilityMechanic,
+    actions::{self, has_ability_mechanic, SimpleAction},
     deck::Deck,
     effects::TurnEffect,
     models::{Card, EnergyType, StatusCondition},
@@ -357,20 +357,8 @@ impl State {
             return;
         };
 
-        // Arceus ex is immune to all status conditions.
-        let arceus_ids = [
-            CardId::A2a071ArceusEx,
-            CardId::A2a086ArceusEx,
-            CardId::A2a095ArceusEx,
-            CardId::A2a096ArceusEx,
-            CardId::A4b299ArceusEx,
-            CardId::A4b372ArceusEx,
-            CardId::B1328ArceusEx,
-        ];
-        let string_id = pokemon.get_id();
-        let card_id = CardId::from_card_id(&string_id).unwrap();
-        if arceus_ids.contains(&card_id) {
-            log::debug!("Arceus ex avoids status effect");
+        if has_ability_mechanic(&pokemon.card, &AbilityMechanic::ImmuneToStatusConditions) {
+            debug!("Fabled Luster: Pokémon is immune to status conditions");
             return;
         }
 

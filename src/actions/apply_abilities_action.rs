@@ -53,7 +53,7 @@ pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usiz
         AbilityId::A2a010LeafeonExForestBreath => Outcomes::single_fn(leafon_ex_ability),
         AbilityId::A2a022GlaceonExSnowyTerrain => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2a069ShayminSkySupport => panic!("Sky Support is a passive ability"),
-        AbilityId::A2a071Arceus => panic!("Arceus's ability cant be used on demand"),
+        AbilityId::A2a071Arceus => unreachable!("Handled by AbilityMechanic"),
         AbilityId::A2072DusknoirShadowVoid => Outcomes::single(dusknoir_shadow_void(in_play_idx)),
         AbilityId::A2078GiratinaLevitate => panic!("Levitate is a passive ability"),
         AbilityId::A2092LucarioFightingCoach => panic!("Fighting Coach is a passive ability"),
@@ -176,6 +176,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
         AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
         AbilityMechanic::DiscardFromHandToDrawCard => discard_from_hand_to_draw_card(),
+        AbilityMechanic::ImmuneToStatusConditions => {
+            panic!("ImmuneToStatusConditions is a passive ability")
+        }
     }
 }
 
