@@ -270,4 +270,8 @@ pub enum Mechanic {
         extra_damage: u32,
     },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
+    SelfAndBothBenchDamage {
+        self_damage: u32,
+        bench_damage: u32,
+    },
 }

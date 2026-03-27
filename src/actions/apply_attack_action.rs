@@ -529,6 +529,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
+        Mechanic::SelfAndBothBenchDamage {
+            self_damage,
+            bench_damage,
+        } => self_and_both_bench_damage_attack(
+            state,
+            attack.fixed_damage,
+            *self_damage,
+            *bench_damage,
+        ),
     }
 }
 
@@ -1326,6 +1335,36 @@ fn self_damage_attack(damage: u32, self_damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.apply_damage(self_damage);
+    })
+}
+
+/// For attacks like Enormous Explosion: deal damage to opponent's active,
+/// self-damage, and splash damage to all Benched Pokémon on both sides.
+fn self_and_both_bench_damage_attack(
+    state: &State,
+    active_damage: u32,
+    self_damage: u32,
+    bench_damage: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let mut targets: Vec<(u32, usize)> = state
+        .enumerate_bench_pokemon(opponent)
+        .map(|(idx, _)| (bench_damage, idx))
+        .collect();
+    targets.push((active_damage, 0));
+    let own_bench_indices: Vec<usize> = state
+        .enumerate_bench_pokemon(state.current_player)
+        .map(|(idx, _)| idx)
+        .collect();
+    damage_effect_doutcome(targets, move |_, state, action| {
+        for &idx in &own_bench_indices {
+            if let Some(pokemon) = state.in_play_pokemon[action.actor][idx].as_mut() {
+                pokemon.apply_damage(bench_damage);
+            }
+        }
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.apply_damage(self_damage);
+        }
     })
 }
 

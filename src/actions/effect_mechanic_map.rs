@@ -1673,7 +1673,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Take a [W] and a [L] Energy from your Energy Zone and attach them to this Pokémon.", todo_implementation);
-    // map.insert("This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).", todo_implementation);
+    map.insert(
+        "This Pokémon also does 100 damage to itself and 50 damage to all Benched Pokémon (both yours and your opponent's).",
+        Mechanic::SelfAndBothBenchDamage {
+            self_damage: 100,
+            bench_damage: 50,
+        },
+    );
     // map.insert("This attack does 20 more damage for each Benched Pokémon (both yours and your opponent's).", todo_implementation);
     map.insert(
         "This attack does 30 more damage for each point you have gotten.",
