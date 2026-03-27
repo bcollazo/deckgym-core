@@ -488,36 +488,42 @@ pub(crate) fn handle_damage_only(
     }
 }
 
+fn is_iris_bonus_active(
+    state: &State,
+    attacking_ref: (usize, usize),
+    is_from_active_attack: bool,
+) -> bool {
+    if !is_from_active_attack {
+        return false;
+    }
+    let has_iris_effect = state
+        .get_current_turn_effects()
+        .iter()
+        .any(|e| matches!(e, TurnEffect::BonusPointForHaxorusActiveKO));
+    if !has_iris_effect {
+        return false;
+    }
+    state.in_play_pokemon[attacking_ref.0][attacking_ref.1]
+        .as_ref()
+        .map(|attacker| {
+            matches!(
+                CardId::from_card_id(match &attacker.card {
+                    Card::Pokemon(p) => p.id.as_str(),
+                    Card::Trainer(t) => t.id.as_str(),
+                }),
+                Some(CardId::B2b056Haxorus | CardId::B2b110Haxorus | CardId::PB045Haxorus)
+            )
+        })
+        .unwrap_or(false)
+}
+
 pub(crate) fn handle_knockouts(
     state: &mut State,
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     is_from_active_attack: bool,
 ) {
     let knockouts = get_knocked_out(state);
-
-    // Pre-check: Is Iris bonus active (attacker is Haxorus and effect is set)?
-    let iris_bonus_active = is_from_active_attack && {
-        let has_iris_effect = state
-            .get_current_turn_effects()
-            .iter()
-            .any(|e| matches!(e, TurnEffect::BonusPointForHaxorusActiveKO));
-        if has_iris_effect {
-            state.in_play_pokemon[attacking_ref.0][attacking_ref.1]
-                .as_ref()
-                .map(|attacker| {
-                    matches!(
-                        CardId::from_card_id(match &attacker.card {
-                            Card::Pokemon(p) => p.id.as_str(),
-                            Card::Trainer(t) => t.id.as_str(),
-                        }),
-                        Some(CardId::B2b056Haxorus | CardId::B2b110Haxorus | CardId::PB045Haxorus)
-                    )
-                })
-                .unwrap_or(false)
-        } else {
-            false
-        }
-    };
+    let iris_bonus_active = is_iris_bonus_active(state, attacking_ref, is_from_active_attack);
 
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
