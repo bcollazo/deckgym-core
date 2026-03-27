@@ -1643,7 +1643,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If you played a Supporter card from your hand during this turn, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your Pokémon in play have 3 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a [G] or [M] Pokémon, this attack does 40 more damage.", todo_implementation);
-    // map.insert("Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Metal],
+            target_benched_type: None,
+        },
+    );
     // map.insert("This attack also does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("This attack does 20 more damage for each [P] Pokémon in your discard pile.", todo_implementation);
 
