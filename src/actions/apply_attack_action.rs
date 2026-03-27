@@ -28,6 +28,7 @@ use super::{
     mutations::{
         active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
+        full_targets_damage_doutcome,
     },
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
@@ -1346,26 +1347,21 @@ fn self_and_both_bench_damage_attack(
     self_damage: u32,
     bench_damage: u32,
 ) -> Outcomes {
-    let opponent = (state.current_player + 1) % 2;
-    let mut targets: Vec<(u32, usize)> = state
-        .enumerate_bench_pokemon(opponent)
-        .map(|(idx, _)| (bench_damage, idx))
-        .collect();
-    targets.push((active_damage, 0));
-    let own_bench_indices: Vec<usize> = state
-        .enumerate_bench_pokemon(state.current_player)
-        .map(|(idx, _)| idx)
-        .collect();
-    damage_effect_doutcome(targets, move |_, state, action| {
-        for &idx in &own_bench_indices {
-            if let Some(pokemon) = state.in_play_pokemon[action.actor][idx].as_mut() {
-                pokemon.apply_damage(bench_damage);
-            }
-        }
-        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
-            active.apply_damage(self_damage);
-        }
-    })
+    let attacker = state.current_player;
+    let opponent = (attacker + 1) % 2;
+    let mut targets: Vec<(u32, usize, usize)> =
+        vec![(active_damage, opponent, 0), (self_damage, attacker, 0)];
+    targets.extend(
+        state
+            .enumerate_bench_pokemon(opponent)
+            .map(|(idx, _)| (bench_damage, opponent, idx)),
+    );
+    targets.extend(
+        state
+            .enumerate_bench_pokemon(attacker)
+            .map(|(idx, _)| (bench_damage, attacker, idx)),
+    );
+    full_targets_damage_doutcome(targets)
 }
 
 /// For attacks that deal damage and apply multiple status effects to opponent (e.g. Mega Venusaur Critical Bloom)
