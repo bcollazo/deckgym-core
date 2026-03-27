@@ -23,6 +23,7 @@ pub struct PlayedCard {
     pub attached_energy: Vec<EnergyType>,
     pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
+    pub moved_to_active_this_turn: bool,
     pub ability_used: bool,
     pub poisoned: bool,
     pub paralyzed: bool,
@@ -52,6 +53,7 @@ impl PlayedCard {
             stadium_hp_bonus: 0,
             attached_energy,
             played_this_turn,
+            moved_to_active_this_turn: false,
             cards_behind,
 
             attached_tool: None,
@@ -312,8 +314,9 @@ impl PlayedCard {
             }
         });
 
-        // Reset played_this_turn and ability_used
+        // Reset played_this_turn, moved_to_active_this_turn, and ability_used
         self.played_this_turn = false;
+        self.moved_to_active_this_turn = false;
         self.ability_used = false;
     }
 

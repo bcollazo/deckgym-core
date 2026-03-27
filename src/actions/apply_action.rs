@@ -476,6 +476,11 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         pokemon.clear_status_and_effects();
     }
 
+    // Mark the new active Pokemon as having moved from bench to active this turn
+    if let Some(pokemon) = state.in_play_pokemon[player][0].as_mut() {
+        pokemon.moved_to_active_this_turn = true;
+    }
+
     state.has_retreated = true;
 }
 
@@ -817,10 +822,9 @@ mod tests {
         };
         apply_action(&mut rng, &mut state, &action);
 
-        assert_eq!(
-            state.in_play_pokemon[0][0],
-            Some(to_playable_card(&primeape, false))
-        );
+        let mut expected_primeape = to_playable_card(&primeape, false);
+        expected_primeape.moved_to_active_this_turn = true;
+        assert_eq!(state.in_play_pokemon[0][0], Some(expected_primeape));
         assert_eq!(
             state.in_play_pokemon[0][2],
             Some(to_playable_card(&mankey, false))

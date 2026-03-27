@@ -775,8 +775,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("If this Pokémon has no damage on it, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfMovedFromBench { extra_damage: 50 },
+    );
+    map.insert(
+        "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfMovedFromBench { extra_damage: 60 },
+    );
     // map.insert("If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon's remaining HP is 30 or less, this attack does 60 more damage.", todo_implementation);
     // map.insert("If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage.", todo_implementation);
@@ -1535,7 +1541,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.", todo_implementation);
     // map.insert("If this Pokémon has any [P] Energy attached, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfMovedFromBench { extra_damage: 40 },
+    );
     map.insert(
         "If you have 5 or more [P] Energy in play, this attack does 60 more damage.",
         Mechanic::ExtraDamageIfTypeEnergyInPlay {

@@ -419,6 +419,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfMovedFromBench { extra_damage } => {
+            extra_damage_if_moved_from_bench_attack(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
@@ -1763,6 +1766,23 @@ fn extra_damage_if_knocked_out_last_turn_attack(
     extra_damage: u32,
 ) -> Outcomes {
     let damage = if state.knocked_out_by_opponent_attack_last_turn {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_moved_from_bench_attack(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> Outcomes {
+    let moved = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .map(|p| p.moved_to_active_this_turn)
+        .unwrap_or(false);
+    let damage = if moved {
         base_damage + extra_damage
     } else {
         base_damage
