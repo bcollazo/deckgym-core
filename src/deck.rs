@@ -297,7 +297,11 @@ Trainer: 14
         let deck = Deck::from_string(string).expect("Failed to parse deck from string");
         assert_eq!(
             deck.energy_types,
-            vec![EnergyType::Water, EnergyType::Fighting, EnergyType::Darkness]
+            vec![
+                EnergyType::Water,
+                EnergyType::Fighting,
+                EnergyType::Darkness
+            ]
         );
     }
 }
