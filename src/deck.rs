@@ -19,7 +19,7 @@ pub struct Deck {
 impl Hash for Deck {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.cards.hash(state);
-        // order energy types alphabetically to ensure consistent hash
+        // Normalize energy ordering so deck hashes are stable across processes.
         let mut energy_types: Vec<_> = self.energy_types.iter().collect();
         energy_types.sort();
         energy_types.hash(state);
@@ -70,9 +70,12 @@ impl Deck {
             });
         }
 
+        let mut energy_types: Vec<_> = energy_types.into_iter().collect();
+        energy_types.sort();
+
         Ok(Self {
             cards,
-            energy_types: energy_types.into_iter().collect(),
+            energy_types,
         })
     }
 
@@ -273,5 +276,32 @@ Trainer: 12
 2 Professor's Research P-A 7"#;
         let deck = Deck::from_string(string).expect("Failed to parse deck from string");
         assert_eq!(deck.cards.len(), 20);
+    }
+
+    #[test]
+    fn test_from_string_sorts_energy_types_deterministically() {
+        let string = r#"Pokémon: 6
+2 Froakie A1 87
+2 Darkrai ex A2 110
+2 Hitmonlee A1 154
+
+Trainer: 14
+2 Cyrus A2 150
+2 Professor's Research P-A 7
+2 Poké Ball P-A 5
+2 Pokémon Communication A2 146
+2 Leaf A1a 68
+2 Potion P-A 1
+2 X Speed P-A 2"#;
+
+        let deck = Deck::from_string(string).expect("Failed to parse deck from string");
+        assert_eq!(
+            deck.energy_types,
+            vec![
+                EnergyType::Water,
+                EnergyType::Fighting,
+                EnergyType::Darkness
+            ]
+        );
     }
 }
