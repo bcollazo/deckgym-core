@@ -3,12 +3,12 @@ use serde::{Deserialize, Serialize};
 
 use super::State;
 use crate::{
+    actions::{abilities::AbilityMechanic, has_ability_mechanic},
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType, BASIC_STAGE},
     tools::has_tool,
-    AbilityId,
 };
 
 /// This represents a card in the mat. Has a pointer to the card
@@ -211,15 +211,19 @@ impl PlayedCard {
         effective_hp += self.stadium_hp_bonus;
 
         // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
-            if ability_id == AbilityId::B1a034ReuniclusInfiniteIncrease {
-                let psychic_count = self
-                    .attached_energy
-                    .iter()
-                    .filter(|e| **e == EnergyType::Psychic)
-                    .count() as u32;
-                effective_hp += psychic_count * 30;
-            }
+        if has_ability_mechanic(
+            &self.card,
+            &AbilityMechanic::IncreaseHpPerAttachedEnergy {
+                energy_type: EnergyType::Psychic,
+                amount: 30,
+            },
+        ) {
+            let psychic_count = self
+                .attached_energy
+                .iter()
+                .filter(|e| **e == EnergyType::Psychic)
+                .count() as u32;
+            effective_hp += psychic_count * 30;
         }
 
         effective_hp
@@ -380,9 +384,7 @@ impl fmt::Debug for PlayedCard {
 
 pub fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
     state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
-        AbilityId::from_pokemon_id(&pokemon.get_id()[..])
-            .map(|id| id == AbilityId::A1a006SerperiorJungleTotem)
-            .unwrap_or(false)
+        has_ability_mechanic(&pokemon.card, &AbilityMechanic::DoubleGrassEnergy)
     })
 }
 

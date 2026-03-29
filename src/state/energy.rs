@@ -1,11 +1,11 @@
 use crate::{
     actions::{
-        abilities::AbilityMechanic, ability_mechanic_from_effect, handle_damage_only,
-        handle_knockouts,
+        abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
+        handle_damage_only, handle_knockouts,
     },
     effects::TurnEffect,
     models::{EnergyType, StatusCondition},
-    AbilityId, State,
+    State,
 };
 
 impl State {
@@ -95,11 +95,11 @@ impl State {
         from_zone: bool,
         is_turn_energy: bool,
     ) {
-        let ability_id = {
+        let mechanic = {
             let pokemon = self.in_play_pokemon[actor][in_play_idx]
                 .as_ref()
                 .expect("Pokemon should be there if attaching energy to it");
-            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
+            get_ability_mechanic(&pokemon.card).cloned()
         };
 
         if from_zone {
@@ -123,9 +123,15 @@ impl State {
         }
 
         // Check for Darkrai ex's Nightmare Aura ability
-        if let Some(ability_id) = ability_id {
-            if ability_id == AbilityId::A2110DarkraiExNightmareAura
-                && energy_type == EnergyType::Darkness
+        if let Some(mechanic) = mechanic {
+            if matches!(
+                mechanic,
+                AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf {
+                    energy_type: EnergyType::Darkness,
+                    amount: 20,
+                    only_turn_energy: true,
+                }
+            ) && energy_type == EnergyType::Darkness
                 && is_turn_energy
             {
                 // Deal 20 damage to opponent's active Pokémon
@@ -140,14 +146,24 @@ impl State {
             }
 
             // Check for Komala's Comatose ability
-            if ability_id == AbilityId::A3141KomalaComatose && in_play_idx == 0 && from_zone {
+            if matches!(
+                mechanic,
+                AbilityMechanic::SleepOnZoneAttachToSelfWhileActive
+            ) && in_play_idx == 0
+                && from_zone
+            {
                 // As long as this Pokémon is in the Active Spot, whenever you attach an Energy from your Energy Zone to it, it is now Asleep.
                 self.apply_status_condition(actor, 0, StatusCondition::Asleep);
             }
 
             // Check for Cresselia ex's Lunar Plumage ability
-            if ability_id == AbilityId::PA037CresseliaExLunarPlumage
-                && energy_type == EnergyType::Psychic
+            if matches!(
+                mechanic,
+                AbilityMechanic::HealSelfOnZoneAttach {
+                    energy_type: EnergyType::Psychic,
+                    amount: 20,
+                }
+            ) && energy_type == EnergyType::Psychic
                 && from_zone
             {
                 // Whenever you attach a Psychic Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.

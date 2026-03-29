@@ -142,7 +142,7 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
 /// Calculate poison damage based on base damage (10) plus +10 for each opponent's Nihilego with More Poison ability
 /// Only applies the bonus if the poisoned Pokemon is in the active spot (index 0)
 fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
-    use crate::ability_ids::AbilityId;
+    use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic};
 
     let base_damage = 10;
 
@@ -155,9 +155,10 @@ fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
     let nihilego_count = state
         .enumerate_in_play_pokemon(opponent)
         .filter(|(_, pokemon)| {
-            AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
-                .map(|id| id == AbilityId::A3a042NihilegoMorePoison)
-                .unwrap_or(false)
+            matches!(
+                get_ability_mechanic(&pokemon.card),
+                Some(AbilityMechanic::IncreasePoisonDamage { amount: 10 })
+            )
         })
         .count();
 

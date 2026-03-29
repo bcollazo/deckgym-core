@@ -287,7 +287,7 @@ mod tests {
         let outcomes = Outcomes::geometric_until_tails(5, |_| Box::new(|_, _, _| {}));
         let (probabilities, _) = outcomes.into_branches();
 
-        let expected = vec![0.5, 0.25, 0.125, 0.0625, 0.03125, 0.03125];
+        let expected = [0.5, 0.25, 0.125, 0.0625, 0.03125, 0.03125];
         assert_eq!(probabilities.len(), expected.len());
         for (actual, exp) in probabilities.iter().zip(expected.iter()) {
             assert!((actual - exp).abs() < 1e-9);
