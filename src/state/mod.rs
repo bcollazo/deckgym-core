@@ -15,6 +15,7 @@ use crate::{
     models::{Card, EnergyType, StatusCondition},
     move_generation,
     stadiums::is_starting_plains_active,
+    tools::has_tool,
 };
 
 pub use played_card::{has_serperior_jungle_totem, PlayedCard};
@@ -359,6 +360,11 @@ impl State {
 
         if has_ability_mechanic(&pokemon.card, &AbilityMechanic::ImmuneToStatusConditions) {
             debug!("Fabled Luster: Pokémon is immune to status conditions");
+            return;
+        }
+
+        if has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
+            debug!("Steel Apron: Pokémon is immune to status conditions");
             return;
         }
 
