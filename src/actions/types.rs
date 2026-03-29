@@ -100,6 +100,10 @@ pub enum SimpleAction {
     ShufflePokemonIntoDeck {
         hand_pokemon: Vec<Card>,
     },
+    /// Maintenance: shuffle specific cards from hand into your deck, then draw a card
+    ShuffleOwnCardsIntoDeck {
+        cards: Vec<Card>,
+    },
     /// Silver: shuffle a specific Supporter from opponent's hand into their deck
     ShuffleOpponentSupporter {
         supporter_card: Card,
@@ -244,6 +248,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
                 write!(f, "ShufflePokemonIntoDeck({:?})", hand_pokemon)
+            }
+            SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
+                write!(f, "ShuffleOwnCardsIntoDeck({:?})", cards)
             }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")

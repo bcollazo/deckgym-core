@@ -88,6 +88,9 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
             forecast_shuffle_pokemon_into_deck(action.actor, hand_pokemon)
         }
+        SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
+            forecast_shuffle_own_cards_into_deck(action.actor, cards)
+        }
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
         }
@@ -585,6 +588,21 @@ fn forecast_shuffle_pokemon_into_deck(acting_player: usize, hand_pokemon: &[Card
         }
         state.decks[acting_player].shuffle(false, rng);
         debug!("May: Shuffled {:?} from hand into deck", pokemon_list);
+    })
+}
+
+fn forecast_shuffle_own_cards_into_deck(acting_player: usize, cards: &[Card]) -> Outcomes {
+    let cards_to_shuffle = cards.to_vec();
+    Outcomes::single_fn(move |rng, state, _action| {
+        for card in &cards_to_shuffle {
+            state.transfer_card_from_hand_to_deck(acting_player, card);
+        }
+        state.decks[acting_player].shuffle(false, rng);
+        state.maybe_draw_card(acting_player);
+        debug!(
+            "Maintenance: Shuffled {:?} from hand into deck, then drew a card",
+            cards_to_shuffle
+        );
     })
 }
 

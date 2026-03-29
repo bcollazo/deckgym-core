@@ -169,6 +169,7 @@ pub fn forecast_trainer_action(
         }
         CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
+        CardId::B2b066Maintenance => Outcomes::single_fn(maintenance_effect),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
         CardId::B2b068Calem | CardId::B2b082Calem => Outcomes::single_fn(calem_effect),
         CardId::B2b065NastyNotice => Outcomes::single_fn(nasty_notice_effect),
@@ -207,6 +208,20 @@ fn iris_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, if your opponent's Active Pokémon is Knocked Out by damage from
     // an attack used by your Haxorus, you get 1 more point.
     state.add_turn_effect(TurnEffect::BonusPointForHaxorusActiveKO, 0);
+}
+
+fn maintenance_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let hand_cards = state.hands[action.actor].to_vec();
+    let shuffle_choices: Vec<SimpleAction> = generate_combinations(&hand_cards, 2)
+        .into_iter()
+        .map(|cards| SimpleAction::ShuffleOwnCardsIntoDeck { cards })
+        .collect();
+
+    if !shuffle_choices.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, shuffle_choices));
+    }
 }
 
 fn calem_effect(_: &mut StdRng, state: &mut State, action: &Action) {
@@ -1398,5 +1413,27 @@ mod tests {
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
         assert!(!state.get_active(0).is_confused());
+    }
+
+    #[test]
+    fn test_maintenance_effect_creates_two_card_shuffle_choices() {
+        let mut state = State::default();
+        state.hands[0] = vec![
+            get_card_by_enum(CardId::PA005PokeBall),
+            get_card_by_enum(CardId::PA006RedCard),
+            get_card_by_enum(CardId::PA007ProfessorsResearch),
+        ];
+
+        maintenance_effect(&mut StdRng::seed_from_u64(0), &mut state, &make_action());
+
+        let (_, choices) = state
+            .move_generation_stack
+            .last()
+            .expect("Maintenance should push choices onto the stack");
+        assert_eq!(choices.len(), 3);
+        assert!(choices.iter().all(|choice| matches!(
+            choice,
+            SimpleAction::ShuffleOwnCardsIntoDeck { cards } if cards.len() == 2
+        )));
     }
 }

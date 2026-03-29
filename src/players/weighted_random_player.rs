@@ -59,6 +59,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Activate { .. } => 1,
         SimpleAction::CommunicatePokemon { .. } => 5,
         SimpleAction::ShufflePokemonIntoDeck { .. } => 5,
+        SimpleAction::ShuffleOwnCardsIntoDeck { .. } => 5,
         SimpleAction::ShuffleOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOwnCards { .. } => 5,
