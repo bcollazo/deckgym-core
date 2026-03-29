@@ -13,8 +13,13 @@ fn test_confused_pokemon_can_attack() {
 
     // Set up confused Charizard vs Squirtle
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1035Charizard)
-            .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])],
+        vec![
+            PlayedCard::from_id(CardId::A1035Charizard).with_energy(vec![
+                EnergyType::Fire,
+                EnergyType::Fire,
+                EnergyType::Fire,
+            ]),
+        ],
         vec![PlayedCard::from_id(CardId::A1053Squirtle)],
     );
     state.apply_status_condition(0, 0, StatusCondition::Confused);
@@ -140,8 +145,13 @@ fn test_confused_attack_can_succeed() {
         let mut state = game.get_state_clone();
 
         state.set_board(
-            vec![PlayedCard::from_id(CardId::A1035Charizard)
-                .with_energy(vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire])],
+            vec![
+                PlayedCard::from_id(CardId::A1035Charizard).with_energy(vec![
+                    EnergyType::Fire,
+                    EnergyType::Fire,
+                    EnergyType::Fire,
+                ]),
+            ],
             vec![PlayedCard::from_id(CardId::A1053Squirtle)],
         );
         state.apply_status_condition(0, 0, StatusCondition::Confused);

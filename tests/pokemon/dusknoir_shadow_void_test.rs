@@ -1,7 +1,7 @@
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    models::{PlayedCard},
+    models::PlayedCard,
     test_support::get_initialized_game,
 };
 
