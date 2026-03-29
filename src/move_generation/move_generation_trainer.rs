@@ -208,6 +208,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::B1214PlumeFossil
         | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
         CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
+        CardId::B2b066Maintenance => can_play_maintenance(state, trainer_card),
         CardId::B2b067Iris | CardId::B2b081Iris => can_play_trainer(state, trainer_card),
         CardId::B2b068Calem | CardId::B2b082Calem => can_play_trainer(state, trainer_card),
         CardId::A3b068Hau | CardId::A3b085Hau => can_play_trainer(state, trainer_card),
@@ -751,6 +752,15 @@ fn can_play_team_rocket_grunt(
         .map(|p| !p.attached_energy.is_empty())
         .unwrap_or(false);
     if has_energy {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Maintenance can be played (requires 2 other cards in hand after playing it)
+fn can_play_maintenance(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state.hands[state.current_player].len() >= 3 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
