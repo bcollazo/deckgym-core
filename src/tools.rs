@@ -42,6 +42,8 @@ static ELECTRICAL_CORD_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::A3a065ElectricalCord));
 static INFLATABLE_BOAT_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::A4a067InflatableBoat));
+static STEEL_APRON_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::A4153SteelApron));
 static HEAVY_HELMET_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B1219HeavyHelmet));
 static PROTECTIVE_PONCHO_EFFECT: LazyLock<String> =
@@ -77,6 +79,9 @@ pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> b
     if effect == INFLATABLE_BOAT_EFFECT.as_str() {
         return pokemon.card.get_type() == Some(EnergyType::Water);
     }
+    if effect == STEEL_APRON_EFFECT.as_str() {
+        return pokemon.card.get_type() == Some(EnergyType::Metal);
+    }
     if effect == METAL_CORE_BARRIER_EFFECT.as_str() {
         return pokemon.card.get_type() == Some(EnergyType::Metal);
     }
@@ -110,6 +115,7 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == LEAF_CAPE_EFFECT.as_str()
             || e == ELECTRICAL_CORD_EFFECT.as_str()
             || e == INFLATABLE_BOAT_EFFECT.as_str()
+            || e == STEEL_APRON_EFFECT.as_str()
             || e == HEAVY_HELMET_EFFECT.as_str()
             || e == PROTECTIVE_PONCHO_EFFECT.as_str()
             || e == METAL_CORE_BARRIER_EFFECT.as_str()

@@ -257,10 +257,14 @@ fn apply_attach_energy(
 
 fn apply_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_card: &Card) {
     tools::ensure_tool_card(tool_card);
-    state.in_play_pokemon[actor][in_play_idx]
+    let pokemon = state.in_play_pokemon[actor][in_play_idx]
         .as_mut()
-        .expect("Pokemon should be there if attaching tool to it")
-        .attached_tool = Some(tool_card.clone());
+        .expect("Pokemon should be there if attaching tool to it");
+    pokemon.attached_tool = Some(tool_card.clone());
+
+    if tools::has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
+        pokemon.cure_status_conditions();
+    }
 }
 
 fn apply_move_energy(

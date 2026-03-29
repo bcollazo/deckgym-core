@@ -382,6 +382,26 @@ fn get_metal_core_barrier_reduction(
     0
 }
 
+fn get_steel_apron_reduction(
+    state: &State,
+    attacking_player: usize,
+    (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+
+    let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
+        .as_ref()
+        .expect("Defending Pokemon should be there when checking Steel Apron");
+    if has_tool(defending_pokemon, CardId::A4153SteelApron) {
+        debug!("Steel Apron: Reducing damage by 10");
+        return 10;
+    }
+    0
+}
+
 fn get_intimidating_fang_reduction(
     state: &State,
     attacking_ref: (usize, usize),
@@ -690,6 +710,12 @@ pub(crate) fn modify_damage(
     let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
     let metal_core_barrier_reduction =
         get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
+    let steel_apron_reduction = get_steel_apron_reduction(
+        state,
+        attacking_player,
+        (target_player, target_idx),
+        is_from_active_attack,
+    );
     let ability_damage_reduction =
         get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
     let ability_damage_increase =
@@ -736,7 +762,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
@@ -745,6 +771,7 @@ pub(crate) fn modify_damage(
         reduced_turn_effect_modifiers,
         heavy_helmet_reduction,
         metal_core_barrier_reduction,
+        steel_apron_reduction,
         intimidating_fang_reduction,
         ability_damage_reduction,
         ability_damage_increase,
@@ -763,6 +790,7 @@ pub(crate) fn modify_damage(
                 + reduced_turn_effect_modifiers
                 + heavy_helmet_reduction
                 + metal_core_barrier_reduction
+                + steel_apron_reduction
                 + intimidating_fang_reduction
                 + ability_damage_reduction,
         )
