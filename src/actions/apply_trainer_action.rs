@@ -171,6 +171,7 @@ pub fn forecast_trainer_action(
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),
         CardId::B2b068Calem | CardId::B2b082Calem => Outcomes::single_fn(calem_effect),
+        CardId::B2b065NastyNotice => Outcomes::single_fn(nasty_notice_effect),
         CardId::A3b068Hau | CardId::A3b085Hau => Outcomes::single_fn(hau_effect),
         CardId::A3142BigMalasada => Outcomes::single_fn(big_malasada_effect),
         CardId::B2150Sightseer | CardId::B2191Sightseer => sightseer_effect(acting_player, state),
@@ -224,6 +225,23 @@ fn calem_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     for _ in 0..mega_count {
         state.maybe_draw_card(action.actor);
     }
+}
+
+fn nasty_notice_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Your opponent discards cards from their hand until they have 4 cards in their hand.
+    let opponent = (action.actor + 1) % 2;
+    let excess_cards = state.hands[opponent].len().saturating_sub(4);
+
+    if excess_cards == 0 {
+        return;
+    }
+
+    let choices = generate_combinations(&state.hands[opponent], excess_cards)
+        .into_iter()
+        .map(|cards| SimpleAction::DiscardOwnCards { cards })
+        .collect::<Vec<_>>();
+
+    state.move_generation_stack.push((opponent, choices));
 }
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
@@ -1237,6 +1255,8 @@ fn team_rocket_grunt_outcomes() -> Outcomes {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
+
     use rand::{rngs::StdRng, SeedableRng};
 
     use super::*;
@@ -1312,6 +1332,61 @@ mod tests {
         big_malasada_effect(&mut rng, &mut state, &make_action());
 
         assert!(!state.get_active(0).is_burned());
+    }
+
+    #[test]
+    fn test_nasty_notice_queues_opponent_discard_choices() {
+        let mut state = State::default();
+        state.hands[1] = vec![
+            get_card_by_enum(CardId::A1001Bulbasaur),
+            get_card_by_enum(CardId::A1033Charmander),
+            get_card_by_enum(CardId::A1053Squirtle),
+            get_card_by_enum(CardId::A1a025Pikachu),
+            get_card_by_enum(CardId::PA001Potion),
+        ];
+
+        nasty_notice_effect(&mut StdRng::seed_from_u64(0), &mut state, &make_action());
+
+        let (actor, choices) = state
+            .move_generation_stack
+            .pop()
+            .expect("Nasty Notice should queue discard choices");
+
+        assert_eq!(actor, 1);
+        assert_eq!(choices.len(), 5);
+
+        let actual_discards = choices
+            .into_iter()
+            .map(|choice| match choice {
+                SimpleAction::DiscardOwnCards { cards } => {
+                    assert_eq!(cards.len(), 1);
+                    cards[0].get_name()
+                }
+                other => panic!("Unexpected action: {other:?}"),
+            })
+            .collect::<BTreeSet<_>>();
+
+        let expected_discards = ["Bulbasaur", "Charmander", "Pikachu", "Potion", "Squirtle"]
+            .into_iter()
+            .map(str::to_string)
+            .collect::<BTreeSet<_>>();
+
+        assert_eq!(actual_discards, expected_discards);
+    }
+
+    #[test]
+    fn test_nasty_notice_does_nothing_at_four_cards() {
+        let mut state = State::default();
+        state.hands[1] = vec![
+            get_card_by_enum(CardId::A1001Bulbasaur),
+            get_card_by_enum(CardId::A1033Charmander),
+            get_card_by_enum(CardId::A1053Squirtle),
+            get_card_by_enum(CardId::A1a025Pikachu),
+        ];
+
+        nasty_notice_effect(&mut StdRng::seed_from_u64(0), &mut state, &make_action());
+
+        assert!(state.move_generation_stack.is_empty());
     }
 
     #[test]
