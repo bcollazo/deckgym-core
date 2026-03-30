@@ -235,9 +235,6 @@ impl State {
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
-        // Soothing Wind: continuously cure status conditions for energy-bearing pokemon
-        self.apply_soothing_wind();
-
         // Maintain PlayedCard state for _all_ players
         for i in 0..2 {
             self.in_play_pokemon[i].iter_mut().for_each(|x| {
@@ -252,20 +249,12 @@ impl State {
         self.has_used_stadium[self.current_player] = false;
     }
 
-    /// Clear status conditions from every energy-bearing Pokémon on teams that have
-    /// a Teal Mask Ogerpon ex (Soothing Wind) in play.
-    fn apply_soothing_wind(&mut self) {
-        for player in 0..2 {
-            let has_soothing_wind = self.in_play_pokemon[player]
-                .iter()
-                .flatten()
-                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
-            if has_soothing_wind {
-                for slot in self.in_play_pokemon[player].iter_mut().flatten() {
-                    if !slot.attached_energy.is_empty() {
-                        slot.cure_status_conditions();
-                    }
-                }
+    /// Clear status conditions from every energy-bearing Pokémon on a player's side.
+    /// Called immediately when a Pokémon with SoothingWind enters play.
+    pub(crate) fn apply_soothing_wind_for_player(&mut self, player: usize) {
+        for slot in self.in_play_pokemon[player].iter_mut().flatten() {
+            if !slot.attached_energy.is_empty() {
+                slot.cure_status_conditions();
             }
         }
     }

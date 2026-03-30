@@ -480,9 +480,8 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
 
 fn heal_active_your_pokemon(amount: u32) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
-        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
-            active.heal(amount);
-        }
+        let active = state.get_active_mut(action.actor);
+        active.heal(amount);
     })
 }
 

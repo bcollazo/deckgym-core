@@ -835,10 +835,22 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 50 },
     );
     // map.insert("If your opponent's Active Pokémon is Burned, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 40 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 50 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 60 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 70 },
+    );
     // map.insert("If your opponent's Active Pokémon is Zangoose, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage.", todo_implementation);

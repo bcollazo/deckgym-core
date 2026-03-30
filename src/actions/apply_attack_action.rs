@@ -565,6 +565,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipAlsoChoiceBenchDamage { opponent, damage } => {
             coin_flip_also_choice_bench_damage(state, *opponent, attack.fixed_damage, *damage)
         }
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage } => {
+            extra_damage_if_defender_poisoned(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 
@@ -2144,15 +2147,13 @@ fn coin_flip_also_choice_bench_damage(
     // Build choices that bundle active + bench damage atomically (avoids stale slot issues).
     let choices: Vec<_> = state
         .enumerate_bench_pokemon(bench_target)
-        .map(|(in_play_idx, _)| {
-            SimpleAction::ApplyDamage {
-                attacking_ref: (state.current_player, 0),
-                targets: vec![
-                    (active_damage, opponent_player, 0),
-                    (bench_damage, bench_target, in_play_idx),
-                ],
-                is_from_active_attack: true,
-            }
+        .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+            attacking_ref: (state.current_player, 0),
+            targets: vec![
+                (active_damage, opponent_player, 0),
+                (bench_damage, bench_target, in_play_idx),
+            ],
+            is_from_active_attack: true,
         })
         .collect();
 
@@ -2165,10 +2166,26 @@ fn coin_flip_also_choice_bench_damage(
     // Tails: deal active damage directly (bench untouched).
     Outcomes::binary_coin(
         Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
-            state.move_generation_stack.push((action.actor, choices.clone()));
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
         }),
         active_damage_mutation(active_damage),
     )
+}
+
+fn extra_damage_if_defender_poisoned(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let damage = if state.get_active(opponent).is_poisoned() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
 }
 
 fn mega_ampharos_lightning_lancer() -> Outcomes {

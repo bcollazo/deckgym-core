@@ -407,3 +407,130 @@ fn test_cornerstone_dance_heads_reduces_incoming_damage() {
         "Cornerstone Dance's -100 damage reduction should keep Ogerpon alive (130 - 100 = 30 dmg on 80 HP)"
     );
 }
+
+// ── Soothing Wind – cure on play ─────────────────────────────────────────────
+
+/// When Teal Mask Ogerpon ex is played to the bench, it immediately cures status
+/// conditions from any energy-bearing Pokémon on that player's side.
+#[test]
+fn test_soothing_wind_cures_on_play() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Player 0 has a poisoned Bulbasaur with energy in the active spot.
+    // Ogerpon is in hand – not yet in play, so no Soothing Wind effect.
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+
+    // Poison the active via apply_status_condition – Ogerpon not in play yet, so no prevention.
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
+    assert!(
+        state.get_active(0).is_poisoned(),
+        "Bulbasaur should be Poisoned before Ogerpon enters play"
+    );
+
+    // Add Ogerpon to player 0's hand and place it on the bench.
+    let ogerpon_card = get_card_by_enum(CardId::B2017TealMaskOgerponEx);
+    state.hands[0].push(ogerpon_card.clone());
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Place(ogerpon_card, 1),
+        is_stack: false,
+    });
+
+    assert!(
+        !game.get_state_clone().get_active(0).is_poisoned(),
+        "Soothing Wind should cure Poison the moment Ogerpon enters play"
+    );
+}
+
+// ── Venoshock interaction ─────────────────────────────────────────────────────
+
+/// Salandit's Venoshock deals 10 + 40 = 50 damage when the target is Poisoned.
+#[test]
+fn test_venoshock_deals_extra_damage_when_poisoned() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Player 0: Salandit with 1 Colorless energy (enough for Venoshock).
+    // Player 1: Bulbasaur (70 HP, no energy) – will be poisoned.
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a015Salandit).with_energy(vec![EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+
+    // Poison player 1's active (no Soothing Wind in play yet).
+    state.apply_status_condition(1, 0, StatusCondition::Poisoned);
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
+
+    // Bulbasaur 70 HP – 50 (10 base + 40 poison bonus) = 20.
+    let hp = game.get_state_clone().get_active(1).get_remaining_hp();
+    assert_eq!(
+        hp, 20,
+        "Venoshock should deal 50 damage to a Poisoned target"
+    );
+}
+
+/// When Ogerpon is played to the bench, it cures Poison from the active, and
+/// a subsequent Venoshock deals only base 10 damage (no poison bonus).
+#[test]
+fn test_soothing_wind_cures_before_venoshock_no_extra_damage() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Player 0: Salandit active with energy (opponent's attacker).
+    // Player 1: Bulbasaur active (poisoned, has energy) + Ogerpon in hand.
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1a015Salandit).with_energy(vec![EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass])],
+    );
+
+    // Poison Bulbasaur via apply_status_condition – Ogerpon not in play yet, no prevention.
+    state.apply_status_condition(1, 0, StatusCondition::Poisoned);
+    assert!(
+        state.get_active(1).is_poisoned(),
+        "Bulbasaur should be Poisoned before Ogerpon enters play"
+    );
+
+    // Player 1 plays Ogerpon to bench → Soothing Wind immediately cures Bulbasaur.
+    let ogerpon_card = get_card_by_enum(CardId::B2017TealMaskOgerponEx);
+    state.hands[1].push(ogerpon_card.clone());
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 1,
+        action: SimpleAction::Place(ogerpon_card, 1),
+        is_stack: false,
+    });
+
+    assert!(
+        !game.get_state_clone().get_active(1).is_poisoned(),
+        "Soothing Wind should have cured Bulbasaur's Poison when Ogerpon was played"
+    );
+
+    // Now player 0 attacks with Venoshock – Bulbasaur is no longer Poisoned,
+    // so only base 10 damage should be dealt.
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
+
+    // Bulbasaur 70 HP – 10 (base only, no poison bonus) = 60.
+    let hp = game.get_state_clone().get_active(1).get_remaining_hp();
+    assert_eq!(
+        hp, 60,
+        "Venoshock should deal only base 10 damage after Soothing Wind cured the Poison"
+    );
+}

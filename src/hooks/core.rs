@@ -693,7 +693,8 @@ pub(crate) fn modify_damage(
         return base_damage;
     }
 
-    let Some(attacking_pokemon) = state.in_play_pokemon[attacking_player][attacking_idx].as_ref() else {
+    let Some(attacking_pokemon) = state.in_play_pokemon[attacking_player][attacking_idx].as_ref()
+    else {
         return 0; // Attacker slot is empty (e.g. KO'd by counter-attack before queued damage applied)
     };
     let Some(receiving_pokemon) = state.in_play_pokemon[target_player][target_idx].as_ref() else {

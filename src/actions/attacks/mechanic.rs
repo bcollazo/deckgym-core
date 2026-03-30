@@ -303,4 +303,8 @@ pub enum Mechanic {
         opponent: bool,
         damage: u32,
     },
+    /// Venoshock – extra damage if opponent's active is Poisoned.
+    ExtraDamageIfDefenderPoisoned {
+        extra_damage: u32,
+    },
 }
