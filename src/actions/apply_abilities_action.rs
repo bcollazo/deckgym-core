@@ -179,6 +179,9 @@ fn forecast_ability_by_mechanic(mechanic: &AbilityMechanic) -> Outcomes {
         AbilityMechanic::ImmuneToStatusConditions => {
             panic!("ImmuneToStatusConditions is a passive ability")
         }
+        AbilityMechanic::SoothingWind => {
+            panic!("SoothingWind is a passive ability")
+        }
     }
 }
 
@@ -306,8 +309,9 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
 
 fn heal_active_your_pokemon(amount: u32) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.heal(amount);
+        if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+            active.heal(amount);
+        }
     })
 }
 

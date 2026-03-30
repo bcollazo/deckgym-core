@@ -235,6 +235,9 @@ impl State {
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
+        // Soothing Wind: continuously cure status conditions for energy-bearing pokemon
+        self.apply_soothing_wind();
+
         // Maintain PlayedCard state for _all_ players
         for i in 0..2 {
             self.in_play_pokemon[i].iter_mut().for_each(|x| {
@@ -247,6 +250,24 @@ impl State {
         self.has_played_support = false;
         self.has_retreated = false;
         self.has_used_stadium[self.current_player] = false;
+    }
+
+    /// Clear status conditions from every energy-bearing Pokémon on teams that have
+    /// a Teal Mask Ogerpon ex (Soothing Wind) in play.
+    fn apply_soothing_wind(&mut self) {
+        for player in 0..2 {
+            let has_soothing_wind = self.in_play_pokemon[player]
+                .iter()
+                .flatten()
+                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
+            if has_soothing_wind {
+                for slot in self.in_play_pokemon[player].iter_mut().flatten() {
+                    if !slot.attached_energy.is_empty() {
+                        slot.cure_status_conditions();
+                    }
+                }
+            }
+        }
     }
 
     pub(crate) fn set_pending_will_first_heads(&mut self) {
@@ -366,6 +387,20 @@ impl State {
         if has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
             debug!("Steel Apron: Pokémon is immune to status conditions");
             return;
+        }
+
+        // Soothing Wind: if any of this player's Pokémon has the ability, all their
+        // energy-bearing Pokémon are immune to Special Conditions.
+        let has_energy = !pokemon.attached_energy.is_empty();
+        if has_energy {
+            let has_soothing_wind = self.in_play_pokemon[player]
+                .iter()
+                .flatten()
+                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
+            if has_soothing_wind {
+                debug!("Soothing Wind: Pokémon with energy is immune to status conditions");
+                return;
+            }
         }
 
         self.in_play_pokemon[player][in_play_idx]

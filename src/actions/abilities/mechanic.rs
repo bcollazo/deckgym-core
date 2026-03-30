@@ -51,4 +51,8 @@ pub enum AbilityMechanic {
     CoinFlipSleepOpponentActive,
     DiscardFromHandToDrawCard,
     ImmuneToStatusConditions,
+    /// Teal Mask Ogerpon ex – Soothing Wind (passive):
+    /// Each of your Pokémon that has any Energy attached recovers from all Special Conditions
+    /// and can't be affected by any Special Conditions.
+    SoothingWind,
 }
