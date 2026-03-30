@@ -2,12 +2,11 @@ mod attacks;
 mod move_generation_abilities;
 mod move_generation_trainer;
 
-use crate::actions::{Action, SimpleAction};
+use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic, Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::stadiums::can_use_mesagoza;
 use crate::state::State;
-use crate::AbilityId;
 
 use attacks::generate_attack_actions;
 use move_generation_abilities::generate_ability_actions;
@@ -183,9 +182,12 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     // (unless there's a Boosted Evolution Eevee in active spot)
                     let has_boosted_evolution_in_active = state.in_play_pokemon[current_player][0]
                         .as_ref()
-                        .and_then(|active| AbilityId::from_pokemon_id(&active.card.get_id()[..]))
-                        .map(|id| id == AbilityId::B1184EeveeBoostedEvolution)
-                        .unwrap_or(false);
+                        .is_some_and(|active| {
+                            matches!(
+                                get_ability_mechanic(&active.card),
+                                Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
+                            )
+                        });
 
                     if state.is_users_first_turn() && !has_boosted_evolution_in_active {
                         return;
@@ -198,9 +200,10 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                         .for_each(|(i, pokemon)| {
                             // Check if this pokemon has Boosted Evolution and is in active spot
                             let can_bypass_timing = i == 0
-                                && AbilityId::from_pokemon_id(&pokemon.card.get_id()[..])
-                                    .map(|id| id == AbilityId::B1184EeveeBoostedEvolution)
-                                    .unwrap_or(false);
+                                && matches!(
+                                    get_ability_mechanic(&pokemon.card),
+                                    Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
+                                );
 
                             if (!pokemon.played_this_turn || can_bypass_timing)
                                 && can_evolve_into(hand_card, pokemon)
@@ -257,9 +260,10 @@ fn has_opponent_aerodactyl_ex_primeval_law(state: &State, player: usize) -> bool
     state
         .enumerate_in_play_pokemon(opponent)
         .any(|(_, pokemon)| {
-            AbilityId::from_pokemon_id(&pokemon.get_id()[..])
-                .map(|id| id == AbilityId::A1a046AerodactylExPrimevalLaw)
-                .unwrap_or(false)
+            matches!(
+                get_ability_mechanic(&pokemon.card),
+                Some(AbilityMechanic::PreventOpponentActiveEvolution)
+            )
         })
 }
 

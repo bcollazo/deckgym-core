@@ -1,4 +1,5 @@
 use crate::{
+    models::PlayedCard,
     players::{Player, RandomPlayer},
     Deck, Game,
 };
@@ -39,6 +40,29 @@ pub fn get_initialized_game(seed: u64) -> Game<'static> {
     let mut game = crate::Game::new(players, seed);
     game.play_until_stable();
     game
+}
+
+pub fn get_initialized_game_with_board(
+    seed: u64,
+    current_player: usize,
+    turn_count: u8,
+    player_board: Vec<PlayedCard>,
+    opponent_board: Vec<PlayedCard>,
+) -> Game<'static> {
+    let mut game = get_initialized_game(seed);
+    let mut state = game.get_state_clone();
+    state.set_board(player_board, opponent_board);
+    state.current_player = current_player;
+    state.turn_count = turn_count;
+    game.set_state(state);
+    game
+}
+
+pub fn get_test_game_with_board(
+    player_board: Vec<PlayedCard>,
+    opponent_board: Vec<PlayedCard>,
+) -> Game<'static> {
+    get_initialized_game_with_board(0, 0, 3, player_board, opponent_board)
 }
 
 lazy_static! {

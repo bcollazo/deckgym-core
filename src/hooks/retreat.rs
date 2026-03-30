@@ -1,5 +1,5 @@
 use crate::{
-    ability_ids::AbilityId,
+    actions::{abilities::AbilityMechanic, get_ability_mechanic},
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
@@ -22,10 +22,12 @@ pub(crate) fn can_retreat(state: &State) -> bool {
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
-        if let Some(ability_id) = AbilityId::from_pokemon_id(&card.get_id()) {
-            if ability_id == AbilityId::A2078GiratinaLevitate && !card.attached_energy.is_empty() {
-                return vec![];
-            }
+        if matches!(
+            get_ability_mechanic(&card.card),
+            Some(AbilityMechanic::NoRetreatIfHasEnergy)
+        ) && !card.attached_energy.is_empty()
+        {
+            return vec![];
         }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
         if has_tool(card, CardId::A4a067InflatableBoat)
@@ -52,10 +54,13 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             // Only affects Basic Pokemon
             let current_player = state.current_player;
             for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
-                if let Some(ability_id) = AbilityId::from_pokemon_id(&benched_pokemon.get_id()) {
-                    if ability_id == AbilityId::A2a069ShayminSkySupport {
-                        to_subtract += 1;
-                    }
+                if matches!(
+                    get_ability_mechanic(&benched_pokemon.card),
+                    Some(
+                        AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { amount: 1 }
+                    )
+                ) {
+                    to_subtract += 1;
                 }
             }
         }
@@ -74,12 +79,12 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         // This check needs to look at if the OPPONENT has Ariados in play
         let opponent = (state.current_player + 1) % 2;
         for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
-            if let Some(ability_id) = AbilityId::from_pokemon_id(&pokemon.get_id()) {
-                if ability_id == AbilityId::B1a006AriadosTrapTerritory {
-                    // Add 1 Colorless to retreat cost for opponent's active
-                    normal_cost.push(EnergyType::Colorless);
-                    break; // Only apply once
-                }
+            if matches!(
+                get_ability_mechanic(&pokemon.card),
+                Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
+            ) {
+                normal_cost.push(EnergyType::Colorless);
+                break;
             }
         }
 

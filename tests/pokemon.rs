@@ -1,0 +1,38 @@
+#[path = "pokemon/arceus_ex_test.rs"]
+mod arceus_ex_test;
+#[path = "pokemon/blastoise_double_splash_test.rs"]
+mod blastoise_double_splash_test;
+#[path = "pokemon/charmeleon_ignition_test.rs"]
+mod charmeleon_ignition_test;
+#[path = "pokemon/darkrai_ex_test.rs"]
+mod darkrai_ex_test;
+#[path = "pokemon/dusknoir_shadow_void_test.rs"]
+mod dusknoir_shadow_void_test;
+#[path = "pokemon/jolteon_ex_test.rs"]
+mod jolteon_ex_test;
+#[path = "pokemon/legacy_ability_logic_test.rs"]
+mod legacy_ability_logic_test;
+#[path = "pokemon/lucario_fighting_coach_test.rs"]
+mod lucario_fighting_coach_test;
+#[path = "pokemon/magneton_test.rs"]
+mod magneton_test;
+#[path = "pokemon/magnezone_mirror_shot_test.rs"]
+mod magnezone_mirror_shot_test;
+#[path = "pokemon/marshadow_revenge_test.rs"]
+mod marshadow_revenge_test;
+#[path = "pokemon/mega_kangaskhan_double_punching_family_test.rs"]
+mod mega_kangaskhan_double_punching_family_test;
+#[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
+mod mega_steelix_adamantine_rolling_test;
+#[path = "pokemon/porygonz_cyberjack_test.rs"]
+mod porygonz_cyberjack_test;
+#[path = "pokemon/rampardos_head_smash_test.rs"]
+mod rampardos_head_smash_test;
+#[path = "pokemon/shinx_hide_test.rs"]
+mod shinx_hide_test;
+#[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
+mod sunflora_quick_grow_beam_test;
+#[path = "pokemon/vulpix_tail_whip_test.rs"]
+mod vulpix_tail_whip_test;
+#[path = "pokemon/xerneas_geoburst_test.rs"]
+mod xerneas_geoburst_test;

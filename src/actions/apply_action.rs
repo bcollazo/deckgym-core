@@ -152,7 +152,11 @@ fn forecast_deterministic_action() -> Outcomes {
 
 fn apply_deterministic_action(state: &mut State, action: &Action) {
     match &action.action {
-        SimpleAction::DrawCard { .. } => state.maybe_draw_card(action.actor),
+        SimpleAction::DrawCard { amount } => {
+            for _ in 0..*amount {
+                state.maybe_draw_card(action.actor);
+            }
+        }
         SimpleAction::Attach {
             attachments,
             is_turn_energy,

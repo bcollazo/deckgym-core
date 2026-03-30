@@ -3,7 +3,10 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{card_ids::CardId, AbilityId};
+use crate::{
+    actions::{abilities::AbilityMechanic, has_ability_mechanic},
+    card_ids::CardId,
+};
 
 /// Represents the type of energy.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
@@ -258,11 +261,10 @@ impl Card {
 
                 // Special case: Eevee ex's Veevee 'volve ability
                 // Allows Eevee ex to evolve into any Pokemon that evolves from "Eevee"
-                if let Some(ability_id) = AbilityId::from_pokemon_id(&self.get_id()[..]) {
-                    if ability_id == AbilityId::A3b056EeveeExVeeveeVolve && evolves_from == "Eevee"
-                    {
-                        return true;
-                    }
+                if has_ability_mechanic(self, &AbilityMechanic::CanEvolveIntoEeveeEvolution)
+                    && evolves_from == "Eevee"
+                {
+                    return true;
                 }
             }
         }
