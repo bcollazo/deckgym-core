@@ -21,31 +21,35 @@ to see what is missing from the specified card.
 ## Abilities
 
 - Get the details of all the cards that have the ability you want to implement by using the following script:
+  - For a single card or name lookup:
 
   ```bash
   cargo run --bin search "Venusaur"
   ```
 
 - Copy the ids of cards to implement (including full art versions) in the given JSON. Only choose the ones with the ability you want to implement.
-- Use the new `AbilityMechanic` pathway first.
+- All abilities should use the `AbilityMechanic` pathway.
   - Find the ability effect text in the JSON and search for it in `effect_ability_mechanic_map.rs`.
-  - Decide whether to re-use an existing `AbilityMechanic` or add a new variant in `src/actions/abilities/mechanic.rs`.
-  - Uncomment all matching `map.insert(...)` lines in `effect_ability_mechanic_map.rs` and map them to the correct `AbilityMechanic` with parameters.
-  - Implement the mechanic logic in `forecast_ability_by_mechanic` in `apply_abilities_action.rs`.
+  - Re-use an existing `AbilityMechanic` when possible. If not, add a new variant in `src/actions/abilities/mechanic.rs`.
+  - Add or uncomment all matching `map.insert(...)` lines in `effect_ability_mechanic_map.rs` and map them to the correct `AbilityMechanic` with parameters.
+  - Implement the mechanic logic in `forecast_ability_by_mechanic` in `src/actions/apply_abilities_action.rs`.
     - Return an `Outcomes` struct (see `src/actions/outcomes.rs`).
     - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
     - For coin-flip effects, use the appropriate `Outcomes` constructor:
-      - `Outcomes::binary_coin(heads_mutation, tails_mutation)` - single coin flip
-      - `Outcomes::binomial_by_heads(n, |heads| mutation)` - flip N coins, group by heads count
-      - `Outcomes::geometric_until_tails(max, |heads| mutation)` - flip until tails
-    - Keep the `match` arms as one-liners (use helpers).
-  - Implement move generation logic in `can_use_ability_by_mechanic` in `move_generation_abilities.rs`.
-    Keep the `match` arms as one-liners (use helpers).
+      - `Outcomes::binary_coin(heads_mutation, tails_mutation)` for a single coin flip
+      - `Outcomes::binomial_by_heads(n, |heads| mutation)` for N flips grouped by heads count
+      - `Outcomes::geometric_until_tails(max, |heads| mutation)` for flip-until-tails effects
+    - Keep `match` arms as one-liners by moving logic into helpers.
+  - Implement move generation logic in `can_use_ability_by_mechanic` in `src/move_generation/move_generation_abilities.rs`.
+    - Keep `match` arms as one-liners by moving logic into helpers.
 - If the ability is passive or hook-driven:
-  - Prefer a mechanic + hook combo (e.g., hooks in `hooks/core.rs` that apply the effect when damage is calculated).
+  - Prefer a mechanic + hook combination.
+  - Put the mechanic-to-hook wiring in the relevant hook file, usually under `src/hooks/`.
   - `forecast_ability_by_mechanic` should `panic!` for passive mechanics, and `can_use_ability_by_mechanic` should return `false`.
-- Only fall back to `AbilityId` for abilities that cannot yet be represented as a mechanic or need custom one-off logic.
-  - If you add `AbilityId`, update both the enum and `ABILITY_ID_MAP` in `ability_ids.rs`, keeping the file ordered by set and number.
+- Add a logic test at the `Game` public API level.
+  - Prefer the folder-matched integration test layout under `tests/`, for example `tests/pokemon/...`, `tests/tools/...`, `tests/stadiums/...`, or `tests/mechanics/...`.
+  - Follow existing tests like `tests/tools/raikou_rocky_helmet_order_test.rs` in style and abstraction level.
+  - Do not assert on `.move_generation_stack`; drive behavior through public actions and resulting game state.
 
 ## Attack
 
@@ -59,7 +63,7 @@ to see what is missing from the specified card.
 - Decide if we should introduce a new Mechanic or re-use or generalize an existing one. Try to re-use existing ones first.
 - Identify all the cards that have the same effect text template, and just differ by parameters.
 - Uncomment all the `// map.insert("` lines that pertain to the mechanic, and add the correct value (an `Mechanic` enum variant with the corresponding parameters).
-- Implement the mechanic logic in `forecast_effect_attack_by_mechanic` in `apply_attack_action.rs`.
+- Implement the mechanic logic in `forecast_effect_attack_by_mechanic` in `src/actions/apply_attack_action.rs`.
   - Return an `Outcomes` struct (see `src/actions/outcomes.rs`).
   - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
   - For coin-flip effects, use the appropriate `Outcomes` constructor:
@@ -67,7 +71,8 @@ to see what is missing from the specified card.
     - `Outcomes::binomial_by_heads(n, |heads| mutation)` - flip N coins, group by heads count
     - `Outcomes::geometric_until_tails(max, |heads| mutation)` - flip until tails
   - Keep the code as a simple one-liner in the match statement by using helper functions
-  - Review similar attacks in `apply_attack_action.rs` to ensure consistency in implementation.
+  - Review similar attacks in `src/actions/apply_attack_action.rs` to ensure consistency in implementation.
+- Add a Game-level logic test in the matching `tests/` subfolder when the attack has non-trivial behavior.
 
 ## Tool
 
@@ -79,6 +84,7 @@ to see what is missing from the specified card.
 
 - Copy the ids of cards to implement (including full art versions) in the given JSON.
 - In `tools.rs`:
+- In `src/tools.rs`:
   - Add a `static EFFECT_NAME_EFFECT: LazyLock<String>` constant using `tool_effect_text_from_card_id(CardId::...)`.
   - Add the effect to `is_tool_effect_implemented()` match expression.
   - If the tool has attachment restrictions (e.g., only Grass pokemon), add a check in `can_attach_tool_to()`.
@@ -90,6 +96,7 @@ to see what is missing from the specified card.
   - Implement hooks in `hooks/core.rs` or other appropriate hook files.
   - Use `has_tool(played_card, CardId::...)` to check if a pokemon has a specific tool attached.
   - Examples: Rocky Helmet deals damage when the holder is attacked.
+- Add a Game-level integration test under `tests/tools/` for the observable effect.
 
 ## Trainer Cards
 
@@ -104,7 +111,7 @@ to see what is missing from the specified card.
   - In `move_generation_trainer.rs` implement the switch branch. Its often the case the Trainer/Support can always be played, so just add to this case in the switch.
 - Implement the "apply action" logic.
   - This is the code that actually runs when the card is played.
-  - Visit `apply_trainer_action.rs`.
+  - Visit `src/actions/apply_trainer_action.rs`.
   - Return an `Outcomes` struct (see `src/actions/outcomes.rs`):
     - For deterministic effects: `Outcomes::single_fn(|rng, state, action| { ... })`
     - For coin-flip effects, use `Outcomes::binary_coin(...)` or other coin constructors
@@ -118,6 +125,7 @@ to see what is missing from the specified card.
       pieces of state to the `State` struct if necessary.
 
   - Try to keep the `match trainer_id` cases as one-liners (using helper functions if necessary).
+- Add a Game-level integration test in the appropriate `tests/` area if the trainer has logic beyond a trivial draw/search path.
 
 ## Stadium
 
@@ -128,7 +136,7 @@ to see what is missing from the specified card.
   ```
 
 - Copy the ids of cards to implement (including full art versions) in the given JSON.
-- In `stadiums.rs`:
+- In `src/stadiums.rs`:
   - Add a static `LazyLock<String>` constant for the stadium's effect text.
   - Add the stadium to `is_stadium_effect_implemented()`.
   - Add a helper function to query the stadium's effect (e.g., `get_peculiar_plaza_retreat_reduction`).
@@ -141,12 +149,13 @@ to see what is missing from the specified card.
   - HP bonuses: May need to modify `get_effective_total_hp()` or damage calculation
 - Stadium effects apply to BOTH players equally.
 - Test using `cargo run --bin card_test -- "CardId"`.
+- Add a Game-level integration test under `tests/stadiums/`.
 
 ## Appendix
 
 ### Testing Your Implementation
 
-After implementing a card test it like so:
+After implementing a card, test it like so:
 
 Run the integrated card test command (it generates a temp deck and runs 10,000 random games against all decks in `example_decks/`):
 
@@ -156,6 +165,17 @@ cargo run --bin card_test -- "Card ID"
 
 Review the results to ensure the games complete without errors.
 
+Run the targeted automated checks for the code you touched:
+
+```bash
+cargo test --features test-utils --test pokemon
+cargo test --features test-utils --test tools
+cargo test --features test-utils --test stadiums
+cargo test --features test-utils --test mechanics
+```
+
+Pick the relevant test target(s) for your change rather than always running all four.
+
 ### Code Quality
 
-Make sure to run `cargo clippy --fix --allow-dirty -- -D warnings` and `cargo fmt` to format the code. Also make sure `cargo test --features tui,test-utils` still work.
+Make sure to run `cargo fmt` and `cargo clippy --all-targets --all-features -- -D warnings`. Also run the relevant targeted tests for the area you changed.
