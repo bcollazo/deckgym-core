@@ -116,7 +116,7 @@ fn test_energized_leaves_extra_damage_at_threshold() {
 /// a Special Condition via apply_status_condition.
 #[test]
 fn test_soothing_wind_prevents_status_on_energized_pokemon() {
-    let mut game = get_initialized_game(0);
+    let game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
     // Teal Mask Ogerpon ex on bench; active Bulbasaur has energy attached.
@@ -141,7 +141,7 @@ fn test_soothing_wind_prevents_status_on_energized_pokemon() {
 /// A Pokémon WITHOUT energy on a Soothing Wind team CAN still be inflicted.
 #[test]
 fn test_soothing_wind_allows_status_on_unenergized_pokemon() {
-    let mut game = get_initialized_game(0);
+    let game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
     state.set_board(
@@ -166,7 +166,7 @@ fn test_soothing_wind_allows_status_on_unenergized_pokemon() {
 /// Pokémon with energy on a Soothing Wind team are protected from multiple status types.
 #[test]
 fn test_soothing_wind_prevents_paralysis() {
-    let mut game = get_initialized_game(0);
+    let game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
     state.set_board(
@@ -451,16 +451,17 @@ fn test_soothing_wind_cures_on_play() {
 // ── Venoshock interaction ─────────────────────────────────────────────────────
 
 /// Salandit's Venoshock deals 10 + 40 = 50 damage when the target is Poisoned.
+/// Uses Charmander (Fire type, weak to Water) so Salandit's Fire attacks have no weakness bonus.
 #[test]
 fn test_venoshock_deals_extra_damage_when_poisoned() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Player 0: Salandit with 1 Colorless energy (enough for Venoshock).
-    // Player 1: Bulbasaur (70 HP, no energy) – will be poisoned.
+    // Player 0: Salandit (Fire) with 1 Colorless energy (enough for Venoshock).
+    // Player 1: Charmander (Fire, 60 HP, weak to Water – NOT weak to Fire) – will be poisoned.
     state.set_board(
         vec![PlayedCard::from_id(CardId::A1a015Salandit).with_energy(vec![EnergyType::Colorless])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
     );
     state.current_player = 0;
 
@@ -474,10 +475,10 @@ fn test_venoshock_deals_extra_damage_when_poisoned() {
         is_stack: false,
     });
 
-    // Bulbasaur 70 HP – 50 (10 base + 40 poison bonus) = 20.
+    // Charmander 60 HP – 50 (10 base + 40 poison bonus, no weakness) = 10.
     let hp = game.get_state_clone().get_active(1).get_remaining_hp();
     assert_eq!(
-        hp, 20,
+        hp, 10,
         "Venoshock should deal 50 damage to a Poisoned target"
     );
 }
@@ -489,21 +490,21 @@ fn test_soothing_wind_cures_before_venoshock_no_extra_damage() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Player 0: Salandit active with energy (opponent's attacker).
-    // Player 1: Bulbasaur active (poisoned, has energy) + Ogerpon in hand.
+    // Player 0: Salandit (Fire) active with energy (attacker).
+    // Player 1: Charmander (Fire, 60 HP, weak to Water – NOT weak to Fire) with energy + Ogerpon in hand.
     state.set_board(
         vec![PlayedCard::from_id(CardId::A1a015Salandit).with_energy(vec![EnergyType::Colorless])],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass])],
+        vec![PlayedCard::from_id(CardId::A1033Charmander).with_energy(vec![EnergyType::Fire])],
     );
 
-    // Poison Bulbasaur via apply_status_condition – Ogerpon not in play yet, no prevention.
+    // Poison Charmander via apply_status_condition – Ogerpon not in play yet, no prevention.
     state.apply_status_condition(1, 0, StatusCondition::Poisoned);
     assert!(
         state.get_active(1).is_poisoned(),
-        "Bulbasaur should be Poisoned before Ogerpon enters play"
+        "Charmander should be Poisoned before Ogerpon enters play"
     );
 
-    // Player 1 plays Ogerpon to bench → Soothing Wind immediately cures Bulbasaur.
+    // Player 1 plays Ogerpon to bench → Soothing Wind immediately cures Charmander.
     let ogerpon_card = get_card_by_enum(CardId::B2017TealMaskOgerponEx);
     state.hands[1].push(ogerpon_card.clone());
     game.set_state(state);
@@ -516,21 +517,21 @@ fn test_soothing_wind_cures_before_venoshock_no_extra_damage() {
 
     assert!(
         !game.get_state_clone().get_active(1).is_poisoned(),
-        "Soothing Wind should have cured Bulbasaur's Poison when Ogerpon was played"
+        "Soothing Wind should have cured Charmander's Poison when Ogerpon was played"
     );
 
-    // Now player 0 attacks with Venoshock – Bulbasaur is no longer Poisoned,
-    // so only base 10 damage should be dealt.
+    // Now player 0 attacks with Venoshock – Charmander is no longer Poisoned,
+    // so only base 10 damage should be dealt (no weakness bonus since Charmander isn't weak to Fire).
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::Attack(0),
         is_stack: false,
     });
 
-    // Bulbasaur 70 HP – 10 (base only, no poison bonus) = 60.
+    // Charmander 60 HP – 10 (base only, no poison bonus, no weakness) = 50.
     let hp = game.get_state_clone().get_active(1).get_remaining_hp();
     assert_eq!(
-        hp, 60,
+        hp, 50,
         "Venoshock should deal only base 10 damage after Soothing Wind cured the Poison"
     );
 }
