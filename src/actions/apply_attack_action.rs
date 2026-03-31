@@ -129,9 +129,7 @@ fn apply_defender_damage_prevention_if_needed(
     // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
     if attack.fixed_damage > 0 {
         let opponent = (acting_player + 1) % 2;
-        let Some(defender) = state.in_play_pokemon[opponent][0].as_ref() else {
-            return outcomes;
-        };
+        let defender = state.get_active(opponent);
         let defender_has_coin_flip_prevent = defender
             .card
             .get_ability()
