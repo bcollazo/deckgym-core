@@ -801,7 +801,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfSupportPlayedThisTurn { extra_damage: 50 },
     );
     // map.insert("If your opponent's Active Pokémon has a Pokémon Tool attached, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfOpponentActiveHasAbility { extra_damage: 40 },
+    );
     map.insert(
         "If your opponent's Active Pokémon has damage on it, this attack does 30 more damage.",
         Mechanic::ExtraDamageIfHurt {
