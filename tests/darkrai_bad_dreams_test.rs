@@ -177,3 +177,38 @@ fn test_bad_dreams_multiple_darkrai_each_trigger_independently() {
         "Two Darkrai should each deal 20 damage independently (50 - 40 = 10)"
     );
 }
+
+#[test]
+fn test_bad_dreams_owner_active_can_be_koed_earlier_in_same_checkup() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.in_play_pokemon = [[None, None, None, None], [None, None, None, None]];
+    state.move_generation_stack.clear();
+    state.winner = None;
+    state.points = [1, 0];
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A4a059Igglybuff),
+            PlayedCard::from_id(CardId::B2b040Darkrai),
+            PlayedCard::from_id(CardId::B2b040Darkrai),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::B1196Swablu).with_remaining_hp(40),
+            PlayedCard::from_id(CardId::A4a059Igglybuff),
+            PlayedCard::from_id(CardId::B2b040Darkrai),
+        ],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
+    state.current_player = 0;
+    state.turn_count = 26;
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    });
+}

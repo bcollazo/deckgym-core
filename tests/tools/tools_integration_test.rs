@@ -238,3 +238,72 @@ fn test_guzma_double_ko_wins_immediately() {
     assert_eq!(state.points[0], 2);
     assert_eq!(state.winner, Some(deckgym::state::GameOutcome::Win(0)));
 }
+
+#[test]
+fn test_guzma_discards_all_tools_before_promotion() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.in_play_pokemon = [[None, None, None, None], [None, None, None, None]];
+    state.move_generation_stack.clear();
+    state.winner = None;
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_tool(get_card_by_enum(CardId::A2147GiantCape))
+                .with_damage(80),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_tool(get_card_by_enum(CardId::A2147GiantCape))
+                .with_damage(80),
+            PlayedCard::from_id(CardId::A1053Squirtle),
+        ],
+    );
+    state.current_player = 0;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    state.hands[0] = vec![get_card_by_enum(CardId::A3151Guzma)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::A3151Guzma);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.points[0], 2, "Player 0 should gain 2 points");
+    assert!(state.in_play_pokemon[1][0].is_none());
+    assert!(state.in_play_pokemon[1][2].is_none());
+    assert!(state.in_play_pokemon[1][3].is_some());
+    assert_eq!(state.winner, None);
+
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 1, "Opponent should still be prompted to promote");
+    let activate_targets: Vec<usize> = actions
+        .iter()
+        .filter_map(|action| match action.action {
+            SimpleAction::Activate { in_play_idx, .. } => Some(in_play_idx),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        activate_targets,
+        vec![1, 3],
+        "Promotion choices should exclude the KO'd bench slot"
+    );
+
+    game.apply_action(
+        actions
+            .iter()
+            .find(|action| matches!(action.action, SimpleAction::Activate { in_play_idx: 3, .. }))
+            .expect("Expected promotion into the surviving bench slot"),
+    );
+
+    let state = game.get_state_clone();
+    assert!(state.in_play_pokemon[1][0].is_some());
+    assert!(state.in_play_pokemon[1][3].is_none());
+}
