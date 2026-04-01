@@ -286,26 +286,28 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
 /// Apply Bad Dreams ability damage: for each player's Darkrai in play, if that player's
 /// opponent has an Asleep Active Pokémon, deal 20 damage to it.
 fn apply_bad_dreams_damage(state: &mut State) {
-    let mut sources: Vec<(usize, u32)> = vec![];
-
-    for player in 0..2 {
-        let bad_dreams_amount: u32 = state
-            .enumerate_in_play_pokemon(player)
-            .filter(|(_, pokemon)| !pokemon.is_knocked_out())
-            .filter_map(|(_, pokemon)| {
-                get_ability_mechanic(&pokemon.card).and_then(|m| match m {
-                    AbilityMechanic::BadDreamsEndOfTurn { amount } => Some(amount),
-                    _ => None,
+    let sources: Vec<(usize, usize, u32)> = (0..2)
+        .flat_map(|player| {
+            state
+                .enumerate_in_play_pokemon(player)
+                .filter_map(move |(idx, pokemon)| {
+                    if pokemon.is_knocked_out() {
+                        return None;
+                    }
+                    get_ability_mechanic(&pokemon.card).and_then(|m| match m {
+                        AbilityMechanic::BadDreamsEndOfTurn { amount } => {
+                            Some((player, idx, *amount))
+                        }
+                        _ => None,
+                    })
                 })
-            })
-            .sum();
+        })
+        .collect();
 
-        if bad_dreams_amount > 0 {
-            sources.push((player, bad_dreams_amount));
+    for (darkrai_owner, darkrai_idx, amount) in sources {
+        if state.in_play_pokemon[darkrai_owner][darkrai_idx].is_none() {
+            continue;
         }
-    }
-
-    for (darkrai_owner, amount) in sources {
         let opponent = (darkrai_owner + 1) % 2;
         let Some(opponent_active) = state.in_play_pokemon[opponent][0].as_ref() else {
             continue;
@@ -319,7 +321,7 @@ fn apply_bad_dreams_damage(state: &mut State) {
         );
         crate::actions::handle_damage(
             state,
-            (darkrai_owner, 0),
+            (darkrai_owner, darkrai_idx),
             &[(amount, opponent, 0)],
             false,
             None,
