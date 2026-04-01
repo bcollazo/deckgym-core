@@ -835,10 +835,22 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 50 },
     );
     // map.insert("If your opponent's Active Pokémon is Burned, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 40 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 50 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 60 },
+    );
+    map.insert(
+        "If your opponent's Active Pokémon is Poisoned, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage: 70 },
+    );
     // map.insert("If your opponent's Active Pokémon is Zangoose, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is a Basic Pokémon, this attack does 70 more damage.", todo_implementation);
@@ -1541,16 +1553,36 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip 3 coins. This attack does 30 damage for each heads.", todo_implementation);
     // map.insert("Flip a coin for each Tandemaus and Maushold you have in play. This attack does 60 damage for each heads.", todo_implementation);
     // map.insert("Flip a coin. If heads, discard your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("Flip a coin. If heads, during your opponent's next turn, this Pokémon takes -100 damage from attacks.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, during your opponent's next turn, this Pokémon takes -100 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::ReducedDamage { amount: 100 },
+            duration: 1,
+            coin_flip: true,
+        },
+    );
     // map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", todo_implementation);
-    // map.insert("Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+        Mechanic::CoinFlipChargeBench {
+            energies: vec![EnergyType::Fire, EnergyType::Fire],
+            target_benched_type: None,
+        },
+    );
+    map.insert(
+        "Flip a coin. If heads, this attack also does 40 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::CoinFlipAlsoChoiceBenchDamage { opponent: true, damage: 40 },
+    );
     // map.insert("Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If tails, this Pokémon also does 50 damage to itself.", todo_implementation);
     // map.insert("Heal 20 damage from 1 of your Pokémon.", todo_implementation);
     // map.insert("If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("If a Stadium is in play, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast { threshold: 5, extra_damage: 60 },
+    );
     // map.insert("If this Pokémon has any [P] Energy attached, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage.", todo_implementation);
     map.insert(

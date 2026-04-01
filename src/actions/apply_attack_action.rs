@@ -542,6 +542,30 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
+        Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast {
+            threshold,
+            extra_damage,
+        } => extra_damage_if_combined_active_energy_at_least(
+            state,
+            attack.fixed_damage,
+            *threshold,
+            *extra_damage,
+        ),
+        Mechanic::CoinFlipChargeBench {
+            energies,
+            target_benched_type,
+        } => coin_flip_charge_bench(
+            state,
+            attack.fixed_damage,
+            energies.clone(),
+            *target_benched_type,
+        ),
+        Mechanic::CoinFlipAlsoChoiceBenchDamage { opponent, damage } => {
+            coin_flip_also_choice_bench_damage(state, *opponent, attack.fixed_damage, *damage)
+        }
+        Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage } => {
+            extra_damage_if_defender_poisoned(state, attack.fixed_damage, *extra_damage)
+        }
     }
 }
 
@@ -2049,6 +2073,117 @@ fn coin_flip_shuffle_random_opponent_hand_card_into_deck() -> Outcomes {
         // Tails: do nothing
         active_damage_mutation(0),
     )
+}
+
+/// Teal Mask Ogerpon ex – Energized Leaves:
+/// If total energy on both Active Pokémon ≥ threshold, deal extra_damage more.
+fn extra_damage_if_combined_active_energy_at_least(
+    state: &State,
+    base_damage: u32,
+    threshold: usize,
+    extra_damage: u32,
+) -> Outcomes {
+    let current_player = state.current_player;
+    let opponent = (current_player + 1) % 2;
+    let combined = state.get_active(current_player).attached_energy.len()
+        + state.get_active(opponent).attached_energy.len();
+    let total = if combined >= threshold {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(total)
+}
+
+/// Hearthflame Mask Ogerpon – Hearthflame Dance:
+/// Flip a coin. If heads, take `energies` from your Energy Zone and attach to 1 Benched Pokémon.
+fn coin_flip_charge_bench(
+    state: &State,
+    base_damage: u32,
+    energies: Vec<EnergyType>,
+    target_benched_type: Option<EnergyType>,
+) -> Outcomes {
+    let choices = state
+        .enumerate_bench_pokemon(state.current_player)
+        .filter(|(_, played_card)| {
+            target_benched_type.is_none() || played_card.get_energy_type() == target_benched_type
+        })
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: energies
+                .iter()
+                .map(|&energy| (1, energy, in_play_idx))
+                .collect(),
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(base_damage, move |_, state, action| {
+            if !choices.is_empty() {
+                state
+                    .move_generation_stack
+                    .push((action.actor, choices.clone()));
+            }
+        }),
+        active_damage_mutation(base_damage),
+    )
+}
+
+/// Wellspring Mask Ogerpon – Wellspring Dance:
+/// Flip a coin. If heads, this attack also does `bench_damage` to 1 of the chosen side's bench.
+fn coin_flip_also_choice_bench_damage(
+    state: &State,
+    opponent: bool,
+    active_damage: u32,
+    bench_damage: u32,
+) -> Outcomes {
+    let opponent_player = (state.current_player + 1) % 2;
+    let bench_target = if opponent {
+        opponent_player
+    } else {
+        state.current_player
+    };
+    // Build choices that bundle active + bench damage atomically (avoids stale slot issues).
+    let choices: Vec<_> = state
+        .enumerate_bench_pokemon(bench_target)
+        .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+            attacking_ref: (state.current_player, 0),
+            targets: vec![
+                (active_damage, opponent_player, 0),
+                (bench_damage, bench_target, in_play_idx),
+            ],
+            is_from_active_attack: true,
+        })
+        .collect();
+
+    if choices.is_empty() {
+        // No bench targets: coin flip has no effect; always deal active damage.
+        return active_damage_doutcome(active_damage);
+    }
+
+    // Heads: defer all damage via ApplyDamage choice (atomic KO resolution).
+    // Tails: deal active damage directly (bench untouched).
+    Outcomes::binary_coin(
+        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }),
+        active_damage_mutation(active_damage),
+    )
+}
+
+fn extra_damage_if_defender_poisoned(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let damage = if state.get_active(opponent).is_poisoned() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
 }
 
 fn mega_ampharos_lightning_lancer() -> Outcomes {

@@ -283,4 +283,28 @@ pub enum Mechanic {
         extra_damage: u32,
     },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
+    /// Teal Mask Ogerpon ex – Energized Leaves:
+    /// If total energy on both Active Pokémon ≥ threshold, deal extra_damage more.
+    ExtraDamageIfCombinedActiveEnergyAtLeast {
+        threshold: usize,
+        extra_damage: u32,
+    },
+    /// Hearthflame Mask Ogerpon – Hearthflame Dance:
+    /// Flip a coin. If heads, take `count` energy of `energy_type` from your Energy Zone
+    /// and attach them to 1 of your Benched Pokémon.
+    CoinFlipChargeBench {
+        energies: Vec<EnergyType>,
+        target_benched_type: Option<EnergyType>,
+    },
+    /// Wellspring Mask Ogerpon – Wellspring Dance:
+    /// Flip a coin. If heads, this attack also does `damage` to 1 of the chosen player's
+    /// Benched Pokémon (opponent = true → opponent's bench).
+    CoinFlipAlsoChoiceBenchDamage {
+        opponent: bool,
+        damage: u32,
+    },
+    /// Venoshock – extra damage if opponent's active is Poisoned.
+    ExtraDamageIfDefenderPoisoned {
+        extra_damage: u32,
+    },
 }

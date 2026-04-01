@@ -322,6 +322,11 @@ pub(crate) fn apply_place_card(
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
     state.refresh_starting_plains_bonus_for_idx(actor, index);
+    // Soothing Wind: cures all energy-bearing Pokémon on this player's side immediately.
+    if has_ability_mechanic(card, &AbilityMechanic::SoothingWind) {
+        debug!("Soothing Wind: Ogerpon entered play – curing status conditions for player {actor}");
+        state.apply_soothing_wind_for_player(actor);
+    }
     if from_deck {
         state.remove_card_from_deck(actor, card);
     } else {

@@ -99,7 +99,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Each [G] Energy attached to your [G] Pokémon provides 2 [G] Energy. This effect doesn't stack.",
             AbilityMechanic::DoubleGrassEnergy,
         );
-        // map.insert("Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.", todo_implementation);
+        map.insert(
+            "Each of your Pokémon that has any Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.",
+            AbilityMechanic::SoothingWind,
+        );
         // map.insert("Each of your Pokémon that has any [P] Energy attached recovers from all Special Conditions and can't be affected by any Special Conditions.", todo_implementation);
         // map.insert("Each of your [G] Pokémon gets +20 HP.", todo_implementation);
         // map.insert("If a Stadium is in play, this Pokémon has no Retreat Cost.", todo_implementation);

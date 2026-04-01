@@ -249,6 +249,16 @@ impl State {
         self.has_used_stadium[self.current_player] = false;
     }
 
+    /// Clear status conditions from every energy-bearing Pokémon on a player's side.
+    /// Called immediately when a Pokémon with SoothingWind enters play.
+    pub(crate) fn apply_soothing_wind_for_player(&mut self, player: usize) {
+        for slot in self.in_play_pokemon[player].iter_mut().flatten() {
+            if !slot.attached_energy.is_empty() {
+                slot.cure_status_conditions();
+            }
+        }
+    }
+
     pub(crate) fn set_pending_will_first_heads(&mut self) {
         self.add_turn_effect(TurnEffect::ForceFirstHeads, 0);
     }
@@ -366,6 +376,20 @@ impl State {
         if has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
             debug!("Steel Apron: Pokémon is immune to status conditions");
             return;
+        }
+
+        // Soothing Wind: if any of this player's Pokémon has the ability, all their
+        // energy-bearing Pokémon are immune to Special Conditions.
+        let has_energy = !pokemon.attached_energy.is_empty();
+        if has_energy {
+            let has_soothing_wind = self.in_play_pokemon[player]
+                .iter()
+                .flatten()
+                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
+            if has_soothing_wind {
+                debug!("Soothing Wind: Pokémon with energy is immune to status conditions");
+                return;
+            }
         }
 
         self.in_play_pokemon[player][in_play_idx]
