@@ -41,7 +41,7 @@ where
 /// Like `damage_effect_doutcome` but targets include an explicit player index,
 /// allowing damage to be dealt to any player's Pokémon (e.g. self-damage, own bench).
 pub(crate) fn full_targets_damage_doutcome(targets: Vec<(u32, usize, usize)>) -> Outcomes {
-    Outcomes::single(full_targets_damage_mutation(targets))
+    Outcomes::single(full_targets_damage_mutation(targets, |_, _, _| {}))
 }
 
 // ===== Helper functions for building Mutations
@@ -63,92 +63,82 @@ pub(crate) fn damage_effect_mutation<F>(
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
-    Box::new({
-        move |rng, state, action| {
-            let opponent = (action.actor + 1) % 2;
-            let targets: Vec<(u32, usize, usize)> = targets
-                .iter()
-                .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
-                .collect();
-
-            let attack_name: String = match &action.action {
-                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
-                    .as_ref()
-                    .expect("Attacking Pokemon must be there if attacking")
-                    .card
-                    .get_attacks()
-                    .get(*attack_index)
-                    .unwrap_or_else(|| {
-                        panic!("Index must exist if attacking with {}", attack_index)
-                    })
-                    .title
-                    .clone(),
-                SimpleAction::UseCopiedAttack {
-                    source_player,
-                    source_in_play_idx,
-                    attack_index,
-                    ..
-                } => state.in_play_pokemon[*source_player][*source_in_play_idx]
-                    .as_ref()
-                    .expect("Copied-attack source Pokemon must exist")
-                    .card
-                    .get_attacks()
-                    .get(*attack_index)
-                    .unwrap_or_else(|| {
-                        panic!(
-                            "Copied attack index must exist for source {}:{}",
-                            source_player, source_in_play_idx
-                        )
-                    })
-                    .title
-                    .clone(),
-                _ => panic!("This codepath should come from an attack."),
-            };
-
-            let attacking_ref = (action.actor, 0);
-            let is_from_active_attack = true;
-            handle_damage_only(
-                state,
-                attacking_ref,
-                &targets,
-                is_from_active_attack,
-                Some(&attack_name),
-            );
-            additional_effect(rng, state, action);
-            handle_knockouts(state, attacking_ref, is_from_active_attack);
-        }
+    // Convert (damage, in_play_idx) to full targets at execution time, then delegate.
+    Box::new(move |rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let full_targets: Vec<(u32, usize, usize)> = targets
+            .iter()
+            .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
+            .collect();
+        apply_full_targets(rng, state, action, &full_targets, &additional_effect);
     })
 }
 
-fn full_targets_damage_mutation(targets: Vec<(u32, usize, usize)>) -> Mutation {
-    Box::new({
-        move |_, state, action| {
-            let attack_name: String = match &action.action {
-                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
-                    .as_ref()
-                    .expect("Attacking Pokemon must be there if attacking")
-                    .card
-                    .get_attacks()
-                    .get(*attack_index)
-                    .unwrap_or_else(|| {
-                        panic!("Index must exist if attacking with {}", attack_index)
-                    })
-                    .title
-                    .clone(),
-                _ => panic!("This codepath should come from an attack."),
-            };
-            let attacking_ref = (action.actor, 0);
-            let is_from_active_attack = true;
-            handle_damage_only(
-                state,
-                attacking_ref,
-                &targets,
-                is_from_active_attack,
-                Some(&attack_name),
-            );
-            handle_knockouts(state, attacking_ref, is_from_active_attack);
-        }
+fn full_targets_damage_mutation<F>(
+    targets: Vec<(u32, usize, usize)>,
+    additional_effect: F,
+) -> Mutation
+where
+    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
+{
+    Box::new(move |rng, state, action| {
+        apply_full_targets(rng, state, action, &targets, &additional_effect);
     })
+}
+
+/// Shared execution core: resolve attack name, apply damage to all targets, run
+/// any extra effect, then handle knockouts.
+fn apply_full_targets<F>(
+    rng: &mut StdRng,
+    state: &mut State,
+    action: &Action,
+    targets: &[(u32, usize, usize)],
+    additional_effect: &F,
+) where
+    F: Fn(&mut StdRng, &mut State, &Action),
+{
+    let attack_name: String = match &action.action {
+        SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
+            .as_ref()
+            .expect("Attacking Pokemon must be there if attacking")
+            .card
+            .get_attacks()
+            .get(*attack_index)
+            .unwrap_or_else(|| panic!("Index must exist if attacking with {}", attack_index))
+            .title
+            .clone(),
+        SimpleAction::UseCopiedAttack {
+            source_player,
+            source_in_play_idx,
+            attack_index,
+            ..
+        } => state.in_play_pokemon[*source_player][*source_in_play_idx]
+            .as_ref()
+            .expect("Copied-attack source Pokemon must exist")
+            .card
+            .get_attacks()
+            .get(*attack_index)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Copied attack index must exist for source {}:{}",
+                    source_player, source_in_play_idx
+                )
+            })
+            .title
+            .clone(),
+        _ => panic!("This codepath should come from an attack."),
+    };
+    let attacking_ref = (action.actor, 0);
+    let is_from_active_attack = true;
+    handle_damage_only(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        Some(&attack_name),
+    );
+    additional_effect(rng, state, action);
+    handle_knockouts(state, attacking_ref, is_from_active_attack);
 }
 
 // ===== Other Helper Functions
