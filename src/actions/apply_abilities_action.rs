@@ -174,6 +174,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::SoothingWind => {
             panic!("SoothingWind is a passive ability")
         }
+        AbilityMechanic::FlowerShield => {
+            panic!("FlowerShield is a passive ability")
+        }
         AbilityMechanic::NoOpponentSupportInActive => {
             panic!("NoOpponentSupportInActive is a passive ability")
         }

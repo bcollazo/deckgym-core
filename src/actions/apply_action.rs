@@ -327,6 +327,11 @@ pub(crate) fn apply_place_card(
         debug!("Soothing Wind: Ogerpon entered play – curing status conditions for player {actor}");
         state.apply_soothing_wind_for_player(actor);
     }
+    // Flower Shield: cures all [P]-energy-bearing Pokémon on this player's side immediately.
+    if has_ability_mechanic(card, &AbilityMechanic::FlowerShield) {
+        debug!("Flower Shield: Comfey entered play – curing status conditions for [P] Pokémon of player {actor}");
+        state.apply_flower_shield_for_player(actor);
+    }
     if from_deck {
         state.remove_card_from_deck(actor, card);
     } else {

@@ -259,6 +259,19 @@ impl State {
         }
     }
 
+    /// Clear status conditions from every Psychic-energy-bearing Pokémon on a player's side.
+    /// Called immediately when a Pokémon with FlowerShield enters play.
+    pub(crate) fn apply_flower_shield_for_player(&mut self, player: usize) {
+        for slot in self.in_play_pokemon[player].iter_mut().flatten() {
+            if slot
+                .attached_energy
+                .contains(&crate::models::EnergyType::Psychic)
+            {
+                slot.cure_status_conditions();
+            }
+        }
+    }
+
     pub(crate) fn set_pending_will_first_heads(&mut self) {
         self.add_turn_effect(TurnEffect::ForceFirstHeads, 0);
     }
@@ -388,6 +401,22 @@ impl State {
                 .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
             if has_soothing_wind {
                 debug!("Soothing Wind: Pokémon with energy is immune to status conditions");
+                return;
+            }
+        }
+
+        // Flower Shield: if any of this player's Pokémon has the ability, all their
+        // Psychic-energy-bearing Pokémon are immune to Special Conditions.
+        let has_psychic_energy = pokemon
+            .attached_energy
+            .contains(&crate::models::EnergyType::Psychic);
+        if has_psychic_energy {
+            let has_flower_shield = self.in_play_pokemon[player]
+                .iter()
+                .flatten()
+                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::FlowerShield));
+            if has_flower_shield {
+                debug!("Flower Shield: Pokémon with [P] Energy is immune to status conditions");
                 return;
             }
         }
