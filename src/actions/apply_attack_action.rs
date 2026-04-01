@@ -1664,11 +1664,7 @@ fn extra_damage_if_opponent_hp_more_than_self(state: &State, base: u32, extra: u
     }
 }
 
-fn extra_damage_if_opponent_active_has_ability(
-    state: &State,
-    base: u32,
-    extra: u32,
-) -> Outcomes {
+fn extra_damage_if_opponent_active_has_ability(state: &State, base: u32, extra: u32) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let has_ability = opponent_active.card.get_ability().is_some();
