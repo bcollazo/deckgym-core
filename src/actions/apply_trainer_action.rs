@@ -6,7 +6,7 @@ use rand::Rng;
 
 use crate::{
     actions::{
-        apply_evolve,
+        apply_evolve, handle_knockouts,
         shared_mutations::{
             card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
             item_search_outcomes, pokemon_search_outcomes, tool_search_outcomes,
@@ -319,6 +319,9 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     for idx in tool_indices {
         state.discard_tool(opponent, idx);
     }
+
+    // Resolve knockouts only after Guzma has discarded every opponent tool.
+    handle_knockouts(state, (action.actor, 0), false);
 }
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
