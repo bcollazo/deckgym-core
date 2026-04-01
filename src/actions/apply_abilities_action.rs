@@ -171,7 +171,7 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ImmuneToStatusConditions => {
             panic!("ImmuneToStatusConditions is a passive ability")
         }
-        AbilityMechanic::SoothingWind => {
+        AbilityMechanic::SoothingWind { .. } => {
             panic!("SoothingWind is a passive ability")
         }
         AbilityMechanic::NoOpponentSupportInActive => {
