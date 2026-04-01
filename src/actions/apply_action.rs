@@ -4,7 +4,7 @@ use log::debug;
 use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
 
 use crate::{
-    actions::effect_ability_mechanic_map::has_ability_mechanic,
+    actions::effect_ability_mechanic_map::{get_ability_mechanic, has_ability_mechanic},
     actions::{
         abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
@@ -322,15 +322,10 @@ pub(crate) fn apply_place_card(
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
     state.refresh_starting_plains_bonus_for_idx(actor, index);
-    // Soothing Wind: cures all energy-bearing Pokémon on this player's side immediately.
-    if has_ability_mechanic(card, &AbilityMechanic::SoothingWind) {
-        debug!("Soothing Wind: Ogerpon entered play – curing status conditions for player {actor}");
-        state.apply_soothing_wind_for_player(actor);
-    }
-    // Flower Shield: cures all [P]-energy-bearing Pokémon on this player's side immediately.
-    if has_ability_mechanic(card, &AbilityMechanic::FlowerShield) {
-        debug!("Flower Shield: Comfey entered play – curing status conditions for [P] Pokémon of player {actor}");
-        state.apply_flower_shield_for_player(actor);
+    // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): cure status conditions on entry.
+    if let Some(AbilityMechanic::SoothingWind { energy_type }) = get_ability_mechanic(card) {
+        debug!("SoothingWind: Pokémon entered play – curing status conditions for player {actor}");
+        state.apply_soothing_wind_for_player(actor, energy_type.as_ref());
     }
     if from_deck {
         state.remove_card_from_deck(actor, card);

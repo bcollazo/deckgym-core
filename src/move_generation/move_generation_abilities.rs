@@ -129,8 +129,7 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.hands[state.current_player].is_empty()
         }
         AbilityMechanic::ImmuneToStatusConditions => false, // Passive ability
-        AbilityMechanic::SoothingWind => false,             // Passive ability
-        AbilityMechanic::FlowerShield => false,             // Passive ability
+        AbilityMechanic::SoothingWind { .. } => false,      // Passive ability
         AbilityMechanic::NoOpponentSupportInActive => false,
         AbilityMechanic::DoubleGrassEnergy => false,
         AbilityMechanic::PreventOpponentActiveEvolution => false,

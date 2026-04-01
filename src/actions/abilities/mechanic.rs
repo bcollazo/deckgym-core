@@ -111,14 +111,14 @@ pub enum AbilityMechanic {
     CoinFlipSleepOpponentActive,
     DiscardFromHandToDrawCard,
     ImmuneToStatusConditions,
-    /// Teal Mask Ogerpon ex – Soothing Wind (passive):
-    /// Each of your Pokémon that has any Energy attached recovers from all Special Conditions
-    /// and can't be affected by any Special Conditions.
-    SoothingWind,
-    /// Comfey – Flower Shield (passive):
-    /// Each of your Pokémon that has any [P] Energy attached recovers from all Special Conditions
-    /// and can't be affected by any Special Conditions.
-    FlowerShield,
+    /// Passive ability shared by Teal Mask Ogerpon ex (Soothing Wind) and Comfey (Flower Shield):
+    /// Each of your Pokémon that has the required Energy attached recovers from all Special
+    /// Conditions and can't be affected by any Special Conditions.
+    ///   - `energy_type: None`  → any energy (Ogerpon ex – Soothing Wind)
+    ///   - `energy_type: Some(t)` → only the specified type (Comfey – Flower Shield, `[P]`)
+    SoothingWind {
+        energy_type: Option<EnergyType>,
+    },
     NoOpponentSupportInActive,
     DoubleGrassEnergy,
     PreventOpponentActiveEvolution,
