@@ -4,6 +4,8 @@ mod arceus_ex_test;
 mod blastoise_double_splash_test;
 #[path = "pokemon/charmeleon_ignition_test.rs"]
 mod charmeleon_ignition_test;
+#[path = "pokemon/comfey_flower_shield_test.rs"]
+mod comfey_flower_shield_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]

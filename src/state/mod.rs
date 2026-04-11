@@ -249,11 +249,21 @@ impl State {
         self.has_used_stadium[self.current_player] = false;
     }
 
-    /// Clear status conditions from every energy-bearing Pokémon on a player's side.
-    /// Called immediately when a Pokémon with SoothingWind enters play.
-    pub(crate) fn apply_soothing_wind_for_player(&mut self, player: usize) {
+    /// Clear status conditions from energy-bearing Pokémon on a player's side.
+    /// `energy_type` restricts which Pokémon are cured:
+    ///   - `None`    → any energy (Soothing Wind / Ogerpon ex)
+    ///   - `Some(t)` → only Pokémon that have that specific energy type attached (Flower Shield / Comfey)
+    pub(crate) fn apply_soothing_wind_for_player(
+        &mut self,
+        player: usize,
+        energy_type: Option<&EnergyType>,
+    ) {
         for slot in self.in_play_pokemon[player].iter_mut().flatten() {
-            if !slot.attached_energy.is_empty() {
+            let is_protected = match energy_type {
+                None => !slot.attached_energy.is_empty(),
+                Some(t) => slot.attached_energy.contains(t),
+            };
+            if is_protected {
                 slot.cure_status_conditions();
             }
         }
@@ -378,17 +388,22 @@ impl State {
             return;
         }
 
-        // Soothing Wind: if any of this player's Pokémon has the ability, all their
-        // energy-bearing Pokémon are immune to Special Conditions.
-        let has_energy = !pokemon.attached_energy.is_empty();
-        if has_energy {
-            let has_soothing_wind = self.in_play_pokemon[player]
-                .iter()
-                .flatten()
-                .any(|p| has_ability_mechanic(&p.card, &AbilityMechanic::SoothingWind));
-            if has_soothing_wind {
-                debug!("Soothing Wind: Pokémon with energy is immune to status conditions");
-                return;
+        // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): if any of this player's Pokémon
+        // has the ability, Pokémon meeting the energy requirement are immune to Special Conditions.
+        for p in self.in_play_pokemon[player].iter().flatten() {
+            if let Some(AbilityMechanic::SoothingWind { energy_type }) =
+                crate::actions::get_ability_mechanic(&p.card)
+            {
+                let is_protected = match energy_type {
+                    None => !pokemon.attached_energy.is_empty(),
+                    Some(t) => pokemon.attached_energy.contains(t),
+                };
+                if is_protected {
+                    debug!(
+                        "SoothingWind: Pokémon with matching energy is immune to status conditions"
+                    );
+                    return;
+                }
             }
         }
 
