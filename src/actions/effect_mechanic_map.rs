@@ -1747,7 +1747,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 60 },
     );
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
-    // map.insert("Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.",
+        Mechanic::MoveFixedEnergyTypeToBench {
+            energy_type: EnergyType::Darkness,
+            amount: 2,
+        },
+    );
     map.insert(
         "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.",
         Mechanic::ChargeBench {
@@ -1867,7 +1873,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has any [F] Energy attached, this attack does 60 more damage.", todo_implementation);
     // map.insert("If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has no damage on it, this attack does 30 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has no damage on it, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfUndamaged { extra_damage: 30 },
+    );
     // map.insert("If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);

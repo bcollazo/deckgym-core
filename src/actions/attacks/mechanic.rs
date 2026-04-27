@@ -139,6 +139,10 @@ pub enum Mechanic {
     MoveAllEnergyTypeToBench {
         energy_type: EnergyType,
     },
+    MoveFixedEnergyTypeToBench {
+        energy_type: EnergyType,
+        amount: u32,
+    },
     ChargeBench {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
@@ -209,6 +213,9 @@ pub enum Mechanic {
     ExtraDamageIfHurt {
         extra_damage: u32,
         opponent: bool,
+    },
+    ExtraDamageIfUndamaged {
+        extra_damage: u32,
     },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,

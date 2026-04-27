@@ -231,6 +231,10 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::MoveAllEnergyTypeToBench { energy_type } => {
             move_all_energy_type_to_bench(state, attack, *energy_type)
         }
+        Mechanic::MoveFixedEnergyTypeToBench {
+            energy_type,
+            amount,
+        } => move_fixed_energy_type_to_bench(state, attack, *energy_type, *amount),
         Mechanic::ChargeBench {
             energies,
             target_benched_type,
@@ -387,6 +391,9 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             opponent,
         } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
+        Mechanic::ExtraDamageIfUndamaged { extra_damage } => {
+            extra_damage_if_undamaged(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -1038,6 +1045,58 @@ fn move_all_energy_type_to_bench(
                     amount: energy_count,
                 })
                 .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn move_fixed_energy_type_to_bench(
+    state: &State,
+    attack: &Attack,
+    energy_type: EnergyType,
+    amount: u32,
+) -> Outcomes {
+    let active = state.get_active(state.current_player);
+    let energy_count = active
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count() as u32;
+
+    if energy_count < amount
+        || state
+            .enumerate_bench_pokemon(state.current_player)
+            .next()
+            .is_none()
+    {
+        return active_damage_doutcome(attack.fixed_damage);
+    }
+
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let active = state.in_play_pokemon[action.actor][0]
+            .as_ref()
+            .expect("Active should be there");
+        let energy_count = active
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == energy_type)
+            .count() as u32;
+
+        if energy_count < amount {
+            return;
+        }
+
+        let choices: Vec<SimpleAction> = state
+            .enumerate_bench_pokemon(action.actor)
+            .map(|(to_idx, _)| SimpleAction::MoveEnergy {
+                from_in_play_idx: 0,
+                to_in_play_idx: to_idx,
+                energy_type,
+                amount,
+            })
+            .collect();
+
+        if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
         }
     })
@@ -1816,6 +1875,15 @@ fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) ->
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)
+    }
+}
+
+fn extra_damage_if_undamaged(state: &State, base: u32, extra: u32) -> Outcomes {
+    let attacker = state.get_active(state.current_player);
+    if attacker.is_damaged() {
+        active_damage_doutcome(base)
+    } else {
+        active_damage_doutcome(base + extra)
     }
 }
 
