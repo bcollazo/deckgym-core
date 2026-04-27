@@ -242,7 +242,18 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::SearchRandomPokemonFromDeck,
         );
         // map.insert("Once during your turn, you may switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
-        map.insert("Once during your turn, you may switch out your opponent's Active Pok\u{e9}mon to the Bench.\u{a0}(Your opponent chooses the new Active Pok\u{e9}mon.)", AbilityMechanic::SwitchOutOpponentActiveToBench);
+        map.insert(
+            "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)",
+            AbilityMechanic::SwitchOutOpponentActiveToBench {
+                require_active: true,
+            },
+        );
+        map.insert(
+            "Once during your turn, you may switch out your opponent's Active Pok\u{e9}mon to the Bench.\u{a0}(Your opponent chooses the new Active Pok\u{e9}mon.)",
+            AbilityMechanic::SwitchOutOpponentActiveToBench {
+                require_active: false,
+            },
+        );
         map.insert(
             "Once during your turn, you may switch your Active Ultra Beast with 1 of your Benched Ultra Beasts.",
             AbilityMechanic::SwitchActiveUltraBeastWithBench,

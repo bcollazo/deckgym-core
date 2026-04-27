@@ -165,7 +165,9 @@ fn forecast_ability_by_mechanic(
         } => discard_energy_to_increase_type_damage(*discard_energy, *attack_type, *amount),
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
         AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
-        AbilityMechanic::SwitchOutOpponentActiveToBench => switch_out_opponent_active_to_bench(),
+        AbilityMechanic::SwitchOutOpponentActiveToBench { .. } => {
+            switch_out_opponent_active_to_bench()
+        }
         AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
         AbilityMechanic::DiscardFromHandToDrawCard => discard_from_hand_to_draw_card(),
         AbilityMechanic::ImmuneToStatusConditions => {

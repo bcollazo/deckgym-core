@@ -42,6 +42,8 @@ mod rampardos_head_smash_test;
 mod shinx_hide_test;
 #[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
 mod sunflora_quick_grow_beam_test;
+#[path = "pokemon/vaporeon_ex_test.rs"]
+mod vaporeon_ex_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]
 mod vulpix_tail_whip_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]

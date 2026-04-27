@@ -121,9 +121,11 @@ fn can_use_ability_by_mechanic(
         }
         AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::HealActiveYourPokemon { .. } => !card.ability_used,
-        AbilityMechanic::SwitchOutOpponentActiveToBench => {
+        AbilityMechanic::SwitchOutOpponentActiveToBench { require_active } => {
             let opponent = (state.current_player + 1) % 2;
-            !card.ability_used && state.enumerate_bench_pokemon(opponent).next().is_some()
+            !card.ability_used
+                && (!require_active || is_active)
+                && state.enumerate_bench_pokemon(opponent).next().is_some()
         }
         AbilityMechanic::DiscardFromHandToDrawCard => {
             !card.ability_used && !state.hands[state.current_player].is_empty()
