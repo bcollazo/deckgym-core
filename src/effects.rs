@@ -7,6 +7,7 @@ use crate::models::EnergyType;
 pub enum CardEffect {
     NoRetreat,
     ReducedDamage { amount: u32 },
+    IncreasedVulnerability { amount: u32 },
     IncreasedAttackCost { amount: u8 },
     CannotAttack,
     CannotUseAttack(String),

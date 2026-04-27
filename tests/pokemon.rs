@@ -24,6 +24,8 @@ mod grovyle_slicing_snipe_test;
 mod jolteon_ex_test;
 #[path = "pokemon/legacy_ability_logic_test.rs"]
 mod legacy_ability_logic_test;
+#[path = "pokemon/lucario_b3_test.rs"]
+mod lucario_b3_test;
 #[path = "pokemon/lucario_fighting_coach_test.rs"]
 mod lucario_fighting_coach_test;
 #[path = "pokemon/magneton_test.rs"]

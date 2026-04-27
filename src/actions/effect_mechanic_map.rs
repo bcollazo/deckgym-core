@@ -1809,7 +1809,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your next turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("During your next turn, this Pokémon's Psych Up attack does +30 damage.", todo_implementation);
     // map.insert("During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.", todo_implementation);
-    // map.insert("During your opponent's next turn, this Pokémon takes +20 damage from attacks.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes +20 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedVulnerability { amount: 20 },
+            duration: 1,
+            coin_flip: false,
+        },
+    );
     map.insert(
         "Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.",
         Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
@@ -1872,7 +1880,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.", todo_implementation);
     // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has any [F] Energy attached, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Fighting],
+            extra_damage: 50,
+        },
+    );
     map.insert(
         "If this Pokémon has no damage on it, this attack does 30 more damage.",
         Mechanic::ExtraDamageIfUndamaged { extra_damage: 30 },
