@@ -16,6 +16,8 @@ mod comfey_flower_shield_test;
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
 mod dusknoir_shadow_void_test;
+#[path = "pokemon/emboar_flare_storm_test.rs"]
+mod emboar_flare_storm_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/jolteon_ex_test.rs"]

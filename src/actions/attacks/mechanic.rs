@@ -128,6 +128,7 @@ pub enum Mechanic {
     CelebiExPowerfulBloom,
     CoinFlipPerSpecificEnergyType {
         energy_type: EnergyType,
+        include_fixed_damage: bool,
         damage_per_heads: u32,
     },
     MagikarpWaterfallEvolution,
