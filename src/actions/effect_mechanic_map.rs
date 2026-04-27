@@ -1797,7 +1797,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your next turn, this Pokémon's Psych Up attack does +30 damage.", todo_implementation);
     // map.insert("During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes +20 damage from attacks.", todo_implementation);
-    // map.insert("Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.", todo_implementation);
+    map.insert(
+        "Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.",
+        Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
+            num_coins: 3,
+            energy_type: EnergyType::Fire,
+            damage_per_discarded_energy: 30,
+        },
+    );
     // map.insert("Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads.", todo_implementation);
     // map.insert("Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.", todo_implementation);
     // map.insert("Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);

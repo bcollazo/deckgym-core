@@ -74,6 +74,11 @@ pub enum Mechanic {
         damage_per_head: u32,
         num_coins: usize,
     },
+    DiscardSelfEnergyPerHeadsExtraDamage {
+        num_coins: usize,
+        energy_type: EnergyType,
+        damage_per_discarded_energy: u32,
+    },
     CoinFlipNoEffect,
     SelfDiscardEnergy {
         energies: Vec<EnergyType>,

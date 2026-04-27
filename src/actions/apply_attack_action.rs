@@ -287,6 +287,16 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             attack,
         ),
+        Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
+            num_coins,
+            energy_type,
+            damage_per_discarded_energy,
+        } => discard_self_energy_per_heads_extra_damage_attack(
+            attack.fixed_damage,
+            *num_coins,
+            *energy_type,
+            *damage_per_discarded_energy,
+        ),
         Mechanic::CoinFlipNoEffect => coinflip_no_effect(attack.fixed_damage),
         Mechanic::SelfDiscardEnergy { energies } => {
             self_energy_discard_attack(attack.fixed_damage, energies.clone())
@@ -699,6 +709,33 @@ fn coinflip_extra_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes
         active_damage_mutation(base_damage + extra_damage),
         active_damage_mutation(base_damage),
     )
+}
+
+fn discard_self_energy_per_heads_extra_damage_attack(
+    base_damage: u32,
+    num_coins: usize,
+    energy_type: EnergyType,
+    damage_per_discarded_energy: u32,
+) -> Outcomes {
+    Outcomes::binomial_by_heads(num_coins, move |heads| {
+        Box::new(move |_, state, action| {
+            let requested = vec![energy_type; heads];
+            let actual = {
+                let active = state.get_active(action.actor);
+                available_requested_energy_to_discard(active, &requested)
+            };
+            let damage = base_damage + (actual.len() as u32 * damage_per_discarded_energy);
+            let opponent = (action.actor + 1) % 2;
+            let attacking_ref = (action.actor, 0);
+
+            if !actual.is_empty() {
+                state.discard_from_active(action.actor, &actual);
+            }
+
+            handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+            handle_knockouts(state, attacking_ref, true);
+        })
+    })
 }
 
 fn both_heads_bonus_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes {
