@@ -630,6 +630,26 @@ fn get_reduced_card_effect_modifiers(
         .sum::<u32>()
 }
 
+fn get_increased_vulnerability_modifiers(
+    state: &State,
+    is_active_to_active: bool,
+    target_player: usize,
+) -> u32 {
+    if !is_active_to_active {
+        return 0;
+    }
+    state
+        .get_active(target_player)
+        .get_active_effects()
+        .iter()
+        .filter(|effect| matches!(effect, CardEffect::IncreasedVulnerability { .. }))
+        .map(|effect| match effect {
+            CardEffect::IncreasedVulnerability { amount } => *amount,
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
 fn get_turn_effect_damage_reduction(
     state: &State,
     target_player: usize,
@@ -796,6 +816,8 @@ pub(crate) fn modify_damage(
     );
     let reduced_card_effect_modifiers =
         get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
+    let increased_vulnerability_modifiers =
+        get_increased_vulnerability_modifiers(state, is_active_to_active, target_player);
     let reduced_turn_effect_modifiers = get_turn_effect_damage_reduction(
         state,
         target_player,
@@ -829,11 +851,12 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
+        "Attack: {:?}, Weakness: {}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, IncreasedVulnerability: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
         base_damage,
         weakness_modifier,
         increased_turn_effect_modifiers,
         increased_attack_specific_modifiers,
+        increased_vulnerability_modifiers,
         reduced_card_effect_modifiers,
         reduced_turn_effect_modifiers,
         heavy_helmet_reduction,
@@ -850,6 +873,7 @@ pub(crate) fn modify_damage(
         + ability_damage_increase
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
+        + increased_vulnerability_modifiers
         + type_boost_bonus
         + stadium_damage_bonus)
         .saturating_sub(
