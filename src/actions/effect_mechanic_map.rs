@@ -1761,5 +1761,51 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_point: 30,
         },
     );
+
+    // B3 Mechanics
+    // map.insert("1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.", todo_implementation);
+    // map.insert("1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.", todo_implementation);
+    // map.insert("Discard 2 random Energy from among the Energy attached to all of your Pokémon.", todo_implementation);
+    // map.insert("Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.", todo_implementation);
+    // map.insert("Discard a [D] Energy from this Pokémon.", todo_implementation);
+    // map.insert("Discard a [R] Energy from your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("Discard a [W] Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    // map.insert("Discard the top card of your deck.", todo_implementation);
+    // map.insert("During your next turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon.", todo_implementation);
+    // map.insert("During your next turn, this Pokémon's Psych Up attack does +30 damage.", todo_implementation);
+    // map.insert("During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.", todo_implementation);
+    // map.insert("During your opponent's next turn, this Pokémon takes +20 damage from attacks.", todo_implementation);
+    // map.insert("Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.", todo_implementation);
+    // map.insert("Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads.", todo_implementation);
+    // map.insert("Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.", todo_implementation);
+    // map.insert("Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    // map.insert("Flip a coin. If tails, this Pokémon also does 60 damage to itself.", todo_implementation);
+    // map.insert("Heal 10 damage from each of your Pokémon.", todo_implementation);
+    // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
+    // map.insert("Heal 30 damage from 1 of your Benched Pokémon.", todo_implementation);
+    // map.insert("Heal 30 damage from 1 of your Pokémon.", todo_implementation);
+    // map.insert("Heal 30 damage from each of your Pokémon.", todo_implementation);
+    // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
+    // map.insert("If a Stadium is in play, heal 20 damage from this Pokémon.", todo_implementation);
+    // map.insert("If a Stadium is in play, this attack does 20 more damage.", todo_implementation);
+    // map.insert("If a Stadium is in play, this attack does 70 more damage.", todo_implementation);
+    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Asleep.", todo_implementation);
+    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Burned.", todo_implementation);
+    // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
+    // map.insert("If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.", todo_implementation);
+    // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If this Pokémon has any [F] Energy attached, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If this Pokémon has no damage on it, this attack does 30 more damage.", todo_implementation);
+    // map.insert("If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);
+    // map.insert("If your opponent's Active Pokémon is Confused, this attack does 70 more damage.", todo_implementation);
+    // map.insert("Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
+    // map.insert("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.", todo_implementation);
+    // map.insert("Take a [C] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    // map.insert("The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot.", todo_implementation);
+    // map.insert("This attack does 30 damage for each of your Benched [D] Pokémon.", todo_implementation);
+    // map.insert("This attack does 60 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
     map
 });

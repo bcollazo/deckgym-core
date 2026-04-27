@@ -64752,6 +64752,5300 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B3 001",
+      "name": "Tangela",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Bind",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 002",
+      "name": "Tangrowth",
+      "stage": 1,
+      "evolves_from": "Tangela",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Vine Whip",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 003",
+      "name": "Heracross",
+      "stage": 2,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Powerful Friends",
+          "fixed_damage": 30,
+          "effect": "If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 004",
+      "name": "Celebi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Time Recall",
+        "effect": "Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 005",
+      "name": "Treecko",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pound",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 006",
+      "name": "Grovyle",
+      "stage": 1,
+      "evolves_from": "Treecko",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Slicing Snipe",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 007",
+      "name": "Sceptile",
+      "stage": 2,
+      "evolves_from": "Grovyle",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Leaf Blade",
+          "fixed_damage": 70,
+          "effect": "Flip a coin. If heads, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 008",
+      "name": "Mega Sceptile ex",
+      "stage": 2,
+      "evolves_from": "Grovyle",
+      "hp": 210,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Terminating Tail",
+          "fixed_damage": 130,
+          "effect": "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 009",
+      "name": "Surskit",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Firefighting",
+          "fixed_damage": 10,
+          "effect": "Discard a [R] Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 010",
+      "name": "Masquerain",
+      "stage": 1,
+      "evolves_from": "Surskit",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gust",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 011",
+      "name": "Shroomish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Spore",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 012",
+      "name": "Breloom",
+      "stage": 1,
+      "evolves_from": "Shroomish",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pre-Dawn Strike",
+          "fixed_damage": 30,
+          "effect": "If your opponent's Active Pokémon is Asleep, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 013",
+      "name": "Budew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Prickly Powder",
+          "fixed_damage": 10,
+          "effect": "The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 014",
+      "name": "Carnivine",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Bite",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 015",
+      "name": "Sewaddle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 016",
+      "name": "Swadloon",
+      "stage": 1,
+      "evolves_from": "Sewaddle",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Protect",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 017",
+      "name": "Leavanny",
+      "stage": 2,
+      "evolves_from": "Swadloon",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Grass"],
+          "title": "Razor Leaf",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 018",
+      "name": "Durant",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Bite Together",
+          "fixed_damage": 20,
+          "effect": "If Durant is on your Bench, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 019",
+      "name": "Applin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Share",
+          "fixed_damage": 0,
+          "effect": "Heal 30 damage from 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 020",
+      "name": "Flapple",
+      "stage": 1,
+      "evolves_from": "Applin",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Sour Spit",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 021",
+      "name": "Numel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "Knock Away",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 022",
+      "name": "Camerupt",
+      "stage": 1,
+      "evolves_from": "Numel",
+      "hp": 130,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Eruption",
+          "fixed_damage": 60,
+          "effect": "Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 023",
+      "name": "Mega Camerupt ex",
+      "stage": 1,
+      "evolves_from": "Numel",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Volcanic Kaboom",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random. Do 160 damage to it."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 024",
+      "name": "Castform Sunny Form",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Sunny Scorching",
+          "fixed_damage": 30,
+          "effect": "If a Stadium is in play, your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 025",
+      "name": "Victini",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": {
+        "title": "Victory Star",
+        "effect": "Once during your turn, after you flip any coins for an attack of 1 of your [R] Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "V-Flame",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 026",
+      "name": "Tepig",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Stoke",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 027",
+      "name": "Pignite",
+      "stage": 1,
+      "evolves_from": "Tepig",
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Magma Punch",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 028",
+      "name": "Emboar",
+      "stage": 2,
+      "evolves_from": "Pignite",
+      "hp": 160,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Flare Storm",
+          "fixed_damage": 70,
+          "effect": "Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 029",
+      "name": "Darumaka",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 030",
+      "name": "Darmanitan",
+      "stage": 1,
+      "evolves_from": "Darumaka",
+      "hp": 120,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Double Smash",
+          "fixed_damage": 40,
+          "effect": "Flip 2 coins. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 031",
+      "name": "Larvesta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Steady Firebreathing",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 032",
+      "name": "Volcarona",
+      "stage": 1,
+      "evolves_from": "Larvesta",
+      "hp": 110,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Fire Arrow",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 033",
+      "name": "Poliwag",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Rain Splash",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 034",
+      "name": "Poliwhirl",
+      "stage": 1,
+      "evolves_from": "Poliwag",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Hit Twice",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 035",
+      "name": "Politoed",
+      "stage": 2,
+      "evolves_from": "Poliwhirl",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Raid",
+          "fixed_damage": 50,
+          "effect": "If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 036",
+      "name": "Paldean Tauros",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Smash Kick",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 037",
+      "name": "Vaporeon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 160,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Frozen Flow",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 038",
+      "name": "Wooper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Tail Whap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 039",
+      "name": "Quagsire",
+      "stage": 1,
+      "evolves_from": "Wooper",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless", "Colorless"],
+          "title": "Muddy Headbutt",
+          "fixed_damage": 60,
+          "effect": "If this Pokémon has any [F] Energy attached, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 040",
+      "name": "Castform Rainy Form",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Rainy Absorbing",
+          "fixed_damage": 30,
+          "effect": "If a Stadium is in play, heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 041",
+      "name": "Castform Snowy Form",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Snowy Chilling",
+          "fixed_damage": 40,
+          "effect": "If a Stadium is in play, your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 042",
+      "name": "Clamperl",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Sparkling Pearl",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 043",
+      "name": "Huntail",
+      "stage": 1,
+      "evolves_from": "Clamperl",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Hydro Splash",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 044",
+      "name": "Gorebyss",
+      "stage": 1,
+      "evolves_from": "Clamperl",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 045",
+      "name": "Regice",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless", "Colorless"],
+          "title": "Reflect Energy",
+          "fixed_damage": 70,
+          "effect": "Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 046",
+      "name": "Cubchoo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Icicle Punch",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 047",
+      "name": "Beartic",
+      "stage": 1,
+      "evolves_from": "Cubchoo",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Frost Smash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 048",
+      "name": "Sobble",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Find a Friend",
+          "fixed_damage": 0,
+          "effect": "Put a random Pokémon from your deck into your hand."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 049",
+      "name": "Drizzile",
+      "stage": 1,
+      "evolves_from": "Sobble",
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Swift Shot",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 20 damage to your opponent's Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 050",
+      "name": "Inteleon",
+      "stage": 2,
+      "evolves_from": "Drizzile",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Swift Shot",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may do 30 damage to your opponent's Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 051",
+      "name": "Rapid Strike Urshifu",
+      "stage": 1,
+      "evolves_from": "Kubfu",
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Double Type",
+        "effect": "As long as this Pokémon is in play, it is [W] and [F] type."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Tornado Shot",
+          "fixed_damage": 40,
+          "effect": "Discard a [W] Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 052",
+      "name": "Magnemite",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Thunder Shock",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 053",
+      "name": "Magneton",
+      "stage": 1,
+      "evolves_from": "Magnemite",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Magnetic Blast",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 054",
+      "name": "Magnezone ex",
+      "stage": 2,
+      "evolves_from": "Magneton",
+      "hp": 180,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Storm Blade",
+          "fixed_damage": 130,
+          "effect": "Discard a [L] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 055",
+      "name": "Voltorb",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Single Shot Blast",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 056",
+      "name": "Electrode",
+      "stage": 1,
+      "evolves_from": "Voltorb",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electroblast",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 30 more damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 057",
+      "name": "Chinchou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Razor Fin",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 058",
+      "name": "Lanturn",
+      "stage": 1,
+      "evolves_from": "Chinchou",
+      "hp": 110,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Electric Ball",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 059",
+      "name": "Zekrom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Bolt Strike",
+          "fixed_damage": 110,
+          "effect": "Flip a coin. If tails, this Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 060",
+      "name": "Toxel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Slap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 061",
+      "name": "Toxtricity",
+      "stage": 1,
+      "evolves_from": "Toxel",
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Vengeful Shock",
+          "fixed_damage": 40,
+          "effect": "If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 062",
+      "name": "Morpeko",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Full Belly Bolt",
+          "fixed_damage": 10,
+          "effect": "If this Pokémon has no damage on it, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 063",
+      "name": "Ralts",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 064",
+      "name": "Kirlia",
+      "stage": 1,
+      "evolves_from": "Ralts",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Double Spin",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 065",
+      "name": "Espurr",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Mumble",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 066",
+      "name": "Meowstic",
+      "stage": 1,
+      "evolves_from": "Espurr",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Perplexing Ears",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Psyshot",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 067",
+      "name": "Diancie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Diamond Storm",
+          "fixed_damage": 50,
+          "effect": "Heal 20 damage from each of your [P] Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 068",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Pester the Dizzy",
+          "fixed_damage": 20,
+          "effect": "If your opponent's Active Pokémon is Confused, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 069",
+      "name": "Hatenna",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 070",
+      "name": "Hattrem",
+      "stage": 1,
+      "evolves_from": "Hatenna",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Disarming Voice",
+          "fixed_damage": 20,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 071",
+      "name": "Hatterene",
+      "stage": 2,
+      "evolves_from": "Hattrem",
+      "hp": 150,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Mental Crush",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon is Confused, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 072",
+      "name": "Bramblin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Petty Grudge",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 073",
+      "name": "Brambleghast",
+      "stage": 1,
+      "evolves_from": "Bramblin",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Accept Pain",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may move 30 damage that your Active Pokémon has on it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Spooky Shot",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 074",
+      "name": "Gligar",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Lunge",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 075",
+      "name": "Gliscor",
+      "stage": 1,
+      "evolves_from": "Gligar",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Pierce",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 076",
+      "name": "Trapinch",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Mud-Slap",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 077",
+      "name": "Regirock",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Mad Hammer",
+          "fixed_damage": 100,
+          "effect": "This Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 078",
+      "name": "Bonsly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Teary Attack",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -30 damage."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 079",
+      "name": "Riolu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Fighting Fist",
+          "fixed_damage": 10,
+          "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 080",
+      "name": "Lucario",
+      "stage": 1,
+      "evolves_from": "Riolu",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Close Combat",
+          "fixed_damage": 90,
+          "effect": "During your opponent's next turn, this Pokémon takes +20 damage from attacks."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 081",
+      "name": "Mega Lucario ex",
+      "stage": 1,
+      "evolves_from": "Riolu",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Fighting Pulse",
+          "fixed_damage": 90,
+          "effect": "If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 082",
+      "name": "Croagunk",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Corkscrew Punch",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 083",
+      "name": "Toxicroak",
+      "stage": 1,
+      "evolves_from": "Croagunk",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Poison Jab",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 084",
+      "name": "Gallade",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Earthen Sword",
+          "fixed_damage": 70,
+          "effect": "If a Stadium is in play, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 085",
+      "name": "Throh",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Circle Throw",
+          "fixed_damage": 70,
+          "effect": "Switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 086",
+      "name": "Sawk",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Brick Break",
+          "fixed_damage": 30,
+          "effect": "This attack's damage isn't affected by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 087",
+      "name": "Dwebble",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 088",
+      "name": "Crustle ex",
+      "stage": 1,
+      "evolves_from": "Dwebble",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Boulder Crush",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 089",
+      "name": "Meloetta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Inspiring Dance",
+          "fixed_damage": 30,
+          "effect": "During your next turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 090",
+      "name": "Stufful",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 091",
+      "name": "Bewear",
+      "stage": 1,
+      "evolves_from": "Stufful",
+      "hp": 110,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Triple Smash",
+          "fixed_damage": 50,
+          "effect": "Flip 3 coins. This attack does 50 damage for each heads."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 092",
+      "name": "Rolycoly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 093",
+      "name": "Carkol",
+      "stage": 1,
+      "evolves_from": "Rolycoly",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Hammer In",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 094",
+      "name": "Coalossal",
+      "stage": 2,
+      "evolves_from": "Carkol",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Mountain Crush",
+          "fixed_damage": 90,
+          "effect": "Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 095",
+      "name": "Silicobra",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 096",
+      "name": "Sandaconda",
+      "stage": 1,
+      "evolves_from": "Silicobra",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Super Sand Attack",
+          "fixed_damage": 70,
+          "effect": "During your opponent's next turn, if the Defending Pokémon tries to use an attack, your opponent flips a coin. If tails, that attack doesn't happen."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 097",
+      "name": "Kubfu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Training",
+          "fixed_damage": 0,
+          "effect": "Take a [C] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 098",
+      "name": "Zubat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Spin Turn",
+          "fixed_damage": 10,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 099",
+      "name": "Golbat",
+      "stage": 1,
+      "evolves_from": "Zubat",
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Cutting Wind",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 100",
+      "name": "Crobat",
+      "stage": 2,
+      "evolves_from": "Golbat",
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Surprise Strike",
+          "fixed_damage": 60,
+          "effect": "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 101",
+      "name": "Koffing",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Gas Bomb",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 102",
+      "name": "Weezing",
+      "stage": 1,
+      "evolves_from": "Koffing",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 103",
+      "name": "Qwilfish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Spiny Rush",
+          "fixed_damage": 40,
+          "effect": "Flip a coin until you get tails. This attack does 40 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 104",
+      "name": "Seviper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Poison Jab",
+          "fixed_damage": 20,
+          "effect": "Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 105",
+      "name": "Zorua",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Ascension",
+          "fixed_damage": 0,
+          "effect": "Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 106",
+      "name": "Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Zorua",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Brutal Bash",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each of your Benched [D] Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 107",
+      "name": "Foongus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 108",
+      "name": "Amoonguss",
+      "stage": 1,
+      "evolves_from": "Foongus",
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Dangerous Spores",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Poisoned and Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 109",
+      "name": "Vullaby",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Flap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 110",
+      "name": "Mandibuzz",
+      "stage": 1,
+      "evolves_from": "Vullaby",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Blindside",
+          "fixed_damage": 0,
+          "effect": "This attack does 60 damage to 1 of your opponent's Pokémon that have damage on them."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 111",
+      "name": "Inkay",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Spinning Attack",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 112",
+      "name": "Malamar",
+      "stage": 1,
+      "evolves_from": "Inkay",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Evolution Jammer",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 113",
+      "name": "Single Strike Urshifu",
+      "stage": 1,
+      "evolves_from": "Kubfu",
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Double Type",
+        "effect": "As long as this Pokémon is in play, it is [F] and [D] type."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Power Blast",
+          "fixed_damage": 110,
+          "effect": "Discard a [D] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 114",
+      "name": "Zarude",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Dark Vengeance",
+          "fixed_damage": 40,
+          "effect": "If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 115",
+      "name": "Bombirdier",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Villainous Delivery",
+        "effect": "As long as this Pokémon is on your Bench, your Active [D] Pokémon's Retreat Cost is 1 less."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Dark Cutter",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 116",
+      "name": "Registeel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless", "Colorless"],
+          "title": "Protect Charge",
+          "fixed_damage": 60,
+          "effect": "During your opponent's next turn, this Pokémon takes -30 damage from attacks."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 117",
+      "name": "Bronzor",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Speed Dive",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 118",
+      "name": "Bronzong",
+      "stage": 1,
+      "evolves_from": "Bronzor",
+      "hp": 120,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Psychic Resonance",
+          "fixed_damage": 50,
+          "effect": "If your opponent has any [P] Pokémon in play, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 119",
+      "name": "Pawniard",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Cut Up",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 120",
+      "name": "Bisharp",
+      "stage": 1,
+      "evolves_from": "Pawniard",
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Night Slash",
+          "fixed_damage": 60,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 121",
+      "name": "Magearna",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Windup Cannon",
+          "fixed_damage": 20,
+          "effect": "This attack does 20 more damage for each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 122",
+      "name": "Meltan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 123",
+      "name": "Melmetal",
+      "stage": 1,
+      "evolves_from": "Meltan",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Metal"],
+          "title": "Overdrive Smash",
+          "fixed_damage": 60,
+          "effect": "During your next turn, this Pokémon's Overdrive Smash attack does +60 damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 124",
+      "name": "Corviknight ex",
+      "stage": 2,
+      "evolves_from": "Corvisquire",
+      "hp": 180,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Metal"],
+          "title": "Air Crash",
+          "fixed_damage": 110,
+          "effect": "Discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 125",
+      "name": "Vibrava",
+      "stage": 1,
+      "evolves_from": "Trapinch",
+      "hp": 90,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Sand Wind",
+          "fixed_damage": 0,
+          "effect": "This attack does 10 damage to each of your opponent's Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 126",
+      "name": "Flygon ex",
+      "stage": 2,
+      "evolves_from": "Vibrava",
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Sand Slammer",
+        "effect": "During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fighting", "Colorless"],
+          "title": "Dragon Pulse",
+          "fixed_damage": 140,
+          "effect": "Discard the top card of your deck."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 127",
+      "name": "Chansey",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Bind Wound",
+          "fixed_damage": 0,
+          "effect": "Heal 30 damage from 1 of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 128",
+      "name": "Blissey",
+      "stage": 1,
+      "evolves_from": "Chansey",
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Happiness Supplement",
+        "effect": "Once during your turn, you may remove a random Special Condition from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 129",
+      "name": "Eevee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Jumping Kick",
+          "fixed_damage": 0,
+          "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 130",
+      "name": "Dunsparce",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Bop 'n' Burrow",
+          "fixed_damage": 20,
+          "effect": "You may shuffle this Pokémon and all attached cards into your deck."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 131",
+      "name": "Teddiursa",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Dig Claws",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 132",
+      "name": "Ursaring",
+      "stage": 1,
+      "evolves_from": "Teddiursa",
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Raging Claws",
+          "fixed_damage": 40,
+          "effect": "This attack does more damage equal to the damage this Pokémon has on it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 133",
+      "name": "Castform",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Blow Through",
+          "fixed_damage": 20,
+          "effect": "If a Stadium is in play, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 134",
+      "name": "Regigigas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Seal of Antiquity",
+        "effect": "If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Giga Turbo",
+          "fixed_damage": 100,
+          "effect": "Take a [C] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 135",
+      "name": "Patrat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 136",
+      "name": "Watchog",
+      "stage": 1,
+      "evolves_from": "Patrat",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Psych Up",
+          "fixed_damage": 30,
+          "effect": "During your next turn, this Pokémon's Psych Up attack does +30 damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 137",
+      "name": "Lillipup",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 138",
+      "name": "Herdier",
+      "stage": 1,
+      "evolves_from": "Lillipup",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Hammer In",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 139",
+      "name": "Stoutland",
+      "stage": 2,
+      "evolves_from": "Herdier",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Fighting Fangs",
+          "fixed_damage": 70,
+          "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 140",
+      "name": "Audino",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Healing Light",
+          "fixed_damage": 40,
+          "effect": "Heal 10 damage from each of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 141",
+      "name": "Mega Audino ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Heartfelt Shine",
+          "fixed_damage": 90,
+          "effect": "Heal 30 damage from each of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 142",
+      "name": "Minccino",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Fluffy Tail",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 143",
+      "name": "Cinccino",
+      "stage": 1,
+      "evolves_from": "Minccino",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Knock Away",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 144",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Whimsy Tackle",
+          "fixed_damage": 80,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 145",
+      "name": "Rookidee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Pluck",
+          "fixed_damage": 10,
+          "effect": "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 146",
+      "name": "Corvisquire",
+      "stage": 1,
+      "evolves_from": "Rookidee",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Joust",
+          "fixed_damage": 30,
+          "effect": "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 147",
+      "trainer_card_type": "Item",
+      "name": "Field Blower",
+      "effect": "Discard a Pokémon Tool card from a Pokémon (yours or your opponent's), or discard a Stadium card in play.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 148",
+      "trainer_card_type": "Tool",
+      "name": "Lucky Egg",
+      "effect": "If the Pokémon this card is attached to is Knocked Out by damage from an attack from your opponent's Pokémon, draw cards until you have 5 cards in your hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 149",
+      "trainer_card_type": "Supporter",
+      "name": "Korrina",
+      "effect": "During this turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon ex.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 150",
+      "trainer_card_type": "Supporter",
+      "name": "Cabbie",
+      "effect": "Put a random Stadium card from your deck into your hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 151",
+      "trainer_card_type": "Supporter",
+      "name": "Cheren",
+      "effect": "During your opponent's next turn, all of your Watchog and Stoutland take -100 damage from attacks from your opponent's Pokémon ex.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 152",
+      "trainer_card_type": "Supporter",
+      "name": "Parasol Lady",
+      "effect": "Put 1 of your [W] Pokémon in play, except any Pokémon ex, into your hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 153",
+      "trainer_card_type": "Stadium",
+      "name": "Fragrant Forest",
+      "effect": "Once during each player's turn, that player may put a random Basic [G] Pokémon from their deck into their hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 154",
+      "trainer_card_type": "Stadium",
+      "name": "Arena of Antiquity",
+      "effect": "Attacks used by each [F] Pokémon in play (both yours and your opponent's) do +20 damage to the opponent's Active Pokémon ex.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 155",
+      "trainer_card_type": "Stadium",
+      "name": "Bounded Field",
+      "effect": "When applying the opponent's Active Pokémon's Weakness to damage from attacks used by Pokémon in play (both yours and your opponent's) that aren't Mega Evolution Pokémon ex, apply Weakness as ×2.",
+      "rarity": "◊◊",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 156",
+      "name": "Treecko",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pound",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 157",
+      "name": "Grovyle",
+      "stage": 1,
+      "evolves_from": "Treecko",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Slicing Snipe",
+          "fixed_damage": 0,
+          "effect": "This attack does 50 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 158",
+      "name": "Shroomish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Spore",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 159",
+      "name": "Budew",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Prickly Powder",
+          "fixed_damage": 10,
+          "effect": "The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 160",
+      "name": "Flapple",
+      "stage": 1,
+      "evolves_from": "Applin",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Sour Spit",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 161",
+      "name": "Tepig",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Stoke",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 162",
+      "name": "Quagsire",
+      "stage": 1,
+      "evolves_from": "Wooper",
+      "hp": 130,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless", "Colorless"],
+          "title": "Muddy Headbutt",
+          "fixed_damage": 60,
+          "effect": "If this Pokémon has any [F] Energy attached, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 163",
+      "name": "Zekrom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Bolt Strike",
+          "fixed_damage": 110,
+          "effect": "Flip a coin. If tails, this Pokémon also does 30 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 164",
+      "name": "Morpeko",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Full Belly Bolt",
+          "fixed_damage": 10,
+          "effect": "If this Pokémon has no damage on it, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 165",
+      "name": "Meowstic",
+      "stage": 1,
+      "evolves_from": "Espurr",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Perplexing Ears",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Psyshot",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 166",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Pester the Dizzy",
+          "fixed_damage": 20,
+          "effect": "If your opponent's Active Pokémon is Confused, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 167",
+      "name": "Brambleghast",
+      "stage": 1,
+      "evolves_from": "Bramblin",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Accept Pain",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may move 30 damage that your Active Pokémon has on it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Spooky Shot",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 168",
+      "name": "Bonsly",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Teary Attack",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -30 damage."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 169",
+      "name": "Riolu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Fighting Fist",
+          "fixed_damage": 10,
+          "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 170",
+      "name": "Meloetta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Inspiring Dance",
+          "fixed_damage": 30,
+          "effect": "During your next turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 171",
+      "name": "Carkol",
+      "stage": 1,
+      "evolves_from": "Rolycoly",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Hammer In",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 172",
+      "name": "Kubfu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Training",
+          "fixed_damage": 0,
+          "effect": "Take a [C] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 173",
+      "name": "Seviper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Poison Jab",
+          "fixed_damage": 20,
+          "effect": "Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 174",
+      "name": "Zorua",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Ascension",
+          "fixed_damage": 0,
+          "effect": "Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 175",
+      "name": "Malamar",
+      "stage": 1,
+      "evolves_from": "Inkay",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Evolution Jammer",
+          "fixed_damage": 40,
+          "effect": "During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 176",
+      "name": "Bisharp",
+      "stage": 1,
+      "evolves_from": "Pawniard",
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Night Slash",
+          "fixed_damage": 60,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 177",
+      "name": "Meltan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 178",
+      "name": "Castform",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Blow Through",
+          "fixed_damage": 20,
+          "effect": "If a Stadium is in play, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 179",
+      "name": "Cinccino",
+      "stage": 1,
+      "evolves_from": "Minccino",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Knock Away",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 180",
+      "name": "Mega Sceptile ex",
+      "stage": 2,
+      "evolves_from": "Grovyle",
+      "hp": 210,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Terminating Tail",
+          "fixed_damage": 130,
+          "effect": "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 181",
+      "name": "Mega Camerupt ex",
+      "stage": 1,
+      "evolves_from": "Numel",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Volcanic Kaboom",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random. Do 160 damage to it."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 182",
+      "name": "Vaporeon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 160,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Frozen Flow",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 183",
+      "name": "Magnezone ex",
+      "stage": 2,
+      "evolves_from": "Magneton",
+      "hp": 180,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Storm Blade",
+          "fixed_damage": 130,
+          "effect": "Discard a [L] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 184",
+      "name": "Mega Lucario ex",
+      "stage": 1,
+      "evolves_from": "Riolu",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Fighting Pulse",
+          "fixed_damage": 90,
+          "effect": "If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 185",
+      "name": "Crustle ex",
+      "stage": 1,
+      "evolves_from": "Dwebble",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Boulder Crush",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 186",
+      "name": "Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Zorua",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Brutal Bash",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each of your Benched [D] Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 187",
+      "name": "Corviknight ex",
+      "stage": 2,
+      "evolves_from": "Corvisquire",
+      "hp": 180,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Metal"],
+          "title": "Air Crash",
+          "fixed_damage": 110,
+          "effect": "Discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 188",
+      "name": "Flygon ex",
+      "stage": 2,
+      "evolves_from": "Vibrava",
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Sand Slammer",
+        "effect": "During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fighting", "Colorless"],
+          "title": "Dragon Pulse",
+          "fixed_damage": 140,
+          "effect": "Discard the top card of your deck."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 189",
+      "name": "Mega Audino ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Heartfelt Shine",
+          "fixed_damage": 90,
+          "effect": "Heal 30 damage from each of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 190",
+      "trainer_card_type": "Supporter",
+      "name": "Korrina",
+      "effect": "During this turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon ex.",
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 191",
+      "trainer_card_type": "Supporter",
+      "name": "Cabbie",
+      "effect": "Put a random Stadium card from your deck into your hand.",
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 192",
+      "trainer_card_type": "Supporter",
+      "name": "Cheren",
+      "effect": "During your opponent's next turn, all of your Watchog and Stoutland take -100 damage from attacks from your opponent's Pokémon ex.",
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3 193",
+      "trainer_card_type": "Supporter",
+      "name": "Parasol Lady",
+      "effect": "Put 1 of your [W] Pokémon in play, except any Pokémon ex, into your hand.",
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 194",
+      "name": "Mega Sceptile ex",
+      "stage": 2,
+      "evolves_from": "Grovyle",
+      "hp": 210,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Terminating Tail",
+          "fixed_damage": 130,
+          "effect": "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 195",
+      "name": "Mega Camerupt ex",
+      "stage": 1,
+      "evolves_from": "Numel",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Fire", "Colorless"],
+          "title": "Volcanic Kaboom",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random. Do 160 damage to it."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 196",
+      "name": "Vaporeon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 160,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Frozen Flow",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 197",
+      "name": "Magnezone ex",
+      "stage": 2,
+      "evolves_from": "Magneton",
+      "hp": 180,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Lightning"],
+          "title": "Storm Blade",
+          "fixed_damage": 130,
+          "effect": "Discard a [L] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 198",
+      "name": "Crustle ex",
+      "stage": 1,
+      "evolves_from": "Dwebble",
+      "hp": 160,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Boulder Crush",
+          "fixed_damage": 90,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 199",
+      "name": "Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Zorua",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Brutal Bash",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each of your Benched [D] Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 200",
+      "name": "Corviknight ex",
+      "stage": 2,
+      "evolves_from": "Corvisquire",
+      "hp": 180,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Metal"],
+          "title": "Air Crash",
+          "fixed_damage": 110,
+          "effect": "Discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 201",
+      "name": "Flygon ex",
+      "stage": 2,
+      "evolves_from": "Vibrava",
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Sand Slammer",
+        "effect": "During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fighting", "Colorless"],
+          "title": "Dragon Pulse",
+          "fixed_damage": 140,
+          "effect": "Discard the top card of your deck."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 202",
+      "name": "Mega Audino ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Heartfelt Shine",
+          "fixed_damage": 90,
+          "effect": "Heal 30 damage from each of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 203",
+      "name": "Sobble",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Find a Friend",
+          "fixed_damage": 0,
+          "effect": "Put a random Pokémon from your deck into your hand."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 204",
+      "name": "Mega Lucario ex",
+      "stage": 1,
+      "evolves_from": "Riolu",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Fighting Pulse",
+          "fixed_damage": 90,
+          "effect": "If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 205",
+      "name": "Cottonee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Razor Leaf",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 206",
+      "name": "Torchic",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Peck",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 207",
+      "name": "Combusken",
+      "stage": 1,
+      "evolves_from": "Torchic",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "High Jump Kick",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 208",
+      "name": "Blaziken",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Blaze Kick",
+          "fixed_damage": 100,
+          "effect": "Discard a [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 209",
+      "name": "Frillish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 210",
+      "name": "Jellicent",
+      "stage": 1,
+      "evolves_from": "Frillish",
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Bouncy Body",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Surf",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 211",
+      "name": "Onix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Dig",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 212",
+      "name": "Zubat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Spin Turn",
+          "fixed_damage": 10,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 213",
+      "name": "Golbat",
+      "stage": 1,
+      "evolves_from": "Zubat",
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Cutting Wind",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 214",
+      "name": "Crobat",
+      "stage": 2,
+      "evolves_from": "Golbat",
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Surprise Strike",
+          "fixed_damage": 60,
+          "effect": "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 215",
+      "name": "Grimer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 216",
+      "name": "Muk",
+      "stage": 1,
+      "evolves_from": "Grimer",
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness", "Darkness"],
+          "title": "Gunk Shot",
+          "fixed_damage": 70,
+          "effect": "Your opponent's Active Pokémon is now Poisoned."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 217",
+      "name": "Absol",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Ominous Claw",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 218",
+      "name": "Skrelp",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Razor Fin",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 219",
+      "name": "Steelix",
+      "stage": 1,
+      "evolves_from": "Onix",
+      "hp": 150,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Metal Defender",
+          "fixed_damage": 100,
+          "effect": "During your opponent's next turn, this Pokémon has no Weakness."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 220",
+      "name": "Chansey",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Bind Wound",
+          "fixed_damage": 0,
+          "effect": "Heal 30 damage from 1 of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 221",
+      "name": "Blissey",
+      "stage": 1,
+      "evolves_from": "Chansey",
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Happiness Supplement",
+        "effect": "Once during your turn, you may remove a random Special Condition from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 222",
+      "name": "Porygon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stiffen",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 223",
+      "name": "Porygon2",
+      "stage": 1,
+      "evolves_from": "Porygon",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 224",
+      "name": "Porygon-Z",
+      "stage": 2,
+      "evolves_from": "Porygon2",
+      "hp": 140,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Cyberjack",
+          "fixed_damage": 20,
+          "effect": "This attack does 20 more damage for each Trainer card in your opponent's deck."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 225",
+      "name": "Whimsicott ex",
+      "stage": 1,
+      "evolves_from": "Cottonee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Grass Knot",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 226",
+      "name": "Mega Blaziken ex",
+      "stage": 2,
+      "evolves_from": "Combusken",
+      "hp": 210,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Mega Burning",
+          "fixed_damage": 120,
+          "effect": "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 227",
+      "name": "Greninja ex",
+      "stage": 2,
+      "evolves_from": "Frogadier",
+      "hp": 170,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Shifting Stream",
+        "effect": "Once during your turn, you may switch your Active [W] Pokémon with 1 of your Benched Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Aqua Edge",
+          "fixed_damage": 100,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 228",
+      "name": "Jolteon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Electromagnetic Wall",
+        "effect": "As long as this Pokémon is in the Active Spot, whenever your opponent attaches an Energy from their Energy Zone to 1 of their Pokémon, do 20 damage to that Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 229",
+      "name": "Hitmonchan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Quick Straight",
+          "fixed_damage": 50,
+          "effect": "This attack's damage isn't affected by Weakness."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 230",
+      "name": "Mega Absol ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Darkness Claw",
+          "fixed_damage": 80,
+          "effect": "Your opponent reveals their hand. Choose a Supporter card you find there and discard it."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 231",
+      "name": "Dragalge ex",
+      "stage": 1,
+      "evolves_from": "Skrelp",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Poison Point",
+        "effect": "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 232",
+      "name": "Mega Steelix ex",
+      "stage": 1,
+      "evolves_from": "Onix",
+      "hp": 220,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Adamantine Rolling",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 233",
+      "name": "Celebi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Time Recall",
+        "effect": "Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3 234",
+      "name": "Bombirdier",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": {
+        "title": "Villainous Delivery",
+        "effect": "As long as this Pokémon is on your Bench, your Active [D] Pokémon's Retreat Cost is 1 less."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Dark Cutter",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Pulsing Aura (B3)"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
@@ -68542,6 +73836,340 @@
         }
       ],
       "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 049",
+      "name": "Victini",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": {
+        "title": "Victory Star",
+        "effect": "Once during your turn, after you flip any coins for an attack of 1 of your [R] Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "V-Flame",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 050",
+      "name": "Meloetta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Strange Singing",
+        "effect": "At the beginning of your turn, if this Pokémon is in the Active Spot, put a random [P] Pokémon from your deck into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psyshot",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 051",
+      "name": "Zygarde",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Bite",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 052",
+      "name": "Zygarde",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Cell Storm",
+          "fixed_damage": 60,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 053",
+      "name": "Zygarde ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Land Laser",
+          "fixed_damage": 100,
+          "effect": "Flip 2 coins. This attack does 100 damage for each heads."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 054",
+      "name": "Eevee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Boosted Evolution",
+        "effect": "As long as this Pokémon is in the Active Spot, it can evolve during your first turn or the turn you play it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 055",
+      "name": "Zygarde ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Land Laser",
+          "fixed_damage": 100,
+          "effect": "Flip 2 coins. This attack does 100 damage for each heads."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 056",
+      "name": "Mega Heracross ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Grass", "Colorless"],
+          "title": "Dynamic Horn",
+          "fixed_damage": 170,
+          "effect": "Flip a coin. If tails, this Pokémon also does 60 damage to itself."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 057",
+      "name": "Castform Sunny Form",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Sunny Scorching",
+          "fixed_damage": 30,
+          "effect": "If a Stadium is in play, your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 058",
+      "name": "Tepig",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Firebreathing",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 059",
+      "name": "Dwebble",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": {
+        "title": "Shell Armor",
+        "effect": "This Pokémon takes -10 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Stampede",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 060",
+      "name": "Zarude",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Dark Vengeance",
+          "fixed_damage": 40,
+          "effect": "If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 061",
+      "name": "Treecko",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Pound",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 062",
+      "name": "Gallade",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Earthen Sword",
+          "fixed_damage": 70,
+          "effect": "If a Stadium is in play, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Psychic",
       "retreat_cost": ["Colorless", "Colorless"],
       "rarity": "◊◊◊",
       "booster_pack": "Promo B (P-B)"
