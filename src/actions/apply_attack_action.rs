@@ -363,6 +363,16 @@ fn forecast_effect_attack_by_mechanic(
             *duration,
             *coin_flip,
         ),
+        Mechanic::CoinFlipNoDamageOrDamageAndCardEffect {
+            opponent,
+            effect,
+            duration,
+        } => coin_flip_no_damage_or_damage_and_card_effect_attack(
+            attack.fixed_damage,
+            *opponent,
+            effect.clone(),
+            *duration,
+        ),
         Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::SelfDiscardAllTypeEnergy { energy_type } => {
@@ -1711,6 +1721,29 @@ fn damage_and_card_effect_attack(
     } else {
         active_damage_effect_doutcome(damage, effect_on_target)
     }
+}
+
+fn coin_flip_no_damage_or_damage_and_card_effect_attack(
+    damage: u32,
+    opponent: bool,
+    effect: CardEffect,
+    effect_duration: u8,
+) -> Outcomes {
+    let effect_on_target = move |_: &mut StdRng, state: &mut State, action: &Action| {
+        let player = if opponent {
+            (action.actor + 1) % 2
+        } else {
+            action.actor
+        };
+        state
+            .get_active_mut(player)
+            .add_effect(effect.clone(), effect_duration);
+    };
+
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(damage, effect_on_target),
+        active_damage_mutation(0),
+    )
 }
 
 /// Discard all energy from this Pokemon

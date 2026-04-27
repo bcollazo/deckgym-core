@@ -136,6 +136,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DoubleGrassEnergy => false,
         AbilityMechanic::PreventOpponentActiveEvolution => false,
         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { .. } => false,
+        AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench { .. } => false,
         AbilityMechanic::NoRetreatIfHasEnergy => false,
         AbilityMechanic::PreventAllDamageFromEx => false,
         AbilityMechanic::SleepOnZoneAttachToSelfWhileActive => false,

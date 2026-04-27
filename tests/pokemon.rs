@@ -4,6 +4,8 @@ mod additional_ability_logic_test;
 mod arceus_ex_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
 mod blastoise_double_splash_test;
+#[path = "pokemon/bombirdier_test.rs"]
+mod bombirdier_test;
 #[path = "pokemon/bonsly_teary_attack_test.rs"]
 mod bonsly_teary_attack_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]

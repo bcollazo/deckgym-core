@@ -189,6 +189,11 @@ pub enum Mechanic {
         duration: u8,
         coin_flip: bool, // false = always apply, true = apply on heads
     },
+    CoinFlipNoDamageOrDamageAndCardEffect {
+        opponent: bool,
+        effect: CardEffect,
+        duration: u8,
+    },
     DrawCard {
         amount: u8,
     },

@@ -127,6 +127,10 @@ pub enum AbilityMechanic {
     ReduceRetreatCostOfYourActiveBasicFromBench {
         amount: u32,
     },
+    ReduceRetreatCostOfYourActiveTypedFromBench {
+        energy_type: EnergyType,
+        amount: u32,
+    },
     NoRetreatIfHasEnergy,
     PreventAllDamageFromEx,
     SleepOnZoneAttachToSelfWhileActive,
