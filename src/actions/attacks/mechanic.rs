@@ -69,6 +69,9 @@ pub enum Mechanic {
         extra_damage: u32,
         self_damage: u32,
     },
+    CoinFlipSelfDamage {
+        self_damage: u32,
+    },
     ExtraDamageForEachHeads {
         include_fixed_damage: bool,
         damage_per_head: u32,
@@ -128,12 +131,17 @@ pub enum Mechanic {
     CelebiExPowerfulBloom,
     CoinFlipPerSpecificEnergyType {
         energy_type: EnergyType,
+        include_fixed_damage: bool,
         damage_per_heads: u32,
     },
     MagikarpWaterfallEvolution,
     CoinFlipToBlockAttackNextTurn,
     MoveAllEnergyTypeToBench {
         energy_type: EnergyType,
+    },
+    MoveFixedEnergyTypeToBench {
+        energy_type: EnergyType,
+        amount: u32,
     },
     ChargeBench {
         energies: Vec<EnergyType>,
@@ -205,6 +213,9 @@ pub enum Mechanic {
     ExtraDamageIfHurt {
         extra_damage: u32,
         opponent: bool,
+    },
+    ExtraDamageIfUndamaged {
+        extra_damage: u32,
     },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,

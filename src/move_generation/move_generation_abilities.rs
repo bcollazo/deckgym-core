@@ -143,6 +143,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DrawCardsOnEvolve { .. } => false,
         AbilityMechanic::HealTypedPokemonOnEvolve { .. } => false,
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedOnEvolve { .. } => false,
+        AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => false,
         AbilityMechanic::CanEvolveIntoEeveeEvolution => false,
         AbilityMechanic::CanEvolveOnFirstTurnIfActive => false,
         AbilityMechanic::CounterattackDamage { .. } => false,

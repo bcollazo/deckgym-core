@@ -16,6 +16,8 @@ mod comfey_flower_shield_test;
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
 mod dusknoir_shadow_void_test;
+#[path = "pokemon/emboar_flare_storm_test.rs"]
+mod emboar_flare_storm_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
@@ -38,6 +40,8 @@ mod mega_kangaskhan_double_punching_family_test;
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
 mod mega_steelix_adamantine_rolling_test;
+#[path = "pokemon/morpeko_test.rs"]
+mod morpeko_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
@@ -46,6 +50,8 @@ mod rampardos_head_smash_test;
 mod shinx_hide_test;
 #[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
 mod sunflora_quick_grow_beam_test;
+#[path = "pokemon/swift_shot_test.rs"]
+mod swift_shot_test;
 #[path = "pokemon/tepig_stoke_test.rs"]
 mod tepig_stoke_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
@@ -54,3 +60,5 @@ mod vaporeon_ex_test;
 mod vulpix_tail_whip_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]
 mod xerneas_geoburst_test;
+#[path = "pokemon/zekrom_bolt_strike_test.rs"]
+mod zekrom_bolt_strike_test;

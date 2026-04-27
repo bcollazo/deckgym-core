@@ -555,6 +555,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin for each [M] Energy attached to this Pokémon. This attack does 50 damage for each heads.",
         Mechanic::CoinFlipPerSpecificEnergyType {
             energy_type: EnergyType::Metal,
+            include_fixed_damage: false,
             damage_per_heads: 50,
         },
     );
@@ -658,8 +659,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Flip a coin. If heads, your opponent's Active Pokémon's remaining HP is now 10.", todo_implementation);
     // map.insert("Flip a coin. If tails, discard 2 random Energy from this Pokémon.", todo_implementation);
     // map.insert("Flip a coin. If tails, during your next turn, this Pokémon can't attack.", todo_implementation);
-    // map.insert("Flip a coin. If tails, this Pokémon also does 20 damage to itself.", todo_implementation);
-    // map.insert("Flip a coin. If tails, this Pokémon also does 30 damage to itself.", todo_implementation);
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 20 damage to itself.",
+        Mechanic::CoinFlipSelfDamage { self_damage: 20 },
+    );
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 30 damage to itself.",
+        Mechanic::CoinFlipSelfDamage { self_damage: 30 },
+    );
     map.insert(
         "Flip a coin. If tails, this attack does nothing.",
         Mechanic::CoinFlipNoEffect,
@@ -1740,7 +1747,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage: 60 },
     );
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 40 more damage.", todo_implementation);
-    // map.insert("Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Move 2 [D] Energy from this Pokémon to 1 of your Benched Pokémon.",
+        Mechanic::MoveFixedEnergyTypeToBench {
+            energy_type: EnergyType::Darkness,
+            amount: 2,
+        },
+    );
     map.insert(
         "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.",
         Mechanic::ChargeBench {
@@ -1805,7 +1818,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_discarded_energy: 30,
         },
     );
-    // map.insert("Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads.",
+        Mechanic::CoinFlipPerSpecificEnergyType {
+            energy_type: EnergyType::Fire,
+            include_fixed_damage: true,
+            damage_per_heads: 30,
+        },
+    );
     // map.insert("Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.", todo_implementation);
     map.insert(
         "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.",
@@ -1853,7 +1873,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon has any [F] Energy attached, this attack does 60 more damage.", todo_implementation);
     // map.insert("If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If this Pokémon has no damage on it, this attack does 30 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has no damage on it, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfUndamaged { extra_damage: 30 },
+    );
     // map.insert("If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);

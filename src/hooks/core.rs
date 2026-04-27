@@ -76,7 +76,11 @@ pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) 
 }
 
 /// Called when a Pokémon evolves
-pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
+pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_hand: bool) {
+    if !from_hand {
+        return;
+    }
+
     match get_ability_mechanic(to_card) {
         Some(AbilityMechanic::DrawCardsOnEvolve { amount }) => {
             state.move_generation_stack.push((
@@ -117,6 +121,19 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card) {
                     SimpleAction::Attach {
                         attachments: vec![(1, *energy_type, 0)],
                         is_turn_energy: false,
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
+        }
+        Some(AbilityMechanic::DamageOpponentActiveOnEvolve { amount }) => {
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::ApplyDamage {
+                        attacking_ref: (actor, 0),
+                        targets: vec![(*amount, (actor + 1) % 2, 0)],
+                        is_from_active_attack: false,
                     },
                     SimpleAction::Noop,
                 ],

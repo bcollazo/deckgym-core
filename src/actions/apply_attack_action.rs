@@ -202,8 +202,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CelebiExPowerfulBloom => celebi_powerful_bloom(state),
         Mechanic::CoinFlipPerSpecificEnergyType {
             energy_type,
+            include_fixed_damage,
             damage_per_heads,
-        } => coin_flip_per_specific_energy_type(state, *energy_type, *damage_per_heads),
+        } => coin_flip_per_specific_energy_type(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *include_fixed_damage,
+            *damage_per_heads,
+        ),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
@@ -224,6 +231,10 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::MoveAllEnergyTypeToBench { energy_type } => {
             move_all_energy_type_to_bench(state, attack, *energy_type)
         }
+        Mechanic::MoveFixedEnergyTypeToBench {
+            energy_type,
+            amount,
+        } => move_fixed_energy_type_to_bench(state, attack, *energy_type, *amount),
         Mechanic::ChargeBench {
             energies,
             target_benched_type,
@@ -280,6 +291,9 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             self_damage,
         } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
+        Mechanic::CoinFlipSelfDamage { self_damage } => {
+            coinflip_self_damage_attack(attack.fixed_damage, *self_damage)
+        }
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
             damage_per_head,
@@ -377,6 +391,9 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             opponent,
         } => extra_damage_if_hurt(state, attack.fixed_damage, *extra_damage, *opponent),
+        Mechanic::ExtraDamageIfUndamaged { extra_damage } => {
+            extra_damage_if_undamaged(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -723,6 +740,17 @@ fn coinflip_extra_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes
     )
 }
 
+/// Used for attacks that deal damage and damage themselves only on tails.
+fn coinflip_self_damage_attack(base_damage: u32, self_damage: u32) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_mutation(base_damage),
+        active_damage_effect_mutation(base_damage, move |_, state, action| {
+            let active = state.get_active_mut(action.actor);
+            active.apply_damage(self_damage);
+        }),
+    )
+}
+
 fn discard_self_energy_per_heads_extra_damage_attack(
     base_damage: u32,
     num_coins: usize,
@@ -786,7 +814,9 @@ fn celebi_powerful_bloom(state: &State) -> Outcomes {
 
 fn coin_flip_per_specific_energy_type(
     state: &State,
+    base_damage: u32,
     energy_type: EnergyType,
+    include_fixed_damage: bool,
     damage_per_heads: u32,
 ) -> Outcomes {
     let active_pokemon = state.get_active(state.current_player);
@@ -796,12 +826,10 @@ fn coin_flip_per_specific_energy_type(
         .filter(|&&e| e == energy_type)
         .count();
 
-    if energy_count == 0 {
-        return Outcomes::single(active_damage_mutation(0));
-    }
+    let base_damage = if include_fixed_damage { base_damage } else { 0 };
 
     Outcomes::binomial_by_heads(energy_count, move |heads| {
-        active_damage_mutation((heads as u32) * damage_per_heads)
+        active_damage_mutation(base_damage + (heads as u32) * damage_per_heads)
     })
 }
 
@@ -1017,6 +1045,58 @@ fn move_all_energy_type_to_bench(
                     amount: energy_count,
                 })
                 .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn move_fixed_energy_type_to_bench(
+    state: &State,
+    attack: &Attack,
+    energy_type: EnergyType,
+    amount: u32,
+) -> Outcomes {
+    let active = state.get_active(state.current_player);
+    let energy_count = active
+        .attached_energy
+        .iter()
+        .filter(|&&e| e == energy_type)
+        .count() as u32;
+
+    if energy_count < amount
+        || state
+            .enumerate_bench_pokemon(state.current_player)
+            .next()
+            .is_none()
+    {
+        return active_damage_doutcome(attack.fixed_damage);
+    }
+
+    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
+        let active = state.in_play_pokemon[action.actor][0]
+            .as_ref()
+            .expect("Active should be there");
+        let energy_count = active
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == energy_type)
+            .count() as u32;
+
+        if energy_count < amount {
+            return;
+        }
+
+        let choices: Vec<SimpleAction> = state
+            .enumerate_bench_pokemon(action.actor)
+            .map(|(to_idx, _)| SimpleAction::MoveEnergy {
+                from_in_play_idx: 0,
+                to_in_play_idx: to_idx,
+                energy_type,
+                amount,
+            })
+            .collect();
+
+        if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
         }
     })
@@ -1795,6 +1875,15 @@ fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) ->
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)
+    }
+}
+
+fn extra_damage_if_undamaged(state: &State, base: u32, extra: u32) -> Outcomes {
+    let attacker = state.get_active(state.current_player);
+    if attacker.is_damaged() {
+        active_damage_doutcome(base)
+    } else {
+        active_damage_doutcome(base + extra)
     }
 }
 
