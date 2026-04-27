@@ -213,7 +213,6 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
-        Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
         Mechanic::MegaKangaskhanExDoublePunchingFamily => {
             mega_kangaskhan_ex_double_punching_family(attack)
         }
@@ -292,6 +291,14 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfDiscardEnergy { energies } => {
             self_energy_discard_attack(attack.fixed_damage, energies.clone())
         }
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies,
+            conditions,
+        } => self_discard_energy_and_inflict_status(
+            attack.fixed_damage,
+            energies.clone(),
+            conditions.clone(),
+        ),
         Mechanic::ExtraDamageIfExtraEnergy {
             required_extra_energy,
             extra_damage,
@@ -770,18 +777,6 @@ fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> Outcomes {
                 }],
             ),
         )
-    })
-}
-
-/// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-fn mega_burning_attack(attack: &Attack) -> Outcomes {
-    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
-        // Discard one Fire energy if present.
-        discard_requested_energy_from_active_best_effort(state, action.actor, &[EnergyType::Fire]);
-
-        // Apply burned status
-        let opponent = (action.actor + 1) % 2;
-        state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
 }
 
@@ -1314,6 +1309,21 @@ fn discard_requested_energy_from_active_best_effort(
 fn self_energy_discard_attack(fixed_damage: u32, to_discard: Vec<EnergyType>) -> Outcomes {
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
         discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
+    })
+}
+
+fn self_discard_energy_and_inflict_status(
+    fixed_damage: u32,
+    to_discard: Vec<EnergyType>,
+    conditions: Vec<StatusCondition>,
+) -> Outcomes {
+    active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
+        discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
+
+        let opponent = (action.actor + 1) % 2;
+        for condition in &conditions {
+            state.apply_status_condition(opponent, 0, *condition);
+        }
     })
 }
 

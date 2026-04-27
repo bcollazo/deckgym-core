@@ -28,6 +28,8 @@ mod magnezone_mirror_shot_test;
 mod marshadow_revenge_test;
 #[path = "pokemon/mega_kangaskhan_double_punching_family_test.rs"]
 mod mega_kangaskhan_double_punching_family_test;
+#[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
+mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
 mod mega_steelix_adamantine_rolling_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]

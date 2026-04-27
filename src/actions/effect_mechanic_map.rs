@@ -103,7 +103,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", Mechanic::PalkiaExDimensionalStorm);
     map.insert(
         "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.",
-        Mechanic::MegaBlazikenExMegaBurningAttack,
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies: vec![EnergyType::Fire],
+            conditions: vec![StatusCondition::Burned],
+        },
     );
     map.insert(
         "Discard a [F] Energy from this Pokémon.",
@@ -1772,7 +1775,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.", todo_implementation);
     // map.insert("1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.", todo_implementation);
     // map.insert("Discard 2 random Energy from among the Energy attached to all of your Pokémon.", todo_implementation);
-    // map.insert("Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.", todo_implementation);
+    map.insert(
+        "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.",
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies: vec![EnergyType::Grass],
+            conditions: vec![StatusCondition::Poisoned],
+        },
+    );
     // map.insert("Discard a [D] Energy from this Pokémon.", todo_implementation);
     // map.insert("Discard a [R] Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Discard a [W] Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);

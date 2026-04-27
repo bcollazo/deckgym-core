@@ -78,6 +78,10 @@ pub enum Mechanic {
     SelfDiscardEnergy {
         energies: Vec<EnergyType>,
     },
+    SelfDiscardEnergyAndInflictStatus {
+        energies: Vec<EnergyType>,
+        conditions: Vec<StatusCondition>,
+    },
     ExtraDamageIfExtraEnergy {
         required_extra_energy: Vec<EnergyType>,
         extra_damage: u32,
@@ -108,7 +112,6 @@ pub enum Mechanic {
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
-    MegaBlazikenExMegaBurningAttack,
     MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
