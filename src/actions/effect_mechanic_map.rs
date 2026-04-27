@@ -1773,7 +1773,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
 
     // B3 Mechanics
     // map.insert("1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.", todo_implementation);
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.",
+        Mechanic::RandomSpreadDamage {
+            times: 1,
+            damage_per_hit: 160,
+            include_own_bench: false,
+        },
+    );
     // map.insert("Discard 2 random Energy from among the Energy attached to all of your Pokémon.", todo_implementation);
     map.insert(
         "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.",

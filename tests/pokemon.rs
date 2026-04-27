@@ -26,6 +26,8 @@ mod magneton_test;
 mod magnezone_mirror_shot_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
+#[path = "pokemon/mega_camerupt_ex_test.rs"]
+mod mega_camerupt_ex_test;
 #[path = "pokemon/mega_kangaskhan_double_punching_family_test.rs"]
 mod mega_kangaskhan_double_punching_family_test;
 #[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
