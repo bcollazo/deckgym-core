@@ -11,7 +11,7 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
-    stadiums::{get_training_area_damage_bonus, is_hiking_trail_active},
+    stadiums::{get_training_area_damage_bonus, is_bounded_field_active, is_hiking_trail_active},
     tools::has_tool,
     State,
 };
@@ -662,6 +662,7 @@ fn get_weakness_modifier(
     is_active_to_active: bool,
     target_player: usize,
     attacking_pokemon: &crate::models::PlayedCard,
+    base_damage: u32,
 ) -> u32 {
     if !is_active_to_active {
         return 0;
@@ -685,6 +686,13 @@ fn get_weakness_modifier(
                 pokemon_card,
                 attacking_pokemon.card.get_type()
             );
+            // Bounded Field: apply weakness as ×2 for non-Mega-Evolution-ex attackers
+            if is_bounded_field_active(state)
+                && !(attacking_pokemon.card.is_mega() && attacking_pokemon.card.is_ex())
+            {
+                debug!("Bounded Field: Applying weakness as ×2");
+                return base_damage;
+            }
             return 20;
         }
     }
@@ -795,8 +803,13 @@ pub(crate) fn modify_damage(
         attacking_player,
         is_from_active_attack,
     );
-    let weakness_modifier =
-        get_weakness_modifier(state, is_active_to_active, target_player, attacking_pokemon);
+    let weakness_modifier = get_weakness_modifier(
+        state,
+        is_active_to_active,
+        target_player,
+        attacking_pokemon,
+        base_damage,
+    );
 
     // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
     // These check if certain ability-holders are in play and boost damage for specific energy types

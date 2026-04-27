@@ -821,3 +821,83 @@ fn test_mesagoza_not_available_without_pokemon_in_deck() {
         "UseStadium should NOT be available when no Pokemon in deck"
     );
 }
+
+// ============================================================================
+// Bounded Field Tests
+// ============================================================================
+
+#[test]
+fn test_bounded_field_doubles_weakness_damage() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Heatmor (Fire) does 30 damage with Combustion (1 Fire energy)
+    // Bulbasaur (Grass, 70 HP) is weak to Fire
+    // Normal weakness: 30 + 20 = 50 damage → 20 HP remaining
+    // Bounded Field: 30 × 2 = 60 damage → 10 HP remaining
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1048Heatmor).with_energy(vec![EnergyType::Fire])],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B3155BoundedField)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::B3155BoundedField);
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active_stadium_name(),
+        Some("Bounded Field".to_string())
+    );
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let defender_hp = state.get_active(1).get_remaining_hp();
+    assert_eq!(
+        defender_hp, 10,
+        "Bounded Field: weakness should be ×2 (30×2=60 damage), leaving 10 HP"
+    );
+}
+
+#[test]
+fn test_bounded_field_does_not_affect_no_weakness_attacks() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    // Heatmor (Fire) does 30 damage with Combustion
+    // Charmander (Fire, 60 HP) is weak to Water, not Fire → no weakness applies
+    // Bounded Field should not change anything
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1048Heatmor).with_energy(vec![EnergyType::Fire])],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.active_stadium = Some(get_card_by_enum(CardId::B3155BoundedField));
+    game.set_state(state);
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let defender_hp = state.get_active(1).get_remaining_hp();
+    assert_eq!(
+        defender_hp, 30,
+        "Bounded Field should not affect attacks where no weakness applies (60 - 30 = 30 HP)"
+    );
+}
