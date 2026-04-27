@@ -58,3 +58,5 @@ mod vaporeon_ex_test;
 mod vulpix_tail_whip_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]
 mod xerneas_geoburst_test;
+#[path = "pokemon/zekrom_bolt_strike_test.rs"]
+mod zekrom_bolt_strike_test;

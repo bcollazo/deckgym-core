@@ -287,6 +287,9 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             self_damage,
         } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
+        Mechanic::CoinFlipSelfDamage { self_damage } => {
+            coinflip_self_damage_attack(attack.fixed_damage, *self_damage)
+        }
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
             damage_per_head,
@@ -727,6 +730,17 @@ fn coinflip_extra_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes
     Outcomes::binary_coin(
         active_damage_mutation(base_damage + extra_damage),
         active_damage_mutation(base_damage),
+    )
+}
+
+/// Used for attacks that deal damage and damage themselves only on tails.
+fn coinflip_self_damage_attack(base_damage: u32, self_damage: u32) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_mutation(base_damage),
+        active_damage_effect_mutation(base_damage, move |_, state, action| {
+            let active = state.get_active_mut(action.actor);
+            active.apply_damage(self_damage);
+        }),
     )
 }
 
