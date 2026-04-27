@@ -156,6 +156,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::EndFirstTurnAttachEnergyToSelf { .. } => false,
         AbilityMechanic::EndTurnDrawCardIfActive { .. } => false,
         AbilityMechanic::EndTurnHealSelfIfActive { .. } => false,
+        AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => false,
     }
 }
 

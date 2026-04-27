@@ -11,7 +11,8 @@ use crate::{
     card_ids::CardId,
     effects::TurnEffect,
     hooks::{
-        get_counterattack_damage, modify_damage, on_end_turn, on_knockout, should_poison_attacker,
+        get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
+        should_poison_attacker,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -527,6 +528,7 @@ pub(crate) fn handle_knockouts(
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
         // Call knockout hook (e.g., for Electrical Cord)
         on_knockout(state, ko_receiver, ko_pokemon_idx, is_from_active_attack);
+        on_attack_knockout(state, attacking_ref, ko_receiver, is_from_active_attack);
 
         // Award points
         {

@@ -240,6 +240,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::EndFirstTurnAttachEnergyToSelf { .. } => {
             panic!("EndFirstTurnAttachEnergyToSelf is triggered at end of first turn")
         }
+        AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => {
+            panic!("ProtectSelfNextTurnAfterAttackKnockout is a passive ability")
+        }
     }
 }
 

@@ -170,4 +170,5 @@ pub enum AbilityMechanic {
     EndFirstTurnAttachEnergyToSelf {
         energy_type: EnergyType,
     },
+    ProtectSelfNextTurnAfterAttackKnockout,
 }

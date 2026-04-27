@@ -68,5 +68,7 @@ mod vulpix_tail_whip_test;
 mod xerneas_geoburst_test;
 #[path = "pokemon/zekrom_bolt_strike_test.rs"]
 mod zekrom_bolt_strike_test;
+#[path = "pokemon/zorua_zoroark_ex_test.rs"]
+mod zorua_zoroark_ex_test;
 #[path = "pokemon/zubat_crobat_b3_test.rs"]
 mod zubat_crobat_b3_test;
