@@ -324,6 +324,9 @@ fn forecast_effect_attack_by_mechanic(
             *minimum_count,
             *extra_damage,
         ),
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage } => {
+            extra_damage_if_stadium_in_play(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::ExtraDamageIfBothHeads { extra_damage } => {
             both_heads_bonus_damage_attack(attack.fixed_damage, *extra_damage)
         }
@@ -467,6 +470,12 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
         Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::SelfHealIfStadiumInPlay { amount } => {
+            self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
+        }
+        Mechanic::InflictStatusIfStadiumInPlay { status } => {
+            inflict_status_if_stadium_in_play(state, attack.fixed_damage, *status)
+        }
         Mechanic::ConditionalBenchDamage {
             required_extra_energy,
             bench_damage,
@@ -1508,6 +1517,31 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
     })
 }
 
+fn self_heal_if_stadium_in_play(state: &State, damage: u32, heal: u32) -> Outcomes {
+    if state.active_stadium.is_some() {
+        active_damage_effect_doutcome(damage, move |_, state, action| {
+            state.get_active_mut(action.actor).heal(heal);
+        })
+    } else {
+        active_damage_doutcome(damage)
+    }
+}
+
+fn inflict_status_if_stadium_in_play(
+    state: &State,
+    damage: u32,
+    status: StatusCondition,
+) -> Outcomes {
+    if state.active_stadium.is_some() {
+        active_damage_effect_doutcome(damage, move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, status);
+        })
+    } else {
+        active_damage_doutcome(damage)
+    }
+}
+
 /// For attacks that put this Pokémon to sleep and heal it (e.g. Slowpoke's Rest).
 fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
@@ -1841,6 +1875,14 @@ fn extra_damage_if_type_energy_in_play_attack(
         .sum();
 
     if total_in_play_type_energy >= minimum_count {
+        active_damage_doutcome(base_damage + extra_damage)
+    } else {
+        active_damage_doutcome(base_damage)
+    }
+}
+
+fn extra_damage_if_stadium_in_play(state: &State, base_damage: u32, extra_damage: u32) -> Outcomes {
+    if state.active_stadium.is_some() {
         active_damage_doutcome(base_damage + extra_damage)
     } else {
         active_damage_doutcome(base_damage)

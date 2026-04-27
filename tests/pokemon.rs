@@ -6,6 +6,8 @@ mod arceus_ex_test;
 mod blastoise_double_splash_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
+#[path = "pokemon/castform_test.rs"]
+mod castform_test;
 #[path = "pokemon/charmeleon_ignition_test.rs"]
 mod charmeleon_ignition_test;
 #[path = "pokemon/comfey_flower_shield_test.rs"]

@@ -1815,11 +1815,34 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Heal 30 damage from 1 of your Pokémon.", todo_implementation);
     // map.insert("Heal 30 damage from each of your Pokémon.", todo_implementation);
     // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, heal 20 damage from this Pokémon.", todo_implementation);
-    // map.insert("If a Stadium is in play, this attack does 20 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, this attack does 70 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Asleep.", todo_implementation);
-    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Burned.", todo_implementation);
+    map.insert(
+        "If a Stadium is in play, heal 20 damage from this Pokémon.",
+        Mechanic::SelfHealIfStadiumInPlay { amount: 20 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 20 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 40 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 70 },
+    );
+    map.insert(
+        "If a Stadium is in play, your opponent's Active Pokémon is now Asleep.",
+        Mechanic::InflictStatusIfStadiumInPlay {
+            status: StatusCondition::Asleep,
+        },
+    );
+    map.insert(
+        "If a Stadium is in play, your opponent's Active Pokémon is now Burned.",
+        Mechanic::InflictStatusIfStadiumInPlay {
+            status: StatusCondition::Burned,
+        },
+    );
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.", todo_implementation);
     // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);

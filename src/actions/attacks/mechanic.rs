@@ -96,6 +96,9 @@ pub enum Mechanic {
         minimum_count: usize,
         extra_damage: u32,
     },
+    ExtraDamageIfStadiumInPlay {
+        extra_damage: u32,
+    },
     ExtraDamageIfBothHeads {
         extra_damage: u32,
     },
@@ -272,6 +275,12 @@ pub enum Mechanic {
     DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    SelfHealIfStadiumInPlay {
+        amount: u32,
+    },
+    InflictStatusIfStadiumInPlay {
+        status: StatusCondition,
+    },
     CopyAttack {
         source: CopyAttackSource,
         require_attacker_energy_match: bool,
