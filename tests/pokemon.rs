@@ -18,6 +18,8 @@ mod darkrai_ex_test;
 mod dusknoir_shadow_void_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
+#[path = "pokemon/gallade_test.rs"]
+mod gallade_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
