@@ -113,6 +113,9 @@ pub enum Mechanic {
     SelfChargeActive {
         energies: Vec<EnergyType>,
     },
+    CoinFlipSelfChargeActive {
+        energies: Vec<EnergyType>,
+    },
     ChargeYourTypeAnyWay {
         energy_type: EnergyType,
         count: usize,

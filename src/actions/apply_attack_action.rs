@@ -208,6 +208,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
         }
+        Mechanic::CoinFlipSelfChargeActive { energies } => {
+            coin_flip_self_charge_active(attack.fixed_damage, energies.clone())
+        }
         Mechanic::ChargeYourTypeAnyWay { energy_type, count } => {
             charge_energy_any_way_to_type(attack.fixed_damage, *energy_type, *count)
         }
@@ -1218,6 +1221,21 @@ fn self_charge_active_from_energies(damage: u32, energies: Vec<EnergyType>) -> O
             state.attach_energy_from_zone(action.actor, 0, *energy, 1, false);
         }
     })
+}
+
+fn coin_flip_self_charge_active(damage: u32, energies: Vec<EnergyType>) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(damage, move |_, state, action| {
+            for energy in &energies {
+                if state.in_play_pokemon[action.actor][0].is_none() {
+                    continue;
+                }
+
+                state.attach_energy_from_zone(action.actor, 0, *energy, 1, false);
+            }
+        }),
+        active_damage_mutation(damage),
+    )
 }
 
 /// Used for attacks that can go directly to bench.
