@@ -98,7 +98,9 @@ pub enum AbilityMechanic {
     HealActiveYourPokemon {
         amount: u32,
     },
-    SwitchOutOpponentActiveToBench,
+    SwitchOutOpponentActiveToBench {
+        require_active: bool,
+    },
     BadDreamsEndOfTurn {
         amount: u32,
     },

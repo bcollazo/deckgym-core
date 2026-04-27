@@ -745,7 +745,7 @@ fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> Outcomes {
 
     let mut branches: Vec<(f64, Mutation, Vec<CoinSeq>)> =
         Vec::with_capacity(search_probs.len() + 1);
-    for (prob, mutation) in search_probs.into_iter().zip(search_mutations.into_iter()) {
+    for (prob, mutation) in search_probs.into_iter().zip(search_mutations) {
         let wrapped: Mutation = Box::new(move |rng, state, action| {
             state.has_used_stadium[action.actor] = true;
             mutation(rng, state, action);

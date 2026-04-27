@@ -9,6 +9,13 @@ To implement cards, first read the `models` module and the `state` module. Cards
 are not implemented if they are a Pokemon that is missing an Ability or Attack implementation,
 or a Trainer card (be it a tool or a normal one) missig implementation.
 
+Use TDD for every new card implementation:
+
+- Before changing the production implementation, add 1 or 2 focused tests for the new card behavior.
+- Write those tests at the same abstraction level as `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
+- Keep the tests at the public `Game` API level, driving behavior through calls like `game.apply_action(...)`, `generate_possible_actions()`, `get_state_clone()`, and observable game state changes.
+- Do not start implementation until those tests exist.
+
 If the user hasn't specified what card to implement, you can use the tool:
 
 ```bash
@@ -46,9 +53,10 @@ to see what is missing from the specified card.
   - Prefer a mechanic + hook combination.
   - Put the mechanic-to-hook wiring in the relevant hook file, usually under `src/hooks/`.
   - `forecast_ability_by_mechanic` should `panic!` for passive mechanics, and `can_use_ability_by_mechanic` should return `false`.
-- Add a logic test at the `Game` public API level.
+- Add 1 or 2 logic tests before implementation at the `Game` public API level.
   - Prefer the folder-matched integration test layout under `tests/`, for example `tests/pokemon/...`, `tests/tools/...`, `tests/stadiums/...`, or `tests/mechanics/...`.
-  - Follow existing tests like `tests/tools/raikou_rocky_helmet_order_test.rs` in style and abstraction level.
+  - Follow `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs` in style and abstraction level.
+  - Drive behavior through public APIs like `game.apply_action(...)` instead of internal helpers or private implementation details.
   - Do not assert on `.move_generation_stack`; drive behavior through public actions and resulting game state.
 
 ## Attack
@@ -72,7 +80,9 @@ to see what is missing from the specified card.
     - `Outcomes::geometric_until_tails(max, |heads| mutation)` - flip until tails
   - Keep the code as a simple one-liner in the match statement by using helper functions
   - Review similar attacks in `src/actions/apply_attack_action.rs` to ensure consistency in implementation.
-- Add a Game-level logic test in the matching `tests/` subfolder when the attack has non-trivial behavior.
+- Add 1 or 2 Game-level logic tests in the matching `tests/` subfolder before implementation when the attack has non-trivial behavior.
+  - Match the abstraction level of `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
+  - Exercise the `Game` public API, especially `game.apply_action(...)` and the resulting public game state.
 
 ## Tool
 
@@ -96,7 +106,9 @@ to see what is missing from the specified card.
   - Implement hooks in `hooks/core.rs` or other appropriate hook files.
   - Use `has_tool(played_card, CardId::...)` to check if a pokemon has a specific tool attached.
   - Examples: Rocky Helmet deals damage when the holder is attacked.
-- Add a Game-level integration test under `tests/tools/` for the observable effect.
+- Add 1 or 2 Game-level integration tests under `tests/tools/` before implementation for the observable effect.
+  - Match the abstraction level of `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
+  - Exercise the `Game` public API, especially `game.apply_action(...)` and the resulting public game state.
 
 ## Trainer Cards
 
@@ -125,7 +137,9 @@ to see what is missing from the specified card.
       pieces of state to the `State` struct if necessary.
 
   - Try to keep the `match trainer_id` cases as one-liners (using helper functions if necessary).
-- Add a Game-level integration test in the appropriate `tests/` area if the trainer has logic beyond a trivial draw/search path.
+- Add 1 or 2 Game-level integration tests in the appropriate `tests/` area before implementation if the trainer has logic beyond a trivial draw/search path.
+  - Match the abstraction level of `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
+  - Exercise the `Game` public API, especially `game.apply_action(...)` and the resulting public game state.
 
 ## Stadium
 
@@ -149,7 +163,9 @@ to see what is missing from the specified card.
   - HP bonuses: May need to modify `get_effective_total_hp()` or damage calculation
 - Stadium effects apply to BOTH players equally.
 - Test using `cargo run --bin card_test -- "CardId"`.
-- Add a Game-level integration test under `tests/stadiums/`.
+- Add 1 or 2 Game-level integration tests under `tests/stadiums/` before implementation.
+  - Match the abstraction level of `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
+  - Exercise the `Game` public API, especially `game.apply_action(...)` and the resulting public game state.
 
 ## Appendix
 

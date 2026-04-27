@@ -103,7 +103,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Discard 3 [W] Energy from this Pokémon. This attack also does 20 damage to each of your opponent's Benched Pokémon.", Mechanic::PalkiaExDimensionalStorm);
     map.insert(
         "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.",
-        Mechanic::MegaBlazikenExMegaBurningAttack,
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies: vec![EnergyType::Fire],
+            conditions: vec![StatusCondition::Burned],
+        },
     );
     map.insert(
         "Discard a [F] Energy from this Pokémon.",
@@ -1359,7 +1362,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.", todo_implementation);
-    // map.insert("This attack does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 50 damage to 1 of your opponent's Benched Pokémon.",
+        Mechanic::DirectDamage {
+            damage: 50,
+            bench_only: true,
+        },
+    );
     map.insert(
         "This attack does 50 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {
@@ -1764,9 +1773,22 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
 
     // B3 Mechanics
     // map.insert("1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.", todo_implementation);
-    // map.insert("1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.", todo_implementation);
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random. Do 160 damage to it.",
+        Mechanic::RandomSpreadDamage {
+            times: 1,
+            damage_per_hit: 160,
+            include_own_bench: false,
+        },
+    );
     // map.insert("Discard 2 random Energy from among the Energy attached to all of your Pokémon.", todo_implementation);
-    // map.insert("Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.", todo_implementation);
+    map.insert(
+        "Discard Grass[G] Energy from this Pokémon. Your opponent's Active Pokémon is now Poisoned.",
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies: vec![EnergyType::Grass],
+            conditions: vec![StatusCondition::Poisoned],
+        },
+    );
     // map.insert("Discard a [D] Energy from this Pokémon.", todo_implementation);
     // map.insert("Discard a [R] Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Discard a [W] Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
@@ -1775,10 +1797,22 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your next turn, this Pokémon's Psych Up attack does +30 damage.", todo_implementation);
     // map.insert("During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, this Pokémon takes +20 damage from attacks.", todo_implementation);
-    // map.insert("Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.", todo_implementation);
+    map.insert(
+        "Flip 3 coins. For each heads, discard a [R] Energy from this Pokémon. This attack does 30 more damage for each [R] Energy you discarded in this way.",
+        Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
+            num_coins: 3,
+            energy_type: EnergyType::Fire,
+            damage_per_discarded_energy: 30,
+        },
+    );
     // map.insert("Flip a coin for each [R] Energy attached to this Pokémon. This attack does 30 more damage for each heads.", todo_implementation);
     // map.insert("Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.", todo_implementation);
-    // map.insert("Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::CoinFlipSelfChargeActive {
+            energies: vec![EnergyType::Fire, EnergyType::Fire],
+        },
+    );
     // map.insert("Flip a coin. If tails, this Pokémon also does 60 damage to itself.", todo_implementation);
     // map.insert("Heal 10 damage from each of your Pokémon.", todo_implementation);
     // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
@@ -1786,11 +1820,34 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Heal 30 damage from 1 of your Pokémon.", todo_implementation);
     // map.insert("Heal 30 damage from each of your Pokémon.", todo_implementation);
     // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, heal 20 damage from this Pokémon.", todo_implementation);
-    // map.insert("If a Stadium is in play, this attack does 20 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, this attack does 70 more damage.", todo_implementation);
-    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Asleep.", todo_implementation);
-    // map.insert("If a Stadium is in play, your opponent's Active Pokémon is now Burned.", todo_implementation);
+    map.insert(
+        "If a Stadium is in play, heal 20 damage from this Pokémon.",
+        Mechanic::SelfHealIfStadiumInPlay { amount: 20 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 20 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 40 },
+    );
+    map.insert(
+        "If a Stadium is in play, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage: 70 },
+    );
+    map.insert(
+        "If a Stadium is in play, your opponent's Active Pokémon is now Asleep.",
+        Mechanic::InflictStatusIfStadiumInPlay {
+            status: StatusCondition::Asleep,
+        },
+    );
+    map.insert(
+        "If a Stadium is in play, your opponent's Active Pokémon is now Burned.",
+        Mechanic::InflictStatusIfStadiumInPlay {
+            status: StatusCondition::Burned,
+        },
+    );
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.", todo_implementation);
     // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);

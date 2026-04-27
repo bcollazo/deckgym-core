@@ -74,9 +74,18 @@ pub enum Mechanic {
         damage_per_head: u32,
         num_coins: usize,
     },
+    DiscardSelfEnergyPerHeadsExtraDamage {
+        num_coins: usize,
+        energy_type: EnergyType,
+        damage_per_discarded_energy: u32,
+    },
     CoinFlipNoEffect,
     SelfDiscardEnergy {
         energies: Vec<EnergyType>,
+    },
+    SelfDiscardEnergyAndInflictStatus {
+        energies: Vec<EnergyType>,
+        conditions: Vec<StatusCondition>,
     },
     ExtraDamageIfExtraEnergy {
         required_extra_energy: Vec<EnergyType>,
@@ -85,6 +94,9 @@ pub enum Mechanic {
     ExtraDamageIfTypeEnergyInPlay {
         energy_type: EnergyType,
         minimum_count: usize,
+        extra_damage: u32,
+    },
+    ExtraDamageIfStadiumInPlay {
         extra_damage: u32,
     },
     ExtraDamageIfBothHeads {
@@ -101,6 +113,9 @@ pub enum Mechanic {
     SelfChargeActive {
         energies: Vec<EnergyType>,
     },
+    CoinFlipSelfChargeActive {
+        energies: Vec<EnergyType>,
+    },
     ChargeYourTypeAnyWay {
         energy_type: EnergyType,
         count: usize,
@@ -108,7 +123,6 @@ pub enum Mechanic {
     // Fairly unique mechanics
     ManaphyOceanicGift,
     PalkiaExDimensionalStorm,
-    MegaBlazikenExMegaBurningAttack,
     MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
     CelebiExPowerfulBloom,
@@ -264,6 +278,12 @@ pub enum Mechanic {
     DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    SelfHealIfStadiumInPlay {
+        amount: u32,
+    },
+    InflictStatusIfStadiumInPlay {
+        status: StatusCondition,
+    },
     CopyAttack {
         source: CopyAttackSource,
         require_attacker_energy_match: bool,

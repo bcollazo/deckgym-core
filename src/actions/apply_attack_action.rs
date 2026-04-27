@@ -208,12 +208,14 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
         }
+        Mechanic::CoinFlipSelfChargeActive { energies } => {
+            coin_flip_self_charge_active(attack.fixed_damage, energies.clone())
+        }
         Mechanic::ChargeYourTypeAnyWay { energy_type, count } => {
             charge_energy_any_way_to_type(attack.fixed_damage, *energy_type, *count)
         }
         Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
-        Mechanic::MegaBlazikenExMegaBurningAttack => mega_burning_attack(attack),
         Mechanic::MegaKangaskhanExDoublePunchingFamily => {
             mega_kangaskhan_ex_double_punching_family(attack)
         }
@@ -288,10 +290,28 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             attack,
         ),
+        Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
+            num_coins,
+            energy_type,
+            damage_per_discarded_energy,
+        } => discard_self_energy_per_heads_extra_damage_attack(
+            attack.fixed_damage,
+            *num_coins,
+            *energy_type,
+            *damage_per_discarded_energy,
+        ),
         Mechanic::CoinFlipNoEffect => coinflip_no_effect(attack.fixed_damage),
         Mechanic::SelfDiscardEnergy { energies } => {
             self_energy_discard_attack(attack.fixed_damage, energies.clone())
         }
+        Mechanic::SelfDiscardEnergyAndInflictStatus {
+            energies,
+            conditions,
+        } => self_discard_energy_and_inflict_status(
+            attack.fixed_damage,
+            energies.clone(),
+            conditions.clone(),
+        ),
         Mechanic::ExtraDamageIfExtraEnergy {
             required_extra_energy,
             extra_damage,
@@ -307,6 +327,9 @@ fn forecast_effect_attack_by_mechanic(
             *minimum_count,
             *extra_damage,
         ),
+        Mechanic::ExtraDamageIfStadiumInPlay { extra_damage } => {
+            extra_damage_if_stadium_in_play(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::ExtraDamageIfBothHeads { extra_damage } => {
             both_heads_bonus_damage_attack(attack.fixed_damage, *extra_damage)
         }
@@ -450,6 +473,12 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
         Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::SelfHealIfStadiumInPlay { amount } => {
+            self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
+        }
+        Mechanic::InflictStatusIfStadiumInPlay { status } => {
+            inflict_status_if_stadium_in_play(state, attack.fixed_damage, *status)
+        }
         Mechanic::ConditionalBenchDamage {
             required_extra_energy,
             bench_damage,
@@ -694,6 +723,33 @@ fn coinflip_extra_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes
     )
 }
 
+fn discard_self_energy_per_heads_extra_damage_attack(
+    base_damage: u32,
+    num_coins: usize,
+    energy_type: EnergyType,
+    damage_per_discarded_energy: u32,
+) -> Outcomes {
+    Outcomes::binomial_by_heads(num_coins, move |heads| {
+        Box::new(move |_, state, action| {
+            let requested = vec![energy_type; heads];
+            let actual = {
+                let active = state.get_active(action.actor);
+                available_requested_energy_to_discard(active, &requested)
+            };
+            let damage = base_damage + (actual.len() as u32 * damage_per_discarded_energy);
+            let opponent = (action.actor + 1) % 2;
+            let attacking_ref = (action.actor, 0);
+
+            if !actual.is_empty() {
+                state.discard_from_active(action.actor, &actual);
+            }
+
+            handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+            handle_knockouts(state, attacking_ref, true);
+        })
+    })
+}
+
 fn both_heads_bonus_damage_attack(base_damage: u32, extra_damage: u32) -> Outcomes {
     Outcomes::from_coin_branches(vec![
         (
@@ -770,18 +826,6 @@ fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> Outcomes {
                 }],
             ),
         )
-    })
-}
-
-/// For Mega Blaziken ex's Mega Burning: Deals 120 damage, discards Fire energy, and burns opponent
-fn mega_burning_attack(attack: &Attack) -> Outcomes {
-    active_damage_effect_doutcome(attack.fixed_damage, move |_, state, action| {
-        // Discard one Fire energy if present.
-        discard_requested_energy_from_active_best_effort(state, action.actor, &[EnergyType::Fire]);
-
-        // Apply burned status
-        let opponent = (action.actor + 1) % 2;
-        state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
 }
 
@@ -1179,6 +1223,21 @@ fn self_charge_active_from_energies(damage: u32, energies: Vec<EnergyType>) -> O
     })
 }
 
+fn coin_flip_self_charge_active(damage: u32, energies: Vec<EnergyType>) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(damage, move |_, state, action| {
+            for energy in &energies {
+                if state.in_play_pokemon[action.actor][0].is_none() {
+                    continue;
+                }
+
+                state.attach_energy_from_zone(action.actor, 0, *energy, 1, false);
+            }
+        }),
+        active_damage_mutation(damage),
+    )
+}
+
 /// Used for attacks that can go directly to bench.
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
 fn direct_damage(damage: u32, bench_only: bool) -> Outcomes {
@@ -1314,6 +1373,21 @@ fn discard_requested_energy_from_active_best_effort(
 fn self_energy_discard_attack(fixed_damage: u32, to_discard: Vec<EnergyType>) -> Outcomes {
     active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
         discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
+    })
+}
+
+fn self_discard_energy_and_inflict_status(
+    fixed_damage: u32,
+    to_discard: Vec<EnergyType>,
+    conditions: Vec<StatusCondition>,
+) -> Outcomes {
+    active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
+        discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
+
+        let opponent = (action.actor + 1) % 2;
+        for condition in &conditions {
+            state.apply_status_condition(opponent, 0, *condition);
+        }
     })
 }
 
@@ -1459,6 +1533,31 @@ fn self_heal_attack(heal: u32, attack: &Attack) -> Outcomes {
         let active = state.get_active_mut(action.actor);
         active.heal(heal);
     })
+}
+
+fn self_heal_if_stadium_in_play(state: &State, damage: u32, heal: u32) -> Outcomes {
+    if state.active_stadium.is_some() {
+        active_damage_effect_doutcome(damage, move |_, state, action| {
+            state.get_active_mut(action.actor).heal(heal);
+        })
+    } else {
+        active_damage_doutcome(damage)
+    }
+}
+
+fn inflict_status_if_stadium_in_play(
+    state: &State,
+    damage: u32,
+    status: StatusCondition,
+) -> Outcomes {
+    if state.active_stadium.is_some() {
+        active_damage_effect_doutcome(damage, move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, status);
+        })
+    } else {
+        active_damage_doutcome(damage)
+    }
 }
 
 /// For attacks that put this Pokémon to sleep and heal it (e.g. Slowpoke's Rest).
@@ -1794,6 +1893,14 @@ fn extra_damage_if_type_energy_in_play_attack(
         .sum();
 
     if total_in_play_type_energy >= minimum_count {
+        active_damage_doutcome(base_damage + extra_damage)
+    } else {
+        active_damage_doutcome(base_damage)
+    }
+}
+
+fn extra_damage_if_stadium_in_play(state: &State, base_damage: u32, extra_damage: u32) -> Outcomes {
+    if state.active_stadium.is_some() {
         active_damage_doutcome(base_damage + extra_damage)
     } else {
         active_damage_doutcome(base_damage)
