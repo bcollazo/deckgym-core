@@ -540,7 +540,7 @@ pub(crate) fn apply_evolve(
     }
 
     // Run special logic hooks on evolution
-    on_evolve(acting_player, state, to_card)
+    on_evolve(acting_player, state, to_card, !from_deck)
 }
 
 fn forecast_pokemon_communication(

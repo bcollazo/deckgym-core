@@ -207,6 +207,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedOnEvolve { .. } => {
             panic!("AttachEnergyFromZoneToActiveTypedOnEvolve is triggered on evolve")
         }
+        AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => {
+            panic!("DamageOpponentActiveOnEvolve is triggered on evolve")
+        }
         AbilityMechanic::CanEvolveIntoEeveeEvolution => {
             panic!("CanEvolveIntoEeveeEvolution is a passive ability")
         }

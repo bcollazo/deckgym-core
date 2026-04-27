@@ -143,6 +143,9 @@ pub enum AbilityMechanic {
     AttachEnergyFromZoneToActiveTypedOnEvolve {
         energy_type: EnergyType,
     },
+    DamageOpponentActiveOnEvolve {
+        amount: u32,
+    },
     CanEvolveIntoEeveeEvolution,
     CanEvolveOnFirstTurnIfActive,
     CounterattackDamage {

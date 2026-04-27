@@ -1,3 +1,3 @@
 fix:
 	cargo fmt
-	cargo clippy --all-targets --features tui --allow-dirty --fix -- -D warnings
+	cargo clippy --all-targets --features "tui,test-utils" --allow-dirty --fix -- -D warnings
