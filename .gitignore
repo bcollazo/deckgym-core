@@ -1,5 +1,6 @@
 /target
 .venv
+.DS_Store
 
 TODO.md
 
