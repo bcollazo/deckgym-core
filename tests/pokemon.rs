@@ -1,3 +1,5 @@
+#[path = "pokemon/additional_ability_logic_test.rs"]
+mod additional_ability_logic_test;
 #[path = "pokemon/arceus_ex_test.rs"]
 mod arceus_ex_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
