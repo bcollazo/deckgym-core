@@ -40,6 +40,8 @@ static MESAGOZA_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2a093Mesagoza));
 static HIKING_TRAIL_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2b069HikingTrail));
+static BOUNDED_FIELD_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3155BoundedField));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -51,11 +53,16 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == STARTING_PLAINS_EFFECT.as_str()
             || e == MESAGOZA_EFFECT.as_str()
             || e == HIKING_TRAIL_EFFECT.as_str()
+            || e == BOUNDED_FIELD_EFFECT.as_str()
     )
 }
 
 pub fn is_hiking_trail_active(state: &State) -> bool {
     has_stadium(state, CardId::B2b069HikingTrail)
+}
+
+pub fn is_bounded_field_active(state: &State) -> bool {
+    has_stadium(state, CardId::B3155BoundedField)
 }
 
 /// Returns true if Mesagoza stadium is active
