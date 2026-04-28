@@ -1872,7 +1872,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Flip a coin. If tails, this Pokémon also does 60 damage to itself.", todo_implementation);
-    // map.insert("Heal 10 damage from each of your Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 10 damage from each of your Pokémon.",
+        Mechanic::HealAllYourPokemon { amount: 10 },
+    );
     // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
     // map.insert("Heal 30 damage from 1 of your Benched Pokémon.", todo_implementation);
     map.insert(
@@ -1883,7 +1886,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin. If heads, heal 60 damage from this Pokémon.",
         Mechanic::CoinFlipSelfHeal { amount: 60 },
     );
-    // map.insert("Heal 30 damage from each of your Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 30 damage from each of your Pokémon.",
+        Mechanic::HealAllYourPokemon { amount: 30 },
+    );
     // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
     map.insert(
         "If a Stadium is in play, heal 20 damage from this Pokémon.",

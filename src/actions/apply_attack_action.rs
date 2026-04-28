@@ -213,6 +213,9 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon_attack(*amount),
+        Mechanic::HealAllYourPokemon { amount } => {
+            heal_all_your_pokemon_attack(attack.fixed_damage, *amount)
+        }
         Mechanic::CoinFlipSelfHeal { amount } => {
             coin_flip_self_heal_attack(attack.fixed_damage, *amount)
         }
@@ -1650,6 +1653,18 @@ fn heal_one_your_pokemon_attack(amount: u32) -> Outcomes {
             state.move_generation_stack.push((action.actor, choices));
         }
     })
+}
+
+fn heal_all_your_pokemon_attack(damage: u32, heal: u32) -> Outcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        heal_all_pokemon(state, action.actor, heal);
+    })
+}
+
+fn heal_all_pokemon(state: &mut State, player: usize, amount: u32) {
+    for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+        pokemon.heal(amount);
+    }
 }
 
 fn coin_flip_self_heal_attack(damage: u32, heal: u32) -> Outcomes {
