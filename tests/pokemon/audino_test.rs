@@ -12,11 +12,9 @@ fn test_audino_healing_light_heals_each_of_your_pokemon() {
 
     // Set up board with damaged active Pokemon only
     state.set_board(
-        vec![
-            PlayedCard::from_id(CardId::B3140Audino)
-                .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
-                .with_damage(20),
-        ],
+        vec![PlayedCard::from_id(CardId::B3140Audino)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
+            .with_damage(20)],
         vec![PlayedCard::from_id(CardId::A1053Squirtle)],
     );
     state.current_player = 0;
@@ -54,15 +52,13 @@ fn test_mega_audino_ex_heartfelt_shine_heals_all_pokemon() {
 
     // Set up board - just Mega Audino active to focus on healing the active Pokemon
     state.set_board(
-        vec![
-            PlayedCard::from_id(CardId::B3141MegaAudinoEx)
-                .with_energy(vec![
-                    EnergyType::Colorless,
-                    EnergyType::Colorless,
-                    EnergyType::Colorless,
-                ])
-                .with_damage(60),
-        ],
+        vec![PlayedCard::from_id(CardId::B3141MegaAudinoEx)
+            .with_energy(vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ])
+            .with_damage(60)],
         vec![PlayedCard::from_id(CardId::A1053Squirtle)],
     );
     state.current_player = 0;
