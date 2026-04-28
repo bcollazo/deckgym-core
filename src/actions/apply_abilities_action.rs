@@ -6,7 +6,7 @@ use rand::{rngs::StdRng, Rng};
 use crate::{
     actions::{
         abilities::AbilityMechanic,
-        apply_action_helpers::{handle_damage, Mutation},
+        apply_action_helpers::{handle_damage, handle_knockouts, Mutation},
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         outcomes::Outcomes,
         shared_mutations::pokemon_search_outcomes,
@@ -133,6 +133,7 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::MoveDamageFromOneYourPokemonToThisPokemon => {
             Outcomes::single(dusknoir_shadow_void(in_play_idx))
         }
+        AbilityMechanic::DiscardOpponentActiveToolsAndDiscardSelf => dismantling_keys(in_play_idx),
         AbilityMechanic::PreventFirstAttack => {
             panic!("PreventFirstAttack is a passive ability")
         }
@@ -605,6 +606,25 @@ fn dusknoir_shadow_void(dusknoir_idx: usize) -> Mutation {
 
         if !choices.is_empty() {
             state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn dismantling_keys(klefki_idx: usize) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if state
+            .maybe_get_active(opponent)
+            .is_none_or(|active| !active.has_tool_attached())
+        {
+            return;
+        }
+
+        state.discard_tool(opponent, 0);
+        handle_knockouts(state, (action.actor, klefki_idx), false);
+
+        if state.in_play_pokemon[action.actor][klefki_idx].is_some() {
+            state.discard_from_play(action.actor, klefki_idx);
         }
     })
 }

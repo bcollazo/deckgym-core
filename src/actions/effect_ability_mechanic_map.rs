@@ -169,7 +169,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 energy_type: EnergyType::Grass,
             },
         );
-        // map.insert("Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon.", todo_implementation);
+        map.insert(
+            "Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon.",
+            AbilityMechanic::DiscardOpponentActiveToolsAndDiscardSelf,
+        );
         map.insert(
             "Once during your turn, if this Pokémon is on your Bench, you may switch it with your Active Pokémon.",
             AbilityMechanic::SwitchThisBenchWithActive,

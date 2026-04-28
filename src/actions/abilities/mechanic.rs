@@ -81,6 +81,7 @@ pub enum AbilityMechanic {
     },
     SearchRandomPokemonFromDeck,
     MoveDamageFromOneYourPokemonToThisPokemon,
+    DiscardOpponentActiveToolsAndDiscardSelf,
     PreventFirstAttack,
     ElectromagneticWall,
     InfiltratingInspection,
