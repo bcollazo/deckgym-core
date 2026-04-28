@@ -9,7 +9,7 @@ use crate::{
         abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
         apply_action_helpers::{wrap_with_common_logic, Mutation},
-        shared_mutations::pokemon_search_outcomes,
+        shared_mutations::{pokemon_search_outcomes, pokemon_search_outcomes_by_type_for_player},
     },
     effects::TurnEffect,
     hooks::{get_retreat_cost, on_evolve, to_playable_card},
@@ -779,32 +779,13 @@ fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> Outcomes {
 
 /// Fragrant Forest: Once during each player's turn, that player may put a random Basic [G] Pokémon from their deck into their hand.
 fn forecast_fragrant_forest_effect(state: &State, acting_player: usize) -> Outcomes {
-    let basic_grass: Vec<Card> = state.decks[acting_player]
-        .cards
-        .iter()
-        .filter(|card| {
-            matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Grass)
+    pokemon_search_outcomes_by_type_for_player(acting_player, state, true, EnergyType::Grass)
+        .map_mutations(|mutation| {
+            Box::new(move |rng, state, action| {
+                state.has_used_stadium[action.actor] = true;
+                mutation(rng, state, action);
+            })
         })
-        .cloned()
-        .collect();
-
-    if basic_grass.is_empty() {
-        return Outcomes::single_fn(|_, state, action| {
-            state.has_used_stadium[action.actor] = true;
-        });
-    }
-
-    let num = basic_grass.len();
-    let prob = 1.0 / num as f64;
-    let mut outcomes: Mutations = vec![];
-    for pokemon in basic_grass {
-        outcomes.push(Box::new(move |_, state, action| {
-            state.has_used_stadium[action.actor] = true;
-            state.transfer_card_from_deck_to_hand(action.actor, &pokemon);
-            debug!("Fragrant Forest: Moved {} to hand", pokemon.get_name());
-        }));
-    }
-    Outcomes::from_parts(vec![prob; num], outcomes)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
