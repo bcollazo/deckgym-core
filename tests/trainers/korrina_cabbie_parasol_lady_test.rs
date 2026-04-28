@@ -258,3 +258,93 @@ fn test_parasol_lady_cannot_target_ex_pokemon() {
         "Parasol Lady should not be playable when the only Water pokemon in play is ex"
     );
 }
+
+#[test]
+fn test_parasol_lady_last_pokemon_loses_game() {
+    // If the only pokemon the player has in play is a Water non-ex and they Parasol Lady it
+    // back to hand, they should lose immediately (no pokemon in play).
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+    state.turn_count = 3;
+
+    // Squirtle is the only pokemon in play for player 0
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1053Squirtle)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    let parasol_lady = make_trainer_card(CardId::B3152ParasolLady);
+    state.hands[0] = vec![Card::Trainer(parasol_lady.clone())];
+    game.set_state(state);
+
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: parasol_lady,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // The only choice is to return Squirtle (the active)
+    let (_actor, choices) = game.get_state_clone().generate_possible_actions();
+    assert!(!choices.is_empty());
+    game.apply_action(&choices[0]);
+
+    assert_eq!(
+        game.get_state_clone().winner,
+        Some(GameOutcome::Win(1)),
+        "Player 1 should win when player 0 Parasol Ladies away their last pokemon"
+    );
+}
+
+#[test]
+fn test_parasol_lady_active_triggers_promotion() {
+    // If Parasol Lady returns the active pokemon and a bench pokemon is available,
+    // the player must immediately promote a benched pokemon to the active spot.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+    state.turn_count = 3;
+
+    // Squirtle is the active (Water, non-ex); Charmander sits on bench
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1053Squirtle),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    let parasol_lady = make_trainer_card(CardId::B3152ParasolLady);
+    state.hands[0] = vec![Card::Trainer(parasol_lady.clone())];
+    game.set_state(state);
+
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: parasol_lady,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    // Choose to return Squirtle (the active, in_play_idx 0)
+    let (_actor, choices) = game.get_state_clone().generate_possible_actions();
+    let return_squirtle = choices
+        .iter()
+        .find(|a| matches!(a.action, SimpleAction::ReturnPokemonToHand { in_play_idx: 0 }))
+        .expect("Should be able to return the active Squirtle");
+    game.apply_action(return_squirtle);
+
+    // Next action should be player 0 promoting one of their bench pokemon
+    let (actor, promotion_choices) = game.get_state_clone().generate_possible_actions();
+    assert_eq!(actor, 0, "Player 0 must act next (promote)");
+    assert!(
+        promotion_choices
+            .iter()
+            .all(|a| matches!(a.action, SimpleAction::Activate { player: 0, .. })),
+        "All choices should be Activate actions for player 0 to promote Charmander"
+    );
+}
