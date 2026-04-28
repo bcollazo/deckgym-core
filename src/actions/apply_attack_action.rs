@@ -212,6 +212,10 @@ fn forecast_effect_attack_by_mechanic(
             *damage_per_heads,
         ),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
+        Mechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon_attack(*amount),
+        Mechanic::CoinFlipSelfHeal { amount } => {
+            coin_flip_self_heal_attack(attack.fixed_damage, *amount)
+        }
         Mechanic::SelfChargeActive { energies } => {
             self_charge_active_from_energies(attack.fixed_damage, energies.clone())
         }
@@ -1629,6 +1633,32 @@ fn draw_and_damage_outcome(damage: u32, amount: u8) -> Outcomes {
             .move_generation_stack
             .push((action.actor, vec![SimpleAction::DrawCard { amount }]));
     })
+}
+
+fn heal_one_your_pokemon_attack(amount: u32) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let choices = state
+            .enumerate_in_play_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.is_damaged())
+            .map(|(in_play_idx, _)| SimpleAction::Heal {
+                in_play_idx,
+                amount,
+                cure_status: false,
+            })
+            .collect::<Vec<_>>();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn coin_flip_self_heal_attack(damage: u32, heal: u32) -> Outcomes {
+    Outcomes::binary_coin(
+        active_damage_effect_mutation(damage, move |_, state, action| {
+            state.get_active_mut(action.actor).heal(heal);
+        }),
+        active_damage_mutation(damage),
+    )
 }
 
 /// Generic attack that deals bonus damage if the Pokémon has enough energy of a specific type attached.

@@ -120,6 +120,9 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && card.attached_energy.contains(discard_energy)
         }
         AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
+            can_use_remove_random_special_condition_from_active(state, card)
+        }
         AbilityMechanic::HealActiveYourPokemon { .. } => !card.ability_used,
         AbilityMechanic::SwitchOutOpponentActiveToBench { require_active } => {
             let opponent = (state.current_player + 1) % 2;
@@ -190,6 +193,19 @@ fn can_use_switch_active_typed_with_bench(
         .enumerate_bench_pokemon(state.current_player)
         .next()
         .is_some()
+}
+
+fn can_use_remove_random_special_condition_from_active(state: &State, card: &PlayedCard) -> bool {
+    !card.ability_used
+        && state
+            .maybe_get_active(state.current_player)
+            .is_some_and(|active| {
+                active.is_poisoned()
+                    || active.is_paralyzed()
+                    || active.is_asleep()
+                    || active.is_burned()
+                    || active.is_confused()
+            })
 }
 
 fn can_use_heal_one_your_pokemon_ex_and_discard_random_energy(

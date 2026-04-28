@@ -22,6 +22,12 @@ pub enum Mechanic {
     SelfHeal {
         amount: u32,
     },
+    HealOneYourPokemon {
+        amount: u32,
+    },
+    CoinFlipSelfHeal {
+        amount: u32,
+    },
     SearchToHandByEnergy {
         energy_type: EnergyType,
     },
