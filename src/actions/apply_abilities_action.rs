@@ -186,6 +186,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { .. } => {
             panic!("ReduceRetreatCostOfYourActiveBasicFromBench is a passive ability")
         }
+        AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench { .. } => {
+            panic!("ReduceRetreatCostOfYourActiveTypedFromBench is a passive ability")
+        }
         AbilityMechanic::NoRetreatIfHasEnergy => {
             panic!("NoRetreatIfHasEnergy is a passive ability")
         }
@@ -239,6 +242,9 @@ fn forecast_ability_by_mechanic(
         }
         AbilityMechanic::EndFirstTurnAttachEnergyToSelf { .. } => {
             panic!("EndFirstTurnAttachEnergyToSelf is triggered at end of first turn")
+        }
+        AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => {
+            panic!("ProtectSelfNextTurnAfterAttackKnockout is a passive ability")
         }
     }
 }

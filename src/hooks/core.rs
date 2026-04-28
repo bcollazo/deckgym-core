@@ -1071,6 +1071,28 @@ pub(crate) fn on_knockout(
     }
 }
 
+pub(crate) fn on_attack_knockout(
+    state: &mut State,
+    attacking_ref: (usize, usize),
+    knocked_out_player: usize,
+    is_from_active_attack: bool,
+) {
+    if !is_from_active_attack || knocked_out_player == attacking_ref.0 {
+        return;
+    }
+
+    let Some(attacking_pokemon) = state.in_play_pokemon[attacking_ref.0][attacking_ref.1].as_mut()
+    else {
+        return;
+    };
+    if matches!(
+        get_ability_mechanic(&attacking_pokemon.card),
+        Some(AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout)
+    ) {
+        attacking_pokemon.add_effect(CardEffect::PreventAllDamageAndEffects, 1);
+    }
+}
+
 // Test Colorless is wildcard when counting energy
 #[cfg(test)]
 mod tests {

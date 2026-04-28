@@ -64,6 +64,20 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 }
             }
         }
+        if let Some(active_energy_type) = card.get_energy_type() {
+            let current_player = state.current_player;
+            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
+                if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
+                    energy_type,
+                    amount,
+                }) = get_ability_mechanic(&benched_pokemon.card)
+                {
+                    if energy_type == &active_energy_type {
+                        to_subtract += *amount as u8;
+                    }
+                }
+            }
+        }
 
         // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
         if let Some(energy_type) = card.get_energy_type() {

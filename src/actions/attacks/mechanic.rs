@@ -50,6 +50,7 @@ pub enum Mechanic {
     },
     DiscardEnergyFromOpponentActive,
     CoinFlipDiscardEnergyFromOpponentActive,
+    DiscardOpponentActiveToolsBeforeDamage,
     ExtraDamageIfEx {
         extra_damage: u32,
     },
@@ -89,6 +90,11 @@ pub enum Mechanic {
     SelfDiscardEnergyAndInflictStatus {
         energies: Vec<EnergyType>,
         conditions: Vec<StatusCondition>,
+    },
+    SelfDiscardEnergyAndCardEffect {
+        energies: Vec<EnergyType>,
+        effect: CardEffect,
+        duration: u8,
     },
     ExtraDamageIfExtraEnergy {
         required_extra_energy: Vec<EnergyType>,
@@ -188,6 +194,11 @@ pub enum Mechanic {
         effect: CardEffect,
         duration: u8,
         coin_flip: bool, // false = always apply, true = apply on heads
+    },
+    CoinFlipNoDamageOrDamageAndCardEffect {
+        opponent: bool,
+        effect: CardEffect,
+        duration: u8,
     },
     DrawCard {
         amount: u8,

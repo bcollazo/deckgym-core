@@ -54,7 +54,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
-    // map.insert("Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",
+        Mechanic::DiscardOpponentActiveToolsBeforeDamage,
+    );
     // map.insert("Both Active Pokémon are now Asleep.", todo_implementation);
     // map.insert("Both Active Pokémon are now Confused.", todo_implementation);
     // map.insert("Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
@@ -81,7 +84,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Lightning, EnergyType::Lightning],
         },
     );
-    // map.insert("Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
+    map.insert(
+        "Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.",
+        Mechanic::SelfDiscardEnergyAndCardEffect {
+            energies: vec![EnergyType::Metal, EnergyType::Metal],
+            effect: CardEffect::ReducedDamage { amount: 50 },
+            duration: 1,
+        },
+    );
     map.insert(
         "Discard 2 [P] Energy from this Pokémon.",
         Mechanic::SelfDiscardEnergy {
@@ -679,7 +689,11 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin. If tails, this attack does nothing.",
         Mechanic::CoinFlipNoEffect,
     );
-    // map.insert("Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", todo_implementation);
+    map.insert("Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", Mechanic::CoinFlipNoDamageOrDamageAndCardEffect {
+        opponent: false,
+        effect: CardEffect::PreventAllDamageAndEffects,
+        duration: 1,
+    });
     // map.insert("Flip a coin. If tails, this attack does nothing. If heads, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("Halve your opponent's Active Pokémon's remaining HP, rounded down.", todo_implementation);
     map.insert(
@@ -1907,7 +1921,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.", todo_implementation);
     // map.insert("Take a [C] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot.", todo_implementation);
-    // map.insert("This attack does 30 damage for each of your Benched [D] Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 30 damage for each of your Benched [D] Pokémon.",
+        Mechanic::BenchCountDamage {
+            include_fixed_damage: false,
+            damage_per: 30,
+            energy_type: Some(EnergyType::Darkness),
+            bench_side: BenchSide::YourBench,
+        },
+    );
     // map.insert("This attack does 60 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
     map
 });

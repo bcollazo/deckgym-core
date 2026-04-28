@@ -4,6 +4,8 @@ mod additional_ability_logic_test;
 mod arceus_ex_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
 mod blastoise_double_splash_test;
+#[path = "pokemon/bombirdier_test.rs"]
+mod bombirdier_test;
 #[path = "pokemon/bonsly_teary_attack_test.rs"]
 mod bonsly_teary_attack_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
@@ -14,6 +16,8 @@ mod castform_test;
 mod charmeleon_ignition_test;
 #[path = "pokemon/comfey_flower_shield_test.rs"]
 mod comfey_flower_shield_test;
+#[path = "pokemon/corviknight_line_test.rs"]
+mod corviknight_line_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
@@ -68,3 +72,7 @@ mod vulpix_tail_whip_test;
 mod xerneas_geoburst_test;
 #[path = "pokemon/zekrom_bolt_strike_test.rs"]
 mod zekrom_bolt_strike_test;
+#[path = "pokemon/zorua_zoroark_ex_test.rs"]
+mod zorua_zoroark_ex_test;
+#[path = "pokemon/zubat_crobat_b3_test.rs"]
+mod zubat_crobat_b3_test;
