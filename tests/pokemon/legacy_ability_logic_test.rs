@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{get_initialized_game, get_test_game_with_board},
     Game,
 };
 
@@ -20,18 +20,13 @@ where
 
 #[test]
 fn test_victreebel_fragrance_trap_switches_benched_basic_to_active() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1020Victreebel)],
         vec![
             PlayedCard::from_id(CardId::A1002Ivysaur),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -99,15 +94,10 @@ fn test_gengar_ex_shadowy_spellbind_blocks_supporters() {
 
 #[test]
 fn test_gardevoir_attaches_psychic_energy_to_active() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1132Gardevoir)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -122,9 +112,7 @@ fn test_gardevoir_attaches_psychic_energy_to_active() {
 
 #[test]
 fn test_vaporeon_wash_out_moves_water_energy_to_active() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1053Squirtle),
             PlayedCard::from_id(CardId::A1a019Vaporeon),
@@ -132,9 +120,6 @@ fn test_vaporeon_wash_out_moves_water_energy_to_active() {
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -185,18 +170,13 @@ fn test_aerodactyl_ex_primeval_law_blocks_active_evolution() {
 
 #[test]
 fn test_giratina_levitate_allows_retreat_with_energy_attached() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A2078Giratina).with_energy(vec![EnergyType::Psychic]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(actions
@@ -206,15 +186,10 @@ fn test_giratina_levitate_allows_retreat_with_energy_attached() {
 
 #[test]
 fn test_giratina_ex_broken_space_bellow_attaches_energy_and_offers_end_turn() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A2b035GiratinaEx)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -236,18 +211,13 @@ fn test_giratina_ex_broken_space_bellow_attaches_energy_and_offers_end_turn() {
 
 #[test]
 fn test_solgaleo_ex_rising_road_switches_from_bench() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A3122SolgaleoEx),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -300,18 +270,13 @@ fn test_shiinotic_illuminate_puts_pokemon_from_deck_into_hand() {
 
 #[test]
 fn test_celesteela_ultra_thrusters_switches_ultra_beast() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A3a042Nihilego),
             PlayedCard::from_id(CardId::A3a062Celesteela),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -364,18 +329,13 @@ fn test_flareon_ex_combust_attaches_from_discard_and_damages_self() {
 
 #[test]
 fn test_espeon_ex_psychic_healing_heals_selected_pokemon() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A4083EspeonEx),
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(40),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -403,18 +363,13 @@ fn test_espeon_ex_psychic_healing_heals_selected_pokemon() {
 
 #[test]
 fn test_crobat_cunning_link_damages_opponent_active() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A2a050Crobat),
             PlayedCard::from_id(CardId::A2a071ArceusEx),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -427,18 +382,13 @@ fn test_crobat_cunning_link_damages_opponent_active() {
 
 #[test]
 fn test_umbreon_ex_dark_chase_switches_damaged_bench_to_active() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A4112UmbreonEx)],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1002Ivysaur).with_damage(20),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -462,16 +412,11 @@ fn test_umbreon_ex_dark_chase_switches_damaged_bench_to_active() {
 
 #[test]
 fn test_oricorio_safeguard_prevents_damage_from_ex_attack() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1129MewtwoEx)
             .with_energy(vec![EnergyType::Psychic, EnergyType::Colorless])],
         vec![PlayedCard::from_id(CardId::A3066Oricorio)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -484,15 +429,10 @@ fn test_oricorio_safeguard_prevents_damage_from_ex_attack() {
 
 #[test]
 fn test_komala_comatose_puts_it_to_sleep_on_zone_attach() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A3141Komala)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -572,15 +512,10 @@ fn test_sylveon_ex_happy_ribbon_draws_two_on_evolve() {
 
 #[test]
 fn test_snorlax_ex_full_mouth_manner_heals_at_end_of_turn() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A3b057SnorlaxEx).with_damage(20)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -647,15 +582,10 @@ fn test_milotic_healing_ripples_heals_on_evolve() {
 
 #[test]
 fn test_cresselia_ex_lunar_plumage_heals_on_psychic_attach() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::PA037CresseliaEx).with_damage(40)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -671,9 +601,7 @@ fn test_cresselia_ex_lunar_plumage_heals_on_psychic_attach() {
 
 #[test]
 fn test_ariados_trap_territory_increases_retreat_cost() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
             PlayedCard::from_id(CardId::A1053Squirtle),
@@ -683,9 +611,6 @@ fn test_ariados_trap_territory_increases_retreat_cost() {
             PlayedCard::from_id(CardId::B1a006Ariados),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
@@ -695,9 +620,7 @@ fn test_ariados_trap_territory_increases_retreat_cost() {
 
 #[test]
 fn test_wartortle_shell_shield_prevents_bench_damage() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A4a025RaikouEx)
             .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])],
         vec![
@@ -705,9 +628,6 @@ fn test_wartortle_shell_shield_prevents_bench_damage() {
             PlayedCard::from_id(CardId::B1a018Wartortle),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -734,15 +654,10 @@ fn test_wartortle_shell_shield_prevents_bench_damage() {
 
 #[test]
 fn test_reuniclus_infinite_increase_raises_effective_hp_on_attach() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::B1a034Reuniclus).with_damage(20)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -758,15 +673,10 @@ fn test_reuniclus_infinite_increase_raises_effective_hp_on_attach() {
 
 #[test]
 fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A2091Riolu).with_energy(vec![EnergyType::Fighting])],
         vec![PlayedCard::from_id(CardId::B1177Goomy)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
@@ -776,9 +686,7 @@ fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
 
 #[test]
 fn test_aegislash_cursed_metal_boosts_its_own_attack_damage() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B1172Aegislash).with_energy(vec![
                 EnergyType::Metal,
@@ -788,9 +696,6 @@ fn test_aegislash_cursed_metal_boosts_its_own_attack_damage() {
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -848,9 +753,7 @@ fn test_nihilego_more_poison_increases_poison_damage() {
 
 #[test]
 fn test_shaymin_sky_support_reduces_active_basic_retreat_cost() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A2a069Shaymin),
@@ -858,9 +761,6 @@ fn test_shaymin_sky_support_reduces_active_basic_retreat_cost() {
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(actions

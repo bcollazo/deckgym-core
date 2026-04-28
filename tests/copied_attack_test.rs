@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{Card, EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{get_initialized_game, get_test_game_with_board},
 };
 
 #[test]
@@ -66,10 +66,7 @@ fn test_genome_hacking_copies_simple_damage_attack() {
 
 #[test]
 fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
                 EnergyType::Psychic,
@@ -80,9 +77,6 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
         ],
         vec![PlayedCard::from_id(CardId::A1115Abra)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -137,10 +131,7 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
 
 #[test]
 fn test_genome_hacking_only_offers_opponent_active_attacks() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
             EnergyType::Psychic,
@@ -151,9 +142,6 @@ fn test_genome_hacking_only_offers_opponent_active_attacks() {
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -374,10 +362,7 @@ fn test_copy_a_friend_uses_own_non_ex_bench_attacks_only() {
 
 #[test]
 fn test_genome_hacking_filters_out_opponent_mew_ex_genome_hacking() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
             EnergyType::Psychic,
@@ -385,9 +370,6 @@ fn test_genome_hacking_filters_out_opponent_mew_ex_genome_hacking() {
         ])],
         vec![PlayedCard::from_id(CardId::A1a032MewEx)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -460,10 +442,7 @@ fn test_genome_hacking_does_not_offer_opponent_ditto_copy_anything() {
 
 #[test]
 fn test_copy_anything_does_not_offer_copy_attacks() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1205Ditto).with_energy(vec![
             EnergyType::Colorless,
             EnergyType::Colorless,
@@ -475,9 +454,6 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
             PlayedCard::from_id(CardId::A1205Ditto),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -547,10 +523,7 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
 
 #[test]
 fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B1a055Ditto)
                 .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
@@ -559,9 +532,6 @@ fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -603,10 +573,7 @@ fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
 
 #[test]
 fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
             EnergyType::Psychic,
@@ -617,9 +584,6 @@ fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -665,10 +629,7 @@ fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
 
 #[test]
 fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
                 EnergyType::Water,
@@ -682,9 +643,6 @@ fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() 
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,

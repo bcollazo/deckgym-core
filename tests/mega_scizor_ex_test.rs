@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{get_initialized_game, get_test_game_with_board},
 };
 
 fn trainer_from_id(card_id: CardId) -> TrainerCard {
@@ -93,12 +93,7 @@ fn test_bullet_slugger_bonus_after_regular_retreat() {
 /// Revavroom's Metal Transport ability moves Mega Scizor ex to active, triggering the 50 extra damage.
 #[test]
 fn test_bullet_slugger_bonus_after_revavroom_metal_transport() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    // Varoom (Metal type) is active; Revavroom is on bench 1 with its ability unused;
-    // Mega Scizor ex is on bench 2 with full energy.
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B2b049Varoom),
             PlayedCard::from_id(CardId::B2b050Revavroom),
@@ -106,9 +101,6 @@ fn test_bullet_slugger_bonus_after_revavroom_metal_transport() {
         ],
         vec![fat_bulbasaur()],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     // Use Revavroom's Metal Transport ability (bench index 1).
     game.apply_action(&Action {
