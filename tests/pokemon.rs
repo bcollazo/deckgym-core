@@ -16,6 +16,8 @@ mod castform_test;
 mod charmeleon_ignition_test;
 #[path = "pokemon/comfey_flower_shield_test.rs"]
 mod comfey_flower_shield_test;
+#[path = "pokemon/corviknight_line_test.rs"]
+mod corviknight_line_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]

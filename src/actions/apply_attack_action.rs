@@ -271,6 +271,9 @@ fn forecast_effect_attack_by_mechanic(
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive => mawile_crunch(),
+        Mechanic::DiscardOpponentActiveToolsBeforeDamage => {
+            discard_opponent_active_tools_before_damage(attack.fixed_damage, attack.title.clone())
+        }
         Mechanic::ExtraDamageIfEx { extra_damage } => {
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
@@ -325,6 +328,16 @@ fn forecast_effect_attack_by_mechanic(
             attack.fixed_damage,
             energies.clone(),
             conditions.clone(),
+        ),
+        Mechanic::SelfDiscardEnergyAndCardEffect {
+            energies,
+            effect,
+            duration,
+        } => self_discard_energy_and_card_effect(
+            attack.fixed_damage,
+            energies.clone(),
+            effect.clone(),
+            *duration,
         ),
         Mechanic::ExtraDamageIfExtraEnergy {
             required_extra_energy,
@@ -1481,23 +1494,63 @@ fn self_discard_energy_and_inflict_status(
     })
 }
 
+fn self_discard_energy_and_card_effect(
+    fixed_damage: u32,
+    to_discard: Vec<EnergyType>,
+    effect: CardEffect,
+    duration: u8,
+) -> Outcomes {
+    active_damage_effect_doutcome(fixed_damage, move |_, state, action| {
+        discard_requested_energy_from_active_best_effort(state, action.actor, &to_discard);
+        state
+            .get_active_mut(action.actor)
+            .add_effect(effect.clone(), duration);
+    })
+}
+
 /// For attacks that deal damage and discard random energy from opponent's active Pokémon
 fn damage_and_discard_energy(damage: u32, discard_count: usize) -> Outcomes {
     active_damage_effect_doutcome(damage, move |rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let active = state.get_active_mut(opponent);
+        let mut to_discard = Vec::new();
+        let mut remaining = state.get_active(opponent).attached_energy.clone();
 
         for _ in 0..discard_count {
-            if active.attached_energy.is_empty() {
+            if remaining.is_empty() {
                 break; // No more energy to discard
             }
 
-            // Get a random index to discard
-            let energy_count = active.attached_energy.len();
+            let energy_count = remaining.len();
             let rand_idx = rng.gen_range(0..energy_count);
-            active.attached_energy.remove(rand_idx);
+            to_discard.push(remaining.swap_remove(rand_idx));
+        }
+
+        if !to_discard.is_empty() {
+            state.discard_from_active(opponent, &to_discard);
         }
     })
+}
+
+fn discard_opponent_active_tools_before_damage(damage: u32, attack_name: String) -> Outcomes {
+    Outcomes::single(Box::new(move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if state.in_play_pokemon[opponent][0]
+            .as_ref()
+            .is_some_and(|pokemon| pokemon.attached_tool.is_some())
+        {
+            state.discard_tool(opponent, 0);
+        }
+
+        let attacking_ref = (action.actor, 0);
+        handle_damage_only(
+            state,
+            attacking_ref,
+            &[(damage, opponent, 0)],
+            true,
+            Some(attack_name.as_str()),
+        );
+        handle_knockouts(state, attacking_ref, true);
+    }))
 }
 
 /// For attacks that deal damage and discard cards from the top of opponent's deck

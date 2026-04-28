@@ -54,7 +54,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
-    // map.insert("Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",
+        Mechanic::DiscardOpponentActiveToolsBeforeDamage,
+    );
     // map.insert("Both Active Pokémon are now Asleep.", todo_implementation);
     // map.insert("Both Active Pokémon are now Confused.", todo_implementation);
     // map.insert("Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
@@ -81,7 +84,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Lightning, EnergyType::Lightning],
         },
     );
-    // map.insert("Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.", todo_implementation);
+    map.insert(
+        "Discard 2 [M] Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -50 damage from attacks.",
+        Mechanic::SelfDiscardEnergyAndCardEffect {
+            energies: vec![EnergyType::Metal, EnergyType::Metal],
+            effect: CardEffect::ReducedDamage { amount: 50 },
+            duration: 1,
+        },
+    );
     map.insert(
         "Discard 2 [P] Energy from this Pokémon.",
         Mechanic::SelfDiscardEnergy {
