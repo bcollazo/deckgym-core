@@ -179,6 +179,7 @@ pub fn forecast_trainer_action(
         CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
             team_rocket_grunt_outcomes()
         }
+        CardId::B3147FieldBlower => Outcomes::single_fn(field_blower_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -305,6 +306,30 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, possible_moves));
+    }
+}
+
+fn field_blower_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Offer one choice per Pokémon with a tool (both players) plus one choice to discard the stadium.
+    let mut choices: Vec<SimpleAction> = (0..2)
+        .flat_map(|player| {
+            state
+                .enumerate_in_play_pokemon(player)
+                .filter(|(_, pokemon)| pokemon.has_tool_attached())
+                .map(
+                    move |(in_play_idx, _)| SimpleAction::DiscardToolFromPokemon {
+                        player,
+                        in_play_idx,
+                    },
+                )
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    if state.active_stadium.is_some() {
+        choices.push(SimpleAction::DiscardActiveStadium);
+    }
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
     }
 }
 

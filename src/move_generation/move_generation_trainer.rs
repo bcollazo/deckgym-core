@@ -218,6 +218,7 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
             can_play_team_rocket_grunt(state, trainer_card)
         }
+        CardId::B3147FieldBlower => can_play_field_blower(state, trainer_card),
         _ => None,
     }
 }
@@ -762,6 +763,19 @@ fn can_play_team_rocket_grunt(
 /// Check if Maintenance can be played (requires 2 other cards in hand after playing it)
 fn can_play_maintenance(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     if state.hands[state.current_player].len() >= 3 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Field Blower can be played (requires any Pokémon with a tool attached, or an active stadium)
+fn can_play_field_blower(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let any_tool = (0..2)
+        .flat_map(|player| state.enumerate_in_play_pokemon(player))
+        .any(|(_, pokemon)| pokemon.has_tool_attached());
+    let any_stadium = state.active_stadium.is_some();
+    if any_tool || any_stadium {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

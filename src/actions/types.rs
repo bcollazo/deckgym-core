@@ -135,6 +135,13 @@ pub enum SimpleAction {
     ReturnPokemonToHand {
         in_play_idx: usize,
     },
+    /// Field Blower: discard the tool attached to a specific Pokémon (any player).
+    DiscardToolFromPokemon {
+        player: usize,
+        in_play_idx: usize,
+    },
+    /// Field Blower: discard the active stadium.
+    DiscardActiveStadium,
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -279,6 +286,10 @@ impl fmt::Display for SimpleAction {
             SimpleAction::ReturnPokemonToHand { in_play_idx } => {
                 write!(f, "ReturnPokemonToHand({in_play_idx})")
             }
+            SimpleAction::DiscardToolFromPokemon { player, in_play_idx } => {
+                write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")
+            }
+            SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
             SimpleAction::UseStadium => write!(f, "UseStadium"),
             SimpleAction::Noop => write!(f, "Noop"),
         }
