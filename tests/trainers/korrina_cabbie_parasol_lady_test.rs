@@ -334,7 +334,12 @@ fn test_parasol_lady_active_triggers_promotion() {
     let (_actor, choices) = game.get_state_clone().generate_possible_actions();
     let return_squirtle = choices
         .iter()
-        .find(|a| matches!(a.action, SimpleAction::ReturnPokemonToHand { in_play_idx: 0 }))
+        .find(|a| {
+            matches!(
+                a.action,
+                SimpleAction::ReturnPokemonToHand { in_play_idx: 0 }
+            )
+        })
         .expect("Should be able to return the active Squirtle");
     game.apply_action(return_squirtle);
 
