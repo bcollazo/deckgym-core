@@ -5,22 +5,19 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{PlayedCard, StatusCondition},
-    test_support::get_initialized_game,
+    test_support::{get_initialized_game, get_test_game_with_board},
 };
 
 #[test]
 fn test_bad_dreams_deals_damage_when_opponent_asleep() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    // Darkrai (Bad Dreams) active for player 0; Caterpie (50 HP) asleep for player 1.
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
         vec![PlayedCard::from_id(CardId::A1005Caterpie)],
     );
+    let mut state = game.get_state_clone();
+
+    // Darkrai (Bad Dreams) active for player 0; Caterpie (50 HP) asleep for player 1.
     state.apply_status_condition(1, 0, StatusCondition::Asleep);
-    state.current_player = 0;
-    state.turn_count = 3;
     game.set_state(state);
 
     game.apply_action(&Action {
@@ -40,16 +37,10 @@ fn test_bad_dreams_deals_damage_when_opponent_asleep() {
 
 #[test]
 fn test_bad_dreams_no_damage_when_not_asleep() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
         vec![PlayedCard::from_id(CardId::A1005Caterpie)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
@@ -68,16 +59,13 @@ fn test_bad_dreams_no_damage_when_not_asleep() {
 fn test_bad_dreams_triggers_at_end_of_each_turn() {
     // Darkrai belongs to player 1; player 0 ends their turn with an Asleep active.
     // The ability says "at the end of EACH turn", so it fires on the opponent's turn too.
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1005Caterpie)],
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
     );
+    let mut state = game.get_state_clone();
+
     state.apply_status_condition(0, 0, StatusCondition::Asleep);
-    state.current_player = 0;
-    state.turn_count = 3;
     game.set_state(state);
 
     game.apply_action(&Action {
@@ -99,10 +87,7 @@ fn test_bad_dreams_triggers_at_end_of_each_turn() {
 fn test_bad_dreams_ko_during_end_turn_queues_promotion() {
     // Corner case: Bad Dreams KOs the opponent's Active Pokémon during end-turn processing.
     // The opponent must promote a benched Pokémon.
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
         vec![
             // Caterpie with only 10 HP left and Asleep — Bad Dreams (20 dmg) will KO it.
@@ -111,9 +96,9 @@ fn test_bad_dreams_ko_during_end_turn_queues_promotion() {
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
+    let mut state = game.get_state_clone();
+
     state.apply_status_condition(1, 0, StatusCondition::Asleep);
-    state.current_player = 0;
-    state.turn_count = 3;
     game.set_state(state);
 
     game.apply_action(&Action {
@@ -149,19 +134,16 @@ fn test_bad_dreams_ko_during_end_turn_queues_promotion() {
 fn test_bad_dreams_multiple_darkrai_each_trigger_independently() {
     // Corner case: Two Darkrai in play for the same player each trigger Bad Dreams.
     // Combined damage should be 40 (2 × 20).
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B2b040Darkrai), // active
             PlayedCard::from_id(CardId::B2b040Darkrai), // bench
         ],
         vec![PlayedCard::from_id(CardId::A1005Caterpie)],
     );
+    let mut state = game.get_state_clone();
+
     state.apply_status_condition(1, 0, StatusCondition::Asleep);
-    state.current_player = 0;
-    state.turn_count = 3;
     game.set_state(state);
 
     game.apply_action(&Action {

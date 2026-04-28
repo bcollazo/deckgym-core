@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{get_initialized_game, get_test_game_with_board},
 };
 
 #[test]
@@ -186,16 +186,11 @@ fn test_giratina_ex_ability_end_turn_does_not_panic_if_ko_by_jolteon() {
 
 #[test]
 fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A2a022GlaceonEx)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let end_turn_action = Action {
         actor: 0,
@@ -219,19 +214,14 @@ fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
 
 #[test]
 fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A4083EspeonEx),
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
 
@@ -245,19 +235,14 @@ fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
 
 #[test]
 fn test_victreebel_fragrance_trap_not_available_without_benched_basic_target() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1020Victreebel)],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1002Ivysaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
 
@@ -273,16 +258,11 @@ fn test_victreebel_fragrance_trap_not_available_without_benched_basic_target() {
 fn test_weezing_gas_leak_poisons_opponent_active() {
     // Weezing's Gas Leak: Once during your turn, if this Pokémon is in the Active Spot,
     // you may make your opponent's Active Pokémon Poisoned.
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1177Weezing)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let ability_action = Action {
         actor: 0,
@@ -304,16 +284,11 @@ fn test_weezing_gas_leak_poisons_opponent_active() {
 #[test]
 fn test_indeedee_ex_watch_over_heals_active() {
     // Indeedee ex's Watch Over: Once during your turn, you may heal 20 damage from your Active Pokémon.
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::B1121IndeedeeEx).with_remaining_hp(80)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let ability_action = Action {
         actor: 0,
@@ -337,19 +312,14 @@ fn test_indeedee_ex_watch_over_heals_active() {
 fn test_pidgeot_drive_off_forces_opponent_switch() {
     // Pidgeot's Drive Off: Once during your turn, you may switch out your opponent's Active Pokémon
     // to the Bench. (Your opponent chooses the new Active Pokémon.)
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1188Pidgeot)],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1002Ivysaur),
         ],
     );
-    state.current_player = 0;
-    state.turn_count = 3;
-    game.set_state(state);
+
 
     let ability_action = Action {
         actor: 0,

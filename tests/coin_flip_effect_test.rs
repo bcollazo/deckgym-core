@@ -3,27 +3,21 @@ use deckgym::{
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::get_test_game_with_board,
 };
 
 /// Test that CoinFlipToBlockAttack effect blocks attacks 50% of the time
 #[test]
 fn test_coin_flip_to_block_attack_effect() {
-    let mut game = get_initialized_game(0);
-    let mut state = game.get_state_clone();
-    state.current_player = 0;
-
     // Set up attacker with CoinFlipToBlockAttack effect
     let mut charmander_played = PlayedCard::from_id(CardId::A1033Charmander)
         .with_energy(vec![EnergyType::Fire, EnergyType::Fire]);
     charmander_played.add_effect(CardEffect::CoinFlipToBlockAttack, 1);
 
-    state.set_board(
+    let mut game = get_test_game_with_board(
         vec![charmander_played],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
-    game.set_state(state);
 
     let action = Action {
         actor: 0,
