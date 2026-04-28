@@ -28,7 +28,6 @@ fn test_victreebel_fragrance_trap_switches_benched_basic_to_active() {
         ],
     );
 
-
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 0 },
@@ -100,7 +99,6 @@ fn test_gardevoir_attaches_psychic_energy_to_active() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
-
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 0 },
@@ -117,12 +115,11 @@ fn test_vaporeon_wash_out_moves_water_energy_to_active() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1053Squirtle),
-        PlayedCard::from_id(CardId::A1a019Vaporeon),
+            PlayedCard::from_id(CardId::A1a019Vaporeon),
             PlayedCard::from_id(CardId::A1055Blastoise).with_energy(vec![EnergyType::Water]),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -176,11 +173,10 @@ fn test_giratina_levitate_allows_retreat_with_energy_attached() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A2078Giratina).with_energy(vec![EnergyType::Psychic]),
-        PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(actions
@@ -194,7 +190,6 @@ fn test_giratina_ex_broken_space_bellow_attaches_energy_and_offers_end_turn() {
         vec![PlayedCard::from_id(CardId::A2b035GiratinaEx)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -219,11 +214,10 @@ fn test_solgaleo_ex_rising_road_switches_from_bench() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
-        PlayedCard::from_id(CardId::A3122SolgaleoEx),
+            PlayedCard::from_id(CardId::A3122SolgaleoEx),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -279,11 +273,10 @@ fn test_celesteela_ultra_thrusters_switches_ultra_beast() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A3a042Nihilego),
-        PlayedCard::from_id(CardId::A3a062Celesteela),
+            PlayedCard::from_id(CardId::A3a062Celesteela),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -339,11 +332,10 @@ fn test_espeon_ex_psychic_healing_heals_selected_pokemon() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A4083EspeonEx),
-        PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(40),
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(40),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -374,11 +366,10 @@ fn test_crobat_cunning_link_damages_opponent_active() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A2a050Crobat),
-        PlayedCard::from_id(CardId::A2a071ArceusEx),
+            PlayedCard::from_id(CardId::A2a071ArceusEx),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -398,7 +389,6 @@ fn test_umbreon_ex_dark_chase_switches_damaged_bench_to_active() {
             PlayedCard::from_id(CardId::A1002Ivysaur).with_damage(20),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -424,11 +414,9 @@ fn test_umbreon_ex_dark_chase_switches_damaged_bench_to_active() {
 fn test_oricorio_safeguard_prevents_damage_from_ex_attack() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1129MewtwoEx)
-            .with_energy(vec![EnergyType::Psychic,
-        EnergyType::Colorless])],
+            .with_energy(vec![EnergyType::Psychic, EnergyType::Colorless])],
         vec![PlayedCard::from_id(CardId::A3066Oricorio)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -445,7 +433,6 @@ fn test_komala_comatose_puts_it_to_sleep_on_zone_attach() {
         vec![PlayedCard::from_id(CardId::A3141Komala)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -530,7 +517,6 @@ fn test_snorlax_ex_full_mouth_manner_heals_at_end_of_turn() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
-
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::EndTurn,
@@ -601,7 +587,6 @@ fn test_cresselia_ex_lunar_plumage_heals_on_psychic_attach() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
-
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::Attach {
@@ -619,14 +604,13 @@ fn test_ariados_trap_territory_increases_retreat_cost() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
-        PlayedCard::from_id(CardId::A1053Squirtle),
+            PlayedCard::from_id(CardId::A1053Squirtle),
         ],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::B1a006Ariados),
         ],
     );
-
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
@@ -638,14 +622,12 @@ fn test_ariados_trap_territory_increases_retreat_cost() {
 fn test_wartortle_shell_shield_prevents_bench_damage() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A4a025RaikouEx)
-            .with_energy(vec![EnergyType::Lightning,
-        EnergyType::Lightning])],
+            .with_energy(vec![EnergyType::Lightning, EnergyType::Lightning])],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::B1a018Wartortle),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -677,7 +659,6 @@ fn test_reuniclus_infinite_increase_raises_effective_hp_on_attach() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
-
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::Attach {
@@ -697,7 +678,6 @@ fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
         vec![PlayedCard::from_id(CardId::B1177Goomy)],
     );
 
-
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
         .iter()
@@ -710,13 +690,12 @@ fn test_aegislash_cursed_metal_boosts_its_own_attack_damage() {
         vec![
             PlayedCard::from_id(CardId::B1172Aegislash).with_energy(vec![
                 EnergyType::Metal,
-        EnergyType::Colorless,
+                EnergyType::Colorless,
                 EnergyType::Colorless,
             ]),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -777,12 +756,11 @@ fn test_shaymin_sky_support_reduces_active_basic_retreat_cost() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
-        PlayedCard::from_id(CardId::A2a069Shaymin),
+            PlayedCard::from_id(CardId::A2a069Shaymin),
             PlayedCard::from_id(CardId::A1053Squirtle),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(actions

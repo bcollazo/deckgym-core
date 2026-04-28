@@ -191,7 +191,6 @@ fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
-
     let end_turn_action = Action {
         actor: 0,
         action: SimpleAction::EndTurn,
@@ -217,11 +216,10 @@ fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A4083EspeonEx),
-        PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
 
@@ -243,7 +241,6 @@ fn test_victreebel_fragrance_trap_not_available_without_benched_basic_target() {
         ],
     );
 
-
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
 
     assert!(
@@ -262,7 +259,6 @@ fn test_weezing_gas_leak_poisons_opponent_active() {
         vec![PlayedCard::from_id(CardId::A1177Weezing)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     let ability_action = Action {
         actor: 0,
@@ -288,7 +284,6 @@ fn test_indeedee_ex_watch_over_heals_active() {
         vec![PlayedCard::from_id(CardId::B1121IndeedeeEx).with_remaining_hp(80)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     let ability_action = Action {
         actor: 0,
@@ -319,7 +314,6 @@ fn test_pidgeot_drive_off_forces_opponent_switch() {
             PlayedCard::from_id(CardId::A1002Ivysaur),
         ],
     );
-
 
     let ability_action = Action {
         actor: 0,

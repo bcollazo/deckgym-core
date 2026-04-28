@@ -70,14 +70,13 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
         vec![
             PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
                 EnergyType::Psychic,
-        EnergyType::Psychic,
+                EnergyType::Psychic,
                 EnergyType::Psychic,
             ]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
         vec![PlayedCard::from_id(CardId::A1115Abra)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -135,7 +134,7 @@ fn test_genome_hacking_only_offers_opponent_active_attacks() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
-        EnergyType::Psychic,
+            EnergyType::Psychic,
             EnergyType::Psychic,
         ])],
         vec![
@@ -143,7 +142,6 @@ fn test_genome_hacking_only_offers_opponent_active_attacks() {
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -367,12 +365,11 @@ fn test_genome_hacking_filters_out_opponent_mew_ex_genome_hacking() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
-        EnergyType::Psychic,
+            EnergyType::Psychic,
             EnergyType::Psychic,
         ])],
         vec![PlayedCard::from_id(CardId::A1a032MewEx)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -448,7 +445,7 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1205Ditto).with_energy(vec![
             EnergyType::Colorless,
-        EnergyType::Colorless,
+            EnergyType::Colorless,
             EnergyType::Colorless,
         ])],
         vec![
@@ -457,7 +454,6 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
             PlayedCard::from_id(CardId::A1205Ditto),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -530,14 +526,12 @@ fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B1a055Ditto)
-                .with_energy(vec![EnergyType::Grass,
-        EnergyType::Colorless]),
+                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1205Ditto),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -582,7 +576,7 @@ fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
             EnergyType::Psychic,
-        EnergyType::Psychic,
+            EnergyType::Psychic,
             EnergyType::Psychic,
         ])],
         vec![
@@ -590,7 +584,6 @@ fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,
@@ -640,7 +633,7 @@ fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() 
         vec![
             PlayedCard::from_id(CardId::A1a032MewEx).with_energy(vec![
                 EnergyType::Water,
-        EnergyType::Psychic,
+                EnergyType::Psychic,
                 EnergyType::Psychic,
             ]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
@@ -650,7 +643,6 @@ fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() 
             PlayedCard::from_id(CardId::A1001Bulbasaur),
         ],
     );
-
 
     game.apply_action(&Action {
         actor: 0,

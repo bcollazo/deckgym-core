@@ -96,12 +96,11 @@ fn test_bullet_slugger_bonus_after_revavroom_metal_transport() {
     let mut game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::B2b049Varoom),
-        PlayedCard::from_id(CardId::B2b050Revavroom),
+            PlayedCard::from_id(CardId::B2b050Revavroom),
             mega_scizor_ex_with_energy(),
         ],
         vec![fat_bulbasaur()],
     );
-
 
     // Use Revavroom's Metal Transport ability (bench index 1).
     game.apply_action(&Action {
