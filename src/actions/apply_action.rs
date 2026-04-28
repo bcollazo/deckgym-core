@@ -14,7 +14,7 @@ use crate::{
     effects::TurnEffect,
     hooks::{get_retreat_cost, on_evolve, to_playable_card},
     models::{Card, EnergyType},
-    stadiums::is_mesagoza_active,
+    stadiums::{is_fragrant_forest_active, is_mesagoza_active},
     state::State,
     tools,
 };
@@ -739,13 +739,14 @@ fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
     }
 }
 
-/// Forecasts the UseStadium action for activated stadiums like Mesagoza.
+/// Forecasts the UseStadium action for activated stadiums like Mesagoza and Fragrant Forest.
 fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
-    // Currently only Mesagoza has an activated effect
     if is_mesagoza_active(state) {
         return forecast_mesagoza_effect(state, acting_player);
     }
-    // No other activated stadiums for now, just mark as used
+    if is_fragrant_forest_active(state) {
+        return forecast_fragrant_forest_effect(state, acting_player);
+    }
     Outcomes::single_fn(|_, _, _| {})
 }
 
@@ -774,6 +775,36 @@ fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> Outcomes {
 
     // Not `binary_coin`: heads fans out into many weighted search outcomes, not one mutation.
     Outcomes::from_coin_branches(branches).expect("Mesagoza coin branches should be valid")
+}
+
+/// Fragrant Forest: Once during each player's turn, that player may put a random Basic [G] Pokémon from their deck into their hand.
+fn forecast_fragrant_forest_effect(state: &State, acting_player: usize) -> Outcomes {
+    let basic_grass: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| {
+            matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Grass)
+        })
+        .cloned()
+        .collect();
+
+    if basic_grass.is_empty() {
+        return Outcomes::single_fn(|_, state, action| {
+            state.has_used_stadium[action.actor] = true;
+        });
+    }
+
+    let num = basic_grass.len();
+    let prob = 1.0 / num as f64;
+    let mut outcomes: Mutations = vec![];
+    for pokemon in basic_grass {
+        outcomes.push(Box::new(move |_, state, action| {
+            state.has_used_stadium[action.actor] = true;
+            state.transfer_card_from_deck_to_hand(action.actor, &pokemon);
+            debug!("Fragrant Forest: Moved {} to hand", pokemon.get_name());
+        }));
+    }
+    Outcomes::from_parts(vec![prob; num], outcomes)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.

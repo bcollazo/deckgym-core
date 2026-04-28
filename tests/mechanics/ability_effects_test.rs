@@ -213,7 +213,7 @@ fn test_glaceon_ex_snowy_terrain_damages_opponent_active_during_checkup() {
 
 #[test]
 fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A4083EspeonEx),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
@@ -233,7 +233,7 @@ fn test_espeon_ex_psychic_healing_not_available_without_damaged_pokemon() {
 
 #[test]
 fn test_victreebel_fragrance_trap_not_available_without_benched_basic_target() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A1020Victreebel)],
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),

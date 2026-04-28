@@ -1,3 +1,5 @@
+#[path = "tools/lucky_egg_test.rs"]
+mod lucky_egg_test;
 #[path = "tools/lucky_ice_pop_test.rs"]
 mod lucky_ice_pop_test;
 #[path = "tools/protective_poncho_test.rs"]

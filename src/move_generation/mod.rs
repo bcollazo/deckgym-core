@@ -5,7 +5,7 @@ mod move_generation_trainer;
 use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic, Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
-use crate::stadiums::can_use_mesagoza;
+use crate::stadiums::{can_use_fragrant_forest, can_use_mesagoza};
 use crate::state::State;
 
 use attacks::generate_attack_actions;
@@ -109,8 +109,8 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
     let ability_actions = generate_ability_actions(state);
     actions.extend(ability_actions);
 
-    // Add actions given by active stadium (activated stadiums like Mesagoza)
-    if can_use_mesagoza(state, current_player) {
+    // Add actions given by active stadium (activated stadiums like Mesagoza, Fragrant Forest)
+    if can_use_mesagoza(state, current_player) || can_use_fragrant_forest(state, current_player) {
         actions.push(SimpleAction::UseStadium);
     }
 

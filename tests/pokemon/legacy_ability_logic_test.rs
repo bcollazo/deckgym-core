@@ -170,7 +170,7 @@ fn test_aerodactyl_ex_primeval_law_blocks_active_evolution() {
 
 #[test]
 fn test_giratina_levitate_allows_retreat_with_energy_attached() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A2078Giratina).with_energy(vec![EnergyType::Psychic]),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
@@ -601,7 +601,7 @@ fn test_cresselia_ex_lunar_plumage_heals_on_psychic_attach() {
 
 #[test]
 fn test_ariados_trap_territory_increases_retreat_cost() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
             PlayedCard::from_id(CardId::A1053Squirtle),
@@ -673,7 +673,7 @@ fn test_reuniclus_infinite_increase_raises_effective_hp_on_attach() {
 
 #[test]
 fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A2091Riolu).with_energy(vec![EnergyType::Fighting])],
         vec![PlayedCard::from_id(CardId::B1177Goomy)],
     );
@@ -753,7 +753,7 @@ fn test_nihilego_more_poison_increases_poison_damage() {
 
 #[test]
 fn test_shaymin_sky_support_reduces_active_basic_retreat_cost() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A2a069Shaymin),
