@@ -1,7 +1,7 @@
 use core::panic;
 
 use log::debug;
-use rand::rngs::StdRng;
+use rand::{rngs::StdRng, Rng};
 
 use crate::{
     actions::{
@@ -14,7 +14,7 @@ use crate::{
     },
     effects::TurnEffect,
     hooks::is_ultra_beast,
-    models::{Card, EnergyType, StatusCondition},
+    models::{Card, EnergyType, PlayedCard, StatusCondition},
     State,
 };
 
@@ -164,6 +164,9 @@ fn forecast_ability_by_mechanic(
             amount,
         } => discard_energy_to_increase_type_damage(*discard_energy, *attack_type, *amount),
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
+        AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
+            remove_random_special_condition_from_active()
+        }
         AbilityMechanic::HealActiveYourPokemon { amount } => heal_active_your_pokemon(*amount),
         AbilityMechanic::SwitchOutOpponentActiveToBench { .. } => {
             switch_out_opponent_active_to_bench()
@@ -471,6 +474,31 @@ fn poison_opponent_active() -> Outcomes {
         let opponent = (action.actor + 1) % 2;
         state.apply_status_condition(opponent, 0, StatusCondition::Poisoned);
     })
+}
+
+fn remove_random_special_condition_from_active() -> Outcomes {
+    Outcomes::single_fn(|rng, state, action| {
+        let active = state.get_active_mut(action.actor);
+        let conditions = active_special_conditions(active);
+        if conditions.is_empty() {
+            return;
+        }
+        let condition = conditions[rng.gen_range(0..conditions.len())];
+        active.clear_status_condition(condition);
+    })
+}
+
+fn active_special_conditions(active: &PlayedCard) -> Vec<StatusCondition> {
+    [
+        active.is_poisoned().then_some(StatusCondition::Poisoned),
+        active.is_paralyzed().then_some(StatusCondition::Paralyzed),
+        active.is_asleep().then_some(StatusCondition::Asleep),
+        active.is_burned().then_some(StatusCondition::Burned),
+        active.is_confused().then_some(StatusCondition::Confused),
+    ]
+    .into_iter()
+    .flatten()
+    .collect()
 }
 
 fn coin_flip_sleep_opponent_active() -> Outcomes {

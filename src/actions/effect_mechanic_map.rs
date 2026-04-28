@@ -590,7 +590,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive,
     );
     // map.insert("Flip a coin. If heads, discard a random card from your opponent's hand.", todo_implementation);
-    // map.insert("Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::PreventAllDamageAndEffects,
+            duration: 1,
+            coin_flip: true,
+        },
+    );
     map.insert("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.", Mechanic::DamageAndCardEffect {
         opponent: false,
         effect: CardEffect::PreventAllDamageAndEffects,
@@ -1853,7 +1861,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Heal 10 damage from each of your Pokémon.", todo_implementation);
     // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
     // map.insert("Heal 30 damage from 1 of your Benched Pokémon.", todo_implementation);
-    // map.insert("Heal 30 damage from 1 of your Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 30 damage from 1 of your Pokémon.",
+        Mechanic::HealOneYourPokemon { amount: 30 },
+    );
+    map.insert(
+        "Flip a coin. If heads, heal 60 damage from this Pokémon.",
+        Mechanic::CoinFlipSelfHeal { amount: 60 },
+    );
     // map.insert("Heal 30 damage from each of your Pokémon.", todo_implementation);
     // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
     map.insert(
