@@ -219,6 +219,11 @@ pub fn trainer_move_generation_implementation(
             can_play_team_rocket_grunt(state, trainer_card)
         }
         CardId::B3147FieldBlower => can_play_field_blower(state, trainer_card),
+        CardId::B3149Korrina | CardId::B3190Korrina => can_play_trainer(state, trainer_card),
+        CardId::B3150Cabbie | CardId::B3191Cabbie => can_play_cabbie(state, trainer_card),
+        CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
+            can_play_parasol_lady(state, trainer_card)
+        }
         _ => None,
     }
 }
@@ -776,6 +781,32 @@ fn can_play_field_blower(state: &State, trainer_card: &TrainerCard) -> Option<Ve
         .any(|(_, pokemon)| pokemon.has_tool_attached());
     let any_stadium = state.active_stadium.is_some();
     if any_tool || any_stadium {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Cabbie can be played (requires at least one Stadium card in the deck)
+fn can_play_cabbie(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_stadium = state.decks[state.current_player].cards.iter().any(
+        |card| matches!(card, Card::Trainer(tc) if tc.trainer_card_type == TrainerType::Stadium),
+    );
+    if has_stadium {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Parasol Lady can be played (requires at least one [W] non-ex Pokémon in play)
+fn can_play_parasol_lady(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| {
+            pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
+        });
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

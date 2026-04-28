@@ -180,6 +180,16 @@ pub fn forecast_trainer_action(
             team_rocket_grunt_outcomes()
         }
         CardId::B3147FieldBlower => Outcomes::single_fn(field_blower_effect),
+        CardId::B3149Korrina | CardId::B3190Korrina => Outcomes::single_fn(korrina_effect),
+        CardId::B3150Cabbie | CardId::B3191Cabbie => card_search_outcomes_with_filter_multiple(
+            acting_player,
+            state,
+            1,
+            |card| matches!(card, Card::Trainer(tc) if tc.trainer_card_type == TrainerType::Stadium),
+        ),
+        CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
+            parasol_lady_effect(acting_player, state)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -331,6 +341,36 @@ fn field_blower_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     if !choices.is_empty() {
         state.move_generation_stack.push((action.actor, choices));
     }
+}
+
+fn korrina_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon ex.
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForTypeAgainstEx {
+            amount: 30,
+            energy_type: EnergyType::Fighting,
+        },
+        0,
+    );
+}
+
+fn parasol_lady_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Put 1 of your [W] Pokémon in play, except any Pokémon ex, into your hand.
+    let choices: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(acting_player)
+        .filter(|(_, pokemon)| {
+            pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
+        })
+        .map(|(in_play_idx, _)| SimpleAction::ReturnPokemonToHand { in_play_idx })
+        .collect();
+
+    Outcomes::single_fn(move |_, state, action| {
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }
+    })
 }
 
 fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {

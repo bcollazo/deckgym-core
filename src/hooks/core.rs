@@ -574,6 +574,12 @@ fn get_increased_turn_effect_modifiers(
                     0
                 }
             }
+            TurnEffect::IncreasedDamageForTypeAgainstEx {
+                amount,
+                energy_type,
+            } if target_is_ex && attacking_pokemon.get_energy_type() == Some(*energy_type) => {
+                *amount
+            }
             _ => 0,
         })
         .sum::<u32>()

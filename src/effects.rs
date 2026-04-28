@@ -53,6 +53,10 @@ pub enum TurnEffect {
         amount: u32,
         pokemon_names: Vec<String>,
     },
+    IncreasedDamageForTypeAgainstEx {
+        amount: u32,
+        energy_type: EnergyType,
+    },
     DelayedSpotDamage {
         source_player: usize,
         target_player: usize,
