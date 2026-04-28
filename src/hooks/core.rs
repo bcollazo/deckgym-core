@@ -11,7 +11,10 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType, BASIC_STAGE},
-    stadiums::{get_training_area_damage_bonus, is_bounded_field_active, is_hiking_trail_active},
+    stadiums::{
+        get_arena_of_antiquity_damage_bonus, get_training_area_damage_bonus,
+        is_bounded_field_active, is_hiking_trail_active,
+    },
     tools::has_tool,
     State,
 };
@@ -851,7 +854,15 @@ pub(crate) fn modify_damage(
     // Stadium damage bonus (e.g., Training Area for Stage 1 Pokemon)
     // Only applies to attacks against the opponent's Active Pokemon
     let stadium_damage_bonus = if is_active_to_active {
-        get_training_area_damage_bonus(state, get_stage(attacking_pokemon))
+        let training_area = get_training_area_damage_bonus(state, get_stage(attacking_pokemon));
+        let arena_of_antiquity = get_arena_of_antiquity_damage_bonus(
+            state,
+            attacking_pokemon
+                .get_energy_type()
+                .unwrap_or(EnergyType::Colorless),
+            target_is_ex,
+        );
+        training_area + arena_of_antiquity
     } else {
         0
     };
@@ -1019,8 +1030,28 @@ pub(crate) fn on_knockout(
     state: &mut State,
     knocked_out_player: usize,
     knocked_out_idx: usize,
+    attacking_ref: (usize, usize),
     is_from_active_attack: bool,
 ) {
+    // Handle Lucky Egg: draw until hand has 5 when KO'd by opponent's active attack
+    let is_opponent_attack = is_from_active_attack && attacking_ref.0 != knocked_out_player;
+    let has_lucky_egg = {
+        let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+            .as_ref()
+            .expect("Pokemon should be there if knocked out");
+        has_tool(knocked_out_pokemon, CardId::B3148LuckyEgg)
+    };
+    if has_lucky_egg && is_opponent_attack {
+        debug!("Lucky Egg: Drawing cards until hand has 5");
+        let draws_needed = 5usize.saturating_sub(state.hands[knocked_out_player].len());
+        for _ in 0..draws_needed {
+            if state.decks[knocked_out_player].cards.is_empty() {
+                break;
+            }
+            state.maybe_draw_card(knocked_out_player);
+        }
+    }
+
     let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
         .as_ref()
         .expect("Pokemon should be there if knocked out");

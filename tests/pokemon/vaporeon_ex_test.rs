@@ -31,7 +31,7 @@ fn test_vaporeon_ex_frozen_flow_forces_opponent_switch() {
 
 #[test]
 fn test_vaporeon_ex_frozen_flow_not_available_from_bench() {
-    let mut game = get_test_game_with_board(
+    let game = get_test_game_with_board(
         vec![
             PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::B3037VaporeonEx),

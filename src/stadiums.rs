@@ -42,6 +42,10 @@ static HIKING_TRAIL_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B2b069HikingTrail));
 static BOUNDED_FIELD_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3155BoundedField));
+static ARENA_OF_ANTIQUITY_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3154ArenaofAntiquity));
+static FRAGRANT_FOREST_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3153FragrantForest));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -54,6 +58,8 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == MESAGOZA_EFFECT.as_str()
             || e == HIKING_TRAIL_EFFECT.as_str()
             || e == BOUNDED_FIELD_EFFECT.as_str()
+            || e == ARENA_OF_ANTIQUITY_EFFECT.as_str()
+            || e == FRAGRANT_FOREST_EFFECT.as_str()
     )
 }
 
@@ -116,4 +122,43 @@ pub fn get_training_area_damage_bonus(state: &State, attacker_stage: u8) -> u32 
     } else {
         0
     }
+}
+
+pub fn is_arena_of_antiquity_active(state: &State) -> bool {
+    has_stadium(state, CardId::B3154ArenaofAntiquity)
+}
+
+/// Returns the damage bonus for Arena of Antiquity.
+/// Arena of Antiquity: "Attacks used by each [F] Pokémon in play (both yours and your opponent's) do +20 damage to the opponent's Active Pokémon ex."
+pub fn get_arena_of_antiquity_damage_bonus(
+    state: &State,
+    attacker_energy_type: EnergyType,
+    target_is_ex: bool,
+) -> u32 {
+    if attacker_energy_type == EnergyType::Fighting
+        && target_is_ex
+        && is_arena_of_antiquity_active(state)
+    {
+        20
+    } else {
+        0
+    }
+}
+
+pub fn is_fragrant_forest_active(state: &State) -> bool {
+    has_stadium(state, CardId::B3153FragrantForest)
+}
+
+/// Returns true if the player can use Fragrant Forest's effect (stadium is active, not used this turn, deck has Basic Grass Pokemon)
+pub fn can_use_fragrant_forest(state: &State, player: usize) -> bool {
+    if !is_fragrant_forest_active(state) {
+        return false;
+    }
+    if state.has_used_stadium[player] {
+        return false;
+    }
+    state.decks[player]
+        .cards
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Grass))
 }

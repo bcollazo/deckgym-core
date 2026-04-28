@@ -527,7 +527,13 @@ pub(crate) fn handle_knockouts(
     // Handle knockouts: Discard cards and award points (to potentially short-circuit promotions)
     for (ko_receiver, ko_pokemon_idx) in knockouts.clone() {
         // Call knockout hook (e.g., for Electrical Cord)
-        on_knockout(state, ko_receiver, ko_pokemon_idx, is_from_active_attack);
+        on_knockout(
+            state,
+            ko_receiver,
+            ko_pokemon_idx,
+            attacking_ref,
+            is_from_active_attack,
+        );
         on_attack_knockout(state, attacking_ref, ko_receiver, is_from_active_attack);
 
         // Award points
