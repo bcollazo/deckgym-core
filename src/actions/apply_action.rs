@@ -63,6 +63,8 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
         | SimpleAction::ReturnPokemonToHand { .. }
+        | SimpleAction::DiscardToolFromPokemon { .. }
+        | SimpleAction::DiscardActiveStadium
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -239,6 +241,17 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         }
         SimpleAction::ReturnPokemonToHand { in_play_idx } => {
             apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
+        }
+        SimpleAction::DiscardToolFromPokemon {
+            player,
+            in_play_idx,
+        } => {
+            state.discard_tool(*player, *in_play_idx);
+        }
+        SimpleAction::DiscardActiveStadium => {
+            if let Some(stadium) = state.active_stadium.take() {
+                state.discard_piles[action.actor].push(stadium);
+            }
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
