@@ -337,6 +337,9 @@ pub enum Mechanic {
     ExtraDamageIfOpponentHpMoreThanSelf {
         extra_damage: u32,
     },
+    ExtraDamageIfOpponentActiveHasAbility {
+        extra_damage: u32,
+    },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
     /// Teal Mask Ogerpon ex – Energized Leaves:
     /// If total energy on both Active Pokémon ≥ threshold, deal extra_damage more.

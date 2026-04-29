@@ -624,6 +624,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfOpponentHpMoreThanSelf { extra_damage } => {
             extra_damage_if_opponent_hp_more_than_self(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfOpponentActiveHasAbility { extra_damage } => {
+            extra_damage_if_opponent_active_has_ability(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
@@ -2002,6 +2005,13 @@ fn extra_damage_if_opponent_hp_more_than_self(state: &State, base: u32, extra: u
     } else {
         active_damage_doutcome(base)
     }
+}
+
+fn extra_damage_if_opponent_active_has_ability(state: &State, base: u32, extra: u32) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let has_ability = opponent_active.card.get_ability().is_some();
+    active_damage_doutcome(if has_ability { base + extra } else { base })
 }
 
 fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> Outcomes {
