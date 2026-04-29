@@ -249,6 +249,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => {
             panic!("ProtectSelfNextTurnAfterAttackKnockout is a passive ability")
         }
+        AbilityMechanic::PerishBody => {
+            panic!("PerishBody is a passive ability")
+        }
     }
 }
 

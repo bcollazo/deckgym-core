@@ -199,6 +199,38 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         );
     }
 
+    let delayed_attack_damages: Vec<(u32, usize, u64)> = state
+        .maybe_get_active(player_ending_turn)
+        .map(|active| {
+            active
+                .get_effects()
+                .iter()
+                .filter_map(|(effect, _)| match effect {
+                    CardEffect::DelayedAttackDamage {
+                        amount,
+                        source_player,
+                        source_play_id,
+                    } => Some((*amount, *source_player, *source_play_id)),
+                    _ => None,
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    for (amount, source_player, source_play_id) in delayed_attack_damages {
+        debug!(
+            "Delayed attack damage: Applying {} damage to active Pokemon",
+            amount
+        );
+        crate::actions::handle_attack_damage_from_source(
+            state,
+            source_player,
+            source_play_id,
+            &[(amount, player_ending_turn, 0)],
+            true,
+        );
+    }
+
     // Process delayed spot damage effects from turn effects (e.g. Meowscarada ex's Flower Trick).
     // These target a board position, so they hit whichever Pokémon occupies the spot at trigger time.
     let triggered_spot_damages: Vec<(usize, usize, usize, u32)> = state

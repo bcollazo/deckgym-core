@@ -6,16 +6,37 @@ use crate::models::EnergyType;
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CardEffect {
     NoRetreat,
-    ReducedDamage { amount: u32 },
-    IncreasedVulnerability { amount: u32 },
-    IncreasedAttackCost { amount: u8 },
+    ReducedDamage {
+        amount: u32,
+    },
+    IncreasedVulnerability {
+        amount: u32,
+    },
+    IncreasedAttackCost {
+        amount: u8,
+    },
     CannotAttack,
     CannotUseAttack(String),
-    IncreasedDamageForAttack { attack_name: String, amount: u32 },
+    IncreasedDamageForAttack {
+        attack_name: String,
+        amount: u32,
+    },
     PreventAllDamageAndEffects,
     NoWeakness,
     CoinFlipToBlockAttack,
-    DelayedDamage { amount: u32 },
+    DelayedDamage {
+        amount: u32,
+    },
+    DelayedAttackDamage {
+        amount: u32,
+        source_player: usize,
+        source_play_id: u64,
+    },
+    ReactiveAttackDamageNextTurn {
+        amount: u32,
+        source_player: usize,
+        source_play_id: u64,
+    },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
@@ -63,6 +84,8 @@ pub enum TurnEffect {
         target_in_play_idx: usize,
         amount: u32,
     },
-    ForceFirstHeads,
+    ForceFirstHeads {
+        player: usize,
+    },
     BonusPointForHaxorusActiveKO,
 }

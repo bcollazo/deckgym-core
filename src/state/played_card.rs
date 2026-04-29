@@ -150,6 +150,10 @@ impl PlayedCard {
         self.damage_counters = self.damage_counters.saturating_add(damage);
     }
 
+    pub(crate) fn knock_out(&mut self) {
+        self.damage_counters = self.get_effective_total_hp();
+    }
+
     // Option because if playing an item card... (?)
     pub(crate) fn get_energy_type(&self) -> Option<EnergyType> {
         match &self.card {

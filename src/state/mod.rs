@@ -26,6 +26,21 @@ pub enum GameOutcome {
     Tie,
 }
 
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct PendingPerishBody {
+    pub(crate) attacking_player: usize,
+    pub(crate) attacker_play_id: u64,
+    pub(crate) defender_player: usize,
+    pub(crate) allow_will: bool,
+}
+
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct DeferredAttackKnockouts {
+    pub(crate) attacking_player: usize,
+    pub(crate) attacker_play_id: u64,
+    pub(crate) is_from_active_attack: bool,
+}
+
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct State {
     // Turn State
@@ -46,6 +61,8 @@ pub struct State {
     pub discard_energies: [Vec<EnergyType>; 2],
     // 0 index is the active pokemon, 1..4 are the bench
     pub in_play_pokemon: [[Option<PlayedCard>; 4]; 2],
+    pub(crate) play_ids: [[Option<u64>; 4]; 2],
+    pub(crate) next_play_id: u64,
     // Stadium card currently in play (affects both players)
     pub active_stadium: Option<Card>,
 
@@ -55,6 +72,8 @@ pub struct State {
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
     pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
+    pub(crate) pending_perish_body: Option<PendingPerishBody>,
+    pub(crate) deferred_attack_knockouts: Option<DeferredAttackKnockouts>,
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -74,6 +93,8 @@ impl State {
             discard_piles: [Vec::new(), Vec::new()],
             discard_energies: [Vec::new(), Vec::new()],
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
+            play_ids: [[None, None, None, None], [None, None, None, None]],
+            next_play_id: 1,
             active_stadium: None,
             has_played_support: false,
             has_retreated: false,
@@ -81,6 +102,8 @@ impl State {
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
+            pending_perish_body: None,
+            deferred_attack_knockouts: None,
             turn_effects: BTreeMap::new(),
         }
     }
@@ -269,27 +292,108 @@ impl State {
         }
     }
 
-    pub(crate) fn set_pending_will_first_heads(&mut self) {
-        self.add_turn_effect(TurnEffect::ForceFirstHeads, 0);
+    pub(crate) fn set_pending_will_first_heads(&mut self, player: usize) {
+        self.add_turn_effect(TurnEffect::ForceFirstHeads { player }, 0);
     }
 
-    pub(crate) fn has_pending_will_first_heads(&self) -> bool {
-        self.get_current_turn_effects()
-            .iter()
-            .any(|effect| matches!(effect, TurnEffect::ForceFirstHeads))
+    pub(crate) fn has_pending_will_first_heads(&self, player: usize) -> bool {
+        self.get_current_turn_effects().iter().any(
+            |effect| matches!(effect, TurnEffect::ForceFirstHeads { player: p } if *p == player),
+        )
     }
 
-    pub(crate) fn consume_pending_will_first_heads(&mut self) -> bool {
+    pub(crate) fn consume_pending_will_first_heads(&mut self, player: usize) -> bool {
         if let Some(turn_effects) = self.turn_effects.get_mut(&self.turn_count) {
             if let Some(pos) = turn_effects
                 .iter()
-                .position(|effect| matches!(effect, TurnEffect::ForceFirstHeads))
+                .position(|effect| matches!(effect, TurnEffect::ForceFirstHeads { player: p } if *p == player))
             {
                 turn_effects.remove(pos);
                 return true;
             }
         }
         false
+    }
+
+    pub(crate) fn set_pending_perish_body(
+        &mut self,
+        attacking_player: usize,
+        attacker_play_id: u64,
+        defender_player: usize,
+        allow_will: bool,
+    ) {
+        self.pending_perish_body = Some(PendingPerishBody {
+            attacking_player,
+            attacker_play_id,
+            defender_player,
+            allow_will,
+        });
+    }
+
+    fn allocate_play_id(&mut self) -> u64 {
+        if self.next_play_id == 0 {
+            self.next_play_id = 1;
+        }
+        let id = self.next_play_id;
+        self.next_play_id = self.next_play_id.saturating_add(1).max(1);
+        id
+    }
+
+    pub(crate) fn ensure_play_ids(&mut self) {
+        for player in 0..2 {
+            for idx in 0..4 {
+                if self.in_play_pokemon[player][idx].is_some() {
+                    if self.play_ids[player][idx].is_none() {
+                        let id = self.allocate_play_id();
+                        self.play_ids[player][idx] = Some(id);
+                    }
+                } else {
+                    self.play_ids[player][idx] = None;
+                }
+            }
+        }
+    }
+
+    pub(crate) fn assign_new_play_id(&mut self, player: usize, idx: usize) {
+        let id = self.allocate_play_id();
+        self.play_ids[player][idx] = Some(id);
+    }
+
+    pub(crate) fn clear_play_id(&mut self, player: usize, idx: usize) {
+        self.play_ids[player][idx] = None;
+    }
+
+    pub(crate) fn play_id(&self, player: usize, idx: usize) -> Option<u64> {
+        if self.in_play_pokemon[player][idx].is_some() {
+            self.play_ids[player][idx]
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn find_play_id(&self, player: usize, play_id: u64) -> Option<usize> {
+        (0..4).find(|idx| {
+            self.in_play_pokemon[player][*idx].is_some()
+                && self.play_ids[player][*idx] == Some(play_id)
+        })
+    }
+
+    pub(crate) fn swap_in_play(&mut self, player: usize, a: usize, b: usize) {
+        self.in_play_pokemon[player].swap(a, b);
+        self.play_ids[player].swap(a, b);
+    }
+
+    pub(crate) fn defer_attack_knockouts(
+        &mut self,
+        attacking_player: usize,
+        attacker_play_id: u64,
+        is_from_active_attack: bool,
+    ) {
+        self.deferred_attack_knockouts = Some(DeferredAttackKnockouts {
+            attacking_player,
+            attacker_play_id,
+            is_from_active_attack,
+        });
     }
 
     /// Adds an effect card that will remain active for a specified number of turns.
@@ -457,6 +561,7 @@ impl State {
         self.discard_piles[ko_receiver].extend(cards_to_discard);
         self.discard_energies[ko_receiver].extend(ko_pokemon.attached_energy.iter().cloned());
         self.in_play_pokemon[ko_receiver][ko_pokemon_idx] = None;
+        self.clear_play_id(ko_receiver, ko_pokemon_idx);
     }
 
     /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
@@ -547,6 +652,7 @@ impl State {
         for (i, card) in player_1.into_iter().enumerate() {
             self.in_play_pokemon[1][i] = Some(card);
         }
+        self.ensure_play_ids();
     }
 
     /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.

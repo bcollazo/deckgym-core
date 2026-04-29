@@ -26,7 +26,8 @@ pub struct Game<'a> {
 }
 
 impl<'a> Game<'a> {
-    pub fn from_state(state: State, players: Vec<Box<dyn Player>>, seed: u64) -> Self {
+    pub fn from_state(mut state: State, players: Vec<Box<dyn Player>>, seed: u64) -> Self {
+        state.ensure_play_ids();
         let rng = StdRng::seed_from_u64(seed);
         Game {
             seed,
@@ -128,7 +129,8 @@ impl<'a> Game<'a> {
         apply_action(&mut self.rng, &mut self.state, action);
     }
 
-    pub fn set_state(&mut self, state: State) {
+    pub fn set_state(&mut self, mut state: State) {
+        state.ensure_play_ids();
         self.state = state;
     }
 

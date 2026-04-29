@@ -161,6 +161,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::EndTurnDrawCardIfActive { .. } => false,
         AbilityMechanic::EndTurnHealSelfIfActive { .. } => false,
         AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => false,
+        AbilityMechanic::PerishBody => false,
     }
 }
 

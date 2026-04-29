@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use log::debug;
-use rand::rngs::StdRng;
+use rand::{rngs::StdRng, Rng};
 
 use crate::{
     actions::{
@@ -9,7 +9,7 @@ use crate::{
         effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
     },
     card_ids::CardId,
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     hooks::{
         get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
         should_poison_attacker,
@@ -105,6 +105,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
             probabilities.push(base_probability * start_prob);
             outcomes.push(Box::new(move |rng, state, action| {
                 on_end_turn(action.actor, state);
+                resolve_pending_perish_body(rng, state);
                 let live_checkup_targets = collect_checkup_targets(state);
                 apply_pokemon_checkup(state, &live_checkup_targets, &outcome);
 
@@ -378,14 +379,38 @@ pub(crate) fn handle_damage(
     is_from_active_attack: bool,
     attack_name: Option<&str>,
 ) {
-    handle_damage_only(
+    handle_damage_internal(
         state,
         attacking_ref,
         targets,
         is_from_active_attack,
         attack_name,
+        None,
+        false,
     );
     handle_knockouts(state, attacking_ref, is_from_active_attack);
+}
+
+pub(crate) fn handle_attack_damage_from_source(
+    state: &mut State,
+    attacking_player: usize,
+    attacker_play_id: u64,
+    targets: &[(u32, usize, usize)],
+    allow_perish_will: bool,
+) {
+    let attacking_idx = state
+        .find_play_id(attacking_player, attacker_play_id)
+        .unwrap_or(0);
+    handle_damage_internal(
+        state,
+        (attacking_player, attacking_idx),
+        targets,
+        true,
+        None,
+        Some(attacker_play_id),
+        allow_perish_will,
+    );
+    handle_knockouts(state, (attacking_player, attacking_idx), true);
 }
 
 // This function handles Counter-Attacks and Attack Modifiers, but doesn't handle K.O.s or
@@ -397,6 +422,27 @@ pub(crate) fn handle_damage_only(
     is_from_active_attack: bool,
     attack_name: Option<&str>,
 ) {
+    handle_damage_internal(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        attack_name,
+        None,
+        false,
+    );
+}
+
+fn handle_damage_internal(
+    state: &mut State,
+    attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+    attack_name: Option<&str>,
+    source_play_id_override: Option<u64>,
+    allow_perish_will: bool,
+) {
+    state.ensure_play_ids();
     let attacking_player = attacking_ref.0;
 
     // Reduce and sum damage for duplicate targets
@@ -437,10 +483,12 @@ pub(crate) fn handle_damage_only(
         }
 
         // Apply damage
+        let was_knocked_out;
         {
             let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
                 .as_mut()
                 .expect("Pokemon should be there if taking damage");
+            was_knocked_out = target_pokemon.is_knocked_out();
             target_pokemon.apply_damage(damage); // Applies without surpassing 0 HP
             debug!(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
@@ -449,6 +497,17 @@ pub(crate) fn handle_damage_only(
                 target_pokemon.get_remaining_hp()
             );
         }
+        record_perish_body_if_needed(
+            state,
+            attacking_ref,
+            source_play_id_override,
+            target_player,
+            target_pokemon_idx,
+            damage,
+            was_knocked_out,
+            is_from_active_attack,
+            allow_perish_will,
+        );
 
         // Consider Counter-Attack (only if from Active Attack to Active)
         if !(is_from_active_attack && target_pokemon_idx == 0) {
@@ -465,6 +524,18 @@ pub(crate) fn handle_damage_only(
                 0
             }
         };
+        let reactive_attack_damages: Vec<(u32, usize, u64)> = target_pokemon
+            .get_effects()
+            .iter()
+            .filter_map(|(effect, _)| match effect {
+                CardEffect::ReactiveAttackDamageNextTurn {
+                    amount,
+                    source_player,
+                    source_play_id,
+                } => Some((*amount, *source_player, *source_play_id)),
+                _ => None,
+            })
+            .collect();
         let should_poison = should_poison_attacker(target_pokemon);
 
         // Apply counterattack damage and poison
@@ -479,12 +550,78 @@ pub(crate) fn handle_damage_only(
                 attacking_pokemon.get_remaining_hp()
             );
         }
+        for (reactive_damage, source_player, source_play_id) in reactive_attack_damages {
+            let Some(attacking_pokemon) = state.in_play_pokemon[attacking_player][0].as_mut()
+            else {
+                continue;
+            };
+            let was_knocked_out = attacking_pokemon.is_knocked_out();
+            attacking_pokemon.apply_damage(reactive_damage);
+            debug!(
+                "Dealt {} reactive attack damage to active Pokemon. Remaining HP: {}",
+                reactive_damage,
+                attacking_pokemon.get_remaining_hp()
+            );
+            record_perish_body_if_needed(
+                state,
+                (source_player, 0),
+                Some(source_play_id),
+                attacking_player,
+                0,
+                reactive_damage,
+                was_knocked_out,
+                true,
+                true,
+            );
+        }
 
         if should_poison {
             state.apply_status_condition(attacking_player, 0, StatusCondition::Poisoned);
             debug!("Poison Barb: Poisoned the attacking Pokemon");
         }
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn record_perish_body_if_needed(
+    state: &mut State,
+    attacking_ref: (usize, usize),
+    source_play_id_override: Option<u64>,
+    target_player: usize,
+    target_pokemon_idx: usize,
+    damage: u32,
+    was_knocked_out: bool,
+    is_from_active_attack: bool,
+    allow_will: bool,
+) {
+    if !is_from_active_attack
+        || target_pokemon_idx != 0
+        || damage == 0
+        || was_knocked_out
+        || attacking_ref.0 == target_player
+    {
+        return;
+    }
+
+    let Some(target_pokemon) = state.in_play_pokemon[target_player][target_pokemon_idx].as_ref()
+    else {
+        return;
+    };
+    if !target_pokemon.is_knocked_out()
+        || !matches!(
+            get_ability_mechanic(&target_pokemon.card),
+            Some(AbilityMechanic::PerishBody)
+        )
+    {
+        return;
+    }
+
+    let Some(attacker_play_id) =
+        source_play_id_override.or_else(|| state.play_id(attacking_ref.0, attacking_ref.1))
+    else {
+        return;
+    };
+    state.set_pending_perish_body(attacking_ref.0, attacker_play_id, target_player, allow_will);
 }
 
 fn is_iris_bonus_active(
@@ -614,6 +751,49 @@ pub(crate) fn handle_knockouts(
     }
 }
 
+fn resolve_deferred_attack_knockouts(state: &mut State) {
+    let Some(deferred) = state.deferred_attack_knockouts.take() else {
+        return;
+    };
+    let attacking_idx = state
+        .find_play_id(deferred.attacking_player, deferred.attacker_play_id)
+        .unwrap_or(0);
+    handle_knockouts(
+        state,
+        (deferred.attacking_player, attacking_idx),
+        deferred.is_from_active_attack,
+    );
+}
+
+fn resolve_pending_perish_body(rng: &mut StdRng, state: &mut State) {
+    let Some(trigger) = state.pending_perish_body.take() else {
+        return;
+    };
+
+    let heads =
+        if trigger.allow_will && state.consume_pending_will_first_heads(trigger.defender_player) {
+            true
+        } else {
+            rng.gen_bool(0.5)
+        };
+    if !heads {
+        return;
+    }
+
+    let Some(attacker_idx) = state.find_play_id(trigger.attacking_player, trigger.attacker_play_id)
+    else {
+        return;
+    };
+    let Some(attacker) = state.in_play_pokemon[trigger.attacking_player][attacker_idx].as_mut()
+    else {
+        return;
+    };
+
+    debug!("Perish Body: heads, knocking out the attacking Pokemon");
+    attacker.knock_out();
+    handle_knockouts(state, (trigger.attacking_player, attacker_idx), false);
+}
+
 fn get_knocked_out(state: &State) -> Vec<(usize, usize)> {
     let mut knockouts: Vec<(usize, usize)> = vec![];
     for (idx, card) in state.enumerate_in_play_pokemon(0) {
@@ -660,6 +840,11 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
         }
 
         mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
+
+        if action.is_stack {
+            resolve_deferred_attack_knockouts(state);
+        }
+        resolve_pending_perish_body(rng, state);
 
         if let SimpleAction::Attack(_) = &action.action {
             // We use a flag instead of .move_generation_stack to reduce

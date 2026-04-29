@@ -458,8 +458,8 @@ fn lucky_ice_pop_outcomes(_state: &State, _acting_player: usize) -> Outcomes {
     Outcomes::binary_coin(heads_mutation, tails_mutation)
 }
 
-fn will_effect(_: &mut StdRng, state: &mut State, _: &Action) {
-    state.set_pending_will_first_heads();
+fn will_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    state.set_pending_will_first_heads(action.actor);
 }
 
 fn electric_generator_outcomes() -> Outcomes {

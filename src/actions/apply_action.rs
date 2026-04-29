@@ -31,6 +31,7 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
+    state.ensure_play_ids();
     let (probabilities, mut lazy_mutations) = forecast_action(state, action).into_branches();
     if probabilities.len() == 1 {
         lazy_mutations.remove(0)(rng, state, action);
@@ -119,11 +120,11 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
 
     // This is where we basically "apply" Will in a way that is forecasteable.
     // (The player should know if they have an upcoming Will).
-    if is_will_eligible_action(&action.action) && state.has_pending_will_first_heads() {
+    if is_will_eligible_action(&action.action) && state.has_pending_will_first_heads(action.actor) {
         outcomes = match outcomes.force_first_heads() {
             Ok(forced_outcomes) => forced_outcomes.map_mutations(|mutation| {
                 Box::new(move |rng, state, action| {
-                    state.consume_pending_will_first_heads();
+                    state.consume_pending_will_first_heads(action.actor);
                     mutation(rng, state, action);
                 })
             }),
@@ -334,6 +335,7 @@ pub(crate) fn apply_place_card(
 ) {
     let played_card = to_playable_card(card, true);
     state.in_play_pokemon[actor][index] = Some(played_card);
+    state.assign_new_play_id(actor, index);
     state.refresh_starting_plains_bonus_for_idx(actor, index);
     // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): cure status conditions on entry.
     if let Some(AbilityMechanic::SoothingWind { energy_type }) = get_ability_mechanic(card) {
@@ -365,6 +367,7 @@ fn apply_return_pokemon_to_hand(acting_player: usize, state: &mut State, in_play
     let played_card = state.in_play_pokemon[acting_player][in_play_idx]
         .take()
         .expect("Pokemon should be there if returning to hand");
+    state.clear_play_id(acting_player, in_play_idx);
     let mut cards_to_collect = played_card.cards_behind.clone();
     cards_to_collect.push(played_card.card.clone());
     state.hands[acting_player].extend(cards_to_collect);
@@ -498,7 +501,7 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         }
     }
 
-    state.in_play_pokemon[player].swap(0, bench_idx);
+    state.swap_in_play(player, 0, bench_idx);
 
     // Clear status and effects of the new bench Pokemon
     if let Some(pokemon) = state.in_play_pokemon[player][bench_idx].as_mut() {

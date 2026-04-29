@@ -197,6 +197,12 @@ pub enum Mechanic {
     DelayedSpotDamage {
         amount: u32,
     },
+    DelayedAttackDamage {
+        amount: u32,
+    },
+    ReactiveAttackDamageNextTurn {
+        amount: u32,
+    },
     // End Unique mechanics
     DamageAndCardEffect {
         opponent: bool,
@@ -309,6 +315,7 @@ pub enum Mechanic {
     DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    MaySwitchSelfWithBench,
     SelfHealIfStadiumInPlay {
         amount: u32,
     },

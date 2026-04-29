@@ -519,7 +519,16 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
-        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, false),
+        Mechanic::MaySwitchSelfWithBench => {
+            switch_self_with_bench(state, attack.fixed_damage, true)
+        }
+        Mechanic::DelayedAttackDamage { amount } => {
+            delayed_attack_damage(attack.fixed_damage, *amount)
+        }
+        Mechanic::ReactiveAttackDamageNextTurn { amount } => {
+            reactive_attack_damage_next_turn(attack.fixed_damage, *amount)
+        }
         Mechanic::SelfHealIfStadiumInPlay { amount } => {
             self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
         }
@@ -2694,30 +2703,72 @@ fn random_spread_damage(
     random_damage_outcomes_to_outcomes(outcomes)
 }
 
-fn switch_self_with_bench(state: &State, damage: u32) -> Outcomes {
-    let choices: Vec<_> = state
+fn switch_self_with_bench(state: &State, damage: u32, may_switch: bool) -> Outcomes {
+    let mut choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
         .map(|(in_play_idx, _)| SimpleAction::Activate {
             player: state.current_player,
             in_play_idx,
         })
         .collect();
+    if may_switch && !choices.is_empty() {
+        choices.push(SimpleAction::Noop);
+    }
 
     Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
             let opponent = (action.actor + 1) % 2;
             let attacking_ref = (action.actor, 0);
+            let attacker_play_id = state
+                .play_id(action.actor, 0)
+                .expect("Attacking Pokemon should have a play id");
 
             // Deal damage to opponent's active
-            handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+            handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
 
-            // Push choices for switching if there are benched Pokemon and pokemon
-            // is still alive (after possible counterdamage)
+            // Switch effects resolve before final attack knockouts. Keep the original
+            // attacker id so counterattacks can still find hit-and-run attackers.
             if !choices.is_empty() && state.maybe_get_active(action.actor).is_some() {
+                state.defer_attack_knockouts(action.actor, attacker_play_id, true);
                 state.move_generation_stack.push((action.actor, choices));
+            } else {
+                handle_knockouts(state, attacking_ref, true);
             }
         },
     ))
+}
+
+fn delayed_attack_damage(base_damage: u32, delayed_damage: u32) -> Outcomes {
+    active_damage_effect_doutcome(base_damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let source_play_id = state
+            .play_id(action.actor, 0)
+            .expect("Attacking Pokemon should have a play id");
+        state.get_active_mut(opponent).add_effect(
+            CardEffect::DelayedAttackDamage {
+                amount: delayed_damage,
+                source_player: action.actor,
+                source_play_id,
+            },
+            1,
+        );
+    })
+}
+
+fn reactive_attack_damage_next_turn(base_damage: u32, reactive_damage: u32) -> Outcomes {
+    active_damage_effect_doutcome(base_damage, move |_, state, action| {
+        let source_play_id = state
+            .play_id(action.actor, 0)
+            .expect("Attacking Pokemon should have a play id");
+        state.get_active_mut(action.actor).add_effect(
+            CardEffect::ReactiveAttackDamageNextTurn {
+                amount: reactive_damage,
+                source_player: action.actor,
+                source_play_id,
+            },
+            1,
+        );
+    })
 }
 
 /// Mega Steelix ex - Adamantine Rolling: Deals damage and applies multiple card effects

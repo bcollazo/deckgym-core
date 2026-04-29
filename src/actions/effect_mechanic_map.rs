@@ -47,12 +47,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     map.insert(
         "At the end of your opponent's next turn, do 90 damage to the Defending Pokémon.",
-        Mechanic::DamageAndCardEffect {
-            opponent: true,
-            effect: CardEffect::DelayedDamage { amount: 90 },
-            duration: 1,
-            coin_flip: false,
-        },
+        Mechanic::DelayedAttackDamage { amount: 90 },
     );
     map.insert(
         "Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",
@@ -351,7 +346,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your opponent's next turn, if they attach Energy from their Energy Zone to the Defending Pokémon, that Pokémon will be Asleep.", todo_implementation);
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 20 damage to the Attacking Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 30 damage to the Attacking Pokémon.", todo_implementation);
-    // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.",
+        Mechanic::ReactiveAttackDamageNextTurn { amount: 40 },
+    );
     // map.insert("During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.", todo_implementation);
     map.insert(
         "During your opponent's next turn, the Defending Pokémon can't attack.",
@@ -1438,7 +1436,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Until this Pokémon leaves the Active Spot, this Pokémon's Rolling Frenzy attack does +30 damage. This effect stacks.", todo_implementation);
     // map.insert("You can use this attack only if you have Uxie and Azelf on your Bench. Discard all Energy from this Pokémon.", todo_implementation);
     // map.insert("You may discard any number of your Benched [W] Pokémon. This attack does 40 more damage for each Benched Pokémon you discarded in this way.", todo_implementation);
-    // map.insert("You may switch this Pokémon with 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "You may switch this Pokémon with 1 of your Benched Pokémon.",
+        Mechanic::MaySwitchSelfWithBench,
+    );
     map.insert(
         "Your opponent can't use any Supporter cards from their hand during their next turn.",
         Mechanic::DamageAndTurnEffect {
