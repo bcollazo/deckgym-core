@@ -576,6 +576,15 @@ fn forecast_effect_attack_by_mechanic(
             attack.fixed_damage,
             *damage_per_supporter,
         ),
+        Mechanic::ExtraDamagePerPokemonTypeInDiscard {
+            energy_type,
+            damage_per_pokemon,
+        } => extra_damage_per_pokemon_type_in_discard_attack(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *damage_per_pokemon,
+        ),
         Mechanic::ExtraDamagePerOwnPoint { damage_per_point } => {
             extra_damage_per_own_point_attack(state, attack.fixed_damage, *damage_per_point)
         }
@@ -3009,6 +3018,20 @@ fn extra_damage_per_supporter_in_discard_attack(
         })
         .count() as u32;
     let total_damage = base_damage + (supporter_count * damage_per_supporter);
+    active_damage_doutcome(total_damage)
+}
+
+fn extra_damage_per_pokemon_type_in_discard_attack(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    damage_per_pokemon: u32,
+) -> Outcomes {
+    let pokemon_count = state.discard_piles[state.current_player]
+        .iter()
+        .filter(|card| matches!(card, Card::Pokemon(pokemon) if pokemon.energy_type == energy_type))
+        .count() as u32;
+    let total_damage = base_damage + (pokemon_count * damage_per_pokemon);
     active_damage_doutcome(total_damage)
 }
 

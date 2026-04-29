@@ -106,6 +106,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::MoveDamageFromOneYourPokemonToThisPokemon => {
             can_use_dusknoir_shadow_void(state, _in_play_index)
         }
+        AbilityMechanic::DiscardOpponentActiveToolsAndDiscardSelf => {
+            can_use_dismantling_keys(state, _in_play_index, card)
+        }
         AbilityMechanic::PreventFirstAttack => false,
         AbilityMechanic::ElectromagneticWall => false,
         AbilityMechanic::InfiltratingInspection => false,
@@ -238,6 +241,16 @@ fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
     state
         .enumerate_in_play_pokemon(state.current_player)
         .any(|(i, p)| p.is_damaged() && i != dusknoir_idx)
+}
+
+fn can_use_dismantling_keys(state: &State, in_play_idx: usize, card: &PlayedCard) -> bool {
+    if in_play_idx == 0 || card.ability_used {
+        return false;
+    }
+    let opponent = (state.current_player + 1) % 2;
+    state
+        .maybe_get_active(opponent)
+        .is_some_and(|active| active.has_tool_attached())
 }
 
 fn can_use_crobat_cunning_link(state: &State, card: &PlayedCard) -> bool {
