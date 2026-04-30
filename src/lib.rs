@@ -22,7 +22,7 @@ pub mod state;
 pub mod temp_deck;
 pub mod tools;
 
-#[cfg(any(test, feature = "test-utils"))]
+#[cfg(test)]
 #[allow(dead_code)]
 mod test_support;
 

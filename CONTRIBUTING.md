@@ -73,7 +73,7 @@ cargo clippy --features tui -- -D warnings
 
 **Run the test suite:**
 ```sh
-cargo test --features "tui test-utils"
+cargo test --features tui
 ```
 
 Integration tests are grouped by domain. Put new engine/state coverage under `tests/engine/`, generic rules under `tests/mechanics/`, card-specific scenarios under the matching card folder, and cross-cutting bug repros under `tests/regressions/`. See [TESTING.md](./TESTING.md) for the current layout.
