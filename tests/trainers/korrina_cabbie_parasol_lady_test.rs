@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -7,7 +7,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn make_trainer_card(card_id: CardId) -> deckgym::models::TrainerCard {
+fn make_trainer_card(card_id: CardId) -> crate::deckgym::models::TrainerCard {
     get_card_by_enum(card_id).as_trainer()
 }
 

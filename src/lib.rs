@@ -23,7 +23,8 @@ pub mod temp_deck;
 pub mod tools;
 
 #[cfg(any(test, feature = "test-utils"))]
-pub mod test_support;
+#[allow(dead_code)]
+mod test_support;
 
 pub use deck::Deck;
 pub use game::Game;

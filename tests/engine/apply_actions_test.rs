@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -37,7 +37,7 @@ fn test_initial_build_phase() {
 #[test]
 fn test_no_supporter_or_evolutions_in_first_turns() {
     let players = init_random_players();
-    let mut game = deckgym::Game::new(players, rand::random());
+    let mut game = crate::deckgym::Game::new(players, rand::random());
     let mut state = game.get_state_clone();
     while state.turn_count == 0 {
         let action = game.play_tick();
@@ -46,7 +46,7 @@ fn test_no_supporter_or_evolutions_in_first_turns() {
             panic!("Evolution played in first 2 turns");
         }
         if let SimpleAction::Play { trainer_card } = action.action {
-            if trainer_card.trainer_card_type == deckgym::models::TrainerType::Supporter {
+            if trainer_card.trainer_card_type == crate::deckgym::models::TrainerType::Supporter {
                 panic!("Supporter card played in first 2 turns");
             }
         }

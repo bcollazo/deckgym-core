@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -13,7 +13,7 @@ fn trainer_from_id(card_id: CardId) -> TrainerCard {
     }
 }
 
-fn play_will(game: &mut deckgym::Game<'static>, actor: usize) {
+fn play_will(game: &mut crate::deckgym::Game<'static>, actor: usize) {
     let will = trainer_from_id(CardId::A4156Will);
     game.apply_action(&Action {
         actor,

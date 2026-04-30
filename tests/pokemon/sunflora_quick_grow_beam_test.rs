@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -42,7 +42,7 @@ fn test_quick_grow_extract_evolves_from_deck() {
     let play_extract = Action {
         actor: 0,
         action: SimpleAction::Play {
-            trainer_card: if let deckgym::models::Card::Trainer(tc) = extract {
+            trainer_card: if let crate::deckgym::models::Card::Trainer(tc) = extract {
                 tc
             } else {
                 panic!("Expected trainer card")

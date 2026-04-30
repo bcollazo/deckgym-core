@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
@@ -6,7 +6,7 @@ use deckgym::{
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
-    let card = deckgym::database::get_card_by_enum(card_id);
+    let card = crate::deckgym::database::get_card_by_enum(card_id);
     PlayedCard::new(card, 0, base_hp, vec![], false, vec![])
 }
 

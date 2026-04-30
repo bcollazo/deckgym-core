@@ -118,6 +118,17 @@ Once you have Rust installed (see https://www.rust-lang.org/tools/install) you s
 cargo test --features "tui test-utils"
 ```
 
+**Test Organization**
+
+Rust integration tests are grouped by domain:
+
+- `cargo test --test engine`
+- `cargo test --test mechanics`
+- `cargo test --test cards`
+- `cargo test --test regressions`
+
+See [TESTING.md](./TESTING.md) for placement guidance.
+
 **Running Benchmarks**
 
 ```bash

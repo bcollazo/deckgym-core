@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -6,7 +6,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
+fn trainer_from_id(card_id: CardId) -> crate::deckgym::models::TrainerCard {
     match get_card_by_enum(card_id) {
         Card::Trainer(trainer_card) => trainer_card,
         _ => panic!("Expected trainer card"),
@@ -15,7 +15,7 @@ fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
 
 /// Sets up a game with Machop (player 0) vs Machamp ex (player 1),
 /// optionally with Arena of Antiquity active.
-fn setup_game_with_fighting_vs_ex(with_stadium: bool) -> deckgym::Game<'static> {
+fn setup_game_with_fighting_vs_ex(with_stadium: bool) -> crate::deckgym::Game<'static> {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -45,7 +45,7 @@ fn setup_game_with_fighting_vs_ex(with_stadium: bool) -> deckgym::Game<'static> 
     game
 }
 
-fn get_remaining_hp_after_damage(game: &mut deckgym::Game<'static>, damage: u32) -> u32 {
+fn get_remaining_hp_after_damage(game: &mut crate::deckgym::Game<'static>, damage: u32) -> u32 {
     let action = Action {
         actor: 0,
         action: SimpleAction::ApplyDamage {

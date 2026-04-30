@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -6,7 +6,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn play_lucky_egg_on_active(game: &mut deckgym::Game<'static>) {
+fn play_lucky_egg_on_active(game: &mut crate::deckgym::Game<'static>) {
     let lucky_egg = get_card_by_enum(CardId::B3148LuckyEgg);
     let trainer_card = match lucky_egg {
         Card::Trainer(tc) => tc,

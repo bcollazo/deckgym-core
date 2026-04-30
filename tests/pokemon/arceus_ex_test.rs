@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     card_ids::CardId,
     models::{PlayedCard, StatusCondition},
     test_support::get_initialized_game,

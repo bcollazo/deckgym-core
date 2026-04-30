@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -6,7 +6,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
+fn trainer_from_id(card_id: CardId) -> crate::deckgym::models::TrainerCard {
     match get_card_by_enum(card_id) {
         Card::Trainer(trainer_card) => trainer_card,
         _ => panic!("Expected trainer card"),
@@ -236,7 +236,10 @@ fn test_guzma_double_ko_wins_immediately() {
 
     let state = game.get_state_clone();
     assert_eq!(state.points[0], 2);
-    assert_eq!(state.winner, Some(deckgym::state::GameOutcome::Win(0)));
+    assert_eq!(
+        state.winner,
+        Some(crate::deckgym::state::GameOutcome::Win(0))
+    );
 }
 
 #[test]

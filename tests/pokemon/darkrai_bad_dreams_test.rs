@@ -1,7 +1,7 @@
 // Tests for Darkrai (B2b 040) "Bad Dreams" ability:
 // "At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage to that Pokémon."
 
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{PlayedCard, StatusCondition},

@@ -1,6 +1,14 @@
-#[path = "engine/apply_actions_test.rs"]
-mod apply_actions_test;
-#[path = "engine/deck_test.rs"]
-mod deck_test;
-#[path = "engine/game_api_test.rs"]
-mod game_api_test;
+extern crate deckgym as deckgym_lib;
+
+mod support;
+
+pub mod deckgym {
+    pub use super::deckgym_lib::*;
+
+    pub mod test_support {
+        pub use crate::support::*;
+    }
+}
+
+#[path = "engine/mod.rs"]
+mod engine;

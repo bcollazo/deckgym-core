@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -27,7 +27,7 @@ fn test_charmeleon_ignition() {
         (game, charmeleon)
     };
 
-    let evolve = |game: &mut deckgym::Game, charmeleon: Card| {
+    let evolve = |game: &mut crate::deckgym::Game, charmeleon: Card| {
         let evolve_action = Action {
             actor: 0,
             action: SimpleAction::Evolve {
