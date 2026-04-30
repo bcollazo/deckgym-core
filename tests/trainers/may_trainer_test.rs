@@ -1,8 +1,8 @@
-use deckgym::actions::{may_effect, Action, SimpleAction};
-use deckgym::card_ids::CardId;
-use deckgym::database::get_card_by_enum;
-use deckgym::models::Card;
-use deckgym::{Deck, State};
+use crate::deckgym::actions::{may_effect, Action, SimpleAction};
+use crate::deckgym::card_ids::CardId;
+use crate::deckgym::database::get_card_by_enum;
+use crate::deckgym::models::Card;
+use crate::deckgym::{Deck, State};
 use rand::rngs::StdRng;
 use rand::SeedableRng;
 
@@ -30,7 +30,7 @@ fn test_may_generates_all_combinations() {
     state.current_player = 0;
 
     // Call May effect
-    let (probabilities, mutations) = may_effect(0, &state);
+    let (probabilities, mutations) = may_effect(0, &state).into_branches();
 
     // Should have 1 outcome (drawing {Charmander, Squirtle} - order doesn't matter)
     assert_eq!(probabilities.len(), 1);
@@ -107,7 +107,7 @@ fn test_may_probabilities_with_multiple_pokemon() {
     state.current_player = 0;
 
     // Call May effect
-    let (probabilities, mutations) = may_effect(0, &state);
+    let (probabilities, mutations) = may_effect(0, &state).into_branches();
 
     // Should have C(4,2) = 6 outcomes
     assert_eq!(

@@ -1,8 +1,8 @@
+mod common;
+
+use common::load_test_decks;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use deckgym::{
-    players::{Player, RandomPlayer},
-    test_support::load_test_decks,
-};
+use deckgym::players::{Player, RandomPlayer};
 
 fn play_random_game(seed: u64) {
     let (deck_a, deck_b) = load_test_decks();

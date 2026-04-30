@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -6,7 +6,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn steel_apron_trainer() -> deckgym::models::TrainerCard {
+fn steel_apron_trainer() -> crate::deckgym::models::TrainerCard {
     match get_card_by_enum(CardId::A4153SteelApron) {
         Card::Trainer(card) => card,
         _ => panic!("Expected Steel Apron to be a trainer card"),

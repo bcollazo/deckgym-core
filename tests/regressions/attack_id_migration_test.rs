@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::EFFECT_MECHANIC_MAP, card_ids::CardId, database::get_card_by_enum, models::Card,
 };
 use strum::IntoEnumIterator;

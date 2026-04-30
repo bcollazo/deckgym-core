@@ -1,0 +1,9 @@
+mod field_blower_test;
+mod ilima_test;
+mod iris_trainer_test;
+mod korrina_cabbie_parasol_lady_test;
+mod may_trainer_test;
+mod piers_trainer_test;
+mod pokemon_center_lady_test;
+mod team_trainer_test;
+mod will_test;

@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     card_ids::CardId,
     card_validation::{get_implementation_status, ImplementationStatus},
 };

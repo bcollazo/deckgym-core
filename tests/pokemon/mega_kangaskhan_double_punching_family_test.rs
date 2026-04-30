@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -12,7 +12,7 @@ fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
     PlayedCard::new(card, 0, base_hp, vec![], false, vec![])
 }
 
-fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
+fn trainer_from_id(card_id: CardId) -> crate::deckgym::models::TrainerCard {
     match get_card_by_enum(card_id) {
         Card::Trainer(trainer_card) => trainer_card,
         _ => panic!("Expected trainer card"),

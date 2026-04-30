@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -55,7 +55,8 @@ fn test_metallic_turbo_does_not_panic_if_target_ko_by_jolteon() {
             matches!(
                 &action.action,
                 SimpleAction::Attach { attachments, is_turn_energy: false }
-                    if attachments == &vec![(1, EnergyType::Metal, 2), (1, EnergyType::Metal, 2)]
+                    if attachments.as_slice()
+                        == [(1_u32, EnergyType::Metal, 2_usize), (1_u32, EnergyType::Metal, 2_usize)]
             )
         })
         .expect("Expected Metallic Turbo attach choice for bench index 2");
