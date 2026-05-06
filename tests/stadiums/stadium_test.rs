@@ -901,3 +901,45 @@ fn test_bounded_field_does_not_affect_no_weakness_attacks() {
         "Bounded Field should not affect attacks where no weakness applies (60 - 30 = 30 HP)"
     );
 }
+
+#[test]
+fn test_bounded_field_doubles_all_modifiers_including_red() {
+    // Ponyta (Fire, 20 base damage) attacks Venusaur ex (Grass, weak to Fire, 190 HP).
+    // Red is played: +20 damage against ex → total before weakness = 40.
+    // Bounded Field is active: weakness multiplies everything x2 → 40 × 2 = 80 damage.
+    // Venusaur ex should have 190 - 80 = 110 HP remaining.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1042Ponyta).with_energy(vec![EnergyType::Fire])],
+        vec![PlayedCard::from_id(CardId::A1004VenusaurEx)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.active_stadium = Some(get_card_by_enum(CardId::B3155BoundedField));
+    state.hands[0] = vec![get_card_by_enum(CardId::A2b071Red)];
+    game.set_state(state);
+
+    let red_trainer = trainer_from_id(CardId::A2b071Red);
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: red_trainer,
+        },
+        is_stack: false,
+    });
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let defender_hp = state.get_active(1).get_remaining_hp();
+    assert_eq!(
+        defender_hp, 110,
+        "Bounded Field x2 should apply to all modifiers: (20 base + 20 Red) × 2 = 80 damage, leaving 110 HP"
+    );
+}
