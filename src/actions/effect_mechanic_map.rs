@@ -1278,7 +1278,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: true,
         },
     );
-    // map.insert("This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.", todo_implementation);
+    map.insert(
+        "This attack does 20 damage to 1 of your opponent's Pokémon for each Energy attached to that Pokémon.",
+        Mechanic::DamageToAnyOpponentPerTargetEnergy { damage_per_energy: 20 },
+    );
     map.insert(
         "This attack does 20 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {
