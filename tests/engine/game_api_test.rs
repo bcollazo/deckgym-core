@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     players::{AttachAttackPlayer, EndTurnPlayer, MctsPlayer, Player, RandomPlayer},
     state::GameOutcome,
     test_support::{init_random_players, load_test_decks},
@@ -7,7 +7,7 @@ use deckgym::{
 #[test]
 fn test_game_api() {
     let players = init_random_players();
-    let mut game = deckgym::Game::new(players, 0);
+    let mut game = crate::deckgym::Game::new(players, 0);
     game.play();
 }
 
@@ -17,7 +17,7 @@ fn test_mcts_player() {
     let player_a = Box::new(RandomPlayer { deck: deck_a });
     let player_b = Box::new(MctsPlayer::new(deck_b, 5));
     let players: Vec<Box<dyn Player>> = vec![player_a, player_b];
-    let mut game = deckgym::Game::new(players, 6);
+    let mut game = crate::deckgym::Game::new(players, 6);
 
     // TODO: We segment the ticks like this so that this test can also be helpful
     // to print out the tree to .dot file and inspect it.
@@ -30,7 +30,7 @@ fn test_mcts_player() {
 #[test]
 fn test_retreat_should_cure_poison() {
     let players = init_random_players();
-    let mut game = deckgym::Game::new(players, 1406385978241804004);
+    let mut game = crate::deckgym::Game::new(players, 1406385978241804004);
     game.play();
 }
 
@@ -40,7 +40,7 @@ fn test_first_ko() {
     let player_a = Box::new(AttachAttackPlayer { deck: deck_a });
     let player_b = Box::new(EndTurnPlayer { deck: deck_b });
     let players: Vec<Box<dyn Player>> = vec![player_a, player_b];
-    let mut game = deckgym::Game::new(players, 3);
+    let mut game = crate::deckgym::Game::new(players, 3);
 
     // On seed=3, AttachAttack goes first. So turn 3 should be the first attach. Bulbasaur
     // needs 2 energy, so on turn 5 is first attack, and turn 7 knocks out the opponent Koffing.

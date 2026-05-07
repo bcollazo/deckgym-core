@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -6,7 +6,7 @@ use deckgym::{
     test_support::get_initialized_game,
 };
 
-fn attack_once(attacker: PlayedCard, defender: PlayedCard) -> deckgym::State {
+fn attack_once(attacker: PlayedCard, defender: PlayedCard) -> crate::deckgym::State {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     state.current_player = 0;

@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -13,7 +13,7 @@ fn make_lucky_ice_pop_trainer_card() -> TrainerCard {
     }
 }
 
-fn setup_damaged_active(seed: u64) -> (deckgym::Game<'static>, TrainerCard) {
+fn setup_damaged_active(seed: u64) -> (crate::deckgym::Game<'static>, TrainerCard) {
     let mut game = get_initialized_game(seed);
     let mut state = game.get_state_clone();
     state.current_player = 0;

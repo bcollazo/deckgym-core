@@ -1,6 +1,14 @@
-#[path = "mechanics/ability_effects_test.rs"]
-mod ability_effects_test;
-#[path = "mechanics/attack_effects_test.rs"]
-mod attack_effects_test;
-#[path = "mechanics/confusion_test.rs"]
-mod confusion_test;
+extern crate deckgym as deckgym_lib;
+
+mod support;
+
+pub mod deckgym {
+    pub use super::deckgym_lib::*;
+
+    pub mod test_support {
+        pub use crate::support::*;
+    }
+}
+
+#[path = "mechanics/mod.rs"]
+mod mechanics;

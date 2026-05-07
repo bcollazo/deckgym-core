@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
@@ -737,7 +737,7 @@ fn test_nihilego_more_poison_increases_poison_damage() {
         vec![PlayedCard::from_id(CardId::A3a042Nihilego)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
-    state.apply_status_condition(1, 0, deckgym::models::StatusCondition::Poisoned);
+    state.apply_status_condition(1, 0, crate::deckgym::models::StatusCondition::Poisoned);
     state.current_player = 0;
     state.turn_count = 3;
     game.set_state(state);

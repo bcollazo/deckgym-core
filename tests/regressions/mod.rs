@@ -1,0 +1,6 @@
+mod ability_mechanic_examples_test;
+mod ability_mechanic_migration_test;
+mod attack_id_migration_test;
+mod coin_flip_effect_test;
+mod copied_attack_test;
+mod pokemon_checkup_test;

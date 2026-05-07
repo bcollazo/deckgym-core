@@ -1,4 +1,4 @@
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{Card, PlayedCard, StatusCondition, TrainerCard},
@@ -21,7 +21,7 @@ fn test_pokemon_center_lady_heals_30_damage() {
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
         id: "A2b 070".to_string(),
-        trainer_card_type: deckgym::models::TrainerType::Supporter,
+        trainer_card_type: crate::deckgym::models::TrainerType::Supporter,
         name: "Pokémon Center Lady".to_string(),
         effect:
             "Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions."
@@ -90,7 +90,7 @@ fn test_pokemon_center_lady_cures_poisoned() {
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
         id: "A2b 070".to_string(),
-        trainer_card_type: deckgym::models::TrainerType::Supporter,
+        trainer_card_type: crate::deckgym::models::TrainerType::Supporter,
         name: "Pokémon Center Lady".to_string(),
         effect:
             "Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions."
@@ -158,7 +158,7 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     // Add Pokemon Center Lady to hand
     let pokemon_center_lady = Card::Trainer(TrainerCard {
         id: "A2b 089".to_string(),
-        trainer_card_type: deckgym::models::TrainerType::Supporter,
+        trainer_card_type: crate::deckgym::models::TrainerType::Supporter,
         name: "Pokémon Center Lady".to_string(),
         effect:
             "Heal 30 damage from 1 of your Pokémon, and it recovers from all Special Conditions."

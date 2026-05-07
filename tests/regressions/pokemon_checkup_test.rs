@@ -1,6 +1,6 @@
 use std::panic::{catch_unwind, AssertUnwindSafe};
 
-use deckgym::{
+use crate::deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     effects::CardEffect,
@@ -19,7 +19,7 @@ fn run_active_case(
     seed: u64,
     statuses: &[StatusCondition],
     source: RemovalSource,
-) -> Result<deckgym::State, String> {
+) -> Result<crate::deckgym::State, String> {
     let mut game = get_initialized_game(seed);
     let mut state = game.get_state_clone();
     state.in_play_pokemon = [[None, None, None, None], [None, None, None, None]];
@@ -83,7 +83,7 @@ fn run_active_case(
     }
 }
 
-fn run_meowscarada_bench_case(seed: u64) -> Result<deckgym::State, String> {
+fn run_meowscarada_bench_case(seed: u64) -> Result<crate::deckgym::State, String> {
     let mut game = get_initialized_game(seed);
     let mut state = game.get_state_clone();
     state.in_play_pokemon = [[None, None, None, None], [None, None, None, None]];
