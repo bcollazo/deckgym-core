@@ -273,6 +273,10 @@ pub enum Mechanic {
         opponent: bool,
         damage_per_energy: u32,
     },
+    /// Choose 1 of the opponent's Pokémon; deal damage_per_energy × (energy on that Pokémon).
+    DamageToAnyOpponentPerTargetEnergy {
+        damage_per_energy: u32,
+    },
     DiscardHandCards {
         count: usize,
     },

@@ -461,6 +461,9 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => damage_per_energy_all(state, *opponent, *damage_per_energy),
+        Mechanic::DamageToAnyOpponentPerTargetEnergy { damage_per_energy } => {
+            damage_to_any_opponent_per_target_energy(*damage_per_energy)
+        }
         Mechanic::DiscardHandCards { count } => {
             discard_hand_cards_required_attack(state, attack.fixed_damage, *count)
         }
@@ -2084,6 +2087,28 @@ fn damage_per_energy_all(state: &State, opponent: bool, damage_per_energy: u32) 
         .sum();
     let damage = total_energy * damage_per_energy;
     active_damage_doutcome(damage)
+}
+
+/// Choose 1 of the opponent's Pokémon; deal damage_per_energy × (energy on that Pokémon).
+fn damage_to_any_opponent_per_target_energy(damage_per_energy: u32) -> Outcomes {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let choices: Vec<SimpleAction> = state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(in_play_idx, pokemon)| {
+                let energy_count = pokemon.attached_energy.len() as u32;
+                let damage = energy_count * damage_per_energy;
+                SimpleAction::ApplyDamage {
+                    attacking_ref: (action.actor, 0),
+                    targets: vec![(damage, opponent, in_play_idx)],
+                    is_from_active_attack: true,
+                }
+            })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 /// Damage per specific energy type attached to self (e.g., Genesect's Metal Blast)
