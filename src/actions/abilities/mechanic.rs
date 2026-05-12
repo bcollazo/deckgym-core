@@ -177,4 +177,7 @@ pub enum AbilityMechanic {
         energy_type: EnergyType,
     },
     ProtectSelfNextTurnAfterAttackKnockout,
+    MoveFixedDamageFromActiveToThisBenched {
+        amount: u32,
+    },
 }
