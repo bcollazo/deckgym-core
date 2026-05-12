@@ -1,3 +1,5 @@
+#[path = "trainers/barry_test.rs"]
+mod barry_test;
 #[path = "trainers/field_blower_test.rs"]
 mod field_blower_test;
 #[path = "trainers/iris_trainer_test.rs"]

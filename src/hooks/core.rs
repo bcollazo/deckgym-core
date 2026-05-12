@@ -984,6 +984,35 @@ pub(crate) fn get_attack_cost(
         .unwrap_or_default();
     modified_cost.extend(vec![EnergyType::Colorless; extra_colorless]);
 
+    // Check for Barry-style turn effects that reduce colorless cost for specific pokemon
+    if let Some(active) = &state.in_play_pokemon[attacking_player][0] {
+        let active_name = active.get_name();
+        let reduction: usize = state
+            .get_current_turn_effects()
+            .iter()
+            .filter_map(|e| {
+                if let TurnEffect::ReducedAttackCostForSpecificPokemon {
+                    amount,
+                    pokemon_names,
+                } = e
+                {
+                    if pokemon_names.contains(&active_name) {
+                        return Some(*amount as usize);
+                    }
+                }
+                None
+            })
+            .sum();
+        for _ in 0..reduction {
+            if let Some(pos) = modified_cost
+                .iter()
+                .position(|e| *e == EnergyType::Colorless)
+            {
+                modified_cost.remove(pos);
+            }
+        }
+    }
+
     modified_cost
 }
 

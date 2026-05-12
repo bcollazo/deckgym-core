@@ -823,7 +823,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             opponent: false,
         },
     );
-    // map.insert("If this Pokémon has no damage on it, this attack does 40 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has no damage on it, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfUndamaged { extra_damage: 40 },
+    );
     map.insert(
         "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 50 more damage.",
         Mechanic::ExtraDamageIfMovedFromBench { extra_damage: 50 },
@@ -1880,7 +1883,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Fire, EnergyType::Fire],
         },
     );
-    // map.insert("Flip a coin. If tails, this Pokémon also does 60 damage to itself.", todo_implementation);
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 60 damage to itself.",
+        Mechanic::CoinFlipSelfDamage { self_damage: 60 },
+    );
     map.insert(
         "Heal 10 damage from each of your Pokémon.",
         Mechanic::HealAllYourPokemon { amount: 10 },
@@ -1943,7 +1949,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If this Pokémon has no damage on it, this attack does 30 more damage.",
         Mechanic::ExtraDamageIfUndamaged { extra_damage: 30 },
     );
-    // map.insert("If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If you have any Stage 2 Pokémon on your Bench, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfStage2OnBench { extra_damage: 50 },
+    );
     // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Confused, this attack does 70 more damage.", todo_implementation);

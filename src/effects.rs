@@ -65,4 +65,8 @@ pub enum TurnEffect {
     },
     ForceFirstHeads,
     BonusPointForHaxorusActiveKO,
+    ReducedAttackCostForSpecificPokemon {
+        amount: u8,
+        pokemon_names: Vec<String>,
+    },
 }

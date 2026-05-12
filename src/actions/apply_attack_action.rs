@@ -424,6 +424,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfUndamaged { extra_damage } => {
             extra_damage_if_undamaged(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfStage2OnBench { extra_damage } => {
+            extra_damage_if_stage2_on_bench(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -2027,6 +2030,17 @@ fn extra_damage_if_undamaged(state: &State, base: u32, extra: u32) -> Outcomes {
         active_damage_doutcome(base)
     } else {
         active_damage_doutcome(base + extra)
+    }
+}
+
+fn extra_damage_if_stage2_on_bench(state: &State, base: u32, extra: u32) -> Outcomes {
+    let has_stage2 = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, p)| get_stage(p) == 2);
+    if has_stage2 {
+        active_damage_doutcome(base + extra)
+    } else {
+        active_damage_doutcome(base)
     }
 }
 

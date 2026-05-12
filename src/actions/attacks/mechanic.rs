@@ -241,6 +241,9 @@ pub enum Mechanic {
     ExtraDamageIfUndamaged {
         extra_damage: u32,
     },
+    ExtraDamageIfStage2OnBench {
+        extra_damage: u32,
+    },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,
     ExtraDamageIfKnockedOutLastTurn {
