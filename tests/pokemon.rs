@@ -10,6 +10,8 @@ mod blastoise_double_splash_test;
 mod bombirdier_test;
 #[path = "pokemon/bonsly_teary_attack_test.rs"]
 mod bonsly_teary_attack_test;
+#[path = "pokemon/brambleghast_accept_pain_test.rs"]
+mod brambleghast_accept_pain_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
 #[path = "pokemon/castform_test.rs"]

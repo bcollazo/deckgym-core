@@ -250,6 +250,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => {
             panic!("ProtectSelfNextTurnAfterAttackKnockout is a passive ability")
         }
+        AbilityMechanic::MoveFixedDamageFromActiveToThisBenched { amount } => {
+            move_fixed_damage_from_active_to_this_benched(in_play_idx, *amount)
+        }
     }
 }
 
@@ -522,6 +525,14 @@ fn heal_active_your_pokemon(amount: u32) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
         let active = state.get_active_mut(action.actor);
         active.heal(amount);
+    })
+}
+
+fn move_fixed_damage_from_active_to_this_benched(self_idx: usize, amount: u32) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        state.get_active_mut(action.actor).heal(amount);
+        let targets = vec![(amount, action.actor, self_idx)];
+        handle_damage(state, (action.actor, 0), &targets, false, None);
     })
 }
 

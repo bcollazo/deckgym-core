@@ -164,7 +164,23 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::EndTurnDrawCardIfActive { .. } => false,
         AbilityMechanic::EndTurnHealSelfIfActive { .. } => false,
         AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => false,
+        AbilityMechanic::MoveFixedDamageFromActiveToThisBenched { amount } => {
+            can_use_accept_pain(state, _in_play_index, card, *amount)
+        }
     }
+}
+
+fn can_use_accept_pain(
+    state: &State,
+    in_play_index: usize,
+    card: &PlayedCard,
+    amount: u32,
+) -> bool {
+    in_play_index != 0
+        && !card.ability_used
+        && state
+            .maybe_get_active(state.current_player)
+            .is_some_and(|active| active.get_damage_counters() >= amount)
 }
 
 fn can_use_celesteela_ultra_thrusters(state: &State, card: &PlayedCard) -> bool {
