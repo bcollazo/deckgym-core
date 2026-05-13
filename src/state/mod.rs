@@ -20,6 +20,10 @@ use crate::{
 
 pub use played_card::{has_serperior_jungle_totem, PlayedCard};
 
+/// Maximum number of cards a player may hold. Drawing or transferring beyond
+/// this limit is a no-op, matching the official Pokémon TCG Pocket rule.
+pub(crate) const MAX_HAND_SIZE: usize = 10;
+
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameOutcome {
     Win(usize),
@@ -173,6 +177,14 @@ impl State {
     }
 
     pub(crate) fn maybe_draw_card(&mut self, player: usize) {
+        if self.hands[player].len() >= MAX_HAND_SIZE {
+            debug!(
+                "Player {} cannot draw a card, hand is already at the {} card limit",
+                player + 1,
+                MAX_HAND_SIZE
+            );
+            return;
+        }
         if let Some(card) = self.decks[player].draw() {
             self.hands[player].push(card.clone());
             debug!(
@@ -188,6 +200,15 @@ impl State {
     }
 
     pub(crate) fn transfer_card_from_deck_to_hand(&mut self, player: usize, card: &Card) {
+        if self.hands[player].len() >= MAX_HAND_SIZE {
+            debug!(
+                "Player {} cannot take {:?} from deck, hand is already at the {} card limit",
+                player + 1,
+                canonical_name(card),
+                MAX_HAND_SIZE
+            );
+            return;
+        }
         // Remove from deck and add to hand
         let pos = self.decks[player]
             .cards
@@ -615,6 +636,37 @@ mod tests {
 
         assert_eq!(state.decks[0].cards.len(), 19);
         assert_eq!(state.hands[0].len(), 1);
+    }
+
+    #[test]
+    fn test_draw_stops_at_hand_limit() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        state.hands[0] = (0..MAX_HAND_SIZE)
+            .map(|_| get_card_by_enum(CardId::PA001Potion))
+            .collect();
+
+        let deck_len_before = state.decks[0].cards.len();
+        state.maybe_draw_card(0);
+
+        assert_eq!(state.hands[0].len(), MAX_HAND_SIZE);
+        assert_eq!(state.decks[0].cards.len(), deck_len_before);
+    }
+
+    #[test]
+    fn test_transfer_from_deck_to_hand_stops_at_hand_limit() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+        state.hands[0] = (0..MAX_HAND_SIZE)
+            .map(|_| get_card_by_enum(CardId::PA001Potion))
+            .collect();
+
+        let card = state.decks[0].cards[0].clone();
+        let deck_len_before = state.decks[0].cards.len();
+        state.transfer_card_from_deck_to_hand(0, &card);
+
+        assert_eq!(state.hands[0].len(), MAX_HAND_SIZE);
+        assert_eq!(state.decks[0].cards.len(), deck_len_before);
     }
 
     #[test]

@@ -604,9 +604,7 @@ fn mars_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
 
     // Draw cards
     for _ in 0..cards_to_draw {
-        if let Some(card) = state.decks[opponent_player].draw() {
-            state.hands[opponent_player].push(card);
-        }
+        state.maybe_draw_card(opponent_player);
     }
 }
 
@@ -856,8 +854,8 @@ fn mythical_slab_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Look at the top card of your deck. If that card is a Psychic Pokemon,\n        put it in your hand. If it is not a Psychic Pokemon, put it on the\n        bottom of your deck.
     if let Some(card) = state.decks[action.actor].cards.first() {
         if card.is_basic() {
-            state.hands[action.actor].push(card.clone());
-            state.decks[action.actor].cards.remove(0);
+            let card = card.clone();
+            state.transfer_card_from_deck_to_hand(action.actor, &card);
         } else {
             let card = state.decks[action.actor].cards.remove(0);
             state.decks[action.actor].cards.push(card);
@@ -1486,6 +1484,23 @@ mod tests {
         nasty_notice_effect(&mut StdRng::seed_from_u64(0), &mut state, &make_action());
 
         assert!(state.move_generation_stack.is_empty());
+    }
+
+    #[test]
+    fn test_professors_research_respects_hand_limit() {
+        let mut state = State::default();
+        state.hands[0] = (0..9)
+            .map(|_| get_card_by_enum(CardId::PA001Potion))
+            .collect();
+        state.decks[0].cards = vec![
+            get_card_by_enum(CardId::A1001Bulbasaur),
+            get_card_by_enum(CardId::A1033Charmander),
+        ];
+
+        professor_oak_effect(&mut StdRng::seed_from_u64(0), &mut state, &make_action());
+
+        assert_eq!(state.hands[0].len(), 10);
+        assert_eq!(state.decks[0].cards.len(), 1);
     }
 
     #[test]
