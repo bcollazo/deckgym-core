@@ -415,7 +415,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 amount: 1,
             },
         );
-        // map.insert("During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon.", todo_implementation);
+        map.insert(
+            "During Pokémon Checkup, if this Pokémon is in the Active Spot, do 10 damage to each of your opponent's Pokémon.",
+            AbilityMechanic::CheckupDamageToAllOpponentPokemon { amount: 10 },
+        );
         // map.insert("Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)", todo_implementation);
         // map.insert("If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack.", todo_implementation);
         // map.insert("Once during your turn, after you flip any coins for an attack of 1 of your [R] Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn.", todo_implementation);

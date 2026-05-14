@@ -1847,7 +1847,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard a [D] Energy from this Pokémon.", todo_implementation);
     // map.insert("Discard a [R] Energy from your opponent's Active Pokémon.", todo_implementation);
     // map.insert("Discard a [W] Energy from this Pokémon, and this attack also does 40 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("Discard the top card of your deck.", todo_implementation);
+    map.insert(
+        "Discard the top card of your deck.",
+        Mechanic::DiscardTopSelfDeck,
+    );
     // map.insert("During your next turn, attacks used by your [F] Pokémon do +30 damage to your opponent's Active Pokémon.", todo_implementation);
     // map.insert("During your next turn, this Pokémon's Psych Up attack does +30 damage.", todo_implementation);
     // map.insert("During your opponent's next turn, they can't play any Pokémon from their hand to evolve their Pokémon.", todo_implementation);

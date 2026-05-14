@@ -369,4 +369,6 @@ pub enum Mechanic {
     ExtraDamageIfDefenderPoisoned {
         extra_damage: u32,
     },
+    /// Discard the top card of the attacker's own deck after dealing damage.
+    DiscardTopSelfDeck,
 }
