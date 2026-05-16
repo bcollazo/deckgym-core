@@ -657,6 +657,7 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage } => {
             extra_damage_if_defender_poisoned(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::DiscardTopSelfDeck => discard_top_self_deck(attack.fixed_damage),
     }
 }
 
@@ -1573,6 +1574,14 @@ fn discard_opponent_active_tools_before_damage(damage: u32, attack_name: String)
         );
         handle_knockouts(state, attacking_ref, true);
     }))
+}
+
+fn discard_top_self_deck(damage: u32) -> Outcomes {
+    active_damage_effect_doutcome(damage, |_, state, action| {
+        if let Some(card) = state.decks[action.actor].draw() {
+            state.discard_piles[action.actor].push(card);
+        }
+    })
 }
 
 /// For attacks that deal damage and discard cards from the top of opponent's deck

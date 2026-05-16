@@ -292,33 +292,33 @@ fn apply_pokemon_checkup(
 }
 
 fn apply_snowy_terrain_checkup_damage(state: &mut State) {
-    let mut source_players_with_damage: Vec<(usize, u32)> = vec![];
+    let mut active_only_damage: Vec<(usize, u32)> = vec![];
+    let mut all_opponent_damage: Vec<(usize, u32)> = vec![];
 
     for player in 0..2 {
         let Some(active) = state.in_play_pokemon[player][0].as_ref() else {
             continue;
         };
-
-        let checkup_damage = get_ability_mechanic(&active.card)
-            .and_then(|m| match m {
-                AbilityMechanic::CheckupDamageToOpponentActive { amount } => Some(*amount),
-                _ => None,
-            })
-            .unwrap_or(0);
-
-        if checkup_damage > 0 && !active.is_knocked_out() {
-            source_players_with_damage.push((player, checkup_damage));
+        if active.is_knocked_out() {
+            continue;
+        }
+        match get_ability_mechanic(&active.card) {
+            Some(AbilityMechanic::CheckupDamageToOpponentActive { amount }) => {
+                active_only_damage.push((player, *amount));
+            }
+            Some(AbilityMechanic::CheckupDamageToAllOpponentPokemon { amount }) => {
+                all_opponent_damage.push((player, *amount));
+            }
+            _ => {}
         }
     }
 
-    for (source_player, checkup_damage) in source_players_with_damage {
+    for (source_player, checkup_damage) in active_only_damage {
         let target_player = (source_player + 1) % 2;
-
         if state.in_play_pokemon[target_player][0].is_some() {
             debug!(
                 "Snowy Terrain: Player {} active Pokémon deals {} checkup damage to opponent active",
-                source_player,
-                checkup_damage
+                source_player, checkup_damage
             );
             handle_damage(
                 state,
@@ -327,6 +327,21 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
                 false,
                 None,
             );
+        }
+    }
+
+    for (source_player, checkup_damage) in all_opponent_damage {
+        let target_player = (source_player + 1) % 2;
+        let targets: Vec<(u32, usize, usize)> = state
+            .enumerate_in_play_pokemon(target_player)
+            .map(|(idx, _)| (checkup_damage, target_player, idx))
+            .collect();
+        if !targets.is_empty() {
+            debug!(
+                "Sand Slammer: Player {} active Pokémon deals {} checkup damage to all opponent Pokémon",
+                source_player, checkup_damage
+            );
+            handle_damage(state, (source_player, 0), &targets, false, None);
         }
     }
 }

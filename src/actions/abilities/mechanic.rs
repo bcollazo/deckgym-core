@@ -90,6 +90,9 @@ pub enum AbilityMechanic {
     CheckupDamageToOpponentActive {
         amount: u32,
     },
+    CheckupDamageToAllOpponentPokemon {
+        amount: u32,
+    },
     DiscardEnergyToIncreaseTypeDamage {
         discard_energy: EnergyType,
         attack_type: EnergyType,

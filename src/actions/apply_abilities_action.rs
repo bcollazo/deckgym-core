@@ -150,6 +150,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::CheckupDamageToOpponentActive { .. } => {
             panic!("CheckupDamageToOpponentActive is a passive ability")
         }
+        AbilityMechanic::CheckupDamageToAllOpponentPokemon { .. } => {
+            panic!("CheckupDamageToAllOpponentPokemon is a passive ability")
+        }
         AbilityMechanic::BadDreamsEndOfTurn { .. } => {
             panic!("BadDreamsEndOfTurn is a passive ability")
         }
