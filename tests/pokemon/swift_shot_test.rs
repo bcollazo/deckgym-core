@@ -73,7 +73,7 @@ fn assert_swift_shot_damage(
                     attacking_ref: (0, 0),
                     ref targets,
                     is_from_active_attack: false,
-                } if targets == &vec![(damage, 1, 0)]
+                } if *targets == vec![(damage, 1, 0)]
             )
         })
         .cloned()

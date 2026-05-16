@@ -43,7 +43,7 @@ fn test_energy_arrow_damage_scales_with_target_energy() {
         .find(|c| {
             matches!(
                 &c.action,
-                SimpleAction::ApplyDamage { targets, .. } if targets == &vec![(40, 1, 0)]
+                SimpleAction::ApplyDamage { targets, .. } if *targets == vec![(40, 1, 0)]
             )
         })
         .cloned()
@@ -97,7 +97,7 @@ fn test_energy_arrow_deals_zero_when_target_has_no_energy() {
     let target = choices[0].clone();
     assert!(matches!(
         &target.action,
-        SimpleAction::ApplyDamage { targets, .. } if targets == &vec![(0, 1, 0)]
+        SimpleAction::ApplyDamage { targets, .. } if *targets == vec![(0, 1, 0)]
     ));
 
     game.apply_action(&target);
