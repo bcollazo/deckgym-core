@@ -22,7 +22,6 @@ pub mod state;
 pub mod temp_deck;
 pub mod tools;
 
-#[cfg(any(test, feature = "test-utils"))]
 pub mod test_support;
 
 pub use deck::Deck;

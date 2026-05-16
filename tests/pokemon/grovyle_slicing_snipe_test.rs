@@ -49,7 +49,7 @@ fn test_grovyle_slicing_snipe_targets_only_opponents_bench() {
                     ref targets,
                     is_from_active_attack: true,
                     ..
-                } if targets == &vec![(50, 1, 2)]
+                } if *targets == vec![(50, 1, 2)]
             )
         })
         .cloned()
