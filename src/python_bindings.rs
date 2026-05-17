@@ -411,7 +411,38 @@ impl PyState {
 
     #[getter]
     fn current_energy(&self) -> Option<PyEnergyType> {
-        self.state.current_energy.map(|e| e.into())
+        self.state.energy_zone[self.state.current_player]
+            .current
+            .map(|e| e.into())
+    }
+
+    /// The energy that will rotate into `current` at the start of the active player's next
+    /// turn (visible preview).
+    #[getter]
+    fn next_energy(&self) -> Option<PyEnergyType> {
+        self.state.energy_zone[self.state.current_player]
+            .next
+            .map(|e| e.into())
+    }
+
+    /// The current-slot energy for `player` (0 or 1).
+    fn energy_zone_current(&self, player: usize) -> PyResult<Option<PyEnergyType>> {
+        if player > 1 {
+            return Err(PyErr::new::<pyo3::exceptions::PyIndexError, _>(
+                "Player index must be 0 or 1",
+            ));
+        }
+        Ok(self.state.energy_zone[player].current.map(|e| e.into()))
+    }
+
+    /// The next-slot energy for `player` (0 or 1).
+    fn energy_zone_next(&self, player: usize) -> PyResult<Option<PyEnergyType>> {
+        if player > 1 {
+            return Err(PyErr::new::<pyo3::exceptions::PyIndexError, _>(
+                "Player index must be 0 or 1",
+            ));
+        }
+        Ok(self.state.energy_zone[player].next.map(|e| e.into()))
     }
 
     #[getter]

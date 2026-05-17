@@ -207,3 +207,60 @@ fn test_attach_action() {
         &vec![EnergyType::Grass]
     ); // 1 grass energy
 }
+
+/// Right after `get_initialized_game` finishes (setup phase ended, turn 1 has started),
+/// the player going first must have no `current` energy (turn-1-no-attach rule) but both
+/// players must already have a `next` energy visible — the queue preview.
+#[test]
+fn test_energy_zone_state_at_start_of_turn_1() {
+    let game = get_initialized_game(0);
+    let state = game.get_state_clone();
+    assert_eq!(state.turn_count, 1);
+
+    let first_player = state.current_player;
+    let second_player = (first_player + 1) % 2;
+
+    assert!(
+        state.energy_zone[first_player].current.is_none(),
+        "Player going first must NOT have an attachable energy on turn 1"
+    );
+    assert!(
+        state.energy_zone[first_player].next.is_some(),
+        "Player going first should already see the energy they'll receive on turn 3"
+    );
+    assert!(
+        state.energy_zone[second_player].next.is_some(),
+        "Player going second should already see the energy they'll receive on turn 2"
+    );
+}
+
+/// After the player going first ends turn 1, the player going second must have a
+/// `current` energy (their first attaching turn) and a fresh `next` rolled.
+#[test]
+fn test_energy_zone_rotates_on_turn_2() {
+    let mut game = get_initialized_game(0);
+    let state = game.get_state_clone();
+    let first_player = state.current_player;
+    let second_player = (first_player + 1) % 2;
+
+    let second_player_next_at_start = state.energy_zone[second_player].next;
+
+    // End turn 1 by directly applying EndTurn (the turn-1 transition path).
+    game.apply_action(&Action {
+        actor: first_player,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert_eq!(state.turn_count, 2);
+    assert_eq!(state.current_player, second_player);
+    assert_eq!(
+        state.energy_zone[second_player].current, second_player_next_at_start,
+        "next slot must rotate into current at turn 2 start"
+    );
+    assert!(
+        state.energy_zone[second_player].next.is_some(),
+        "a fresh next must be rolled for the new active player"
+    );
+}

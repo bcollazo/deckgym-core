@@ -68,7 +68,7 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
     actions.extend(hand_actions);
 
     // Maybe attach energy to in play cards
-    if let Some(energy) = state.current_energy {
+    if let Some(energy) = state.energy_zone[current_player].current {
         state.in_play_pokemon[current_player]
             .iter()
             .enumerate()

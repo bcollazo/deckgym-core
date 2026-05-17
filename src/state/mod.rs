@@ -2,6 +2,7 @@ mod energy;
 mod played_card;
 
 use log::{debug, trace};
+use rand::rngs::StdRng;
 use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -26,6 +27,17 @@ pub enum GameOutcome {
     Tie,
 }
 
+/// A player's energy zone. The zone holds two slots:
+/// - `current`: the energy attachable this turn (None on the player going first's turn 1,
+///   and None after the player has already attached this turn).
+/// - `next`: the energy that will rotate into `current` at the start of this player's next turn.
+///   Visible to the player as a preview.
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default, Serialize, Deserialize)]
+pub struct EnergyZone {
+    pub current: Option<EnergyType>,
+    pub next: Option<EnergyType>,
+}
+
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct State {
     // Turn State
@@ -39,7 +51,7 @@ pub struct State {
     pub move_generation_stack: Vec<(usize, Vec<SimpleAction>)>,
 
     // Core state
-    pub(crate) current_energy: Option<EnergyType>,
+    pub energy_zone: [EnergyZone; 2],
     pub hands: [Vec<Card>; 2],
     pub decks: [Deck; 2],
     pub discard_piles: [Vec<Card>; 2],
@@ -68,7 +80,7 @@ impl State {
             current_player: 0,
             end_turn_pending: false,
             move_generation_stack: Vec::new(),
-            current_energy: None,
+            energy_zone: [EnergyZone::default(), EnergyZone::default()],
             hands: [Vec::new(), Vec::new()],
             decks: [deck_a.clone(), deck_b.clone()],
             discard_piles: [Vec::new(), Vec::new()],
@@ -134,6 +146,12 @@ impl State {
         }
         // Flip a coin to determine the starting player
         state.current_player = rng.gen_range(0..2);
+
+        // Pre-populate each player's `next` energy. On turn 1, neither player has rotated yet,
+        // so both keep `current = None`. The player going second's queue will rotate at turn 2,
+        // promoting `next` into `current`; the player going first's queue rotates at turn 3.
+        state.energy_zone[0].next = Some(roll_energy(&state.decks[0], rng));
+        state.energy_zone[1].next = Some(roll_energy(&state.decks[1], rng));
 
         state
     }
@@ -221,17 +239,13 @@ impl State {
             .filter(|card| matches!(card, Card::Pokemon(_)))
     }
 
-    pub(crate) fn generate_energy(&mut self) {
-        if self.decks[self.current_player].energy_types.len() == 1 {
-            self.current_energy = Some(self.decks[self.current_player].energy_types[0]);
-        }
-
-        let deck_energies = &self.decks[self.current_player].energy_types;
-        let mut rng = rand::thread_rng();
-        let generated = deck_energies
-            .choose(&mut rng)
-            .expect("Decks should have at least 1 energy");
-        self.current_energy = Some(*generated);
+    /// Rotates `player`'s energy zone: the previously-visible `next` becomes the new `current`
+    /// (the energy attachable this turn), and a fresh `next` is rolled from the deck's energy
+    /// types using the shared rng. Called from `advance_turn` for the player about to take their
+    /// turn.
+    pub(crate) fn rotate_energy_zone(&mut self, player: usize, rng: &mut impl Rng) {
+        self.energy_zone[player].current = self.energy_zone[player].next.take();
+        self.energy_zone[player].next = Some(roll_energy(&self.decks[player], rng));
     }
 
     pub(crate) fn end_turn_maintenance(&mut self) {
@@ -414,7 +428,7 @@ impl State {
     }
 
     // This function should be called only from turn 1 onwards
-    pub(crate) fn advance_turn(&mut self) {
+    pub(crate) fn advance_turn(&mut self, rng: &mut StdRng) {
         debug!(
             "Ending turn moving from player {} to player {}",
             self.current_player,
@@ -425,7 +439,7 @@ impl State {
         self.turn_count += 1;
         self.end_turn_maintenance();
         self.queue_draw_action(self.current_player, 1);
-        self.generate_energy();
+        self.rotate_energy_zone(self.current_player, rng);
     }
 
     pub(crate) fn is_game_over(&self) -> bool {
@@ -539,8 +553,12 @@ impl State {
     // =========================================================================
 
     /// Set up multiple in-play pokemon for both players at once.
-    /// For each side: Index 0 = active, 1..3 = bench.
+    /// For each side: Index 0 = active, 1..3 = bench. Any board slot not provided is cleared
+    /// to `None` — this makes test setups deterministic regardless of what setup-phase
+    /// placements left behind.
     pub fn set_board(&mut self, player_0: Vec<PlayedCard>, player_1: Vec<PlayedCard>) {
+        self.in_play_pokemon[0] = [None, None, None, None];
+        self.in_play_pokemon[1] = [None, None, None, None];
         for (i, card) in player_0.into_iter().enumerate() {
             self.in_play_pokemon[0][i] = Some(card);
         }
@@ -592,6 +610,15 @@ fn canonical_name(card: &Card) -> &String {
 
 fn to_canonical_names(cards: &[Card]) -> Vec<&String> {
     cards.iter().map(canonical_name).collect()
+}
+
+/// Picks a random energy type from the deck's declared energy set, using the supplied rng.
+/// Decks are guaranteed by `Deck::from_string` to have at least one energy type.
+fn roll_energy(deck: &Deck, rng: &mut impl Rng) -> EnergyType {
+    *deck
+        .energy_types
+        .choose(rng)
+        .expect("Decks should have at least 1 energy")
 }
 
 #[cfg(test)]
@@ -664,5 +691,62 @@ mod tests {
         assert_eq!(state.discard_energies[0].len(), 2);
         assert_eq!(state.discard_energies[0][0], EnergyType::Grass);
         assert_eq!(state.discard_energies[0][1], EnergyType::Grass);
+    }
+
+    /// Both players' energy zones start with `current = None` (turn 1 has no energy to
+    /// attach for the player going first) but `next = Some(_)` so that each side can
+    /// preview the energy they'll receive on their first attaching turn.
+    #[test]
+    fn test_initialize_populates_next_energy_for_both_players() {
+        use rand::SeedableRng;
+        let (deck_a, deck_b) = load_test_decks();
+        let mut rng = StdRng::seed_from_u64(7);
+        let state = State::initialize(&deck_a, &deck_b, &mut rng);
+
+        assert!(state.energy_zone[0].current.is_none());
+        assert!(state.energy_zone[1].current.is_none());
+        assert!(state.energy_zone[0].next.is_some());
+        assert!(state.energy_zone[1].next.is_some());
+
+        // The rolled energies must come from each deck's declared energy set.
+        let n0 = state.energy_zone[0].next.unwrap();
+        let n1 = state.energy_zone[1].next.unwrap();
+        assert!(state.decks[0].energy_types.contains(&n0));
+        assert!(state.decks[1].energy_types.contains(&n1));
+    }
+
+    /// Rotating a queue promotes `next` into `current` and rolls a fresh `next`.
+    #[test]
+    fn test_rotate_energy_zone_shifts_queue() {
+        use rand::SeedableRng;
+        let (deck_a, deck_b) = load_test_decks();
+        let mut rng = StdRng::seed_from_u64(11);
+        let mut state = State::initialize(&deck_a, &deck_b, &mut rng);
+
+        let before = state.energy_zone[0].next.unwrap();
+        state.rotate_energy_zone(0, &mut rng);
+
+        assert_eq!(state.energy_zone[0].current, Some(before));
+        assert!(state.energy_zone[0].next.is_some());
+    }
+
+    /// Two independent runs with the same seed produce identical energy_zone trajectories.
+    /// This locks in the reproducibility guarantee.
+    #[test]
+    fn test_energy_generation_is_reproducible_under_shared_rng() {
+        use rand::SeedableRng;
+        let (deck_a, deck_b) = load_test_decks();
+
+        let mut rng_a = StdRng::seed_from_u64(123);
+        let mut state_a = State::initialize(&deck_a, &deck_b, &mut rng_a);
+        state_a.rotate_energy_zone(1, &mut rng_a);
+        state_a.rotate_energy_zone(0, &mut rng_a);
+
+        let mut rng_b = StdRng::seed_from_u64(123);
+        let mut state_b = State::initialize(&deck_a, &deck_b, &mut rng_b);
+        state_b.rotate_energy_zone(1, &mut rng_b);
+        state_b.rotate_energy_zone(0, &mut rng_b);
+
+        assert_eq!(state_a.energy_zone, state_b.energy_zone);
     }
 }
