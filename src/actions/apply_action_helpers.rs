@@ -107,6 +107,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
                 on_end_turn(action.actor, state);
                 let live_checkup_targets = collect_checkup_targets(state);
                 apply_pokemon_checkup(state, &live_checkup_targets, &outcome);
+                finish_turn_after_checkup(state, rng);
 
                 start_mutation(rng, state, action);
             }));
@@ -284,11 +285,15 @@ fn apply_pokemon_checkup(
 
     apply_snowy_terrain_checkup_damage(mutated_state);
 
-    // Advance turn
+    // Shift the per-turn KO flag. Turn advancement (including energy rotation) is performed
+    // separately by `finish_turn_after_checkup` so it can consume the shared rng.
     mutated_state.knocked_out_by_opponent_attack_last_turn =
         mutated_state.knocked_out_by_opponent_attack_this_turn;
     mutated_state.knocked_out_by_opponent_attack_this_turn = false;
-    mutated_state.advance_turn();
+}
+
+fn finish_turn_after_checkup(state: &mut State, rng: &mut StdRng) {
+    state.advance_turn(rng);
 }
 
 fn apply_snowy_terrain_checkup_damage(state: &mut State) {

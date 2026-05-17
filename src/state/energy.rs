@@ -23,7 +23,7 @@ impl State {
         let attached =
             self.attach_energy_internal(actor, in_play_idx, energy, amount, true, is_turn_energy);
         if attached && is_turn_energy {
-            self.current_energy = None;
+            self.energy_zone[actor].current = None;
         }
         attached
     }
