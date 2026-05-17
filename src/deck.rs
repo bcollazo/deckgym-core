@@ -48,12 +48,24 @@ impl Deck {
                 continue;
             }
             if trimmed.starts_with("Energy:") {
-                let energy_type: &str = trimmed
-                    .split_whitespace()
-                    .last()
-                    .expect("Energy: line should have an energy type");
-                energy_types
-                    .insert(EnergyType::from_str(energy_type).expect("Invalid energy type"));
+                let energy_list = trimmed
+                    .strip_prefix("Energy:")
+                    .expect("Energy: line should start with Energy:")
+                    .trim();
+
+                if energy_list.is_empty() {
+                    return Err("Energy: line should have at least one energy type".to_string());
+                }
+
+                for energy_type in energy_list.split(',').map(str::trim) {
+                    if energy_type.is_empty() {
+                        continue;
+                    }
+
+                    energy_types.insert(
+                        EnergyType::from_str(energy_type).expect("Invalid energy type"),
+                    );
+                }
                 continue;
             }
 
@@ -258,6 +270,29 @@ Trainer: 12
         assert_eq!(deck.cards.len(), 20);
         assert_eq!(deck.energy_types.len(), 1);
         assert_eq!(deck.energy_types[0], EnergyType::Grass);
+    }
+
+    #[test]
+    fn test_from_string_with_multiple_energy_types() {
+        let string = r#"Energy: Grass, Fire
+Pokémon: 8
+2 Bulbasaur A1 1
+2 Ivysaur A1 2
+2 Venusaur ex A1 4
+2 Exeggcute A1 21
+2 Exeggutor ex A1 23
+
+Trainer: 10
+1 Erika A1 219
+2 Sabrina A1 225
+2 X Speed P-A 002
+2 Poké Ball P-A 005
+2 Professor's Research P-A 007
+1 Potion P-A 001"#;
+        let deck = Deck::from_string(string).expect("Failed to parse deck from string");
+
+        assert_eq!(deck.cards.len(), 20);
+        assert_eq!(deck.energy_types, vec![EnergyType::Grass, EnergyType::Fire]);
     }
 
     #[test]
