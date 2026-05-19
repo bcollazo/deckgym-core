@@ -192,7 +192,10 @@ impl State {
 
     pub(crate) fn maybe_draw_card(&mut self, player: usize) {
         if self.hands[player].len() >= 10 {
-            debug!("Player {} cannot draw a card, hand is full (10 cards)", player + 1);
+            debug!(
+                "Player {} cannot draw a card, hand is full (10 cards)",
+                player + 1
+            );
             return;
         }
         if let Some(card) = self.decks[player].draw() {
