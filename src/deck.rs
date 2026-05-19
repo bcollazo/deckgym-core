@@ -62,9 +62,8 @@ impl Deck {
                         continue;
                     }
 
-                    energy_types.insert(
-                        EnergyType::from_str(energy_type).expect("Invalid energy type"),
-                    );
+                    energy_types
+                        .insert(EnergyType::from_str(energy_type).expect("Invalid energy type"));
                 }
                 continue;
             }

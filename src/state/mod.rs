@@ -191,6 +191,13 @@ impl State {
     }
 
     pub(crate) fn maybe_draw_card(&mut self, player: usize) {
+        if self.hands[player].len() >= 10 {
+            debug!(
+                "Player {} cannot draw a card, hand is full (10 cards)",
+                player + 1
+            );
+            return;
+        }
         if let Some(card) = self.decks[player].draw() {
             self.hands[player].push(card.clone());
             debug!(
@@ -437,13 +444,17 @@ impl State {
         self.end_turn_pending = false;
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
+        if self.turn_count > 30 {
+            self.winner = Some(GameOutcome::Tie);
+            return;
+        }
         self.end_turn_maintenance();
         self.queue_draw_action(self.current_player, 1);
         self.rotate_energy_zone(self.current_player, rng);
     }
 
     pub(crate) fn is_game_over(&self) -> bool {
-        self.winner.is_some() || self.turn_count >= 100
+        self.winner.is_some()
     }
 
     pub(crate) fn num_in_play_of_type(&self, player: usize, energy: EnergyType) -> usize {
@@ -748,5 +759,35 @@ mod tests {
         state_b.rotate_energy_zone(0, &mut rng_b);
 
         assert_eq!(state_a.energy_zone, state_b.energy_zone);
+    }
+
+    #[test]
+    fn test_maybe_draw_card_respects_10_card_hand_limit() {
+        let (deck_a, deck_b) = load_test_decks();
+        let mut state = State::new(&deck_a, &deck_b);
+
+        for _ in 0..10 {
+            state.maybe_draw_card(0);
+        }
+        assert_eq!(state.hands[0].len(), 10);
+
+        // 11th draw should be a no-op
+        state.maybe_draw_card(0);
+        assert_eq!(state.hands[0].len(), 10);
+        assert_eq!(state.decks[0].cards.len(), 10);
+    }
+
+    #[test]
+    fn test_advance_turn_declares_tie_after_turn_30() {
+        use rand::SeedableRng;
+        let (deck_a, deck_b) = load_test_decks();
+        let mut rng = StdRng::seed_from_u64(42);
+        let mut state = State::initialize(&deck_a, &deck_b, &mut rng);
+
+        state.turn_count = 30;
+        state.advance_turn(&mut rng);
+
+        assert_eq!(state.winner, Some(GameOutcome::Tie));
+        assert!(state.is_game_over());
     }
 }
