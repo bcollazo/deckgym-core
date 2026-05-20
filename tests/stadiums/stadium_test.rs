@@ -258,6 +258,64 @@ fn test_stadium_is_discarded_when_replaced() {
     assert!(matches!(&state.discard_piles[0][0], Card::Trainer(t) if t.name == "Peculiar Plaza"));
 }
 
+#[test]
+fn test_replaced_stadium_goes_to_original_players_discard() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 0;
+    state.turn_count = 1;
+    state.hands[0] = vec![get_card_by_enum(CardId::B2155PeculiarPlaza)];
+    state.hands[1] = vec![get_card_by_enum(CardId::B2153TrainingArea)];
+    game.set_state(state);
+
+    let play_peculiar_plaza = Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: trainer_from_id(CardId::B2155PeculiarPlaza),
+        },
+        is_stack: false,
+    };
+    game.apply_action(&play_peculiar_plaza);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.active_stadium_owner, Some(0));
+    assert!(state.discard_piles[0].is_empty());
+    assert!(state.discard_piles[1].is_empty());
+
+    let play_training_area = Action {
+        actor: 1,
+        action: SimpleAction::Play {
+            trainer_card: trainer_from_id(CardId::B2153TrainingArea),
+        },
+        is_stack: false,
+    };
+    game.apply_action(&play_training_area);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active_stadium_name(),
+        Some("Training Area".to_string())
+    );
+    assert_eq!(state.active_stadium_owner, Some(1));
+    assert!(
+        state.discard_piles[0]
+            .iter()
+            .any(|card| matches!(card, Card::Trainer(trainer) if trainer.name == "Peculiar Plaza")),
+        "Player 0's replaced Stadium should go to Player 0's discard pile"
+    );
+    assert!(
+        !state.discard_piles[1]
+            .iter()
+            .any(|card| matches!(card, Card::Trainer(trainer) if trainer.name == "Peculiar Plaza")),
+        "Player 0's replaced Stadium should not go to Player 1's discard pile"
+    );
+}
+
 // ============================================================================
 // Training Area Tests
 // ============================================================================

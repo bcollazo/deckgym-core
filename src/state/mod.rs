@@ -60,6 +60,8 @@ pub struct State {
     pub in_play_pokemon: [[Option<PlayedCard>; 4]; 2],
     // Stadium card currently in play (affects both players)
     pub active_stadium: Option<Card>,
+    #[serde(default)]
+    pub active_stadium_owner: Option<usize>,
 
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
@@ -87,6 +89,7 @@ impl State {
             discard_energies: [Vec::new(), Vec::new()],
             in_play_pokemon: [[None, None, None, None], [None, None, None, None]],
             active_stadium: None,
+            active_stadium_owner: None,
             has_played_support: false,
             has_retreated: false,
             has_used_stadium: [false, false],
@@ -102,7 +105,24 @@ impl State {
     }
 
     pub fn set_active_stadium(&mut self, stadium: Card) -> Option<Card> {
+        self.active_stadium_owner = None;
         self.active_stadium.replace(stadium)
+    }
+
+    pub fn set_active_stadium_for_player(
+        &mut self,
+        player: usize,
+        stadium: Card,
+    ) -> Option<(Card, Option<usize>)> {
+        let old_stadium = self.active_stadium.replace(stadium);
+        let old_owner = self.active_stadium_owner.replace(player);
+        old_stadium.map(|stadium| (stadium, old_owner))
+    }
+
+    pub fn take_active_stadium(&mut self) -> Option<(Card, Option<usize>)> {
+        let stadium = self.active_stadium.take();
+        let owner = self.active_stadium_owner.take();
+        stadium.map(|stadium| (stadium, owner))
     }
 
     pub(crate) fn refresh_starting_plains_bonus_all(&mut self) {

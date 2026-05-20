@@ -249,8 +249,8 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             state.discard_tool(*player, *in_play_idx);
         }
         SimpleAction::DiscardActiveStadium => {
-            if let Some(stadium) = state.active_stadium.take() {
-                state.discard_piles[action.actor].push(stadium);
+            if let Some((stadium, owner)) = state.take_active_stadium() {
+                state.discard_piles[owner.unwrap_or(action.actor)].push(stadium);
             }
         }
         SimpleAction::Noop => {}
