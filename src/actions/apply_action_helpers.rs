@@ -658,9 +658,11 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
         if let SimpleAction::Play { trainer_card } = &action.action {
             let card = Card::Trainer(trainer_card.clone());
             if trainer_card.trainer_card_type == TrainerType::Stadium {
-                // Replace old stadium (discard it if exists)
-                if let Some(old_stadium) = state.set_active_stadium(card.clone()) {
-                    state.discard_piles[action.actor].push(old_stadium);
+                // Replaced Stadium cards go to the discard pile of the player who played them.
+                if let Some((old_stadium, old_owner)) =
+                    state.set_active_stadium_for_player(action.actor, card.clone())
+                {
+                    state.discard_piles[old_owner.unwrap_or(action.actor)].push(old_stadium);
                 }
                 state.remove_card_from_hand(action.actor, &card);
                 state.refresh_starting_plains_bonus_all();
