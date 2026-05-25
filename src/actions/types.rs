@@ -142,6 +142,8 @@ pub enum SimpleAction {
     },
     /// Field Blower: discard the active stadium.
     DiscardActiveStadium,
+    /// Crawdaunt's Unruly Claw: discard a random Energy from the opponent's Active Pokémon
+    DiscardRandomOpponentActiveEnergy,
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -290,6 +292,9 @@ impl fmt::Display for SimpleAction {
                 write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")
             }
             SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
+            SimpleAction::DiscardRandomOpponentActiveEnergy => {
+                write!(f, "DiscardRandomOpponentActiveEnergy")
+            }
             SimpleAction::UseStadium => write!(f, "UseStadium"),
             SimpleAction::Noop => write!(f, "Noop"),
         }

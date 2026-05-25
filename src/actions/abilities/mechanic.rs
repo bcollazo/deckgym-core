@@ -155,6 +155,7 @@ pub enum AbilityMechanic {
     DamageOpponentActiveOnEvolve {
         amount: u32,
     },
+    DiscardRandomEnergyFromOpponentActiveOnEvolve,
     CanEvolveIntoEeveeEvolution,
     CanEvolveOnFirstTurnIfActive,
     CounterattackDamage {
