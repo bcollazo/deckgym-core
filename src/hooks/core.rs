@@ -142,6 +142,21 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_ha
                 ],
             ));
         }
+        Some(AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve) => {
+            let opponent = (actor + 1) % 2;
+            let has_energy = state
+                .maybe_get_active(opponent)
+                .is_some_and(|active| !active.attached_energy.is_empty());
+            if has_energy {
+                state.move_generation_stack.push((
+                    actor,
+                    vec![
+                        SimpleAction::DiscardRandomOpponentActiveEnergy,
+                        SimpleAction::Noop,
+                    ],
+                ));
+            }
+        }
         _ => {}
     }
 }

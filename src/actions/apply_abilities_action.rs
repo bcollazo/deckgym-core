@@ -220,6 +220,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => {
             panic!("DamageOpponentActiveOnEvolve is triggered on evolve")
         }
+        AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve => {
+            panic!("DiscardRandomEnergyFromOpponentActiveOnEvolve is triggered on evolve")
+        }
         AbilityMechanic::CanEvolveIntoEeveeEvolution => {
             panic!("CanEvolveIntoEeveeEvolution is a passive ability")
         }

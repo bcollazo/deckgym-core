@@ -24,6 +24,8 @@ mod charmeleon_ignition_test;
 mod comfey_flower_shield_test;
 #[path = "pokemon/corviknight_line_test.rs"]
 mod corviknight_line_test;
+#[path = "pokemon/crawdaunt_unruly_claw_test.rs"]
+mod crawdaunt_unruly_claw_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
 mod darkrai_ex_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]

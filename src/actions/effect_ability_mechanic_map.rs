@@ -181,7 +181,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, if you have Arceus or Arceus ex in play, you may do 30 damage to your opponent's Active Pokémon.",
             AbilityMechanic::DamageOpponentActiveIfArceusInPlay { amount: 30 },
         );
-        // map.insert("Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
+        map.insert(
+            "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may discard a random Energy from your opponent's Active Pokémon.",
+            AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve,
+        );
         map.insert(
             "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.",
             AbilityMechanic::DrawCardsOnEvolve { amount: 2 },
