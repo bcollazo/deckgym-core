@@ -2722,7 +2722,7 @@ pub enum CardId {
     B2a085Flamigo,
     B2a086ElectricGenerator,
     B2a087BigAirBalloon,
-    B2a088Team,
+    B2a088TeamStarGrunt,
     B2a089Iono,
     B2a090Nemona,
     B2a091Arven,
@@ -2739,7 +2739,7 @@ pub enum CardId {
     B2a102ChienPaoEx,
     B2a103BelliboltEx,
     B2a104GholdengoEx,
-    B2a105Team,
+    B2a105TeamStarGrunt,
     B2a106Iono,
     B2a107Nemona,
     B2a108Arven,
@@ -6015,7 +6015,7 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2a 085", CardId::B2a085Flamigo);
     map.insert("B2a 086", CardId::B2a086ElectricGenerator);
     map.insert("B2a 087", CardId::B2a087BigAirBalloon);
-    map.insert("B2a 088", CardId::B2a088Team);
+    map.insert("B2a 088", CardId::B2a088TeamStarGrunt);
     map.insert("B2a 089", CardId::B2a089Iono);
     map.insert("B2a 090", CardId::B2a090Nemona);
     map.insert("B2a 091", CardId::B2a091Arven);
@@ -6032,7 +6032,7 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2a 102", CardId::B2a102ChienPaoEx);
     map.insert("B2a 103", CardId::B2a103BelliboltEx);
     map.insert("B2a 104", CardId::B2a104GholdengoEx);
-    map.insert("B2a 105", CardId::B2a105Team);
+    map.insert("B2a 105", CardId::B2a105TeamStarGrunt);
     map.insert("B2a 106", CardId::B2a106Iono);
     map.insert("B2a 107", CardId::B2a107Nemona);
     map.insert("B2a 108", CardId::B2a108Arven);

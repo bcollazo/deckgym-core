@@ -1538,18 +1538,6 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 1,
         },
     );
-    // TODO: Database has a bug with missing "-20" in effect text, handle both versions
-    map.insert(
-        "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.",
-        Mechanic::DamageAndMultipleCardEffects {
-            opponent: false,
-            effects: vec![
-                CardEffect::ReducedDamage { amount: 20 },
-                CardEffect::NoWeakness,
-            ],
-            duration: 1,
-        },
-    );
     map.insert(
         "This attack's damage is reduced by the amount of damage this Pokémon has on it.",
         Mechanic::DamageReducedBySelfDamage,

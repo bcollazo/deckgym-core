@@ -70,7 +70,7 @@ fn test_team_not_playable_without_valid_opponent_target() {
     );
     state.current_player = 0;
     state.turn_count = 1;
-    state.hands[0] = vec![get_card_by_enum(CardId::B2a105Team)];
+    state.hands[0] = vec![get_card_by_enum(CardId::B2a105TeamStarGrunt)];
     game.set_state(state);
 
     let state = game.get_state_clone();

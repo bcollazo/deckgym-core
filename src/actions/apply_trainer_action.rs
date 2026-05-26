@@ -168,7 +168,9 @@ pub fn forecast_trainer_action(
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
             electric_generator_outcomes()
         }
-        CardId::B2a088Team | CardId::B2a105Team => Outcomes::single_fn(team_effect),
+        CardId::B2a088TeamStarGrunt | CardId::B2a105TeamStarGrunt => {
+            Outcomes::single_fn(team_effect)
+        }
         CardId::B2145LuckyIcePop => lucky_ice_pop_outcomes(state, acting_player),
         CardId::B2b066Maintenance => Outcomes::single_fn(maintenance_effect),
         CardId::B2b067Iris | CardId::B2b081Iris => Outcomes::single_fn(iris_effect),

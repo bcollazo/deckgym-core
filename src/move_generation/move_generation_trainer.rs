@@ -197,7 +197,9 @@ pub fn trainer_move_generation_implementation(
         CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
             can_play_electric_generator(state, trainer_card)
         }
-        CardId::B2a088Team | CardId::B2a105Team => can_play_team(state, trainer_card),
+        CardId::B2a088TeamStarGrunt | CardId::B2a105TeamStarGrunt => {
+            can_play_team(state, trainer_card)
+        }
         CardId::A1216HelixFossil
         | CardId::A1217DomeFossil
         | CardId::A1218OldAmber

@@ -52867,7 +52867,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",
@@ -53468,7 +53468,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",
@@ -53580,7 +53580,7 @@
           "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
           "title": "Adamantine Rolling",
           "fixed_damage": 120,
-          "effect": "During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness."
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness."
         }
       ],
       "weakness": "Fire",
@@ -61262,7 +61262,7 @@
     "Trainer": {
       "id": "B2a 088",
       "trainer_card_type": "Supporter",
-      "name": "Team",
+      "name": "Team Star Grunt",
       "effect": "Discard a random Energy from among the Energy attached to all of your opponent's Pokémon that have an Ability.",
       "rarity": "◊◊",
       "booster_pack": "Paldean Wonders (B2a)"
@@ -61590,7 +61590,7 @@
     "Trainer": {
       "id": "B2a 105",
       "trainer_card_type": "Supporter",
-      "name": "Team",
+      "name": "Team Star Grunt",
       "effect": "Discard a random Energy from among the Energy attached to all of your opponent's Pokémon that have an Ability.",
       "rarity": "☆☆",
       "booster_pack": "Paldean Wonders (B2a)"
@@ -64801,7 +64801,7 @@
     "Pokemon": {
       "id": "B3 003",
       "name": "Heracross",
-      "stage": 2,
+      "stage": 0,
       "evolves_from": null,
       "hp": 90,
       "energy_type": "Grass",

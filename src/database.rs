@@ -52406,7 +52406,7 @@ fn populate_database_chunk_18(map: &mut HashMap<CardId, Card>) {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Adamantine Rolling".to_string(),
                     fixed_damage: 120,
-                    effect: Some("During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -53017,7 +53017,7 @@ fn populate_database_chunk_18(map: &mut HashMap<CardId, Card>) {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Adamantine Rolling".to_string(),
                     fixed_damage: 120,
-                    effect: Some("During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -53134,7 +53134,7 @@ fn populate_database_chunk_18(map: &mut HashMap<CardId, Card>) {
                     energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
                     title: "Adamantine Rolling".to_string(),
                     fixed_damage: 120,
-                    effect: Some("During your opponent's next turn, this Pokémon takes  damage from attacks and has no Weakness.".to_string()),
+                    effect: Some("During your opponent's next turn, this Pokémon takes -20 damage from attacks and has no Weakness.".to_string()),
                 },
             ],
             weakness: Some(EnergyType::Fire),
@@ -60655,9 +60655,9 @@ fn populate_database_chunk_21(map: &mut HashMap<CardId, Card>) {
             trainer_card_type: TrainerType::Tool,
         }),
     );
-    map.insert(CardId::B2a088Team, Card::Trainer(TrainerCard {
+    map.insert(CardId::B2a088TeamStarGrunt, Card::Trainer(TrainerCard {
             id: "B2a 088".to_string(),
-            name: "Team".to_string(),
+            name: "Team Star Grunt".to_string(),
             effect: "Discard a random Energy from among the Energy attached to all of your opponent's Pokémon that have an Ability.".to_string(),
             rarity: "◊◊".to_string(),
             booster_pack: "Paldean Wonders (B2a)".to_string(),
@@ -60974,9 +60974,9 @@ fn populate_database_chunk_21(map: &mut HashMap<CardId, Card>) {
             rarity: "☆☆".to_string(),
             booster_pack: "Paldean Wonders (B2a)".to_string(),
         }));
-    map.insert(CardId::B2a105Team, Card::Trainer(TrainerCard {
+    map.insert(CardId::B2a105TeamStarGrunt, Card::Trainer(TrainerCard {
             id: "B2a 105".to_string(),
-            name: "Team".to_string(),
+            name: "Team Star Grunt".to_string(),
             effect: "Discard a random Energy from among the Energy attached to all of your opponent's Pokémon that have an Ability.".to_string(),
             rarity: "☆☆".to_string(),
             booster_pack: "Paldean Wonders (B2a)".to_string(),
@@ -64042,7 +64042,7 @@ fn populate_database_chunk_22(map: &mut HashMap<CardId, Card>) {
     map.insert(CardId::B3003Heracross, Card::Pokemon(PokemonCard {
             id: "B3 003".to_string(),
             name: "Heracross".to_string(),
-            stage: 2,
+            stage: 0,
             evolves_from: None,
             hp: 90,
             energy_type: EnergyType::Grass,
