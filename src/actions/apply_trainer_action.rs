@@ -193,6 +193,12 @@ pub fn forecast_trainer_action(
         CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
             parasol_lady_effect(acting_player, state)
         }
+        CardId::B3a071Juliana | CardId::B3a086Juliana => card_search_outcomes_with_filter_multiple(
+            acting_player,
+            state,
+            1,
+            |card| matches!(card, Card::Pokemon(p) if p.stage == 2),
+        ),
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             professor_turo_effect(acting_player, state)
         }
