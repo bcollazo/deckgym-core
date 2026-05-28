@@ -924,6 +924,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfEx { extra_damage: 30 },
     );
     map.insert(
+        "If your opponent's Active Pokémon is a Pokémon ex, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfEx { extra_damage: 40 },
+    );
+    map.insert(
         "If your opponent's Active Pokémon is a Pokémon ex, this attack does 70 more damage.",
         Mechanic::ExtraDamageIfEx { extra_damage: 70 },
     );
