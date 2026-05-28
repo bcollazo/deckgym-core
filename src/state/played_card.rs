@@ -206,6 +206,8 @@ impl PlayedCard {
             effective_hp += 20;
         } else if has_tool(self, CardId::A3147LeafCape) {
             effective_hp += 30;
+        } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule) {
+            effective_hp += 40;
         }
 
         effective_hp += self.stadium_hp_bonus;
