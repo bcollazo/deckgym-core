@@ -658,6 +658,14 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage_if_defender_poisoned(state, attack.fixed_damage, *extra_damage)
         }
         Mechanic::DiscardTopSelfDeck => discard_top_self_deck(attack.fixed_damage),
+        Mechanic::TieredCoinFlipDamage {
+            num_coins,
+            extra_damage_by_heads,
+        } => tiered_coin_flip_damage(
+            attack.fixed_damage,
+            *num_coins,
+            extra_damage_by_heads.clone(),
+        ),
     }
 }
 
@@ -1581,6 +1589,17 @@ fn discard_top_self_deck(damage: u32) -> Outcomes {
         if let Some(card) = state.decks[action.actor].draw() {
             state.discard_piles[action.actor].push(card);
         }
+    })
+}
+
+fn tiered_coin_flip_damage(
+    fixed_damage: u32,
+    num_coins: usize,
+    extra_damage_by_heads: Vec<u32>,
+) -> Outcomes {
+    Outcomes::binomial_by_heads(num_coins, move |heads| {
+        let extra = extra_damage_by_heads.get(heads).copied().unwrap_or(0);
+        active_damage_mutation(fixed_damage + extra)
     })
 }
 

@@ -42,6 +42,10 @@ mod grovyle_slicing_snipe_test;
 mod heracross_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]
 mod houndstone_last_respects_test;
+#[path = "pokemon/iron_hands_test.rs"]
+mod iron_hands_test;
+#[path = "pokemon/iron_moth_test.rs"]
+mod iron_moth_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
 mod jolteon_ex_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
@@ -74,6 +78,8 @@ mod porygonz_cyberjack_test;
 mod rampardos_head_smash_test;
 #[path = "pokemon/shinx_hide_test.rs"]
 mod shinx_hide_test;
+#[path = "pokemon/slither_wing_test.rs"]
+mod slither_wing_test;
 #[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
 mod sunflora_quick_grow_beam_test;
 #[path = "pokemon/swift_shot_test.rs"]

@@ -483,6 +483,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("Flip 2 coins. This attack does 70 damage for each heads. If at least 1 of them is heads, your opponent's Active Pokémon is now Burned.", todo_implementation);
     map.insert(
+        "Flip 2 coins. This attack does 70 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 70,
+            num_coins: 2,
+        },
+    );
+    map.insert(
         "Flip 2 coins. This attack does 80 damage for each heads.",
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage: false,
@@ -1114,6 +1122,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert(
         "This Pokémon also does 50 damage to itself.",
         Mechanic::SelfDamage { amount: 50 },
+    );
+    map.insert(
+        "This Pokémon also does 60 damage to itself.",
+        Mechanic::SelfDamage { amount: 60 },
     );
     map.insert(
         "This Pokémon also does 70 damage to itself.",
@@ -1961,5 +1973,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("This attack does 60 damage to 1 of your opponent's Pokémon that have damage on them.", todo_implementation);
+
+    // B3a Mechanics
+    map.insert(
+        "Flip 3 coins. If 1 of them is heads, this attack does 20 more damage. If 2 of them are heads, this attack does 50 more damage. If all of them are heads, this attack does 120 more damage.",
+        Mechanic::TieredCoinFlipDamage {
+            num_coins: 3,
+            extra_damage_by_heads: vec![0, 20, 50, 120],
+        },
+    );
     map
 });

@@ -371,4 +371,10 @@ pub enum Mechanic {
     },
     /// Discard the top card of the attacker's own deck after dealing damage.
     DiscardTopSelfDeck,
+    /// Tiered coin flip damage: flip `num_coins` coins and deal fixed_damage +
+    /// extra_damage_by_heads[heads_count] total damage.
+    TieredCoinFlipDamage {
+        num_coins: usize,
+        extra_damage_by_heads: Vec<u32>,
+    },
 }
