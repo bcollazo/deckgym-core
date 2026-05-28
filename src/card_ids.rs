@@ -3117,6 +3117,115 @@ pub enum CardId {
     B3232MegaSteelixEx,
     B3233Celebi,
     B3234Bombirdier,
+    B3a001Surskit,
+    B3a002Masquerain,
+    B3a003BruteBonnet,
+    B3a004SlitherWing,
+    B3a005IronMoth,
+    B3a006Psyduck,
+    B3a007Golduck,
+    B3a008Vaporeon,
+    B3a009Buizel,
+    B3a010Floatzel,
+    B3a011Snom,
+    B3a012Frosmoth,
+    B3a013IronBundleEx,
+    B3a014Pawmi,
+    B3a015Pawmo,
+    B3a016Pawmot,
+    B3a017IronHands,
+    B3a018IronThorns,
+    B3a019MiraidonEx,
+    B3a020Espeon,
+    B3a021Flittle,
+    B3a022Espathra,
+    B3a023Greavard,
+    B3a024Houndstone,
+    B3a025ScreamTail,
+    B3a026FlutterManeEx,
+    B3a027IronValiant,
+    B3a028IronLeaves,
+    B3a029IronBoulder,
+    B3a030IronCrown,
+    B3a031Nacli,
+    B3a032Naclstack,
+    B3a033Garganacl,
+    B3a034GreatTusk,
+    B3a035SandyShocks,
+    B3a036KoraidonEx,
+    B3a037Umbreon,
+    B3a038Sneasel,
+    B3a039Weavile,
+    B3a040Sableye,
+    B3a041Pawniard,
+    B3a042Bisharp,
+    B3a043Kingambit,
+    B3a044Glimmet,
+    B3a045Glimmora,
+    B3a046IronJugulis,
+    B3a047RoaringMoon,
+    B3a048Corviknight,
+    B3a049Cufant,
+    B3a050Copperajah,
+    B3a051IronTreads,
+    B3a052Altaria,
+    B3a053WalkingWake,
+    B3a054GougingFire,
+    B3a055RagingBolt,
+    B3a056Eevee,
+    B3a057Girafarig,
+    B3a058Farigiraf,
+    B3a059Dunsparce,
+    B3a060Dudunsparce,
+    B3a061Swablu,
+    B3a062Rufflet,
+    B3a063Braviary,
+    B3a064Hawlucha,
+    B3a065Rookidee,
+    B3a066Corvisquire,
+    B3a067Flamigo,
+    B3a068TerapagosEx,
+    B3a069AncientBoosterEnergyCapsule,
+    B3a070FutureBoosterEnergyCapsule,
+    B3a071Juliana,
+    B3a072ProfessorSada,
+    B3a073ProfessorTuro,
+    B3a074AreaZero,
+    B3a075Snom,
+    B3a076Flittle,
+    B3a077IronBoulder,
+    B3a078Glimmora,
+    B3a079RagingBolt,
+    B3a080Hawlucha,
+    B3a081IronBundleEx,
+    B3a082MiraidonEx,
+    B3a083FlutterManeEx,
+    B3a084KoraidonEx,
+    B3a085TerapagosEx,
+    B3a086Juliana,
+    B3a087ProfessorSada,
+    B3a088ProfessorTuro,
+    B3a089IronBundleEx,
+    B3a090MiraidonEx,
+    B3a091FlutterManeEx,
+    B3a092KoraidonEx,
+    B3a093TerapagosEx,
+    B3a094Rellor,
+    B3a095Charcadet,
+    B3a096Tadbulb,
+    B3a097Rabsca,
+    B3a098Diglett,
+    B3a099Dugtrio,
+    B3a100Klawf,
+    B3a101Orthworm,
+    B3a102Swablu,
+    B3a103Altaria,
+    B3a104MeowscaradaEx,
+    B3a105ArmarougeEx,
+    B3a106BelliboltEx,
+    B3a107MegaAltariaEx,
+    B3a108IronValiant,
+    B3a109RoaringMoon,
     PA001Potion,
     PA002XSpeed,
     PA003HandScope,
@@ -3296,6 +3405,14 @@ pub enum CardId {
     PB060Zarude,
     PB061Treecko,
     PB062Gallade,
+    PB063MeowscaradaEx,
+    PB064Charcadet,
+    PB065Vaporeon,
+    PB066CeruledgeEx,
+    PB067Pawniard,
+    PB068Dudunsparce,
+    PB069Floragato,
+    PB070Sableye,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -6410,6 +6527,115 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B3 232", CardId::B3232MegaSteelixEx);
     map.insert("B3 233", CardId::B3233Celebi);
     map.insert("B3 234", CardId::B3234Bombirdier);
+    map.insert("B3a 001", CardId::B3a001Surskit);
+    map.insert("B3a 002", CardId::B3a002Masquerain);
+    map.insert("B3a 003", CardId::B3a003BruteBonnet);
+    map.insert("B3a 004", CardId::B3a004SlitherWing);
+    map.insert("B3a 005", CardId::B3a005IronMoth);
+    map.insert("B3a 006", CardId::B3a006Psyduck);
+    map.insert("B3a 007", CardId::B3a007Golduck);
+    map.insert("B3a 008", CardId::B3a008Vaporeon);
+    map.insert("B3a 009", CardId::B3a009Buizel);
+    map.insert("B3a 010", CardId::B3a010Floatzel);
+    map.insert("B3a 011", CardId::B3a011Snom);
+    map.insert("B3a 012", CardId::B3a012Frosmoth);
+    map.insert("B3a 013", CardId::B3a013IronBundleEx);
+    map.insert("B3a 014", CardId::B3a014Pawmi);
+    map.insert("B3a 015", CardId::B3a015Pawmo);
+    map.insert("B3a 016", CardId::B3a016Pawmot);
+    map.insert("B3a 017", CardId::B3a017IronHands);
+    map.insert("B3a 018", CardId::B3a018IronThorns);
+    map.insert("B3a 019", CardId::B3a019MiraidonEx);
+    map.insert("B3a 020", CardId::B3a020Espeon);
+    map.insert("B3a 021", CardId::B3a021Flittle);
+    map.insert("B3a 022", CardId::B3a022Espathra);
+    map.insert("B3a 023", CardId::B3a023Greavard);
+    map.insert("B3a 024", CardId::B3a024Houndstone);
+    map.insert("B3a 025", CardId::B3a025ScreamTail);
+    map.insert("B3a 026", CardId::B3a026FlutterManeEx);
+    map.insert("B3a 027", CardId::B3a027IronValiant);
+    map.insert("B3a 028", CardId::B3a028IronLeaves);
+    map.insert("B3a 029", CardId::B3a029IronBoulder);
+    map.insert("B3a 030", CardId::B3a030IronCrown);
+    map.insert("B3a 031", CardId::B3a031Nacli);
+    map.insert("B3a 032", CardId::B3a032Naclstack);
+    map.insert("B3a 033", CardId::B3a033Garganacl);
+    map.insert("B3a 034", CardId::B3a034GreatTusk);
+    map.insert("B3a 035", CardId::B3a035SandyShocks);
+    map.insert("B3a 036", CardId::B3a036KoraidonEx);
+    map.insert("B3a 037", CardId::B3a037Umbreon);
+    map.insert("B3a 038", CardId::B3a038Sneasel);
+    map.insert("B3a 039", CardId::B3a039Weavile);
+    map.insert("B3a 040", CardId::B3a040Sableye);
+    map.insert("B3a 041", CardId::B3a041Pawniard);
+    map.insert("B3a 042", CardId::B3a042Bisharp);
+    map.insert("B3a 043", CardId::B3a043Kingambit);
+    map.insert("B3a 044", CardId::B3a044Glimmet);
+    map.insert("B3a 045", CardId::B3a045Glimmora);
+    map.insert("B3a 046", CardId::B3a046IronJugulis);
+    map.insert("B3a 047", CardId::B3a047RoaringMoon);
+    map.insert("B3a 048", CardId::B3a048Corviknight);
+    map.insert("B3a 049", CardId::B3a049Cufant);
+    map.insert("B3a 050", CardId::B3a050Copperajah);
+    map.insert("B3a 051", CardId::B3a051IronTreads);
+    map.insert("B3a 052", CardId::B3a052Altaria);
+    map.insert("B3a 053", CardId::B3a053WalkingWake);
+    map.insert("B3a 054", CardId::B3a054GougingFire);
+    map.insert("B3a 055", CardId::B3a055RagingBolt);
+    map.insert("B3a 056", CardId::B3a056Eevee);
+    map.insert("B3a 057", CardId::B3a057Girafarig);
+    map.insert("B3a 058", CardId::B3a058Farigiraf);
+    map.insert("B3a 059", CardId::B3a059Dunsparce);
+    map.insert("B3a 060", CardId::B3a060Dudunsparce);
+    map.insert("B3a 061", CardId::B3a061Swablu);
+    map.insert("B3a 062", CardId::B3a062Rufflet);
+    map.insert("B3a 063", CardId::B3a063Braviary);
+    map.insert("B3a 064", CardId::B3a064Hawlucha);
+    map.insert("B3a 065", CardId::B3a065Rookidee);
+    map.insert("B3a 066", CardId::B3a066Corvisquire);
+    map.insert("B3a 067", CardId::B3a067Flamigo);
+    map.insert("B3a 068", CardId::B3a068TerapagosEx);
+    map.insert("B3a 069", CardId::B3a069AncientBoosterEnergyCapsule);
+    map.insert("B3a 070", CardId::B3a070FutureBoosterEnergyCapsule);
+    map.insert("B3a 071", CardId::B3a071Juliana);
+    map.insert("B3a 072", CardId::B3a072ProfessorSada);
+    map.insert("B3a 073", CardId::B3a073ProfessorTuro);
+    map.insert("B3a 074", CardId::B3a074AreaZero);
+    map.insert("B3a 075", CardId::B3a075Snom);
+    map.insert("B3a 076", CardId::B3a076Flittle);
+    map.insert("B3a 077", CardId::B3a077IronBoulder);
+    map.insert("B3a 078", CardId::B3a078Glimmora);
+    map.insert("B3a 079", CardId::B3a079RagingBolt);
+    map.insert("B3a 080", CardId::B3a080Hawlucha);
+    map.insert("B3a 081", CardId::B3a081IronBundleEx);
+    map.insert("B3a 082", CardId::B3a082MiraidonEx);
+    map.insert("B3a 083", CardId::B3a083FlutterManeEx);
+    map.insert("B3a 084", CardId::B3a084KoraidonEx);
+    map.insert("B3a 085", CardId::B3a085TerapagosEx);
+    map.insert("B3a 086", CardId::B3a086Juliana);
+    map.insert("B3a 087", CardId::B3a087ProfessorSada);
+    map.insert("B3a 088", CardId::B3a088ProfessorTuro);
+    map.insert("B3a 089", CardId::B3a089IronBundleEx);
+    map.insert("B3a 090", CardId::B3a090MiraidonEx);
+    map.insert("B3a 091", CardId::B3a091FlutterManeEx);
+    map.insert("B3a 092", CardId::B3a092KoraidonEx);
+    map.insert("B3a 093", CardId::B3a093TerapagosEx);
+    map.insert("B3a 094", CardId::B3a094Rellor);
+    map.insert("B3a 095", CardId::B3a095Charcadet);
+    map.insert("B3a 096", CardId::B3a096Tadbulb);
+    map.insert("B3a 097", CardId::B3a097Rabsca);
+    map.insert("B3a 098", CardId::B3a098Diglett);
+    map.insert("B3a 099", CardId::B3a099Dugtrio);
+    map.insert("B3a 100", CardId::B3a100Klawf);
+    map.insert("B3a 101", CardId::B3a101Orthworm);
+    map.insert("B3a 102", CardId::B3a102Swablu);
+    map.insert("B3a 103", CardId::B3a103Altaria);
+    map.insert("B3a 104", CardId::B3a104MeowscaradaEx);
+    map.insert("B3a 105", CardId::B3a105ArmarougeEx);
+    map.insert("B3a 106", CardId::B3a106BelliboltEx);
+    map.insert("B3a 107", CardId::B3a107MegaAltariaEx);
+    map.insert("B3a 108", CardId::B3a108IronValiant);
+    map.insert("B3a 109", CardId::B3a109RoaringMoon);
     map.insert("P-A 001", CardId::PA001Potion);
     map.insert("P-A 002", CardId::PA002XSpeed);
     map.insert("P-A 003", CardId::PA003HandScope);
@@ -6589,6 +6815,14 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 060", CardId::PB060Zarude);
     map.insert("P-B 061", CardId::PB061Treecko);
     map.insert("P-B 062", CardId::PB062Gallade);
+    map.insert("P-B 063", CardId::PB063MeowscaradaEx);
+    map.insert("P-B 064", CardId::PB064Charcadet);
+    map.insert("P-B 065", CardId::PB065Vaporeon);
+    map.insert("P-B 066", CardId::PB066CeruledgeEx);
+    map.insert("P-B 067", CardId::PB067Pawniard);
+    map.insert("P-B 068", CardId::PB068Dudunsparce);
+    map.insert("P-B 069", CardId::PB069Floragato);
+    map.insert("P-B 070", CardId::PB070Sableye);
     map
 });
 

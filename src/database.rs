@@ -36,6 +36,7 @@ static DATABASE: LazyLock<HashMap<CardId, Card>> = LazyLock::new(|| {
     populate_database_chunk_23(&mut map);
     populate_database_chunk_24(&mut map);
     populate_database_chunk_25(&mut map);
+    populate_database_chunk_26(&mut map);
     map
 });
 
@@ -69219,6 +69220,2418 @@ fn populate_database_chunk_24(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Pulsing Aura (B3)".to_string(),
         }));
     map.insert(
+        CardId::B3a001Surskit,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 001".to_string(),
+            name: "Surskit".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Ram".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a002Masquerain,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 002".to_string(),
+            name: "Masquerain".to_string(),
+            stage: 1,
+            evolves_from: Some("Surskit".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Air Slash".to_string(),
+                fixed_damage: 70,
+                effect: Some("Discard a random Energy from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a003BruteBonnet,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 003".to_string(),
+            name: "Brute Bonnet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Colorless],
+                title: "Spirited Smack".to_string(),
+                fixed_damage: 90,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a004SlitherWing,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 004".to_string(),
+            name: "Slither Wing".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Colorless],
+                title: "Wildly Writhe".to_string(),
+                fixed_damage: 120,
+                effect: Some("This Pokémon also does 60 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a005IronMoth, Card::Pokemon(PokemonCard {
+            id: "B3a 005".to_string(),
+            name: "Iron Moth".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Colorless,],
+                    title: "Thermal Gust".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("Flip 3 coins. If 1 of them is heads, this attack does 20 more damage. If 2 of them are heads, this attack does 50 more damage. If all of them are heads, this attack does 120 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a006Psyduck,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 006".to_string(),
+            name: "Psyduck".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Ram".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a007Golduck, Card::Pokemon(PokemonCard {
+            id: "B3a 007".to_string(),
+            name: "Golduck".to_string(),
+            stage: 1,
+            evolves_from: Some("Psyduck".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Psychic".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a008Vaporeon,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 008".to_string(),
+            name: "Vaporeon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water],
+                title: "Impound".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "During your opponent's next turn, the Defending Pokémon can't retreat."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a009Buizel,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 009".to_string(),
+            name: "Buizel".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water],
+                title: "Surf".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a010Floatzel,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 010".to_string(),
+            name: "Floatzel".to_string(),
+            stage: 1,
+            evolves_from: Some("Buizel".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
+                title: "Waterfall".to_string(),
+                fixed_damage: 90,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a011Snom,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 011".to_string(),
+            name: "Snom".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Gnaw".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a012Frosmoth,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 012".to_string(),
+            name: "Frosmoth".to_string(),
+            stage: 1,
+            evolves_from: Some("Snom".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Aurora Beam".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a013IronBundleEx, Card::Pokemon(PokemonCard {
+            id: "B3a 013".to_string(),
+            name: "Iron Bundle ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
+                    title: "Cold Start".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a014Pawmi,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 014".to_string(),
+            name: "Pawmi".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Bite".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a015Pawmo,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 015".to_string(),
+            name: "Pawmo".to_string(),
+            stage: 1,
+            evolves_from: Some("Pawmi".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Spark".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "This attack also does 10 damage to 1 of your opponent's Benched Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a016Pawmot,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 016".to_string(),
+            name: "Pawmot".to_string(),
+            stage: 2,
+            evolves_from: Some("Pawmo".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Volt Wave".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a017IronHands,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 017".to_string(),
+            name: "Iron Hands".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Lightning,
+                    EnergyType::Lightning,
+                    EnergyType::Colorless,
+                ],
+                title: "Successive Slapping".to_string(),
+                fixed_damage: 70,
+                effect: Some(
+                    "Flip 2 coins. This attack does 70 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a018IronThorns, Card::Pokemon(PokemonCard {
+            id: "B3a 018".to_string(),
+            name: "Iron Thorns".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Binary Thunder".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a019MiraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 019".to_string(),
+            name: "Miraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Hadron Ray".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("This attack does 20 more damage for each [L] Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a020Espeon,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 020".to_string(),
+            name: "Espeon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Hypnoblast".to_string(),
+                fixed_damage: 40,
+                effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a021Flittle,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 021".to_string(),
+            name: "Flittle".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Psy Bolt".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a022Espathra,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 022".to_string(),
+            name: "Espathra".to_string(),
+            stage: 1,
+            evolves_from: Some("Flittle".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Psychic],
+                title: "Lumina Crash".to_string(),
+                fixed_damage: 50,
+                effect: Some(
+                    "During your next turn, the Defending Pokémon takes +50 damage from attacks."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a023Greavard,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 023".to_string(),
+            name: "Greavard".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Sharp Fang".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a024Houndstone,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 024".to_string(),
+            name: "Houndstone".to_string(),
+            stage: 1,
+            evolves_from: Some("Greavard".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Psychic,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Spooky Shot".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a025ScreamTail, Card::Pokemon(PokemonCard {
+            id: "B3a 025".to_string(),
+            name: "Scream Tail".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Shooing Shout".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip 2 coins. If both of them are heads, discard your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a026FlutterManeEx, Card::Pokemon(PokemonCard {
+            id: "B3a 026".to_string(),
+            name: "Flutter Mane ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Spellbinding Start".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a027IronValiant,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 027".to_string(),
+            name: "Iron Valiant".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: Some(Ability {
+                title: "Future System".to_string(),
+                effect: "Attacks used by your Future Pokémon cost 1 less [C] Energy.".to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Psychic],
+                title: "Slicing Blade".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a028IronLeaves, Card::Pokemon(PokemonCard {
+            id: "B3a 028".to_string(),
+            name: "Iron Leaves".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Avenging Edge".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a029IronBoulder,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 029".to_string(),
+            name: "Iron Boulder".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Psychic,
+                    EnergyType::Psychic,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Modular Axe".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a030IronCrown,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 030".to_string(),
+            name: "Iron Crown".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Enumerating Blade".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "This attack does 20 more damage for each of your opponent's Benched Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a031Nacli,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 031".to_string(),
+            name: "Nacli".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Headbutt".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a032Naclstack,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 032".to_string(),
+            name: "Naclstack".to_string(),
+            stage: 1,
+            evolves_from: Some("Nacli".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Fighting],
+                title: "Rock Throw".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a033Garganacl,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 033".to_string(),
+            name: "Garganacl".to_string(),
+            stage: 2,
+            evolves_from: Some("Naclstack".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: Some(Ability {
+                title: "Blessed Salt".to_string(),
+                effect: "During Pokémon Checkup, heal 10 damage from each of your Pokémon."
+                    .to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                ],
+                title: "Land Crush".to_string(),
+                fixed_damage: 90,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a034GreatTusk,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 034".to_string(),
+            name: "Great Tusk".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Fighting],
+                title: "Shaking Stomp".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "This attack also does 20 damage to each of your Benched Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a035SandyShocks, Card::Pokemon(PokemonCard {
+            id: "B3a 035".to_string(),
+            name: "Sandy Shocks".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
+                    title: "Pull In and Pound".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a036KoraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 036".to_string(),
+            name: "Koraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "World Wrecker".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Discard the top card of your deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a037Umbreon,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 037".to_string(),
+            name: "Umbreon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness, EnergyType::Colorless],
+                title: "Confuse Ray".to_string(),
+                fixed_damage: 50,
+                effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a038Sneasel,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 038".to_string(),
+            name: "Sneasel".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Quick Attack".to_string(),
+                fixed_damage: 10,
+                effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a039Weavile, Card::Pokemon(PokemonCard {
+            id: "B3a 039".to_string(),
+            name: "Weavile".to_string(),
+            stage: 1,
+            evolves_from: Some("Sneasel".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Raid".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If this Pokémon evolved from Sneasel during this turn, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a040Sableye, Card::Pokemon(PokemonCard {
+            id: "B3a 040".to_string(),
+            name: "Sableye".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Jeweled Gift".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Take a random Energy from among [G], [R], [W], [L], [P], [F], [D], and [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a041Pawniard,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 041".to_string(),
+            name: "Pawniard".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Slash".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a042Bisharp,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 042".to_string(),
+            name: "Bisharp".to_string(),
+            stage: 1,
+            evolves_from: Some("Pawniard".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Dark Cutter".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a043Kingambit, Card::Pokemon(PokemonCard {
+            id: "B3a 043".to_string(),
+            name: "Kingambit".to_string(),
+            stage: 2,
+            evolves_from: Some("Bisharp".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Overlord's Blade".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("This attack does 40 more damage for each time your Pokémon have been Knocked Out during this game.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a044Glimmet,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 044".to_string(),
+            name: "Glimmet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Hang Down".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a045Glimmora, Card::Pokemon(PokemonCard {
+            id: "B3a 045".to_string(),
+            name: "Glimmora".to_string(),
+            stage: 1,
+            evolves_from: Some("Glimmet".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Shattering Crystal".to_string(), effect: "When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Venomous Hit".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("Your opponent's Active Pokémon is now Poisoned.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a046IronJugulis, Card::Pokemon(PokemonCard {
+            id: "B3a 046".to_string(),
+            name: "Iron Jugulis".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Automated Combat".to_string(), effect: "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 20 damage to the Attacking Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Blasting Wind".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a047RoaringMoon, Card::Pokemon(PokemonCard {
+            id: "B3a 047".to_string(),
+            name: "Roaring Moon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Ancient Roar".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Wind of Darkness".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a048Corviknight,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 048".to_string(),
+            name: "Corviknight".to_string(),
+            stage: 2,
+            evolves_from: Some("Corvisquire".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Metal],
+                title: "Metal Claw".to_string(),
+                fixed_damage: 90,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a049Cufant,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 049".to_string(),
+            name: "Cufant".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Metal,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Strength".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a050Copperajah,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 050".to_string(),
+            name: "Copperajah".to_string(),
+            stage: 1,
+            evolves_from: Some("Cufant".to_string()),
+            hp: 170,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Iron Swing".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "Flip 2 coins. This attack does 100 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a051IronTreads, Card::Pokemon(PokemonCard {
+            id: "B3a 051".to_string(),
+            name: "Iron Treads".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,],
+                    title: "Roll and Release".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Flip a coin until you get tails. This attack does 30 more damage for each heads.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a052Altaria, Card::Pokemon(PokemonCard {
+            id: "B3a 052".to_string(),
+            name: "Altaria".to_string(),
+            stage: 1,
+            evolves_from: Some("Swablu".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Fly".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a053WalkingWake, Card::Pokemon(PokemonCard {
+            id: "B3a 053".to_string(),
+            name: "Walking Wake".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Water,],
+                    title: "Sweeping Billow".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("Discard an Energy from this Pokémon, and this attack also does 20 damage to each of your opponent's Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a054GougingFire, Card::Pokemon(PokemonCard {
+            id: "B3a 054".to_string(),
+            name: "Gouging Fire".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Scorching Interruption".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("Discard 2 Energy from this Pokémon. During your opponent's next turn, this Pokémon takes -30 damage from attacks.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a055RagingBolt, Card::Pokemon(PokemonCard {
+            id: "B3a 055".to_string(),
+            name: "Raging Bolt".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Baneful Boom".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Discard all Energy from this Pokémon. Knock Out your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a056Eevee, Card::Pokemon(PokemonCard {
+            id: "B3a 056".to_string(),
+            name: "Eevee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Tail Whip".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, the Defending Pokémon can't attack during your opponent's next turn.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a057Girafarig,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 057".to_string(),
+            name: "Girafarig".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Headbang".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a058Farigiraf,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 058".to_string(),
+            name: "Farigiraf".to_string(),
+            stage: 1,
+            evolves_from: Some("Girafarig".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Double Hit".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "Flip 2 coins. This attack does 60 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a059Dunsparce,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 059".to_string(),
+            name: "Dunsparce".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Rollout".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a060Dudunsparce, Card::Pokemon(PokemonCard {
+            id: "B3a 060".to_string(),
+            name: "Dudunsparce".to_string(),
+            stage: 1,
+            evolves_from: Some("Dunsparce".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Sudden Drilling".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this Pokémon evolved from Dunsparce during this turn, discard 2 random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a061Swablu,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 061".to_string(),
+            name: "Swablu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Fury Attack".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip 3 coins. This attack does 10 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a062Rufflet,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 062".to_string(),
+            name: "Rufflet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Peck".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a063Braviary,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 063".to_string(),
+            name: "Braviary".to_string(),
+            stage: 1,
+            evolves_from: Some("Rufflet".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Brave Bird".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon also does 20 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a064Hawlucha,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 064".to_string(),
+            name: "Hawlucha".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Acrobatics".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 more damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a065Rookidee,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 065".to_string(),
+            name: "Rookidee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Claw".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a066Corvisquire,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 066".to_string(),
+            name: "Corvisquire".to_string(),
+            stage: 1,
+            evolves_from: Some("Rookidee".to_string()),
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Flap".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a067Flamigo,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 067".to_string(),
+            name: "Flamigo".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Nosedive".to_string(),
+                fixed_damage: 80,
+                effect: Some("This Pokémon also does 20 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a068TerapagosEx, Card::Pokemon(PokemonCard {
+            id: "B3a 068".to_string(),
+            name: "Terapagos ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Prism Impact".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("This attack does 20 more damage for each type of Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a069AncientBoosterEnergyCapsule,
+        Card::Trainer(TrainerCard {
+            id: "B3a 069".to_string(),
+            name: "Ancient Booster Energy Capsule".to_string(),
+            effect: "The Ancient Pokémon this card is attached to gets +40 HP.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }),
+    );
+    map.insert(CardId::B3a070FutureBoosterEnergyCapsule, Card::Trainer(TrainerCard {
+            id: "B3a 070".to_string(),
+            name: "Future Booster Energy Capsule".to_string(),
+            effect: "Attacks used by the Future Pokémon this card is attached to do +20 damage to your opponent's Active Pokémon.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }));
+    map.insert(
+        CardId::B3a071Juliana,
+        Card::Trainer(TrainerCard {
+            id: "B3a 071".to_string(),
+            name: "Juliana".to_string(),
+            effect: "Put a random Stage 2 Pokémon from your deck into your hand.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B3a072ProfessorSada, Card::Trainer(TrainerCard {
+            id: "B3a 072".to_string(),
+            name: "Professor Sada".to_string(),
+            effect: "Attach 3 different types of Energy from your discard pile to your Ancient Pokémon in any way you like.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(
+        CardId::B3a073ProfessorTuro,
+        Card::Trainer(TrainerCard {
+            id: "B3a 073".to_string(),
+            name: "Professor Turo".to_string(),
+            effect: "Shuffle 1 of your Future Pokémon in play into your deck.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B3a074AreaZero, Card::Trainer(TrainerCard {
+            id: "B3a 074".to_string(),
+            name: "Area Zero".to_string(),
+            effect: "Once during each player's turn, that player may shuffle a Basic Pokémon from their hand into their deck. If they do, they draw a card.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Stadium,
+        }));
+    map.insert(
+        CardId::B3a075Snom,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 075".to_string(),
+            name: "Snom".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Gnaw".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a076Flittle,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 076".to_string(),
+            name: "Flittle".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Psy Bolt".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a077IronBoulder,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 077".to_string(),
+            name: "Iron Boulder".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Psychic,
+                    EnergyType::Psychic,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Modular Axe".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a078Glimmora, Card::Pokemon(PokemonCard {
+            id: "B3a 078".to_string(),
+            name: "Glimmora".to_string(),
+            stage: 1,
+            evolves_from: Some("Glimmet".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Shattering Crystal".to_string(), effect: "When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Venomous Hit".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("Your opponent's Active Pokémon is now Poisoned.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a079RagingBolt, Card::Pokemon(PokemonCard {
+            id: "B3a 079".to_string(),
+            name: "Raging Bolt".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Baneful Boom".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Discard all Energy from this Pokémon. Knock Out your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a080Hawlucha,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 080".to_string(),
+            name: "Hawlucha".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Acrobatics".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 more damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a081IronBundleEx, Card::Pokemon(PokemonCard {
+            id: "B3a 081".to_string(),
+            name: "Iron Bundle ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
+                    title: "Cold Start".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a082MiraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 082".to_string(),
+            name: "Miraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Hadron Ray".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("This attack does 20 more damage for each [L] Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a083FlutterManeEx, Card::Pokemon(PokemonCard {
+            id: "B3a 083".to_string(),
+            name: "Flutter Mane ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Spellbinding Start".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a084KoraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 084".to_string(),
+            name: "Koraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "World Wrecker".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Discard the top card of your deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a085TerapagosEx, Card::Pokemon(PokemonCard {
+            id: "B3a 085".to_string(),
+            name: "Terapagos ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Prism Impact".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("This attack does 20 more damage for each type of Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a086Juliana,
+        Card::Trainer(TrainerCard {
+            id: "B3a 086".to_string(),
+            name: "Juliana".to_string(),
+            effect: "Put a random Stage 2 Pokémon from your deck into your hand.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B3a087ProfessorSada, Card::Trainer(TrainerCard {
+            id: "B3a 087".to_string(),
+            name: "Professor Sada".to_string(),
+            effect: "Attach 3 different types of Energy from your discard pile to your Ancient Pokémon in any way you like.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(
+        CardId::B3a088ProfessorTuro,
+        Card::Trainer(TrainerCard {
+            id: "B3a 088".to_string(),
+            name: "Professor Turo".to_string(),
+            effect: "Shuffle 1 of your Future Pokémon in play into your deck.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B3a089IronBundleEx, Card::Pokemon(PokemonCard {
+            id: "B3a 089".to_string(),
+            name: "Iron Bundle ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
+                    title: "Cold Start".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a090MiraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 090".to_string(),
+            name: "Miraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Hadron Ray".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("This attack does 20 more damage for each [L] Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+}
+
+fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
+    map.insert(CardId::B3a091FlutterManeEx, Card::Pokemon(PokemonCard {
+            id: "B3a 091".to_string(),
+            name: "Flutter Mane ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Spellbinding Start".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a092KoraidonEx, Card::Pokemon(PokemonCard {
+            id: "B3a 092".to_string(),
+            name: "Koraidon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: Some(Ability { title: "Legendary Drive".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "World Wrecker".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Discard the top card of your deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(CardId::B3a093TerapagosEx, Card::Pokemon(PokemonCard {
+            id: "B3a 093".to_string(),
+            name: "Terapagos ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Prism Impact".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("This attack does 20 more damage for each type of Energy attached to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆☆".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a094Rellor,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 094".to_string(),
+            name: "Rellor".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Ball Roll".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip a coin until you get tails. This attack does 20 damage for each heads."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a095Charcadet,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 095".to_string(),
+            name: "Charcadet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Punch".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a096Tadbulb,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 096".to_string(),
+            name: "Tadbulb".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Charge".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Take a [L] Energy from your Energy Zone and attach it to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a097Rabsca,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 097".to_string(),
+            name: "Rabsca".to_string(),
+            stage: 1,
+            evolves_from: Some("Rellor".to_string()),
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Psychic],
+                title: "Psybeam".to_string(),
+                fixed_damage: 80,
+                effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a098Diglett,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 098".to_string(),
+            name: "Diglett".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Slight Intrusion".to_string(),
+                fixed_damage: 30,
+                effect: Some("This Pokémon also does 10 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a099Dugtrio,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 099".to_string(),
+            name: "Dugtrio".to_string(),
+            stage: 1,
+            evolves_from: Some("Diglett".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Mud Bomb".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a100Klawf,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 100".to_string(),
+            name: "Klawf".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Fighting],
+                title: "Adrenaline Hammer".to_string(),
+                fixed_damage: 70,
+                effect: Some("This Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a101Orthworm, Card::Pokemon(PokemonCard {
+            id: "B3a 101".to_string(),
+            name: "Orthworm".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,],
+                    title: "Iron Supply".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("Take a [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a102Swablu,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 102".to_string(),
+            name: "Swablu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Sing".to_string(),
+                fixed_damage: 0,
+                effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a103Altaria,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 103".to_string(),
+            name: "Altaria".to_string(),
+            stage: 1,
+            evolves_from: Some("Swablu".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Do the Wave".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "This attack does 20 more damage for each of your Benched Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a104MeowscaradaEx, Card::Pokemon(PokemonCard {
+            id: "B3a 104".to_string(),
+            name: "Meowscarada ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Floragato".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Flower Trick".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.".to_string()),
+                },
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Solar Beam".to_string(),
+                    fixed_damage: 80,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
+        CardId::B3a105ArmarougeEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 105".to_string(),
+            name: "Armarouge ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Charcadet".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Fire,
+            ability: Some(Ability {
+                title: "Armor".to_string(),
+                effect: "This Pokémon takes -30 damage from attacks.".to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fire,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Armor Cannon".to_string(),
+                fixed_damage: 120,
+                effect: Some("Discard a [R] Energy from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "**".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a106BelliboltEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 106".to_string(),
+            name: "Bellibolt ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Tadbulb".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "High-Voltage Cannon".to_string(),
+                fixed_damage: 70,
+                effect: Some(
+                    "If you have 4 or more [L] Energy in play, this attack does 70 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "**".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a107MegaAltariaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 107".to_string(),
+            name: "Mega Altaria ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Swablu".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Psychic],
+                title: "Mega Harmony".to_string(),
+                fixed_damage: 40,
+                effect: Some(
+                    "This attack does 30 more damage for each of your Benched Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "**".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3a108IronValiant,
+        Card::Pokemon(PokemonCard {
+            id: "B3a 108".to_string(),
+            name: "Iron Valiant".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: Some(Ability {
+                title: "Future System".to_string(),
+                effect: "Attacks used by your Future Pokémon cost 1 less [C] Energy.".to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Psychic],
+                title: "Slicing Blade".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "♛".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3a109RoaringMoon, Card::Pokemon(PokemonCard {
+            id: "B3a 109".to_string(),
+            name: "Roaring Moon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: Some(Ability { title: "Ancient Roar".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Wind of Darkness".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "♛".to_string(),
+            booster_pack: "Paradox Drive (B3a)".to_string(),
+        }));
+    map.insert(
         CardId::PA001Potion,
         Card::Trainer(TrainerCard {
             id: "P-A 001".to_string(),
@@ -71256,9 +73669,6 @@ fn populate_database_chunk_24(map: &mut HashMap<CardId, Card>) {
             rarity: "◊◊◊".to_string(),
             booster_pack: "Promo A (P-A)".to_string(),
         }));
-}
-
-fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PA091Greedent,
         Card::Pokemon(PokemonCard {
@@ -71698,6 +74108,9 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             rarity: "☆☆".to_string(),
             booster_pack: "Promo A (P-A)".to_string(),
         }));
+}
+
+fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
     map.insert(CardId::PA110EnteiEx, Card::Pokemon(PokemonCard {
             id: "P-A 110".to_string(),
             name: "Entei ex".to_string(),
@@ -73371,6 +75784,188 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Promo B (P-B)".to_string(),
         }),
     );
+    map.insert(CardId::PB063MeowscaradaEx, Card::Pokemon(PokemonCard {
+            id: "P-B 063".to_string(),
+            name: "Meowscarada ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Floragato".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Flower Trick".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, do 70 damage to the Pokémon in the spot you chose.".to_string()),
+                },
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Solar Beam".to_string(),
+                    fixed_damage: 80,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(CardId::PB064Charcadet, Card::Pokemon(PokemonCard {
+            id: "P-B 064".to_string(),
+            name: "Charcadet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Protect".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB065Vaporeon,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 065".to_string(),
+            name: "Vaporeon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water],
+                title: "Impound".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "During your opponent's next turn, the Defending Pokémon can't retreat."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB066CeruledgeEx, Card::Pokemon(PokemonCard {
+            id: "P-B 066".to_string(),
+            name: "Ceruledge ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Charcadet".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Shimmering Slash".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB067Pawniard,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 067".to_string(),
+            name: "Pawniard".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Call for Family".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Put 1 random Basic Pokémon from your deck onto your Bench.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB068Dudunsparce, Card::Pokemon(PokemonCard {
+            id: "P-B 068".to_string(),
+            name: "Dudunsparce".to_string(),
+            stage: 1,
+            evolves_from: Some("Dunsparce".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Sudden Drilling".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this Pokémon evolved from Dunsparce during this turn, discard 2 random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB069Floragato,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 069".to_string(),
+            name: "Floragato".to_string(),
+            stage: 1,
+            evolves_from: Some("Sprigatito".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Leaf Step".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB070Sableye, Card::Pokemon(PokemonCard {
+            id: "P-B 070".to_string(),
+            name: "Sableye".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Jeweled Gift".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Take a random Energy from among [G], [R], [W], [L], [P], [F], [D], and [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
 }
 
 pub fn get_card_by_enum(id: CardId) -> Card {
