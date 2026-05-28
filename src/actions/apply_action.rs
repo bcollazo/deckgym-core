@@ -521,6 +521,23 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
     }
 
     state.has_retreated = true;
+
+    // Legendary Drive: when ability_used is set on the newly-active pokemon, it means
+    // UseAbility was called for LegendaryDrive this turn; move all bench energy to it.
+    let legendary_drive_triggered = state.in_play_pokemon[player][0].as_ref().is_some_and(|p| {
+        p.ability_used && has_ability_mechanic(&p.card, &AbilityMechanic::LegendaryDrive)
+    });
+    if legendary_drive_triggered {
+        let mut gathered: Vec<EnergyType> = Vec::new();
+        for i in 1..state.in_play_pokemon[player].len() {
+            if let Some(pokemon) = state.in_play_pokemon[player][i].as_mut() {
+                gathered.append(&mut pokemon.attached_energy);
+            }
+        }
+        if let Some(active) = state.in_play_pokemon[player][0].as_mut() {
+            active.attached_energy.extend(gathered);
+        }
+    }
 }
 
 // We will replace the PlayedCard, but taking into account the attached energy

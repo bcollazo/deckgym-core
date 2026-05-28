@@ -59,12 +59,24 @@ fn test_legendary_drive_switches_to_active_and_moves_energy() {
         "Noop should be offered alongside Legendary Drive"
     );
 
-    // Choose to use Legendary Drive
+    // Choose to use Legendary Drive (pushes Activate onto the stack)
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 2 },
         is_stack: true,
     });
+
+    // UseAbility queues the Activate; apply it to complete the switch
+    let activate_action = find_action(&game, |a| {
+        matches!(
+            a.action,
+            SimpleAction::Activate {
+                player: 0,
+                in_play_idx: 2
+            }
+        )
+    });
+    game.apply_action(&activate_action);
 
     // After the switch, Miraidon ex should be the active pokemon
     let state = game.get_state_clone();

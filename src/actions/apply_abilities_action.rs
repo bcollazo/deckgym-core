@@ -545,39 +545,16 @@ fn move_fixed_damage_from_active_to_this_benched(self_idx: usize, amount: u32) -
 }
 
 fn legendary_drive(bench_idx: usize) -> Outcomes {
-    Outcomes::single_fn(move |_rng, state, action| {
-        let actor = action.actor;
-        debug!(
-            "Legendary Drive: switching bench index {bench_idx} to active and moving all energy"
-        );
-
-        // Swap bench pokemon with active
-        state.in_play_pokemon[actor].swap(0, bench_idx);
-
-        // Clear status of the pokemon that went to bench
-        if let Some(pokemon) = state.in_play_pokemon[actor][bench_idx].as_mut() {
-            pokemon.clear_status_and_effects();
-        }
-
-        // Mark the new active as having moved from bench to active this turn
-        if let Some(pokemon) = state.in_play_pokemon[actor][0].as_mut() {
-            pokemon.moved_to_active_this_turn = true;
-        }
-
-        // Prevent further retreating this turn (switching counts as the retreat action)
-        state.has_retreated = true;
-
-        // Move all energy from every benched pokemon to the newly-active pokemon
-        let mut gathered: Vec<EnergyType> = Vec::new();
-        for i in 1..state.in_play_pokemon[actor].len() {
-            if let Some(pokemon) = state.in_play_pokemon[actor][i].as_mut() {
-                gathered.append(&mut pokemon.attached_energy);
-            }
-        }
-        if let Some(active) = state.in_play_pokemon[actor][0].as_mut() {
-            active.attached_energy.extend(gathered);
-        }
-    })
+    Outcomes::single(Box::new(move |_, state, action| {
+        debug!("Legendary Drive: switching bench index {bench_idx} to active");
+        state.move_generation_stack.push((
+            action.actor,
+            vec![SimpleAction::Activate {
+                player: action.actor,
+                in_play_idx: bench_idx,
+            }],
+        ));
+    }))
 }
 
 fn switch_out_opponent_active_to_bench() -> Outcomes {
