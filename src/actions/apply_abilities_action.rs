@@ -547,7 +547,9 @@ fn move_fixed_damage_from_active_to_this_benched(self_idx: usize, amount: u32) -
 fn legendary_drive(bench_idx: usize) -> Outcomes {
     Outcomes::single(Box::new(move |_, state, action| {
         let player = action.actor;
-        debug!("Legendary Drive: switching bench index {bench_idx} to active and moving all energy");
+        debug!(
+            "Legendary Drive: switching bench index {bench_idx} to active and moving all energy"
+        );
         apply_activate(player, state, bench_idx);
         let mut gathered: Vec<EnergyType> = Vec::new();
         for i in 1..state.in_play_pokemon[player].len() {
