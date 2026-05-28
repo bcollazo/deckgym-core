@@ -50,6 +50,8 @@ mod iron_bundle_ex_test;
 mod iron_hands_test;
 #[path = "pokemon/iron_moth_test.rs"]
 mod iron_moth_test;
+#[path = "pokemon/iron_thorns_test.rs"]
+mod iron_thorns_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
 mod jolteon_ex_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
