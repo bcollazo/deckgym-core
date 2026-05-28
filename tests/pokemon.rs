@@ -48,6 +48,8 @@ mod houndstone_last_respects_test;
 mod iron_bundle_ex_test;
 #[path = "pokemon/iron_hands_test.rs"]
 mod iron_hands_test;
+#[path = "pokemon/iron_leaves_test.rs"]
+mod iron_leaves_test;
 #[path = "pokemon/iron_moth_test.rs"]
 mod iron_moth_test;
 #[path = "pokemon/iron_thorns_test.rs"]
