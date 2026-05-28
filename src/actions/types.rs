@@ -135,6 +135,10 @@ pub enum SimpleAction {
     ReturnPokemonToHand {
         in_play_idx: usize,
     },
+    /// Shuffle a Pokemon from play into its owner's deck (e.g., Professor Turo).
+    ShuffleInPlayPokemonIntoDeck {
+        in_play_idx: usize,
+    },
     /// Field Blower: discard the tool attached to a specific Pokémon (any player).
     DiscardToolFromPokemon {
         player: usize,
@@ -287,6 +291,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::ReturnPokemonToHand { in_play_idx } => {
                 write!(f, "ReturnPokemonToHand({in_play_idx})")
+            }
+            SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
+                write!(f, "ShuffleInPlayPokemonIntoDeck({in_play_idx})")
             }
             SimpleAction::DiscardToolFromPokemon { player, in_play_idx } => {
                 write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")

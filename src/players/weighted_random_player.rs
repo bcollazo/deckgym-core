@@ -68,6 +68,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::HealAllEeveeEvolutions => 5,
         SimpleAction::DiscardFossil { .. } => 1, // Low weight to discard fossils
         SimpleAction::ReturnPokemonToHand { .. } => 5,
+        SimpleAction::ShuffleInPlayPokemonIntoDeck { .. } => 5,
         SimpleAction::DiscardToolFromPokemon { .. } => 5,
         SimpleAction::DiscardActiveStadium => 5,
         SimpleAction::DiscardRandomOpponentActiveEnergy => 10,
