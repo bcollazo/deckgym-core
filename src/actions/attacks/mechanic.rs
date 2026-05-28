@@ -377,4 +377,14 @@ pub enum Mechanic {
         num_coins: usize,
         extra_damage_by_heads: Vec<u32>,
     },
+    /// First attack after coming into play: conditionally apply a turn effect (e.g. Flutter Mane).
+    FirstAttackBonusTurnEffect {
+        effect: TurnEffect,
+        duration: u8,
+    },
+    /// First attack after coming into play: conditionally deal extra damage and inflict status (e.g. Iron Bundle).
+    FirstAttackBonusDamageAndStatus {
+        extra_damage: u32,
+        conditions: Vec<StatusCondition>,
+    },
 }
