@@ -10,6 +10,7 @@ mod effect_ability_mechanic_map;
 mod effect_mechanic_map;
 mod mutations;
 mod outcomes;
+pub mod professor_sada;
 mod shared_mutations;
 mod types;
 

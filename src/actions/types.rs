@@ -121,6 +121,10 @@ pub enum SimpleAction {
         in_play_idx: usize,
         num_random_energies: usize,
     },
+    /// Professor Sada: attach 3 specific different-typed energies from discard to Ancient Pokémon
+    SadaAttach {
+        assignments: Vec<(EnergyType, usize)>, // (energy_type, in_play_idx) × 3
+    },
     /// Eevee Bag Option 1: Apply damage boost for Eevee evolutions this turn
     ApplyEeveeBagDamageBoost,
     /// Eevee Bag Option 2: Heal all Eevee evolutions
@@ -279,6 +283,14 @@ impl fmt::Display for SimpleAction {
                 num_random_energies,
             } => {
                 write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
+            }
+            SimpleAction::SadaAttach { assignments } => {
+                let s = assignments
+                    .iter()
+                    .map(|(e, idx)| format!("{e:?}→{idx}"))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                write!(f, "SadaAttach([{s}])")
             }
             SimpleAction::ApplyEeveeBagDamageBoost => {
                 write!(f, "ApplyEeveeBagDamageBoost")

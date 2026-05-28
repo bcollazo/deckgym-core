@@ -111,6 +111,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
             *in_play_idx,
             *num_random_energies,
         ),
+        SimpleAction::SadaAttach { assignments } => forecast_sada_attach(assignments),
         SimpleAction::UseStadium => forecast_use_stadium(state, action.actor),
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
         SimpleAction::EndTurn => {
@@ -740,6 +741,15 @@ fn generate_energy_combinations(energies: &[EnergyType]) -> Vec<(Vec<EnergyType>
         }
     }
     combination_counts.into_iter().collect()
+}
+
+fn forecast_sada_attach(assignments: &[(crate::models::EnergyType, usize)]) -> Outcomes {
+    let assignments = assignments.to_vec();
+    Outcomes::single_fn(move |_, state, action| {
+        for (energy, in_play_idx) in &assignments {
+            state.attach_energy_from_discard(action.actor, *in_play_idx, &[*energy]);
+        }
+    })
 }
 
 fn apply_eevee_bag_damage_boost(state: &mut State) {
