@@ -8,3 +8,5 @@ mod iris_trainer_test;
 mod juliana_test;
 #[path = "trainers/korrina_cabbie_parasol_lady_test.rs"]
 mod korrina_cabbie_parasol_lady_test;
+#[path = "trainers/professor_turo_test.rs"]
+mod professor_turo_test;

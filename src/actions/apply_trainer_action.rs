@@ -18,7 +18,7 @@ use crate::{
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
-    hooks::{get_stage, is_ultra_beast},
+    hooks::{get_stage, is_future_pokemon, is_ultra_beast},
     models::{Card, EnergyType, StatusCondition, TrainerCard, TrainerType},
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
@@ -199,6 +199,9 @@ pub fn forecast_trainer_action(
             1,
             |card| matches!(card, Card::Pokemon(p) if p.stage == 2),
         ),
+        CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
+            professor_turo_effect(acting_player, state)
+        }
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -371,6 +374,23 @@ fn parasol_lady_effect(acting_player: usize, state: &State) -> Outcomes {
             pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
         })
         .map(|(in_play_idx, _)| SimpleAction::ReturnPokemonToHand { in_play_idx })
+        .collect();
+
+    Outcomes::single_fn(move |_, state, action| {
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }
+    })
+}
+
+fn professor_turo_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Shuffle 1 of your Future Pokémon in play into your deck.
+    let choices: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(acting_player)
+        .filter(|(_, pokemon)| is_future_pokemon(&pokemon.get_name()))
+        .map(|(in_play_idx, _)| SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx })
         .collect();
 
     Outcomes::single_fn(move |_, state, action| {

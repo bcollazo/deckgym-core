@@ -5,7 +5,7 @@ use crate::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
     },
     effects::TurnEffect,
-    hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
+    hooks::{can_play_item, can_play_support, get_stage, is_future_pokemon, is_ultra_beast},
     models::{Card, EnergyType, TrainerCard, TrainerType},
     stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
@@ -228,6 +228,9 @@ pub fn trainer_move_generation_implementation(
             can_play_parasol_lady(state, trainer_card)
         }
         CardId::B3a071Juliana | CardId::B3a086Juliana => can_play_trainer(state, trainer_card),
+        CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
+            can_play_professor_turo(state, trainer_card)
+        }
         _ => None,
     }
 }
@@ -811,6 +814,18 @@ fn can_play_parasol_lady(state: &State, trainer_card: &TrainerCard) -> Option<Ve
             pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
         });
     if has_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Professor Turo can be played (requires at least one Future Pokémon in play)
+fn can_play_professor_turo(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_future = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| is_future_pokemon(&pokemon.get_name()));
+    if has_future {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

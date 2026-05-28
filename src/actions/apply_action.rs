@@ -63,6 +63,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
         | SimpleAction::ReturnPokemonToHand { .. }
+        | SimpleAction::ShuffleInPlayPokemonIntoDeck { .. }
         | SimpleAction::DiscardToolFromPokemon { .. }
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
@@ -243,6 +244,9 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::ReturnPokemonToHand { in_play_idx } => {
             apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
         }
+        SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
+            apply_shuffle_in_play_pokemon_into_deck(action.actor, state, *in_play_idx)
+        }
         SimpleAction::DiscardToolFromPokemon {
             player,
             in_play_idx,
@@ -380,6 +384,23 @@ fn apply_return_pokemon_to_hand(acting_player: usize, state: &mut State, in_play
     state.hands[acting_player].extend(cards_to_collect);
 
     // If returning the active, trigger promotion or declare winner.
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(acting_player);
+    }
+}
+
+fn apply_shuffle_in_play_pokemon_into_deck(
+    acting_player: usize,
+    state: &mut State,
+    in_play_idx: usize,
+) {
+    let played_card = state.in_play_pokemon[acting_player][in_play_idx]
+        .take()
+        .expect("Pokemon should be there if shuffling into deck");
+    let mut cards_to_shuffle = played_card.cards_behind.clone();
+    cards_to_shuffle.push(played_card.card.clone());
+    state.decks[acting_player].cards.extend(cards_to_shuffle);
+
     if in_play_idx == 0 {
         state.trigger_promotion_or_declare_winner(acting_player);
     }
