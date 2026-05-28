@@ -7,6 +7,7 @@ use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
+    hooks::is_ancient_pokemon,
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType, BASIC_STAGE},
     tools::has_tool,
 };
@@ -206,7 +207,9 @@ impl PlayedCard {
             effective_hp += 20;
         } else if has_tool(self, CardId::A3147LeafCape) {
             effective_hp += 30;
-        } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule) {
+        } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule)
+            && is_ancient_pokemon(&self.get_name())
+        {
             effective_hp += 40;
         }
 

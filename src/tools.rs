@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
-    hooks::{is_ancient_pokemon, is_future_pokemon},
+
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType},
     State,
 };
@@ -94,12 +94,6 @@ pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> b
     }
     if effect == BIG_AIR_BALLOON_EFFECT.as_str() {
         return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 2);
-    }
-    if effect == ANCIENT_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str() {
-        return is_ancient_pokemon(&pokemon.get_name());
-    }
-    if effect == FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str() {
-        return is_future_pokemon(&pokemon.get_name());
     }
     true
 }
