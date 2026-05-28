@@ -457,6 +457,9 @@ fn forecast_effect_attack_by_mechanic(
             opponent,
             damage_per_energy,
         } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
+        Mechanic::ExtraDamagePerEnergyType { damage_per_type } => {
+            extra_damage_per_energy_type(state, attack.fixed_damage, *damage_per_type)
+        }
         Mechanic::ExtraDamagePerRetreatCost { damage_per_energy } => {
             extra_damage_per_retreat_cost(state, attack.fixed_damage, *damage_per_energy)
         }
@@ -2094,6 +2097,17 @@ fn extra_damage_equal_to_self_damage(state: &State, base_damage: u32) -> Outcome
     let attacker = state.get_active(state.current_player);
     let self_damage = attacker.get_damage_counters();
     active_damage_doutcome(base_damage + self_damage)
+}
+
+fn extra_damage_per_energy_type(state: &State, base_damage: u32, damage_per_type: u32) -> Outcomes {
+    let attacker = state.get_active(state.current_player);
+    let energies = attacker.get_effective_attached_energy(state, state.current_player);
+    let mut seen = std::collections::HashSet::new();
+    for e in &energies {
+        seen.insert(*e);
+    }
+    let damage = base_damage + (seen.len() as u32) * damage_per_type;
+    active_damage_doutcome(damage)
 }
 
 fn extra_damage_per_energy(

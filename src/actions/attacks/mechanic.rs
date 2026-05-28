@@ -269,6 +269,9 @@ pub enum Mechanic {
         opponent: bool,
         damage_per_energy: u32,
     },
+    ExtraDamagePerEnergyType {
+        damage_per_type: u32,
+    },
     ExtraDamagePerRetreatCost {
         damage_per_energy: u32,
     },
