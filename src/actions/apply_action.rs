@@ -8,11 +8,11 @@ use crate::{
     actions::{
         abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
-        apply_action_helpers::{wrap_with_common_logic, Mutation},
+        apply_action_helpers::{apply_activate, wrap_with_common_logic, Mutation},
         shared_mutations::{pokemon_search_outcomes, pokemon_search_outcomes_by_type_for_player},
     },
     effects::TurnEffect,
-    hooks::{get_retreat_cost, on_evolve, to_playable_card},
+    hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     stadiums::{is_fragrant_forest_active, is_mesagoza_active},
     state::State,
@@ -355,6 +355,9 @@ pub(crate) fn apply_place_card(
         if placed_in_bench && has_ability_mechanic(card, &AbilityMechanic::InfiltratingInspection) {
             debug!("Misdreavus's Infiltrating Inspection: Opponent's hand is revealed (no-op in AI context)");
         }
+        if placed_in_bench {
+            on_bench_from_hand(actor, state, card, index);
+        }
     }
 }
 
@@ -505,19 +508,7 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         }
     }
 
-    state.in_play_pokemon[player].swap(0, bench_idx);
-
-    // Clear status and effects of the new bench Pokemon
-    if let Some(pokemon) = state.in_play_pokemon[player][bench_idx].as_mut() {
-        pokemon.clear_status_and_effects();
-    }
-
-    // Mark the new active Pokemon as having moved from bench to active this turn
-    if let Some(pokemon) = state.in_play_pokemon[player][0].as_mut() {
-        pokemon.moved_to_active_this_turn = true;
-    }
-
-    state.has_retreated = true;
+    apply_activate(player, state, bench_idx);
 }
 
 // We will replace the PlayedCard, but taking into account the attached energy

@@ -1334,6 +1334,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "This attack does 20 more damage for each [L] Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type: EnergyType::Lightning,
+            damage_per_energy: 20,
+        },
+    );
+    map.insert(
         "This attack does 20 more damage for each [M] Energy attached to this Pokémon.",
         Mechanic::ExtraDamagePerSpecificEnergy {
             energy_type: EnergyType::Metal,

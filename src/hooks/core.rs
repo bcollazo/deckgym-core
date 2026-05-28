@@ -197,6 +197,44 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_ha
     }
 }
 
+/// Called when a basic Pokémon is placed from hand onto the bench (index > 0).
+pub(crate) fn on_bench_from_hand(actor: usize, state: &mut State, card: &Card, bench_idx: usize) {
+    match get_ability_mechanic(card) {
+        Some(AbilityMechanic::LegendaryDrive) => {
+            if state.maybe_get_active(actor).is_none() {
+                return;
+            }
+            debug!("Legendary Drive: offering switch to active");
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::UseAbility {
+                        in_play_idx: bench_idx,
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
+        }
+        Some(AbilityMechanic::AncientRoar) => {
+            let opponent = (actor + 1) % 2;
+            if state.enumerate_bench_pokemon(opponent).next().is_none() {
+                return;
+            }
+            debug!("Ancient Roar: offering force-switch of opponent's active");
+            state.move_generation_stack.push((
+                actor,
+                vec![
+                    SimpleAction::UseAbility {
+                        in_play_idx: bench_idx,
+                    },
+                    SimpleAction::Noop,
+                ],
+            ));
+        }
+        _ => {}
+    }
+}
+
 /// Called when a basic Pokémon is played to the bench from hand
 pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
     // Check if active Pokémon has an end-of-turn ability

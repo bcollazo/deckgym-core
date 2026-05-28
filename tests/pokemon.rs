@@ -74,12 +74,16 @@ mod mega_kangaskhan_double_punching_family_test;
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
 mod mega_steelix_adamantine_rolling_test;
+#[path = "pokemon/miraidon_ex_test.rs"]
+mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
 mod morpeko_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
 mod rampardos_head_smash_test;
+#[path = "pokemon/roaring_moon_test.rs"]
+mod roaring_moon_test;
 #[path = "pokemon/shinx_hide_test.rs"]
 mod shinx_hide_test;
 #[path = "pokemon/slither_wing_test.rs"]

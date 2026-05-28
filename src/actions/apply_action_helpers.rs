@@ -649,6 +649,22 @@ fn get_knocked_out(state: &State) -> Vec<(usize, usize)> {
     knockouts
 }
 
+/// Swap a bench pokemon into the active spot, clearing status/effects and setting turn flags.
+/// This is the swap portion of retreat without energy payment.
+pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize) {
+    state.in_play_pokemon[player].swap(0, bench_idx);
+
+    if let Some(pokemon) = state.in_play_pokemon[player][bench_idx].as_mut() {
+        pokemon.clear_status_and_effects();
+    }
+
+    if let Some(pokemon) = state.in_play_pokemon[player][0].as_mut() {
+        pokemon.moved_to_active_this_turn = true;
+    }
+
+    state.has_retreated = true;
+}
+
 // Apply common logic in outcomes
 pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
     Box::new(move |rng, state, action| {
