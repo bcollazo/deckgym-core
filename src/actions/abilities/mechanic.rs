@@ -184,4 +184,12 @@ pub enum AbilityMechanic {
     MoveFixedDamageFromActiveToThisBenched {
         amount: u32,
     },
+    /// "Once during your turn, when you put this Pokémon from your hand onto your Bench,
+    /// you may switch it with your Active Pokémon. If you do, move all of your Energy
+    /// in play to this Pokémon."
+    LegendaryDrive,
+    /// "Once during your turn, when you put this Pokémon from your hand onto your Bench,
+    /// you may switch out your opponent's Active Pokémon to the Bench.
+    /// (Your opponent chooses the new Active Pokémon.)"
+    AncientRoar,
 }

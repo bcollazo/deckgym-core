@@ -408,6 +408,16 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         );
         map.insert("Once during your turn, you may switch your Active [M] Pokémon with 1 of your Benched Pokémon.", AbilityMechanic::SwitchActiveTypedWithBench { energy_type: EnergyType::Metal });
 
+        // b3a mechanics
+        map.insert(
+            "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch it with your Active Pokémon. If you do, move all of your Energy in play to this Pokémon.",
+            AbilityMechanic::LegendaryDrive,
+        );
+        map.insert(
+            "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)",
+            AbilityMechanic::AncientRoar,
+        );
+
         // b3 mechanics
         // map.insert("As long as this Pokémon is in play, it is [F] and [D] type.", todo_implementation);
         // map.insert("As long as this Pokémon is in play, it is [W] and [F] type.", todo_implementation);

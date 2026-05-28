@@ -12,7 +12,7 @@ use crate::{
         shared_mutations::{pokemon_search_outcomes, pokemon_search_outcomes_by_type_for_player},
     },
     effects::TurnEffect,
-    hooks::{get_retreat_cost, on_evolve, to_playable_card},
+    hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
     models::{Card, EnergyType},
     stadiums::{is_fragrant_forest_active, is_mesagoza_active},
     state::State,
@@ -354,6 +354,9 @@ pub(crate) fn apply_place_card(
         let placed_in_bench = index != 0;
         if placed_in_bench && has_ability_mechanic(card, &AbilityMechanic::InfiltratingInspection) {
             debug!("Misdreavus's Infiltrating Inspection: Opponent's hand is revealed (no-op in AI context)");
+        }
+        if placed_in_bench {
+            on_bench_from_hand(actor, state, card, index);
         }
     }
 }
