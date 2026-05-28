@@ -46,6 +46,8 @@ static ARENA_OF_ANTIQUITY_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3154ArenaofAntiquity));
 static FRAGRANT_FOREST_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3153FragrantForest));
+static AREA_ZERO_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3a074AreaZero));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -60,6 +62,7 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == BOUNDED_FIELD_EFFECT.as_str()
             || e == ARENA_OF_ANTIQUITY_EFFECT.as_str()
             || e == FRAGRANT_FOREST_EFFECT.as_str()
+            || e == AREA_ZERO_EFFECT.as_str()
     )
 }
 
@@ -161,4 +164,19 @@ pub fn can_use_fragrant_forest(state: &State, player: usize) -> bool {
         .cards
         .iter()
         .any(|card| matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Grass))
+}
+
+pub fn is_area_zero_active(state: &State) -> bool {
+    has_stadium(state, CardId::B3a074AreaZero)
+}
+
+/// Returns true if the player can use Area Zero's effect (stadium is active, not used this turn, hand has Basic Pokemon)
+pub fn can_use_area_zero(state: &State, player: usize) -> bool {
+    if !is_area_zero_active(state) {
+        return false;
+    }
+    if state.has_used_stadium[player] {
+        return false;
+    }
+    state.hands[player].iter().any(|card| card.is_basic())
 }

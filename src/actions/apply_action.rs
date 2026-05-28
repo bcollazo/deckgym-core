@@ -14,7 +14,7 @@ use crate::{
     effects::TurnEffect,
     hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
     models::{Card, EnergyType},
-    stadiums::{is_fragrant_forest_active, is_mesagoza_active},
+    stadiums::{is_area_zero_active, is_fragrant_forest_active, is_mesagoza_active},
     state::State,
     tools,
 };
@@ -758,7 +758,7 @@ fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
     }
 }
 
-/// Forecasts the UseStadium action for activated stadiums like Mesagoza and Fragrant Forest.
+/// Forecasts the UseStadium action for activated stadiums like Mesagoza, Fragrant Forest, and Area Zero.
 fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
     if is_mesagoza_active(state) {
         return forecast_mesagoza_effect(state, acting_player);
@@ -766,7 +766,31 @@ fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
     if is_fragrant_forest_active(state) {
         return forecast_fragrant_forest_effect(state, acting_player);
     }
+    if is_area_zero_active(state) {
+        return forecast_area_zero_effect(state, acting_player);
+    }
     Outcomes::single_fn(|_, _, _| {})
+}
+
+/// Area Zero: Once during each player's turn, that player may shuffle a Basic Pokémon from their
+/// hand into their deck. If they do, they draw a card.
+fn forecast_area_zero_effect(state: &State, acting_player: usize) -> Outcomes {
+    let choices: Vec<SimpleAction> = state.hands[acting_player]
+        .iter()
+        .filter(|card| card.is_basic())
+        .map(|card| SimpleAction::ShuffleOwnCardsIntoDeck {
+            cards: vec![card.clone()],
+        })
+        .collect();
+
+    Outcomes::single_fn(move |_, state, action| {
+        state.has_used_stadium[action.actor] = true;
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }
+    })
 }
 
 /// Mesagoza: Once during each player's turn, that player may flip a coin.
