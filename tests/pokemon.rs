@@ -96,6 +96,8 @@ mod swift_shot_test;
 mod tapu_lele_energy_arrow_test;
 #[path = "pokemon/tepig_stoke_test.rs"]
 mod tepig_stoke_test;
+#[path = "pokemon/terapagos_ex_test.rs"]
+mod terapagos_ex_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
 mod vaporeon_ex_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]

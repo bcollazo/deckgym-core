@@ -1321,6 +1321,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon.", todo_implementation);
     // map.insert("This attack does 20 damage to each of your opponent's Pokémon. During your next turn, this Pokémon's Wild Spin attack does +20 damage to each of your opponent's Pokémon.", todo_implementation);
     map.insert(
+        "This attack does 20 more damage for each type of Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerEnergyType {
+            damage_per_type: 20,
+        },
+    );
+    map.insert(
         "This attack does 20 more damage for each Energy attached to this Pokémon.",
         Mechanic::ExtraDamagePerEnergy {
             opponent: false,
