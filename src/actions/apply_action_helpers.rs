@@ -667,6 +667,8 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
                 state.remove_card_from_hand(action.actor, &card);
                 state.refresh_starting_plains_bonus_all();
                 handle_knockouts(state, (action.actor, 0), false);
+            } else if trainer_card.trainer_card_type == TrainerType::Tool {
+                state.remove_card_from_hand(action.actor, &card);
             } else {
                 state.discard_card_from_hand(action.actor, &card);
             }

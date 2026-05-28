@@ -205,6 +205,54 @@ fn test_ko_discards_attached_tool() {
 }
 
 #[test]
+fn test_played_tool_is_discarded_once_after_ko() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.current_player = 1;
+    state.turn_count = 3;
+    state.points = [0, 0];
+    state.hands[1] = vec![get_card_by_enum(CardId::A2147GiantCape)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::A2147GiantCape);
+    game.apply_action(&Action {
+        actor: 1,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let (_actor, choices) = state.generate_possible_actions();
+    game.apply_action(&Action {
+        actor: 1,
+        action: attach_choice_for_idx(&choices, 0),
+        is_stack: false,
+    });
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::ApplyDamage {
+            attacking_ref: (0, 0),
+            targets: vec![(100, 1, 0)],
+            is_from_active_attack: true,
+        },
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    let giant_cape_count = state.discard_piles[1]
+        .iter()
+        .filter(|card| **card == get_card_by_enum(CardId::A2147GiantCape))
+        .count();
+    assert_eq!(giant_cape_count, 1);
+}
+
+#[test]
 fn test_guzma_double_ko_wins_immediately() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
