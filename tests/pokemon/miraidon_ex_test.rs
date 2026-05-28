@@ -59,26 +59,14 @@ fn test_legendary_drive_switches_to_active_and_moves_energy() {
         "Noop should be offered alongside Legendary Drive"
     );
 
-    // Choose to use Legendary Drive (pushes Activate onto the stack)
+    // Choose to use Legendary Drive (directly switches and moves energy in one step)
     game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::UseAbility { in_play_idx: 2 },
         is_stack: true,
     });
 
-    // UseAbility queues the Activate; apply it to complete the switch
-    let activate_action = find_action(&game, |a| {
-        matches!(
-            a.action,
-            SimpleAction::Activate {
-                player: 0,
-                in_play_idx: 2
-            }
-        )
-    });
-    game.apply_action(&activate_action);
-
-    // After the switch, Miraidon ex should be the active pokemon
+    // After UseAbility, Miraidon ex should be the active pokemon
     let state = game.get_state_clone();
     assert_eq!(
         state.get_active(0).get_name(),
@@ -93,6 +81,15 @@ fn test_legendary_drive_switches_to_active_and_moves_energy() {
         3,
         "Miraidon ex should have all 3 energies (2 from Bulbasaur + 1 from Squirtle)"
     );
+
+    // Bench pokemon should have no energy remaining
+    for (_, pokemon) in state.enumerate_bench_pokemon(0) {
+        assert!(
+            pokemon.attached_energy.is_empty(),
+            "{} should have no energy after Legendary Drive moved it all",
+            pokemon.get_name()
+        );
+    }
 }
 
 /// Hadron Ray does 20 base + 20 more damage for each [L] Energy attached to Miraidon ex.

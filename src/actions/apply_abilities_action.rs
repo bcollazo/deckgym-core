@@ -6,7 +6,7 @@ use rand::{rngs::StdRng, Rng};
 use crate::{
     actions::{
         abilities::AbilityMechanic,
-        apply_action_helpers::{handle_damage, handle_knockouts, Mutation},
+        apply_action_helpers::{apply_activate, handle_damage, handle_knockouts, Mutation},
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         outcomes::Outcomes,
         shared_mutations::pokemon_search_outcomes,
@@ -546,14 +546,18 @@ fn move_fixed_damage_from_active_to_this_benched(self_idx: usize, amount: u32) -
 
 fn legendary_drive(bench_idx: usize) -> Outcomes {
     Outcomes::single(Box::new(move |_, state, action| {
-        debug!("Legendary Drive: switching bench index {bench_idx} to active");
-        state.move_generation_stack.push((
-            action.actor,
-            vec![SimpleAction::Activate {
-                player: action.actor,
-                in_play_idx: bench_idx,
-            }],
-        ));
+        let player = action.actor;
+        debug!("Legendary Drive: switching bench index {bench_idx} to active and moving all energy");
+        apply_activate(player, state, bench_idx);
+        let mut gathered: Vec<EnergyType> = Vec::new();
+        for i in 1..state.in_play_pokemon[player].len() {
+            if let Some(pokemon) = state.in_play_pokemon[player][i].as_mut() {
+                gathered.append(&mut pokemon.attached_energy);
+            }
+        }
+        if let Some(active) = state.in_play_pokemon[player][0].as_mut() {
+            active.attached_energy.extend(gathered);
+        }
     }))
 }
 
