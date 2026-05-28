@@ -843,6 +843,20 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 60 more damage.",
         Mechanic::ExtraDamageIfMovedFromBench { extra_damage: 60 },
     );
+    map.insert(
+        "If this is the first time this Pokémon has used an attack after coming into play, this attack does 20 more damage, and your opponent's Active Pokémon is now Paralyzed.",
+        Mechanic::FirstAttackBonusDamageAndStatus {
+            extra_damage: 20,
+            conditions: vec![StatusCondition::Paralyzed],
+        },
+    );
+    map.insert(
+        "If this is the first time this Pokémon has used an attack after coming into play, during your opponent's next turn, they can't use any Trainer cards from their hand.",
+        Mechanic::FirstAttackBonusTurnEffect {
+            effect: TurnEffect::NoTrainerCards,
+            duration: 1,
+        },
+    );
     // map.insert("If this Pokémon was damaged by an attack during your opponent's last turn while it was in the Active Spot, this attack does 50 more damage.", todo_implementation);
     // map.insert("If this Pokémon's remaining HP is 30 or less, this attack does 60 more damage.", todo_implementation);
     // map.insert("If you have exactly 1, 3, or 5 cards in your hand, this attack does 60 more damage.", todo_implementation);

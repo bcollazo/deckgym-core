@@ -32,6 +32,8 @@ mod darkrai_ex_test;
 mod dusknoir_shadow_void_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
+#[path = "pokemon/flutter_mane_ex_test.rs"]
+mod flutter_mane_ex_test;
 #[path = "pokemon/flygon_ex_test.rs"]
 mod flygon_ex_test;
 #[path = "pokemon/gallade_test.rs"]
@@ -42,6 +44,8 @@ mod grovyle_slicing_snipe_test;
 mod heracross_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]
 mod houndstone_last_respects_test;
+#[path = "pokemon/iron_bundle_ex_test.rs"]
+mod iron_bundle_ex_test;
 #[path = "pokemon/iron_hands_test.rs"]
 mod iron_hands_test;
 #[path = "pokemon/iron_moth_test.rs"]

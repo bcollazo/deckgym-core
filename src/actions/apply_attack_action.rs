@@ -666,6 +666,18 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             extra_damage_by_heads.clone(),
         ),
+        Mechanic::FirstAttackBonusTurnEffect { effect, duration } => {
+            first_attack_bonus_turn_effect(state, attack.fixed_damage, effect.clone(), *duration)
+        }
+        Mechanic::FirstAttackBonusDamageAndStatus {
+            extra_damage,
+            conditions,
+        } => first_attack_bonus_damage_and_status(
+            state,
+            attack.fixed_damage,
+            *extra_damage,
+            conditions.clone(),
+        ),
     }
 }
 
@@ -3144,6 +3156,54 @@ fn coin_flip_to_block_attack_next_turn(damage: u32) -> Outcomes {
         state
             .get_active_mut(opponent)
             .add_effect(CardEffect::CoinFlipToBlockAttack, 1);
+    })
+}
+
+fn first_attack_bonus_turn_effect(
+    state: &State,
+    base_damage: u32,
+    effect: TurnEffect,
+    duration: u8,
+) -> Outcomes {
+    let is_first = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .map(|p| !p.has_attacked_since_play)
+        .unwrap_or(false);
+    active_damage_effect_doutcome(base_damage, move |_, state, action| {
+        if is_first {
+            state.add_turn_effect(effect.clone(), duration);
+        }
+        if let Some(attacker) = state.in_play_pokemon[action.actor][0].as_mut() {
+            attacker.has_attacked_since_play = true;
+        }
+    })
+}
+
+fn first_attack_bonus_damage_and_status(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+    conditions: Vec<StatusCondition>,
+) -> Outcomes {
+    let is_first = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .map(|p| !p.has_attacked_since_play)
+        .unwrap_or(false);
+    let damage = if is_first {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        if is_first {
+            let opponent = (action.actor + 1) % 2;
+            for status in &conditions {
+                state.apply_status_condition(opponent, 0, *status);
+            }
+        }
+        if let Some(attacker) = state.in_play_pokemon[action.actor][0].as_mut() {
+            attacker.has_attacked_since_play = true;
+        }
     })
 }
 
