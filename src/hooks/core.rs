@@ -23,6 +23,42 @@ fn is_fossil(trainer_card: &TrainerCard) -> bool {
     trainer_card.trainer_card_type == TrainerType::Fossil
 }
 
+const ANCIENT_POKEMON_NAMES: [&str; 11] = [
+    "Brute Bonnet",
+    "Slither Wing",
+    "Scream Tail",
+    "Flutter Mane ex",
+    "Great Tusk",
+    "Sandy Shocks",
+    "Koraidon ex",
+    "Roaring Moon",
+    "Walking Wake",
+    "Gouging Fire",
+    "Raging Bolt",
+];
+
+pub fn is_ancient_pokemon(pokemon_name: &str) -> bool {
+    ANCIENT_POKEMON_NAMES.contains(&pokemon_name)
+}
+
+const FUTURE_POKEMON_NAMES: [&str; 11] = [
+    "Iron Moth",
+    "Iron Bundle ex",
+    "Iron Hands",
+    "Iron Thorns",
+    "Miraidon ex",
+    "Iron Valiant",
+    "Iron Leaves",
+    "Iron Boulder",
+    "Iron Crown",
+    "Iron Jugulis",
+    "Iron Treads",
+];
+
+pub fn is_future_pokemon(pokemon_name: &str) -> bool {
+    FUTURE_POKEMON_NAMES.contains(&pokemon_name)
+}
+
 // Ultra Beasts
 // TODO: Move this to a field in PokemonCard and database in the future
 const ULTRA_BEAST_NAMES: [&str; 14] = [
@@ -747,6 +783,16 @@ fn get_weakness_application(
     WeaknessApplication::None
 }
 
+fn get_future_booster_damage_bonus(attacking_pokemon: &PlayedCard) -> u32 {
+    if has_tool(attacking_pokemon, CardId::B3a070FutureBoosterEnergyCapsule)
+        && is_future_pokemon(&attacking_pokemon.get_name())
+    {
+        debug!("Future Booster Energy Capsule: Increasing damage by 20");
+        return 20;
+    }
+    0
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
@@ -865,6 +911,12 @@ pub(crate) fn modify_damage(
         0
     };
 
+    let future_booster_damage_bonus = if is_active_to_active {
+        get_future_booster_damage_bonus(attacking_pokemon)
+    } else {
+        0
+    };
+
     // Stadium damage bonus (e.g., Training Area for Stage 1 Pokemon)
     // Only applies to attacks against the opponent's Active Pokemon
     let stadium_damage_bonus = if is_active_to_active {
@@ -882,7 +934,7 @@ pub(crate) fn modify_damage(
     };
 
     debug!(
-        "Attack: {:?}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, IncreasedVulnerability: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}",
+        "Attack: {:?}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, IncreasedVulnerability: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}, FutureBooster: {}",
         base_damage,
         increased_turn_effect_modifiers,
         increased_attack_specific_modifiers,
@@ -896,7 +948,8 @@ pub(crate) fn modify_damage(
         ability_damage_reduction,
         ability_damage_increase,
         type_boost_bonus,
-        stadium_damage_bonus
+        stadium_damage_bonus,
+        future_booster_damage_bonus
     );
     let pre_weakness = (base_damage
         + ability_damage_increase
@@ -904,7 +957,8 @@ pub(crate) fn modify_damage(
         + increased_attack_specific_modifiers
         + increased_vulnerability_modifiers
         + type_boost_bonus
-        + stadium_damage_bonus)
+        + stadium_damage_bonus
+        + future_booster_damage_bonus)
         .saturating_sub(
             reduced_card_effect_modifiers
                 + reduced_turn_effect_modifiers
