@@ -227,6 +227,7 @@ pub fn trainer_move_generation_implementation(
         CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
             can_play_parasol_lady(state, trainer_card)
         }
+        CardId::B3a071Juliana | CardId::B3a086Juliana => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }
