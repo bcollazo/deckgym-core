@@ -18,7 +18,7 @@ use crate::{
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
-    hooks::{get_stage, is_ultra_beast},
+    hooks::{get_stage, is_ancient_pokemon, is_future_pokemon, is_ultra_beast},
     models::{Card, EnergyType, StatusCondition, TrainerCard, TrainerType},
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
@@ -192,6 +192,12 @@ pub fn forecast_trainer_action(
         ),
         CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
             parasol_lady_effect(acting_player, state)
+        }
+        CardId::B3a072ProfessorSada | CardId::B3a087ProfessorSada => {
+            Outcomes::single_fn(professor_sada_effect)
+        }
+        CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
+            Outcomes::single_fn(professor_turo_effect)
         }
         _ => panic!("Unsupported Trainer Card"),
     }
@@ -1352,6 +1358,100 @@ fn team_rocket_grunt_outcomes() -> Outcomes {
             },
         )
     })
+}
+
+fn professor_sada_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let distinct_types: Vec<EnergyType> = {
+        let mut seen = std::collections::HashSet::new();
+        state.discard_energies[player]
+            .iter()
+            .filter(|e| seen.insert(**e))
+            .copied()
+            .collect()
+    };
+    let ancient_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, p)| is_ancient_pokemon(&p.get_name()))
+        .map(|(idx, _)| idx)
+        .collect();
+
+    let energy_combos = generate_energy_type_combinations(&distinct_types, 3);
+    let mut choices: Vec<SimpleAction> = Vec::new();
+    for combo in energy_combos {
+        let distributions = generate_energy_distributions(&combo, &ancient_indices);
+        for dist in distributions {
+            let action = SimpleAction::ProfessorSadaAttach { attachments: dist };
+            if !choices.contains(&action) {
+                choices.push(action);
+            }
+        }
+    }
+    if !choices.is_empty() {
+        state.move_generation_stack.push((player, choices));
+    }
+}
+
+/// Generate all combinations of `count` distinct energy types from the available types.
+fn generate_energy_type_combinations(types: &[EnergyType], count: usize) -> Vec<Vec<EnergyType>> {
+    if types.len() < count {
+        if types.is_empty() {
+            return vec![vec![]];
+        }
+        return vec![types.to_vec()];
+    }
+    let mut result = Vec::new();
+    generate_combinations_helper(types, count, 0, &mut vec![], &mut result);
+    result
+}
+
+fn generate_combinations_helper(
+    types: &[EnergyType],
+    count: usize,
+    start: usize,
+    current: &mut Vec<EnergyType>,
+    result: &mut Vec<Vec<EnergyType>>,
+) {
+    if current.len() == count {
+        result.push(current.clone());
+        return;
+    }
+    for i in start..types.len() {
+        current.push(types[i]);
+        generate_combinations_helper(types, count, i + 1, current, result);
+        current.pop();
+    }
+}
+
+/// Generate all ways to distribute a list of energies to a set of in-play indices.
+fn generate_energy_distributions(
+    energies: &[EnergyType],
+    targets: &[usize],
+) -> Vec<Vec<(EnergyType, usize)>> {
+    if energies.is_empty() {
+        return vec![vec![]];
+    }
+    let mut result = Vec::new();
+    let rest = generate_energy_distributions(&energies[1..], targets);
+    for target in targets {
+        for mut dist in rest.clone() {
+            dist.insert(0, (energies[0], *target));
+            result.push(dist);
+        }
+    }
+    result
+}
+
+fn professor_turo_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let choices: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, p)| is_future_pokemon(&p.get_name()))
+        .map(|(idx, _)| SimpleAction::ReturnPokemonToHand { in_play_idx: idx })
+        .collect();
+    if !choices.is_empty() {
+        state.move_generation_stack.push((player, choices));
+    }
 }
 
 #[cfg(test)]

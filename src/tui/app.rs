@@ -42,6 +42,7 @@ fn action_priority_for_tui(action: &SimpleAction) -> u8 {
         SimpleAction::Play { .. } => 2,
         SimpleAction::Attach { .. }
         | SimpleAction::AttachFromDiscard { .. }
+        | SimpleAction::ProfessorSadaAttach { .. }
         | SimpleAction::AttachTool { .. } => 3,
         SimpleAction::Attack(_) | SimpleAction::UseCopiedAttack { .. } => 4,
         SimpleAction::Retreat(_) => 5,

@@ -66,6 +66,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::DiscardToolFromPokemon { .. }
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
+        | SimpleAction::ProfessorSadaAttach { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -258,6 +259,11 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             let opponent = (action.actor + 1) % 2;
             if let Some(energy) = state.get_active(opponent).attached_energy.last().copied() {
                 state.discard_from_active(opponent, &[energy]);
+            }
+        }
+        SimpleAction::ProfessorSadaAttach { attachments } => {
+            for (energy, in_play_idx) in attachments {
+                state.attach_energy_from_discard(action.actor, *in_play_idx, &[*energy]);
             }
         }
         SimpleAction::Noop => {}

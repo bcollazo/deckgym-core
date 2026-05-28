@@ -13,6 +13,7 @@ pub(crate) use core::energy_missing;
 pub(crate) use core::get_attack_cost;
 pub(crate) use core::get_stage;
 pub(crate) use core::is_ancient_pokemon;
+pub(crate) use core::is_future_pokemon;
 pub(crate) use core::is_ultra_beast;
 pub(crate) use core::modify_damage;
 pub(crate) use core::on_attack_knockout;

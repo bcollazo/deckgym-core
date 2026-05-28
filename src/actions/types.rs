@@ -144,6 +144,10 @@ pub enum SimpleAction {
     DiscardActiveStadium,
     /// Crawdaunt's Unruly Claw: discard a random Energy from the opponent's Active Pokémon
     DiscardRandomOpponentActiveEnergy,
+    /// Professor Sada: attach 3 specific energy types from discard to Ancient Pokémon
+    ProfessorSadaAttach {
+        attachments: Vec<(EnergyType, usize)>, // (energy_type, in_play_idx)
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -292,6 +296,9 @@ impl fmt::Display for SimpleAction {
                 write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")
             }
             SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
+            SimpleAction::ProfessorSadaAttach { attachments } => {
+                write!(f, "ProfessorSadaAttach({attachments:?})")
+            }
             SimpleAction::DiscardRandomOpponentActiveEnergy => {
                 write!(f, "DiscardRandomOpponentActiveEnergy")
             }

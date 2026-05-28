@@ -64,6 +64,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::DiscardOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOwnCards { .. } => 5,
         SimpleAction::AttachFromDiscard { .. } => 10,
+        SimpleAction::ProfessorSadaAttach { .. } => 10,
         SimpleAction::ApplyEeveeBagDamageBoost => 5,
         SimpleAction::HealAllEeveeEvolutions => 5,
         SimpleAction::DiscardFossil { .. } => 1, // Low weight to discard fossils

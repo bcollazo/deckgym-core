@@ -5,7 +5,10 @@ use crate::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
     },
     effects::TurnEffect,
-    hooks::{can_play_item, can_play_support, get_stage, is_ultra_beast},
+    hooks::{
+        can_play_item, can_play_support, get_stage, is_ancient_pokemon, is_future_pokemon,
+        is_ultra_beast,
+    },
     models::{Card, EnergyType, TrainerCard, TrainerType},
     stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
@@ -226,6 +229,12 @@ pub fn trainer_move_generation_implementation(
         CardId::B3150Cabbie | CardId::B3191Cabbie => can_play_cabbie(state, trainer_card),
         CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
             can_play_parasol_lady(state, trainer_card)
+        }
+        CardId::B3a072ProfessorSada | CardId::B3a087ProfessorSada => {
+            can_play_professor_sada(state, trainer_card)
+        }
+        CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
+            can_play_professor_turo(state, trainer_card)
         }
         _ => None,
     }
@@ -810,6 +819,38 @@ fn can_play_parasol_lady(state: &State, trainer_card: &TrainerCard) -> Option<Ve
             pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
         });
     if has_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Professor Sada can be played.
+/// Requires: at least 1 Ancient Pokémon in play AND at least 3 distinct energy types in discard.
+fn can_play_professor_sada(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let has_ancient = state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, p)| is_ancient_pokemon(&p.get_name()));
+    if !has_ancient {
+        return cannot_play_trainer();
+    }
+    let distinct_types: std::collections::HashSet<EnergyType> =
+        state.discard_energies[player].iter().copied().collect();
+    if distinct_types.len() < 3 {
+        return cannot_play_trainer();
+    }
+    can_play_trainer(state, trainer_card)
+}
+
+/// Check if Professor Turo can be played.
+/// Requires: at least 1 Future Pokémon in play.
+fn can_play_professor_turo(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let has_future = state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, p)| is_future_pokemon(&p.get_name()));
+    if has_future {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
