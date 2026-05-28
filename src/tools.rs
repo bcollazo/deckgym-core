@@ -3,7 +3,6 @@ use std::sync::LazyLock;
 use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
-
     models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType},
     State,
 };

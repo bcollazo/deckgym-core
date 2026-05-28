@@ -140,7 +140,9 @@ fn test_future_booster_no_damage_bonus_for_non_future_pokemon() {
     });
 
     let state = game.get_state_clone();
-    let defender = state.in_play_pokemon[1][0].as_ref().expect("Charmander should survive");
+    let defender = state.in_play_pokemon[1][0]
+        .as_ref()
+        .expect("Charmander should survive");
     assert_eq!(
         defender.get_remaining_hp(),
         20,
