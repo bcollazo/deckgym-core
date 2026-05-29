@@ -2,19 +2,21 @@ use crate::combinatorics::generate_combinations;
 use crate::models::EnergyType;
 use std::collections::HashSet;
 
-/// Generate all valid ways to attach 3 different energy types from the discard pile
+/// Generate all valid ways to attach up to 3 different energy types from the discard pile
 /// to Ancient Pokémon in play.
+///
+/// Attaches `min(3, distinct_types_in_discard)` energies — one of each chosen type.
+/// If there are more than 3 distinct types the player also chooses which 3 to use.
 ///
 /// `ancient_slots` are the in-play indices that hold Ancient Pokémon.
 /// `discard_energies` is the full discard-energy list for the player (duplicates allowed).
 ///
-/// Returns every possible complete assignment as a vec of 3 `(EnergyType, in_play_idx)` pairs
-/// representing which energy goes to which Ancient Pokémon slot.
+/// Returns every possible complete assignment as a vec of `(EnergyType, in_play_idx)` pairs.
 pub fn generate_professor_sada_assignments(
     ancient_slots: &[usize],
     discard_energies: &[EnergyType],
 ) -> Vec<Vec<(EnergyType, usize)>> {
-    if ancient_slots.is_empty() {
+    if ancient_slots.is_empty() || discard_energies.is_empty() {
         return vec![];
     }
 
@@ -26,26 +28,33 @@ pub fn generate_professor_sada_assignments(
         .copied()
         .collect();
 
-    if unique_types.len() < 3 {
-        return vec![];
-    }
-
-    // For each 3-combination of distinct types, generate every possible target assignment
+    let n_to_attach = unique_types.len().min(3);
     let mut results = Vec::new();
-    for types in generate_combinations(&unique_types, 3) {
-        for &slot0 in ancient_slots {
-            for &slot1 in ancient_slots {
-                for &slot2 in ancient_slots {
-                    results.push(vec![
-                        (types[0], slot0),
-                        (types[1], slot1),
-                        (types[2], slot2),
-                    ]);
-                }
-            }
-        }
+    for types in generate_combinations(&unique_types, n_to_attach) {
+        results.extend(all_slot_assignments(&types, ancient_slots));
     }
     results
+}
+
+/// Generate every way to assign each energy type (in order) to any ancient slot.
+/// This is the Cartesian product of `ancient_slots` taken `types.len()` times, zipped with types.
+fn all_slot_assignments(
+    types: &[EnergyType],
+    ancient_slots: &[usize],
+) -> Vec<Vec<(EnergyType, usize)>> {
+    if types.is_empty() {
+        return vec![vec![]];
+    }
+    let tails = all_slot_assignments(&types[1..], ancient_slots);
+    let mut result = Vec::new();
+    for &slot in ancient_slots {
+        for tail in &tails {
+            let mut assignment = vec![(types[0], slot)];
+            assignment.extend_from_slice(tail);
+            result.push(assignment);
+        }
+    }
+    result
 }
 
 #[cfg(test)]
@@ -63,17 +72,30 @@ mod tests {
     }
 
     #[test]
-    fn test_fewer_than_3_types_in_discard() {
-        let result =
-            generate_professor_sada_assignments(&[0, 1], &[EnergyType::Fire, EnergyType::Water]);
+    fn test_empty_discard() {
+        let result = generate_professor_sada_assignments(&[0, 1], &[]);
         assert!(result.is_empty());
     }
 
     #[test]
-    fn test_single_type_in_discard() {
+    fn test_one_type_two_ancient_slots() {
+        // 1 distinct type → attach 1 energy, player picks which slot
         let result =
             generate_professor_sada_assignments(&[0, 1], &[EnergyType::Fire, EnergyType::Fire]);
-        assert!(result.is_empty());
+        // C(1,1) × 2^1 = 2 assignments
+        assert_eq!(result.len(), 2);
+        assert!(result.iter().all(|a| a.len() == 1));
+        assert!(result.iter().all(|a| a[0].0 == EnergyType::Fire));
+    }
+
+    #[test]
+    fn test_two_types_two_ancient_slots() {
+        // 2 distinct types → attach 2 energies (one of each)
+        let result =
+            generate_professor_sada_assignments(&[0, 1], &[EnergyType::Fire, EnergyType::Water]);
+        // C(2,2) × 2^2 = 1 × 4 = 4 assignments
+        assert_eq!(result.len(), 4);
+        assert!(result.iter().all(|a| a.len() == 2));
     }
 
     #[test]
@@ -131,7 +153,7 @@ mod tests {
 
     #[test]
     fn test_duplicate_energies_counted_as_one_type() {
-        // Duplicates in discard should not inflate the type count
+        // Duplicates should not inflate the type count
         let result = generate_professor_sada_assignments(
             &[0, 1],
             &[
@@ -141,23 +163,12 @@ mod tests {
                 EnergyType::Grass,
             ],
         );
-        // Same as 3 distinct types: 1 combo × 2^3 = 8
+        // 3 distinct types: 1 combo × 2^3 = 8
         assert_eq!(result.len(), 8);
     }
 
     #[test]
-    fn test_all_assignments_have_exactly_3_entries() {
-        let result = generate_professor_sada_assignments(
-            &[0, 1],
-            &[EnergyType::Fire, EnergyType::Water, EnergyType::Grass],
-        );
-        for assignment in &result {
-            assert_eq!(assignment.len(), 3);
-        }
-    }
-
-    #[test]
-    fn test_each_assignment_uses_three_distinct_types() {
+    fn test_each_assignment_uses_distinct_types() {
         let result = generate_professor_sada_assignments(
             &[0, 1],
             &[
@@ -169,7 +180,11 @@ mod tests {
         );
         for assignment in &result {
             let types: HashSet<EnergyType> = assignment.iter().map(|(e, _)| *e).collect();
-            assert_eq!(types.len(), 3, "Each assignment must use 3 distinct types");
+            assert_eq!(
+                types.len(),
+                assignment.len(),
+                "Each assignment must use distinct types"
+            );
         }
     }
 

@@ -30,12 +30,8 @@ fn test_cannot_play_sada_no_ancient_pokemon() {
     let mut state = game.get_state_clone();
     state.current_player = 0;
 
-    // Both players have only non-Ancient Pokémon
     state.set_board(
-        vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
-        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
 
@@ -55,9 +51,9 @@ fn test_cannot_play_sada_no_ancient_pokemon() {
     );
 }
 
-/// Professor Sada cannot be played when the discard has fewer than 3 distinct energy types.
+/// Professor Sada cannot be played when the discard has no energies at all.
 #[test]
-fn test_cannot_play_sada_insufficient_energy_types() {
+fn test_cannot_play_sada_empty_discard() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     state.current_player = 0;
@@ -70,8 +66,7 @@ fn test_cannot_play_sada_insufficient_energy_types() {
     state.hands[0].clear();
     let trainer_card = make_sada_trainer_card();
     state.hands[0].push(Card::Trainer(trainer_card));
-    // Only 2 distinct types — not enough
-    state.discard_energies[0] = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Water];
+    state.discard_energies[0] = vec![]; // empty
     game.set_state(state);
 
     let (_, actions) = game.get_state_clone().generate_possible_actions();
@@ -80,8 +75,104 @@ fn test_cannot_play_sada_insufficient_energy_types() {
         .any(|a| matches!(&a.action, SimpleAction::Play { .. }));
     assert!(
         !can_play,
-        "Should not be able to play Sada with only 2 distinct energy types, actions: {actions:?}"
+        "Should not be able to play Sada with empty discard, actions: {actions:?}"
     );
+}
+
+/// With only 1 distinct energy type in the discard, Sada attaches that 1 energy.
+/// The player chooses which Ancient Pokémon receives it.
+#[test]
+fn test_sada_one_type_gives_one_choice_per_ancient_slot() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::B3a003BruteBonnet),
+            PlayedCard::from_id(CardId::B3a034GreatTusk),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    state.hands[0].clear();
+    let trainer_card = make_sada_trainer_card();
+    state.hands[0].push(Card::Trainer(trainer_card));
+    // 3 Fire but only 1 distinct type
+    state.discard_energies[0] = vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire];
+    game.set_state(state);
+
+    play_sada(&mut game);
+
+    let (actor, choices) = game.get_state_clone().generate_possible_actions();
+    assert_eq!(actor, 0);
+    let sada_choices: Vec<_> = choices
+        .iter()
+        .filter(|a| matches!(&a.action, SimpleAction::SadaAttach { .. }))
+        .collect();
+    // C(1,1) × 2 slots = 2 choices (attach Fire to active, or to bench)
+    assert_eq!(
+        sada_choices.len(),
+        2,
+        "1 type × 2 ancient slots = 2 choices; got: {sada_choices:?}"
+    );
+    assert!(
+        sada_choices
+            .iter()
+            .all(|a| matches!(&a.action, SimpleAction::SadaAttach { assignments } if assignments.len() == 1)),
+        "Each choice should attach exactly 1 energy"
+    );
+}
+
+/// With 2 distinct energy types, Sada attaches both (one of each).
+#[test]
+fn test_sada_two_types_attaches_both() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::B3a003BruteBonnet)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    state.hands[0].clear();
+    let trainer_card = make_sada_trainer_card();
+    state.hands[0].push(Card::Trainer(trainer_card));
+    state.discard_energies[0] = vec![EnergyType::Fire, EnergyType::Water];
+    game.set_state(state);
+
+    play_sada(&mut game);
+
+    // Only 1 ancient slot, so both energies must go there: 1 choice
+    let (_, choices) = game.get_state_clone().generate_possible_actions();
+    let sada_choices: Vec<_> = choices
+        .iter()
+        .filter(|a| matches!(&a.action, SimpleAction::SadaAttach { .. }))
+        .collect();
+    assert_eq!(
+        sada_choices.len(),
+        1,
+        "1 ancient slot, 2 types → 1 choice; got: {sada_choices:?}"
+    );
+    assert!(
+        matches!(&sada_choices[0].action, SimpleAction::SadaAttach { assignments } if assignments.len() == 2),
+        "Should attach 2 energies"
+    );
+
+    game.apply_action(sada_choices[0]);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.discard_energies[0].len(),
+        0,
+        "Both discard energies should be consumed"
+    );
+    let active_energies = &state.in_play_pokemon[0][0]
+        .as_ref()
+        .unwrap()
+        .attached_energy;
+    assert_eq!(active_energies.len(), 2);
 }
 
 /// Playing Professor Sada with one Ancient Pokémon and exactly 3 energy types presents
@@ -155,7 +246,7 @@ fn test_sada_two_ancient_three_types_gives_eight_choices() {
     );
 }
 
-/// After choosing an assignment, the 3 energies are removed from discard
+/// After choosing an assignment, the energies are removed from discard
 /// and attached to the correct Pokémon.
 #[test]
 fn test_sada_attaches_energies_and_clears_discard() {
@@ -196,23 +287,15 @@ fn test_sada_attaches_energies_and_clears_discard() {
     game.apply_action(all_to_active.unwrap());
 
     let state = game.get_state_clone();
-
-    // Discard energies should be empty
     assert!(
         state.discard_energies[0].is_empty(),
         "All 3 energies should have been removed from discard"
     );
 
-    // Active (Brute Bonnet) should have 3 energies attached
     let active = state.in_play_pokemon[0][0]
         .as_ref()
         .expect("Active should exist");
-    assert_eq!(
-        active.attached_energy.len(),
-        3,
-        "Active should have 3 energies attached, got: {:?}",
-        active.attached_energy
-    );
+    assert_eq!(active.attached_energy.len(), 3);
     let attached: std::collections::HashSet<_> = active.attached_energy.iter().collect();
     assert!(attached.contains(&EnergyType::Fire));
     assert!(attached.contains(&EnergyType::Water));

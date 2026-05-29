@@ -569,9 +569,7 @@ fn can_play_professor_sada(state: &State, trainer_card: &TrainerCard) -> Option<
         return cannot_play_trainer();
     }
 
-    let unique_types: std::collections::HashSet<_> =
-        state.discard_energies[player].iter().collect();
-    if unique_types.len() < 3 {
+    if state.discard_energies[player].is_empty() {
         return cannot_play_trainer();
     }
 
