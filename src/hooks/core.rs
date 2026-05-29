@@ -1120,33 +1120,28 @@ pub(crate) fn get_attack_cost(
         }
     }
 
-    // Future System: if any in-play Pokémon has FutureSystem and the attacker is a Future Pokémon,
-    // reduce cost by 1 Colorless.
-    let attacker_is_future = state.in_play_pokemon[attacking_player][0]
-        .as_ref()
-        .is_some_and(|active| is_future_pokemon(&active.get_name()));
-    if attacker_is_future {
-        let has_future_system = state.in_play_pokemon[attacking_player]
-            .iter()
-            .flatten()
-            .any(|p| {
-                matches!(
-                    get_ability_mechanic(&p.card),
-                    Some(AbilityMechanic::FutureSystem)
-                )
-            });
-        if has_future_system {
-            if let Some(pos) = modified_cost
-                .iter()
-                .position(|e| *e == EnergyType::Colorless)
-            {
-                debug!("Future System: Reducing attack cost by 1 Colorless");
-                modified_cost.remove(pos);
-            }
-        }
-    }
+    apply_future_system_reduction(&mut modified_cost, state, attacking_player);
 
     modified_cost
+}
+
+fn apply_future_system_reduction(cost: &mut Vec<EnergyType>, state: &State, player: usize) {
+    let attacker_is_future = state.in_play_pokemon[player][0]
+        .as_ref()
+        .is_some_and(|active| is_future_pokemon(&active.get_name()));
+    if !attacker_is_future {
+        return;
+    }
+    let has_future_system = state.in_play_pokemon[player]
+        .iter()
+        .flatten()
+        .any(|p| matches!(get_ability_mechanic(&p.card), Some(AbilityMechanic::FutureSystem)));
+    if has_future_system {
+        if let Some(pos) = cost.iter().position(|e| *e == EnergyType::Colorless) {
+            debug!("Future System: Reducing attack cost by 1 Colorless");
+            cost.remove(pos);
+        }
+    }
 }
 
 // Check if attached satisfies cost (considering Colorless and Serperior's ability)
