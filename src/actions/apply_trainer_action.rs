@@ -18,7 +18,7 @@ use crate::{
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
-    hooks::{get_stage, is_future_pokemon, is_ultra_beast},
+    hooks::{get_stage, is_ancient_pokemon, is_future_pokemon, is_ultra_beast},
     models::{Card, EnergyType, StatusCondition, TrainerCard, TrainerType},
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     State,
@@ -199,6 +199,9 @@ pub fn forecast_trainer_action(
             1,
             |card| matches!(card, Card::Pokemon(p) if p.stage == 2),
         ),
+        CardId::B3a072ProfessorSada | CardId::B3a087ProfessorSada => {
+            Outcomes::single_fn(professor_sada_effect)
+        }
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             professor_turo_effect(acting_player, state)
         }
@@ -1042,6 +1045,28 @@ fn silver_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((player, possible_shuffles));
+    }
+}
+
+fn professor_sada_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let ancient_slots: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| is_ancient_pokemon(&pokemon.get_name()))
+        .map(|(idx, _)| idx)
+        .collect();
+
+    let choices: Vec<SimpleAction> =
+        crate::actions::professor_sada::generate_professor_sada_assignments(
+            &ancient_slots,
+            &state.discard_energies[player],
+        )
+        .into_iter()
+        .map(|assignments| SimpleAction::SadaAttach { assignments })
+        .collect();
+
+    if !choices.is_empty() {
+        state.move_generation_stack.push((player, choices));
     }
 }
 

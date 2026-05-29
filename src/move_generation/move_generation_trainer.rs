@@ -5,7 +5,10 @@ use crate::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
     },
     effects::TurnEffect,
-    hooks::{can_play_item, can_play_support, get_stage, is_future_pokemon, is_ultra_beast},
+    hooks::{
+        can_play_item, can_play_support, get_stage, is_ancient_pokemon, is_future_pokemon,
+        is_ultra_beast,
+    },
     models::{Card, EnergyType, TrainerCard, TrainerType},
     stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
@@ -228,6 +231,9 @@ pub fn trainer_move_generation_implementation(
             can_play_parasol_lady(state, trainer_card)
         }
         CardId::B3a071Juliana | CardId::B3a086Juliana => can_play_trainer(state, trainer_card),
+        CardId::B3a072ProfessorSada | CardId::B3a087ProfessorSada => {
+            can_play_professor_sada(state, trainer_card)
+        }
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             can_play_professor_turo(state, trainer_card)
         }
@@ -550,6 +556,24 @@ fn can_play_gladion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
     } else {
         can_play_trainer(state, trainer_card)
     }
+}
+
+fn can_play_professor_sada(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+
+    let has_ancient = state.in_play_pokemon[player]
+        .iter()
+        .flatten()
+        .any(|pokemon| is_ancient_pokemon(&pokemon.get_name()));
+    if !has_ancient {
+        return cannot_play_trainer();
+    }
+
+    if state.discard_energies[player].is_empty() {
+        return cannot_play_trainer();
+    }
+
+    can_play_trainer(state, trainer_card)
 }
 
 /// Check if Lusamine can be played (requires opponent has >= 1 point, player has Ultra Beast, >= 1 energy in discard)
