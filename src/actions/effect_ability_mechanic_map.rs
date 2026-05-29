@@ -417,6 +417,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)",
             AbilityMechanic::AncientRoar,
         );
+        map.insert(
+            "Attacks used by your Future Pokémon cost 1 less [C] Energy.",
+            AbilityMechanic::FutureSystem,
+        );
 
         // b3 mechanics
         // map.insert("As long as this Pokémon is in play, it is [F] and [D] type.", todo_implementation);

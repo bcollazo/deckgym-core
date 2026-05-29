@@ -192,4 +192,6 @@ pub enum AbilityMechanic {
     /// you may switch out your opponent's Active Pokémon to the Bench.
     /// (Your opponent chooses the new Active Pokémon.)"
     AncientRoar,
+    /// "Attacks used by your Future Pokémon cost 1 less [C] Energy."
+    FutureSystem,
 }
