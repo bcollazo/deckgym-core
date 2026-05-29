@@ -1120,28 +1120,27 @@ pub(crate) fn get_attack_cost(
         }
     }
 
-    apply_future_system_reduction(&mut modified_cost, state, attacking_player);
+    modified_cost = future_system_cost(modified_cost, state, attacking_player);
 
     modified_cost
 }
 
-fn apply_future_system_reduction(cost: &mut Vec<EnergyType>, state: &State, player: usize) {
+fn future_system_cost(mut cost: Vec<EnergyType>, state: &State, player: usize) -> Vec<EnergyType> {
     let attacker_is_future = state.in_play_pokemon[player][0]
         .as_ref()
         .is_some_and(|active| is_future_pokemon(&active.get_name()));
-    if !attacker_is_future {
-        return;
-    }
-    let has_future_system = state.in_play_pokemon[player]
-        .iter()
-        .flatten()
-        .any(|p| matches!(get_ability_mechanic(&p.card), Some(AbilityMechanic::FutureSystem)));
+    let has_future_system = attacker_is_future
+        && state.in_play_pokemon[player]
+            .iter()
+            .flatten()
+            .any(|p| matches!(get_ability_mechanic(&p.card), Some(AbilityMechanic::FutureSystem)));
     if has_future_system {
         if let Some(pos) = cost.iter().position(|e| *e == EnergyType::Colorless) {
             debug!("Future System: Reducing attack cost by 1 Colorless");
             cost.remove(pos);
         }
     }
+    cost
 }
 
 // Check if attached satisfies cost (considering Colorless and Serperior's ability)
