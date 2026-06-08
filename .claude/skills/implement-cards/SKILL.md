@@ -1,5 +1,5 @@
 ---
-name: Implementing Cards
+name: implement-cards
 description: Fill out the implementation of effects of different attacks, abilities, and trainer cards in this Pokemon TCG Pocket engine codebase.
 ---
 
@@ -137,6 +137,7 @@ to see what is missing from the specified card.
       pieces of state to the `State` struct if necessary.
 
   - Try to keep the `match trainer_id` cases as one-liners (using helper functions if necessary).
+
 - Add 1 or 2 Game-level integration tests in the appropriate `tests/` area before implementation if the trainer has logic beyond a trivial draw/search path.
   - Match the abstraction level of `test_raikou_rocky_helmet_promotion_order` in `tests/tools/raikou_rocky_helmet_order_test.rs`.
   - Exercise the `Game` public API, especially `game.apply_action(...)` and the resulting public game state.
