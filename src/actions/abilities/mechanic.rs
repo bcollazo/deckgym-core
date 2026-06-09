@@ -99,6 +99,7 @@ pub enum AbilityMechanic {
         amount: u32,
     },
     PoisonOpponentActive,
+    ConfuseOpponentActive,
     RemoveRandomSpecialConditionFromActive,
     HealActiveYourPokemon {
         amount: u32,
