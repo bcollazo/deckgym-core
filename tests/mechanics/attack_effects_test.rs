@@ -126,6 +126,64 @@ fn test_weedle_multiply_attack() {
 /// and triggers a Rocky Helmet knockout counterattack. This is an edge case to ensure that
 /// attack effects are resolved before handling knockouts and promotions.
 #[test]
+fn test_altaria_dragon_arcana_bonus_damage_with_multiple_energy_types() {
+    let mut game = get_initialized_game(7);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4a055Altaria)
+            .with_energy(vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Dragon,
+            ])
+            .with_remaining_hp(120)],
+        vec![PlayedCard::from_id(CardId::A2119DialgaEx).with_remaining_hp(200)],
+    );
+    state.current_player = 0;
+    game.set_state(state.clone());
+
+    let initial_hp = state.get_active(1).get_remaining_hp();
+
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_remaining_hp(), initial_hp - 100);
+}
+
+#[test]
+fn test_altaria_dragon_arcana_no_bonus_damage_with_single_energy_type() {
+    let mut game = get_initialized_game(8);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4a055Altaria)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
+            .with_remaining_hp(120)],
+        vec![PlayedCard::from_id(CardId::A2119DialgaEx).with_remaining_hp(200)],
+    );
+    state.current_player = 0;
+    game.set_state(state.clone());
+
+    let initial_hp = state.get_active(1).get_remaining_hp();
+
+    let attack_action = Action {
+        actor: 0,
+        action: SimpleAction::Attack(0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_remaining_hp(), initial_hp - 40);
+}
+
+#[test]
 fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     // Start with an initialized game to have proper deck structures
     let mut game = get_initialized_game(42);
