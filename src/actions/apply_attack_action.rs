@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use log::trace;
 use rand::{rngs::StdRng, Rng};
@@ -350,6 +350,15 @@ fn forecast_effect_attack_by_mechanic(
             required_extra_energy,
             extra_damage,
         } => extra_energy_attack(state, attack, required_extra_energy.clone(), *extra_damage),
+        Mechanic::ExtraDamageIfDifferentEnergyTypesAttached {
+            minimum_types,
+            extra_damage,
+        } => extra_damage_if_different_energy_types_attack(
+            state,
+            attack.fixed_damage,
+            *minimum_types,
+            *extra_damage,
+        ),
         Mechanic::ExtraDamageIfTypeEnergyInPlay {
             energy_type,
             minimum_count,
@@ -1765,6 +1774,30 @@ fn extra_energy_attack(
         active_damage_doutcome(attack.fixed_damage + extra_damage)
     } else {
         active_damage_doutcome(attack.fixed_damage)
+    }
+}
+
+fn extra_damage_if_different_energy_types_attack(
+    state: &State,
+    base_damage: u32,
+    minimum_types: usize,
+    extra_damage: u32,
+) -> Outcomes {
+    let pokemon = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .expect("Active Pokemon should be there if attacking");
+
+    let distinct_energy_types = pokemon
+        .get_effective_attached_energy(state, state.current_player)
+        .iter()
+        .copied()
+        .collect::<HashSet<_>>()
+        .len();
+
+    if distinct_energy_types >= minimum_types {
+        active_damage_doutcome(base_damage + extra_damage)
+    } else {
+        active_damage_doutcome(base_damage)
     }
 }
 
