@@ -439,7 +439,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)", todo_implementation);
         // map.insert("If you don't have Regirock, Regice, and Registeel on your Bench, this Pokémon can't attack.", todo_implementation);
         // map.insert("Once during your turn, after you flip any coins for an attack of 1 of your [R] Pokémon, you may ignore all results of those coin flips and begin flipping those coins again. You can't use more than 1 Victory Star Ability each turn.", todo_implementation);
-        // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused.", todo_implementation);
+        map.insert(
+            "Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Confused.",
+            AbilityMechanic::ConfuseOpponentActive,
+        );
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)", todo_implementation);
         map.insert(
             "Once during your turn, if this Pokémon is on your Bench, you may move 30 damage that your Active Pokémon has on it to this Pokémon.",

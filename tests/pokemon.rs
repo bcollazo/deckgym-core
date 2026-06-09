@@ -80,6 +80,8 @@ mod mega_kangaskhan_double_punching_family_test;
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
 mod mega_steelix_adamantine_rolling_test;
+#[path = "pokemon/meowstic_test.rs"]
+mod meowstic_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
