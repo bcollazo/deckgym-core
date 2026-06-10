@@ -534,9 +534,12 @@ fn get_intimidating_fang_reduction(
         return 0;
     }
 
-    let defenders_active = &state.in_play_pokemon[target_player][0]
-        .as_ref()
-        .expect("Defending Pokemon should be there when checking Intimidating Fang");
+    // The defender's Active slot can be momentarily empty (e.g. it was just
+    // knocked out and a replacement hasn't been promoted yet) while a deferred
+    // bench-targeting attack resolves. No Active means no Intimidating Fang.
+    let Some(defenders_active) = state.in_play_pokemon[target_player][0].as_ref() else {
+        return 0;
+    };
     if matches!(
         get_ability_mechanic(&defenders_active.card),
         Some(AbilityMechanic::ReduceOpponentActiveDamage { amount: 20 })

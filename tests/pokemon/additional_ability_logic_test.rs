@@ -40,6 +40,55 @@ fn test_luxray_intimidating_fang_reduces_opponent_active_damage() {
 }
 
 #[test]
+fn test_active_attack_on_bench_does_not_panic_when_opponent_active_is_empty() {
+    // Regression test for the "Defending Pokemon should be there when checking
+    // Intimidating Fang" panic that showed up when simulating many games.
+    //
+    // A bench-targeting active attack (e.g. Grovyle's Slicing Snipe) resolves its
+    // damage through a deferred `ApplyDamage` action. That action can be resolved
+    // while the opponent's Active slot is momentarily empty (their Active was just
+    // knocked out and a replacement hasn't been promoted yet). The damage modifier
+    // hooks unconditionally read the opponent's Active slot to check for
+    // Intimidating Fang, which panics when that slot is `None`.
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+    );
+
+    // Simulate the transient post-knockout state: opponent has a benched Pokemon
+    // but no Active Pokemon yet.
+    let mut state = game.get_state_clone();
+    state.in_play_pokemon[1][0] = None;
+    game.set_state(state);
+
+    // An active-attack that hits the opponent's bench should resolve without
+    // panicking even though the opponent has no Active Pokemon.
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::ApplyDamage {
+            attacking_ref: (0, 0),
+            targets: vec![(30, 1, 1)],
+            is_from_active_attack: true,
+        },
+        is_stack: false,
+    });
+
+    // With no Active Pokemon there is no Intimidating Fang reduction, so the
+    // benched Pokemon takes the full 30 damage (Bulbasaur: 70 HP -> 40 HP).
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.in_play_pokemon[1][1]
+            .as_ref()
+            .expect("Benched Pokemon should still be in play")
+            .get_remaining_hp(),
+        40
+    );
+}
+
+#[test]
 fn test_eevee_boosted_evolution_allows_first_turn_evolution_while_active() {
     let mut game = get_initialized_game_with_board(
         0,
