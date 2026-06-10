@@ -1,5 +1,7 @@
 #[path = "pokemon/additional_ability_logic_test.rs"]
 mod additional_ability_logic_test;
+#[path = "pokemon/altaria_dragon_arcana_test.rs"]
+mod altaria_dragon_arcana_test;
 #[path = "pokemon/arceus_ex_test.rs"]
 mod arceus_ex_test;
 #[path = "pokemon/audino_test.rs"]

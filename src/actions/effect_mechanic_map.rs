@@ -766,7 +766,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If this Pokémon evolved during this turn, this attack does 20 more damage.",
         Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage: 20 },
     );
-    // map.insert("If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has 2 or more different types of Energy attached, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfDifferentEnergyTypesAttached {
+            minimum_types: 2,
+            extra_damage: 60,
+        },
+    );
     map.insert(
         "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
         Mechanic::ExtraDamageIfToolAttached { extra_damage: 30 },
