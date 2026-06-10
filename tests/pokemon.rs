@@ -28,6 +28,8 @@ mod corviknight_line_test;
 mod crawdaunt_unruly_claw_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
 mod darkrai_ex_test;
+#[path = "pokemon/durant_test.rs"]
+mod durant_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
 mod dusknoir_shadow_void_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
