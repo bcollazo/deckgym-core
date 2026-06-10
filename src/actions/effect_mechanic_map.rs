@@ -1993,7 +1993,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Confused, this attack does 70 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is Confused, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfDefenderConfused { extra_damage: 70 },
+    );
     // map.insert("Move 2 random Energy from this Pokémon to 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.", todo_implementation);
     // map.insert("Take a [C] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);

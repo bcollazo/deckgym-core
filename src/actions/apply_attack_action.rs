@@ -663,6 +663,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfDefenderPoisoned { extra_damage } => {
             extra_damage_if_defender_poisoned(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfDefenderConfused { extra_damage } => {
+            extra_damage_if_defender_confused(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DiscardTopSelfDeck => discard_top_self_deck(attack.fixed_damage),
         Mechanic::TieredCoinFlipDamage {
             num_coins,
@@ -2618,6 +2621,20 @@ fn extra_damage_if_defender_poisoned(
 ) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     let damage = if state.get_active(opponent).is_poisoned() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_defender_confused(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let damage = if state.get_active(opponent).is_confused() {
         base_damage + extra_damage
     } else {
         base_damage
