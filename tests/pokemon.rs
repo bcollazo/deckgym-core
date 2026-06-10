@@ -40,6 +40,8 @@ mod flygon_ex_test;
 mod gallade_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
+#[path = "pokemon/hatterene_test.rs"]
+mod hatterene_test;
 #[path = "pokemon/heracross_test.rs"]
 mod heracross_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]

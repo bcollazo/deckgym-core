@@ -375,6 +375,10 @@ pub enum Mechanic {
     ExtraDamageIfDefenderPoisoned {
         extra_damage: u32,
     },
+    /// Hatterene – Mental Crush: extra damage if opponent's active is Confused.
+    ExtraDamageIfDefenderConfused {
+        extra_damage: u32,
+    },
     /// Discard the top card of the attacker's own deck after dealing damage.
     DiscardTopSelfDeck,
     /// Tiered coin flip damage: flip `num_coins` coins and deal fixed_damage +
