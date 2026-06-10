@@ -330,6 +330,7 @@ pub enum Mechanic {
     DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    MaySwitchSelfWithBench,
     SelfHealIfStadiumInPlay {
         amount: u32,
     },
