@@ -427,6 +427,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfStage2OnBench { extra_damage } => {
             extra_damage_if_stage2_on_bench(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name,
+            extra_damage,
+        } => extra_damage_if_pokemon_on_bench(
+            state,
+            attack.fixed_damage,
+            pokemon_name,
+            *extra_damage,
+        ),
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -520,10 +529,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::AttachEnergyToBenchedBasic { energy_type } => {
             attach_energy_to_benched_basic(state.current_player, *energy_type)
         }
-        Mechanic::DamageAndDiscardOpponentDeck {
-            damage,
-            discard_count,
-        } => damage_and_discard_opponent_deck(*damage, *discard_count),
+        Mechanic::DamageAndDiscardOpponentDeck { discard_count } => {
+            damage_and_discard_opponent_deck(attack.fixed_damage, *discard_count)
+        }
         Mechanic::MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(),
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
@@ -2091,6 +2099,22 @@ fn extra_damage_if_stage2_on_bench(state: &State, base: u32, extra: u32) -> Outc
         .enumerate_bench_pokemon(state.current_player)
         .any(|(_, p)| get_stage(p) == 2);
     if has_stage2 {
+        active_damage_doutcome(base + extra)
+    } else {
+        active_damage_doutcome(base)
+    }
+}
+
+fn extra_damage_if_pokemon_on_bench(
+    state: &State,
+    base: u32,
+    pokemon_name: &str,
+    extra: u32,
+) -> Outcomes {
+    let has_pokemon_on_bench = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, p)| p.get_name() == pokemon_name);
+    if has_pokemon_on_bench {
         active_damage_doutcome(base + extra)
     } else {
         active_damage_doutcome(base)

@@ -244,6 +244,10 @@ pub enum Mechanic {
     ExtraDamageIfStage2OnBench {
         extra_damage: u32,
     },
+    ExtraDamageIfPokemonOnBench {
+        pokemon_name: String,
+        extra_damage: u32,
+    },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,
     ExtraDamageIfKnockedOutLastTurn {
@@ -315,7 +319,6 @@ pub enum Mechanic {
         energy_type: EnergyType,
     },
     DamageAndDiscardOpponentDeck {
-        damage: u32,
         discard_count: usize,
     },
     MegaAmpharosExLightningLancer,

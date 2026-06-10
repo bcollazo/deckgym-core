@@ -191,14 +191,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("Discard the top 3 cards of your deck.", todo_implementation);
     map.insert(
         "Discard the top 3 cards of your opponent's deck.",
-        Mechanic::DamageAndDiscardOpponentDeck {
-            damage: 140,
-            discard_count: 3,
-        },
+        Mechanic::DamageAndDiscardOpponentDeck { discard_count: 3 },
     );
     // map.insert("Discard the top 5 cards of each player's deck.", todo_implementation);
     // map.insert("Discard the top card of your deck. If that card is a [F] Pokémon, this attack does 60 more damage.", todo_implementation);
-    // map.insert("Discard the top card of your opponent's deck.", todo_implementation);
+    map.insert(
+        "Discard the top card of your opponent's deck.",
+        Mechanic::DamageAndDiscardOpponentDeck { discard_count: 1 },
+    );
     // map.insert("Discard up to 2 Pokémon Tool cards from your hand. This attack does 50 damage for each card you discarded in this way.", todo_implementation);
     map.insert("Draw a card.", Mechanic::DrawCard { amount: 1 });
     // map.insert("Draw cards until you have the same number of cards in your hand as your opponent.", todo_implementation);
@@ -735,9 +735,27 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.", todo_implementation);
     // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage.", todo_implementation);
     // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.", todo_implementation);
-    // map.insert("If Durant is on your Bench, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If Latios is on your Bench, this attack does 20 more damage.", todo_implementation);
-    // map.insert("If Passimian is on your Bench, this attack does 40 more damage.", todo_implementation);
+    map.insert(
+        "If Durant is on your Bench, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name: "Durant".to_string(),
+            extra_damage: 40,
+        },
+    );
+    map.insert(
+        "If Latios is on your Bench, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name: "Latios".to_string(),
+            extra_damage: 20,
+        },
+    );
+    map.insert(
+        "If Passimian is on your Bench, this attack does 40 more damage.",
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name: "Passimian".to_string(),
+            extra_damage: 40,
+        },
+    );
     // map.insert("If any of your Benched Pokémon have damage on them, this attack does 50 more damage.", todo_implementation);
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 60 });
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage: 40 });
@@ -1809,7 +1827,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::FlipCoinsBenchDamagePerHead { num_coins: 3, bench_damage_per_head: 20 },
     );
     // map.insert("If Electivire is on your Bench, this attack also does 20 damage to each of your opponent's Benched Pokémon.", todo_implementation);
-    // map.insert("If Magmortar is on your Bench, this attack does 70 more damage.", todo_implementation);
+    map.insert(
+        "If Magmortar is on your Bench, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name: "Magmortar".to_string(),
+            extra_damage: 70,
+        },
+    );
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     map.insert(
         "If this Pokémon's remaining HP is 110 or less, this attack does 80 more damage.",
@@ -1943,7 +1967,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Heal 30 damage from each of your Pokémon.",
         Mechanic::HealAllYourPokemon { amount: 30 },
     );
-    // map.insert("If Durant is on your Bench, this attack does 30 more damage.", todo_implementation);
+    map.insert(
+        "If Durant is on your Bench, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfPokemonOnBench {
+            pokemon_name: "Durant".to_string(),
+            extra_damage: 30,
+        },
+    );
     map.insert(
         "If a Stadium is in play, heal 20 damage from this Pokémon.",
         Mechanic::SelfHealIfStadiumInPlay { amount: 20 },
