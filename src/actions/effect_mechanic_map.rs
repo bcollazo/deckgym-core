@@ -1044,6 +1044,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Switch this Pokémon with 1 of your Benched Pokémon.",
         Mechanic::SwitchSelfWithBench,
     );
+    map.insert(
+        "You may switch this Pokémon with 1 of your Benched Pokémon.",
+        Mechanic::MaySwitchSelfWithBench,
+    );
     // map.insert("Switch this Pokémon with 1 of your Benched [L] Pokémon.", todo_implementation);
     map.insert(
         "Take 2 [M] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",

@@ -545,7 +545,8 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
-        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, false),
+        Mechanic::MaySwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, true),
         Mechanic::SelfHealIfStadiumInPlay { amount } => {
             self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
         }
@@ -2880,14 +2881,17 @@ fn random_spread_damage(
     random_damage_outcomes_to_outcomes(outcomes)
 }
 
-fn switch_self_with_bench(state: &State, damage: u32) -> Outcomes {
-    let choices: Vec<_> = state
+fn switch_self_with_bench(state: &State, damage: u32, optional: bool) -> Outcomes {
+    let mut choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
         .map(|(in_play_idx, _)| SimpleAction::Activate {
             player: state.current_player,
             in_play_idx,
         })
         .collect();
+    if optional && !choices.is_empty() {
+        choices.push(SimpleAction::Noop);
+    }
 
     Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
