@@ -546,7 +546,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
         Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, false),
-        Mechanic::MaySwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, true),
+        Mechanic::MaySwitchSelfWithBench => {
+            switch_self_with_bench(state, attack.fixed_damage, true)
+        }
         Mechanic::SelfHealIfStadiumInPlay { amount } => {
             self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
         }
