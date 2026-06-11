@@ -471,21 +471,8 @@ fn forecast_effect_attack_by_mechanic(
             *include_fixed_damage,
             *damage_per,
         ),
-        Mechanic::ExtraDamagePerEnergy {
-            opponent,
-            damage_per_energy,
-        } => {
-            let base = if attack
-                .effect
-                .as_deref()
-                .is_some_and(|e| e.contains("more damage"))
-            {
-                attack.fixed_damage
-            } else {
-                0
-            };
-            extra_damage_per_energy(state, base, *opponent, *damage_per_energy)
-        }
+        Mechanic::ExtraDamagePerEnergy { opponent, damage_per_energy, include_fixed_damage } => 
+            extra_damage_per_energy(state, if *include_fixed_damage { attack.fixed_damage } else { 0 }, *opponent, *damage_per_energy),
         Mechanic::ExtraDamagePerEnergyType { damage_per_type } => {
             extra_damage_per_energy_type(state, attack.fixed_damage, *damage_per_type)
         }
