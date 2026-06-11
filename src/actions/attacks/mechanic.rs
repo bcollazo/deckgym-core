@@ -25,6 +25,9 @@ pub enum Mechanic {
     HealOneYourPokemon {
         amount: u32,
     },
+    HealOneYourBenchedPokemon {
+        amount: u32,
+    },
     HealAllYourPokemon {
         amount: u32,
     },
