@@ -505,7 +505,6 @@ impl State {
     }
 
     /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
-    /// Callers are responsible for resolving any knockouts caused by losing HP bonuses.
     pub(crate) fn discard_tool(&mut self, player: usize, in_play_idx: usize) {
         let pokemon = self.in_play_pokemon[player][in_play_idx]
             .as_mut()

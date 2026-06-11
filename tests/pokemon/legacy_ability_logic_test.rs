@@ -539,7 +539,7 @@ fn test_milotic_healing_ripples_heals_on_evolve() {
     state.set_board(
         vec![
             PlayedCard::from_id(CardId::A4a021Feebas),
-            PlayedCard::from_id(CardId::A1053Squirtle).with_damage(60),
+            PlayedCard::from_id(CardId::A1053Squirtle).with_damage(40),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );

@@ -534,7 +534,13 @@ fn get_intimidating_fang_reduction(
         return 0;
     }
 
-    let defenders_active = &state.in_play_pokemon[target_player][0]
+    // Invariant: the defending player always has an active Pokemon while any other
+    // action can be processed. If a knockout empties the active spot,
+    // `trigger_promotion_or_declare_winner` immediately queues an `Activate` choice
+    // at the top of `move_generation_stack` (or ends the game), which
+    // `generate_possible_actions` short-circuits to. So no further action - including
+    // this `ApplyDamage` - can run until the active spot is refilled (or the game ends).
+    let defenders_active = state.in_play_pokemon[target_player][0]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Intimidating Fang");
     if matches!(
