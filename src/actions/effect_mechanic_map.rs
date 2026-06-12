@@ -1974,7 +1974,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::HealAllYourPokemon { amount: 10 },
     );
     // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
-    // map.insert("Heal 30 damage from 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 30 damage from 1 of your Benched Pokémon.",
+        Mechanic::HealOneYourBenchedPokemon { amount: 30 },
+    );
     map.insert(
         "Heal 30 damage from 1 of your Pokémon.",
         Mechanic::HealOneYourPokemon { amount: 30 },

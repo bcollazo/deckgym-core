@@ -213,6 +213,9 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon_attack(*amount),
+        Mechanic::HealOneYourBenchedPokemon { amount } => {
+            heal_one_your_benched_pokemon_attack(*amount)
+        }
         Mechanic::HealAllYourPokemon { amount } => {
             heal_all_your_pokemon_attack(attack.fixed_damage, *amount)
         }
@@ -1729,6 +1732,23 @@ fn heal_one_your_pokemon_attack(amount: u32) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
         let choices = state
             .enumerate_in_play_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.is_damaged())
+            .map(|(in_play_idx, _)| SimpleAction::Heal {
+                in_play_idx,
+                amount,
+                cure_status: false,
+            })
+            .collect::<Vec<_>>();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+fn heal_one_your_benched_pokemon_attack(amount: u32) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let choices = state
+            .enumerate_bench_pokemon(action.actor)
             .filter(|(_, pokemon)| pokemon.is_damaged())
             .map(|(in_play_idx, _)| SimpleAction::Heal {
                 in_play_idx,
