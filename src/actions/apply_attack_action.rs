@@ -480,7 +480,17 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamagePerEnergy {
             opponent,
             damage_per_energy,
-        } => extra_damage_per_energy(state, attack.fixed_damage, *opponent, *damage_per_energy),
+            include_fixed_damage,
+        } => extra_damage_per_energy(
+            state,
+            if *include_fixed_damage {
+                attack.fixed_damage
+            } else {
+                0
+            },
+            *opponent,
+            *damage_per_energy,
+        ),
         Mechanic::ExtraDamagePerEnergyType { damage_per_type } => {
             extra_damage_per_energy_type(state, attack.fixed_damage, *damage_per_type)
         }

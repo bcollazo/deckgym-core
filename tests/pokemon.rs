@@ -104,6 +104,8 @@ mod roaring_moon_test;
 mod shinx_hide_test;
 #[path = "pokemon/slither_wing_test.rs"]
 mod slither_wing_test;
+#[path = "pokemon/smoochum_test.rs"]
+mod smoochum_test;
 #[path = "pokemon/spewpa_signs_of_evolution_test.rs"]
 mod spewpa_signs_of_evolution_test;
 #[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
