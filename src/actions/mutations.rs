@@ -25,11 +25,14 @@ pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> Outcomes {
-    damage_effect_doutcome(vec![(damage, 0)], additional_effect)
+    damage_effect_doutcome(vec![(damage, true, 0)], additional_effect)
 }
 
+/// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
+/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
+/// the attacker's opponent's side (true) or the attacker's own side (false).
 pub(crate) fn damage_effect_doutcome<F>(
-    targets: Vec<(u32, usize)>,
+    targets: Vec<(u32, bool, usize)>,
     additional_effect: F,
 ) -> Outcomes
 where
@@ -40,18 +43,21 @@ where
 
 // ===== Helper functions for building Mutations
 pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
-    damage_effect_mutation(vec![(damage, 0)], |_, _, _| {})
+    damage_effect_mutation(vec![(damage, true, 0)], |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_mutation(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> Mutation {
-    damage_effect_mutation(vec![(damage, 0)], additional_effect)
+    damage_effect_mutation(vec![(damage, true, 0)], additional_effect)
 }
 
+/// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
+/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
+/// the attacker's opponent's side (true) or the attacker's own side (false).
 pub(crate) fn damage_effect_mutation<F>(
-    targets: Vec<(u32, usize)>,
+    targets: Vec<(u32, bool, usize)>,
     additional_effect: F,
 ) -> Mutation
 where
@@ -62,7 +68,14 @@ where
             let opponent = (action.actor + 1) % 2;
             let targets: Vec<(u32, usize, usize)> = targets
                 .iter()
-                .map(|(damage, in_play_idx)| (*damage, opponent, *in_play_idx))
+                .map(|(damage, is_opponent_target, in_play_idx)| {
+                    let target_player = if *is_opponent_target {
+                        opponent
+                    } else {
+                        action.actor
+                    };
+                    (*damage, target_player, *in_play_idx)
+                })
                 .collect();
 
             let attack_name: String = match &action.action {

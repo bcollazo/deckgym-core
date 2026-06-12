@@ -1032,10 +1032,10 @@ fn manaphy_oceanic() -> Outcomes {
 fn palkia_dimensional_storm(state: &State) -> Outcomes {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
-    let targets: Vec<(u32, usize)> = state
+    let targets: Vec<(u32, bool, usize)> = state
         .enumerate_bench_pokemon((state.current_player + 1) % 2)
-        .map(|(idx, _)| (20, idx))
-        .chain(std::iter::once((150, 0))) // Add active Pokémon directly
+        .map(|(idx, _)| (20, true, idx))
+        .chain(std::iter::once((150, true, 0))) // Add active Pokémon directly
         .collect();
     damage_effect_doutcome(targets, |_, state, action| {
         discard_requested_energy_from_active_best_effort(
@@ -2076,7 +2076,7 @@ fn also_bench_damage(
     } else {
         state.current_player
     };
-    let mut targets: Vec<(u32, usize)> = state
+    let mut targets: Vec<(u32, bool, usize)> = state
         .enumerate_bench_pokemon(player)
         .filter(|(_, pokemon)| {
             if must_have_energy {
@@ -2085,9 +2085,9 @@ fn also_bench_damage(
                 true
             }
         })
-        .map(|(idx, _)| (bench_damage, idx))
+        .map(|(idx, _)| (bench_damage, opponent, idx))
         .collect();
-    targets.push((active_damage, 0)); // Active Pokémon is always index 0
+    targets.push((active_damage, true, 0)); // Opponent's Active Pokémon is always index 0
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
@@ -2095,9 +2095,9 @@ fn also_bench_damage(
 fn damage_all_opponent_pokemon(state: &State, damage: u32) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     // Collect all opponent's Pokémon (active at index 0, plus bench)
-    let targets: Vec<(u32, usize)> = state
+    let targets: Vec<(u32, bool, usize)> = state
         .enumerate_in_play_pokemon(opponent)
-        .map(|(idx, _)| (damage, idx))
+        .map(|(idx, _)| (damage, true, idx))
         .collect();
     damage_effect_doutcome(targets, |_, _, _| {})
 }
