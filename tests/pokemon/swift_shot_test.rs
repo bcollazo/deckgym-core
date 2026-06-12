@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::PlayedCard,
@@ -73,7 +73,7 @@ fn assert_swift_shot_damage(
                     attacking_ref: (0, 0),
                     ref targets,
                     is_from_active_attack: false,
-                } if *targets == vec![(damage, 1, 0)]
+                } if *targets == vec![(damage, DamageTarget::Opponent(0))]
             )
         })
         .cloned()

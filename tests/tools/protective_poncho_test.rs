@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
@@ -35,7 +35,7 @@ fn test_protective_poncho_prevents_bench_damage_from_attack() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(30, 1, 1)],
+            targets: vec![(30, DamageTarget::Opponent(1))],
             is_from_active_attack: true,
         },
         is_stack: false,
@@ -92,7 +92,7 @@ fn test_protective_poncho_prevents_greninja_water_shuriken() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 1),
-            targets: vec![(20, 1, 1)],
+            targets: vec![(20, DamageTarget::Opponent(1))],
             is_from_active_attack: false,
         },
         is_stack: false,

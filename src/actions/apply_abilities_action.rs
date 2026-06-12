@@ -10,7 +10,7 @@ use crate::{
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         outcomes::Outcomes,
         shared_mutations::pokemon_search_outcomes,
-        Action, SimpleAction,
+        Action, DamageTarget, SimpleAction,
     },
     effects::TurnEffect,
     hooks::is_ultra_beast,
@@ -349,7 +349,7 @@ fn damage_one_opponent(amount: u32) -> Outcomes {
             .enumerate_in_play_pokemon(opponent)
             .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
                 attacking_ref: (action.actor, attacking_idx),
-                targets: vec![(amount, opponent, in_play_idx)],
+                targets: vec![(amount, DamageTarget::Opponent(in_play_idx))],
                 is_from_active_attack: false,
             })
             .collect::<Vec<_>>();
@@ -436,7 +436,7 @@ fn attach_energy_from_zone_to_self_and_damage(
                 handle_damage(
                     state,
                     (action.actor, in_play_idx),
-                    &[(self_damage, action.actor, in_play_idx)],
+                    &[(self_damage, DamageTarget::SelfPlayer(in_play_idx))],
                     false,
                     None,
                 );
@@ -458,7 +458,7 @@ fn attach_energy_from_discard_to_self_and_damage(
     handle_damage(
         state,
         (action.actor, in_play_idx),
-        &[(self_damage, action.actor, in_play_idx)],
+        &[(self_damage, DamageTarget::SelfPlayer(in_play_idx))],
         false,
         None,
     );
@@ -469,11 +469,10 @@ fn damage_opponent_active_if_arceus_in_play(amount: u32) -> Outcomes {
         let SimpleAction::UseAbility { in_play_idx } = action.action else {
             panic!("Ability should be triggered by UseAbility action");
         };
-        let opponent = (action.actor + 1) % 2;
         handle_damage(
             state,
             (action.actor, in_play_idx),
-            &[(amount, opponent, 0)],
+            &[(amount, DamageTarget::Opponent(0))],
             false,
             None,
         );
@@ -548,7 +547,7 @@ fn heal_active_your_pokemon(amount: u32) -> Outcomes {
 fn move_fixed_damage_from_active_to_this_benched(self_idx: usize, amount: u32) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
         state.get_active_mut(action.actor).heal(amount);
-        let targets = vec![(amount, action.actor, self_idx)];
+        let targets = vec![(amount, DamageTarget::SelfPlayer(self_idx))];
         handle_damage(state, (action.actor, 0), &targets, false, None);
     })
 }

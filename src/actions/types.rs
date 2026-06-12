@@ -1,3 +1,4 @@
+use crate::actions::mutations::DamageTarget;
 use crate::models::{Card, EnergyType, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -78,7 +79,7 @@ pub enum SimpleAction {
     },
     ApplyDamage {
         attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
-        targets: Vec<(u32, usize, usize)>, // Vec of (damage, target_player, in_play_idx)
+        targets: Vec<(u32, DamageTarget)>, // Vec of (damage, target)
         is_from_active_attack: bool,
     },
     ScheduleDelayedSpotDamage {
@@ -237,9 +238,7 @@ impl fmt::Display for SimpleAction {
             } => {
                 let targets_str = targets
                     .iter()
-                    .map(|(damage, target_player, in_play_idx)| {
-                        format!("({damage}, {target_player}, {in_play_idx})")
-                    })
+                    .map(|(damage, target)| format!("({damage}, {target:?})"))
                     .collect::<Vec<_>>()
                     .join(", ");
                 write!(

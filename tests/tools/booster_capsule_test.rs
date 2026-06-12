@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, PlayedCard},
@@ -98,7 +98,7 @@ fn test_future_booster_increases_damage_to_opponent_active() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(50, 1, 0)],
+            targets: vec![(50, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,
@@ -133,7 +133,7 @@ fn test_future_booster_no_damage_bonus_for_non_future_pokemon() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(40, 1, 0)],
+            targets: vec![(40, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,

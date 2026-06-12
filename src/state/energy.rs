@@ -1,7 +1,7 @@
 use crate::{
     actions::{
         abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
-        handle_damage_only, handle_knockouts,
+        handle_damage_only, handle_knockouts, DamageTarget,
     },
     effects::TurnEffect,
     models::{EnergyType, StatusCondition},
@@ -114,7 +114,7 @@ impl State {
                     handle_damage_only(
                         self,
                         (opponent, 0),
-                        &[(20, actor, in_play_idx)],
+                        &[(20, DamageTarget::Opponent(in_play_idx))],
                         false,
                         None,
                     );
@@ -135,11 +135,10 @@ impl State {
                 && is_turn_energy
             {
                 // Deal 20 damage to opponent's active Pokémon
-                let opponent = (actor + 1) % 2;
                 handle_damage_only(
                     self,
                     (actor, in_play_idx),
-                    &[(20, opponent, 0)],
+                    &[(20, DamageTarget::Opponent(0))],
                     false,
                     None,
                 );

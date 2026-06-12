@@ -6,7 +6,7 @@ use log::debug;
 use crate::{
     actions::{
         abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
-        SimpleAction,
+        DamageTarget, SimpleAction,
     },
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
@@ -171,7 +171,7 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_ha
                 vec![
                     SimpleAction::ApplyDamage {
                         attacking_ref: (actor, 0),
-                        targets: vec![(*amount, (actor + 1) % 2, 0)],
+                        targets: vec![(*amount, DamageTarget::Opponent(0))],
                         is_from_active_attack: false,
                     },
                     SimpleAction::Noop,
@@ -282,9 +282,9 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         crate::actions::handle_damage(
             state,
             (opponent, 0), // Opponent's active Pokemon as the source
-            &[(total_delayed_damage, player_ending_turn, 0)], // Target is current player's active
-            false,         // Not from an active attack (it's a delayed effect)
-            None,          // No attack name
+            &[(total_delayed_damage, DamageTarget::Opponent(0))], // Target is current player's active
+            false, // Not from an active attack (it's a delayed effect)
+            None,  // No attack name
         );
     }
 
@@ -318,7 +318,7 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         crate::actions::handle_damage(
             state,
             (source_player, 0),
-            &[(amount, target_player, target_in_play_idx)],
+            &[(amount, DamageTarget::Opponent(target_in_play_idx))],
             false,
             None,
         );
@@ -431,7 +431,7 @@ fn apply_bad_dreams_damage(state: &mut State) {
         crate::actions::handle_damage(
             state,
             (darkrai_owner, darkrai_idx),
-            &[(amount, opponent, 0)],
+            &[(amount, DamageTarget::Opponent(0))],
             false,
             None,
         );

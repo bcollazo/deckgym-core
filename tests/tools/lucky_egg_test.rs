@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
@@ -78,7 +78,7 @@ fn test_lucky_egg_draws_to_five_on_opponent_attack_ko() {
         actor: 1,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (1, 0),
-            targets: vec![(100, 0, 0)],
+            targets: vec![(100, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,
@@ -137,7 +137,7 @@ fn test_lucky_egg_does_not_draw_without_opponent_attack() {
         actor: 1,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (1, 0),
-            targets: vec![(100, 0, 0)],
+            targets: vec![(100, DamageTarget::Opponent(0))],
             is_from_active_attack: false,
         },
         is_stack: false,

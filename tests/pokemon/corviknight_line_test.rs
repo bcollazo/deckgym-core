@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
@@ -104,7 +104,7 @@ fn test_corviknight_iron_wings_discards_energy_and_reduces_next_damage() {
         actor: 1,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (1, 0),
-            targets: vec![(30, 0, 0)],
+            targets: vec![(30, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,

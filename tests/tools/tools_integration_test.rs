@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, PlayedCard},
@@ -187,7 +187,7 @@ fn test_ko_discards_attached_tool() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(100, 1, 0)],
+            targets: vec![(100, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,
@@ -238,7 +238,7 @@ fn test_played_tool_is_discarded_once_after_ko() {
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(100, 1, 0)],
+            targets: vec![(100, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,

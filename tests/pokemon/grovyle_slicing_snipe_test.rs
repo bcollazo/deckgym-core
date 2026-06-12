@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
     test_support::get_initialized_game,
@@ -49,7 +49,7 @@ fn test_grovyle_slicing_snipe_targets_only_opponents_bench() {
                     ref targets,
                     is_from_active_attack: true,
                     ..
-                } if *targets == vec![(50, 1, 2)]
+                } if *targets == vec![(50, DamageTarget::Opponent(2))]
             )
         })
         .cloned()

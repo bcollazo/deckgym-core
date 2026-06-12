@@ -27,5 +27,6 @@ pub(crate) use effect_ability_mechanic_map::get_ability_mechanic;
 pub use effect_ability_mechanic_map::has_ability_mechanic;
 pub use effect_ability_mechanic_map::EFFECT_ABILITY_MECHANIC_MAP;
 pub use effect_mechanic_map::EFFECT_MECHANIC_MAP;
+pub use mutations::DamageTarget;
 pub use types::Action;
 pub use types::SimpleAction;

@@ -6,7 +6,8 @@ use rand::rngs::StdRng;
 use crate::{
     actions::{
         abilities::AbilityMechanic, ability_mechanic_from_effect,
-        effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
+        effect_ability_mechanic_map::get_ability_mechanic, mutations::DamageTarget,
+        shared_mutations, SimpleAction,
     },
     card_ids::CardId,
     effects::TurnEffect,
@@ -226,7 +227,7 @@ fn apply_pokemon_checkup(
         handle_damage(
             mutated_state,
             attacking_ref,
-            &[(poison_damage, player, in_play_idx)],
+            &[(poison_damage, DamageTarget::SelfPlayer(in_play_idx))],
             false,
             None,
         );
@@ -242,7 +243,7 @@ fn apply_pokemon_checkup(
         handle_damage(
             mutated_state,
             attacking_ref,
-            &[(20, player, in_play_idx)],
+            &[(20, DamageTarget::SelfPlayer(in_play_idx))],
             false,
             None,
         );
@@ -328,7 +329,7 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
             handle_damage(
                 state,
                 (source_player, 0),
-                &[(checkup_damage, target_player, 0)],
+                &[(checkup_damage, DamageTarget::Opponent(0))],
                 false,
                 None,
             );
@@ -337,9 +338,9 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
 
     for (source_player, checkup_damage) in all_opponent_damage {
         let target_player = (source_player + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> = state
+        let targets: Vec<(u32, DamageTarget)> = state
             .enumerate_in_play_pokemon(target_player)
-            .map(|(idx, _)| (checkup_damage, target_player, idx))
+            .map(|(idx, _)| (checkup_damage, DamageTarget::Opponent(idx)))
             .collect();
         if !targets.is_empty() {
             debug!(
@@ -394,7 +395,7 @@ fn checkapply_prevent_first_attack(
 pub(crate) fn handle_damage(
     state: &mut State,
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
-    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    targets: &[(u32, DamageTarget)],
     is_from_active_attack: bool,
     attack_name: Option<&str>,
 ) {
@@ -413,7 +414,7 @@ pub(crate) fn handle_damage(
 pub(crate) fn handle_damage_only(
     state: &mut State,
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
-    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    targets: &[(u32, DamageTarget)],
     is_from_active_attack: bool,
     attack_name: Option<&str>,
 ) {
@@ -421,8 +422,9 @@ pub(crate) fn handle_damage_only(
 
     // Reduce and sum damage for duplicate targets
     let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
-    for (damage, player, idx) in targets {
-        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    for (damage, target) in targets {
+        let (player, idx) = target.resolve(attacking_player);
+        *damage_map.entry((player, idx)).or_insert(0) += damage;
     }
     let targets: Vec<(u32, usize, usize)> = damage_map
         .into_iter()
@@ -682,7 +684,6 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
                 }
                 state.remove_card_from_hand(action.actor, &card);
                 state.refresh_starting_plains_bonus_all();
-                handle_knockouts(state, (action.actor, 0), false);
             } else if trainer_card.trainer_card_type == TrainerType::Tool {
                 state.remove_card_from_hand(action.actor, &card);
             } else {
@@ -765,11 +766,23 @@ mod tests {
         let starting_hp = state.get_active(1).get_remaining_hp();
 
         // First attack damage should be prevented
-        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        handle_damage(
+            &mut state,
+            (0, 0),
+            &[(30, DamageTarget::Opponent(0))],
+            true,
+            None,
+        );
         assert_eq!(state.get_active(1).get_remaining_hp(), starting_hp);
 
         // Second attack should deal damage normally
-        handle_damage(&mut state, (0, 0), &[(30, 1, 0)], true, None);
+        handle_damage(
+            &mut state,
+            (0, 0),
+            &[(30, DamageTarget::Opponent(0))],
+            true,
+            None,
+        );
         assert_eq!(state.get_active(1).get_remaining_hp(), starting_hp - 30);
     }
 }

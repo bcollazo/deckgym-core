@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
@@ -129,7 +129,7 @@ fn test_intimidating_fang_check_does_not_panic_when_defenders_active_was_knocked
         actor: 1,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (1, 0),
-            targets: vec![(30, 0, 0)],
+            targets: vec![(30, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,

@@ -23,6 +23,7 @@ use super::{
     apply_action_helpers::{forecast_end_turn, handle_damage, Mutations},
     apply_attack_action::{forecast_attack, forecast_copied_attack},
     apply_trainer_action::forecast_trainer_action,
+    mutations::DamageTarget,
     outcomes::{CoinSeq, Outcomes},
     Action, SimpleAction,
 };
@@ -478,7 +479,7 @@ fn apply_move_all_damage(actor: usize, state: &mut State, from: usize, to: usize
         from_pokemon.heal(damage_to_move);
 
         // Use handle_damage to ensure KO checks and other effects are triggered
-        let targets = vec![(damage_to_move, actor, to)];
+        let targets = vec![(damage_to_move, DamageTarget::SelfPlayer(to))];
         // Attacking ref is (actor, from) as the source of the damage move
         handle_damage(state, (actor, from), &targets, false, None);
     }

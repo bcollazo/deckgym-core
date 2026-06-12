@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
@@ -50,7 +50,7 @@ fn get_remaining_hp_after_damage(game: &mut deckgym::Game<'static>, damage: u32)
         actor: 0,
         action: SimpleAction::ApplyDamage {
             attacking_ref: (0, 0),
-            targets: vec![(damage, 1, 0)],
+            targets: vec![(damage, DamageTarget::Opponent(0))],
             is_from_active_attack: true,
         },
         is_stack: false,

@@ -27,7 +27,7 @@ use super::{
     apply_action_helpers::{Mutation, Mutations},
     mutations::{
         active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
-        active_damage_mutation, build_status_effect, damage_effect_doutcome,
+        active_damage_mutation, build_status_effect, damage_effect_doutcome, DamageTarget,
     },
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
@@ -802,7 +802,13 @@ fn recoil_if_ko_attack(damage: u32, self_damage: u32) -> Outcomes {
         let attacking_ref = (action.actor, 0);
 
         // Resolve attack damage and any immediate counter-damage before knockout handling.
-        handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+        handle_damage_only(
+            state,
+            attacking_ref,
+            &[(damage, DamageTarget::Opponent(0))],
+            true,
+            None,
+        );
 
         // Check knockout status before any discard/promotion resolution happens.
         let opponent_ko = state.in_play_pokemon[opponent][0]
@@ -860,14 +866,19 @@ fn discard_self_energy_per_heads_extra_damage_attack(
                 available_requested_energy_to_discard(active, &requested)
             };
             let damage = base_damage + (actual.len() as u32 * damage_per_discarded_energy);
-            let opponent = (action.actor + 1) % 2;
             let attacking_ref = (action.actor, 0);
 
             if !actual.is_empty() {
                 state.discard_from_active(action.actor, &actual);
             }
 
-            handle_damage_only(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+            handle_damage_only(
+                state,
+                attacking_ref,
+                &[(damage, DamageTarget::Opponent(0))],
+                true,
+                None,
+            );
             handle_knockouts(state, attacking_ref, true);
         })
     })
@@ -936,8 +947,7 @@ fn mega_kangaskhan_ex_double_punching_family(attack: &Attack) -> Outcomes {
         handle_knockouts(state, attacking_ref, is_from_active_attack);
 
         // .insert(0 damage to purposely do after the K.O. promotions
-        let opponent = (action.actor + 1) % 2;
-        let targets = vec![(40, opponent, 0)];
+        let targets = vec![(40, DamageTarget::Opponent(0))];
         state.move_generation_stack.insert(
             0,
             (
@@ -1026,10 +1036,10 @@ fn manaphy_oceanic() -> Outcomes {
 fn palkia_dimensional_storm(state: &State) -> Outcomes {
     // This attack does 150 damage to Active, and 20 to every bench pokemon
     // it then also discards 3 energies. This is deterministic
-    let targets: Vec<(u32, bool, usize)> = state
+    let targets: Vec<(u32, DamageTarget)> = state
         .enumerate_bench_pokemon((state.current_player + 1) % 2)
-        .map(|(idx, _)| (20, true, idx))
-        .chain(std::iter::once((150, true, 0))) // Add active Pokémon directly
+        .map(|(idx, _)| (20, DamageTarget::Opponent(idx)))
+        .chain(std::iter::once((150, DamageTarget::Opponent(0)))) // Add active Pokémon directly
         .collect();
     damage_effect_doutcome(targets, |_, state, action| {
         discard_requested_energy_from_active_best_effort(
@@ -1357,18 +1367,22 @@ fn also_choice_bench_damage(
     active_damage: u32,
     bench_damage: u32,
 ) -> Outcomes {
-    let opponent_player = (state.current_player + 1) % 2;
     let bench_target = if opponent {
-        opponent_player
+        (state.current_player + 1) % 2
     } else {
         state.current_player
+    };
+    let bench_damage_target = if opponent {
+        DamageTarget::Opponent
+    } else {
+        DamageTarget::SelfPlayer
     };
     let choices: Vec<_> = state
         .enumerate_bench_pokemon(bench_target)
         .map(|(in_play_idx, _)| {
             let targets = vec![
-                (active_damage, opponent_player, 0),
-                (bench_damage, bench_target, in_play_idx),
+                (active_damage, DamageTarget::Opponent(0)),
+                (bench_damage, bench_damage_target(in_play_idx)),
             ];
             SimpleAction::ApplyDamage {
                 attacking_ref: (state.current_player, 0),
@@ -1423,7 +1437,7 @@ fn direct_damage(damage: u32, bench_only: bool) -> Outcomes {
             for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
                     attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
+                    targets: vec![(damage, DamageTarget::Opponent(in_play_idx))],
                     is_from_active_attack: true,
                 });
             }
@@ -1431,7 +1445,7 @@ fn direct_damage(damage: u32, bench_only: bool) -> Outcomes {
             for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
                 choices.push(SimpleAction::ApplyDamage {
                     attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
+                    targets: vec![(damage, DamageTarget::Opponent(in_play_idx))],
                     is_from_active_attack: true,
                 });
             }
@@ -1472,7 +1486,7 @@ fn direct_damage_if_damaged(damage: u32) -> Outcomes {
             if pokemon.is_damaged() {
                 choices.push(SimpleAction::ApplyDamage {
                     attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
+                    targets: vec![(damage, DamageTarget::Opponent(in_play_idx))],
                     is_from_active_attack: true,
                 });
             }
@@ -1505,7 +1519,7 @@ fn discard_all_energy_of_type_then_damage_any_opponent_pokemon(
         for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
             choices.push(SimpleAction::ApplyDamage {
                 attacking_ref: (action.actor, 0),
-                targets: vec![(damage, opponent, in_play_idx)],
+                targets: vec![(damage, DamageTarget::Opponent(in_play_idx))],
                 is_from_active_attack: true,
             });
         }
@@ -1617,7 +1631,7 @@ fn discard_opponent_active_tools_before_damage(damage: u32, attack_name: String)
         handle_damage_only(
             state,
             attacking_ref,
-            &[(damage, opponent, 0)],
+            &[(damage, DamageTarget::Opponent(0))],
             true,
             Some(attack_name.as_str()),
         );
@@ -1881,12 +1895,11 @@ fn flip_coins_bench_damage_per_head(
         let bench_dmg = heads as u32 * bench_damage_per_head;
         let bench_indices = bench_indices.clone();
         Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
-            let opponent = (action.actor + 1) % 2;
             let attacking_ref = (action.actor, 0);
-            let mut targets = vec![(fixed_damage, opponent, 0usize)];
+            let mut targets = vec![(fixed_damage, DamageTarget::Opponent(0))];
             if bench_dmg > 0 {
                 for &idx in &bench_indices {
-                    targets.push((bench_dmg, opponent, idx));
+                    targets.push((bench_dmg, DamageTarget::Opponent(idx)));
                 }
             }
             handle_damage(state, attacking_ref, &targets, true, None);
@@ -2053,7 +2066,14 @@ fn also_bench_damage(
     } else {
         state.current_player
     };
-    let mut targets: Vec<(u32, bool, usize)> = state
+    let bench_target = |idx| {
+        if opponent {
+            DamageTarget::Opponent(idx)
+        } else {
+            DamageTarget::SelfPlayer(idx)
+        }
+    };
+    let mut targets: Vec<(u32, DamageTarget)> = state
         .enumerate_bench_pokemon(player)
         .filter(|(_, pokemon)| {
             if must_have_energy {
@@ -2062,9 +2082,9 @@ fn also_bench_damage(
                 true
             }
         })
-        .map(|(idx, _)| (bench_damage, opponent, idx))
+        .map(|(idx, _)| (bench_damage, bench_target(idx)))
         .collect();
-    targets.push((active_damage, true, 0)); // Opponent's Active Pokémon is always index 0
+    targets.push((active_damage, DamageTarget::Opponent(0))); // Opponent's Active Pokémon is always index 0
     damage_effect_doutcome(targets, |_, _, _| {})
 }
 
@@ -2072,9 +2092,9 @@ fn also_bench_damage(
 fn damage_all_opponent_pokemon(state: &State, damage: u32) -> Outcomes {
     let opponent = (state.current_player + 1) % 2;
     // Collect all opponent's Pokémon (active at index 0, plus bench)
-    let targets: Vec<(u32, bool, usize)> = state
+    let targets: Vec<(u32, DamageTarget)> = state
         .enumerate_in_play_pokemon(opponent)
-        .map(|(idx, _)| (damage, true, idx))
+        .map(|(idx, _)| (damage, DamageTarget::Opponent(idx)))
         .collect();
     damage_effect_doutcome(targets, |_, _, _| {})
 }
@@ -2241,7 +2261,7 @@ fn damage_to_any_opponent_per_target_energy(damage_per_energy: u32) -> Outcomes 
                 let damage = energy_count * damage_per_energy;
                 SimpleAction::ApplyDamage {
                     attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
+                    targets: vec![(damage, DamageTarget::Opponent(in_play_idx))],
                     is_from_active_attack: true,
                 }
             })
@@ -2638,11 +2658,15 @@ fn coin_flip_also_choice_bench_damage(
     active_damage: u32,
     bench_damage: u32,
 ) -> Outcomes {
-    let opponent_player = (state.current_player + 1) % 2;
     let bench_target = if opponent {
-        opponent_player
+        (state.current_player + 1) % 2
     } else {
         state.current_player
+    };
+    let bench_damage_target = if opponent {
+        DamageTarget::Opponent
+    } else {
+        DamageTarget::SelfPlayer
     };
     // Build choices that bundle active + bench damage atomically (avoids stale slot issues).
     let choices: Vec<_> = state
@@ -2650,8 +2674,8 @@ fn coin_flip_also_choice_bench_damage(
         .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
             attacking_ref: (state.current_player, 0),
             targets: vec![
-                (active_damage, opponent_player, 0),
-                (bench_damage, bench_target, in_play_idx),
+                (active_damage, DamageTarget::Opponent(0)),
+                (bench_damage, bench_damage_target(in_play_idx)),
             ],
             is_from_active_attack: true,
         })
@@ -2707,11 +2731,11 @@ fn mega_ampharos_lightning_lancer() -> Outcomes {
     // For each time a Pokémon was chosen, also do 20 damage to it.
     Outcomes::single_fn(|rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> =
+        let targets: Vec<(u32, DamageTarget)> =
             generate_random_spread_indices(rng, state, opponent, true, 3)
                 .into_iter()
-                .map(|idx| (20, opponent, idx))
-                .chain(std::iter::once((100, opponent, 0))) // Add active Pokémon directly
+                .map(|idx| (20, DamageTarget::Opponent(idx)))
+                .chain(std::iter::once((100, DamageTarget::Opponent(0)))) // Add active Pokémon directly
                 .collect();
 
         let attacking_ref = (action.actor, 0);
@@ -2737,10 +2761,10 @@ fn random_damage_to_opponent_pokemon_per_self_energy(
 
     Outcomes::single(Box::new(move |rng, state, action| {
         let opponent = (action.actor + 1) % 2;
-        let targets: Vec<(u32, usize, usize)> =
+        let targets: Vec<(u32, DamageTarget)> =
             generate_random_spread_indices(rng, state, opponent, false, energy_count)
                 .into_iter()
-                .map(|idx| (damage_per_hit, opponent, idx))
+                .map(|idx| (damage_per_hit, DamageTarget::Opponent(idx)))
                 .collect();
 
         let attacking_ref = (action.actor, 0);
@@ -2843,9 +2867,16 @@ fn random_damage_outcomes_to_outcomes(outcomes: Vec<EnumeratedOutcome>) -> Outco
         mutations.push(Box::new(
             move |_: &mut StdRng, state: &mut State, action: &Action| {
                 let attacking_ref = (action.actor, 0);
-                let targets: Vec<(u32, usize, usize)> = damage_dist
+                let targets: Vec<(u32, DamageTarget)> = damage_dist
                     .iter()
-                    .map(|&(player, idx, damage)| (damage, player, idx))
+                    .map(|&(player, idx, damage)| {
+                        let target = if player == action.actor {
+                            DamageTarget::SelfPlayer(idx)
+                        } else {
+                            DamageTarget::Opponent(idx)
+                        };
+                        (damage, target)
+                    })
                     .collect();
                 handle_damage(state, attacking_ref, &targets, true, None);
             },
@@ -2897,11 +2928,16 @@ fn switch_self_with_bench(state: &State, damage: u32, optional: bool) -> Outcome
 
     Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
-            let opponent = (action.actor + 1) % 2;
             let attacking_ref = (action.actor, 0);
 
             // Deal damage to opponent's active
-            handle_damage(state, attacking_ref, &[(damage, opponent, 0)], true, None);
+            handle_damage(
+                state,
+                attacking_ref,
+                &[(damage, DamageTarget::Opponent(0))],
+                true,
+                None,
+            );
 
             // Push choices for switching if there are benched Pokemon and pokemon
             // is still alive (after possible counterdamage)
@@ -2975,11 +3011,15 @@ fn conditional_bench_damage_attack(
     );
 
     if has_extra_energy {
-        let opponent_player = (state.current_player + 1) % 2;
         let bench_target = if opponent {
-            opponent_player
+            (state.current_player + 1) % 2
         } else {
             state.current_player
+        };
+        let bench_damage_target = if opponent {
+            DamageTarget::Opponent
+        } else {
+            DamageTarget::SelfPlayer
         };
         let benched: Vec<usize> = state
             .enumerate_bench_pokemon(bench_target)
@@ -2994,8 +3034,8 @@ fn conditional_bench_damage_attack(
                     .iter()
                     .map(|&bench_idx| {
                         let targets = vec![
-                            (attack.fixed_damage, opponent_player, 0),
-                            (bench_damage, bench_target, bench_idx),
+                            (attack.fixed_damage, DamageTarget::Opponent(0)),
+                            (bench_damage, bench_damage_target(bench_idx)),
                         ];
                         SimpleAction::ApplyDamage {
                             attacking_ref: (state.current_player, 0),
@@ -3009,9 +3049,9 @@ fn conditional_bench_damage_attack(
                 for i in 0..benched.len() {
                     for j in (i + 1)..benched.len() {
                         let targets = vec![
-                            (attack.fixed_damage, opponent_player, 0),
-                            (bench_damage, bench_target, benched[i]),
-                            (bench_damage, bench_target, benched[j]),
+                            (attack.fixed_damage, DamageTarget::Opponent(0)),
+                            (bench_damage, bench_damage_target(benched[i])),
+                            (bench_damage, bench_damage_target(benched[j])),
                         ];
                         choices.push(SimpleAction::ApplyDamage {
                             attacking_ref: (state.current_player, 0),

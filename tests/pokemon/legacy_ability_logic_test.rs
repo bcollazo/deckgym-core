@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::{Action, DamageTarget, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
@@ -638,7 +638,7 @@ fn test_wartortle_shell_shield_prevents_bench_damage() {
     let bench_hit_action = find_action(&game, |a| match &a.action {
         SimpleAction::ApplyDamage { targets, .. } => targets
             .iter()
-            .any(|(_, player, idx)| *player == 1 && *idx == 1),
+            .any(|(_, target)| *target == DamageTarget::Opponent(1)),
         _ => false,
     });
     game.apply_action(&bench_hit_action);

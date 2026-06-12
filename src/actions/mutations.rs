@@ -1,4 +1,5 @@
 use rand::rngs::StdRng;
+use serde::{Deserialize, Serialize};
 
 use crate::{
     actions::apply_action_helpers::{handle_damage_only, handle_knockouts},
@@ -16,6 +17,28 @@ use super::{
 // forcing the end of the turn, applying damage with calculations, forcing enemy
 // to promote pokemon after knockout, etc... apply to all attacks.
 
+/// A damage target expressed relative to the attacking player. Resolved to an
+/// absolute `(player, in_play_idx)` pair once the acting player is known, so
+/// that self-targeting effects (e.g. Great Tusk's Shaking Stomp hitting its
+/// own Bench) and opponent-targeting effects can share the same plumbing
+/// without one being mistaken for the other.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum DamageTarget {
+    /// A Pokémon on the attacker's own side, at the given in-play index.
+    SelfPlayer(usize),
+    /// A Pokémon on the attacker's opponent's side, at the given in-play index.
+    Opponent(usize),
+}
+
+impl DamageTarget {
+    pub(crate) fn resolve(self, actor: usize) -> (usize, usize) {
+        match self {
+            DamageTarget::SelfPlayer(idx) => (actor, idx),
+            DamageTarget::Opponent(idx) => ((actor + 1) % 2, idx),
+        }
+    }
+}
+
 // Useful for deterministic attacks
 pub(crate) fn active_damage_doutcome(damage: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, |_, _, _| {})
@@ -25,14 +48,11 @@ pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> Outcomes {
-    damage_effect_doutcome(vec![(damage, true, 0)], additional_effect)
+    damage_effect_doutcome(vec![(damage, DamageTarget::Opponent(0))], additional_effect)
 }
 
-/// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
-/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
-/// the attacker's opponent's side (true) or the attacker's own side (false).
 pub(crate) fn damage_effect_doutcome<F>(
-    targets: Vec<(u32, bool, usize)>,
+    targets: Vec<(u32, DamageTarget)>,
     additional_effect: F,
 ) -> Outcomes
 where
@@ -43,21 +63,18 @@ where
 
 // ===== Helper functions for building Mutations
 pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
-    damage_effect_mutation(vec![(damage, true, 0)], |_, _, _| {})
+    damage_effect_mutation(vec![(damage, DamageTarget::Opponent(0))], |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_mutation(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
 ) -> Mutation {
-    damage_effect_mutation(vec![(damage, true, 0)], additional_effect)
+    damage_effect_mutation(vec![(damage, DamageTarget::Opponent(0))], additional_effect)
 }
 
-/// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
-/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
-/// the attacker's opponent's side (true) or the attacker's own side (false).
 pub(crate) fn damage_effect_mutation<F>(
-    targets: Vec<(u32, bool, usize)>,
+    targets: Vec<(u32, DamageTarget)>,
     additional_effect: F,
 ) -> Mutation
 where
@@ -65,19 +82,6 @@ where
 {
     Box::new({
         move |rng, state, action| {
-            let opponent = (action.actor + 1) % 2;
-            let targets: Vec<(u32, usize, usize)> = targets
-                .iter()
-                .map(|(damage, is_opponent_target, in_play_idx)| {
-                    let target_player = if *is_opponent_target {
-                        opponent
-                    } else {
-                        action.actor
-                    };
-                    (*damage, target_player, *in_play_idx)
-                })
-                .collect();
-
             let attack_name: String = match &action.action {
                 SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
                     .as_ref()
