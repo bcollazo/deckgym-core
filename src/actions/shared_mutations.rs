@@ -43,6 +43,14 @@ pub(crate) fn pokemon_search_outcomes_by_type_for_player(
     })
 }
 
+pub(crate) fn search_to_hand_by_evolves_from(state: &State, name: String) -> Outcomes {
+    card_search_outcomes_with_filter(
+        state.current_player,
+        state,
+        move |card: &&Card| matches!(card, Card::Pokemon(pokemon_card) if pokemon_card.evolves_from.as_deref() == Some(name.as_str())),
+    )
+}
+
 pub(crate) fn item_search_outcomes(acting_player: usize, state: &State) -> Outcomes {
     card_search_outcomes_with_filter(
         acting_player,
