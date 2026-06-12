@@ -32,7 +32,7 @@ use super::{
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
-        search_and_bench_by_name, supporter_search_outcomes,
+        search_and_bench_by_name, search_to_hand_by_evolves_from, supporter_search_outcomes,
     },
     SimpleAction,
 };
@@ -252,6 +252,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::SearchRandomPokemonToHand => {
             pokemon_search_outcomes(state.current_player, state, false)
+        }
+        Mechanic::SearchToHandByEvolvesFrom { name } => {
+            search_to_hand_by_evolves_from(state, name.clone())
         }
         Mechanic::SearchToHandSupporterCard => {
             supporter_search_outcomes(state.current_player, state)

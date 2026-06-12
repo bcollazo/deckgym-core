@@ -39,6 +39,9 @@ pub enum Mechanic {
     },
     SearchToBenchBasic,
     SearchRandomPokemonToHand,
+    SearchToHandByEvolvesFrom {
+        name: String,
+    },
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
