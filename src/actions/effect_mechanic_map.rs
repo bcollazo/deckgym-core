@@ -1033,7 +1033,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::SearchRandomPokemonToHand,
     );
     map.insert("Put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", Mechanic::MagikarpWaterfallEvolution);
-    // map.insert("Put a random card that evolves from Rockruff from your deck into your hand.", todo_implementation);
+    map.insert(
+        "Put a random card that evolves from Rockruff from your deck into your hand.",
+        Mechanic::SearchToHandByEvolvesFrom {
+            name: "Rockruff".to_string(),
+        },
+    );
     // map.insert("Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck.", todo_implementation);
     // map.insert("Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.", todo_implementation);
     map.insert(
@@ -1043,6 +1048,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert(
         "Switch this Pokémon with 1 of your Benched Pokémon.",
         Mechanic::SwitchSelfWithBench,
+    );
+    map.insert(
+        "You may switch this Pokémon with 1 of your Benched Pokémon.",
+        Mechanic::MaySwitchSelfWithBench,
     );
     // map.insert("Switch this Pokémon with 1 of your Benched [L] Pokémon.", todo_implementation);
     map.insert(
@@ -1723,7 +1732,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If your opponent has gotten exactly 1 points, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);
     // map.insert("Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.", todo_implementation);
-    // map.insert("Put a random card that evolves from Spewpa from your deck into your hand.", todo_implementation);
+    map.insert(
+        "Put a random card that evolves from Spewpa from your deck into your hand.",
+        Mechanic::SearchToHandByEvolvesFrom {
+            name: "Spewpa".to_string(),
+        },
+    );
     // map.insert("Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.", todo_implementation);
     map.insert(
         "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.",
@@ -1971,7 +1985,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::HealAllYourPokemon { amount: 10 },
     );
     // map.insert("Heal 20 damage from each of your [P] Pokémon.", todo_implementation);
-    // map.insert("Heal 30 damage from 1 of your Benched Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 30 damage from 1 of your Benched Pokémon.",
+        Mechanic::HealOneYourBenchedPokemon { amount: 30 },
+    );
     map.insert(
         "Heal 30 damage from 1 of your Pokémon.",
         Mechanic::HealOneYourPokemon { amount: 30 },

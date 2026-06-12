@@ -2,6 +2,8 @@
 mod additional_ability_logic_test;
 #[path = "pokemon/altaria_dragon_arcana_test.rs"]
 mod altaria_dragon_arcana_test;
+#[path = "pokemon/applin_share_test.rs"]
+mod applin_share_test;
 #[path = "pokemon/arceus_ex_test.rs"]
 mod arceus_ex_test;
 #[path = "pokemon/audino_test.rs"]
@@ -104,6 +106,8 @@ mod shinx_hide_test;
 mod slither_wing_test;
 #[path = "pokemon/smoochum_test.rs"]
 mod smoochum_test;
+#[path = "pokemon/spewpa_signs_of_evolution_test.rs"]
+mod spewpa_signs_of_evolution_test;
 #[path = "pokemon/sunflora_quick_grow_beam_test.rs"]
 mod sunflora_quick_grow_beam_test;
 #[path = "pokemon/swift_shot_test.rs"]

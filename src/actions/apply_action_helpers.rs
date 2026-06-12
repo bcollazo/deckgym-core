@@ -701,6 +701,18 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
 
         mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
 
+        // Catch-all knockout check: any action could have reduced a Pokemon's
+        // effective HP below its damage taken (e.g. Field Blower discarding a
+        // Giant Cape). This way individual mutations don't need to remember to
+        // check for knockouts themselves. Damage-dealing mutations already call
+        // handle_knockouts with the proper attacking context, so this is a no-op
+        // for them.
+        // Skipped during the initial setup phase, where players place their boards
+        // one at a time and "0 Pokemon in play" doesn't mean a loss.
+        if state.turn_count > 0 {
+            handle_knockouts(state, (action.actor, 0), false);
+        }
+
         if let SimpleAction::Attack(_) = &action.action {
             // We use a flag instead of .move_generation_stack to reduce
             // stack surgery to make sure things happen in order.

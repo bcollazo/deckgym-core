@@ -25,6 +25,9 @@ pub enum Mechanic {
     HealOneYourPokemon {
         amount: u32,
     },
+    HealOneYourBenchedPokemon {
+        amount: u32,
+    },
     HealAllYourPokemon {
         amount: u32,
     },
@@ -39,6 +42,9 @@ pub enum Mechanic {
     },
     SearchToBenchBasic,
     SearchRandomPokemonToHand,
+    SearchToHandByEvolvesFrom {
+        name: String,
+    },
     SearchToHandSupporterCard,
     InflictStatusConditions {
         conditions: Vec<StatusCondition>,
@@ -331,6 +337,7 @@ pub enum Mechanic {
     DarknessClaw,
     BlockBasicAttack,
     SwitchSelfWithBench,
+    MaySwitchSelfWithBench,
     SelfHealIfStadiumInPlay {
         amount: u32,
     },

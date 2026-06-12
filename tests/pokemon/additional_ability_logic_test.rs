@@ -2,10 +2,17 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{EnergyType, PlayedCard},
+    models::{Card, EnergyType, PlayedCard, TrainerCard},
     test_support::{get_initialized_game_with_board, get_test_game_with_board},
     Game,
 };
+
+fn field_blower_trainer() -> TrainerCard {
+    match get_card_by_enum(CardId::B3147FieldBlower) {
+        Card::Trainer(card) => card,
+        _ => panic!("Expected Field Blower to be a trainer card"),
+    }
+}
 
 fn find_action<F>(game: &Game, predicate: F) -> Action
 where
@@ -37,6 +44,105 @@ fn test_luxray_intimidating_fang_reduces_opponent_active_damage() {
     });
 
     assert_eq!(game.get_state_clone().get_active(1).get_remaining_hp(), 110);
+}
+
+#[test]
+fn test_intimidating_fang_check_does_not_panic_when_defenders_active_was_knocked_out() {
+    let mut game = get_test_game_with_board(
+        vec![
+            // Active Pokemon: with Giant Cape (+20 HP) and 70 damage taken, it sits
+            // at 20 remaining HP. Discarding the cape drops its effective HP back to
+            // 70, which knocks it out (0 remaining HP).
+            PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_tool(get_card_by_enum(CardId::A2147GiantCape))
+                .with_damage(70)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    let mut state = game.get_state_clone();
+    state.hands[0] = vec![get_card_by_enum(CardId::B3147FieldBlower)];
+    game.set_state(state);
+
+    // Play Field Blower and discard the Giant Cape from the active Pokemon. This
+    // drops its effective HP back to 70 (already 70 damage taken), knocking it out.
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: field_blower_trainer(),
+        },
+        is_stack: false,
+    });
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::DiscardToolFromPokemon {
+            player: 0,
+            in_play_idx: 0,
+        },
+        is_stack: true,
+    });
+
+    // The post-action knockout check should have removed the active Pokemon, leaving
+    // player 0's active spot empty, and immediately queued a forced promotion: the
+    // engine must not allow any other action (e.g. an opponent's ApplyDamage) to run
+    // until player 0 has promoted a benched Pokemon to active.
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[0][0].is_none(),
+        "Player 0's active spot should be empty after their active was knocked out by Field Blower"
+    );
+    let (actor, possible_actions) = state.generate_possible_actions();
+    assert_eq!(actor, 0, "Player 0 must resolve the pending promotion next");
+    assert_eq!(
+        possible_actions
+            .iter()
+            .map(|a| a.action.clone())
+            .collect::<Vec<_>>(),
+        vec![SimpleAction::Activate {
+            player: 0,
+            in_play_idx: 1
+        }],
+        "The only possible action should be promoting the benched Bulbasaur to active"
+    );
+
+    // Resolve the forced promotion.
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Activate {
+            player: 0,
+            in_play_idx: 1,
+        },
+        is_stack: true,
+    });
+    let state = game.get_state_clone();
+    assert!(
+        state.in_play_pokemon[0][0].is_some(),
+        "Player 0 should have a new active Pokemon after promoting from the bench"
+    );
+
+    // Now that player 0 has an active Pokemon again, player 1's active Pokemon can
+    // attack it. get_intimidating_fang_reduction must not panic since the invariant
+    // (an active Pokemon is always present) holds again.
+    game.apply_action(&Action {
+        actor: 1,
+        action: SimpleAction::ApplyDamage {
+            attacking_ref: (1, 0),
+            targets: vec![(30, 0, 0)],
+            is_from_active_attack: true,
+        },
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.in_play_pokemon[0][0]
+            .as_ref()
+            .expect("Player 0's promoted active Pokemon should still be in play")
+            .get_remaining_hp(),
+        40
+    );
 }
 
 #[test]

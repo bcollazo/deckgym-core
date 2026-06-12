@@ -32,7 +32,7 @@ use super::{
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
-        search_and_bench_by_name, supporter_search_outcomes,
+        search_and_bench_by_name, search_to_hand_by_evolves_from, supporter_search_outcomes,
     },
     SimpleAction,
 };
@@ -213,6 +213,9 @@ fn forecast_effect_attack_by_mechanic(
         ),
         Mechanic::SelfHeal { amount } => self_heal_attack(*amount, attack),
         Mechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon_attack(*amount),
+        Mechanic::HealOneYourBenchedPokemon { amount } => {
+            heal_one_your_benched_pokemon_attack(*amount)
+        }
         Mechanic::HealAllYourPokemon { amount } => {
             heal_all_your_pokemon_attack(attack.fixed_damage, *amount)
         }
@@ -252,6 +255,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::SearchRandomPokemonToHand => {
             pokemon_search_outcomes(state.current_player, state, false)
+        }
+        Mechanic::SearchToHandByEvolvesFrom { name } => {
+            search_to_hand_by_evolves_from(state, name.clone())
         }
         Mechanic::SearchToHandSupporterCard => {
             supporter_search_outcomes(state.current_player, state)
@@ -555,7 +561,10 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::BlockBasicAttack => block_basic_attack(attack.fixed_damage),
-        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage),
+        Mechanic::SwitchSelfWithBench => switch_self_with_bench(state, attack.fixed_damage, false),
+        Mechanic::MaySwitchSelfWithBench => {
+            switch_self_with_bench(state, attack.fixed_damage, true)
+        }
         Mechanic::SelfHealIfStadiumInPlay { amount } => {
             self_heal_if_stadium_in_play(state, attack.fixed_damage, *amount)
         }
@@ -1746,6 +1755,23 @@ fn heal_one_your_pokemon_attack(amount: u32) -> Outcomes {
     })
 }
 
+fn heal_one_your_benched_pokemon_attack(amount: u32) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let choices = state
+            .enumerate_bench_pokemon(action.actor)
+            .filter(|(_, pokemon)| pokemon.is_damaged())
+            .map(|(in_play_idx, _)| SimpleAction::Heal {
+                in_play_idx,
+                amount,
+                cure_status: false,
+            })
+            .collect::<Vec<_>>();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
 fn heal_all_your_pokemon_attack(damage: u32, heal: u32) -> Outcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         heal_all_pokemon(state, action.actor, heal);
@@ -2890,14 +2916,17 @@ fn random_spread_damage(
     random_damage_outcomes_to_outcomes(outcomes)
 }
 
-fn switch_self_with_bench(state: &State, damage: u32) -> Outcomes {
-    let choices: Vec<_> = state
+fn switch_self_with_bench(state: &State, damage: u32, optional: bool) -> Outcomes {
+    let mut choices: Vec<_> = state
         .enumerate_bench_pokemon(state.current_player)
         .map(|(in_play_idx, _)| SimpleAction::Activate {
             player: state.current_player,
             in_play_idx,
         })
         .collect();
+    if optional && !choices.is_empty() {
+        choices.push(SimpleAction::Noop);
+    }
 
     Outcomes::single(Box::new(
         move |_: &mut StdRng, state: &mut State, action: &Action| {
