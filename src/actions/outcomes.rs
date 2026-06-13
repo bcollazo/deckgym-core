@@ -1,6 +1,9 @@
+use std::rc::Rc;
+
 use rand::rngs::StdRng;
 
-use super::apply_action_helpers::{Mutation, Mutations, Probabilities};
+use super::apply_action_helpers::{AdditionalEffect, Mutation, Mutations, Probabilities};
+use super::mutations::build_attack_mutation;
 use super::Action;
 use crate::State;
 
@@ -12,6 +15,24 @@ pub struct OutcomeBranch {
     pub probability: f64,
     pub mutation: Mutation,
     pub coin_paths: CoinPaths,
+    pub damage_targets: Vec<DamageTarget>,
+    pub additional_effect: AdditionalEffect,
+}
+
+/// A single damage target produced by an attack, before any per-target
+/// modifications (e.g. weakness, Carefree Steps prevention) are applied.
+///
+/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
+/// the attacker's opponent's side (true) or the attacker's own side (false).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DamageTarget {
+    pub amount: u32,
+    pub is_opponent_target: bool,
+    pub in_play_idx: usize,
+}
+
+fn no_additional_effect() -> AdditionalEffect {
+    Rc::new(|_, _, _| {})
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -38,6 +59,8 @@ impl Outcomes {
                 probability: 1.0,
                 mutation,
                 coin_paths: CoinPaths::None,
+                damage_targets: vec![],
+                additional_effect: no_additional_effect(),
             }],
         }
     }
@@ -47,6 +70,72 @@ impl Outcomes {
         F: Fn(&mut StdRng, &mut State, &Action) + 'static,
     {
         Self::single(Box::new(f))
+    }
+
+    /// Tags every branch with the given damage targets and additional effect,
+    /// so that downstream consumers (e.g. Carefree Steps) can reason about the
+    /// damage an outcome will produce without inspecting its mutation closure.
+    pub fn with_damage_info(
+        mut self,
+        damage_targets: Vec<DamageTarget>,
+        additional_effect: AdditionalEffect,
+    ) -> Self {
+        for branch in &mut self.branches {
+            branch.damage_targets = damage_targets.clone();
+            branch.additional_effect = additional_effect.clone();
+        }
+        self
+    }
+
+    pub fn has_damage_targets(&self) -> bool {
+        self.branches.iter().any(|b| !b.damage_targets.is_empty())
+    }
+
+    /// Splits each branch that has damage targets matching `can_prevent` into
+    /// sub-branches covering every combination of "prevented" (heads) vs
+    /// "not prevented" (tails) for those targets, each with independent 50/50
+    /// probability. Targets with zero damage, or not matching `can_prevent`,
+    /// are left untouched. Branches without any matching targets are passed
+    /// through unchanged.
+    pub fn apply_coin_flip_damage_prevention(
+        self,
+        can_prevent: impl Fn(&DamageTarget) -> bool,
+    ) -> Self {
+        let mut branches = Vec::with_capacity(self.branches.len());
+        for branch in self.branches {
+            let preventable: Vec<usize> = branch
+                .damage_targets
+                .iter()
+                .enumerate()
+                .filter(|(_, target)| target.amount > 0 && can_prevent(target))
+                .map(|(idx, _)| idx)
+                .collect();
+
+            if preventable.is_empty() {
+                branches.push(branch);
+                continue;
+            }
+
+            let sub_probability = branch.probability / (1u32 << preventable.len()) as f64;
+            for mask in 0..(1usize << preventable.len()) {
+                let mut targets = branch.damage_targets.clone();
+                for (bit, &idx) in preventable.iter().enumerate() {
+                    if (mask >> bit) & 1 == 1 {
+                        targets[idx].amount = 0;
+                    }
+                }
+                let additional_effect = branch.additional_effect.clone();
+                let mutation = build_attack_mutation(targets.clone(), additional_effect.clone());
+                branches.push(OutcomeBranch {
+                    probability: sub_probability,
+                    mutation,
+                    coin_paths: branch.coin_paths.clone(),
+                    damage_targets: targets,
+                    additional_effect,
+                });
+            }
+        }
+        Self { branches }
     }
 
     // Useful for constructing outcomes that are not based on coin flips, or when coin flip metadata is not needed.
@@ -65,6 +154,8 @@ impl Outcomes {
                 probability,
                 mutation,
                 coin_paths: CoinPaths::None,
+                damage_targets: vec![],
+                additional_effect: no_additional_effect(),
             })
             .collect();
         let outcomes = Self { branches: built };
@@ -81,11 +172,15 @@ impl Outcomes {
                     probability: 0.5,
                     mutation: heads_mutation,
                     coin_paths: CoinPaths::Exact(vec![CoinSeq(vec![true])]),
+                    damage_targets: vec![],
+                    additional_effect: no_additional_effect(),
                 },
                 OutcomeBranch {
                     probability: 0.5,
                     mutation: tails_mutation,
                     coin_paths: CoinPaths::Exact(vec![CoinSeq(vec![false])]),
+                    damage_targets: vec![],
+                    additional_effect: no_additional_effect(),
                 },
             ],
         }
@@ -100,6 +195,8 @@ impl Outcomes {
                 probability,
                 mutation,
                 coin_paths: CoinPaths::Exact(sequences),
+                damage_targets: vec![],
+                additional_effect: no_additional_effect(),
             })
             .collect();
         let outcomes = Self { branches: built };
@@ -162,6 +259,8 @@ impl Outcomes {
                 probability: branch.probability,
                 mutation: f(branch.mutation),
                 coin_paths: branch.coin_paths,
+                damage_targets: branch.damage_targets,
+                additional_effect: branch.additional_effect,
             })
             .collect();
         Self { branches }
@@ -204,6 +303,8 @@ impl Outcomes {
                         probability: scaled_probability,
                         mutation: branch.mutation,
                         coin_paths: CoinPaths::Exact(kept),
+                        damage_targets: branch.damage_targets,
+                        additional_effect: branch.additional_effect,
                     });
                 }
             }

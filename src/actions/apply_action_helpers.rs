@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use log::debug;
 use rand::rngs::StdRng;
@@ -29,6 +30,12 @@ pub(crate) type Probabilities = Vec<f64>;
 pub(crate) type FnMutation = Box<dyn Fn(&mut StdRng, &mut State, &Action)>;
 pub(crate) type Mutation = Box<dyn FnOnce(&mut StdRng, &mut State, &Action)>;
 pub(crate) type Mutations = Vec<Mutation>;
+
+/// A shareable effect (beyond the core damage application) attached to an
+/// attack outcome, e.g. inflicting a status condition. Shared via `Rc` so the
+/// same effect can be reused across the sub-branches produced when splitting
+/// an outcome for per-target coin flips (e.g. Carefree Steps).
+pub(crate) type AdditionalEffect = Rc<dyn Fn(&mut StdRng, &mut State, &Action)>;
 
 #[derive(Clone)]
 struct CheckupTargets {

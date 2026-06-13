@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use rand::rngs::StdRng;
 
 use crate::{
@@ -7,8 +9,8 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::{FnMutation, Mutation},
-    outcomes::Outcomes,
+    apply_action_helpers::{AdditionalEffect, FnMutation, Mutation},
+    outcomes::{DamageTarget, Outcomes},
     Action, SimpleAction,
 };
 
@@ -38,7 +40,10 @@ pub(crate) fn damage_effect_doutcome<F>(
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
-    Outcomes::single(damage_effect_mutation(targets, additional_effect))
+    let damage_targets = to_damage_targets(&targets);
+    let additional_effect: AdditionalEffect = Rc::new(additional_effect);
+    let mutation = build_attack_mutation(damage_targets.clone(), additional_effect.clone());
+    Outcomes::single(mutation).with_damage_info(damage_targets, additional_effect)
 }
 
 // ===== Helper functions for building Mutations
@@ -63,18 +68,39 @@ pub(crate) fn damage_effect_mutation<F>(
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
+    build_attack_mutation(to_damage_targets(&targets), Rc::new(additional_effect))
+}
+
+fn to_damage_targets(targets: &[(u32, bool, usize)]) -> Vec<DamageTarget> {
+    targets
+        .iter()
+        .map(|&(amount, is_opponent_target, in_play_idx)| DamageTarget {
+            amount,
+            is_opponent_target,
+            in_play_idx,
+        })
+        .collect()
+}
+
+/// Builds the `Mutation` shared by attack-damage outcomes: resolves each
+/// `DamageTarget` against the acting player, applies the damage, runs the
+/// `additional_effect`, then handles any resulting knockouts.
+pub(crate) fn build_attack_mutation(
+    targets: Vec<DamageTarget>,
+    additional_effect: AdditionalEffect,
+) -> Mutation {
     Box::new({
         move |rng, state, action| {
             let opponent = (action.actor + 1) % 2;
             let targets: Vec<(u32, usize, usize)> = targets
                 .iter()
-                .map(|(damage, is_opponent_target, in_play_idx)| {
-                    let target_player = if *is_opponent_target {
+                .map(|target| {
+                    let target_player = if target.is_opponent_target {
                         opponent
                     } else {
                         action.actor
                     };
-                    (*damage, target_player, *in_play_idx)
+                    (target.amount, target_player, target.in_play_idx)
                 })
                 .collect();
 

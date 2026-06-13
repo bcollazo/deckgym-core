@@ -29,7 +29,7 @@ use super::{
         active_damage_doutcome, active_damage_effect_doutcome, active_damage_effect_mutation,
         active_damage_mutation, build_status_effect, damage_effect_doutcome,
     },
-    outcomes::{CoinSeq, Outcomes},
+    outcomes::{CoinSeq, DamageTarget, Outcomes},
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
         search_and_bench_by_name, search_to_hand_by_evolves_from, supporter_search_outcomes,
@@ -126,7 +126,21 @@ fn apply_defender_damage_prevention_if_needed(
     attack: &Attack,
     outcomes: Outcomes,
 ) -> Outcomes {
-    // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
+    // Outcomes that report explicit damage targets (e.g. built via
+    // `damage_effect_doutcome`) get a per-target Carefree Steps coin flip:
+    // every Pokemon being damaged (on either side, active or benched) that
+    // has CoinFlipToPreventDamage gets its own independent 50/50 chance to
+    // have just its damage reduced to 0, while any additional effects
+    // (status conditions, etc.) still apply.
+    if outcomes.has_damage_targets() {
+        return outcomes.apply_coin_flip_damage_prevention(|target| {
+            target_has_coin_flip_prevent_damage(state, acting_player, target)
+        });
+    }
+
+    // Legacy fallback for mechanics that don't report explicit damage
+    // targets: only the opponent's active Pokemon is checked, and the whole
+    // outcome (including any additional effects) is gated behind one coin flip.
     if attack.fixed_damage > 0 {
         let opponent = (acting_player + 1) % 2;
         let defender = state.get_active(opponent);
@@ -143,6 +157,27 @@ fn apply_defender_damage_prevention_if_needed(
     }
 
     outcomes
+}
+
+/// Whether the Pokemon being damaged by `target` has the Carefree Steps
+/// (CoinFlipToPreventDamage) ability.
+fn target_has_coin_flip_prevent_damage(
+    state: &State,
+    acting_player: usize,
+    target: &DamageTarget,
+) -> bool {
+    let target_player = if target.is_opponent_target {
+        (acting_player + 1) % 2
+    } else {
+        acting_player
+    };
+    state.in_play_pokemon[target_player]
+        .get(target.in_play_idx)
+        .and_then(|slot| slot.as_ref())
+        .and_then(|card| card.card.get_ability())
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+        .map(|m| matches!(m, AbilityMechanic::CoinFlipToPreventDamage))
+        .unwrap_or(false)
 }
 
 fn forecast_attack_inner(state: &State, card: &Card, attack: &Attack, _index: usize) -> Outcomes {
