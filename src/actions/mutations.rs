@@ -10,7 +10,7 @@ use crate::{
 
 use super::{
     apply_action_helpers::{AdditionalEffect, FnMutation, Mutation},
-    outcomes::{DamageTarget, Outcomes},
+    attack_outcomes::{AttackOutcomes, DamageTarget},
     Action, SimpleAction,
 };
 
@@ -19,14 +19,14 @@ use super::{
 // to promote pokemon after knockout, etc... apply to all attacks.
 
 // Useful for deterministic attacks
-pub(crate) fn active_damage_doutcome(damage: u32) -> Outcomes {
+pub(crate) fn active_damage_doutcome(damage: u32) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, |_, _, _| {})
 }
 
 pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
-) -> Outcomes {
+) -> AttackOutcomes {
     damage_effect_doutcome(vec![(damage, true, 0)], additional_effect)
 }
 
@@ -36,14 +36,13 @@ pub(crate) fn active_damage_effect_doutcome(
 pub(crate) fn damage_effect_doutcome<F>(
     targets: Vec<(u32, bool, usize)>,
     additional_effect: F,
-) -> Outcomes
+) -> AttackOutcomes
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
     let damage_targets = to_damage_targets(&targets);
     let additional_effect: AdditionalEffect = Rc::new(additional_effect);
-    let mutation = build_attack_mutation(damage_targets.clone(), additional_effect.clone());
-    Outcomes::single(mutation).with_damage_info(damage_targets, additional_effect)
+    AttackOutcomes::from_damage_targets(damage_targets, additional_effect)
 }
 
 // ===== Helper functions for building Mutations
