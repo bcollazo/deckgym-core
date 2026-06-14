@@ -53,6 +53,11 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    /// Deal damage, then let the player choose one of these Special Conditions to
+    /// inflict on the opponent's Active Pokémon (e.g. Dustox's Select Powder).
+    ChooseStatusToInflict {
+        options: Vec<StatusCondition>,
+    },
     DamageAllOpponentPokemon {
         damage: u32,
     },

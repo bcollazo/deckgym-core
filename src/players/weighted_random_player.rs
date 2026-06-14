@@ -73,6 +73,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::DiscardToolFromPokemon { .. } => 5,
         SimpleAction::DiscardActiveStadium => 5,
         SimpleAction::DiscardRandomOpponentActiveEnergy => 10,
+        SimpleAction::ApplyStatusToOpponentActive { .. } => 10,
         SimpleAction::UseStadium => 5, // Stadium abilities like Mesagoza
         SimpleAction::Noop => 0,       // No operation has no weight
     }

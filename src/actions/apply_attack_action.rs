@@ -277,6 +277,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, *condition)
         }
+        Mechanic::ChooseStatusToInflict { options } => {
+            damage_and_choose_status_attack(attack.fixed_damage, options.clone())
+        }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
         }
@@ -1298,6 +1301,22 @@ fn extra_or_self_damage_attack(base_damage: u32, extra_damage: u32, self_damage:
             active.apply_damage(self_damage);
         }),
     )
+}
+
+/// Deal damage, then let the player choose which Special Condition to inflict on the
+/// opponent's Active Pokémon (e.g. Dustox's Select Powder).
+fn damage_and_choose_status_attack(damage: u32, options: Vec<StatusCondition>) -> Outcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let choices: Vec<SimpleAction> = options
+            .iter()
+            .map(|condition| SimpleAction::ApplyStatusToOpponentActive {
+                condition: *condition,
+            })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn damage_chance_status_attack(damage: u32, status: StatusCondition) -> Outcomes {
