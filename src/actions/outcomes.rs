@@ -144,6 +144,34 @@ impl Outcomes {
             .expect("geometric_until_tails should always create valid branches")
     }
 
+    /// Build outcomes from per-branch `(probability, mutation, coin_paths)` triples.
+    /// Unlike `from_parts`, this preserves each branch's coin metadata, which is needed
+    /// when converting from an `AttackOutcomes` distribution that already carries coin paths.
+    pub fn from_branches_with_coin_paths(
+        branches: Vec<(f64, Mutation, CoinPaths)>,
+    ) -> Result<Self, ForecastBuildError> {
+        let built = branches
+            .into_iter()
+            .map(|(probability, mutation, coin_paths)| OutcomeBranch {
+                probability,
+                mutation,
+                coin_paths,
+            })
+            .collect();
+        let outcomes = Self { branches: built };
+        outcomes.validate()?;
+        Ok(outcomes)
+    }
+
+    /// Consume the outcomes into per-branch `(probability, mutation, coin_paths)` triples,
+    /// preserving coin metadata (unlike `into_branches`).
+    pub fn into_branches_with_coin_paths(self) -> Vec<(f64, Mutation, CoinPaths)> {
+        self.branches
+            .into_iter()
+            .map(|branch| (branch.probability, branch.mutation, branch.coin_paths))
+            .collect()
+    }
+
     pub fn into_branches(self) -> (Probabilities, Mutations) {
         let mut probabilities = Vec::with_capacity(self.branches.len());
         let mut mutations = Vec::with_capacity(self.branches.len());
@@ -260,7 +288,7 @@ impl Outcomes {
     }
 }
 
-fn generate_sequences_with_heads(flips: usize, heads: usize) -> Vec<Vec<bool>> {
+pub(crate) fn generate_sequences_with_heads(flips: usize, heads: usize) -> Vec<Vec<bool>> {
     if flips == 0 {
         return vec![vec![]];
     }

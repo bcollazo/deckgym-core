@@ -96,6 +96,8 @@ mod mega_sceptile_terminating_tail_test;
 mod mega_steelix_adamantine_rolling_test;
 #[path = "pokemon/meowstic_test.rs"]
 mod meowstic_test;
+#[path = "pokemon/meowth_carefree_steps_test.rs"]
+mod meowth_carefree_steps_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]

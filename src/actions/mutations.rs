@@ -1,130 +1,57 @@
 use rand::rngs::StdRng;
 
-use crate::{
-    actions::apply_action_helpers::{handle_damage_only, handle_knockouts},
-    models::StatusCondition,
-    State,
-};
+use crate::{models::StatusCondition, State};
 
 use super::{
-    apply_action_helpers::{FnMutation, Mutation},
-    outcomes::Outcomes,
-    Action, SimpleAction,
+    apply_action_helpers::FnMutation,
+    attack_outcome::{AttackOutcome, AttackOutcomes, DamageTarget},
+    Action,
 };
 
-// These functions should share the common code of
-// forcing the end of the turn, applying damage with calculations, forcing enemy
-// to promote pokemon after knockout, etc... apply to all attacks.
+// These functions build the structured `AttackOutcome`/`AttackOutcomes` for attacks. Damage is
+// carried as data (in the `damage` field) rather than baked into the effect closures, so that the
+// shared resolution path (`AttackOutcome::into_mutation`) can apply damage with the usual
+// modifiers/counterattacks/knockouts, and so that the defender's coin-flip damage prevention can
+// strip only the active Pokémon's damage while still running effects.
 
 // Useful for deterministic attacks
-pub(crate) fn active_damage_doutcome(damage: u32) -> Outcomes {
-    active_damage_effect_doutcome(damage, |_, _, _| {})
+pub(crate) fn active_damage_doutcome(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::single(active_damage_outcome(damage))
 }
 
 pub(crate) fn active_damage_effect_doutcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
-) -> Outcomes {
-    damage_effect_doutcome(vec![(damage, true, 0)], additional_effect)
+) -> AttackOutcomes {
+    AttackOutcomes::single(active_damage_effect_outcome(damage, additional_effect))
 }
 
 /// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
 /// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
 /// the attacker's opponent's side (true) or the attacker's own side (false).
 pub(crate) fn damage_effect_doutcome<F>(
-    targets: Vec<(u32, bool, usize)>,
+    targets: Vec<DamageTarget>,
     additional_effect: F,
-) -> Outcomes
+) -> AttackOutcomes
 where
     F: Fn(&mut StdRng, &mut State, &Action) + 'static,
 {
-    Outcomes::single(damage_effect_mutation(targets, additional_effect))
+    AttackOutcomes::single(AttackOutcome::damage_then_effect(
+        targets,
+        additional_effect,
+    ))
 }
 
-// ===== Helper functions for building Mutations
-pub(crate) fn active_damage_mutation(damage: u32) -> Mutation {
-    damage_effect_mutation(vec![(damage, true, 0)], |_, _, _| {})
+// ===== Helper functions for building single AttackOutcome branches
+pub(crate) fn active_damage_outcome(damage: u32) -> AttackOutcome {
+    AttackOutcome::damage(vec![(damage, true, 0)])
 }
 
-pub(crate) fn active_damage_effect_mutation(
+pub(crate) fn active_damage_effect_outcome(
     damage: u32,
     additional_effect: impl Fn(&mut StdRng, &mut State, &Action) + 'static,
-) -> Mutation {
-    damage_effect_mutation(vec![(damage, true, 0)], additional_effect)
-}
-
-/// `targets` is a list of `(damage, is_opponent_target, in_play_idx)`, where
-/// `is_opponent_target` indicates whether `in_play_idx` refers to a slot on
-/// the attacker's opponent's side (true) or the attacker's own side (false).
-pub(crate) fn damage_effect_mutation<F>(
-    targets: Vec<(u32, bool, usize)>,
-    additional_effect: F,
-) -> Mutation
-where
-    F: Fn(&mut StdRng, &mut State, &Action) + 'static,
-{
-    Box::new({
-        move |rng, state, action| {
-            let opponent = (action.actor + 1) % 2;
-            let targets: Vec<(u32, usize, usize)> = targets
-                .iter()
-                .map(|(damage, is_opponent_target, in_play_idx)| {
-                    let target_player = if *is_opponent_target {
-                        opponent
-                    } else {
-                        action.actor
-                    };
-                    (*damage, target_player, *in_play_idx)
-                })
-                .collect();
-
-            let attack_name: String = match &action.action {
-                SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
-                    .as_ref()
-                    .expect("Attacking Pokemon must be there if attacking")
-                    .card
-                    .get_attacks()
-                    .get(*attack_index)
-                    .unwrap_or_else(|| {
-                        panic!("Index must exist if attacking with {}", attack_index)
-                    })
-                    .title
-                    .clone(),
-                SimpleAction::UseCopiedAttack {
-                    source_player,
-                    source_in_play_idx,
-                    attack_index,
-                    ..
-                } => state.in_play_pokemon[*source_player][*source_in_play_idx]
-                    .as_ref()
-                    .expect("Copied-attack source Pokemon must exist")
-                    .card
-                    .get_attacks()
-                    .get(*attack_index)
-                    .unwrap_or_else(|| {
-                        panic!(
-                            "Copied attack index must exist for source {}:{}",
-                            source_player, source_in_play_idx
-                        )
-                    })
-                    .title
-                    .clone(),
-                _ => panic!("This codepath should come from an attack."),
-            };
-
-            let attacking_ref = (action.actor, 0);
-            let is_from_active_attack = true;
-            handle_damage_only(
-                state,
-                attacking_ref,
-                &targets,
-                is_from_active_attack,
-                Some(&attack_name),
-            );
-            additional_effect(rng, state, action);
-            handle_knockouts(state, attacking_ref, is_from_active_attack);
-        }
-    })
+) -> AttackOutcome {
+    AttackOutcome::damage_then_effect(vec![(damage, true, 0)], additional_effect)
 }
 
 // ===== Other Helper Functions
