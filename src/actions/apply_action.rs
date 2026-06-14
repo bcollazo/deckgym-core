@@ -67,6 +67,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::DiscardToolFromPokemon { .. }
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
+        | SimpleAction::ApplyStatusToOpponentActive { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
@@ -264,6 +265,10 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             if let Some(energy) = state.get_active(opponent).attached_energy.last().copied() {
                 state.discard_from_active(opponent, &[energy]);
             }
+        }
+        SimpleAction::ApplyStatusToOpponentActive { condition } => {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, *condition);
         }
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),

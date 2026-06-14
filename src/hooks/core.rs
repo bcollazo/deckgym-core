@@ -1012,11 +1012,23 @@ pub(crate) fn modify_damage(
                 + intimidating_fang_reduction
                 + ability_damage_reduction,
         );
-    match weakness_application {
+    let final_damage = match weakness_application {
         WeaknessApplication::None => pre_weakness,
         WeaknessApplication::Flat(amount) => pre_weakness + amount,
         WeaknessApplication::Double => pre_weakness * 2,
+    };
+
+    // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage if it is low enough.
+    let prevented_by_threshold = receiving_pokemon
+        .get_active_effects()
+        .iter()
+        .any(|effect| matches!(effect, CardEffect::PreventDamageIfLessOrEqual { threshold } if final_damage <= *threshold));
+    if prevented_by_threshold {
+        debug!("PreventDamageIfLessOrEqual: Preventing {final_damage} damage");
+        return 0;
     }
+
+    final_damage
 }
 
 /// Calculate type-specific damage boost from abilities like Lucario's Fighting Coach or Aegislash's Royal Command

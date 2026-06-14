@@ -1,4 +1,4 @@
-use crate::models::{Card, EnergyType, TrainerCard};
+use crate::models::{Card, EnergyType, StatusCondition, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -152,6 +152,10 @@ pub enum SimpleAction {
     DiscardActiveStadium,
     /// Crawdaunt's Unruly Claw: discard a random Energy from the opponent's Active Pokémon
     DiscardRandomOpponentActiveEnergy,
+    /// Apply a chosen Special Condition to the opponent's Active Pokémon (e.g. Dustox's Select Powder).
+    ApplyStatusToOpponentActive {
+        condition: StatusCondition,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -315,6 +319,9 @@ impl fmt::Display for SimpleAction {
                 write!(f, "DiscardRandomOpponentActiveEnergy")
             }
             SimpleAction::UseStadium => write!(f, "UseStadium"),
+            SimpleAction::ApplyStatusToOpponentActive { condition } => {
+                write!(f, "ApplyStatusToOpponentActive({condition:?})")
+            }
             SimpleAction::Noop => write!(f, "Noop"),
         }
     }

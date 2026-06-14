@@ -18,6 +18,8 @@ mod bonsly_teary_attack_test;
 mod brambleghast_accept_pain_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
+#[path = "pokemon/cascoon_harden_test.rs"]
+mod cascoon_harden_test;
 #[path = "pokemon/castform_test.rs"]
 mod castform_test;
 #[path = "pokemon/chansey_blissey_test.rs"]
@@ -36,6 +38,8 @@ mod darkrai_ex_test;
 mod durant_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
 mod dusknoir_shadow_void_test;
+#[path = "pokemon/dustox_select_powder_test.rs"]
+mod dustox_select_powder_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
 #[path = "pokemon/flutter_mane_ex_test.rs"]
@@ -50,6 +54,8 @@ mod grovyle_slicing_snipe_test;
 mod hatterene_test;
 #[path = "pokemon/heracross_test.rs"]
 mod heracross_test;
+#[path = "pokemon/honchkrow_evil_admonition_test.rs"]
+mod honchkrow_evil_admonition_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]
 mod houndstone_last_respects_test;
 #[path = "pokemon/iron_bundle_ex_test.rs"]

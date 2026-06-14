@@ -77,7 +77,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", Mechanic::ManaphyOceanicGift);
-    // map.insert("Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.", todo_implementation);
+    map.insert(
+        "Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.",
+        Mechanic::ChooseStatusToInflict {
+            options: vec![StatusCondition::Poisoned, StatusCondition::Confused],
+        },
+    );
     map.insert(
         "Discard 2 [L] Energy from this Pokémon.",
         Mechanic::SelfDiscardEnergy {
@@ -352,7 +357,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 20 damage to the Attacking Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 30 damage to the Attacking Pokémon.", todo_implementation);
     // map.insert("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.", todo_implementation);
-    // map.insert("During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, prevent all damage done to this Pokémon by attacks if that damage is 40 or less.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::PreventDamageIfLessOrEqual { threshold: 40 },
+            duration: 1,
+            coin_flip: false,
+        },
+    );
     map.insert(
         "During your opponent's next turn, the Defending Pokémon can't attack.",
         Mechanic::DamageAndCardEffect {
@@ -1495,7 +1508,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.", todo_implementation);
-    // map.insert("This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.", todo_implementation);
+    map.insert(
+        "This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.",
+        Mechanic::ExtraDamagePerOpponentPokemonWithAbility { damage_per: 40 },
+    );
     map.insert(
         "This attack does 50 damage to 1 of your opponent's Benched Pokémon.",
         Mechanic::DirectDamage {

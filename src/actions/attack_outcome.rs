@@ -464,7 +464,10 @@ mod tests {
         let state = state_with_grimer_vs_meowth();
         let outcomes = AttackOutcomes::single(AttackOutcome::damage(vec![(20, true, 0)]));
         let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None);
-        assert!((expected - 20.0).abs() < 1e-9, "expected 20, got {expected}");
+        assert!(
+            (expected - 20.0).abs() < 1e-9,
+            "expected 20, got {expected}"
+        );
     }
 
     #[test]
@@ -474,7 +477,10 @@ mod tests {
             .split_with_active_damage_prevention();
         // Heads branch (0.5) prevents the active damage, tails branch (0.5) deals 20.
         let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None);
-        assert!((expected - 10.0).abs() < 1e-9, "expected 10, got {expected}");
+        assert!(
+            (expected - 10.0).abs() < 1e-9,
+            "expected 10, got {expected}"
+        );
     }
 
     #[test]

@@ -270,6 +270,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, *condition)
         }
+        Mechanic::ChooseStatusToInflict { options } => {
+            damage_and_choose_status_attack(attack.fixed_damage, options.clone())
+        }
         Mechanic::DamageAllOpponentPokemon { damage } => {
             damage_all_opponent_pokemon(state, *damage)
         }
@@ -665,6 +668,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::ExtraDamageIfOpponentActiveHasAbility { extra_damage } => {
             extra_damage_if_opponent_active_has_ability(state, attack.fixed_damage, *extra_damage)
+        }
+        Mechanic::ExtraDamagePerOpponentPokemonWithAbility { damage_per } => {
+            extra_damage_per_opponent_pokemon_with_ability(state, attack.fixed_damage, *damage_per)
         }
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
@@ -1306,6 +1312,22 @@ fn extra_or_self_damage_attack(
             active.apply_damage(self_damage);
         }),
     )
+}
+
+/// Deal damage, then let the player choose which Special Condition to inflict on the
+/// opponent's Active Pokémon (e.g. Dustox's Select Powder).
+fn damage_and_choose_status_attack(damage: u32, options: Vec<StatusCondition>) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let choices: Vec<SimpleAction> = options
+            .iter()
+            .map(|condition| SimpleAction::ApplyStatusToOpponentActive {
+                condition: *condition,
+            })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn damage_chance_status_attack(damage: u32, status: StatusCondition) -> AttackOutcomes {
@@ -2157,6 +2179,19 @@ fn extra_damage_if_opponent_active_has_ability(
     let opponent_active = state.get_active(opponent);
     let has_ability = opponent_active.card.get_ability().is_some();
     active_damage_doutcome(if has_ability { base + extra } else { base })
+}
+
+fn extra_damage_per_opponent_pokemon_with_ability(
+    state: &State,
+    base: u32,
+    damage_per: u32,
+) -> AttackOutcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let ability_count = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| pokemon.card.get_ability().is_some())
+        .count() as u32;
+    active_damage_doutcome(base + damage_per * ability_count)
 }
 
 fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> AttackOutcomes {

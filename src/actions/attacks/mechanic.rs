@@ -53,6 +53,11 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    /// Deal damage, then let the player choose one of these Special Conditions to
+    /// inflict on the opponent's Active Pokémon (e.g. Dustox's Select Powder).
+    ChooseStatusToInflict {
+        options: Vec<StatusCondition>,
+    },
     DamageAllOpponentPokemon {
         damage: u32,
     },
@@ -364,6 +369,11 @@ pub enum Mechanic {
     },
     ExtraDamageIfOpponentActiveHasAbility {
         extra_damage: u32,
+    },
+    /// Honchkrow – Evil Admonition: extra damage for each of the opponent's
+    /// Pokémon in play (active and bench) that has an Ability.
+    ExtraDamagePerOpponentPokemonWithAbility {
+        damage_per: u32,
     },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
     /// Teal Mask Ogerpon ex – Energized Leaves:

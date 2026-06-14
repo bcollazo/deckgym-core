@@ -6,16 +6,31 @@ use crate::models::EnergyType;
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CardEffect {
     NoRetreat,
-    ReducedDamage { amount: u32 },
-    IncreasedVulnerability { amount: u32 },
-    IncreasedAttackCost { amount: u8 },
+    ReducedDamage {
+        amount: u32,
+    },
+    IncreasedVulnerability {
+        amount: u32,
+    },
+    IncreasedAttackCost {
+        amount: u8,
+    },
     CannotAttack,
     CannotUseAttack(String),
-    IncreasedDamageForAttack { attack_name: String, amount: u32 },
+    IncreasedDamageForAttack {
+        attack_name: String,
+        amount: u32,
+    },
     PreventAllDamageAndEffects,
+    /// Prevent all damage from attacks if the incoming damage is at most `threshold` (e.g. Cascoon's Harden).
+    PreventDamageIfLessOrEqual {
+        threshold: u32,
+    },
     NoWeakness,
     CoinFlipToBlockAttack,
-    DelayedDamage { amount: u32 },
+    DelayedDamage {
+        amount: u32,
+    },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
