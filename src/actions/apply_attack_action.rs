@@ -672,6 +672,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfOpponentActiveHasAbility { extra_damage } => {
             extra_damage_if_opponent_active_has_ability(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamagePerOpponentPokemonWithAbility { damage_per } => {
+            extra_damage_per_opponent_pokemon_with_ability(state, attack.fixed_damage, *damage_per)
+        }
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
@@ -2141,6 +2144,19 @@ fn extra_damage_if_opponent_active_has_ability(state: &State, base: u32, extra: 
     let opponent_active = state.get_active(opponent);
     let has_ability = opponent_active.card.get_ability().is_some();
     active_damage_doutcome(if has_ability { base + extra } else { base })
+}
+
+fn extra_damage_per_opponent_pokemon_with_ability(
+    state: &State,
+    base: u32,
+    damage_per: u32,
+) -> Outcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let ability_count = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| pokemon.card.get_ability().is_some())
+        .count() as u32;
+    active_damage_doutcome(base + damage_per * ability_count)
 }
 
 fn extra_damage_if_hurt(state: &State, base: u32, extra: u32, opponent: bool) -> Outcomes {

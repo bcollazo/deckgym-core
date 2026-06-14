@@ -1495,7 +1495,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("This attack does 40 more damage for each Energy in your opponent's Active Pokémon's Retreat Cost.", todo_implementation);
     // map.insert("This attack does 40 more damage for each of your Benched Wishiwashi and Wishiwashi ex.", todo_implementation);
-    // map.insert("This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.", todo_implementation);
+    map.insert(
+        "This attack does 40 more damage for each of your opponent's Pokémon in play that has an Ability.",
+        Mechanic::ExtraDamagePerOpponentPokemonWithAbility { damage_per: 40 },
+    );
     map.insert(
         "This attack does 50 damage to 1 of your opponent's Benched Pokémon.",
         Mechanic::DirectDamage {
