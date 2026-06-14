@@ -93,16 +93,6 @@ impl AttackOutcome {
         }
     }
 
-    /// Returns a copy of this outcome with damage to the opponent's Active Pokémon removed,
-    /// keeping all other damage and all effects. Used by the defender's coin-flip prevention.
-    fn without_active_opponent_damage(&self) -> Self {
-        let mut clone = self.clone();
-        clone
-            .damage
-            .retain(|(_, is_opponent, idx)| !(*is_opponent && *idx == 0));
-        clone
-    }
-
     /// Resolve `is_opponent_target` into concrete player indices for the acting player.
     fn resolved_targets(&self, actor: usize) -> Vec<(u32, usize, usize)> {
         let opponent = (actor + 1) % 2;
@@ -317,24 +307,59 @@ impl AttackOutcomes {
         Self { branches }
     }
 
-    /// Split each branch into a heads variant (damage to the opponent's Active Pokémon
-    /// prevented, all other damage and effects kept) and a tails variant (full), each at half
-    /// probability. Used for the defender's "flip a coin; if heads, prevent that damage" ability
-    /// (e.g. Meowth's Carefree Steps).
-    pub fn split_with_active_damage_prevention(self) -> Self {
+    /// Apply the defender's "if any damage is done to this Pokémon by attacks, flip a coin; if
+    /// heads, prevent that damage" ability (e.g. Meowth's Carefree Steps) to each opponent
+    /// in-play slot in `prevented_indices`.
+    ///
+    /// The ability applies independently to each such Pokémon — whether Active or Benched — and
+    /// only when it actually takes damage in a given branch. Each branch is therefore split into
+    /// `2^k` sub-branches (where `k` is the number of those Pokémon taking damage in that branch),
+    /// one per combination of heads/tails, removing the damage to the Pokémon whose coin came up
+    /// heads while keeping all other damage and all effects. Coin metadata is dropped (these are
+    /// the defender's coins, not the acting player's).
+    pub fn split_with_damage_prevention(self, prevented_indices: &[usize]) -> Self {
         let mut branches = vec![];
         for branch in self.branches {
-            let prevented = branch.outcome.without_active_opponent_damage();
-            branches.push(AttackBranch {
-                probability: branch.probability * 0.5,
-                outcome: prevented,
-                coin_paths: CoinPaths::None,
-            });
-            branches.push(AttackBranch {
-                probability: branch.probability * 0.5,
-                outcome: branch.outcome,
-                coin_paths: CoinPaths::None,
-            });
+            // Only the protected Pokémon that actually take (>0) opponent damage flip a coin.
+            let flipping: Vec<usize> = prevented_indices
+                .iter()
+                .copied()
+                .filter(|target_idx| {
+                    branch
+                        .outcome
+                        .damage
+                        .iter()
+                        .any(|(amount, is_opponent, idx)| {
+                            *is_opponent && idx == target_idx && *amount > 0
+                        })
+                })
+                .collect();
+
+            if flipping.is_empty() {
+                branches.push(branch);
+                continue;
+            }
+
+            let combos = 1usize << flipping.len();
+            let sub_probability = branch.probability / combos as f64;
+            for mask in 0..combos {
+                // The subset of flipping Pokémon whose coin came up heads (damage prevented).
+                let prevented_now: Vec<usize> = flipping
+                    .iter()
+                    .enumerate()
+                    .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+                    .map(|(_, idx)| *idx)
+                    .collect();
+                let mut outcome = branch.outcome.clone();
+                outcome
+                    .damage
+                    .retain(|(_, is_opponent, idx)| !(*is_opponent && prevented_now.contains(idx)));
+                branches.push(AttackBranch {
+                    probability: sub_probability,
+                    outcome,
+                    coin_paths: CoinPaths::None,
+                });
+            }
         }
         Self { branches }
     }
@@ -474,7 +499,7 @@ mod tests {
     fn expected_damage_halves_under_active_damage_prevention() {
         let state = state_with_grimer_vs_meowth();
         let outcomes = AttackOutcomes::single(AttackOutcome::damage(vec![(20, true, 0)]))
-            .split_with_active_damage_prevention();
+            .split_with_damage_prevention(&[0]);
         // Heads branch (0.5) prevents the active damage, tails branch (0.5) deals 20.
         let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None);
         assert!(

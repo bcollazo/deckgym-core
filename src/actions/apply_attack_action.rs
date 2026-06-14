@@ -45,7 +45,7 @@ pub(crate) fn forecast_attack(acting_player: usize, state: &State, index: usize)
 
     let base_outcomes = forecast_attack_inner(state, &active.card, &attack, index);
 
-    apply_attack_common_modifiers(acting_player, state, &attack, base_outcomes).into_outcomes()
+    apply_attack_common_modifiers(acting_player, state, base_outcomes).into_outcomes()
 }
 
 pub(crate) fn forecast_copied_attack(
@@ -81,13 +81,12 @@ pub(crate) fn forecast_copied_attack(
 
     let base_outcomes = forecast_attack_inner(state, &source.card, &attack, attack_index);
 
-    apply_copied_attack_modifiers(acting_player, state, &attack, base_outcomes).into_outcomes()
+    apply_copied_attack_modifiers(acting_player, state, base_outcomes).into_outcomes()
 }
 
 fn apply_attack_common_modifiers(
     acting_player: usize,
     state: &State,
-    attack: &Attack,
     base_outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
     let active = state.get_active(acting_player);
@@ -108,41 +107,43 @@ fn apply_attack_common_modifiers(
         outcomes = apply_block_attack_coin_flip(outcomes);
     }
 
-    apply_defender_damage_prevention_if_needed(acting_player, state, attack, outcomes)
+    apply_defender_damage_prevention_if_needed(acting_player, state, outcomes)
 }
 
 fn apply_copied_attack_modifiers(
     acting_player: usize,
     state: &State,
-    attack: &Attack,
     base_outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
-    apply_defender_damage_prevention_if_needed(acting_player, state, attack, base_outcomes)
+    apply_defender_damage_prevention_if_needed(acting_player, state, base_outcomes)
 }
 
 fn apply_defender_damage_prevention_if_needed(
     acting_player: usize,
     state: &State,
-    attack: &Attack,
     outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
-    // Check if DEFENDING Pokemon has CoinFlipToPreventDamage ability (only if attack does damage)
-    if attack.fixed_damage > 0 {
-        let opponent = (acting_player + 1) % 2;
-        let defender = state.get_active(opponent);
-        let defender_has_coin_flip_prevent = defender
-            .card
-            .get_ability()
-            .and_then(|a| ability_mechanic_from_effect(&a.effect))
-            .map(|m| matches!(m, AbilityMechanic::CoinFlipToPreventDamage))
-            .unwrap_or(false);
+    // Collect every opponent in-play Pokémon (Active and Benched) with the CoinFlipToPreventDamage
+    // ability (e.g. Meowth's Carefree Steps). The ability applies independently to each such
+    // Pokémon, and the split only adds a coin flip for the ones that actually take damage.
+    let opponent = (acting_player + 1) % 2;
+    let prevented_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| {
+            pokemon
+                .card
+                .get_ability()
+                .and_then(|a| ability_mechanic_from_effect(&a.effect))
+                .map(|m| matches!(m, AbilityMechanic::CoinFlipToPreventDamage))
+                .unwrap_or(false)
+        })
+        .map(|(idx, _)| idx)
+        .collect();
 
-        if defender_has_coin_flip_prevent {
-            return apply_defender_coin_flip_prevent_damage(outcomes);
-        }
+    if prevented_indices.is_empty() {
+        return outcomes;
     }
-
-    outcomes
+    outcomes.split_with_damage_prevention(&prevented_indices)
 }
 
 fn forecast_attack_inner(
@@ -172,13 +173,6 @@ fn apply_confusion_coin_flip(base_outcomes: AttackOutcomes) -> AttackOutcomes {
 /// Applies CoinFlipToBlockAttack effect: 50% chance the attack is blocked (tails)
 fn apply_block_attack_coin_flip(base_outcomes: AttackOutcomes) -> AttackOutcomes {
     base_outcomes.prepend_nullifying_coin_gate()
-}
-
-/// Applies defender's CoinFlipToPreventDamage ability (e.g. Meowth's Carefree Steps):
-/// on heads, the damage done to the defending Active Pokémon is prevented, but the rest of the
-/// attack (other damage and all effects) still resolves.
-fn apply_defender_coin_flip_prevent_damage(base_outcomes: AttackOutcomes) -> AttackOutcomes {
-    base_outcomes.split_with_active_damage_prevention()
 }
 
 // Handles attacks that have effects.

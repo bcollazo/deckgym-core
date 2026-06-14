@@ -63,3 +63,90 @@ fn test_meowth_carefree_steps_prevents_only_damage_not_effects() {
         "expected at least one seed where the damage went through"
     );
 }
+
+/// Carefree Steps applies wherever the Meowth is — including the Bench — and each Meowth flips
+/// its own independent coin. Palkia ex's Dimensional Storm does 150 to the Active and 20 to every
+/// Benched Pokémon, so against two Benched Meowth there should be two independent coin flips.
+///
+/// Across seeds we expect to observe every combination — both prevented, both hit, and (crucially)
+/// the mixed cases where one Meowth is prevented and the other is not. A single shared coin could
+/// never produce a mixed outcome, so seeing one proves the flips are independent and per-Pokémon.
+#[test]
+fn test_carefree_steps_applies_to_benched_meowth_with_independent_flips() {
+    let mut saw_both_prevented = false;
+    let mut saw_both_hit = false;
+    let mut saw_mixed = false;
+
+    for seed in 0..60u64 {
+        // Palkia ex (attacker) vs a tanky Active (survives 150) backed by two Benched Meowth.
+        let mut game = get_initialized_game_with_board(
+            seed,
+            0,
+            3,
+            vec![PlayedCard::from_id(CardId::A2049PalkiaEx).with_energy(vec![
+                EnergyType::Water,
+                EnergyType::Water,
+                EnergyType::Water,
+                EnergyType::Water,
+            ])],
+            vec![
+                // 190 HP, survives the 150 so no promotion muddies the bench slots.
+                PlayedCard::from_id(CardId::A1004VenusaurEx),
+                PlayedCard::from_id(CardId::B2124Meowth),
+                PlayedCard::from_id(CardId::B2124Meowth),
+            ],
+        );
+
+        // Dimensional Storm is Palkia ex's second attack (index 1).
+        game.apply_action(&Action {
+            actor: 0,
+            action: SimpleAction::Attack(1),
+            is_stack: false,
+        });
+
+        let state = game.get_state_clone();
+
+        // The Active (no Carefree Steps) always takes the full 150.
+        assert_eq!(
+            state.get_active(1).get_remaining_hp(),
+            190 - 150,
+            "seed {seed}: opponent Active should always take full Dimensional Storm damage"
+        );
+
+        // Each Benched Meowth is either untouched (50) or took 20 (30).
+        let hp1 = state.in_play_pokemon[1][1]
+            .as_ref()
+            .expect("first Benched Meowth should still be in play")
+            .get_remaining_hp();
+        let hp2 = state.in_play_pokemon[1][2]
+            .as_ref()
+            .expect("second Benched Meowth should still be in play")
+            .get_remaining_hp();
+
+        for hp in [hp1, hp2] {
+            assert!(
+                hp == 50 || hp == 30,
+                "seed {seed}: unexpected Benched Meowth HP {hp}"
+            );
+        }
+
+        match (hp1, hp2) {
+            (50, 50) => saw_both_prevented = true,
+            (30, 30) => saw_both_hit = true,
+            _ => saw_mixed = true,
+        }
+    }
+
+    assert!(
+        saw_both_prevented,
+        "expected a seed where both Benched Meowth prevented the damage"
+    );
+    assert!(
+        saw_both_hit,
+        "expected a seed where both Benched Meowth took the damage"
+    );
+    assert!(
+        saw_mixed,
+        "expected a mixed seed (one Meowth prevented, one not), proving two independent coin flips"
+    );
+}
