@@ -36,10 +36,13 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
         let mut available_attacks: Vec<Attack> = active_pokemon.get_attacks().clone();
         available_attacks.extend(time_recall_attacks(state, current_player, active_pokemon));
 
-        let mut offered_titles: Vec<String> = Vec::new();
+        let mut offered: Vec<Attack> = Vec::new();
         for attack in available_attacks {
-            // Avoid offering the same attack twice (e.g. a previous evolution sharing a title).
-            if offered_titles.contains(&attack.title) {
+            // Avoid offering an identical attack twice (e.g. an attack kept unchanged across an
+            // evolution). Dedup on the whole Attack, not just the title: a previous evolution can
+            // share an attack's name while differing in cost/damage/effect (e.g. Swirlix's and
+            // Slurpuff's "Sweets Relay"), and those are genuinely distinct, usable attacks.
+            if offered.contains(&attack) {
                 continue;
             }
             if restricted_attack_names.contains(&attack.title) {
@@ -47,7 +50,7 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             }
             let modified_cost = get_attack_cost(&attack.energy_required, state, current_player);
             if contains_energy(active_pokemon, &modified_cost, state, current_player) {
-                offered_titles.push(attack.title.clone());
+                offered.push(attack.clone());
                 actions.push(SimpleAction::Attack(attack));
             }
         }
