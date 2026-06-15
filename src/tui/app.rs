@@ -43,7 +43,7 @@ fn action_priority_for_tui(action: &SimpleAction) -> u8 {
         SimpleAction::Attach { .. }
         | SimpleAction::AttachFromDiscard { .. }
         | SimpleAction::AttachTool { .. } => 3,
-        SimpleAction::Attack(_) | SimpleAction::UseCopiedAttack { .. } => 4,
+        SimpleAction::Attack(_) => 4,
         SimpleAction::Retreat(_) => 5,
         SimpleAction::EndTurn => 255,
         _ => 6,
