@@ -177,6 +177,7 @@ pub fn trainer_move_generation_implementation(
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
             can_play_trainer(state, trainer_card)
         }
+        CardId::B1221Marlon | CardId::B1266Marlon => can_play_marlon(state, trainer_card),
         CardId::B1223May | CardId::B1268May => can_play_trainer(state, trainer_card),
         CardId::B1224Fantina | CardId::B1269Fantina => can_play_trainer(state, trainer_card),
         CardId::B1226Lisia | CardId::B1271Lisia => can_play_trainer(state, trainer_card),
@@ -323,6 +324,21 @@ fn can_play_erika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .filter(|(_, x)| x.is_damaged() && x.get_energy_type() == Some(EnergyType::Grass))
         .count();
     if damaged_grass_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Names of Pokémon that Marlon can heal.
+const MARLON_TARGETS: [&str; 2] = ["Carracosta", "Jellicent"];
+
+/// Check if Marlon can be played (requires a damaged Carracosta or Jellicent in play)
+fn can_play_marlon(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_valid_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, x)| x.is_damaged() && MARLON_TARGETS.contains(&x.get_name().as_str()));
+    if has_valid_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

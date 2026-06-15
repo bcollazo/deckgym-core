@@ -995,7 +995,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energy_type: EnergyType::Psychic,
         },
     );
-    // map.insert("Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.", todo_implementation);
+    map.insert(
+        "Prevent all damage done to this Pokémon by attacks from Basic Pokémon during your opponent's next turn.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::PreventDamageFromBasic,
+            duration: 1,
+            coin_flip: false,
+        },
+    );
     map.insert(
         "Put 1 random Basic Pokémon from your deck onto your Bench.",
         Mechanic::SearchToBenchBasic,

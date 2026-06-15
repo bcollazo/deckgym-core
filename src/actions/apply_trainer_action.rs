@@ -145,6 +145,7 @@ pub fn forecast_trainer_action(
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
             Outcomes::single_fn(iono_effect)
         }
+        CardId::B1221Marlon | CardId::B1266Marlon => Outcomes::single_fn(marlon_effect),
         CardId::B1223May | CardId::B1268May => may_effect(acting_player, state),
         CardId::B1224Fantina | CardId::B1269Fantina => Outcomes::single_fn(fantina_effect),
         CardId::B1226Lisia | CardId::B1271Lisia => lisia_effect(acting_player, state),
@@ -287,6 +288,25 @@ fn nasty_notice_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn erika_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 50, Some(EnergyType::Grass));
+}
+
+fn marlon_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal 70 damage from 1 of your Carracosta or Jellicent.
+    let targets = ["Carracosta", "Jellicent"];
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| targets.contains(&x.get_name().as_str()))
+        .map(|(i, _)| SimpleAction::Heal {
+            in_play_idx: i,
+            amount: 70,
+            cure_status: false,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 fn irida_effect(_: &mut StdRng, state: &mut State, action: &Action) {

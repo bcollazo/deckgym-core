@@ -18,6 +18,8 @@ mod bonsly_teary_attack_test;
 mod brambleghast_accept_pain_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
+#[path = "pokemon/carracosta_blocking_shell_test.rs"]
+mod carracosta_blocking_shell_test;
 #[path = "pokemon/cascoon_harden_test.rs"]
 mod cascoon_harden_test;
 #[path = "pokemon/castform_test.rs"]
