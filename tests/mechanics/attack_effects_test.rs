@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -42,7 +42,7 @@ fn test_metallic_turbo_does_not_panic_if_target_ko_by_jolteon() {
     // Dialga ex uses Metallic Turbo to queue attach-to-bench actions
     let attack_action = Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2119DialgaEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -96,7 +96,7 @@ fn test_weedle_multiply_attack() {
     // Apply Multiply attack
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0), // First attack (Multiply)
+        action: attack_action(CardId::A2b001Weedle, 0), // First attack (Multiply)
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -147,7 +147,7 @@ fn test_altaria_dragon_arcana_bonus_damage_with_multiple_energy_types() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a055Altaria, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -174,7 +174,7 @@ fn test_altaria_dragon_arcana_no_bonus_damage_with_single_energy_type() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a055Altaria, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -216,7 +216,7 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     // Apply the Attack action (index 0 = Metallic Turbo)
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2119DialgaEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

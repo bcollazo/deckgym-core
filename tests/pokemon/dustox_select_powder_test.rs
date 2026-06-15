@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard, StatusCondition},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Dustox's Select Powder: "Choose either Poisoned or Confused. Your opponent's
@@ -20,7 +20,7 @@ fn test_dustox_select_powder_offers_poison_and_confuse_then_poisons() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1007Dustox, 0),
         is_stack: false,
     });
 
@@ -89,7 +89,7 @@ fn test_dustox_select_powder_can_confuse_opponent_active() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1007Dustox, 0),
         is_stack: false,
     });
 

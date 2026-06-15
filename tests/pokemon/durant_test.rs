@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -24,7 +24,7 @@ fn test_bite_together_extra_damage_with_durant_on_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1168Durant, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -54,7 +54,7 @@ fn test_bite_together_base_damage_without_durant_on_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1168Durant, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -86,7 +86,7 @@ fn test_mountain_munch_discards_top_card_of_opponent_deck() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a007Durant, 0),
         is_stack: false,
     });
     game.play_until_stable();

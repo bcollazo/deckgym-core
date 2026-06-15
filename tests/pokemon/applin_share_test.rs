@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test that Applin's "Share" attack lets the player heal 30 damage from one
@@ -26,7 +26,7 @@ fn test_applin_share_heals_benched_pokemon() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3019Applin, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -84,7 +84,7 @@ fn test_applin_share_no_choices_when_bench_undamaged() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3019Applin, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

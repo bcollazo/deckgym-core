@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -29,12 +29,12 @@ fn test_lucario_fighting_coach_single() {
     game.set_state(state);
 
     // Apply Riolu's Jab attack (20 base damage + 20 from Fighting Coach = 40)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2091Riolu, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let final_state = game.get_state_clone();
 
@@ -68,12 +68,12 @@ fn test_lucario_fighting_coach_stacked() {
     game.set_state(state);
 
     // Apply attack: 40 base + 20 (active Lucario) + 20 (bench1) + 20 (bench2) = 100
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2092Lucario, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let final_state = game.get_state_clone();
 
@@ -106,12 +106,12 @@ fn test_lucario_fighting_coach_no_boost_non_fighting() {
     game.set_state(state);
 
     // Apply Vine Whip attack (40 damage, should NOT get Fighting Coach boost)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let final_state = game.get_state_clone();
 

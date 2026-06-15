@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -28,7 +28,7 @@ fn test_smoochum_shivery_wave_damage_scales_with_opponent_energy() {
     // Act: Apply Shivery Wave (index 0)
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4075Smoochum, 0),
         is_stack: false,
     });
 
@@ -58,7 +58,7 @@ fn test_smoochum_shivery_wave_zero_damage_with_no_opponent_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4075Smoochum, 0),
         is_stack: false,
     });
 

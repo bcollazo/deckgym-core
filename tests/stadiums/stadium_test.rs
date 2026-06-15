@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
@@ -360,12 +360,12 @@ fn test_training_area_increases_stage1_damage() {
     );
 
     // Attack with Ivysaur's Razor Leaf (60 damage + 10 from Training Area = 70)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1002Ivysaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
     game.play_until_stable(); // Handle post-attack effects
 
     let state = game.get_state_clone();
@@ -405,12 +405,12 @@ fn test_training_area_does_not_affect_basic_pokemon() {
     game.apply_action(&play_action);
 
     // Attack with Bulbasaur's Vine Whip (40 damage, NOT boosted)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let state = game.get_state_clone();
     let defender_hp = state.get_active(1).get_remaining_hp();
@@ -455,12 +455,12 @@ fn test_training_area_does_not_affect_stage2_pokemon() {
     game.apply_action(&play_action);
 
     // Attack with Venusaur's Mega Drain (80 damage, NOT boosted)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1003Venusaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let state = game.get_state_clone();
     // Bulbasaur should be KO'd (70 HP - 80 damage)
@@ -661,12 +661,12 @@ fn test_starting_plains_applies_to_multiply_bench_pokemon() {
     game.apply_action(&play_action);
 
     // Use Weedle's Multiply attack to bench another Weedle
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2b001Weedle, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let state = game.get_state_clone();
     let benched_weedle = state
@@ -702,12 +702,12 @@ fn test_training_area_affects_both_players() {
     game.set_state(state);
 
     // Player 0 attacks with Ivysaur (60 + 10 = 70)
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1002Ivysaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     // Check damage dealt to Charmeleon (90 HP - 70 damage = 20 HP)
     // Note: Charmeleon is weak to nothing relevant here
@@ -917,7 +917,7 @@ fn test_bounded_field_doubles_weakness_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1048Heatmor, 0),
         is_stack: false,
     });
 
@@ -948,7 +948,7 @@ fn test_bounded_field_does_not_affect_no_weakness_attacks() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1048Heatmor, 0),
         is_stack: false,
     });
 
@@ -990,7 +990,7 @@ fn test_bounded_field_doubles_all_modifiers_including_red() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1042Ponyta, 0),
         is_stack: false,
     });
 

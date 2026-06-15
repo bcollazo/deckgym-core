@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_with_hp(card_id: CardId, hp: u32) -> PlayedCard {
@@ -46,7 +46,7 @@ fn test_iron_moth_thermal_gust_at_least_one_head_with_will() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a005IronMoth, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -83,7 +83,7 @@ fn test_iron_moth_thermal_gust_all_damage_tiers() {
 
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::B3a005IronMoth, 0),
             is_stack: false,
         });
         game.play_until_stable();

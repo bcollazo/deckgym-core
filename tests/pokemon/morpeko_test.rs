@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -26,7 +26,7 @@ fn test_morpeko_energizer_wheel_moves_two_darkness_energy_to_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2b045Morpeko, 0),
         is_stack: false,
     });
 
@@ -79,7 +79,7 @@ fn test_morpeko_full_belly_bolt_bonus_only_when_undamaged() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3062Morpeko, 0),
         is_stack: false,
     });
 
@@ -102,7 +102,7 @@ fn test_morpeko_full_belly_bolt_bonus_only_when_undamaged() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3062Morpeko, 0),
         is_stack: false,
     });
 

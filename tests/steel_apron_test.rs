@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, StatusCondition},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn steel_apron_trainer() -> deckgym::models::TrainerCard {
@@ -138,12 +138,12 @@ fn test_steel_apron_reduces_damage_from_opponents_attack() {
     state.current_player = 0;
     game.set_state(state);
 
-    let attack_action = Action {
+    let attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     };
-    game.apply_action(&attack_action);
+    game.apply_action(&attack);
 
     let state = game.get_state_clone();
     assert_eq!(

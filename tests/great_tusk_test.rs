@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_test_game_with_board,
+    test_support::{attack_action, get_test_game_with_board},
 };
 
 /// Repro: "Receiving Pokemon should be there when modifying damage"
@@ -31,7 +31,7 @@ fn great_tusk_shaking_stomp_self_bench_damage_does_not_panic() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a034GreatTusk, 0),
         is_stack: false,
     });
 
@@ -72,7 +72,7 @@ fn great_tusk_shaking_stomp_self_bench_damage_absorbed_by_fur_coat() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a034GreatTusk, 0),
         is_stack: false,
     });
 

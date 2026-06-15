@@ -1,5 +1,8 @@
 use crate::{
-    models::PlayedCard,
+    actions::SimpleAction,
+    card_ids::CardId,
+    database::get_card_by_enum,
+    models::{Attack, PlayedCard},
     players::{Player, RandomPlayer},
     Deck, Game,
 };
@@ -63,6 +66,18 @@ pub fn get_test_game_with_board(
     opponent_board: Vec<PlayedCard>,
 ) -> Game<'static> {
     get_initialized_game_with_board(0, 0, 3, player_board, opponent_board)
+}
+
+/// Returns the `Attack` at `index` from the given card's definition.
+pub fn nth_attack(card_id: CardId, index: usize) -> Attack {
+    get_card_by_enum(card_id).get_attacks()[index].clone()
+}
+
+/// Builds an `Attack` action for the attack at `index` of the given card. Use this in tests in
+/// place of the old index-based `SimpleAction::Attack(index)`; `card_id` is the active Pokémon
+/// whose attack is being used.
+pub fn attack_action(card_id: CardId, index: usize) -> SimpleAction {
+    SimpleAction::Attack(nth_attack(card_id, index))
 }
 
 lazy_static! {

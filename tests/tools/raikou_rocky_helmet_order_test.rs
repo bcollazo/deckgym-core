@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -31,7 +31,7 @@ fn test_raikou_rocky_helmet_promotion_order() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a025RaikouEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -89,7 +89,7 @@ fn test_jumpluff_ex_takes_rocky_helmet_damage_even_when_switching() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a003JumpluffEx, 0),
         is_stack: false,
     });
 

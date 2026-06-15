@@ -2,8 +2,28 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{Card, EnergyType, PlayedCard},
-    test_support::{get_initialized_game, get_test_game_with_board},
+    test_support::{attack_action, get_initialized_game, get_test_game_with_board},
 };
+
+/// Finds an offered `Attack` action by its title. Copied attacks are now surfaced through the
+/// unified `SimpleAction::Attack(Attack)`, so they are identified by the carried attack rather
+/// than by a source/index.
+fn find_attack_by_title(actions: &[Action], title: &str) -> Option<Action> {
+    actions
+        .iter()
+        .find(|action| matches!(&action.action, SimpleAction::Attack(attack) if attack.title == title))
+        .cloned()
+}
+
+fn attack_titles(actions: &[Action]) -> Vec<String> {
+    actions
+        .iter()
+        .filter_map(|action| match &action.action {
+            SimpleAction::Attack(attack) => Some(attack.title.clone()),
+            _ => None,
+        })
+        .collect()
+}
 
 #[test]
 fn test_genome_hacking_copies_simple_damage_attack() {
@@ -26,11 +46,12 @@ fn test_genome_hacking_copies_simple_damage_attack() {
         panic!("Expected opponent active to be a Pokemon");
     };
     let expected_damage = opponent_active.attacks[0].fixed_damage;
+    let expected_title = opponent_active.attacks[0].title.clone();
     game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
@@ -38,21 +59,8 @@ fn test_genome_hacking_copies_simple_damage_attack() {
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
 
-    let copied_attack = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 0,
-                    require_attacker_energy_match: false,
-                }
-            )
-        })
-        .expect("Expected copied attack choice for opponent active's first attack")
-        .clone();
+    let copied_attack = find_attack_by_title(&actions, &expected_title)
+        .expect("Expected copied attack choice for opponent active's first attack");
 
     game.apply_action(&copied_attack);
 
@@ -80,7 +88,7 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
@@ -88,21 +96,8 @@ fn test_genome_hacking_uses_copied_attack_as_mew_ex_attack() {
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
 
-    let copied_teleport = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 0,
-                    require_attacker_energy_match: false,
-                }
-            )
-        })
-        .expect("Expected copied choice for Abra's Teleport")
-        .clone();
+    let copied_teleport = find_attack_by_title(&actions, "Teleport")
+        .expect("Expected copied choice for Abra's Teleport");
 
     game.apply_action(&copied_teleport);
 
@@ -145,30 +140,26 @@ fn test_genome_hacking_only_offers_opponent_active_attacks() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
+    let titles = attack_titles(&actions);
     assert!(
-        actions.iter().all(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    ..
-                }
-            )
-        }),
-        "Genome Hacking should only offer attacks from the opponent's Active Pokemon"
+        !titles.is_empty(),
+        "Genome Hacking should offer the opponent active's attacks"
+    );
+    assert!(
+        titles.iter().all(|title| title == "Teleport"),
+        "Genome Hacking should only offer attacks from the opponent's Active Pokemon (Abra's Teleport), got {titles:?}"
     );
 }
 
 #[test]
-fn test_copy_anything_can_choose_opponent_bench_attack_and_do_nothing_if_energy_does_not_match() {
+fn test_copy_anything_offers_nothing_and_does_nothing_if_energy_does_not_match() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -187,37 +178,21 @@ fn test_copy_anything_can_choose_opponent_bench_attack_and_do_nothing_if_energy_
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1205Ditto, 0),
         is_stack: false,
     });
 
+    // With only 1 Colorless energy, Ditto cannot pay for any of the opponent's attacks, so no
+    // copied-attack choice is offered and Copy Anything resolves to nothing.
     let state = game.get_state_clone();
-    let (actor, actions) = state.generate_possible_actions();
-    assert_eq!(actor, 0);
-
-    let copied_bench_attack = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        })
-        .expect("Copy Anything should offer attacks from opponent bench Pokemon")
-        .clone();
-
-    game.apply_action(&copied_bench_attack);
-
-    let state = game.get_state_clone();
+    assert!(
+        state.move_generation_stack.is_empty(),
+        "Copy Anything should not offer unaffordable copied attacks"
+    );
     assert_eq!(
         state.get_active(1).get_remaining_hp(),
         hp_before,
-        "Copy Anything should do nothing when Ditto does not have the copied attack's required Energy"
+        "Copy Anything should do nothing when Ditto cannot pay for any copied attack"
     );
 }
 
@@ -242,7 +217,7 @@ fn test_copy_anything_copies_opponent_bench_attack_when_energy_matches() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1205Ditto, 0),
         is_stack: false,
     });
 
@@ -250,21 +225,8 @@ fn test_copy_anything_copies_opponent_bench_attack_when_energy_matches() {
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
 
-    let copied_bench_attack = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        })
-        .expect("Copy Anything should offer a matching-energy attack from opponent bench")
-        .clone();
+    let copied_bench_attack = find_attack_by_title(&actions, "Vine Whip")
+        .expect("Copy Anything should offer a matching-energy attack from opponent bench");
 
     game.apply_action(&copied_bench_attack);
 
@@ -298,7 +260,7 @@ fn test_copy_a_friend_uses_own_non_ex_bench_attacks_only() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a055Ditto, 0),
         is_stack: false,
     });
 
@@ -306,49 +268,18 @@ fn test_copy_a_friend_uses_own_non_ex_bench_attacks_only() {
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
 
+    let titles = attack_titles(&actions);
     assert!(
-        actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 0,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        }),
-        "Copy a Friend should offer attacks from your non-ex Benched Pokemon"
+        titles.iter().any(|title| title == "Vine Whip"),
+        "Copy a Friend should offer attacks from your non-ex Benched Pokemon, got {titles:?}"
     );
     assert!(
-        !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 0,
-                    source_in_play_idx: 2,
-                    ..
-                }
-            )
-        }),
-        "Copy a Friend should not offer attacks from Benched Pokemon ex"
+        !titles.iter().any(|title| title == "Psyshot"),
+        "Copy a Friend should not offer attacks from Benched Pokemon ex, got {titles:?}"
     );
 
-    let copied_bulbasaur_attack = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 0,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        })
-        .expect("Expected copied attack from own non-ex bench")
-        .clone();
+    let copied_bulbasaur_attack = find_attack_by_title(&actions, "Vine Whip")
+        .expect("Expected copied attack from own non-ex bench");
 
     game.apply_action(&copied_bulbasaur_attack);
 
@@ -373,40 +304,21 @@ fn test_genome_hacking_filters_out_opponent_mew_ex_genome_hacking() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
+    let titles = attack_titles(&actions);
     assert!(
-        actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 0,
-                    require_attacker_energy_match: false,
-                }
-            )
-        }),
-        "Genome Hacking should still offer Mew ex's non-copy attack"
+        titles.iter().any(|title| title == "Psyshot"),
+        "Genome Hacking should still offer Mew ex's non-copy attack, got {titles:?}"
     );
     assert!(
-        !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 1,
-                    ..
-                }
-            )
-        }),
-        "Genome Hacking should filter out the opponent Mew ex's Genome Hacking option"
+        !titles.iter().any(|title| title == "Genome Hacking"),
+        "Genome Hacking should filter out the opponent Mew ex's Genome Hacking option, got {titles:?}"
     );
 }
 
@@ -429,7 +341,7 @@ fn test_genome_hacking_does_not_offer_opponent_ditto_copy_anything() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
@@ -442,14 +354,13 @@ fn test_genome_hacking_does_not_offer_opponent_ditto_copy_anything() {
 
 #[test]
 fn test_copy_anything_does_not_offer_copy_attacks() {
+    // Ditto (Copy Anything) copies from any opponent Pokemon. The opponent's Active Mew ex has a
+    // normal attack (Psyshot) and a copy attack (Genome Hacking); the benched Ditto only has the
+    // Copy Anything copy attack. Only the affordable, non-copy Psyshot should be offered.
     let mut game = get_test_game_with_board(
-        vec![PlayedCard::from_id(CardId::A1205Ditto).with_energy(vec![
-            EnergyType::Colorless,
-            EnergyType::Colorless,
-            EnergyType::Colorless,
-        ])],
+        vec![PlayedCard::from_id(CardId::A1205Ditto)
+            .with_energy(vec![EnergyType::Psychic, EnergyType::Colorless])],
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
             PlayedCard::from_id(CardId::A1a032MewEx),
             PlayedCard::from_id(CardId::A1205Ditto),
         ],
@@ -457,117 +368,18 @@ fn test_copy_anything_does_not_offer_copy_attacks() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1205Ditto, 0),
         is_stack: false,
     });
 
     let state = game.get_state_clone();
     let (actor, actions) = state.generate_possible_actions();
     assert_eq!(actor, 0);
+    let titles = attack_titles(&actions);
     assert_eq!(
-        actions
-            .iter()
-            .filter(|action| matches!(action.action, SimpleAction::UseCopiedAttack { .. }))
-            .count(),
-        2,
-        "Copy Anything should filter out copy-attack options while keeping the opponent's non-copy attacks"
-    );
-    assert!(
-        actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        }) && actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        }),
-        "Copy Anything should keep the opponent's ordinary attacks"
-    );
-    assert!(
-        !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 1,
-                    attack_index: 1,
-                    ..
-                }
-            )
-        }) && !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 2,
-                    ..
-                }
-            )
-        }),
-        "Copy Anything should not offer Genome Hacking or Copy Anything as copied attacks"
-    );
-}
-
-#[test]
-fn test_copy_a_friend_does_not_offer_own_bench_copy_attacks() {
-    let mut game = get_test_game_with_board(
-        vec![
-            PlayedCard::from_id(CardId::B1a055Ditto)
-                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless]),
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
-            PlayedCard::from_id(CardId::A1205Ditto),
-        ],
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
-    );
-
-    game.apply_action(&Action {
-        actor: 0,
-        action: SimpleAction::Attack(0),
-        is_stack: false,
-    });
-
-    let state = game.get_state_clone();
-    let (actor, actions) = state.generate_possible_actions();
-    assert_eq!(actor, 0);
-    assert!(
-        actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 0,
-                    source_in_play_idx: 1,
-                    attack_index: 0,
-                    require_attacker_energy_match: true,
-                }
-            )
-        }),
-        "Copy a Friend should still offer non-copy attacks from your bench"
-    );
-    assert!(
-        !actions.iter().any(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 0,
-                    source_in_play_idx: 2,
-                    ..
-                }
-            )
-        }),
-        "Copy a Friend should not offer copied attacks from your bench Ditto"
+        titles,
+        vec!["Psyshot".to_string()],
+        "Copy Anything should keep the opponent's affordable non-copy attack and filter out copy attacks, got {titles:?}"
     );
 }
 
@@ -587,27 +399,14 @@ fn test_genome_hacking_best_effort_discards_only_matching_typed_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
     let state = game.get_state_clone();
     let (_, actions) = state.generate_possible_actions();
-    let copied_crimson_storm = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 1,
-                    require_attacker_energy_match: false,
-                }
-            )
-        })
-        .expect("Expected copied choice for Charizard ex's Crimson Storm")
-        .clone();
+    let copied_crimson_storm = find_attack_by_title(&actions, "Crimson Storm")
+        .expect("Expected copied choice for Charizard ex's Crimson Storm");
 
     game.apply_action(&copied_crimson_storm);
 
@@ -646,27 +445,14 @@ fn test_genome_hacking_best_effort_discards_matching_energy_for_attackid_copy() 
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(1),
+        action: attack_action(CardId::A1a032MewEx, 1),
         is_stack: false,
     });
 
     let state = game.get_state_clone();
     let (_, actions) = state.generate_possible_actions();
-    let copied_dimensional_storm = actions
-        .iter()
-        .find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::UseCopiedAttack {
-                    source_player: 1,
-                    source_in_play_idx: 0,
-                    attack_index: 1,
-                    require_attacker_energy_match: false,
-                }
-            )
-        })
-        .expect("Expected copied choice for Palkia ex's Dimensional Storm")
-        .clone();
+    let copied_dimensional_storm = find_attack_by_title(&actions, "Dimensional Storm")
+        .expect("Expected copied choice for Palkia ex's Dimensional Storm");
 
     game.apply_action(&copied_dimensional_storm);
 

@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard, StatusCondition},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Hatterene's Mental Crush deals 70 damage normally, or 70 + 70 = 140 damage
@@ -25,7 +25,7 @@ fn test_mental_crush_extra_damage_when_opponent_confused() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3071Hatterene, 0),
         is_stack: false,
     });
 
@@ -54,7 +54,7 @@ fn test_mental_crush_base_damage_when_opponent_not_confused() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3071Hatterene, 0),
         is_stack: false,
     });
 

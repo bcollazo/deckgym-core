@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -24,7 +24,7 @@ fn test_zorua_ascension_evolves_from_deck() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3105Zorua, 0),
         is_stack: false,
     });
 
@@ -55,7 +55,7 @@ fn test_zoroark_ex_brutal_bash_counts_only_own_darkness_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3106ZoroarkEx, 0),
         is_stack: false,
     });
 
@@ -85,7 +85,7 @@ fn test_zoroark_illusive_trickery_protects_after_attack_ko() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a050Zoroark, 0),
         is_stack: false,
     });
 
@@ -105,7 +105,7 @@ fn test_zoroark_illusive_trickery_protects_after_attack_ko() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1033Charmander, 0),
         is_stack: false,
     });
 

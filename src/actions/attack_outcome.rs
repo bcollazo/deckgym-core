@@ -449,21 +449,9 @@ impl AttackOutcomes {
 }
 
 /// Look up the title of the attack being resolved, for attack-name-specific damage modifiers.
-fn attack_name_from_action(state: &State, action: &Action) -> Option<String> {
+fn attack_name_from_action(_state: &State, action: &Action) -> Option<String> {
     match &action.action {
-        SimpleAction::Attack(attack_index) => state.in_play_pokemon[action.actor][0]
-            .as_ref()
-            .and_then(|p| p.card.get_attacks().get(*attack_index).cloned())
-            .map(|attack| attack.title),
-        SimpleAction::UseCopiedAttack {
-            source_player,
-            source_in_play_idx,
-            attack_index,
-            ..
-        } => state.in_play_pokemon[*source_player][*source_in_play_idx]
-            .as_ref()
-            .and_then(|p| p.card.get_attacks().get(*attack_index).cloned())
-            .map(|attack| attack.title),
+        SimpleAction::Attack(attack) => Some(attack.title.clone()),
         _ => None,
     }
 }

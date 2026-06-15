@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -26,7 +26,7 @@ fn test_spewpa_signs_of_evolution_puts_vivillon_into_hand() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2012Spewpa, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -58,7 +58,7 @@ fn test_spewpa_signs_of_evolution_no_matching_card_just_shuffles() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2012Spewpa, 0),
         is_stack: false,
     });
     game.play_until_stable();

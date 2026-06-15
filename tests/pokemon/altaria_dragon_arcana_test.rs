@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -25,7 +25,7 @@ fn altaria_dragon_arcana_uses_bonus_damage_with_two_energy_types() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a055Altaria, 0),
         is_stack: false,
     });
 
@@ -51,7 +51,7 @@ fn altaria_dragon_arcana_uses_base_damage_with_one_energy_type() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a055Altaria, 0),
         is_stack: false,
     });
 

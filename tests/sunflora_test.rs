@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test Sunflora B1a 008 - Quick-Grow Beam
@@ -26,7 +26,7 @@ fn test_sunflora_quick_grow_beam_without_extract() {
 
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a008Sunflora, 0),
         is_stack: false,
     };
 
@@ -60,7 +60,7 @@ fn test_sunflora_quick_grow_beam_with_extract() {
 
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a008Sunflora, 0),
         is_stack: false,
     };
 

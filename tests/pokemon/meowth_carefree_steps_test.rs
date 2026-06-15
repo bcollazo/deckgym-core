@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game_with_board,
+    test_support::{attack_action, get_initialized_game_with_board},
 };
 
 /// Meowth's "Carefree Steps": "If any damage is done to this Pokémon by attacks, flip a coin. If
@@ -34,7 +34,7 @@ fn test_meowth_carefree_steps_prevents_only_damage_not_effects() {
         // Poison Gas: 10 damage and the opponent's Active Pokémon is now Poisoned.
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::A1174Grimer, 0),
             is_stack: false,
         });
 
@@ -100,7 +100,7 @@ fn test_carefree_steps_applies_to_benched_meowth_with_independent_flips() {
         // Dimensional Storm is Palkia ex's second attack (index 1).
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(1),
+            action: attack_action(CardId::A2049PalkiaEx, 1),
             is_stack: false,
         });
 

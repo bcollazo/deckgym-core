@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -40,7 +40,7 @@ fn test_blastoise_double_splash_with_extra_energy() {
     // Attack with Double Splash
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a019Blastoise, 0),
         is_stack: false,
     };
 
@@ -109,7 +109,7 @@ fn test_blastoise_double_splash_without_extra_energy() {
     // Attack with Double Splash
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a019Blastoise, 0),
         is_stack: false,
     };
 
@@ -173,7 +173,7 @@ fn test_blastoise_double_splash_with_extra_energy_no_bench() {
     // Attack with Double Splash
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a019Blastoise, 0),
         is_stack: false,
     };
 

@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_with_hp(card_id: CardId, hp: u32) -> PlayedCard {
@@ -25,7 +25,7 @@ fn test_iron_thorns_binary_thunder_base_damage_vs_non_ex() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a018IronThorns, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -52,7 +52,7 @@ fn test_iron_thorns_binary_thunder_bonus_damage_vs_ex() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a018IronThorns, 0),
         is_stack: false,
     });
     game.play_until_stable();

@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn attack_once(attacker: PlayedCard, defender: PlayedCard) -> deckgym::State {
@@ -11,12 +11,13 @@ fn attack_once(attacker: PlayedCard, defender: PlayedCard) -> deckgym::State {
     let mut state = game.get_state_clone();
     state.current_player = 0;
     state.turn_count = 3;
+    let attacker_id = attacker.card.get_card_id();
     state.set_board(vec![attacker], vec![defender]);
     game.set_state(state);
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(attacker_id, 0),
         is_stack: false,
     });
 
@@ -88,7 +89,7 @@ fn test_corviknight_iron_wings_discards_energy_and_reduces_next_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1175Corviknight, 0),
         is_stack: false,
     });
 

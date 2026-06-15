@@ -195,4 +195,9 @@ pub enum AbilityMechanic {
     AncientRoar,
     /// "Attacks used by your Future Pokémon cost 1 less [C] Energy."
     FutureSystem,
+    /// Celebi's Time Recall: "Each of your evolved Pokémon can use any attack from its previous
+    /// Evolutions. (You still need the necessary Energy to use each attack.)"
+    /// Passive: while a Pokémon with this ability is in play, attack generation also offers the
+    /// active evolved Pokémon the attacks from its previous evolutions (its under-cards).
+    TimeRecall,
 }

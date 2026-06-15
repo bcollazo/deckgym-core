@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test Shinx's Hide prevents damage on successful coin flip (heads)
@@ -38,7 +38,7 @@ fn test_shinx_hide_damage_prevention() {
     // Opponent attacks Shinx with Vine Whip (40 damage)
     let attack_action = Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -77,7 +77,7 @@ fn test_shinx_hide_effect_prevention() {
     // Opponent uses Weezing's attack (Tackle: 50 damage)
     let attack_action = Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1177Weezing, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
