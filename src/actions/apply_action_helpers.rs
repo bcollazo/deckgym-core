@@ -12,7 +12,7 @@ use crate::{
     effects::TurnEffect,
     hooks::{
         get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
-        should_poison_attacker,
+        should_poison_attacker, DamageModifierContext,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -403,7 +403,10 @@ pub(crate) fn handle_damage(
         attacking_ref,
         targets,
         is_from_active_attack,
-        attack_name,
+        DamageModifierContext {
+            attack_name,
+            attack_effect: None,
+        },
     );
     handle_knockouts(state, attacking_ref, is_from_active_attack);
 }
@@ -415,7 +418,7 @@ pub(crate) fn handle_damage_only(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
     is_from_active_attack: bool,
-    attack_name: Option<&str>,
+    context: DamageModifierContext<'_>,
 ) {
     let attacking_player = attacking_ref.0;
 
@@ -438,7 +441,7 @@ pub(crate) fn handle_damage_only(
                 attacking_ref,
                 *target_ref,
                 is_from_active_attack,
-                attack_name,
+                context,
             );
             (modified_damage, target_ref.1, target_ref.2)
         })

@@ -58,6 +58,8 @@ mod grovyle_slicing_snipe_test;
 mod hatterene_test;
 #[path = "pokemon/heracross_test.rs"]
 mod heracross_test;
+#[path = "pokemon/hitmonchan_ex_test.rs"]
+mod hitmonchan_ex_test;
 #[path = "pokemon/honchkrow_evil_admonition_test.rs"]
 mod honchkrow_evil_admonition_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]

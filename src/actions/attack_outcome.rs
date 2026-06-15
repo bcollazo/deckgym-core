@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use rand::rngs::StdRng;
 
-use crate::hooks::modify_damage;
+use crate::hooks::{modify_damage, DamageModifierContext};
 use crate::State;
 
 use super::apply_action_helpers::{handle_damage_only, handle_knockouts, Mutation, Probabilities};
@@ -117,13 +117,16 @@ impl AttackOutcome {
             }
 
             if !resolved.is_empty() {
-                let attack_name = attack_name_from_action(state, action);
+                let attack_metadata = attack_metadata_from_action(state, action);
                 handle_damage_only(
                     state,
                     attacking_ref,
                     &resolved,
                     true,
-                    attack_name.as_deref(),
+                    DamageModifierContext {
+                        attack_name: attack_metadata.name.as_deref(),
+                        attack_effect: attack_metadata.effect.as_deref(),
+                    },
                 );
             }
 
@@ -380,6 +383,7 @@ impl AttackOutcomes {
         target_player: usize,
         target_idx: usize,
         attack_name: Option<&str>,
+        attack_effect: Option<&str>,
     ) -> f64 {
         let actor = attacking_ref.0;
         let opponent = (actor + 1) % 2;
@@ -400,7 +404,10 @@ impl AttackOutcomes {
                             attacking_ref,
                             (*amount, target_player, *idx),
                             true,
-                            attack_name,
+                            DamageModifierContext {
+                                attack_name,
+                                attack_effect,
+                            },
                         )
                     })
                     .sum();
@@ -416,9 +423,17 @@ impl AttackOutcomes {
         state: &State,
         acting_player: usize,
         attack_name: Option<&str>,
+        attack_effect: Option<&str>,
     ) -> f64 {
         let opponent = (acting_player + 1) % 2;
-        self.expected_damage_to(state, (acting_player, 0), opponent, 0, attack_name)
+        self.expected_damage_to(
+            state,
+            (acting_player, 0),
+            opponent,
+            0,
+            attack_name,
+            attack_effect,
+        )
     }
 
     /// Lower into `Outcomes` and return its `(probabilities, mutations)` branches. Convenience
@@ -449,10 +464,21 @@ impl AttackOutcomes {
 }
 
 /// Look up the title of the attack being resolved, for attack-name-specific damage modifiers.
-fn attack_name_from_action(_state: &State, action: &Action) -> Option<String> {
+struct AttackMetadata {
+    name: Option<String>,
+    effect: Option<String>,
+}
+
+fn attack_metadata_from_action(_state: &State, action: &Action) -> AttackMetadata {
     match &action.action {
-        SimpleAction::Attack(attack) => Some(attack.title.clone()),
-        _ => None,
+        SimpleAction::Attack(attack) => AttackMetadata {
+            name: Some(attack.title.clone()),
+            effect: attack.effect.clone(),
+        },
+        _ => AttackMetadata {
+            name: None,
+            effect: None,
+        },
     }
 }
 
@@ -476,7 +502,7 @@ mod tests {
     fn expected_damage_reads_branch_data_without_running_closures() {
         let state = state_with_grimer_vs_meowth();
         let outcomes = AttackOutcomes::single(AttackOutcome::damage(vec![(20, true, 0)]));
-        let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None);
+        let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None, None);
         assert!(
             (expected - 20.0).abs() < 1e-9,
             "expected 20, got {expected}"
@@ -489,7 +515,7 @@ mod tests {
         let outcomes = AttackOutcomes::single(AttackOutcome::damage(vec![(20, true, 0)]))
             .split_with_damage_prevention(&[0]);
         // Heads branch (0.5) prevents the active damage, tails branch (0.5) deals 20.
-        let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None);
+        let expected = outcomes.expected_damage_to_opponent_active(&state, 0, None, None);
         assert!(
             (expected - 10.0).abs() < 1e-9,
             "expected 10, got {expected}"
