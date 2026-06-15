@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Carracosta's Blocking Shell: "Prevent all damage done to this Pokémon by attacks
@@ -30,7 +30,7 @@ fn test_carracosta_blocking_shell_prevents_basic_attack_damage() {
     // Carracosta uses Blocking Shell, dealing 100 and shielding itself from Basics.
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1067Carracosta, 0),
         is_stack: false,
     });
 
@@ -40,7 +40,7 @@ fn test_carracosta_blocking_shell_prevents_basic_attack_damage() {
     game.set_state(state);
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1129MewtwoEx, 0),
         is_stack: false,
     });
 
@@ -71,7 +71,7 @@ fn test_carracosta_blocking_shell_does_not_prevent_evolved_attack_damage() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a050Weezing, 0),
         is_stack: false,
     });
 
