@@ -1,5 +1,7 @@
 #[path = "pokemon/additional_ability_logic_test.rs"]
 mod additional_ability_logic_test;
+#[path = "pokemon/alolan_sandslash_spike_armor_test.rs"]
+mod alolan_sandslash_spike_armor_test;
 #[path = "pokemon/altaria_dragon_arcana_test.rs"]
 mod altaria_dragon_arcana_test;
 #[path = "pokemon/applin_share_test.rs"]

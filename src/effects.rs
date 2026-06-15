@@ -33,6 +33,12 @@ pub enum CardEffect {
     DelayedDamage {
         amount: u32,
     },
+    /// If this Pokémon is damaged by an attack while in the Active Spot, deal `amount`
+    /// damage to the Attacking Pokémon (e.g. Alolan Sandslash's Spike Armor). Temporary
+    /// counterpart to RockyHelmet's always-on recoil.
+    Counterattack {
+        amount: u32,
+    },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
