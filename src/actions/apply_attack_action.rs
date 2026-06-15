@@ -605,6 +605,7 @@ fn forecast_effect_attack_by_mechanic(
             card_name.clone(),
             *extra_damage,
         ),
+        Mechanic::DamageUnaffectedByWeakness => active_damage_doutcome(attack.fixed_damage),
         Mechanic::CoinFlipToBlockAttackNextTurn => {
             coin_flip_to_block_attack_next_turn(attack.fixed_damage)
         }

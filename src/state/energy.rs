@@ -4,6 +4,7 @@ use crate::{
         handle_damage_only, handle_knockouts,
     },
     effects::TurnEffect,
+    hooks::DamageModifierContext,
     models::{EnergyType, StatusCondition},
     State,
 };
@@ -116,7 +117,7 @@ impl State {
                         (opponent, 0),
                         &[(20, actor, in_play_idx)],
                         false,
-                        None,
+                        DamageModifierContext::default(),
                     );
                 }
             }
@@ -141,7 +142,7 @@ impl State {
                     (actor, in_play_idx),
                     &[(20, opponent, 0)],
                     false,
-                    None,
+                    DamageModifierContext::default(),
                 );
             }
 

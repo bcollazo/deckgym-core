@@ -213,6 +213,7 @@ pub enum Mechanic {
         card_name: String,
         extra_damage: u32,
     },
+    DamageUnaffectedByWeakness,
     DelayedSpotDamage {
         amount: u32,
     },

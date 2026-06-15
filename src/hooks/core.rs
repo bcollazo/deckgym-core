@@ -787,13 +787,29 @@ enum WeaknessApplication {
     Double,
 }
 
+const DAMAGE_UNAFFECTED_BY_WEAKNESS_EFFECT: &str =
+    "This attack's damage isn't affected by Weakness.";
+
+#[derive(Clone, Copy, Default)]
+pub(crate) struct DamageModifierContext<'a> {
+    pub(crate) attack_name: Option<&'a str>,
+    pub(crate) attack_effect: Option<&'a str>,
+}
+
+fn attack_effect_ignores_weakness(context: DamageModifierContext<'_>) -> bool {
+    // TODO: If more attack text needs to alter damage-modifier stages, replace this
+    // effect-string check with a typed attack metadata/damage-modifier capability.
+    context.attack_effect == Some(DAMAGE_UNAFFECTED_BY_WEAKNESS_EFFECT)
+}
+
 fn get_weakness_application(
     state: &State,
     is_active_to_active: bool,
     target_player: usize,
     attacking_pokemon: &crate::models::PlayedCard,
+    context: DamageModifierContext<'_>,
 ) -> WeaknessApplication {
-    if !is_active_to_active {
+    if !is_active_to_active || attack_effect_ignores_weakness(context) {
         return WeaknessApplication::None;
     }
     let receiving = state.get_active(target_player);
@@ -843,7 +859,7 @@ pub(crate) fn modify_damage(
     attacking_ref: (usize, usize),
     target_ref: (u32, usize, usize),
     is_from_active_attack: bool,
-    attack_name: Option<&str>,
+    context: DamageModifierContext<'_>,
 ) -> u32 {
     // If attack is 0, not even Giovanni takes it to 10.
     let (attacking_player, attacking_idx) = attacking_ref;
@@ -941,7 +957,7 @@ pub(crate) fn modify_damage(
     let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
         attacking_pokemon,
         is_active_to_active,
-        attack_name,
+        context.attack_name,
     );
     let reduced_card_effect_modifiers =
         get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
@@ -954,8 +970,13 @@ pub(crate) fn modify_damage(
         attacking_player,
         is_from_active_attack,
     );
-    let weakness_application =
-        get_weakness_application(state, is_active_to_active, target_player, attacking_pokemon);
+    let weakness_application = get_weakness_application(
+        state,
+        is_active_to_active,
+        target_player,
+        attacking_pokemon,
+        context,
+    );
 
     // Type-specific damage boost abilities (e.g., Lucario's Fighting Coach, Aegislash's Royal Command)
     // These check if certain ability-holders are in play and boost damage for specific energy types
@@ -1435,14 +1456,25 @@ mod tests {
 
         // Get base damage without Giovanni effect
         let attack = attacker.get_attacks()[0].clone();
-        let base_damage = modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
+        let base_damage = modify_damage(
+            &state,
+            (0, 0),
+            (attack.fixed_damage, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
 
         // Add Giovanni effect
         state.add_turn_effect(TurnEffect::IncreasedDamage { amount: 10 }, 0);
 
         // Get damage with Giovanni effect
-        let damage_with_giovanni =
-            modify_damage(&state, (0, 0), (attack.fixed_damage, 1, 0), true, None);
+        let damage_with_giovanni = modify_damage(
+            &state,
+            (0, 0),
+            (attack.fixed_damage, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
 
         // Verify Giovanni adds exactly 10 damage
         assert_eq!(
@@ -1461,10 +1493,21 @@ mod tests {
         non_ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let non_ex_defender = get_card_by_enum(CardId::A1033Charmander);
         non_ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&non_ex_defender, false));
-        let base_damage_non_ex = modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
+        let base_damage_non_ex = modify_damage(
+            &non_ex_state,
+            (0, 0),
+            (40, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
         non_ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_non_ex =
-            modify_damage(&non_ex_state, (0, 0), (40, 1, 0), true, None);
+        let damage_with_red_vs_non_ex = modify_damage(
+            &non_ex_state,
+            (0, 0),
+            (40, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
         assert_eq!(
             damage_with_red_vs_non_ex, base_damage_non_ex,
             "Red should not increase damage against non-EX Pokémon"
@@ -1475,9 +1518,21 @@ mod tests {
         ex_state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker_card, false));
         let ex_defender = get_card_by_enum(CardId::A3122SolgaleoEx);
         ex_state.in_play_pokemon[1][0] = Some(to_playable_card(&ex_defender, false));
-        let base_damage_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
+        let base_damage_ex = modify_damage(
+            &ex_state,
+            (0, 0),
+            (40, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
         ex_state.add_turn_effect(TurnEffect::IncreasedDamageAgainstEx { amount: 20 }, 0);
-        let damage_with_red_vs_ex = modify_damage(&ex_state, (0, 0), (40, 1, 0), true, None);
+        let damage_with_red_vs_ex = modify_damage(
+            &ex_state,
+            (0, 0),
+            (40, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
         assert_eq!(
             damage_with_red_vs_ex,
             base_damage_ex + 20,
@@ -1501,7 +1556,13 @@ mod tests {
             .add_effect(crate::effects::CardEffect::ReducedDamage { amount: 50 }, 1);
 
         // Act
-        let damage_with_stiffen = modify_damage(&state, (0, 0), (120, 1, 0), true, None);
+        let damage_with_stiffen = modify_damage(
+            &state,
+            (0, 0),
+            (120, 1, 0),
+            true,
+            DamageModifierContext::default(),
+        );
 
         // Assert
         assert_eq!(
