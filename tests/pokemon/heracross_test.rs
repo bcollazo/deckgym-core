@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -21,7 +21,7 @@ fn test_single_lunge_full_damage_when_undamaged() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4022Heracross, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -49,7 +49,7 @@ fn test_single_lunge_base_damage_when_damaged() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4022Heracross, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -79,7 +79,7 @@ fn test_powerful_friends_extra_damage_with_stage2_on_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3003Heracross, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -109,7 +109,7 @@ fn test_powerful_friends_base_damage_without_stage2_on_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3003Heracross, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -145,7 +145,7 @@ fn test_dynamic_horn_tails_damages_itself() {
 
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::PB056MegaHeracrossEx, 0),
             is_stack: false,
         });
         game.play_until_stable();

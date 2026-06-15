@@ -23,12 +23,9 @@ impl Player for AttachAttackPlayer {
         if let Some(attach) = maybe_attach {
             return attach.clone();
         }
-        let maybe_attack = possible_actions.iter().find(|action| {
-            matches!(
-                action.action,
-                SimpleAction::Attack(_) | SimpleAction::UseCopiedAttack { .. }
-            )
-        });
+        let maybe_attack = possible_actions
+            .iter()
+            .find(|action| matches!(action.action, SimpleAction::Attack(_)));
         if let Some(attack) = maybe_attack {
             return attack.clone();
         }

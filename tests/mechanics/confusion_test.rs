@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard, StatusCondition},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test that a confused Pokémon can still attack but has different outcomes
@@ -35,7 +35,7 @@ fn test_confused_pokemon_can_attack() {
     // Apply attack action
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0), // Fire Blast
+        action: attack_action(CardId::A1035Charizard, 0), // Fire Blast
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -167,7 +167,7 @@ fn test_confused_attack_can_succeed() {
         let initial_hp = 70;
         let attack_action = Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::A1035Charizard, 0),
             is_stack: false,
         };
         game.apply_action(&attack_action);

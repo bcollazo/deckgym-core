@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, StatusCondition, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -47,7 +47,7 @@ fn test_chansey_bind_wound_heals_one_of_your_pokemon() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3127Chansey, 0),
         is_stack: false,
     });
 
@@ -92,7 +92,7 @@ fn test_chansey_scrunch_heads_prevents_next_attack_damage() {
     play_will(&mut game, 0);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4131Chansey, 0),
         is_stack: false,
     });
 
@@ -102,7 +102,7 @@ fn test_chansey_scrunch_heads_prevents_next_attack_damage() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -162,7 +162,7 @@ fn test_blissey_ex_happy_punch_heads_heals_self_after_damage() {
     play_will(&mut game, 0);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::PA098BlisseyEx, 0),
         is_stack: false,
     });
 

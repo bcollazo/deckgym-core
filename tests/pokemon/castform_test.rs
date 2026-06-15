@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -20,7 +20,7 @@ fn test_castform_blow_through_gets_stadium_damage_bonus() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3133Castform, 0),
         is_stack: false,
     });
 
@@ -48,7 +48,7 @@ fn test_castform_rainy_absorbing_heals_only_with_stadium() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3040CastformRainyForm, 0),
         is_stack: false,
     });
 
@@ -81,7 +81,7 @@ fn test_castform_sunny_scorching_burns_only_with_stadium() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3024CastformSunnyForm, 0),
         is_stack: false,
     });
 
@@ -107,7 +107,7 @@ fn test_castform_snowy_chilling_sleeps_only_with_stadium() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3041CastformSnowyForm, 0),
         is_stack: false,
     });
 

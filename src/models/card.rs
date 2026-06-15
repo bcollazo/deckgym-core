@@ -56,7 +56,7 @@ impl EnergyType {
 }
 
 /// Represents an attack of a card.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Attack {
     pub energy_required: Vec<EnergyType>,
     pub title: String,

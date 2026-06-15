@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::{get_initialized_game_with_board, get_test_game_with_board},
+    test_support::{attack_action, get_initialized_game_with_board, get_test_game_with_board},
     Game,
 };
 
@@ -39,7 +39,7 @@ fn test_luxray_intimidating_fang_reduces_opponent_active_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -229,7 +229,7 @@ fn test_aegislash_cursed_metal_boosts_psychic_attack_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1129MewtwoEx, 0),
         is_stack: false,
     });
 
@@ -253,7 +253,7 @@ fn test_togekiss_celestial_blessing_prevents_damage_for_some_seeds() {
 
         game.apply_action(&Action {
             actor: 1,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::A1001Bulbasaur, 0),
             is_stack: false,
         });
 
@@ -278,7 +278,7 @@ fn test_dragalge_ex_poison_point_poisons_attacker() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -297,7 +297,7 @@ fn test_carnivine_power_link_boosts_damage_with_arceus_in_play() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2a009Carnivine, 0),
         is_stack: false,
     });
 
@@ -564,7 +564,7 @@ fn test_skeledirge_passionate_voice_boosts_fire_damage_for_turn() {
     });
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2a018Skeledirge, 0),
         is_stack: false,
     });
 
@@ -588,7 +588,7 @@ fn test_quaquaval_torrent_boosts_damage_when_hp_is_50_or_less() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2a024Quaquaval, 0),
         is_stack: false,
     });
 
@@ -627,7 +627,7 @@ fn test_melmetal_hard_coat_reduces_damage_from_attacks() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -644,7 +644,7 @@ fn test_armarouge_ex_armor_reduces_damage_from_attacks() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 

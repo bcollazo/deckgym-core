@@ -1,4 +1,4 @@
-use crate::models::{Card, EnergyType, StatusCondition, TrainerCard};
+use crate::models::{Attack, Card, EnergyType, StatusCondition, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -32,17 +32,11 @@ pub enum SimpleAction {
         in_play_idx: usize,
     },
 
-    // Its given it is with the active pokemon, to the other active.
-    // usize is the index of the attack in the pokemon's attacks
-    Attack(usize),
-    /// Use another Pokemon's attack definition as the current attack.
-    /// This is used as a stack sub-action after copy-attack effects.
-    UseCopiedAttack {
-        source_player: usize,
-        source_in_play_idx: usize,
-        attack_index: usize,
-        require_attacker_energy_match: bool,
-    },
+    // Use the carried Attack definition as the current attack of the active Pokemon.
+    // Carrying the whole Attack (instead of an index) lets a single codepath serve the
+    // active's own attacks, copied attacks (e.g. Mew ex's Genome Hacking), and attacks
+    // granted from previous evolutions (e.g. Celebi's Time Recall).
+    Attack(Attack),
     // usize is in_play_pokemon index to retreat to. Can't Retreat(0)
     Retreat(usize),
     EndTurn,
@@ -176,16 +170,7 @@ impl fmt::Display for SimpleAction {
                 )
             }
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
-            SimpleAction::Attack(index) => write!(f, "Attack({index})"),
-            SimpleAction::UseCopiedAttack {
-                source_player,
-                source_in_play_idx,
-                attack_index,
-                require_attacker_energy_match,
-            } => write!(
-                f,
-                "UseCopiedAttack(source:{source_player}:{source_in_play_idx}, attack:{attack_index}, require_energy:{require_attacker_energy_match})"
-            ),
+            SimpleAction::Attack(attack) => write!(f, "Attack({})", attack.title),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
             SimpleAction::Attach {

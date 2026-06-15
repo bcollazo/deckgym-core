@@ -31,7 +31,7 @@ fn test_future_system_reduces_future_pokemon_attack_cost() {
     assert!(
         actions
             .iter()
-            .any(|a| matches!(a.action, SimpleAction::Attack(0))),
+            .any(|a| matches!(&a.action, SimpleAction::Attack(atk) if atk.title == "Modular Axe")),
         "Iron Boulder should be able to attack with [P][P][C] thanks to Future System"
     );
 }

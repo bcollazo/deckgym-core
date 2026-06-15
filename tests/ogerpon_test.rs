@@ -16,7 +16,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, StatusCondition, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Build a PlayedCard with a custom base HP (useful for avoiding KOs in damage tests).
@@ -61,7 +61,7 @@ fn test_energized_leaves_base_damage_below_threshold() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2017TealMaskOgerponEx, 0),
         is_stack: false,
     });
 
@@ -98,7 +98,7 @@ fn test_energized_leaves_extra_damage_at_threshold() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2017TealMaskOgerponEx, 0),
         is_stack: false,
     });
 
@@ -205,7 +205,7 @@ fn test_hearthflame_dance_deals_base_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2027HearthflameMaskOgerpon, 0),
         is_stack: false,
     });
 
@@ -243,7 +243,7 @@ fn test_hearthflame_dance_heads_queues_bench_attach_choice() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2027HearthflameMaskOgerpon, 0),
         is_stack: false,
     });
 
@@ -277,7 +277,7 @@ fn test_wellspring_dance_deals_base_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2048WellspringMaskOgerpon, 0),
         is_stack: false,
     });
 
@@ -314,7 +314,7 @@ fn test_wellspring_dance_heads_queues_bench_damage_choice() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2048WellspringMaskOgerpon, 0),
         is_stack: false,
     });
 
@@ -347,7 +347,7 @@ fn test_cornerstone_dance_deals_base_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2093CornerstoneMaskOgerpon, 0),
         is_stack: false,
     });
 
@@ -383,7 +383,7 @@ fn test_cornerstone_dance_heads_reduces_incoming_damage() {
     play_will(&mut game, 0);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2093CornerstoneMaskOgerpon, 0),
         is_stack: false,
     });
     // End player 0's turn.
@@ -397,7 +397,7 @@ fn test_cornerstone_dance_heads_reduces_incoming_damage() {
     // Without the -100 reduction, Ogerpon would be KO'd. With it, it survives.
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2089Rampardos, 0),
         is_stack: false,
     });
 
@@ -471,7 +471,7 @@ fn test_venoshock_deals_extra_damage_when_poisoned() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a015Salandit, 0),
         is_stack: false,
     });
 
@@ -524,7 +524,7 @@ fn test_soothing_wind_cures_before_venoshock_no_extra_damage() {
     // so only base 10 damage should be dealt (no weakness bonus since Charmander isn't weak to Fire).
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a015Salandit, 0),
         is_stack: false,
     });
 

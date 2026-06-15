@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test Magnezone B1a 026 - Mirror Shot
@@ -29,7 +29,7 @@ fn test_magnezone_mirror_shot() {
     // Attack with Mirror Shot (index 0)
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a026Magnezone, 0),
         is_stack: false,
     };
 

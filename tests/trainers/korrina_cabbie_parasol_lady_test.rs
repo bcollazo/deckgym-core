@@ -45,7 +45,7 @@ fn test_korrina_boosts_fighting_damage_against_ex() {
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     let attack = actions
         .iter()
-        .find(|a| matches!(a.action, SimpleAction::Attack(0)))
+        .find(|a| matches!(a.action, SimpleAction::Attack(_)))
         .expect("Hitmonlee should be able to use Kick");
     game.apply_action(attack);
 
@@ -88,7 +88,7 @@ fn test_korrina_does_not_boost_against_non_ex() {
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     let attack = actions
         .iter()
-        .find(|a| matches!(a.action, SimpleAction::Attack(0)))
+        .find(|a| matches!(a.action, SimpleAction::Attack(_)))
         .expect("Hitmonlee should be able to use Kick");
     game.apply_action(attack);
 

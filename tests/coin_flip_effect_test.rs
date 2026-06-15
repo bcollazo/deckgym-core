@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
-    test_support::get_test_game_with_board,
+    test_support::{attack_action, get_test_game_with_board},
 };
 
 /// Test that CoinFlipToBlockAttack effect blocks attacks 50% of the time
@@ -21,7 +21,7 @@ fn test_coin_flip_to_block_attack_effect() {
 
     let action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1033Charmander, 0),
         is_stack: false,
     };
 

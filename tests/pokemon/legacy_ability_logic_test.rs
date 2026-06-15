@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::{get_initialized_game, get_test_game_with_board},
+    test_support::{attack_action, get_initialized_game, get_test_game_with_board},
     Game,
 };
 
@@ -63,7 +63,7 @@ fn test_poliwrath_counterattack_damages_attacker() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -420,7 +420,7 @@ fn test_oricorio_safeguard_prevents_damage_from_ex_attack() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1129MewtwoEx, 0),
         is_stack: false,
     });
 
@@ -631,7 +631,7 @@ fn test_wartortle_shell_shield_prevents_bench_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a025RaikouEx, 0),
         is_stack: false,
     });
 
@@ -681,7 +681,7 @@ fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
         .iter()
-        .any(|action| matches!(action.action, SimpleAction::Attack(0))));
+        .any(|action| matches!(&action.action, SimpleAction::Attack(atk) if atk.title == "Jab")));
 }
 
 #[test]
@@ -699,7 +699,7 @@ fn test_aegislash_cursed_metal_boosts_its_own_attack_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1172Aegislash, 0),
         is_stack: false,
     });
 

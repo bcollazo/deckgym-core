@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -29,7 +29,7 @@ fn test_rampardos_head_smash_no_ko_no_recoil() {
     // Apply Head Smash attack (attack index 0)
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2089Rampardos, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -73,7 +73,7 @@ fn test_rampardos_head_smash_ko_with_recoil() {
     // Apply Head Smash attack
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2089Rampardos, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -121,7 +121,7 @@ fn test_rampardos_head_smash_self_ko_from_recoil() {
     // Apply Head Smash attack
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2089Rampardos, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -167,7 +167,7 @@ fn test_rampardos_head_smash_rocky_helmet_promotion_order() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2089Rampardos, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

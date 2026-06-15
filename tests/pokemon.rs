@@ -24,6 +24,8 @@ mod carracosta_blocking_shell_test;
 mod cascoon_harden_test;
 #[path = "pokemon/castform_test.rs"]
 mod castform_test;
+#[path = "pokemon/celebi_time_recall_test.rs"]
+mod celebi_time_recall_test;
 #[path = "pokemon/chansey_blissey_test.rs"]
 mod chansey_blissey_test;
 #[path = "pokemon/charmeleon_ignition_test.rs"]

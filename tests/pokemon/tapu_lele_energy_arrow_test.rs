@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Energy Arrow does 20 damage per energy attached to the chosen target.
@@ -25,7 +25,7 @@ fn test_energy_arrow_damage_scales_with_target_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A3084TapuLele, 0),
         is_stack: false,
     });
 
@@ -85,7 +85,7 @@ fn test_energy_arrow_deals_zero_when_target_has_no_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A3084TapuLele, 0),
         is_stack: false,
     });
 

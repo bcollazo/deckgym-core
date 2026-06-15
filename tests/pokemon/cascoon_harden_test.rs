@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     effects::CardEffect,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Cascoon's Harden: "During your opponent's next turn, prevent all damage done to
@@ -23,7 +23,7 @@ fn test_cascoon_harden_prevents_low_damage() {
     // Cascoon uses Harden, applying the prevention effect to itself.
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1006Cascoon, 0),
         is_stack: false,
     });
 
@@ -33,7 +33,7 @@ fn test_cascoon_harden_prevents_low_damage() {
     game.set_state(state);
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -63,7 +63,7 @@ fn test_cascoon_harden_does_not_prevent_high_damage() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a050Weezing, 0),
         is_stack: false,
     });
 
