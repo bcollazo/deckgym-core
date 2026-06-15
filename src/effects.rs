@@ -26,6 +26,8 @@ pub enum CardEffect {
     PreventDamageIfLessOrEqual {
         threshold: u32,
     },
+    /// Prevent all damage done by attacks from Basic Pokémon (e.g. Carracosta's Blocking Shell).
+    PreventDamageFromBasic,
     NoWeakness,
     CoinFlipToBlockAttack,
     DelayedDamage {
