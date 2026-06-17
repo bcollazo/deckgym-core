@@ -101,6 +101,11 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
             *in_play_idx,
             *num_random_energies,
         ),
+        SimpleAction::AttachTypedFromDiscard {
+            in_play_idx,
+            energy_type,
+            count,
+        } => forecast_attach_typed_from_discard(*in_play_idx, *energy_type, *count),
         SimpleAction::SadaAttach { assignments } => forecast_sada_attach(assignments),
         SimpleAction::UseStadium => forecast_use_stadium(state, action.actor),
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
@@ -716,6 +721,22 @@ fn forecast_attach_from_discard(
     }
 
     Outcomes::from_parts(probabilities, mutations)
+}
+
+/// Volkner: deterministically attach up to `count` energies of `energy_type` from discard.
+fn forecast_attach_typed_from_discard(
+    in_play_idx: usize,
+    energy_type: EnergyType,
+    count: usize,
+) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let available = state.discard_energies[action.actor]
+            .iter()
+            .filter(|e| **e == energy_type)
+            .count();
+        let energies = vec![energy_type; std::cmp::min(count, available)];
+        state.attach_energy_from_discard(action.actor, in_play_idx, &energies);
+    })
 }
 
 /// Generate all unique 2-energy combinations from a list of energies in discard pile.
