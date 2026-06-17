@@ -115,6 +115,12 @@ pub enum SimpleAction {
         in_play_idx: usize,
         num_random_energies: usize,
     },
+    /// Volkner: attach a fixed number of a specific energy type from discard to a Pokemon
+    AttachTypedFromDiscard {
+        in_play_idx: usize,
+        energy_type: EnergyType,
+        count: usize,
+    },
     /// Professor Sada: attach 3 specific different-typed energies from discard to Ancient Pokémon
     SadaAttach {
         assignments: Vec<(EnergyType, usize)>, // (energy_type, in_play_idx) × 3
@@ -272,6 +278,13 @@ impl fmt::Display for SimpleAction {
                 num_random_energies,
             } => {
                 write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
+            }
+            SimpleAction::AttachTypedFromDiscard {
+                in_play_idx,
+                energy_type,
+                count,
+            } => {
+                write!(f, "AttachTypedFromDiscard({in_play_idx}, {energy_type:?}, {count})")
             }
             SimpleAction::SadaAttach { assignments } => {
                 let s = assignments

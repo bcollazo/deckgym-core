@@ -141,6 +141,7 @@ pub fn forecast_trainer_action(
         CardId::B1217FlamePatch | CardId::B1331FlamePatch => {
             Outcomes::single_fn(flame_patch_effect)
         }
+        CardId::A2153Volkner | CardId::A2193Volkner => Outcomes::single_fn(volkner_effect),
         CardId::B1225Copycat | CardId::B1270Copycat => Outcomes::single_fn(copycat_effect),
         CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
             Outcomes::single_fn(iono_effect)
@@ -1101,6 +1102,34 @@ fn lusamine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .map(|(idx, _)| SimpleAction::AttachFromDiscard {
             in_play_idx: idx,
             num_random_energies: num_energies_to_attach,
+        })
+        .collect();
+
+    if !possible_attachments.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_attachments));
+    }
+}
+
+/// Queue the decision for user to select Electivire or Luxray to attach Lightning energy to
+fn volkner_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let num_lightning_to_attach = std::cmp::min(
+        2,
+        state.discard_energies[player]
+            .iter()
+            .filter(|e| **e == EnergyType::Lightning)
+            .count(),
+    );
+
+    let possible_attachments: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| matches!(pokemon.get_name().as_str(), "Electivire" | "Luxray"))
+        .map(|(idx, _)| SimpleAction::AttachTypedFromDiscard {
+            in_play_idx: idx,
+            energy_type: EnergyType::Lightning,
+            count: num_lightning_to_attach,
         })
         .collect();
 

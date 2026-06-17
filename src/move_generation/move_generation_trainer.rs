@@ -132,6 +132,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b350Lusamine
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
+        CardId::A2153Volkner | CardId::A2193Volkner => can_play_volkner(state, trainer_card),
         CardId::A3149Ilima | CardId::A3191Ilima => can_play_ilima(state, trainer_card),
         CardId::A3150Kiawe | CardId::A3192Kiawe => can_play_kiawe(state, trainer_card),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
@@ -613,6 +614,26 @@ fn can_play_lusamine(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Si
 
     // Check if player has at least 1 energy in discard
     if state.discard_energies[player].is_empty() {
+        return cannot_play_trainer();
+    }
+
+    can_play_trainer(state, trainer_card)
+}
+
+/// Check if Volkner can be played (requires an Electivire or Luxray in play and
+/// at least 1 Lightning Energy in discard)
+fn can_play_volkner(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+
+    let has_valid_target = state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| matches!(pokemon.get_name().as_str(), "Electivire" | "Luxray"));
+    if !has_valid_target {
+        return cannot_play_trainer();
+    }
+
+    let has_lightning_in_discard = state.discard_energies[player].contains(&EnergyType::Lightning);
+    if !has_lightning_in_discard {
         return cannot_play_trainer();
     }
 
