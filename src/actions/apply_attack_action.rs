@@ -499,6 +499,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfAttackUsedDuringOwnLastTurn {
+            attack_name,
+            extra_damage,
+        } => extra_damage_if_attack_used_during_own_last_turn(
+            state,
+            attack.fixed_damage,
+            attack_name,
+            *extra_damage,
+        ),
         Mechanic::ExtraDamageIfMovedFromBench { extra_damage } => {
             extra_damage_if_moved_from_bench_attack(state, attack.fixed_damage, *extra_damage)
         }
@@ -2405,6 +2414,20 @@ fn extra_damage_if_knocked_out_last_turn_attack(
     extra_damage: u32,
 ) -> AttackOutcomes {
     let damage = if state.knocked_out_by_opponent_attack_last_turn {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_attack_used_during_own_last_turn(
+    state: &State,
+    base_damage: u32,
+    attack_name: &str,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let damage = if state.used_attack_during_own_last_turn(state.current_player, attack_name) {
         base_damage + extra_damage
     } else {
         base_damage

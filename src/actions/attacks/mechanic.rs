@@ -269,6 +269,10 @@ pub enum Mechanic {
     ExtraDamageIfKnockedOutLastTurn {
         extra_damage: u32,
     },
+    ExtraDamageIfAttackUsedDuringOwnLastTurn {
+        attack_name: String,
+        extra_damage: u32,
+    },
     ExtraDamageIfMovedFromBench {
         extra_damage: u32,
     },

@@ -69,6 +69,11 @@ pub struct State {
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
     pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
+    // Name of the attack (if any) each player used during their current/previous own turn
+    // (e.g. for Vanilluxe's "Sweets Relay": "If 1 of your Pokémon used Sweets Relay during
+    // your last turn, this attack does more damage.").
+    pub(crate) attack_name_used_this_turn: [Option<String>; 2],
+    pub(crate) attack_name_used_last_turn: [Option<String>; 2],
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -96,6 +101,8 @@ impl State {
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
+            attack_name_used_this_turn: [None, None],
+            attack_name_used_last_turn: [None, None],
             turn_effects: BTreeMap::new(),
         }
     }
@@ -462,6 +469,8 @@ impl State {
             (self.current_player + 1) % 2
         );
         self.end_turn_pending = false;
+        self.attack_name_used_last_turn[self.current_player] =
+            self.attack_name_used_this_turn[self.current_player].take();
         self.current_player = (self.current_player + 1) % 2;
         self.turn_count += 1;
         if self.turn_count > 30 {
@@ -606,6 +615,22 @@ impl State {
     /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
         self.knocked_out_by_opponent_attack_last_turn
+    }
+
+    pub(crate) fn record_attack_used(&mut self, player: usize, attack_name: String) {
+        self.attack_name_used_this_turn[player] = Some(attack_name);
+    }
+
+    pub(crate) fn used_attack_during_own_last_turn(
+        &self,
+        player: usize,
+        attack_name: &str,
+    ) -> bool {
+        self.attack_name_used_last_turn[player].as_deref() == Some(attack_name)
+    }
+
+    pub fn set_attack_name_used_last_turn(&mut self, player: usize, attack_name: Option<String>) {
+        self.attack_name_used_last_turn[player] = attack_name;
     }
 
     /// Generate all possible actions for the current game state.
