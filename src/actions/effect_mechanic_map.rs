@@ -769,9 +769,27 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("Heal 50 damage from 1 of your Benched Pokémon.", todo_implementation);
     // map.insert("Heal from this Pokémon the same amount of damage you did to your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.", todo_implementation);
-    // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage.", todo_implementation);
-    // map.insert("If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfAttackUsedDuringOwnLastTurn {
+            attack_name: "Sweets Relay".to_string(),
+            extra_damage: 20,
+        },
+    );
+    map.insert(
+        "If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 30 more damage.",
+        Mechanic::ExtraDamageIfAttackUsedDuringOwnLastTurn {
+            attack_name: "Sweets Relay".to_string(),
+            extra_damage: 30,
+        },
+    );
+    map.insert(
+        "If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfAttackUsedDuringOwnLastTurn {
+            attack_name: "Sweets Relay".to_string(),
+            extra_damage: 60,
+        },
+    );
     map.insert(
         "If Durant is on your Bench, this attack does 40 more damage.",
         Mechanic::ExtraDamageIfPokemonOnBench {

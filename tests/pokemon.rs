@@ -138,6 +138,8 @@ mod tapu_lele_energy_arrow_test;
 mod tepig_stoke_test;
 #[path = "pokemon/terapagos_ex_test.rs"]
 mod terapagos_ex_test;
+#[path = "pokemon/vanilluxe_test.rs"]
+mod vanilluxe_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
 mod vaporeon_ex_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]

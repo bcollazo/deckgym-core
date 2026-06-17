@@ -701,6 +701,9 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
                 .expect("Pokemon should be there if using ability");
             pokemon.ability_used = true;
         }
+        if let SimpleAction::Attack(attack) = &action.action {
+            state.record_attack_used(action.actor, attack.title.clone());
+        }
 
         mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
 
