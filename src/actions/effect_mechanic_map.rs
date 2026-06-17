@@ -1765,7 +1765,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::CoinFlipAlsoChoiceBenchDamage { opponent: true, damage: 40 },
     );
     // map.insert("Flip a coin. If heads, this attack does 70 damage to your opponent's Active Pokémon. If tails, heal 30 damage from your opponent's Active Pokémon.", todo_implementation);
-    // map.insert("Flip a coin. If tails, this Pokémon also does 50 damage to itself.", todo_implementation);
+    map.insert(
+        "Flip a coin. If tails, this Pokémon also does 50 damage to itself.",
+        Mechanic::CoinFlipSelfDamage { self_damage: 50 },
+    );
     // map.insert("Heal 20 damage from 1 of your Pokémon.", todo_implementation);
     // map.insert("If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.", todo_implementation);
     // map.insert("If a Stadium is in play, this attack does 40 more damage.", todo_implementation);
