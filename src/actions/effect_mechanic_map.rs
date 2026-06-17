@@ -1797,7 +1797,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             name: "Spewpa".to_string(),
         },
     );
-    // map.insert("Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.", todo_implementation);
+    map.insert(
+        "Take 2 [P] Energy from your Energy Zone and attach it to 1 of your Benched [P] Pokémon.",
+        Mechanic::ChargeBench {
+            energies: vec![EnergyType::Psychic, EnergyType::Psychic],
+            target_benched_type: Some(EnergyType::Psychic),
+        },
+    );
     map.insert(
         "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.",
         Mechanic::ChargeYourTypeAnyWay {

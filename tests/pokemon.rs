@@ -54,6 +54,8 @@ mod flutter_mane_ex_test;
 mod flygon_ex_test;
 #[path = "pokemon/gallade_test.rs"]
 mod gallade_test;
+#[path = "pokemon/gardevoir_psy_turbo_test.rs"]
+mod gardevoir_psy_turbo_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/hatterene_test.rs"]
