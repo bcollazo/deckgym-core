@@ -138,6 +138,8 @@ mod terapagos_ex_test;
 mod vaporeon_ex_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]
 mod vulpix_tail_whip_test;
+#[path = "pokemon/wailord_test.rs"]
+mod wailord_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]
 mod xerneas_geoburst_test;
 #[path = "pokemon/zekrom_bolt_strike_test.rs"]
