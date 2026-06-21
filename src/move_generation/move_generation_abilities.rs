@@ -125,6 +125,7 @@ fn can_use_ability_by_mechanic(
         }
         AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::ConfuseOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::BurnOpponentActive => !card.ability_used,
         AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
             can_use_remove_random_special_condition_from_active(state, card)
         }

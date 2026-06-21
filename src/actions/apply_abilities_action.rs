@@ -169,6 +169,7 @@ fn forecast_ability_by_mechanic(
         } => discard_energy_to_increase_type_damage(*discard_energy, *attack_type, *amount),
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
         AbilityMechanic::ConfuseOpponentActive => confuse_opponent_active(),
+        AbilityMechanic::BurnOpponentActive => burn_opponent_active(),
         AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
             remove_random_special_condition_from_active()
         }
@@ -501,6 +502,13 @@ fn confuse_opponent_active() -> Outcomes {
     Outcomes::single_fn(|_rng, state, action| {
         let opponent = (action.actor + 1) % 2;
         state.apply_status_condition(opponent, 0, StatusCondition::Confused);
+    })
+}
+
+fn burn_opponent_active() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
 }
 
