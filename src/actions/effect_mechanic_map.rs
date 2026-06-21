@@ -1554,7 +1554,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_side: BenchSide::YourBench,
         },
     );
-    // map.insert("This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.", todo_implementation);
+    map.insert(
+        "This attack does 40 damage for each time your Pokémon used Sweets Relay during this game.",
+        Mechanic::DamagePerAttackUsedThisGame {
+            attack_name: "Sweets Relay".to_string(),
+            damage_per_use: 40,
+        },
+    );
     map.insert(
         "This attack does 40 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {

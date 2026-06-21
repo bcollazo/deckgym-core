@@ -508,6 +508,10 @@ fn forecast_effect_attack_by_mechanic(
             attack_name,
             *extra_damage,
         ),
+        Mechanic::DamagePerAttackUsedThisGame {
+            attack_name,
+            damage_per_use,
+        } => damage_per_attack_used_this_game(state, attack_name, *damage_per_use),
         Mechanic::ExtraDamageIfMovedFromBench { extra_damage } => {
             extra_damage_if_moved_from_bench_attack(state, attack.fixed_damage, *extra_damage)
         }
@@ -2433,6 +2437,15 @@ fn extra_damage_if_attack_used_during_own_last_turn(
         base_damage
     };
     active_damage_doutcome(damage)
+}
+
+fn damage_per_attack_used_this_game(
+    state: &State,
+    attack_name: &str,
+    damage_per_use: u32,
+) -> AttackOutcomes {
+    let uses = state.count_attack_used_this_game(state.current_player, attack_name);
+    active_damage_doutcome(damage_per_use * uses)
 }
 
 fn extra_damage_if_moved_from_bench_attack(
