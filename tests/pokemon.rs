@@ -18,6 +18,8 @@ mod bombirdier_test;
 mod bonsly_teary_attack_test;
 #[path = "pokemon/brambleghast_accept_pain_test.rs"]
 mod brambleghast_accept_pain_test;
+#[path = "pokemon/breloom_test.rs"]
+mod breloom_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
 #[path = "pokemon/carracosta_blocking_shell_test.rs"]
