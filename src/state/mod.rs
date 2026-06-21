@@ -8,9 +8,11 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::hash::Hash;
 
+use std::collections::HashMap;
+
 use crate::{
     actions::abilities::AbilityMechanic,
-    actions::{has_ability_mechanic, SimpleAction},
+    actions::{get_ability_mechanic, has_ability_mechanic, SimpleAction},
     deck::Deck,
     effects::TurnEffect,
     models::{Card, EnergyType, StatusCondition},
@@ -143,6 +145,35 @@ impl State {
         let starting_plains_active = is_starting_plains_active(self);
         if let Some(pokemon) = self.in_play_pokemon[player][index].as_mut() {
             pokemon.refresh_starting_plains_bonus(starting_plains_active);
+        }
+    }
+
+    /// Recomputes the team-wide HP bonus (e.g. Lilligant's Toughness Aroma) for both
+    /// players' boards. Cheap enough to call after every action, so callers don't need to
+    /// track which specific board mutation might have added or removed a bonus source.
+    pub(crate) fn refresh_ability_team_hp_bonus_all(&mut self) {
+        self.refresh_ability_team_hp_bonus_for_player(0);
+        self.refresh_ability_team_hp_bonus_for_player(1);
+    }
+
+    fn refresh_ability_team_hp_bonus_for_player(&mut self, player: usize) {
+        let mut bonus_by_type: HashMap<EnergyType, u32> = HashMap::new();
+        for pokemon in self.in_play_pokemon[player].iter().flatten() {
+            if let Some(AbilityMechanic::IncreaseHpForTypeInPlay {
+                energy_type,
+                amount,
+            }) = get_ability_mechanic(&pokemon.card)
+            {
+                *bonus_by_type.entry(*energy_type).or_insert(0) += amount;
+            }
+        }
+        for pokemon in self.in_play_pokemon[player].iter_mut().flatten() {
+            let bonus = pokemon
+                .get_energy_type()
+                .and_then(|energy_type| bonus_by_type.get(&energy_type))
+                .copied()
+                .unwrap_or(0);
+            pokemon.set_ability_team_hp_bonus(bonus);
         }
     }
 
@@ -604,6 +635,7 @@ impl State {
         for (i, card) in player_1.into_iter().enumerate() {
             self.in_play_pokemon[1][i] = Some(card);
         }
+        self.refresh_ability_team_hp_bonus_all();
     }
 
     /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.

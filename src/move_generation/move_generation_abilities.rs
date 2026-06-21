@@ -95,6 +95,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,
         AbilityMechanic::IncreaseDamageForTwoTypesInPlay { .. } => false,
+        AbilityMechanic::IncreaseHpForTypeInPlay { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,
         AbilityMechanic::SearchRandomPokemonFromDeck => {
             !card.ability_used

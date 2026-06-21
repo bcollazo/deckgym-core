@@ -113,7 +113,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 energy_type: Some(EnergyType::Psychic),
             },
         );
-        // map.insert("Each of your [G] Pokémon gets +20 HP.", todo_implementation);
+        map.insert(
+            "Each of your [G] Pokémon gets +20 HP.",
+            AbilityMechanic::IncreaseHpForTypeInPlay {
+                energy_type: EnergyType::Grass,
+                amount: 20,
+            },
+        );
         // map.insert("If a Stadium is in play, this Pokémon has no Retreat Cost.", todo_implementation);
         map.insert(
             "If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage.",
