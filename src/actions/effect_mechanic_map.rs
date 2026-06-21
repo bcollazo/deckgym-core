@@ -2148,7 +2148,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ExtraDamageIfStage2OnBench { extra_damage: 50 },
     );
     // map.insert("If your opponent has any [P] Pokémon in play, this attack does 50 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is Asleep, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfDefenderAsleep { extra_damage: 60 },
+    );
     map.insert(
         "If your opponent's Active Pokémon is Confused, this attack does 70 more damage.",
         Mechanic::ExtraDamageIfDefenderConfused { extra_damage: 70 },

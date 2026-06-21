@@ -678,6 +678,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfDefenderConfused { extra_damage } => {
             extra_damage_if_defender_confused(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfDefenderAsleep { extra_damage } => {
+            extra_damage_if_defender_asleep(state, attack.fixed_damage, *extra_damage)
+        }
         Mechanic::DiscardTopSelfDeck => discard_top_self_deck(attack.fixed_damage),
         Mechanic::TieredCoinFlipDamage {
             num_coins,
@@ -2798,6 +2801,20 @@ fn extra_damage_if_defender_confused(
 ) -> AttackOutcomes {
     let opponent = (state.current_player + 1) % 2;
     let damage = if state.get_active(opponent).is_confused() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_defender_asleep(
+    state: &State,
+    base_damage: u32,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let damage = if state.get_active(opponent).is_asleep() {
         base_damage + extra_damage
     } else {
         base_damage
