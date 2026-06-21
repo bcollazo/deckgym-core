@@ -84,6 +84,8 @@ mod iron_valiant_future_system_test;
 mod jolteon_ex_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
 mod klefki_dismantling_keys_test;
+#[path = "pokemon/kommo_o_clanging_scales_test.rs"]
+mod kommo_o_clanging_scales_test;
 #[path = "pokemon/legacy_ability_logic_test.rs"]
 mod legacy_ability_logic_test;
 #[path = "pokemon/lucario_b3_test.rs"]
