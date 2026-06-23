@@ -422,7 +422,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             duration: 1,
         },
     );
-    // map.insert("During your opponent's next turn, this Pokémon takes +30 damage from attacks.", todo_implementation);
+    map.insert(
+        "During your opponent's next turn, this Pokémon takes +30 damage from attacks.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedVulnerability { amount: 30 },
+            duration: 1,
+            coin_flip: false,
+        },
+    );
     map.insert(
         "During your opponent's next turn, this Pokémon takes -20 damage from attacks.",
         Mechanic::DamageAndCardEffect {
