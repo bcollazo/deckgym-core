@@ -273,6 +273,10 @@ pub enum Mechanic {
         attack_name: String,
         extra_damage: u32,
     },
+    DamagePerAttackUsedThisGame {
+        attack_name: String,
+        damage_per_use: u32,
+    },
     ExtraDamageIfMovedFromBench {
         extra_damage: u32,
     },

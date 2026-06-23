@@ -74,6 +74,10 @@ pub struct State {
     // your last turn, this attack does more damage.").
     pub(crate) attack_name_used_this_turn: [Option<String>; 2],
     pub(crate) attack_name_used_last_turn: [Option<String>; 2],
+    // Number of times each player has used each named attack during the entire game (e.g. for
+    // Alcremie's "Sweets Overload": "This attack does 40 damage for each time your Pokémon used
+    // Sweets Relay during this game."). Using BTreeMap to keep State hashable.
+    pub(crate) attack_name_used_count: [BTreeMap<String, u32>; 2],
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -103,6 +107,7 @@ impl State {
             knocked_out_by_opponent_attack_last_turn: false,
             attack_name_used_this_turn: [None, None],
             attack_name_used_last_turn: [None, None],
+            attack_name_used_count: [BTreeMap::new(), BTreeMap::new()],
             turn_effects: BTreeMap::new(),
         }
     }
@@ -618,6 +623,9 @@ impl State {
     }
 
     pub(crate) fn record_attack_used(&mut self, player: usize, attack_name: String) {
+        *self.attack_name_used_count[player]
+            .entry(attack_name.clone())
+            .or_insert(0) += 1;
         self.attack_name_used_this_turn[player] = Some(attack_name);
     }
 
@@ -627,6 +635,13 @@ impl State {
         attack_name: &str,
     ) -> bool {
         self.attack_name_used_last_turn[player].as_deref() == Some(attack_name)
+    }
+
+    pub(crate) fn count_attack_used_this_game(&self, player: usize, attack_name: &str) -> u32 {
+        self.attack_name_used_count[player]
+            .get(attack_name)
+            .copied()
+            .unwrap_or(0)
     }
 
     pub fn set_attack_name_used_last_turn(&mut self, player: usize, attack_name: Option<String>) {
