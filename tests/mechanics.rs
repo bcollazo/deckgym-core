@@ -4,3 +4,5 @@ mod ability_effects_test;
 mod attack_effects_test;
 #[path = "mechanics/confusion_test.rs"]
 mod confusion_test;
+#[path = "mechanics/retreat_test.rs"]
+mod retreat_test;

@@ -512,8 +512,10 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
 
         // Start walking from the back in the attached, removing energies until retreat cost is paid
         let mut remaining_cost = retreat_cost;
+        let mut discarded: Vec<EnergyType> = vec![];
         while remaining_cost > 0 && !attached_energy.is_empty() {
             let energy = attached_energy.pop().unwrap();
+            discarded.push(energy);
             if energy == EnergyType::Grass && double_grass {
                 remaining_cost = remaining_cost.saturating_sub(2);
             } else {
@@ -522,6 +524,10 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         }
         if remaining_cost > 0 {
             panic!("Not enough energy to pay retreat cost");
+        }
+
+        if !discarded.is_empty() {
+            state.discard_energies[player].extend(discarded);
         }
     }
 
