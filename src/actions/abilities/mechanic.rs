@@ -76,6 +76,12 @@ pub enum AbilityMechanic {
         energy_type_b: EnergyType,
         amount: u32,
     },
+    /// Passive: each of your Pokémon of the given type gets +`amount` HP for as long as
+    /// this Pokémon (the ability holder) is in play. Stacks if multiple sources are in play.
+    IncreaseHpForTypeInPlay {
+        energy_type: EnergyType,
+        amount: u32,
+    },
     StartTurnRandomPokemonToHand {
         energy_type: EnergyType,
     },

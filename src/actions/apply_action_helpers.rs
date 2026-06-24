@@ -719,6 +719,12 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
             handle_knockouts(state, (action.actor, 0), false);
         }
 
+        // Catch-all refresh: any action could have changed a player's board composition
+        // (e.g. a Pokemon entering, leaving, or being knocked out of play), which may add
+        // or remove team-wide ability bonuses like Lilligant's Toughness Aroma. Cheap
+        // enough to always run rather than tracking every mutation site that could matter.
+        state.refresh_ability_team_hp_bonus_all();
+
         if let SimpleAction::Attack(_) = &action.action {
             // We use a flag instead of .move_generation_stack to reduce
             // stack surgery to make sure things happen in order.
