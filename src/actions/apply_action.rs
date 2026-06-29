@@ -529,6 +529,8 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         if !discarded.is_empty() {
             state.discard_energies[player].extend(discarded);
         }
+
+        state.has_retreated = true;
     }
 
     apply_activate(player, state, bench_idx);
