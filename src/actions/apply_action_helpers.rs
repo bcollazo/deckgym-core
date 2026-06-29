@@ -664,8 +664,6 @@ pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize)
     if let Some(pokemon) = state.in_play_pokemon[player][0].as_mut() {
         pokemon.moved_to_active_this_turn = true;
     }
-
-    state.has_retreated = true;
 }
 
 // Apply common logic in outcomes
