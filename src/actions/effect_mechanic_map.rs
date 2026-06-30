@@ -837,6 +837,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "If this Pokémon has a Pokémon Tool attached, this attack does 20 more damage.",
+        Mechanic::ExtraDamageIfToolAttached { extra_damage: 20 },
+    );
+    map.insert(
         "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage.",
         Mechanic::ExtraDamageIfToolAttached { extra_damage: 30 },
     );
