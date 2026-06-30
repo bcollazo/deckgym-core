@@ -479,6 +479,15 @@ fn forecast_effect_attack_by_mechanic(
             *energy_type,
             *damage_per_energy,
         ),
+        Mechanic::ExtraDamagePerSpecificEnergyAllYours {
+            energy_type,
+            damage_per_energy,
+        } => extra_damage_per_specific_energy_all_yours(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *damage_per_energy,
+        ),
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
@@ -2343,6 +2352,23 @@ fn extra_damage_per_specific_energy(
     let matching_energy_count = active
         .attached_energy
         .iter()
+        .filter(|e| **e == energy_type)
+        .count() as u32;
+    let damage = base_damage + matching_energy_count * damage_per_energy;
+    active_damage_doutcome(damage)
+}
+
+/// Extra damage per specific energy type across all your Pokémon (e.g., Mega Diancie ex's Brilliant Storm)
+fn extra_damage_per_specific_energy_all_yours(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    damage_per_energy: u32,
+) -> AttackOutcomes {
+    let matching_energy_count: u32 = state.in_play_pokemon[state.current_player]
+        .iter()
+        .flatten()
+        .flat_map(|pokemon| pokemon.attached_energy.iter())
         .filter(|e| **e == energy_type)
         .count() as u32;
     let damage = base_damage + matching_energy_count * damage_per_energy;
