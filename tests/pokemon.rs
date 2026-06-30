@@ -120,6 +120,8 @@ mod meowth_carefree_steps_test;
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
 mod morpeko_test;
+#[path = "pokemon/ninetales_ember_dance_test.rs"]
+mod ninetales_ember_dance_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
