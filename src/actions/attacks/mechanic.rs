@@ -435,4 +435,10 @@ pub enum Mechanic {
         extra_damage: u32,
         conditions: Vec<StatusCondition>,
     },
+    /// Growlithe – Puppy Pile: deal damage_per × (number of own Pokémon in play and hand
+    /// that have an attack named `attack_name`).
+    DamagePerOwnPokemonWithAttackName {
+        attack_name: String,
+        damage_per: u32,
+    },
 }

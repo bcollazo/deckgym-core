@@ -62,6 +62,8 @@ mod gallade_test;
 mod gardevoir_psy_turbo_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
+#[path = "pokemon/growlithe_puppy_pile_test.rs"]
+mod growlithe_puppy_pile_test;
 #[path = "pokemon/hatterene_test.rs"]
 mod hatterene_test;
 #[path = "pokemon/heracross_test.rs"]
