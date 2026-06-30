@@ -37,6 +37,7 @@ static DATABASE: LazyLock<HashMap<CardId, Card>> = LazyLock::new(|| {
     populate_database_chunk_24(&mut map);
     populate_database_chunk_25(&mut map);
     populate_database_chunk_26(&mut map);
+    populate_database_chunk_27(&mut map);
     map
 });
 
@@ -71631,6 +71632,2292 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             rarity: "♛".to_string(),
             booster_pack: "Paradox Drive (B3a)".to_string(),
         }));
+    map.insert(CardId::B3b001Caterpie, Card::Pokemon(PokemonCard {
+            id: "B3b 001".to_string(),
+            name: "Caterpie".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Quick Growth".to_string(), effect: "At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Hook".to_string(),
+                    fixed_damage: 10,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b002Metapod,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 002".to_string(),
+            name: "Metapod".to_string(),
+            stage: 1,
+            evolves_from: Some("Caterpie".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Ram".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b003Butterfree,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 003".to_string(),
+            name: "Butterfree".to_string(),
+            stage: 2,
+            evolves_from: Some("Metapod".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Sunny Wind".to_string(),
+                fixed_damage: 60,
+                effect: Some("Heal 20 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b004Cacnea,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 004".to_string(),
+            name: "Cacnea".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Spike Sting".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b005Tropius,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 005".to_string(),
+            name: "Tropius".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Grass],
+                title: "Solar Beam".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b006Petilil,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 006".to_string(),
+            name: "Petilil".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Double Spin".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b007HisuianLilligant,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 007".to_string(),
+            name: "Hisuian Lilligant".to_string(),
+            stage: 1,
+            evolves_from: Some("Petilil".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Dress Up".to_string(),
+                fixed_damage: 40,
+                effect: Some(
+                    "If this Pokémon has a Pokémon Tool attached, this attack does 20 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b008Vulpix,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 008".to_string(),
+            name: "Vulpix".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Hold Still".to_string(),
+                fixed_damage: 0,
+                effect: Some("Heal 20 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b009Ninetales,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 009".to_string(),
+            name: "Ninetales".to_string(),
+            stage: 1,
+            evolves_from: Some("Vulpix".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fire,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Ember Dance".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 9 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b010Growlithe, Card::Pokemon(PokemonCard {
+            id: "B3b 010".to_string(),
+            name: "Growlithe".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Puppy Pile".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b011Psyduck,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 011".to_string(),
+            name: "Psyduck".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Confusion Wave".to_string(),
+                fixed_damage: 0,
+                effect: Some("Both Active Pokémon are now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b012Goldeen,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 012".to_string(),
+            name: "Goldeen".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Horn Attack".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b013Seaking,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 013".to_string(),
+            name: "Seaking".to_string(),
+            stage: 1,
+            evolves_from: Some("Goldeen".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Aqua Bullet".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b014Feebas,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 014".to_string(),
+            name: "Feebas".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Splash".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b015MiloticEx, Card::Pokemon(PokemonCard {
+            id: "B3b 015".to_string(),
+            name: "Milotic ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Feebas".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Aqua Charge".to_string(), effect: "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Water Pulse".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b016Snorunt,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 016".to_string(),
+            name: "Snorunt".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Headbutt".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b017Froslass,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 017".to_string(),
+            name: "Froslass".to_string(),
+            stage: 1,
+            evolves_from: Some("Snorunt".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Soul Shot".to_string(),
+                fixed_damage: 70,
+                effect: Some(
+                    "Discard a card from your hand. If you can't, this attack does nothing."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b018Luvdisc,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 018".to_string(),
+            name: "Luvdisc".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Water Gun".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b019Piplup,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 019".to_string(),
+            name: "Piplup".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Bubble Beam".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b020IronBundle, Card::Pokemon(PokemonCard {
+            id: "B3b 020".to_string(),
+            name: "Iron Bundle".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
+                    title: "Bundled Pump".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Flip a coin. If heads, this attack does 50 more damage. If tails, this Pokémon also does 50 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b021Pikachu,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 021".to_string(),
+            name: "Pikachu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Electro Ball".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b022Raichu,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 022".to_string(),
+            name: "Raichu".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Mach Bolt".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b023Emolga, Card::Pokemon(PokemonCard {
+            id: "B3b 023".to_string(),
+            name: "Emolga".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Windup Thunder".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b024DedenneEx, Card::Pokemon(PokemonCard {
+            id: "B3b 024".to_string(),
+            name: "Dedenne ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Dede-Circuit".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b025Yamper, Card::Pokemon(PokemonCard {
+            id: "B3b 025".to_string(),
+            name: "Yamper".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Puppy Pile".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b026Slowpoke, Card::Pokemon(PokemonCard {
+            id: "B3b 026".to_string(),
+            name: "Slowpoke".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Growl".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b027Slowbro,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 027".to_string(),
+            name: "Slowbro".to_string(),
+            stage: 1,
+            evolves_from: Some("Slowpoke".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Psychic,
+                    EnergyType::Psychic,
+                    EnergyType::Colorless,
+                ],
+                title: "Psybeam".to_string(),
+                fixed_damage: 70,
+                effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b028Munna,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 028".to_string(),
+            name: "Munna".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Ram".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b029Musharna,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 029".to_string(),
+            name: "Musharna".to_string(),
+            stage: 1,
+            evolves_from: Some("Munna".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Zen Headbutt".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b030Sylveon, Card::Pokemon(PokemonCard {
+            id: "B3b 030".to_string(),
+            name: "Sylveon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: Some(Ability { title: "Soothing Ribbon".to_string(), effect: "Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Magical Shot".to_string(),
+                    fixed_damage: 60,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b031Carbink, Card::Pokemon(PokemonCard {
+            id: "B3b 031".to_string(),
+            name: "Carbink".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,],
+                    title: "Glittering Gift".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [P] Energy from your Energy Zone and attach it to that Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b032MegaDiancieEx, Card::Pokemon(PokemonCard {
+            id: "B3b 032".to_string(),
+            name: "Mega Diancie ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Brilliant Storm".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 20 more damage for each [P] Energy attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b033Enamorus, Card::Pokemon(PokemonCard {
+            id: "B3b 033".to_string(),
+            name: "Enamorus".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Smitten Strike".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 60 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b034Fidough, Card::Pokemon(PokemonCard {
+            id: "B3b 034".to_string(),
+            name: "Fidough".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Puppy Pile".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b035FlutterMane, Card::Pokemon(PokemonCard {
+            id: "B3b 035".to_string(),
+            name: "Flutter Mane".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Hexing Flight".to_string(),
+                    fixed_damage: 90,
+                    effect: Some("If this Pokémon didn't move from the Bench to the Active Spot this turn, this attack does nothing.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b036Wooper,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 036".to_string(),
+            name: "Wooper".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Mud Shot".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b037Quagsire, Card::Pokemon(PokemonCard {
+            id: "B3b 037".to_string(),
+            name: "Quagsire".to_string(),
+            stage: 1,
+            evolves_from: Some("Wooper".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Colorless,],
+                    title: "Amnesia".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("1 of your opponent's Active Pokémon's attacks is chosen at random. During your opponent's next turn, that Pokémon can't use the chosen attack.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b038Rockruff, Card::Pokemon(PokemonCard {
+            id: "B3b 038".to_string(),
+            name: "Rockruff".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Puppy Pile".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b039Sandygast,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 039".to_string(),
+            name: "Sandygast".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Sand Spray".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b040Palossand,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 040".to_string(),
+            name: "Palossand".to_string(),
+            stage: 1,
+            evolves_from: Some("Sandygast".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Ambush".to_string(),
+                fixed_damage: 30,
+                effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b041MegaSableyeEx, Card::Pokemon(PokemonCard {
+            id: "B3b 041".to_string(),
+            name: "Mega Sableye ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Cursed Jewel".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b042Cacturne, Card::Pokemon(PokemonCard {
+            id: "B3b 042".to_string(),
+            name: "Cacturne".to_string(),
+            stage: 1,
+            evolves_from: Some("Cacnea".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,],
+                    title: "Finishing Blow".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("If your opponent's Active Pokémon has damage on it, this attack does 60 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b043Spiritomb,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 043".to_string(),
+            name: "Spiritomb".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness, EnergyType::Colorless],
+                title: "Dark Slumber".to_string(),
+                fixed_damage: 30,
+                effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b044Scraggy,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 044".to_string(),
+            name: "Scraggy".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Low Kick".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b045Scrafty,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 045".to_string(),
+            name: "Scrafty".to_string(),
+            stage: 1,
+            evolves_from: Some("Scraggy".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness, EnergyType::Darkness],
+                title: "High Jump Kick".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b046Mareanie, Card::Pokemon(PokemonCard {
+            id: "B3b 046".to_string(),
+            name: "Mareanie".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Venoshock".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b047ToxapEx, Card::Pokemon(PokemonCard {
+            id: "B3b 047".to_string(),
+            name: "Toxapex".to_string(),
+            stage: 1,
+            evolves_from: Some("Mareanie".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Severe Poison".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Your opponent's Active Pokémon is now Poisoned. Do 40 damage to this Pokémon instead of the usual amount for this Special Condition.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b048Goomy,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 048".to_string(),
+            name: "Goomy".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Stampede".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b049HisuianSliggoo,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 049".to_string(),
+            name: "Hisuian Sliggoo".to_string(),
+            stage: 1,
+            evolves_from: Some("Goomy".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Metal],
+                title: "Hammer In".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: None,
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b050HisuianGoodra, Card::Pokemon(PokemonCard {
+            id: "B3b 050".to_string(),
+            name: "Hisuian Goodra".to_string(),
+            stage: 2,
+            evolves_from: Some("Hisuian Sliggoo".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Dragon,
+            ability: Some(Ability { title: "Securely Sheltered".to_string(), effect: "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -80 damage from that attack.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Metal,EnergyType::Colorless,],
+                    title: "Heavy Impact".to_string(),
+                    fixed_damage: 120,
+                    effect: None,
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b051Jigglypuff,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 051".to_string(),
+            name: "Jigglypuff".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Stompy Stomp".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "Flip 2 coins. This attack does 30 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b052Wigglytuff,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 052".to_string(),
+            name: "Wigglytuff".to_string(),
+            stage: 1,
+            evolves_from: Some("Jigglypuff".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Expand".to_string(),
+                fixed_damage: 50,
+                effect: Some(
+                    "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b053Eevee,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 053".to_string(),
+            name: "Eevee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Gnaw".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b054Munchlax,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 054".to_string(),
+            name: "Munchlax".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![],
+                title: "Hungrily Draw".to_string(),
+                fixed_damage: 10,
+                effect: Some("Draw a card.".to_string()),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b055Snorlax, Card::Pokemon(PokemonCard {
+            id: "B3b 055".to_string(),
+            name: "Snorlax".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Massive Body".to_string(), effect: "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Mega Punch".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b056Teddiursa, Card::Pokemon(PokemonCard {
+            id: "B3b 056".to_string(),
+            name: "Teddiursa".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Charm".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b057Ursaring,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 057".to_string(),
+            name: "Ursaring".to_string(),
+            stage: 1,
+            evolves_from: Some("Teddiursa".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Confront".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b058Ursaluna, Card::Pokemon(PokemonCard {
+            id: "B3b 058".to_string(),
+            name: "Ursaluna".to_string(),
+            stage: 2,
+            evolves_from: Some("Ursaring".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Guts".to_string(), effect: "If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Hammer Arm".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Discard the top card of your opponent's deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b059HisuianZorua,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 059".to_string(),
+            name: "Hisuian Zorua".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Run Around".to_string(),
+                fixed_damage: 0,
+                effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b060HisuianZoroarkEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 060".to_string(),
+            name: "Hisuian Zoroark ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Hisuian Zorua".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Spiteful Illusion".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "This attack does 20 more damage for each Pokémon in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b061Furfrou,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 061".to_string(),
+            name: "Furfrou".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability {
+                title: "Fur Coat".to_string(),
+                effect: "This Pokémon takes -20 damage from attacks.".to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Double Headbutt".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "Flip 2 coins. This attack does 30 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b062Skwovet,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 062".to_string(),
+            name: "Skwovet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Tackle".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b063Greedent,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 063".to_string(),
+            name: "Greedent".to_string(),
+            stage: 1,
+            evolves_from: Some("Skwovet".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Collapse".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon is now Asleep.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b064SmallBalloon,
+        Card::Trainer(TrainerCard {
+            id: "B3b 064".to_string(),
+            name: "Small Balloon".to_string(),
+            effect: "The Retreat Cost of the Basic Pokémon this card is attached to is 1 less."
+                .to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }),
+    );
+    map.insert(
+        CardId::B3b065ElegantCape,
+        Card::Trainer(TrainerCard {
+            id: "B3b 065".to_string(),
+            name: "Elegant Cape".to_string(),
+            effect: "The Stage 1 Pokémon this card is attached to gets +30 HP.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }),
+    );
+    map.insert(CardId::B3b066Elesa, Card::Trainer(TrainerCard {
+            id: "B3b 066".to_string(),
+            name: "Elesa".to_string(),
+            effect: "Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b067PuppyLovingGirl, Card::Trainer(TrainerCard {
+            id: "B3b 067".to_string(),
+            name: "Puppy-Loving Girl".to_string(),
+            effect: "Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b068Wallace, Card::Trainer(TrainerCard {
+            id: "B3b 068".to_string(),
+            name: "Wallace".to_string(),
+            effect: "Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W] Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b069KidsRoom, Card::Trainer(TrainerCard {
+            id: "B3b 069".to_string(),
+            name: "Kid's Room".to_string(),
+            effect: "Once during each player's turn, that player may choose a card in their hand and switch it with a random Pokémon Tool card in their deck.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Stadium,
+        }));
+    map.insert(
+        CardId::B3b070Vulpix,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 070".to_string(),
+            name: "Vulpix".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Hold Still".to_string(),
+                fixed_damage: 0,
+                effect: Some("Heal 20 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b071Piplup,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 071".to_string(),
+            name: "Piplup".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Bubble Beam".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b072Pikachu,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 072".to_string(),
+            name: "Pikachu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Electro Ball".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b073Sylveon, Card::Pokemon(PokemonCard {
+            id: "B3b 073".to_string(),
+            name: "Sylveon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Psychic,
+            ability: Some(Ability { title: "Soothing Ribbon".to_string(), effect: "Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Magical Shot".to_string(),
+                    fixed_damage: 60,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b074Mareanie, Card::Pokemon(PokemonCard {
+            id: "B3b 074".to_string(),
+            name: "Mareanie".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Venoshock".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b075Jigglypuff,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 075".to_string(),
+            name: "Jigglypuff".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Stompy Stomp".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "Flip 2 coins. This attack does 30 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b076Snorlax, Card::Pokemon(PokemonCard {
+            id: "B3b 076".to_string(),
+            name: "Snorlax".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Massive Body".to_string(), effect: "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Mega Punch".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b077Greedent,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 077".to_string(),
+            name: "Greedent".to_string(),
+            stage: 1,
+            evolves_from: Some("Skwovet".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Collapse".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon is now Asleep.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b078MiloticEx, Card::Pokemon(PokemonCard {
+            id: "B3b 078".to_string(),
+            name: "Milotic ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Feebas".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Aqua Charge".to_string(), effect: "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Water Pulse".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b079DedenneEx, Card::Pokemon(PokemonCard {
+            id: "B3b 079".to_string(),
+            name: "Dedenne ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Dede-Circuit".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b080MegaDiancieEx, Card::Pokemon(PokemonCard {
+            id: "B3b 080".to_string(),
+            name: "Mega Diancie ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Brilliant Storm".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 20 more damage for each [P] Energy attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b081MegaSableyeEx, Card::Pokemon(PokemonCard {
+            id: "B3b 081".to_string(),
+            name: "Mega Sableye ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Cursed Jewel".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b082HisuianZoroarkEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 082".to_string(),
+            name: "Hisuian Zoroark ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Hisuian Zorua".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Spiteful Illusion".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "This attack does 20 more damage for each Pokémon in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b083Elesa, Card::Trainer(TrainerCard {
+            id: "B3b 083".to_string(),
+            name: "Elesa".to_string(),
+            effect: "Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b084PuppyLovingGirl, Card::Trainer(TrainerCard {
+            id: "B3b 084".to_string(),
+            name: "Puppy-Loving Girl".to_string(),
+            effect: "Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b085Wallace, Card::Trainer(TrainerCard {
+            id: "B3b 085".to_string(),
+            name: "Wallace".to_string(),
+            effect: "Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W] Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B3b086MiloticEx, Card::Pokemon(PokemonCard {
+            id: "B3b 086".to_string(),
+            name: "Milotic ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Feebas".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Aqua Charge".to_string(), effect: "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Water Pulse".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("Your opponent's Active Pokémon is now Asleep.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b087MegaDiancieEx, Card::Pokemon(PokemonCard {
+            id: "B3b 087".to_string(),
+            name: "Mega Diancie ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Brilliant Storm".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 20 more damage for each [P] Energy attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b088MegaSableyeEx, Card::Pokemon(PokemonCard {
+            id: "B3b 088".to_string(),
+            name: "Mega Sableye ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 170,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Cursed Jewel".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b089HisuianZoroarkEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 089".to_string(),
+            name: "Hisuian Zoroark ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Hisuian Zorua".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Spiteful Illusion".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "This attack does 20 more damage for each Pokémon in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b090DedenneEx, Card::Pokemon(PokemonCard {
+            id: "B3b 090".to_string(),
+            name: "Dedenne ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Dede-Circuit".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆☆".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b091Caterpie, Card::Pokemon(PokemonCard {
+            id: "B3b 091".to_string(),
+            name: "Caterpie".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Quick Growth".to_string(), effect: "At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Hook".to_string(),
+                    fixed_damage: 10,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b092Metapod,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 092".to_string(),
+            name: "Metapod".to_string(),
+            stage: 1,
+            evolves_from: Some("Caterpie".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Ram".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b093Butterfree,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 093".to_string(),
+            name: "Butterfree".to_string(),
+            stage: 2,
+            evolves_from: Some("Metapod".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Sunny Wind".to_string(),
+                fixed_damage: 60,
+                effect: Some("Heal 20 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b094Mareep,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 094".to_string(),
+            name: "Mareep".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Rear Kick".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b095Flaaffy,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 095".to_string(),
+            name: "Flaaffy".to_string(),
+            stage: 1,
+            evolves_from: Some("Mareep".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Colorless],
+                title: "Electric Punch".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b096Ampharos, Card::Pokemon(PokemonCard {
+            id: "B3b 096".to_string(),
+            name: "Ampharos".to_string(),
+            stage: 2,
+            evolves_from: Some("Flaaffy".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Zapping Bullet".to_string(),
+                    fixed_damage: 90,
+                    effect: Some("1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b097Slowbro,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 097".to_string(),
+            name: "Slowbro".to_string(),
+            stage: 1,
+            evolves_from: Some("Slowpoke".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Psychic,
+                    EnergyType::Psychic,
+                    EnergyType::Colorless,
+                ],
+                title: "Psybeam".to_string(),
+                fixed_damage: 70,
+                effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b098Kangaskhan,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 098".to_string(),
+            name: "Kangaskhan".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Steady Punch".to_string(),
+                fixed_damage: 60,
+                effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b099Ditto, Card::Pokemon(PokemonCard {
+            id: "B3b 099".to_string(),
+            name: "Ditto".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Copy a Friend".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b100Snorlax, Card::Pokemon(PokemonCard {
+            id: "B3b 100".to_string(),
+            name: "Snorlax".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Massive Body".to_string(), effect: "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Mega Punch".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b101MegaGyaradosEx,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 101".to_string(),
+            name: "Mega Gyarados ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Magikarp".to_string()),
+            hp: 210,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Colorless,
+                ],
+                title: "Mega Blaster".to_string(),
+                fixed_damage: 140,
+                effect: Some("Discard the top 3 cards of your opponent's deck.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "**".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(CardId::B3b102VaporeonEx, Card::Pokemon(PokemonCard {
+            id: "B3b 102".to_string(),
+            name: "Vaporeon ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Frozen Flow".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,],
+                    title: "Wave Splash".to_string(),
+                    fixed_damage: 80,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b103MegaAmpharosEx, Card::Pokemon(PokemonCard {
+            id: "B3b 103".to_string(),
+            name: "Mega Ampharos ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Flaaffy".to_string()),
+            hp: 210,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Lightning Lancer".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(CardId::B3b104IndeedeeEx, Card::Pokemon(PokemonCard {
+            id: "B3b 104".to_string(),
+            name: "Indeedee ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Psychic,
+            ability: Some(Ability { title: "Watch Over".to_string(), effect: "Once during your turn, you may heal 20 damage from your Active Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Psychic".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }));
+    map.insert(
+        CardId::B3b105Munchlax,
+        Card::Pokemon(PokemonCard {
+            id: "B3b 105".to_string(),
+            name: "Munchlax".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![],
+                title: "Hungrily Draw".to_string(),
+                fixed_damage: 10,
+                effect: Some("Draw a card.".to_string()),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "♛".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B3b106SmallBalloon,
+        Card::Trainer(TrainerCard {
+            id: "B3b 106".to_string(),
+            name: "Small Balloon".to_string(),
+            effect: "The Retreat Cost of the Basic Pokémon this card is attached to is 1 less."
+                .to_string(),
+            rarity: "♛".to_string(),
+            booster_pack: "Everyday Wonders (B3b)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }),
+    );
     map.insert(
         CardId::PA001Potion,
         Card::Trainer(TrainerCard {
@@ -71665,6 +73952,9 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             trainer_card_type: TrainerType::Item,
         }),
     );
+}
+
+fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PA004PokedEx,
         Card::Trainer(TrainerCard {
@@ -74108,9 +76398,6 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             rarity: "☆☆".to_string(),
             booster_pack: "Promo A (P-A)".to_string(),
         }));
-}
-
-fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
     map.insert(CardId::PA110EnteiEx, Card::Pokemon(PokemonCard {
             id: "P-A 110".to_string(),
             name: "Entei ex".to_string(),
@@ -74640,6 +76927,9 @@ fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Promo B (P-B)".to_string(),
         }),
     );
+}
+
+fn populate_database_chunk_27(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PB015Mareep,
         Card::Pokemon(PokemonCard {
@@ -75962,6 +78252,181 @@ fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
                 },
             ],
             weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB071Psyduck,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 071".to_string(),
+            name: "Psyduck".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Confusion Wave".to_string(),
+                fixed_damage: 0,
+                effect: Some("Both Active Pokémon are now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB072Feebas, Card::Pokemon(PokemonCard {
+            id: "P-B 072".to_string(),
+            name: "Feebas".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Hide".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB073Froslass,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 073".to_string(),
+            name: "Froslass".to_string(),
+            stage: 1,
+            evolves_from: Some("Snorunt".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Soul Shot".to_string(),
+                fixed_damage: 70,
+                effect: Some(
+                    "Discard a card from your hand. If you can't, this attack does nothing."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::PB074Raichu,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 074".to_string(),
+            name: "Raichu".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Mach Bolt".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB075Quagsire, Card::Pokemon(PokemonCard {
+            id: "P-B 075".to_string(),
+            name: "Quagsire".to_string(),
+            stage: 1,
+            evolves_from: Some("Wooper".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Energy Press".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB076HisuianZorua,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 076".to_string(),
+            name: "Hisuian Zorua".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Run Around".to_string(),
+                fixed_damage: 0,
+                effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB077Growlithe, Card::Pokemon(PokemonCard {
+            id: "P-B 077".to_string(),
+            name: "Growlithe".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Puppy Pile".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(CardId::PB078Emolga, Card::Pokemon(PokemonCard {
+            id: "P-B 078".to_string(),
+            name: "Emolga".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Lightning,],
+                    title: "Windup Thunder".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
             retreat_cost: vec![EnergyType::Colorless,],
             rarity: "◊◊◊".to_string(),
             booster_pack: "Promo B (P-B)".to_string(),

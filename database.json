@@ -72499,6 +72499,2364 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B3b 001",
+      "name": "Caterpie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Quick Growth",
+        "effect": "At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Hook",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 002",
+      "name": "Metapod",
+      "stage": 1,
+      "evolves_from": "Caterpie",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Ram",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 003",
+      "name": "Butterfree",
+      "stage": 2,
+      "evolves_from": "Metapod",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Sunny Wind",
+          "fixed_damage": 60,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 004",
+      "name": "Cacnea",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Spike Sting",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 005",
+      "name": "Tropius",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Solar Beam",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 006",
+      "name": "Petilil",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Double Spin",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 007",
+      "name": "Hisuian Lilligant",
+      "stage": 1,
+      "evolves_from": "Petilil",
+      "hp": 100,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Dress Up",
+          "fixed_damage": 40,
+          "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 008",
+      "name": "Vulpix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Hold Still",
+          "fixed_damage": 0,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 009",
+      "name": "Ninetales",
+      "stage": 1,
+      "evolves_from": "Vulpix",
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless", "Colorless"],
+          "title": "Ember Dance",
+          "fixed_damage": 20,
+          "effect": "Flip 9 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 010",
+      "name": "Growlithe",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 011",
+      "name": "Psyduck",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Confusion Wave",
+          "fixed_damage": 0,
+          "effect": "Both Active Pokémon are now Confused."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 012",
+      "name": "Goldeen",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Horn Attack",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 013",
+      "name": "Seaking",
+      "stage": 1,
+      "evolves_from": "Goldeen",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Aqua Bullet",
+          "fixed_damage": 30,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 014",
+      "name": "Feebas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Splash",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 015",
+      "name": "Milotic ex",
+      "stage": 1,
+      "evolves_from": "Feebas",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Aqua Charge",
+        "effect": "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Water Pulse",
+          "fixed_damage": 80,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 016",
+      "name": "Snorunt",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 017",
+      "name": "Froslass",
+      "stage": 1,
+      "evolves_from": "Snorunt",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Soul Shot",
+          "fixed_damage": 70,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 018",
+      "name": "Luvdisc",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 019",
+      "name": "Piplup",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Bubble Beam",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 020",
+      "name": "Iron Bundle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Bundled Pump",
+          "fixed_damage": 50,
+          "effect": "Flip a coin. If heads, this attack does 50 more damage. If tails, this Pokémon also does 50 damage to itself."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 021",
+      "name": "Pikachu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Electro Ball",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 022",
+      "name": "Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 110,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 023",
+      "name": "Emolga",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Windup Thunder",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 024",
+      "name": "Dedenne ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Dede-Circuit",
+          "fixed_damage": 40,
+          "effect": "This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 025",
+      "name": "Yamper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 026",
+      "name": "Slowpoke",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Growl",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 027",
+      "name": "Slowbro",
+      "stage": 1,
+      "evolves_from": "Slowpoke",
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Psybeam",
+          "fixed_damage": 70,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 028",
+      "name": "Munna",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 029",
+      "name": "Musharna",
+      "stage": 1,
+      "evolves_from": "Munna",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Zen Headbutt",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 030",
+      "name": "Sylveon",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Soothing Ribbon",
+        "effect": "Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Magical Shot",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 031",
+      "name": "Carbink",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Glittering Gift",
+          "fixed_damage": 0,
+          "effect": "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [P] Energy from your Energy Zone and attach it to that Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 032",
+      "name": "Mega Diancie ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Brilliant Storm",
+          "fixed_damage": 40,
+          "effect": "This attack does 20 more damage for each [P] Energy attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 033",
+      "name": "Enamorus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless", "Colorless"],
+          "title": "Smitten Strike",
+          "fixed_damage": 60,
+          "effect": "If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 034",
+      "name": "Fidough",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": [],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 035",
+      "name": "Flutter Mane",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Hexing Flight",
+          "fixed_damage": 90,
+          "effect": "If this Pokémon didn't move from the Bench to the Active Spot this turn, this attack does nothing."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 036",
+      "name": "Wooper",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Mud Shot",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 037",
+      "name": "Quagsire",
+      "stage": 1,
+      "evolves_from": "Wooper",
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Amnesia",
+          "fixed_damage": 60,
+          "effect": "1 of your opponent's Active Pokémon's attacks is chosen at random. During your opponent's next turn, that Pokémon can't use the chosen attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 038",
+      "name": "Rockruff",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 039",
+      "name": "Sandygast",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Sand Spray",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 040",
+      "name": "Palossand",
+      "stage": 1,
+      "evolves_from": "Sandygast",
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Ambush",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 041",
+      "name": "Mega Sableye ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Cursed Jewel",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 042",
+      "name": "Cacturne",
+      "stage": 1,
+      "evolves_from": "Cacnea",
+      "hp": 100,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Finishing Blow",
+          "fixed_damage": 10,
+          "effect": "If your opponent's Active Pokémon has damage on it, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 043",
+      "name": "Spiritomb",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Dark Slumber",
+          "fixed_damage": 30,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 044",
+      "name": "Scraggy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Low Kick",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 045",
+      "name": "Scrafty",
+      "stage": 1,
+      "evolves_from": "Scraggy",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "High Jump Kick",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 046",
+      "name": "Mareanie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Venoshock",
+          "fixed_damage": 20,
+          "effect": "If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 047",
+      "name": "Toxapex",
+      "stage": 1,
+      "evolves_from": "Mareanie",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Severe Poison",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Poisoned. Do 40 damage to this Pokémon instead of the usual amount for this Special Condition."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 048",
+      "name": "Goomy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Stampede",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 049",
+      "name": "Hisuian Sliggoo",
+      "stage": 1,
+      "evolves_from": "Goomy",
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Metal"],
+          "title": "Hammer In",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 050",
+      "name": "Hisuian Goodra",
+      "stage": 2,
+      "evolves_from": "Hisuian Sliggoo",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Securely Sheltered",
+        "effect": "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -80 damage from that attack."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Metal", "Colorless"],
+          "title": "Heavy Impact",
+          "fixed_damage": 120,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 051",
+      "name": "Jigglypuff",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Stompy Stomp",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 052",
+      "name": "Wigglytuff",
+      "stage": 1,
+      "evolves_from": "Jigglypuff",
+      "hp": 100,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Expand",
+          "fixed_damage": 50,
+          "effect": "During your opponent's next turn, this Pokémon takes -20 damage from attacks."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 053",
+      "name": "Eevee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gnaw",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 054",
+      "name": "Munchlax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Hungrily Draw",
+          "fixed_damage": 10,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 055",
+      "name": "Snorlax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Massive Body",
+        "effect": "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Mega Punch",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 056",
+      "name": "Teddiursa",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Charm",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 057",
+      "name": "Ursaring",
+      "stage": 1,
+      "evolves_from": "Teddiursa",
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Confront",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 058",
+      "name": "Ursaluna",
+      "stage": 2,
+      "evolves_from": "Ursaring",
+      "hp": 160,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Guts",
+        "effect": "If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10."
+      },
+      "attacks": [
+        {
+          "energy_required": [
+            "Colorless",
+            "Colorless",
+            "Colorless",
+            "Colorless"
+          ],
+          "title": "Hammer Arm",
+          "fixed_damage": 110,
+          "effect": "Discard the top card of your opponent's deck."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 059",
+      "name": "Hisuian Zorua",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Run Around",
+          "fixed_damage": 0,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 060",
+      "name": "Hisuian Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Hisuian Zorua",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Spiteful Illusion",
+          "fixed_damage": 80,
+          "effect": "This attack does 20 more damage for each Pokémon in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 061",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Double Headbutt",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 062",
+      "name": "Skwovet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 063",
+      "name": "Greedent",
+      "stage": 1,
+      "evolves_from": "Skwovet",
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Collapse",
+          "fixed_damage": 100,
+          "effect": "This Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 064",
+      "trainer_card_type": "Tool",
+      "name": "Small Balloon",
+      "effect": "The Retreat Cost of the Basic Pokémon this card is attached to is 1 less.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 065",
+      "trainer_card_type": "Tool",
+      "name": "Elegant Cape",
+      "effect": "The Stage 1 Pokémon this card is attached to gets +30 HP.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 066",
+      "trainer_card_type": "Supporter",
+      "name": "Elesa",
+      "effect": "Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 067",
+      "trainer_card_type": "Supporter",
+      "name": "Puppy-Loving Girl",
+      "effect": "Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 068",
+      "trainer_card_type": "Supporter",
+      "name": "Wallace",
+      "effect": "Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W] Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 069",
+      "trainer_card_type": "Stadium",
+      "name": "Kid's Room",
+      "effect": "Once during each player's turn, that player may choose a card in their hand and switch it with a random Pokémon Tool card in their deck.",
+      "rarity": "◊◊",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 070",
+      "name": "Vulpix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Hold Still",
+          "fixed_damage": 0,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 071",
+      "name": "Piplup",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Bubble Beam",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 072",
+      "name": "Pikachu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Electro Ball",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 073",
+      "name": "Sylveon",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 100,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Soothing Ribbon",
+        "effect": "Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Magical Shot",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 074",
+      "name": "Mareanie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Venoshock",
+          "fixed_damage": 20,
+          "effect": "If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 075",
+      "name": "Jigglypuff",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Stompy Stomp",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 30 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 076",
+      "name": "Snorlax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Massive Body",
+        "effect": "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Mega Punch",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 077",
+      "name": "Greedent",
+      "stage": 1,
+      "evolves_from": "Skwovet",
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Collapse",
+          "fixed_damage": 100,
+          "effect": "This Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 078",
+      "name": "Milotic ex",
+      "stage": 1,
+      "evolves_from": "Feebas",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Aqua Charge",
+        "effect": "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Water Pulse",
+          "fixed_damage": 80,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 079",
+      "name": "Dedenne ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Dede-Circuit",
+          "fixed_damage": 40,
+          "effect": "This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 080",
+      "name": "Mega Diancie ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Brilliant Storm",
+          "fixed_damage": 40,
+          "effect": "This attack does 20 more damage for each [P] Energy attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 081",
+      "name": "Mega Sableye ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Cursed Jewel",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 082",
+      "name": "Hisuian Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Hisuian Zorua",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Spiteful Illusion",
+          "fixed_damage": 80,
+          "effect": "This attack does 20 more damage for each Pokémon in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 083",
+      "trainer_card_type": "Supporter",
+      "name": "Elesa",
+      "effect": "Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to their owner's hand.",
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 084",
+      "trainer_card_type": "Supporter",
+      "name": "Puppy-Loving Girl",
+      "effect": "Look at the top 4 cards of your deck. Put all Pokémon you find there that have the Puppy Pile attack into your hand. Shuffle the other cards back into your deck.",
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 085",
+      "trainer_card_type": "Supporter",
+      "name": "Wallace",
+      "effect": "Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W] Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.",
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 086",
+      "name": "Milotic ex",
+      "stage": 1,
+      "evolves_from": "Feebas",
+      "hp": 140,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Aqua Charge",
+        "effect": "Once during your turn, you may take a [W] Energy from your Energy Zone and attach it to this Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Water Pulse",
+          "fixed_damage": 80,
+          "effect": "Your opponent's Active Pokémon is now Asleep."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 087",
+      "name": "Mega Diancie ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Brilliant Storm",
+          "fixed_damage": 40,
+          "effect": "This attack does 20 more damage for each [P] Energy attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 088",
+      "name": "Mega Sableye ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 170,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Cursed Jewel",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, if this Pokémon is damaged by an attack, do 40 damage to the Attacking Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 089",
+      "name": "Hisuian Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Hisuian Zorua",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Spiteful Illusion",
+          "fixed_damage": 80,
+          "effect": "This attack does 20 more damage for each Pokémon in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 090",
+      "name": "Dedenne ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Dede-Circuit",
+          "fixed_damage": 40,
+          "effect": "This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 091",
+      "name": "Caterpie",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Quick Growth",
+        "effect": "At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Hook",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 092",
+      "name": "Metapod",
+      "stage": 1,
+      "evolves_from": "Caterpie",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Ram",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 093",
+      "name": "Butterfree",
+      "stage": 2,
+      "evolves_from": "Metapod",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Sunny Wind",
+          "fixed_damage": 60,
+          "effect": "Heal 20 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 094",
+      "name": "Mareep",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Rear Kick",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 095",
+      "name": "Flaaffy",
+      "stage": 1,
+      "evolves_from": "Mareep",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Electric Punch",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 096",
+      "name": "Ampharos",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Zapping Bullet",
+          "fixed_damage": 90,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random. This attack also does 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 097",
+      "name": "Slowbro",
+      "stage": 1,
+      "evolves_from": "Slowpoke",
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Psybeam",
+          "fixed_damage": 70,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 098",
+      "name": "Kangaskhan",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Steady Punch",
+          "fixed_damage": 60,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 099",
+      "name": "Ditto",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Copy a Friend",
+          "fixed_damage": 0,
+          "effect": "Choose 1 of your Benched Pokémon's attacks, except any Pokémon ex, and use it as this attack. If this Pokémon doesn't have the necessary Energy to use that attack, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 100",
+      "name": "Snorlax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Massive Body",
+        "effect": "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Mega Punch",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 101",
+      "name": "Mega Gyarados ex",
+      "stage": 1,
+      "evolves_from": "Magikarp",
+      "hp": 210,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Colorless"],
+          "title": "Mega Blaster",
+          "fixed_damage": 140,
+          "effect": "Discard the top 3 cards of your opponent's deck."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 102",
+      "name": "Vaporeon ex",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 160,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Frozen Flow",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may switch out your opponent's Active Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 103",
+      "name": "Mega Ampharos ex",
+      "stage": 2,
+      "evolves_from": "Flaaffy",
+      "hp": 210,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Lightning Lancer",
+          "fixed_damage": 100,
+          "effect": "1 of your opponent's Benched Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, also do 20 damage to it."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 104",
+      "name": "Indeedee ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Psychic",
+      "ability": {
+        "title": "Watch Over",
+        "effect": "Once during your turn, you may heal 20 damage from your Active Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B3b 105",
+      "name": "Munchlax",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Hungrily Draw",
+          "fixed_damage": 10,
+          "effect": "Draw a card."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B3b 106",
+      "trainer_card_type": "Tool",
+      "name": "Small Balloon",
+      "effect": "The Retreat Cost of the Basic Pokémon this card is attached to is 1 less.",
+      "rarity": "♛",
+      "booster_pack": "Everyday Wonders (B3b)"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
@@ -76813,6 +79171,190 @@
         }
       ],
       "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 071",
+      "name": "Psyduck",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Confusion Wave",
+          "fixed_damage": 0,
+          "effect": "Both Active Pokémon are now Confused."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 072",
+      "name": "Feebas",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Hide",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 073",
+      "name": "Froslass",
+      "stage": 1,
+      "evolves_from": "Snorunt",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Soul Shot",
+          "fixed_damage": 70,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 074",
+      "name": "Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 110,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Mach Bolt",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 075",
+      "name": "Quagsire",
+      "stage": 1,
+      "evolves_from": "Wooper",
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Energy Press",
+          "fixed_damage": 40,
+          "effect": "This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 076",
+      "name": "Hisuian Zorua",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Run Around",
+          "fixed_damage": 0,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 077",
+      "name": "Growlithe",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Puppy Pile",
+          "fixed_damage": 20,
+          "effect": "Reveal all of your Pokémon in play and in your hand that have the Puppy Pile attack, and this attack does 20 damage for each Pokémon you revealed in this way."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 078",
+      "name": "Emolga",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Windup Thunder",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
       "retreat_cost": ["Colorless"],
       "rarity": "◊◊◊",
       "booster_pack": "Promo B (P-B)"
