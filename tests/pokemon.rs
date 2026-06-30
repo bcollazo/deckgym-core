@@ -74,6 +74,8 @@ mod honchkrow_evil_admonition_test;
 mod houndstone_last_respects_test;
 #[path = "pokemon/iron_bundle_ex_test.rs"]
 mod iron_bundle_ex_test;
+#[path = "pokemon/iron_bundle_test.rs"]
+mod iron_bundle_test;
 #[path = "pokemon/iron_hands_test.rs"]
 mod iron_hands_test;
 #[path = "pokemon/iron_leaves_test.rs"]
