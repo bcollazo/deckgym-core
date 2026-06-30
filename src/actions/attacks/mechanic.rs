@@ -319,6 +319,10 @@ pub enum Mechanic {
         energy_type: EnergyType,
         damage_per_energy: u32,
     },
+    ExtraDamagePerSpecificEnergyAllYours {
+        energy_type: EnergyType,
+        damage_per_energy: u32,
+    },
     ExtraDamageIfToolAttached {
         extra_damage: u32,
     },
