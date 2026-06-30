@@ -715,6 +715,10 @@ fn forecast_effect_attack_by_mechanic(
             *extra_damage,
             conditions.clone(),
         ),
+        Mechanic::DamagePerOwnPokemonWithAttackName {
+            attack_name,
+            damage_per,
+        } => damage_per_own_pokemon_with_attack_name(state, attack_name, *damage_per),
     }
 }
 
@@ -1396,6 +1400,30 @@ fn evolution_bench_count_damage_attack(
         damage_per * evolution_count
     };
     active_damage_doutcome(total_damage)
+}
+
+fn damage_per_own_pokemon_with_attack_name(
+    state: &State,
+    attack_name: &str,
+    damage_per: u32,
+) -> AttackOutcomes {
+    let player = state.current_player;
+    let has_attack = |card: &crate::models::Card| {
+        if let crate::models::Card::Pokemon(p) = card {
+            p.attacks.iter().any(|a| a.title == attack_name)
+        } else {
+            false
+        }
+    };
+    let in_play_count = state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, played)| has_attack(&played.card))
+        .count() as u32;
+    let in_hand_count = state.hands[player]
+        .iter()
+        .filter(|card| has_attack(card))
+        .count() as u32;
+    active_damage_doutcome(damage_per * (in_play_count + in_hand_count))
 }
 
 fn also_choice_bench_damage(
