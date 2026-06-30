@@ -445,4 +445,10 @@ pub enum Mechanic {
         attack_name: String,
         damage_per: u32,
     },
+    /// Emolga (Windup Thunder) / Dedenne ex (Dede-Circuit):
+    /// deal `damage_per` damage for each Pokémon Tool attached to any of your
+    /// Pokémon in play (active + bench).
+    DamagePerOwnToolAttached {
+        damage_per: u32,
+    },
 }

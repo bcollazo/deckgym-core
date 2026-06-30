@@ -491,6 +491,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfToolAttached { extra_damage } => {
             extra_damage_if_tool_attached(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::DamagePerOwnToolAttached { damage_per } => {
+            damage_per_own_tool_attached(state, *damage_per)
+        }
         Mechanic::DiscardRandomGlobalEnergy { count } => {
             discard_random_global_energy_attack(attack.fixed_damage, *count, state)
         }
@@ -2467,6 +2470,15 @@ fn extra_damage_if_tool_attached(
         base_damage
     };
     active_damage_doutcome(damage)
+}
+
+fn damage_per_own_tool_attached(state: &State, damage_per: u32) -> AttackOutcomes {
+    let current_player = state.current_player;
+    let tool_count = state
+        .enumerate_in_play_pokemon(current_player)
+        .filter(|(_, pokemon)| pokemon.has_tool_attached())
+        .count() as u32;
+    active_damage_doutcome(damage_per * tool_count)
 }
 
 fn extra_damage_if_knocked_out_last_turn_attack(
