@@ -864,6 +864,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If this Pokémon has a Pokémon Tool attached, this attack does 50 more damage.",
         Mechanic::ExtraDamageIfToolAttached { extra_damage: 50 },
     );
+    map.insert(
+        "This attack does 30 damage for each Pokémon Tool attached to all of your Pokémon.",
+        Mechanic::DamagePerOwnToolAttached { damage_per: 30 },
+    );
+    map.insert(
+        "This attack does 40 damage for each Pokémon Tool attached to all of your Pokémon.",
+        Mechanic::DamagePerOwnToolAttached { damage_per: 40 },
+    );
     // map.insert("If this Pokémon has any [W] Energy attached, this attack does 40 more damage.", todo_implementation);
     map.insert("If this Pokémon has at least 1 extra [W] Energy attached, this attack does 40 more damage.", 
         Mechanic::ExtraDamageIfExtraEnergy {
