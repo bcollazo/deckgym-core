@@ -201,4 +201,8 @@ pub enum AbilityMechanic {
     /// Passive: while a Pokémon with this ability is in play, attack generation also offers the
     /// active evolved Pokémon the attacks from its previous evolutions (its under-cards).
     TimeRecall,
+    /// Caterpie's Quick Growth: "At the end of your opponent's turn, if this Pokémon is in the
+    /// Active Spot, put a random card from your deck that evolves from this Pokémon onto this
+    /// Pokémon to evolve it."
+    QuickGrowth,
 }

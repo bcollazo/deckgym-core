@@ -466,6 +466,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, you may remove a random Special Condition from your Active Pokémon.",
             AbilityMechanic::RemoveRandomSpecialConditionFromActive,
         );
+
+        // b3b mechanics
+        map.insert(
+            "At the end of your opponent's turn, if this Pokémon is in the Active Spot, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.",
+            AbilityMechanic::QuickGrowth,
+        );
         map
     });
 
