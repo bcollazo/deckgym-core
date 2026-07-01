@@ -74,6 +74,10 @@ pub enum Mechanic {
     ExtraDamageIfEx {
         extra_damage: u32,
     },
+    ExtraDamageIfDefenderType {
+        energy_type: EnergyType,
+        extra_damage: u32,
+    },
     ExtraDamageIfOpponentHasSpecialCondition {
         extra_damage: u32,
     },
