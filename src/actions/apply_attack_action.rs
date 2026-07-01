@@ -252,6 +252,10 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfEx { extra_damage } => {
             extra_damage_if_opponent_is_ex(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfDefenderType {
+            energy_type,
+            extra_damage,
+        } => extra_damage_if_defender_type(state, attack.fixed_damage, *energy_type, *extra_damage),
         Mechanic::ExtraDamageIfOpponentHasSpecialCondition { extra_damage } => unseen_claw_attack(
             state.current_player,
             state,
@@ -2451,6 +2455,22 @@ fn extra_damage_if_opponent_is_ex(
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
     let damage = if opponent_active.card.is_ex() {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+fn extra_damage_if_defender_type(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let opponent_active = state.get_active(opponent);
+    let damage = if opponent_active.card.get_type() == Some(energy_type) {
         base_damage + extra_damage
     } else {
         base_damage
