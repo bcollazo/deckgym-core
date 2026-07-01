@@ -124,6 +124,8 @@ mod mega_steelix_adamantine_rolling_test;
 mod meowstic_test;
 #[path = "pokemon/meowth_carefree_steps_test.rs"]
 mod meowth_carefree_steps_test;
+#[path = "pokemon/milotic_ex_aqua_charge_test.rs"]
+mod milotic_ex_aqua_charge_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
