@@ -20,3 +20,5 @@ mod professor_turo_test;
 mod puppy_loving_girl_test;
 #[path = "trainers/volkner_test.rs"]
 mod volkner_test;
+#[path = "trainers/wallace_test.rs"]
+mod wallace_test;

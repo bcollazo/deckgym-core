@@ -3,6 +3,7 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+        wallace_candidates,
     },
     effects::TurnEffect,
     hooks::{
@@ -243,6 +244,7 @@ pub fn trainer_move_generation_implementation(
         CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
             can_play_trainer(state, trainer_card)
         }
+        CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
         _ => None,
     }
 }
@@ -814,6 +816,17 @@ fn can_play_quick_grow_extract(
 
     // Check if there are any valid evolution candidates
     if quick_grow_extract_candidates(state, state.current_player).is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Check if Wallace can be played
+/// Requires at least 1 Water pokemon with 50 HP or less, that wasn't played this turn,
+/// with a valid Water evolution available in deck
+fn can_play_wallace(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if wallace_candidates(state, state.current_player).is_empty() {
         cannot_play_trainer()
     } else {
         can_play_trainer(state, trainer_card)

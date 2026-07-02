@@ -15,6 +15,7 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+        wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -211,6 +212,7 @@ pub fn forecast_trainer_action(
         CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
             puppy_loving_girl_effect(acting_player, state)
         }
+        CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1459,6 +1461,31 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     }
 
     // Create one outcome per possible evolution
+    let num_outcomes = evolution_choices.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for (in_play_idx, evolution_card) in evolution_choices {
+        outcomes.push(Box::new(move |rng, state, action| {
+            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
+}
+
+fn wallace_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W]
+    // Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.
+    let evolution_choices = wallace_candidates(state, acting_player);
+
+    if evolution_choices.is_empty() {
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
     let num_outcomes = evolution_choices.len();
     let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
     let mut outcomes: Mutations = vec![];
