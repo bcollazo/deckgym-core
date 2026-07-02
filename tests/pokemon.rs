@@ -72,6 +72,8 @@ mod hatterene_test;
 mod heracross_test;
 #[path = "pokemon/hisuian_lilligant_dress_up_test.rs"]
 mod hisuian_lilligant_dress_up_test;
+#[path = "pokemon/hisuian_zoroark_ex_test.rs"]
+mod hisuian_zoroark_ex_test;
 #[path = "pokemon/hitmonchan_ex_test.rs"]
 mod hitmonchan_ex_test;
 #[path = "pokemon/honchkrow_evil_admonition_test.rs"]
