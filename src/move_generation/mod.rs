@@ -5,7 +5,9 @@ mod move_generation_trainer;
 use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic, Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
-use crate::stadiums::{can_use_area_zero, can_use_fragrant_forest, can_use_mesagoza};
+use crate::stadiums::{
+    can_use_area_zero, can_use_fragrant_forest, can_use_kids_room, can_use_mesagoza,
+};
 use crate::state::State;
 
 use attacks::generate_attack_actions;
@@ -113,6 +115,7 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
     if can_use_mesagoza(state, current_player)
         || can_use_fragrant_forest(state, current_player)
         || can_use_area_zero(state, current_player)
+        || can_use_kids_room(state, current_player)
     {
         actions.push(SimpleAction::UseStadium);
     }

@@ -13,8 +13,10 @@ use crate::{
     },
     effects::TurnEffect,
     hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
-    models::{Card, EnergyType},
-    stadiums::{is_area_zero_active, is_fragrant_forest_active, is_mesagoza_active},
+    models::{Card, EnergyType, TrainerType},
+    stadiums::{
+        is_area_zero_active, is_fragrant_forest_active, is_kids_room_active, is_mesagoza_active,
+    },
     state::State,
     tools,
 };
@@ -84,6 +86,9 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         }
         SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
             forecast_shuffle_own_cards_into_deck(action.actor, cards)
+        }
+        SimpleAction::SwitchHandCardForRandomTool { hand_card } => {
+            forecast_switch_hand_card_for_random_tool(state, action.actor, hand_card)
         }
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
@@ -798,6 +803,9 @@ fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
     if is_area_zero_active(state) {
         return forecast_area_zero_effect(state, acting_player);
     }
+    if is_kids_room_active(state) {
+        return forecast_kids_room_effect(state, acting_player);
+    }
     Outcomes::single_fn(|_, _, _| {})
 }
 
@@ -858,6 +866,69 @@ fn forecast_fragrant_forest_effect(state: &State, acting_player: usize) -> Outco
                 mutation(rng, state, action);
             })
         })
+}
+
+/// Kid's Room: Once during each player's turn, that player may choose a card in their hand and
+/// switch it with a random Pokémon Tool card in their deck.
+fn forecast_kids_room_effect(state: &State, acting_player: usize) -> Outcomes {
+    let choices: Vec<SimpleAction> = state.hands[acting_player]
+        .iter()
+        .map(|card| SimpleAction::SwitchHandCardForRandomTool {
+            hand_card: card.clone(),
+        })
+        .collect();
+
+    Outcomes::single_fn(move |_, state, action| {
+        state.has_used_stadium[action.actor] = true;
+        if !choices.is_empty() {
+            state
+                .move_generation_stack
+                .push((action.actor, choices.clone()));
+        }
+    })
+}
+
+fn is_tool_card(card: &Card) -> bool {
+    matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Tool)
+}
+
+/// Kid's Room: switch the chosen hand card with a random Pokémon Tool card from the deck.
+fn forecast_switch_hand_card_for_random_tool(
+    state: &State,
+    acting_player: usize,
+    hand_card: &Card,
+) -> Outcomes {
+    let deck_tools: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| is_tool_card(card))
+        .cloned()
+        .collect();
+
+    let num_deck_tools = deck_tools.len();
+    if num_deck_tools == 0 {
+        // Should not happen if move generation is correct, but just shuffle deck
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    let probabilities = vec![1.0 / (num_deck_tools as f64); num_deck_tools];
+    let mut outcomes: Mutations = vec![];
+    for tool_card in deck_tools {
+        let hand_card_clone = hand_card.clone();
+        outcomes.push(Box::new(move |rng, state, action| {
+            state.transfer_card_from_hand_to_deck(action.actor, &hand_card_clone);
+            state.transfer_card_from_deck_to_hand(action.actor, &tool_card);
+            state.decks[action.actor].shuffle(false, rng);
+            debug!(
+                "Kid's Room: Switched {:?} from hand with {:?} from deck",
+                hand_card_clone, tool_card
+            );
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
