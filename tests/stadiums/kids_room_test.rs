@@ -98,25 +98,19 @@ fn test_kids_room_switches_hand_card_with_random_tool_from_deck() {
     });
 
     // The game queues a choice of which hand card to switch — pick the Potion.
-    let state = game.get_state_clone();
-    let stack_top = state.move_generation_stack.last().cloned();
-    let (_actor, choices) = stack_top.expect("Kid's Room should push a choice of hand cards");
+    let (_actor, choices) = game.get_state_clone().generate_possible_actions();
     let choice = choices
         .iter()
         .find(|action| {
             matches!(
-                action,
+                &action.action,
                 SimpleAction::SwitchHandCardForRandomTool { hand_card }
                     if hand_card.get_name() == "Potion"
             )
         })
         .expect("Potion should be an available choice")
         .clone();
-    game.apply_action(&Action {
-        actor: 0,
-        action: choice,
-        is_stack: true,
-    });
+    game.apply_action(&choice);
 
     let state = game.get_state_clone();
 
@@ -166,14 +160,8 @@ fn test_kids_room_cannot_use_twice_per_turn() {
         is_stack: false,
     });
 
-    let state = game.get_state_clone();
-    if let Some((_actor, choices)) = state.move_generation_stack.last().cloned() {
-        game.apply_action(&Action {
-            actor: 0,
-            action: choices[0].clone(),
-            is_stack: true,
-        });
-    }
+    let (_actor, choices) = game.get_state_clone().generate_possible_actions();
+    game.apply_action(&choices[0]);
 
     let state = game.get_state_clone();
     let (_actor, actions) = state.generate_possible_actions();
