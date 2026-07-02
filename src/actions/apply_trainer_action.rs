@@ -209,6 +209,7 @@ pub fn forecast_trainer_action(
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             professor_turo_effect(acting_player, state)
         }
+        CardId::B3b066Elesa | CardId::B3b083Elesa => Outcomes::single_fn(elesa_effect),
         CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
             puppy_loving_girl_effect(acting_player, state)
         }
@@ -1413,6 +1414,18 @@ fn sightseer_effect(acting_player: usize, state: &State) -> Outcomes {
     }
 
     Outcomes::from_parts(probabilities, outcomes)
+}
+
+fn elesa_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to
+    // their owner's hand.
+    for player in 0..2 {
+        for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+            if let Some(tool) = pokemon.attached_tool.take() {
+                state.hands[player].push(tool);
+            }
+        }
+    }
 }
 
 fn puppy_loving_girl_effect(acting_player: usize, state: &State) -> Outcomes {
