@@ -213,6 +213,9 @@ pub enum Mechanic {
         energy_type: EnergyType,
         damage_per_pokemon: u32,
     },
+    ExtraDamagePerPokemonInDiscard {
+        damage_per_pokemon: u32,
+    },
     ExtraDamagePerOwnPoint {
         damage_per_point: u32,
     },

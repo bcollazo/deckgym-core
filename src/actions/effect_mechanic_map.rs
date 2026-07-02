@@ -1977,6 +1977,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("This attack also does 50 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
     map.insert(
+        "This attack does 20 more damage for each Pokémon in your discard pile.",
+        Mechanic::ExtraDamagePerPokemonInDiscard {
+            damage_per_pokemon: 20,
+        },
+    );
+    map.insert(
         "This attack does 20 more damage for each [P] Pokémon in your discard pile.",
         Mechanic::ExtraDamagePerPokemonTypeInDiscard {
             energy_type: EnergyType::Psychic,
