@@ -134,6 +134,8 @@ mod morpeko_test;
 mod ninetales_ember_dance_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
+#[path = "pokemon/psyduck_test.rs"]
+mod psyduck_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
 mod rampardos_head_smash_test;
 #[path = "pokemon/roaring_moon_test.rs"]

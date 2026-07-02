@@ -59,7 +59,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::DiscardOpponentActiveToolsBeforeDamage,
     );
     // map.insert("Both Active Pokémon are now Asleep.", todo_implementation);
-    // map.insert("Both Active Pokémon are now Confused.", todo_implementation);
+    map.insert(
+        "Both Active Pokémon are now Confused.",
+        Mechanic::InflictStatusConditionsOnBothActive {
+            conditions: vec![StatusCondition::Confused],
+        },
+    );
     // map.insert("Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
     // map.insert("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
     map.insert(
