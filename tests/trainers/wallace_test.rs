@@ -55,6 +55,50 @@ fn test_wallace_evolves_low_hp_water_pokemon_from_deck() {
 }
 
 #[test]
+fn test_wallace_can_evolve_pokemon_played_this_turn() {
+    // Unlike a normal evolution, Wallace has no "not played this turn" restriction: you can
+    // put a Magikarp down and evolve it into Gyarados with Wallace on the same turn.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+    state.turn_count = 3;
+
+    let mut magikarp = PlayedCard::from_id(CardId::A1077Magikarp);
+    magikarp.played_this_turn = true;
+
+    state.set_board(
+        vec![magikarp],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    let gyarados_card = get_card_by_enum(CardId::A1078Gyarados);
+    state.decks[0].cards = vec![gyarados_card.clone()];
+
+    let wallace = make_trainer_card(CardId::B3b068Wallace);
+    state.hands[0] = vec![Card::Trainer(wallace.clone())];
+    game.set_state(state);
+
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play {
+            trainer_card: wallace,
+        },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    let active = state.in_play_pokemon[0][0]
+        .as_ref()
+        .expect("Active Pokemon should still be present");
+    assert_eq!(active.get_name(), "Gyarados");
+    assert!(
+        state.decks[0].cards.is_empty(),
+        "Gyarados should have been removed from the deck"
+    );
+}
+
+#[test]
 fn test_wallace_no_valid_target_does_nothing() {
     // Wallace requires a [W] Pokémon in play with max HP of 50 or less; Wartortle (80 HP)
     // doesn't qualify, so the card should have no effect (and thus can't be played).
