@@ -233,6 +233,9 @@ fn forecast_effect_attack_by_mechanic(
                 damage_and_self_multiple_status_attack(attack.fixed_damage, conditions.clone())
             }
         }
+        Mechanic::InflictStatusConditionsOnBothActive { conditions } => {
+            damage_and_both_active_multiple_status_attack(attack.fixed_damage, conditions.clone())
+        }
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, *condition)
         }
@@ -1792,6 +1795,21 @@ fn damage_and_self_multiple_status_attack(
     active_damage_effect_doutcome(damage, move |_, state, action| {
         for status in &statuses {
             state.apply_status_condition(action.actor, 0, *status);
+        }
+    })
+}
+
+/// For attacks that deal damage to opponent and apply multiple status effects to both
+/// Active Pokémon (attacker and defender), e.g. Psyduck's Confusion Wave.
+fn damage_and_both_active_multiple_status_attack(
+    damage: u32,
+    statuses: Vec<StatusCondition>,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        for status in &statuses {
+            state.apply_status_condition(action.actor, 0, *status);
+            state.apply_status_condition(opponent, 0, *status);
         }
     })
 }
