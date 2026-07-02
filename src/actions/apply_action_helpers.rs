@@ -137,6 +137,10 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
             )
             .into_branches()
         }
+        AbilityMechanic::QuickGrowth => {
+            shared_mutations::quick_growth_evolution_outcomes_for_player(player, state)
+                .into_branches()
+        }
         _ => (vec![1.0], vec![noop_mutation()]),
     }
 }

@@ -2,8 +2,11 @@ use log::debug;
 use std::cmp::min;
 
 use crate::{
-    actions::{apply_action_helpers::Mutations, apply_place_card, outcomes::Outcomes},
+    actions::{
+        apply_action_helpers::Mutations, apply_evolve, apply_place_card, outcomes::Outcomes,
+    },
     combinatorics::generate_combinations,
+    hooks::can_evolve_into,
     models::{Card, EnergyType, TrainerType},
     State,
 };
@@ -139,6 +142,41 @@ where
     }
 
     Outcomes::from_parts(probabilities, outcomes)
+}
+
+/// Generates outcomes for Caterpie's Quick Growth ability: pick a random card from
+/// `player`'s deck that evolves from their current active Pokémon and evolve it.
+/// Returns a no-op (just shuffle) when no eligible evolution exists in the deck.
+pub(crate) fn quick_growth_evolution_outcomes_for_player(player: usize, state: &State) -> Outcomes {
+    let active = state.get_active(player);
+    let evolution_cards: Vec<Card> = state.decks[player]
+        .cards
+        .iter()
+        .filter(|card| can_evolve_into(card, active))
+        .cloned()
+        .collect();
+
+    if evolution_cards.is_empty() {
+        return Outcomes::single_fn(move |rng, state, _action| {
+            state.decks[player].shuffle(false, rng);
+        });
+    }
+
+    let n = evolution_cards.len();
+    let probabilities = vec![1.0 / n as f64; n];
+    let mutations: Mutations = evolution_cards
+        .into_iter()
+        .map(
+            |evo_card| -> crate::actions::apply_action_helpers::Mutation {
+                Box::new(move |rng, state, _action| {
+                    apply_evolve(player, state, &evo_card, 0, true);
+                    state.decks[player].shuffle(false, rng);
+                })
+            },
+        )
+        .collect();
+
+    Outcomes::from_parts(probabilities, mutations)
 }
 
 pub(crate) fn search_and_bench_by_name(state: &State, card_name: String) -> Outcomes {

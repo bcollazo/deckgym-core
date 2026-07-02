@@ -265,6 +265,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::AncientRoar => switch_out_opponent_active_to_bench(),
         AbilityMechanic::FutureSystem => panic!("FutureSystem is a passive ability"),
         AbilityMechanic::TimeRecall => panic!("TimeRecall is a passive ability"),
+        AbilityMechanic::QuickGrowth => {
+            panic!("QuickGrowth is triggered at the end of the opponent's turn")
+        }
     }
 }
 
