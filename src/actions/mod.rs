@@ -3,6 +3,7 @@ mod apply_abilities_action;
 mod apply_action;
 mod apply_action_helpers;
 mod apply_attack_action;
+mod apply_stadium_action;
 mod apply_trainer_action;
 pub(crate) mod attack_helpers;
 pub(crate) mod attack_outcome;
