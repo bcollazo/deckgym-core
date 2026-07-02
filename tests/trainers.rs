@@ -2,6 +2,8 @@
 mod barry_test;
 #[path = "trainers/cynthia_test.rs"]
 mod cynthia_test;
+#[path = "trainers/elesa_test.rs"]
+mod elesa_test;
 #[path = "trainers/field_blower_test.rs"]
 mod field_blower_test;
 #[path = "trainers/iris_trainer_test.rs"]
@@ -16,5 +18,9 @@ mod marlon_test;
 mod professor_sada_test;
 #[path = "trainers/professor_turo_test.rs"]
 mod professor_turo_test;
+#[path = "trainers/puppy_loving_girl_test.rs"]
+mod puppy_loving_girl_test;
 #[path = "trainers/volkner_test.rs"]
 mod volkner_test;
+#[path = "trainers/wallace_test.rs"]
+mod wallace_test;

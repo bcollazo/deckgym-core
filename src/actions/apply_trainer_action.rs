@@ -15,6 +15,7 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
+        wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -208,6 +209,11 @@ pub fn forecast_trainer_action(
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             professor_turo_effect(acting_player, state)
         }
+        CardId::B3b066Elesa | CardId::B3b083Elesa => Outcomes::single_fn(elesa_effect),
+        CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
+            puppy_loving_girl_effect(acting_player, state)
+        }
+        CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1410,6 +1416,48 @@ fn sightseer_effect(acting_player: usize, state: &State) -> Outcomes {
     Outcomes::from_parts(probabilities, outcomes)
 }
 
+fn elesa_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // Return all Pokémon Tools attached to each Pokémon (both yours and your opponent's) to
+    // their owner's hand.
+    for player in 0..2 {
+        for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+            if let Some(tool) = pokemon.attached_tool.take() {
+                state.hands[player].push(tool);
+            }
+        }
+    }
+}
+
+fn puppy_loving_girl_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Look at the top 4 cards of your deck. Put all Pokémon you find there that have the
+    // Puppy Pile attack into your hand. Shuffle the other cards back into your deck.
+    let deck_cards: Vec<Card> = state.decks[acting_player].cards.to_vec();
+    let look_count = min(4, deck_cards.len());
+
+    if look_count == 0 {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let top_combinations = generate_combinations(&deck_cards, look_count);
+    let num_outcomes = top_combinations.len();
+    let probabilities = vec![1.0 / num_outcomes as f64; num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for top_cards in top_combinations {
+        outcomes.push(Box::new(move |rng, state, _action| {
+            for card in &top_cards {
+                if matches!(card, Card::Pokemon(p) if p.attacks.iter().any(|a| a.title == "Puppy Pile"))
+                {
+                    state.transfer_card_from_deck_to_hand(acting_player, card);
+                }
+            }
+            state.decks[acting_player].shuffle(false, rng);
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
+}
+
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [G] Pokémon in play. Put a random [G] Pokémon from your deck
     // that evolves from that Pokémon onto that Pokémon to evolve it.
@@ -1426,6 +1474,31 @@ fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     }
 
     // Create one outcome per possible evolution
+    let num_outcomes = evolution_choices.len();
+    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+    let mut outcomes: Mutations = vec![];
+
+    for (in_play_idx, evolution_card) in evolution_choices {
+        outcomes.push(Box::new(move |rng, state, action| {
+            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+
+    Outcomes::from_parts(probabilities, outcomes)
+}
+
+fn wallace_effect(acting_player: usize, state: &State) -> Outcomes {
+    // Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W]
+    // Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.
+    let evolution_choices = wallace_candidates(state, acting_player);
+
+    if evolution_choices.is_empty() {
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
     let num_outcomes = evolution_choices.len();
     let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
     let mut outcomes: Mutations = vec![];
