@@ -58,6 +58,8 @@ static ANCIENT_BOOSTER_ENERGY_CAPSULE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3a069AncientBoosterEnergyCapsule));
 static FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3a070FutureBoosterEnergyCapsule));
+static SMALL_BALLOON_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3b064SmallBalloon));
 
 pub fn tool_effects_equal(trainer_card: &TrainerCard, reference_tool_id: CardId) -> bool {
     ensure_tool_trainer(trainer_card);
@@ -94,6 +96,9 @@ pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> b
     if effect == BIG_AIR_BALLOON_EFFECT.as_str() {
         return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 2);
     }
+    if effect == SMALL_BALLOON_EFFECT.as_str() {
+        return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 0);
+    }
     true
 }
 
@@ -129,5 +134,6 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == LUCKY_EGG_EFFECT.as_str()
             || e == ANCIENT_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str()
             || e == FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str()
+            || e == SMALL_BALLOON_EFFECT.as_str()
     )
 }
