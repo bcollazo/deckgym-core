@@ -240,6 +240,9 @@ pub fn trainer_move_generation_implementation(
         CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
             can_play_professor_turo(state, trainer_card)
         }
+        CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
+            can_play_trainer(state, trainer_card)
+        }
         _ => None,
     }
 }
