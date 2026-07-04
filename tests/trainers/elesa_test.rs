@@ -138,19 +138,20 @@ fn test_elesa_knocks_out_opponent_active_hanging_on_via_giant_cape() {
 
 #[test]
 fn test_elesa_knocks_out_opponent_active_hanging_on_via_leaf_cape() {
-    // Opponent's Charmander (60 base HP) has a Leaf Cape (+30 HP) and 60 damage on it, so it's
-    // sitting at 30 remaining HP only because of the Leaf Cape. Once Elesa returns the Leaf
-    // Cape to hand, its effective HP drops back to 60 and the existing 60 damage counters
-    // knock it out, awarding a point and requiring the opponent to promote from the bench.
+    // Leaf Cape only attaches to [G] Pokémon, so use Oddish (60 base HP, Grass). It has a Leaf
+    // Cape (+30 HP) and 60 damage on it, so it's sitting at 30 remaining HP only because of the
+    // Leaf Cape. Once Elesa returns the Leaf Cape to hand, its effective HP drops back to 60 and
+    // the existing 60 damage counters knock it out, awarding a point and requiring the opponent
+    // to promote from the bench.
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
     state.current_player = 0;
     state.turn_count = 3;
 
     state.set_board(
-        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
         vec![
-            PlayedCard::from_id(CardId::A1033Charmander)
+            PlayedCard::from_id(CardId::A1011Oddish)
                 .with_tool(get_card_by_enum(CardId::A3147LeafCape))
                 .with_damage(60),
             PlayedCard::from_id(CardId::A1001Bulbasaur),
@@ -173,11 +174,11 @@ fn test_elesa_knocks_out_opponent_active_hanging_on_via_leaf_cape() {
     let state = game.get_state_clone();
     assert!(
         state.in_play_pokemon[1][0].is_none(),
-        "Opponent's Charmander should have been knocked out and removed from the active spot"
+        "Opponent's Oddish should have been knocked out and removed from the active spot"
     );
     assert_eq!(
         state.points[0], 1,
-        "Player should have won 1 point for knocking out opponent's Charmander"
+        "Player should have won 1 point for knocking out opponent's Oddish"
     );
 
     // Opponent must now promote from the bench.
