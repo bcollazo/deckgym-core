@@ -98,6 +98,10 @@ pub enum SimpleAction {
     ShuffleOwnCardsIntoDeck {
         cards: Vec<Card>,
     },
+    /// Kid's Room: switch a specific card from hand with a random Pokemon Tool card from deck
+    SwitchHandCardForRandomTool {
+        hand_card: Card,
+    },
     /// Silver: shuffle a specific Supporter from opponent's hand into their deck
     ShuffleOpponentSupporter {
         supporter_card: Card,
@@ -263,6 +267,9 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
                 write!(f, "ShuffleOwnCardsIntoDeck({:?})", cards)
+            }
+            SimpleAction::SwitchHandCardForRandomTool { hand_card } => {
+                write!(f, "SwitchHandCardForRandomTool({hand_card})")
             }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")
