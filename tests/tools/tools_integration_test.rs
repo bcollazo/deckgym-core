@@ -66,6 +66,60 @@ fn test_giant_cape_attach_increases_hp() {
 }
 
 #[test]
+fn test_elegant_cape_only_attaches_to_stage_1_and_increases_hp() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1002Ivysaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur)],
+    );
+    state.current_player = 0;
+
+    state.hands[0] = vec![get_card_by_enum(CardId::B3b065ElegantCape)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::B3b065ElegantCape);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    let (_actor, choices) = state.generate_possible_actions();
+
+    let attachable_indices: Vec<usize> = choices
+        .iter()
+        .filter_map(|choice| match choice.action {
+            SimpleAction::AttachTool { in_play_idx, .. } => Some(in_play_idx),
+            _ => None,
+        })
+        .collect();
+
+    assert_eq!(attachable_indices, vec![1]);
+
+    let attach_action = Action {
+        actor: 0,
+        action: attach_choice_for_idx(&choices, 1),
+        is_stack: false,
+    };
+    game.apply_action(&attach_action);
+
+    let state = game.get_state_clone();
+    let stage1 = state.in_play_pokemon[0][1]
+        .as_ref()
+        .expect("expected stage-1 target");
+    let base_remaining_hp = PlayedCard::from_id(CardId::A1002Ivysaur).get_remaining_hp();
+    assert!(stage1.attached_tool.is_some());
+    assert_eq!(stage1.get_remaining_hp(), base_remaining_hp + 30);
+}
+
+#[test]
 fn test_leaf_cape_only_attaches_to_grass() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();

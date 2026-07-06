@@ -207,7 +207,8 @@ impl PlayedCard {
         // Tool bonuses
         if has_tool(self, CardId::A2147GiantCape) {
             effective_hp += 20;
-        } else if has_tool(self, CardId::A3147LeafCape) {
+        } else if has_tool(self, CardId::A3147LeafCape) || has_tool(self, CardId::B3b065ElegantCape)
+        {
             effective_hp += 30;
         } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule)
             && is_ancient_pokemon(&self.get_name())
