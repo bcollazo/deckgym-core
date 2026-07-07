@@ -11,14 +11,19 @@ use crate::{
         apply_action_helpers::{apply_activate, wrap_with_common_logic},
     },
     effects::TurnEffect,
-    hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
+    hooks::{
+        get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card, DamageModifierContext,
+    },
     models::{Card, EnergyType},
     state::State,
     tools,
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations},
+    apply_action_helpers::{
+        forecast_end_turn, guts_would_flip, handle_damage, handle_damage_only, handle_knockouts,
+        Mutations,
+    },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
     apply_trainer_action::forecast_trainer_action,
@@ -53,7 +58,6 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::Evolve { .. }
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
-        | SimpleAction::ApplyDamage { .. }
         | SimpleAction::ScheduleDelayedSpotDamage { .. }
         | SimpleAction::Heal { .. }
         | SimpleAction::HealAndDiscardEnergy { .. }
@@ -69,6 +73,11 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::ApplyStatusToOpponentActive { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
+        SimpleAction::ApplyDamage {
+            attacking_ref,
+            targets,
+            is_from_active_attack,
+        } => forecast_apply_damage(state, *attacking_ref, targets, *is_from_active_attack),
         SimpleAction::Attack(attack) => {
             forecast_attack(action.actor, state, attack, action.is_stack)
         }
@@ -155,6 +164,81 @@ fn forecast_deterministic_action() -> Outcomes {
     })
 }
 
+/// ApplyDamage (damage queued through the move-generation stack, e.g. Mega Kangaskhan's second
+/// punch or Raikou ex's spot damage) is deterministic unless a target has the Guts ability and
+/// would be knocked out: each such target flips its own survival coin, independently of any
+/// Guts flip already resolved earlier in the same attack.
+fn forecast_apply_damage(
+    state: &State,
+    attacking_ref: (usize, usize),
+    targets: &[(u32, usize, usize)],
+    is_from_active_attack: bool,
+) -> Outcomes {
+    // Sum raw damage per target (mirroring handle_damage_only) to find the Guts coin flips.
+    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+    for (damage, player, idx) in targets {
+        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    }
+    let flipping: Vec<(usize, usize)> = damage_map
+        .into_iter()
+        .filter(|(target, raw_total)| {
+            guts_would_flip(
+                state,
+                attacking_ref,
+                *raw_total,
+                *target,
+                is_from_active_attack,
+                DamageModifierContext {
+                    attack_name: None,
+                    attack_effect: None,
+                },
+            )
+        })
+        .map(|(target, _)| target)
+        .collect();
+
+    if flipping.is_empty() {
+        let targets = targets.to_vec();
+        return Outcomes::single_fn(move |_, state, _| {
+            handle_damage(state, attacking_ref, &targets, is_from_active_attack, None);
+        });
+    }
+
+    // One branch per heads/tails combination; on heads the damage still applies (so on-damage
+    // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
+    let combos = 1usize << flipping.len();
+    let probabilities = vec![1.0 / combos as f64; combos];
+    let mut mutations: Mutations = vec![];
+    for mask in 0..combos {
+        let survivors: Vec<(usize, usize)> = flipping
+            .iter()
+            .enumerate()
+            .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+            .map(|(_, target)| *target)
+            .collect();
+        let targets = targets.to_vec();
+        mutations.push(Box::new(move |_, state, _| {
+            handle_damage_only(
+                state,
+                attacking_ref,
+                &targets,
+                is_from_active_attack,
+                DamageModifierContext {
+                    attack_name: None,
+                    attack_effect: None,
+                },
+            );
+            for (player, idx) in &survivors {
+                if let Some(pokemon) = state.in_play_pokemon[*player][*idx].as_mut() {
+                    pokemon.set_remaining_hp(10);
+                }
+            }
+            handle_knockouts(state, attacking_ref, is_from_active_attack);
+        }));
+    }
+    Outcomes::from_parts(probabilities, mutations)
+}
+
 fn apply_deterministic_action(state: &mut State, action: &Action) {
     match &action.action {
         SimpleAction::DrawCard { amount } => {
@@ -196,11 +280,6 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             in_play_idx,
         } => apply_retreat(*player, state, *in_play_idx, true),
         SimpleAction::Retreat(position) => apply_retreat(action.actor, state, *position, false),
-        SimpleAction::ApplyDamage {
-            attacking_ref,
-            targets,
-            is_from_active_attack,
-        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack, None),
         SimpleAction::ScheduleDelayedSpotDamage {
             target_player,
             target_in_play_idx,

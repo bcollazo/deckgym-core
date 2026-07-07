@@ -55,15 +55,16 @@ pub(crate) fn forecast_attack(
     let base_outcomes = forecast_attack_inner(state, attack);
 
     if is_sub_attack {
-        apply_copied_attack_modifiers(acting_player, state, base_outcomes).into_outcomes()
+        apply_copied_attack_modifiers(acting_player, state, attack, base_outcomes).into_outcomes()
     } else {
-        apply_attack_common_modifiers(acting_player, state, base_outcomes).into_outcomes()
+        apply_attack_common_modifiers(acting_player, state, attack, base_outcomes).into_outcomes()
     }
 }
 
 fn apply_attack_common_modifiers(
     acting_player: usize,
     state: &State,
+    attack: &Attack,
     base_outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
     let active = state.get_active(acting_player);
@@ -84,15 +85,18 @@ fn apply_attack_common_modifiers(
         outcomes = apply_block_attack_coin_flip(outcomes);
     }
 
-    apply_defender_damage_prevention_if_needed(acting_player, state, outcomes)
+    outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, outcomes);
+    apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_copied_attack_modifiers(
     acting_player: usize,
     state: &State,
+    attack: &Attack,
     base_outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
-    apply_defender_damage_prevention_if_needed(acting_player, state, base_outcomes)
+    let outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, base_outcomes);
+    apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_defender_damage_prevention_if_needed(
@@ -121,6 +125,41 @@ fn apply_defender_damage_prevention_if_needed(
         return outcomes;
     }
     outcomes.split_with_damage_prevention(&prevented_indices)
+}
+
+/// Apply the defender's Guts ability (e.g. Ursaluna): each opponent in-play Pokémon with the
+/// ability flips a coin when this attack's damage would knock it out; on heads it survives
+/// with its remaining HP set to 10.
+fn apply_defender_guts_if_needed(
+    acting_player: usize,
+    state: &State,
+    attack: &Attack,
+    outcomes: AttackOutcomes,
+) -> AttackOutcomes {
+    let opponent = (acting_player + 1) % 2;
+    let guts_indices: Vec<usize> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(_, pokemon)| {
+            pokemon
+                .card
+                .get_ability()
+                .and_then(|a| ability_mechanic_from_effect(&a.effect))
+                .map(|m| matches!(m, AbilityMechanic::CoinFlipToSurviveKnockOut))
+                .unwrap_or(false)
+        })
+        .map(|(idx, _)| idx)
+        .collect();
+
+    if guts_indices.is_empty() {
+        return outcomes;
+    }
+    outcomes.split_with_guts_survival(
+        state,
+        acting_player,
+        Some(&attack.title),
+        attack.effect.as_deref(),
+        &guts_indices,
+    )
 }
 
 fn forecast_attack_inner(state: &State, attack: &Attack) -> AttackOutcomes {

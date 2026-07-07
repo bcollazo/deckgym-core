@@ -5,7 +5,9 @@ use rand::rngs::StdRng;
 use crate::hooks::{modify_damage, DamageModifierContext};
 use crate::State;
 
-use super::apply_action_helpers::{handle_damage_only, handle_knockouts, Mutation, Probabilities};
+use super::apply_action_helpers::{
+    guts_would_flip, handle_damage_only, handle_knockouts, Mutation, Probabilities,
+};
 use super::outcomes::{generate_sequences_with_heads, CoinPaths, CoinSeq, Outcomes};
 use super::{Action, SimpleAction};
 
@@ -357,6 +359,97 @@ impl AttackOutcomes {
                 outcome
                     .damage
                     .retain(|(_, is_opponent, idx)| !(*is_opponent && prevented_now.contains(idx)));
+                branches.push(AttackBranch {
+                    probability: sub_probability,
+                    outcome,
+                    coin_paths: CoinPaths::None,
+                });
+            }
+        }
+        Self { branches }
+    }
+
+    /// Apply the defender's "if this Pokémon would be Knocked Out by damage from an attack,
+    /// flip a coin; if heads, it is not Knocked Out and its remaining HP becomes 10" ability
+    /// (e.g. Ursaluna's Guts) to each opponent in-play slot in `guts_indices`.
+    ///
+    /// The ability applies independently to each such Pokémon, and only in branches where the
+    /// (modified) damage it takes would knock it out. Each such branch is split into `2^k`
+    /// sub-branches, one per combination of heads/tails. On heads the damage still applies in
+    /// full — so on-damage triggers like Rocky Helmet's counterattack fire normally — and a
+    /// post-damage effect then sets the survivor's remaining HP to exactly 10 before knockouts
+    /// are resolved. Coin metadata is dropped (these are the defender's coins, not the acting
+    /// player's).
+    ///
+    /// Knock outs are forecast with the pre-attack board (like `expected_damage_to`), so damage
+    /// modifiers changed by a branch's own pre-damage effect are not taken into account.
+    pub fn split_with_guts_survival(
+        self,
+        state: &State,
+        acting_player: usize,
+        attack_name: Option<&str>,
+        attack_effect: Option<&str>,
+        guts_indices: &[usize],
+    ) -> Self {
+        let opponent = (acting_player + 1) % 2;
+        let mut branches = vec![];
+        for branch in self.branches {
+            // Only the Guts Pokémon that would be knocked out by this branch's damage flip a coin.
+            let flipping: Vec<usize> = guts_indices
+                .iter()
+                .copied()
+                .filter(|target_idx| {
+                    let raw_total: u32 = branch
+                        .outcome
+                        .damage
+                        .iter()
+                        .filter(|(_, is_opponent, idx)| *is_opponent && idx == target_idx)
+                        .map(|(amount, _, _)| *amount)
+                        .sum();
+                    guts_would_flip(
+                        state,
+                        (acting_player, 0),
+                        raw_total,
+                        (opponent, *target_idx),
+                        true,
+                        DamageModifierContext {
+                            attack_name,
+                            attack_effect,
+                        },
+                    )
+                })
+                .collect();
+
+            if flipping.is_empty() {
+                branches.push(branch);
+                continue;
+            }
+
+            let combos = 1usize << flipping.len();
+            let sub_probability = branch.probability / combos as f64;
+            for mask in 0..combos {
+                // The subset of flipping Pokémon whose coin came up heads (survive at 10 HP).
+                let survivors: Vec<usize> = flipping
+                    .iter()
+                    .enumerate()
+                    .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+                    .map(|(_, idx)| *idx)
+                    .collect();
+                let mut outcome = branch.outcome.clone();
+                if !survivors.is_empty() {
+                    let previous_post = outcome.post_damage_effect.take();
+                    outcome.post_damage_effect = Some(Rc::new(move |rng, state, action| {
+                        let opponent = (action.actor + 1) % 2;
+                        for idx in &survivors {
+                            if let Some(pokemon) = state.in_play_pokemon[opponent][*idx].as_mut() {
+                                pokemon.set_remaining_hp(10);
+                            }
+                        }
+                        if let Some(post) = &previous_post {
+                            post(rng, state, action);
+                        }
+                    }));
+                }
                 branches.push(AttackBranch {
                     probability: sub_probability,
                     outcome,

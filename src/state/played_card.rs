@@ -105,10 +105,15 @@ impl PlayedCard {
     }
 
     pub fn with_remaining_hp(mut self, remaining_hp: u32) -> Self {
+        self.set_remaining_hp(remaining_hp);
+        self
+    }
+
+    /// Set the remaining HP to an exact value (e.g. Ursaluna's Guts leaves it at 10).
+    pub(crate) fn set_remaining_hp(&mut self, remaining_hp: u32) {
         let effective_hp = self.get_effective_total_hp();
         let clamped_remaining = remaining_hp.min(effective_hp);
         self.damage_counters = effective_hp.saturating_sub(clamped_remaining);
-        self
     }
 
     pub fn with_tool(mut self, tool: Card) -> Self {
