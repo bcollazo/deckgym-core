@@ -10,5 +10,7 @@ mod protective_poncho_test;
 mod raikou_rocky_helmet_order_test;
 #[path = "tools/small_balloon_test.rs"]
 mod small_balloon_test;
+#[path = "tools/tool_effect_gating_test.rs"]
+mod tool_effect_gating_test;
 #[path = "tools/tools_integration_test.rs"]
 mod tools_integration_test;

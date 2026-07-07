@@ -495,7 +495,10 @@ fn get_metal_core_barrier_reduction(
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Metal Core Barrier");
-    if has_tool(defending_pokemon, CardId::B2148MetalCoreBarrier) {
+    // Metal Core Barrier: "The [M] Pokémon this card is attached to takes -50 damage..."
+    if has_tool(defending_pokemon, CardId::B2148MetalCoreBarrier)
+        && defending_pokemon.get_energy_type() == Some(EnergyType::Metal)
+    {
         debug!("Metal Core Barrier: Reducing damage by 50");
         return 50;
     }
@@ -515,7 +518,10 @@ fn get_steel_apron_reduction(
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Steel Apron");
-    if has_tool(defending_pokemon, CardId::A4153SteelApron) {
+    // Steel Apron: "The [M] Pokémon this card is attached to takes -10 damage..."
+    if has_tool(defending_pokemon, CardId::A4153SteelApron)
+        && defending_pokemon.get_energy_type() == Some(EnergyType::Metal)
+    {
         debug!("Steel Apron: Reducing damage by 10");
         return 10;
     }
@@ -1266,8 +1272,11 @@ pub(crate) fn on_knockout(
         .as_ref()
         .expect("Pokemon should be there if knocked out");
 
-    // Handle Electrical Cord
-    if has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord) {
+    // Handle Electrical Cord: "If the [L] Pokémon this card is attached to is in the Active
+    // Spot and is Knocked Out by damage from an attack..."
+    if has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord)
+        && knocked_out_pokemon.get_energy_type() == Some(EnergyType::Lightning)
+    {
         // Only triggers if knocked out in active spot from an active attack
         if knocked_out_idx != 0 || !is_from_active_attack {
             return;

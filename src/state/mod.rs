@@ -436,7 +436,11 @@ impl State {
             return;
         }
 
-        if has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
+        // Steel Apron: "The [M] Pokémon this card is attached to ... can't be affected by any
+        // Special Conditions." The immunity only applies to a [M] holder.
+        if has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron)
+            && pokemon.get_energy_type() == Some(EnergyType::Metal)
+        {
             debug!("Steel Apron: Pokémon is immune to status conditions");
             return;
         }
