@@ -24,6 +24,8 @@ mod brambleghast_accept_pain_test;
 mod breloom_test;
 #[path = "pokemon/camerupt_eruption_test.rs"]
 mod camerupt_eruption_test;
+#[path = "pokemon/carbink_glittering_gift_test.rs"]
+mod carbink_glittering_gift_test;
 #[path = "pokemon/carracosta_blocking_shell_test.rs"]
 mod carracosta_blocking_shell_test;
 #[path = "pokemon/cascoon_harden_test.rs"]
