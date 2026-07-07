@@ -91,9 +91,8 @@ pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> b
     if effect == METAL_CORE_BARRIER_EFFECT.as_str() {
         return pokemon.card.get_type() == Some(EnergyType::Metal);
     }
-    if effect == BIG_AIR_BALLOON_EFFECT.as_str() {
-        return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 2);
-    }
+    // Big Air Balloon can be attached to any Pokemon (verified in-game); its effect simply
+    // doesn't apply unless the holder is a Stage 2.
     true
 }
 
