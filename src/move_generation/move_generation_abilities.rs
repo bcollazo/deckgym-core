@@ -142,6 +142,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::ImmuneToStatusConditions => false, // Passive ability
         AbilityMechanic::SoothingWind { .. } => false,      // Passive ability
         AbilityMechanic::NoOpponentSupportInActive => false,
+        AbilityMechanic::NoOpponentStadiumInActive => false, // Passive ability
         AbilityMechanic::DoubleGrassEnergy => false,
         AbilityMechanic::PreventOpponentActiveEvolution => false,
         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { .. } => false,

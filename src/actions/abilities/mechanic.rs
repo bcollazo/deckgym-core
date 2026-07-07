@@ -129,6 +129,9 @@ pub enum AbilityMechanic {
         energy_type: Option<EnergyType>,
     },
     NoOpponentSupportInActive,
+    /// Snorlax's Massive Body: as long as this Pokémon is in the Active Spot, the opponent
+    /// can't play any Stadium cards from their hand.
+    NoOpponentStadiumInActive,
     DoubleGrassEnergy,
     PreventOpponentActiveEvolution,
     ReduceRetreatCostOfYourActiveBasicFromBench {

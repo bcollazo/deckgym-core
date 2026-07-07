@@ -39,6 +39,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "As long as this Pokémon is in the Active Spot, your opponent can't use any Supporter cards from their hand.",
             AbilityMechanic::NoOpponentSupportInActive,
         );
+        map.insert(
+            "As long as this Pokémon is in the Active Spot, your opponent can't play any Stadium cards from their hand.",
+            AbilityMechanic::NoOpponentStadiumInActive,
+        );
         // map.insert("As long as this Pokémon is on your Bench, attacks used by your Pokémon that evolve from Poliwhirl do +40 damage to your opponent's Active Pokémon.", todo_implementation);
         map.insert(
             "As long as this Pokémon is on your Bench, prevent all damage done to this Pokémon by attacks.",

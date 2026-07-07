@@ -188,6 +188,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::NoOpponentSupportInActive => {
             panic!("NoOpponentSupportInActive is a passive ability")
         }
+        AbilityMechanic::NoOpponentStadiumInActive => {
+            panic!("NoOpponentStadiumInActive is a passive ability")
+        }
         AbilityMechanic::DoubleGrassEnergy => panic!("DoubleGrassEnergy is a passive ability"),
         AbilityMechanic::PreventOpponentActiveEvolution => {
             panic!("PreventOpponentActiveEvolution is a passive ability")
