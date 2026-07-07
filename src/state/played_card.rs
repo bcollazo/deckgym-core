@@ -213,6 +213,10 @@ impl PlayedCard {
             && is_ancient_pokemon(&self.get_name())
         {
             effective_hp += 40;
+        } else if has_tool(self, CardId::B3b065ElegantCape)
+            && matches!(&self.card, Card::Pokemon(p) if p.stage == 1)
+        {
+            effective_hp += 30;
         }
 
         effective_hp += self.stadium_hp_bonus;

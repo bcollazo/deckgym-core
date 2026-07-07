@@ -38,6 +38,9 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         if has_tool(card, CardId::B2a087BigAirBalloon) && pokemon_card.stage == 2 {
             return vec![];
         }
+        if has_tool(card, CardId::B3b064SmallBalloon) && pokemon_card.stage == 0 {
+            normal_cost.pop();
+        }
         // Implement Retreat Cost Modifiers here
         let mut to_subtract = state
             .get_current_turn_effects()

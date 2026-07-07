@@ -58,6 +58,10 @@ static ANCIENT_BOOSTER_ENERGY_CAPSULE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3a069AncientBoosterEnergyCapsule));
 static FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3a070FutureBoosterEnergyCapsule));
+static SMALL_BALLOON_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3b064SmallBalloon));
+static ELEGANT_CAPE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3b065ElegantCape));
 
 pub fn tool_effects_equal(trainer_card: &TrainerCard, reference_tool_id: CardId) -> bool {
     ensure_tool_trainer(trainer_card);
@@ -91,8 +95,8 @@ pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> b
     if effect == METAL_CORE_BARRIER_EFFECT.as_str() {
         return pokemon.card.get_type() == Some(EnergyType::Metal);
     }
-    // Big Air Balloon can be attached to any Pokemon (verified in-game); its effect simply
-    // doesn't apply unless the holder is a Stage 2.
+    // Big Air Balloon, Small Balloon and Elegant Cape can be attached to any Pokemon (verified
+    // in-game); their effects simply don't apply unless the holder is the matching stage.
     true
 }
 
@@ -128,5 +132,7 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == LUCKY_EGG_EFFECT.as_str()
             || e == ANCIENT_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str()
             || e == FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str()
+            || e == SMALL_BALLOON_EFFECT.as_str()
+            || e == ELEGANT_CAPE_EFFECT.as_str()
     )
 }
