@@ -154,6 +154,8 @@ mod shinx_hide_test;
 mod slither_wing_test;
 #[path = "pokemon/smoochum_test.rs"]
 mod smoochum_test;
+#[path = "pokemon/snorlax_massive_body_test.rs"]
+mod snorlax_massive_body_test;
 #[path = "pokemon/snover_ice_shard_test.rs"]
 mod snover_ice_shard_test;
 #[path = "pokemon/spewpa_signs_of_evolution_test.rs"]

@@ -1,5 +1,5 @@
 use crate::{
-    actions::SimpleAction,
+    actions::{abilities::AbilityMechanic, get_ability_mechanic, SimpleAction},
     card_ids::CardId,
     card_logic::{
         can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
@@ -291,6 +291,23 @@ fn can_play_stadium(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
             return cannot_play_trainer();
         }
     }
+
+    // Snorlax's Massive Body: as long as it is in the opponent's Active Spot, this player
+    // can't play any Stadium cards from their hand.
+    let opponent = (state.current_player + 1) % 2;
+    let blocked_by_massive_body =
+        state.in_play_pokemon[opponent][0]
+            .as_ref()
+            .is_some_and(|opponent_active| {
+                matches!(
+                    get_ability_mechanic(&opponent_active.card),
+                    Some(AbilityMechanic::NoOpponentStadiumInActive)
+                )
+            });
+    if blocked_by_massive_body {
+        return cannot_play_trainer();
+    }
+
     can_play_trainer(state, trainer_card)
 }
 
