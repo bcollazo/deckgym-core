@@ -172,6 +172,8 @@ mod tepig_stoke_test;
 mod terapagos_ex_test;
 #[path = "pokemon/typhlosion_fire_breath_test.rs"]
 mod typhlosion_fire_breath_test;
+#[path = "pokemon/ursaluna_guts_test.rs"]
+mod ursaluna_guts_test;
 #[path = "pokemon/vanilluxe_test.rs"]
 mod vanilluxe_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]

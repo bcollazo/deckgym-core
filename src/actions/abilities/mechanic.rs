@@ -87,6 +87,9 @@ pub enum AbilityMechanic {
     InfiltratingInspection,
     DiscardTopCardOpponentDeck,
     CoinFlipToPreventDamage,
+    /// Ursaluna's Guts: if this Pokémon would be Knocked Out by damage from an attack, flip a
+    /// coin. If heads, it is not Knocked Out and its remaining HP becomes 10.
+    CoinFlipToSurviveKnockOut,
     CheckupDamageToOpponentActive {
         amount: u32,
     },
