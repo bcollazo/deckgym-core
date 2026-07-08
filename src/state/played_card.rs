@@ -204,11 +204,19 @@ impl PlayedCard {
     pub(crate) fn get_effective_total_hp(&self) -> u32 {
         let mut effective_hp = self.base_hp;
 
-        // Tool bonuses
+        // Tool bonuses. Type/stage-specific caps only apply to matching Pokémon (the tools are
+        // attachable to anything, but their HP bonus is gated by the holder).
         if has_tool(self, CardId::A2147GiantCape) {
             effective_hp += 20;
-        } else if has_tool(self, CardId::A3147LeafCape) || has_tool(self, CardId::B3b065ElegantCape)
+        } else if has_tool(self, CardId::A3147LeafCape)
+            && self.get_energy_type() == Some(EnergyType::Grass)
         {
+            // Leaf Cape: "The [G] Pokémon this card is attached to gets +30 HP."
+            effective_hp += 30;
+        } else if has_tool(self, CardId::B3b065ElegantCape)
+            && matches!(&self.card, Card::Pokemon(p) if p.stage == 1)
+        {
+            // Elegant Cape: "The Stage 1 Pokémon this card is attached to gets +30 HP."
             effective_hp += 30;
         } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule)
             && is_ancient_pokemon(&self.get_name())

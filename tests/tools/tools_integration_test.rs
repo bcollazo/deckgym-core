@@ -66,7 +66,7 @@ fn test_giant_cape_attach_increases_hp() {
 }
 
 #[test]
-fn test_elegant_cape_only_attaches_to_stage_1_and_increases_hp() {
+fn test_elegant_cape_attaches_to_any_and_boosts_only_stage_1() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -93,15 +93,18 @@ fn test_elegant_cape_only_attaches_to_stage_1_and_increases_hp() {
     let state = game.get_state_clone();
     let (_actor, choices) = state.generate_possible_actions();
 
-    let attachable_indices: Vec<usize> = choices
+    let mut attachable_indices: Vec<usize> = choices
         .iter()
         .filter_map(|choice| match choice.action {
             SimpleAction::AttachTool { in_play_idx, .. } => Some(in_play_idx),
             _ => None,
         })
         .collect();
+    attachable_indices.sort_unstable();
 
-    assert_eq!(attachable_indices, vec![1]);
+    // Attachable to both the Basic (Bulbasaur) and the Stage 1 (Ivysaur); only the Stage 1
+    // holder gets the +30 HP.
+    assert_eq!(attachable_indices, vec![0, 1]);
 
     let attach_action = Action {
         actor: 0,
@@ -120,7 +123,7 @@ fn test_elegant_cape_only_attaches_to_stage_1_and_increases_hp() {
 }
 
 #[test]
-fn test_leaf_cape_only_attaches_to_grass() {
+fn test_leaf_cape_attaches_to_any_and_boosts_only_grass() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -149,15 +152,18 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let state = game.get_state_clone();
     let (_actor, choices) = state.generate_possible_actions();
 
-    let attachable_indices: Vec<usize> = choices
+    let mut attachable_indices: Vec<usize> = choices
         .iter()
         .filter_map(|choice| match choice.action {
             SimpleAction::AttachTool { in_play_idx, .. } => Some(in_play_idx),
             _ => None,
         })
         .collect();
+    attachable_indices.sort_unstable();
 
-    assert_eq!(attachable_indices, vec![0]);
+    // Attachable to both the Grass Bulbasaur and the Fire Charmander; only the Grass holder
+    // gets the +30 HP.
+    assert_eq!(attachable_indices, vec![0, 1]);
 
     let attach_action = Action {
         actor: 0,

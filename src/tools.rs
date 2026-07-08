@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{Card, EnergyType, PlayedCard, TrainerCard, TrainerType},
+    models::{Card, PlayedCard, TrainerCard, TrainerType},
     State,
 };
 
@@ -77,46 +77,19 @@ pub fn has_tool(played_card: &PlayedCard, reference_tool_id: CardId) -> bool {
     trainer_card.effect == reference_effect
 }
 
-pub fn can_attach_tool_to(trainer_card: &TrainerCard, pokemon: &PlayedCard) -> bool {
-    let trainer_card = ensure_tool_trainer(trainer_card);
-    let effect = trainer_card.effect.as_str();
-    if effect == LEAF_CAPE_EFFECT.as_str() {
-        return pokemon.card.get_type() == Some(EnergyType::Grass);
-    }
-    if effect == ELECTRICAL_CORD_EFFECT.as_str() {
-        return pokemon.card.get_type() == Some(EnergyType::Lightning);
-    }
-    if effect == INFLATABLE_BOAT_EFFECT.as_str() {
-        return pokemon.card.get_type() == Some(EnergyType::Water);
-    }
-    if effect == STEEL_APRON_EFFECT.as_str() {
-        return pokemon.card.get_type() == Some(EnergyType::Metal);
-    }
-    if effect == METAL_CORE_BARRIER_EFFECT.as_str() {
-        return pokemon.card.get_type() == Some(EnergyType::Metal);
-    }
-    if effect == BIG_AIR_BALLOON_EFFECT.as_str() {
-        return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 2);
-    }
-    if effect == SMALL_BALLOON_EFFECT.as_str() {
-        return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 0);
-    }
-    if effect == ELEGANT_CAPE_EFFECT.as_str() {
-        return matches!(&pokemon.card, Card::Pokemon(p) if p.stage == 1);
-    }
-    true
-}
-
 pub(crate) fn enumerate_tool_choices<'a>(
     trainer_card: &TrainerCard,
     state: &'a State,
     actor: usize,
 ) -> Vec<(usize, &'a PlayedCard)> {
-    let trainer_card = ensure_tool_trainer(trainer_card);
+    ensure_tool_trainer(trainer_card);
+    // Pokémon Tools can be attached to ANY Pokémon — the game never restricts attachment by
+    // type or stage. Tools whose effect is type/stage-specific (Leaf Cape [G] +30 HP, Big Air
+    // Balloon Stage-2 free retreat, Steel Apron [M] −10, etc.) gate the *effect* at its
+    // application site, not the attachment. The only attachment rule is one tool per Pokémon.
     state
         .enumerate_in_play_pokemon(actor)
         .filter(|(_, x)| !x.has_tool_attached())
-        .filter(|(_, x)| can_attach_tool_to(trainer_card, x))
         .collect()
 }
 
