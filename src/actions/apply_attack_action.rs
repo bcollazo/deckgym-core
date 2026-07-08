@@ -186,7 +186,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChargeYourTypeAnyWay { energy_type, count } => {
             charge_energy_any_way_to_type(attack.fixed_damage, *energy_type, *count)
         }
-        Mechanic::ManaphyOceanicGift => manaphy_oceanic(),
+        Mechanic::AttachEnergyFromZoneToTwoBenched { energy_type } => {
+            attach_energy_to_two_benched(*energy_type)
+        }
         Mechanic::PalkiaExDimensionalStorm => palkia_dimensional_storm(state),
         Mechanic::MegaKangaskhanExDoublePunchingFamily => {
             mega_kangaskhan_ex_double_punching_family(attack)
@@ -1031,8 +1033,9 @@ fn waterfall_evolution(state: &State) -> AttackOutcomes {
     AttackOutcomes::from_parts(probabilities, outcomes)
 }
 
-/// For Manaphy's Oceanic attack: Choose 2 benched Pokémon and attach Water Energy to each
-fn manaphy_oceanic() -> AttackOutcomes {
+/// For Manaphy's Oceanic Gift / Carbink's Glittering Gift: Choose 2 benched Pokémon and attach
+/// an Energy of the given type to each
+fn attach_energy_to_two_benched(energy_type: EnergyType) -> AttackOutcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
         let benched_pokemon: Vec<usize> = state
             .enumerate_bench_pokemon(action.actor)
@@ -1043,7 +1046,7 @@ fn manaphy_oceanic() -> AttackOutcomes {
         if benched_pokemon.len() == 1 {
             // Only 1 benched Pokémon, can only choose that one
             choices.push(SimpleAction::Attach {
-                attachments: vec![(1, EnergyType::Water, benched_pokemon[0])],
+                attachments: vec![(1, energy_type, benched_pokemon[0])],
                 is_turn_energy: false,
             });
         } else if benched_pokemon.len() >= 2 {
@@ -1053,8 +1056,8 @@ fn manaphy_oceanic() -> AttackOutcomes {
                 for j in (i + 1)..benched_pokemon.len() {
                     choices.push(SimpleAction::Attach {
                         attachments: vec![
-                            (1, EnergyType::Water, benched_pokemon[i]),
-                            (1, EnergyType::Water, benched_pokemon[j]),
+                            (1, energy_type, benched_pokemon[i]),
+                            (1, energy_type, benched_pokemon[j]),
                         ],
                         is_turn_energy: false,
                     });

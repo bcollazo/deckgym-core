@@ -161,7 +161,11 @@ pub enum Mechanic {
         count: usize,
     },
     // Fairly unique mechanics
-    ManaphyOceanicGift,
+    /// Manaphy's Oceanic Gift / Carbink's Glittering Gift: choose 2 of your Benched Pokémon and
+    /// attach an Energy of the given type to each.
+    AttachEnergyFromZoneToTwoBenched {
+        energy_type: EnergyType,
+    },
     PalkiaExDimensionalStorm,
     MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,

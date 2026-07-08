@@ -81,7 +81,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             require_attacker_energy_match: true,
         },
     );
-    map.insert("Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.", Mechanic::ManaphyOceanicGift);
+    map.insert(
+        "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [W] Energy from your Energy Zone and attach it to that Pokémon.",
+        Mechanic::AttachEnergyFromZoneToTwoBenched { energy_type: EnergyType::Water },
+    );
+    map.insert(
+        "Choose 2 of your Benched Pokémon. For each of those Pokémon, take a [P] Energy from your Energy Zone and attach it to that Pokémon.",
+        Mechanic::AttachEnergyFromZoneToTwoBenched { energy_type: EnergyType::Psychic },
+    );
     map.insert(
         "Choose either Poisoned or Confused. Your opponent's Active Pokémon is now affected by that Special Condition.",
         Mechanic::ChooseStatusToInflict {
