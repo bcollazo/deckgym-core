@@ -355,6 +355,11 @@ pub enum Mechanic {
     FlipUntilTailsDamage {
         damage_per_heads: u32,
     },
+    /// Like `FlipUntilTailsDamage`, but the attack's `fixed_damage` is dealt as a base and each
+    /// heads adds `damage_per_heads` on top (e.g. "does 30 more damage for each heads").
+    FlipUntilTailsBonusDamage {
+        damage_per_heads: u32,
+    },
     DirectDamageIfDamaged {
         damage: u32,
     },
