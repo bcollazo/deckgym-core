@@ -97,6 +97,12 @@ pub enum AbilityMechanic {
     /// Ursaluna's Guts: if this Pokémon would be Knocked Out by damage from an attack, flip a
     /// coin. If heads, it is not Knocked Out and its remaining HP becomes 10.
     CoinFlipToSurviveKnockOut,
+    /// Passimian ex's Offload Pass: if this Pokémon is in the Active Spot and is Knocked Out by
+    /// damage from an opponent's attack, move all of its `energy_type` Energy to 1 of your Benched
+    /// Pokémon (your choice). Passive; handled in the `on_knockout` hook.
+    MoveAllTypedEnergyToBenchOnKnockout {
+        energy_type: EnergyType,
+    },
     CheckupDamageToOpponentActive {
         amount: u32,
     },

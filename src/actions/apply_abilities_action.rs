@@ -156,6 +156,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::CoinFlipToSurviveKnockOut => {
             panic!("CoinFlipToSurviveKnockOut is a passive ability")
         }
+        AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { .. } => {
+            panic!("MoveAllTypedEnergyToBenchOnKnockout is a passive ability")
+        }
         AbilityMechanic::CheckupDamageToOpponentActive { .. } => {
             panic!("CheckupDamageToOpponentActive is a passive ability")
         }
