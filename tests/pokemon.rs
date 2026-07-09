@@ -80,6 +80,8 @@ mod hisuian_lilligant_dress_up_test;
 mod hisuian_zoroark_ex_test;
 #[path = "pokemon/hitmonchan_ex_test.rs"]
 mod hitmonchan_ex_test;
+#[path = "pokemon/ho_oh_ex_phoenix_turbo_test.rs"]
+mod ho_oh_ex_phoenix_turbo_test;
 #[path = "pokemon/honchkrow_evil_admonition_test.rs"]
 mod honchkrow_evil_admonition_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]

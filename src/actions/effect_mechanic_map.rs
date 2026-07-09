@@ -1278,7 +1278,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Fire],
         },
     );
-    // map.insert("Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.", todo_implementation);
+    map.insert(
+        "Take a [R], [W], and [L] Energy from your Energy Zone and attach them to your Benched Basic Pokémon in any way you like.",
+        Mechanic::AttachEnergiesAnyWayToBenchedBasic {
+            energies: vec![EnergyType::Fire, EnergyType::Water, EnergyType::Lightning],
+        },
+    );
     map.insert(
         "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
         Mechanic::AttachEnergyToBenchedBasic {
