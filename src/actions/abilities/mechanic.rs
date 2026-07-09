@@ -30,6 +30,13 @@ pub enum AbilityMechanic {
     MoveTypedEnergyFromBenchToActive {
         energy_type: EnergyType,
     },
+    /// Lunala ex's Psychic Connect: "Once during your turn, you may move all [energy_type] Energy
+    /// from 1 of your Benched [energy_type] Pokémon to your Active Pokémon." Unlike
+    /// `MoveTypedEnergyFromBenchToActive`, all of the chosen Pokémon's matching Energy moves at
+    /// once, it is once per turn, and the Active Pokémon may be any type.
+    MoveAllTypedEnergyFromBenchToActive {
+        energy_type: EnergyType,
+    },
     AttachEnergyFromZoneToActiveTypedPokemon {
         energy_type: EnergyType,
     },
