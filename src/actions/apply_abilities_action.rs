@@ -66,6 +66,12 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::MoveTypedEnergyFromBenchToActive { .. } => {
             Outcomes::single_fn(vaporeon_wash_out)
         }
+        AbilityMechanic::MoveAllTypedEnergyFromBenchToActive { energy_type } => {
+            let energy_type = *energy_type;
+            Outcomes::single_fn(move |_rng, state, action| {
+                move_all_typed_energy_from_bench_to_active(state, action, energy_type);
+            })
+        }
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon { energy_type } => {
             attach_energy_from_zone_to_active_typed_outcome(*energy_type)
         }
@@ -749,6 +755,41 @@ fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
         .collect::<Vec<_>>();
     if possible_moves.is_empty() {
         return; // No benched Water Pokémon with Water Energy
+    }
+    state
+        .move_generation_stack
+        .push((acting_player, possible_moves));
+}
+
+/// Lunala ex's Psychic Connect: move all `energy_type` Energy from 1 chosen Benched `energy_type`
+/// Pokémon to the Active Pokémon (any type). The player picks which benched Pokémon to drain.
+fn move_all_typed_energy_from_bench_to_active(
+    state: &mut State,
+    action: &Action,
+    energy_type: EnergyType,
+) {
+    let acting_player = action.actor;
+    let possible_moves = state
+        .enumerate_bench_pokemon(acting_player)
+        .filter_map(|(in_play_idx, pokemon)| {
+            if pokemon.card.get_type() != Some(energy_type) {
+                return None;
+            }
+            let amount = pokemon
+                .attached_energy
+                .iter()
+                .filter(|&&energy| energy == energy_type)
+                .count() as u32;
+            (amount > 0).then_some(SimpleAction::MoveEnergy {
+                from_in_play_idx: in_play_idx,
+                to_in_play_idx: 0, // Active spot
+                energy_type,
+                amount,
+            })
+        })
+        .collect::<Vec<_>>();
+    if possible_moves.is_empty() {
+        return; // No benched Pokémon of this type with matching Energy
     }
     state
         .move_generation_stack

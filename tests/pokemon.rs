@@ -110,6 +110,8 @@ mod legacy_ability_logic_test;
 mod lucario_b3_test;
 #[path = "pokemon/lucario_fighting_coach_test.rs"]
 mod lucario_fighting_coach_test;
+#[path = "pokemon/lunala_ex_test.rs"]
+mod lunala_ex_test;
 #[path = "pokemon/magneton_test.rs"]
 mod magneton_test;
 #[path = "pokemon/magnezone_mirror_shot_test.rs"]
