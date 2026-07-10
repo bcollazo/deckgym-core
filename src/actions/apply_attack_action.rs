@@ -586,6 +586,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::FlipUntilTailsDamage { damage_per_heads } => {
             flip_until_tails_attack(*damage_per_heads)
         }
+        Mechanic::FlipUntilTailsBonusDamage { damage_per_heads } => {
+            flip_until_tails_bonus_attack(attack.fixed_damage, *damage_per_heads)
+        }
         Mechanic::DirectDamageIfDamaged { damage } => direct_damage_if_damaged(*damage),
         Mechanic::AttachEnergyToBenchedBasic { energy_type } => {
             attach_energy_to_benched_basic(state.current_player, *energy_type)
@@ -1988,6 +1991,16 @@ fn flip_until_tails_attack(damage_per_heads: u32) -> AttackOutcomes {
     // Truncate at 8 heads to keep the probability space manageable.
     AttackOutcomes::geometric_until_tails(8, move |heads| {
         active_damage_outcome((heads as u32) * damage_per_heads)
+    })
+}
+
+/// For attacks that deal a base amount and then flip a coin until tails, adding
+/// `damage_per_heads` for each heads (e.g. "does 30 more damage for each heads").
+/// The base is the attack's `fixed_damage`, so it is dealt even on an immediate tails.
+fn flip_until_tails_bonus_attack(base_damage: u32, damage_per_heads: u32) -> AttackOutcomes {
+    // Truncate at 8 heads to keep the probability space manageable.
+    AttackOutcomes::geometric_until_tails(8, move |heads| {
+        active_damage_outcome(base_damage + (heads as u32) * damage_per_heads)
     })
 }
 
@@ -3736,6 +3749,143 @@ mod test {
         // Check probabilities sum to approximately 1
         let sum: f64 = probabilities.iter().sum();
         assert!((sum - 1.0).abs() < 0.001);
+    }
+
+    /// Forecast the given attacker's flip-until-tails attack through the real effect map, apply the
+    /// `heads`-th outcome, and return the damage dealt to a 160-HP receiver (which survives every
+    /// outcome tested here). Exercises the full card -> EFFECT_MECHANIC_MAP -> mechanic pipeline.
+    fn flip_until_tails_map_damage(attacker_id: CardId, heads: usize) -> u32 {
+        let mut rng = StdRng::seed_from_u64(0);
+        let mut state = State::default();
+        let attacker = get_card_by_enum(attacker_id);
+        let receiver = get_card_by_enum(CardId::A1003Venusaur); // 160 HP, no Fire weakness triggered
+        state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+        state.in_play_pokemon[1][0] = Some(to_playable_card(&receiver, false));
+        let attack = state
+            .get_active(0)
+            .get_attacks()
+            .iter()
+            .find(|a| {
+                a.effect
+                    .as_deref()
+                    .is_some_and(|e| e.contains("until you get tails"))
+            })
+            .cloned()
+            .expect("attacker should have a flip-until-tails attack");
+        let mechanic = EFFECT_MECHANIC_MAP
+            .get(attack.effect.as_deref().unwrap())
+            .expect("flip-until-tails effect should be mapped");
+        let (_probabilities, mut mutations) =
+            forecast_effect_attack_by_mechanic(&state, &attack, mechanic).into_branches();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::Attack(attack.clone()),
+            is_stack: false,
+        };
+        mutations.remove(heads)(&mut rng, &mut state, &action);
+        160 - state.get_active(1).get_remaining_hp()
+    }
+
+    #[test]
+    fn test_flip_until_tails_family_effect_map_wiring() {
+        // "N more damage for each heads" -> bonus mechanic (base from fixed_damage);
+        // "N damage for each heads" -> base-less mechanic.
+        assert!(matches!(
+            EFFECT_MECHANIC_MAP.get(
+                "Flip a coin until you get tails. This attack does 30 more damage for each heads."
+            ),
+            Some(Mechanic::FlipUntilTailsBonusDamage {
+                damage_per_heads: 30
+            })
+        ));
+        assert!(matches!(
+            EFFECT_MECHANIC_MAP.get(
+                "Flip a coin until you get tails. This attack does 40 more damage for each heads."
+            ),
+            Some(Mechanic::FlipUntilTailsBonusDamage {
+                damage_per_heads: 40
+            })
+        ));
+        assert!(matches!(
+            EFFECT_MECHANIC_MAP
+                .get("Flip a coin until you get tails. This attack does 40 damage for each heads."),
+            Some(Mechanic::FlipUntilTailsDamage {
+                damage_per_heads: 40
+            })
+        ));
+        assert!(matches!(
+            EFFECT_MECHANIC_MAP
+                .get("Flip a coin until you get tails. This attack does 70 damage for each heads."),
+            Some(Mechanic::FlipUntilTailsDamage {
+                damage_per_heads: 70
+            })
+        ));
+    }
+
+    #[test]
+    fn test_flip_until_tails_bonus_attack_adds_base_and_scales() {
+        // Same geometric shape as the base mechanic: 9 outcomes (0..=8 heads).
+        let (probabilities, _mutations) = flip_until_tails_bonus_attack(50, 30).into_branches();
+        assert_eq!(probabilities.len(), 9);
+
+        // Base is dealt even on an immediate tails; each heads adds `damage_per_heads`.
+        let attacker = get_card_by_enum(CardId::B3a051IronTreads);
+        let receiver = get_card_by_enum(CardId::A1003Venusaur); // 160 HP
+        for (heads, expected_damage) in [(0usize, 50u32), (1, 80), (2, 110)] {
+            let mut rng = StdRng::seed_from_u64(0);
+            let mut state = State::default();
+            state.in_play_pokemon[0][0] = Some(to_playable_card(&attacker, false));
+            state.in_play_pokemon[1][0] = Some(to_playable_card(&receiver, false));
+            let (_probabilities, mut mutations) =
+                flip_until_tails_bonus_attack(50, 30).into_branches();
+            let action = Action {
+                actor: 0,
+                action: SimpleAction::Attack(crate::models::Attack {
+                    energy_required: vec![],
+                    title: String::new(),
+                    fixed_damage: 0,
+                    effect: None,
+                }),
+                is_stack: false,
+            };
+            mutations.remove(heads)(&mut rng, &mut state, &action);
+            assert_eq!(
+                state.get_active(1).get_remaining_hp(),
+                160 - expected_damage,
+                "{heads} heads should deal 50 + {heads}*30"
+            );
+        }
+    }
+
+    #[test]
+    fn test_flip_until_tails_bonus_base_comes_from_card_fixed_damage() {
+        // Iron Treads (50 base) and Rayquaza (70 base) share the exact "30 more" effect text but
+        // different `fixed_damage` -> the base must come from the card, not a constant in the map.
+        assert_eq!(flip_until_tails_map_damage(CardId::B3a051IronTreads, 0), 50);
+        assert_eq!(flip_until_tails_map_damage(CardId::B3a051IronTreads, 1), 80);
+        assert_eq!(flip_until_tails_map_damage(CardId::PA063Rayquaza, 0), 70);
+        assert_eq!(flip_until_tails_map_damage(CardId::PA063Rayquaza, 1), 100);
+        // "40 more" cluster.
+        assert_eq!(
+            flip_until_tails_map_damage(CardId::A2125LickilickyEx, 0),
+            100
+        );
+        assert_eq!(
+            flip_until_tails_map_damage(CardId::A2125LickilickyEx, 1),
+            140
+        );
+
+        // No-base ("N damage for each heads") cards deal nothing on an immediate tails.
+        assert_eq!(flip_until_tails_map_damage(CardId::B1211Wooloo, 0), 0);
+        assert_eq!(flip_until_tails_map_damage(CardId::B1211Wooloo, 1), 40);
+        assert_eq!(
+            flip_until_tails_map_damage(CardId::A3118AlolanDugtrio, 0),
+            0
+        );
+        assert_eq!(
+            flip_until_tails_map_damage(CardId::A3118AlolanDugtrio, 1),
+            70
+        );
     }
 
     #[test]

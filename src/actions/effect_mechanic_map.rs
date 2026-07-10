@@ -657,16 +657,36 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_heads: 20,
         },
     );
-    // map.insert("Flip a coin until you get tails. This attack does 30 more damage for each heads.", todo_implementation);
-    // map.insert("Flip a coin until you get tails. This attack does 40 damage for each heads.", todo_implementation);
-    // map.insert("Flip a coin until you get tails. This attack does 40 more damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip a coin until you get tails. This attack does 30 more damage for each heads.",
+        Mechanic::FlipUntilTailsBonusDamage {
+            damage_per_heads: 30,
+        },
+    );
+    map.insert(
+        "Flip a coin until you get tails. This attack does 40 damage for each heads.",
+        Mechanic::FlipUntilTailsDamage {
+            damage_per_heads: 40,
+        },
+    );
+    map.insert(
+        "Flip a coin until you get tails. This attack does 40 more damage for each heads.",
+        Mechanic::FlipUntilTailsBonusDamage {
+            damage_per_heads: 40,
+        },
+    );
     map.insert(
         "Flip a coin until you get tails. This attack does 60 damage for each heads.",
         Mechanic::FlipUntilTailsDamage {
             damage_per_heads: 60,
         },
     );
-    // map.insert("Flip a coin until you get tails. This attack does 70 damage for each heads.", todo_implementation);
+    map.insert(
+        "Flip a coin until you get tails. This attack does 70 damage for each heads.",
+        Mechanic::FlipUntilTailsDamage {
+            damage_per_heads: 70,
+        },
+    );
     // map.insert("Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.", todo_implementation);
     map.insert(
         "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon.",
