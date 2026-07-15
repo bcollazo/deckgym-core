@@ -1214,6 +1214,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "Take a [C] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Colorless],
+        },
+    );
+    map.insert(
         "Take a [G] Energy from your Energy Zone and attach it to 1 of your Benched [G] Pokémon.",
         Mechanic::ChargeBench {
             energies: vec![EnergyType::Grass],
@@ -2253,7 +2259,6 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per: 20,
         },
     );
-    // map.insert("Take a [C] Energy from your Energy Zone and attach it to this Pokémon.", todo_implementation);
     // map.insert("The Defending Pokémon loses all Abilities. This effect lasts until the Defending Pokémon leaves the Active Spot.", todo_implementation);
     map.insert(
         "This attack does 30 damage for each of your Benched [D] Pokémon.",
