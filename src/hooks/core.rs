@@ -1325,6 +1325,54 @@ pub(crate) fn on_knockout(
             }
         }
     }
+
+    // Passimian ex's Offload Pass: if this Pokémon is Knocked Out in the Active Spot by an
+    // opponent's attack, move all of its typed Energy to 1 of your Benched Pokémon (your choice).
+    if is_opponent_attack && knocked_out_idx == 0 {
+        let offload_energy = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+            .as_ref()
+            .and_then(|pokemon| match get_ability_mechanic(&pokemon.card) {
+                Some(AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { energy_type }) => {
+                    Some(*energy_type)
+                }
+                _ => None,
+            });
+        if let Some(energy_type) = offload_energy {
+            let bench_indices: Vec<usize> = state
+                .enumerate_bench_pokemon(knocked_out_player)
+                .map(|(idx, _)| idx)
+                .collect();
+            // With no Benched Pokémon there is nowhere to move the Energy (and the game is about to
+            // end), so leave it to be discarded with this Pokémon.
+            if !bench_indices.is_empty() {
+                // Remove the Energy from the KO'd Pokémon first so it isn't sent to the discard
+                // pile; the chosen Attach below re-attaches it to a Benched Pokémon.
+                let moved = {
+                    let ko_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+                        .as_mut()
+                        .expect("Pokemon should be there if knocked out");
+                    let before = ko_pokemon.attached_energy.len();
+                    ko_pokemon.attached_energy.retain(|&e| e != energy_type);
+                    (before - ko_pokemon.attached_energy.len()) as u32
+                };
+                if moved > 0 {
+                    // One choice per Benched Pokémon; all of the Energy goes to the chosen one.
+                    // Pushed here (before promotion, which is inserted at the bottom of the stack)
+                    // so it resolves while the Bench is still intact.
+                    let choices = bench_indices
+                        .into_iter()
+                        .map(|idx| SimpleAction::Attach {
+                            attachments: vec![(moved, energy_type, idx)],
+                            is_turn_energy: false,
+                        })
+                        .collect::<Vec<_>>();
+                    state
+                        .move_generation_stack
+                        .push((knocked_out_player, choices));
+                }
+            }
+        }
+    }
 }
 
 pub(crate) fn on_attack_knockout(
