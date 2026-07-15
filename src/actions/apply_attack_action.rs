@@ -245,6 +245,9 @@ fn forecast_effect_attack_by_mechanic(
             energies,
             target_benched_type,
         } => energy_bench_attack(energies.clone(), *target_benched_type, state, attack),
+        Mechanic::AttachEnergiesAnyWayToBenchedBasic { energies } => {
+            attach_energies_any_way_to_benched_basic(attack.fixed_damage, energies.clone())
+        }
         Mechanic::VaporeonHyperWhirlpool => vaporeon_hyper_whirlpool(state, attack.fixed_damage),
         Mechanic::SearchToHandByEnergy { energy_type } => AttackOutcomes::from_effect_outcomes(
             pokemon_search_outcomes_by_type(state, false, *energy_type),
@@ -1364,6 +1367,54 @@ pub(crate) fn energy_bench_attack(
             .move_generation_stack
             .push((action.actor, choices.clone()));
     })
+}
+
+/// Ho-Oh ex's Phoenix Turbo: deal `damage`, then attach each Energy in `energies` to your Benched
+/// Basic Pokémon "in any way you like". Each Energy is placed independently (all on one Pokémon is
+/// allowed), fossils count as Basic (`get_stage == 0`), and if there is no Benched Basic Pokémon
+/// the Energy fizzles — the damage is always dealt.
+fn attach_energies_any_way_to_benched_basic(
+    damage: u32,
+    energies: Vec<EnergyType>,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let basic_indices = state
+            .enumerate_bench_pokemon(action.actor)
+            .filter(|(_, pokemon)| get_stage(pokemon) == 0)
+            .map(|(in_play_idx, _)| in_play_idx)
+            .collect::<Vec<_>>();
+        if basic_indices.is_empty() {
+            return; // No Benched Basic Pokémon; the Energy fizzles (damage already applied).
+        }
+        let mut choices = Vec::new();
+        distribute_energies_across_basics(&basic_indices, &energies, &mut Vec::new(), &mut choices);
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+/// Recursively enumerate every way to attach `energies[assigned.len()..]` to `basic_indices`, one
+/// Energy at a time, producing one `Attach` action per full distribution.
+fn distribute_energies_across_basics(
+    basic_indices: &[usize],
+    energies: &[EnergyType],
+    assigned: &mut Vec<(u32, EnergyType, usize)>,
+    out: &mut Vec<SimpleAction>,
+) {
+    match energies.split_first() {
+        None => out.push(SimpleAction::Attach {
+            attachments: assigned.clone(),
+            is_turn_energy: false,
+        }),
+        Some((&energy, rest)) => {
+            for &in_play_idx in basic_indices {
+                assigned.push((1, energy, in_play_idx));
+                distribute_energies_across_basics(basic_indices, rest, assigned, out);
+                assigned.pop();
+            }
+        }
+    }
 }
 
 /// Used for attacks that on heads deal extra damage, on tails deal self damage.

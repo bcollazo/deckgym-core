@@ -188,6 +188,13 @@ pub enum Mechanic {
         energies: Vec<EnergyType>,
         target_benched_type: Option<EnergyType>,
     },
+    /// Ho-Oh ex's Phoenix Turbo: deal `fixed_damage`, then attach each of these Energies to your
+    /// Benched Basic Pokémon "in any way you like" (each Energy is placed independently, so all on
+    /// one Pokémon is allowed). Fossils count as Basic. If there is no Benched Basic Pokémon the
+    /// Energy simply fizzles; the damage is still dealt.
+    AttachEnergiesAnyWayToBenchedBasic {
+        energies: Vec<EnergyType>,
+    },
     VaporeonHyperWhirlpool,
     ConditionalBenchDamage {
         required_extra_energy: Vec<EnergyType>,
