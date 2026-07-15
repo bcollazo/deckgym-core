@@ -104,6 +104,8 @@ mod jolteon_ex_test;
 mod klefki_dismantling_keys_test;
 #[path = "pokemon/kommo_o_clanging_scales_test.rs"]
 mod kommo_o_clanging_scales_test;
+#[path = "pokemon/kubfu_training_test.rs"]
+mod kubfu_training_test;
 #[path = "pokemon/legacy_ability_logic_test.rs"]
 mod legacy_ability_logic_test;
 #[path = "pokemon/lucario_b3_test.rs"]
