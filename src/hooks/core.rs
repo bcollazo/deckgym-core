@@ -1249,130 +1249,192 @@ pub(crate) fn on_knockout(
     attacking_ref: (usize, usize),
     is_from_active_attack: bool,
 ) {
-    // Handle Lucky Egg: draw until hand has 5 when KO'd by opponent's active attack
+    // A genuine opponent KO: an active attack that knocked out a Pokémon belonging to a
+    // different player than the attacker (not a self/recoil KO).
     let is_opponent_attack = is_from_active_attack && attacking_ref.0 != knocked_out_player;
+    apply_lucky_egg(
+        state,
+        knocked_out_player,
+        knocked_out_idx,
+        is_opponent_attack,
+    );
+    apply_electrical_cord(
+        state,
+        knocked_out_player,
+        knocked_out_idx,
+        is_from_active_attack,
+    );
+    apply_offload_pass(
+        state,
+        knocked_out_player,
+        knocked_out_idx,
+        is_opponent_attack,
+    );
+}
+
+/// Lucky Egg: when the holder is Knocked Out by an opponent's attack, draw until hand has 5.
+/// Position-agnostic — triggers whether the holder was KO'd in the Active Spot or on the Bench.
+fn apply_lucky_egg(
+    state: &mut State,
+    knocked_out_player: usize,
+    knocked_out_idx: usize,
+    is_opponent_attack: bool,
+) {
     let has_lucky_egg = {
         let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
             .as_ref()
             .expect("Pokemon should be there if knocked out");
         has_tool(knocked_out_pokemon, CardId::B3148LuckyEgg)
     };
-    if has_lucky_egg && is_opponent_attack {
-        debug!("Lucky Egg: Drawing cards until hand has 5");
-        let draws_needed = 5usize.saturating_sub(state.hands[knocked_out_player].len());
-        for _ in 0..draws_needed {
-            if state.decks[knocked_out_player].cards.is_empty() {
-                break;
-            }
-            state.maybe_draw_card(knocked_out_player);
-        }
+    if !has_lucky_egg || !is_opponent_attack {
+        return;
     }
 
-    let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
-        .as_ref()
-        .expect("Pokemon should be there if knocked out");
-
-    // Handle Electrical Cord: "If the [L] Pokémon this card is attached to is in the Active
-    // Spot and is Knocked Out by damage from an attack..."
-    if has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord)
-        && knocked_out_pokemon.get_energy_type() == Some(EnergyType::Lightning)
-    {
-        // Only triggers if knocked out in active spot from an active attack
-        if knocked_out_idx != 0 || !is_from_active_attack {
-            return;
+    debug!("Lucky Egg: Drawing cards until hand has 5");
+    let draws_needed = 5usize.saturating_sub(state.hands[knocked_out_player].len());
+    for _ in 0..draws_needed {
+        if state.decks[knocked_out_player].cards.is_empty() {
+            break;
         }
+        state.maybe_draw_card(knocked_out_player);
+    }
+}
 
-        // Collect up to 2 Lightning energies from the knocked out Pokemon
-        let mut lightning_energies = vec![];
-        let knocked_out_pokemon_mut = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+/// Electrical Cord: "If the [L] Pokémon this card is attached to is in the Active Spot and is
+/// Knocked Out by damage from an attack..." move up to 2 of its Lightning Energy to Benched
+/// Pokémon (1 each to the two lowest-index Benched Pokémon). Note this uses the raw
+/// `is_from_active_attack` flag, so it fires even on a self-KO from one's own active attack.
+///
+/// The early returns below only exit this helper (not `on_knockout`), letting control fall
+/// through to `apply_offload_pass`. That is behavior-preserving because every return path here
+/// is gated on the holder being a Lightning Pokémon, and no Lightning Pokémon carries the
+/// `MoveAllTypedEnergyToBenchOnKnockout` ability that Offload Pass requires — so Offload Pass
+/// would be a no-op in these cases regardless.
+fn apply_electrical_cord(
+    state: &mut State,
+    knocked_out_player: usize,
+    knocked_out_idx: usize,
+    is_from_active_attack: bool,
+) {
+    let has_electrical_cord = {
+        let knocked_out_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+            .as_ref()
+            .expect("Pokemon should be there if knocked out");
+        has_tool(knocked_out_pokemon, CardId::A3a065ElectricalCord)
+            && knocked_out_pokemon.get_energy_type() == Some(EnergyType::Lightning)
+    };
+    if !has_electrical_cord {
+        return;
+    }
+    // Only triggers if knocked out in active spot from an active attack
+    if knocked_out_idx != 0 || !is_from_active_attack {
+        return;
+    }
+
+    // Collect up to 2 Lightning energies from the knocked out Pokemon
+    let mut lightning_energies = vec![];
+    let knocked_out_pokemon_mut = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+        .as_mut()
+        .expect("Pokemon should be there if knocked out");
+    for _ in 0..2 {
+        if let Some(pos) = knocked_out_pokemon_mut
+            .attached_energy
+            .iter()
+            .position(|e| *e == EnergyType::Lightning)
+        {
+            // Remove from pokemon so it doesn't end up in discard pile
+            lightning_energies.push(knocked_out_pokemon_mut.attached_energy.swap_remove(pos));
+        }
+    }
+    if lightning_energies.is_empty() {
+        return;
+    }
+
+    // Distribute energies to benched Pokemon (1 each to up to 2 Pokemon)
+    debug!(
+        "Electrical Cord: Moving {} Lightning Energy from knocked out Pokemon",
+        lightning_energies.len()
+    );
+    // Collect just the indices to avoid borrow checker issues
+    let bench_indices: Vec<_> = state
+        .enumerate_bench_pokemon(knocked_out_player)
+        .map(|(idx, _)| idx)
+        .collect();
+    for (i, energy) in lightning_energies.into_iter().enumerate() {
+        if i < bench_indices.len() {
+            let bench_idx = bench_indices[i];
+            if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut() {
+                pokemon.attached_energy.push(energy);
+                debug!(
+                    "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
+                    bench_idx
+                );
+            }
+        }
+    }
+}
+
+/// Passimian ex's Offload Pass: if this Pokémon is Knocked Out in the Active Spot by an
+/// opponent's attack, move all of its typed Energy to 1 of your Benched Pokémon (your choice).
+fn apply_offload_pass(
+    state: &mut State,
+    knocked_out_player: usize,
+    knocked_out_idx: usize,
+    is_opponent_attack: bool,
+) {
+    if !is_opponent_attack || knocked_out_idx != 0 {
+        return;
+    }
+
+    let offload_energy = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
+        .as_ref()
+        .and_then(|pokemon| match get_ability_mechanic(&pokemon.card) {
+            Some(AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { energy_type }) => {
+                Some(*energy_type)
+            }
+            _ => None,
+        });
+    let Some(energy_type) = offload_energy else {
+        return;
+    };
+
+    let bench_indices: Vec<usize> = state
+        .enumerate_bench_pokemon(knocked_out_player)
+        .map(|(idx, _)| idx)
+        .collect();
+    // With no Benched Pokémon there is nowhere to move the Energy (and the game is about to
+    // end), so leave it to be discarded with this Pokémon.
+    if bench_indices.is_empty() {
+        return;
+    }
+
+    // Remove the Energy from the KO'd Pokémon first so it isn't sent to the discard
+    // pile; the chosen Attach below re-attaches it to a Benched Pokémon.
+    let moved = {
+        let ko_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
             .as_mut()
             .expect("Pokemon should be there if knocked out");
-        for _ in 0..2 {
-            if let Some(pos) = knocked_out_pokemon_mut
-                .attached_energy
-                .iter()
-                .position(|e| *e == EnergyType::Lightning)
-            {
-                // Remove from pokemon so it doesn't end up in discard pile
-                lightning_energies.push(knocked_out_pokemon_mut.attached_energy.swap_remove(pos));
-            }
-        }
-        if lightning_energies.is_empty() {
-            return;
-        }
-
-        // Distribute energies to benched Pokemon (1 each to up to 2 Pokemon)
-        debug!(
-            "Electrical Cord: Moving {} Lightning Energy from knocked out Pokemon",
-            lightning_energies.len()
-        );
-        // Collect just the indices to avoid borrow checker issues
-        let bench_indices: Vec<_> = state
-            .enumerate_bench_pokemon(knocked_out_player)
-            .map(|(idx, _)| idx)
-            .collect();
-        for (i, energy) in lightning_energies.into_iter().enumerate() {
-            if i < bench_indices.len() {
-                let bench_idx = bench_indices[i];
-                if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut()
-                {
-                    pokemon.attached_energy.push(energy);
-                    debug!(
-                        "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
-                        bench_idx
-                    );
-                }
-            }
-        }
+        let before = ko_pokemon.attached_energy.len();
+        ko_pokemon.attached_energy.retain(|&e| e != energy_type);
+        (before - ko_pokemon.attached_energy.len()) as u32
+    };
+    if moved == 0 {
+        return;
     }
 
-    // Passimian ex's Offload Pass: if this Pokémon is Knocked Out in the Active Spot by an
-    // opponent's attack, move all of its typed Energy to 1 of your Benched Pokémon (your choice).
-    if is_opponent_attack && knocked_out_idx == 0 {
-        let offload_energy = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
-            .as_ref()
-            .and_then(|pokemon| match get_ability_mechanic(&pokemon.card) {
-                Some(AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { energy_type }) => {
-                    Some(*energy_type)
-                }
-                _ => None,
-            });
-        if let Some(energy_type) = offload_energy {
-            let bench_indices: Vec<usize> = state
-                .enumerate_bench_pokemon(knocked_out_player)
-                .map(|(idx, _)| idx)
-                .collect();
-            // With no Benched Pokémon there is nowhere to move the Energy (and the game is about to
-            // end), so leave it to be discarded with this Pokémon.
-            if !bench_indices.is_empty() {
-                // Remove the Energy from the KO'd Pokémon first so it isn't sent to the discard
-                // pile; the chosen Attach below re-attaches it to a Benched Pokémon.
-                let moved = {
-                    let ko_pokemon = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
-                        .as_mut()
-                        .expect("Pokemon should be there if knocked out");
-                    let before = ko_pokemon.attached_energy.len();
-                    ko_pokemon.attached_energy.retain(|&e| e != energy_type);
-                    (before - ko_pokemon.attached_energy.len()) as u32
-                };
-                if moved > 0 {
-                    // One choice per Benched Pokémon; all of the Energy goes to the chosen one.
-                    // Pushed here (before promotion, which is inserted at the bottom of the stack)
-                    // so it resolves while the Bench is still intact.
-                    let choices = bench_indices
-                        .into_iter()
-                        .map(|idx| SimpleAction::Attach {
-                            attachments: vec![(moved, energy_type, idx)],
-                            is_turn_energy: false,
-                        })
-                        .collect::<Vec<_>>();
-                    state
-                        .move_generation_stack
-                        .push((knocked_out_player, choices));
-                }
-            }
-        }
-    }
+    // One choice per Benched Pokémon; all of the Energy goes to the chosen one.
+    // Pushed here (before promotion, which is inserted at the bottom of the stack)
+    // so it resolves while the Bench is still intact.
+    let choices = bench_indices
+        .into_iter()
+        .map(|idx| SimpleAction::Attach {
+            attachments: vec![(moved, energy_type, idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    state
+        .move_generation_stack
+        .push((knocked_out_player, choices));
 }
 
 pub(crate) fn on_attack_knockout(
