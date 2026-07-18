@@ -19,8 +19,8 @@ use crate::{
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
     hooks::{
-        can_evolve_into, contains_energy, get_attack_cost, get_retreat_cost, get_stage,
-        DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT,
+        attack_effect_ignores_opponent_active_effects, can_evolve_into, contains_energy,
+        get_attack_cost, get_retreat_cost, get_stage,
     },
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     State,
@@ -112,7 +112,7 @@ fn apply_defender_damage_prevention_if_needed(
     // Attacks like Sawk's Brick Break ignore any effect on the opponent's Active Pokémon, so the
     // Active never gets a Carefree-Steps prevention flip (it only ever damages the Active).
     let ignores_active_effects =
-        attack.effect.as_deref() == Some(DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT);
+        attack_effect_ignores_opponent_active_effects(attack.effect.as_deref());
 
     // Collect every opponent in-play Pokémon (Active and Benched) presenting the
     // CoinFlipToPreventIncomingDamage effect (e.g. Meowth's Carefree Steps). It applies
@@ -705,6 +705,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DamageUnaffectedByOpponentActiveEffects => {
             active_damage_doutcome(attack.fixed_damage)
         }
+        Mechanic::ExtraDamageIfSelfHasTypeEnergy {
+            energy_type,
+            extra_damage,
+        } => extra_damage_if_self_has_type_energy(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *extra_damage,
+        ),
         Mechanic::CoinFlipToBlockAttackNextTurn => {
             coin_flip_to_block_attack_next_turn(attack.fixed_damage)
         }
@@ -2552,6 +2561,25 @@ fn extra_damage_per_specific_energy_all_yours(
         .count() as u32;
     let damage = base_damage + matching_energy_count * damage_per_energy;
     active_damage_doutcome(damage)
+}
+
+/// Medicham's "Psykick" / Mega Medicham ex's "Chakra Fist": extra damage if the attacking active
+/// Pokémon has any Energy of `energy_type` attached.
+fn extra_damage_if_self_has_type_energy(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let has_energy = state
+        .get_active(state.current_player)
+        .attached_energy
+        .contains(&energy_type);
+    if has_energy {
+        active_damage_doutcome(base_damage + extra_damage)
+    } else {
+        active_damage_doutcome(base_damage)
+    }
 }
 
 fn extra_damage_if_type_energy_in_play_attack(
