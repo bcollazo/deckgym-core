@@ -82,3 +82,32 @@ fn test_mega_medicham_chakra_fist_bypasses_cloyster_shell_armor() {
     // Cloyster has 120 HP; Shell Armor would leave it at 30. Chakra Fist ignores it → 20.
     assert_eq!(state.get_active(1).get_remaining_hp(), 20);
 }
+
+/// Oricorio's "Safeguard" (`PreventAllDamageFromEx`) normally blocks all damage from a Pokémon ex
+/// (see `test_oricorio_safeguard_prevents_damage_from_ex_attack`). Mega Medicham ex is a Pokémon
+/// ex, but Chakra Fist ignores effects on the opponent's Active Pokémon, so Safeguard is bypassed
+/// and Oricorio (70 HP) still gets Knocked Out by the 100 damage — earning player 0 a point.
+#[test]
+fn test_mega_medicham_chakra_fist_damages_oricorio_through_safeguard() {
+    let mut game = get_test_game_with_board(
+        vec![medicham_with(vec![
+            EnergyType::Fighting,
+            EnergyType::Colorless,
+            EnergyType::Colorless,
+        ])],
+        // Bench a backup so the Knock Out doesn't end the game.
+        vec![
+            PlayedCard::from_id(CardId::A3066Oricorio),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+    );
+
+    game.apply_action(&chakra_fist());
+
+    let state = game.get_state_clone();
+    // If Safeguard had prevented the damage, Oricorio would survive and no point would be scored.
+    assert_eq!(
+        state.points[0], 1,
+        "Chakra Fist must bypass Safeguard and Knock Out Oricorio"
+    );
+}
