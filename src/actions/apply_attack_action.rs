@@ -18,7 +18,10 @@ use crate::{
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
-    hooks::{can_evolve_into, contains_energy, get_attack_cost, get_retreat_cost, get_stage},
+    hooks::{
+        can_evolve_into, contains_energy, get_attack_cost, get_retreat_cost, get_stage,
+        DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT,
+    },
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     State,
 };
@@ -85,7 +88,7 @@ fn apply_attack_common_modifiers(
         outcomes = apply_block_attack_coin_flip(outcomes);
     }
 
-    outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, outcomes);
+    outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, attack, outcomes);
     apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
 }
 
@@ -95,28 +98,35 @@ fn apply_copied_attack_modifiers(
     attack: &Attack,
     base_outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
-    let outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, base_outcomes);
+    let outcomes =
+        apply_defender_damage_prevention_if_needed(acting_player, state, attack, base_outcomes);
     apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_defender_damage_prevention_if_needed(
     acting_player: usize,
     state: &State,
+    attack: &Attack,
     outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
-    // Collect every opponent in-play Pokémon (Active and Benched) with the CoinFlipToPreventDamage
-    // ability (e.g. Meowth's Carefree Steps). The ability applies independently to each such
-    // Pokémon, and the split only adds a coin flip for the ones that actually take damage.
+    // Attacks like Sawk's Brick Break ignore any effect on the opponent's Active Pokémon, so the
+    // Active never gets a Carefree-Steps prevention flip (it only ever damages the Active).
+    let ignores_active_effects =
+        attack.effect.as_deref() == Some(DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT);
+
+    // Collect every opponent in-play Pokémon (Active and Benched) presenting the
+    // CoinFlipToPreventIncomingDamage effect (e.g. Meowth's Carefree Steps). It applies
+    // independently to each such Pokémon, and the split only adds a coin flip for the ones that
+    // actually take damage.
     let opponent = (acting_player + 1) % 2;
     let prevented_indices: Vec<usize> = state
         .enumerate_in_play_pokemon(opponent)
+        .filter(|(idx, _)| !(ignores_active_effects && *idx == 0))
         .filter(|(_, pokemon)| {
             pokemon
-                .card
-                .get_ability()
-                .and_then(|a| ability_mechanic_from_effect(&a.effect))
-                .map(|m| matches!(m, AbilityMechanic::CoinFlipToPreventDamage))
-                .unwrap_or(false)
+                .get_effective_card_effects()
+                .iter()
+                .any(|e| matches!(e, CardEffect::CoinFlipToPreventIncomingDamage))
         })
         .map(|(idx, _)| idx)
         .collect();
@@ -692,6 +702,9 @@ fn forecast_effect_attack_by_mechanic(
             *extra_damage,
         ),
         Mechanic::DamageUnaffectedByWeakness => active_damage_doutcome(attack.fixed_damage),
+        Mechanic::DamageUnaffectedByOpponentActiveEffects => {
+            active_damage_doutcome(attack.fixed_damage)
+        }
         Mechanic::CoinFlipToBlockAttackNextTurn => {
             coin_flip_to_block_attack_next_turn(attack.fixed_damage)
         }

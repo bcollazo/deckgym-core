@@ -235,6 +235,11 @@ pub enum Mechanic {
         extra_damage: u32,
     },
     DamageUnaffectedByWeakness,
+    /// Sawk's Brick Break: fixed damage whose value "isn't affected by any effects on your
+    /// opponent's Active Pokémon." The bypass itself is handled in `hooks::modify_damage` and the
+    /// defender-prevention path via the attack's effect text; this variant just routes the attack
+    /// as ordinary active damage (like `DamageUnaffectedByWeakness`).
+    DamageUnaffectedByOpponentActiveEffects,
     DelayedSpotDamage {
         amount: u32,
     },

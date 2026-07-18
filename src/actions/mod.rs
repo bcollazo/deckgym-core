@@ -25,6 +25,7 @@ pub(crate) use apply_action_helpers::handle_damage_only;
 pub(crate) use apply_action_helpers::handle_knockouts;
 pub use apply_trainer_action::may_effect;
 pub use effect_ability_mechanic_map::ability_mechanic_from_effect;
+pub(crate) use effect_ability_mechanic_map::card_effect_from_ability_mechanic;
 pub(crate) use effect_ability_mechanic_map::get_ability_mechanic;
 pub use effect_ability_mechanic_map::has_ability_mechanic;
 pub use effect_ability_mechanic_map::EFFECT_ABILITY_MECHANIC_MAP;

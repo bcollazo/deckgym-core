@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::actions::abilities::AbilityMechanic;
+use crate::effects::CardEffect;
 use crate::models::{Card, EnergyType};
 
 /// Map from ability effect text to its AbilityMechanic.
@@ -350,7 +351,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 amount: 30,
             },
         );
-        // map.insert("This Pokémon takes -10 damage from attacks.", todo_implementation);
+        map.insert(
+            "This Pokémon takes -10 damage from attacks.",
+            AbilityMechanic::ReduceDamageFromAttacks { amount: 10 },
+        );
         // map.insert("This Pokémon takes -20 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
         map.insert(
             "This Pokémon takes -20 damage from attacks.",
@@ -522,4 +526,27 @@ pub fn get_ability_mechanic(card: &Card) -> Option<&'static AbilityMechanic> {
 
 pub fn has_ability_mechanic(card: &Card, mechanic: &AbilityMechanic) -> bool {
     get_ability_mechanic(card) == Some(mechanic)
+}
+
+/// Translate a *self-scoped defensive* passive ability mechanic into the `CardEffect` it presents
+/// as while the holder is in play. This is the core of the "abilities-as-effects" model: rather
+/// than scanning the board for these abilities, damage code reads a Pokémon's effect list (see
+/// `PlayedCard::get_effective_card_effects`), which merges stored effects with the effects derived
+/// here. Returns `None` for mechanics that are not effects-on-this-Pokémon (activated abilities,
+/// opponent-restrictions like Gengar/Snorlax, auras like Serperior, lifecycle triggers, etc.).
+pub fn card_effect_from_ability_mechanic(mechanic: &AbilityMechanic) -> Option<CardEffect> {
+    match mechanic {
+        AbilityMechanic::ReduceDamageFromAttacks { amount } => {
+            Some(CardEffect::ReduceDamageFromAttacks { amount: *amount })
+        }
+        AbilityMechanic::ReduceOpponentActiveDamage { amount } => {
+            Some(CardEffect::ReduceOpponentActiveDamage { amount: *amount })
+        }
+        AbilityMechanic::PreventAllDamageFromEx => Some(CardEffect::PreventAllDamageFromEx),
+        AbilityMechanic::PreventDamageWhileBenched => Some(CardEffect::PreventDamageWhileBenched),
+        AbilityMechanic::CoinFlipToPreventDamage => {
+            Some(CardEffect::CoinFlipToPreventIncomingDamage)
+        }
+        _ => None,
+    }
 }
