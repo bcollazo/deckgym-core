@@ -800,11 +800,19 @@ enum WeaknessApplication {
 const DAMAGE_UNAFFECTED_BY_WEAKNESS_EFFECT: &str =
     "This attack's damage isn't affected by Weakness.";
 
-/// Sawk's Brick Break (and any card sharing this text): the attack's damage ignores every effect
+/// Sawk's Brick Break (and any card sharing this clause): the attack's damage ignores every effect
 /// on the opponent's Active Pokémon — ability-derived reductions/preventions, stored CardEffects,
 /// and damage-reducing Tools alike. See `attack_ignores_opponent_active_effects`.
 pub(crate) const DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT: &str =
     "This attack's damage isn't affected by any effects on your opponent's Active Pokémon.";
+
+/// Whether an attack's effect text carries the "isn't affected by any effects on your opponent's
+/// Active Pokémon" clause. This is a substring match (not equality) so attacks that combine it with
+/// another clause — e.g. Mega Medicham ex's "Chakra Fist" (the [P]-Energy damage bonus plus this
+/// clause) — share Sawk's bypass behavior.
+pub(crate) fn attack_effect_ignores_opponent_active_effects(effect: Option<&str>) -> bool {
+    effect.is_some_and(|e| e.contains(DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT))
+}
 
 #[derive(Clone, Copy, Default)]
 pub(crate) struct DamageModifierContext<'a> {
@@ -819,7 +827,7 @@ fn attack_effect_ignores_weakness(context: DamageModifierContext<'_>) -> bool {
 }
 
 fn attack_ignores_opponent_active_effects(context: DamageModifierContext<'_>) -> bool {
-    context.attack_effect == Some(DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT)
+    attack_effect_ignores_opponent_active_effects(context.attack_effect)
 }
 
 fn get_weakness_application(

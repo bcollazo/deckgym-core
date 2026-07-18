@@ -128,6 +128,8 @@ mod mega_camerupt_ex_test;
 mod mega_diancie_ex_test;
 #[path = "pokemon/mega_kangaskhan_double_punching_family_test.rs"]
 mod mega_kangaskhan_double_punching_family_test;
+#[path = "pokemon/mega_medicham_ex_test.rs"]
+mod mega_medicham_ex_test;
 #[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]

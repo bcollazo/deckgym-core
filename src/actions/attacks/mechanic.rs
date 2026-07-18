@@ -136,6 +136,14 @@ pub enum Mechanic {
         minimum_count: usize,
         extra_damage: u32,
     },
+    /// Medicham's "Psykick" / Mega Medicham ex's "Chakra Fist": extra damage if the attacking
+    /// Pokémon has any Energy of `energy_type` attached. (Chakra Fist additionally shares Sawk's
+    /// "isn't affected by any effects on your opponent's Active Pokémon" clause, which is detected
+    /// separately from the attack's effect text in `hooks::modify_damage`.)
+    ExtraDamageIfSelfHasTypeEnergy {
+        energy_type: EnergyType,
+        extra_damage: u32,
+    },
     ExtraDamageIfStadiumInPlay {
         extra_damage: u32,
     },

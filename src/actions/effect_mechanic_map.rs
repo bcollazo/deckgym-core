@@ -1897,7 +1897,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If the amount of Energy attached to both Active Pokémon is 5 or more, this attack does 60 more damage.",
         Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast { threshold: 5, extra_damage: 60 },
     );
-    // map.insert("If this Pokémon has any [P] Energy attached, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon has any [P] Energy attached, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfSelfHasTypeEnergy {
+            energy_type: EnergyType::Psychic,
+            extra_damage: 50,
+        },
+    );
     // map.insert("If this Pokémon has more Energy attached than your opponent's Active Pokémon, this attack does 50 more damage.", todo_implementation);
     map.insert(
         "If this Pokémon moved from your Bench to the Active Spot this turn, this attack does 40 more damage.",
@@ -2032,7 +2038,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
 
     // Promo-B
-    // map.insert("If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.", todo_implementation);
+    map.insert(
+        "If this Pokémon has any [P] Energy attached, this attack does 40 more damage. This attack's damage isn't affected by any effects on your opponent's Active Pokémon.",
+        Mechanic::ExtraDamageIfSelfHasTypeEnergy {
+            energy_type: EnergyType::Psychic,
+            extra_damage: 40,
+        },
+    );
 
     // B2b
     map.insert(
