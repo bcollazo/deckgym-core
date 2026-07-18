@@ -39,6 +39,35 @@ pub enum CardEffect {
     Counterattack {
         amount: u32,
     },
+    // ---------------------------------------------------------------------------------------------
+    // Ability-derived effects. These are not added via `add_effect`; they are *derived* on the fly
+    // from a Pokémon's passive ability by `PlayedCard::get_effective_card_effects` (see
+    // `card_effect_from_ability_mechanic`). Modeling passive abilities as `CardEffect`s lets damage
+    // code check a single "effects on this Pokémon" list instead of scanning the board for
+    // abilities, and lets attacks like Sawk's Brick Break ignore *all* effects on the opponent's
+    // Active Pokémon uniformly. They have no turn duration — they are present exactly while the
+    // ability-holder is in play.
+    // ---------------------------------------------------------------------------------------------
+    /// This Pokémon takes `amount` less damage from attacks (e.g. Cloyster's Shell Armor).
+    /// Applies whether the holder is Active or Benched, mirroring `ReduceDamageFromAttacks`.
+    ReduceDamageFromAttacks {
+        amount: u32,
+    },
+    /// While this Pokémon is the Active Spot defender, attacks against it do `amount` less damage
+    /// (e.g. Arbok's Intimidating Fang). Mirrors `ReduceOpponentActiveDamage`.
+    ReduceOpponentActiveDamage {
+        amount: u32,
+    },
+    /// Prevent all damage done to this Pokémon by attacks from the opponent's Pokémon ex
+    /// (e.g. Oricorio's Safeguard). Mirrors `PreventAllDamageFromEx`.
+    PreventAllDamageFromEx,
+    /// Prevent all damage done to this Pokémon by attacks while it is on the Bench
+    /// (e.g. Wartortle's Shell Shield). Mirrors `PreventDamageWhileBenched`.
+    PreventDamageWhileBenched,
+    /// If any damage is done to this Pokémon by attacks, flip a coin; on heads prevent that damage
+    /// (e.g. Meowth's Carefree Steps). Mirrors `CoinFlipToPreventDamage`. Distinct from
+    /// `CoinFlipToBlockAttack`, which is an attacker self-debuff on the holder's own attacks.
+    CoinFlipToPreventIncomingDamage,
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]

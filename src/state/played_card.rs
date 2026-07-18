@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 
 use super::State;
 use crate::{
-    actions::{abilities::AbilityMechanic, has_ability_mechanic},
+    actions::{
+        abilities::AbilityMechanic, card_effect_from_ability_mechanic, get_ability_mechanic,
+        has_ability_mechanic,
+    },
     card_ids::CardId,
     database::get_card_by_enum,
     effects::CardEffect,
@@ -291,6 +294,22 @@ impl PlayedCard {
             .iter()
             .map(|(effect, _)| effect.clone())
             .collect()
+    }
+
+    /// All effects currently on this Pokémon: the stored (turn-duration) effects from
+    /// `add_effect`, plus effects *derived* from its passive ability (the "abilities-as-effects"
+    /// model — see `card_effect_from_ability_mechanic`). Damage code should query this instead of
+    /// separately scanning for defensive abilities, so a passive like Cloyster's Shell Armor and a
+    /// stored effect like Carracosta's Blocking Shell are handled through one list. Derived effects
+    /// are present exactly while the ability-holder is in play (no turn duration).
+    pub(crate) fn get_effective_card_effects(&self) -> Vec<CardEffect> {
+        let mut effects = self.get_active_effects();
+        if let Some(mechanic) = get_ability_mechanic(&self.card) {
+            if let Some(derived) = card_effect_from_ability_mechanic(mechanic) {
+                effects.push(derived);
+            }
+        }
+        effects
     }
 
     pub(crate) fn get_effects(&self) -> &Vec<(CardEffect, u8)> {

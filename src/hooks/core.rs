@@ -549,31 +549,35 @@ fn get_intimidating_fang_reduction(
     let defenders_active = state.in_play_pokemon[target_player][0]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Intimidating Fang");
-    if matches!(
-        get_ability_mechanic(&defenders_active.card),
-        Some(AbilityMechanic::ReduceOpponentActiveDamage { amount: 20 })
-    ) {
-        debug!("Intimidating Fang: Reducing opponent's attack damage by 20");
-        return 20;
-    }
-    0
+    // Reads the unified effect list: Intimidating Fang (a passive ability) presents as a
+    // `ReduceOpponentActiveDamage` effect on the Active defender.
+    defenders_active
+        .get_effective_card_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::ReduceOpponentActiveDamage { amount } => Some(*amount),
+            _ => None,
+        })
+        .sum()
 }
 
 fn get_ability_damage_reduction(
     receiving_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
 ) -> u32 {
-    if let Some(ability) = receiving_pokemon.card.get_ability() {
-        if let Some(AbilityMechanic::ReduceDamageFromAttacks { amount }) =
-            ability_mechanic_from_effect(&ability.effect)
-        {
-            if is_from_active_attack {
-                debug!("ReduceDamageFromAttacks: Reducing damage by {}", amount);
-                return *amount;
-            }
-        }
+    if !is_from_active_attack {
+        return 0;
     }
-    0
+    // Reads the unified effect list, so Cloyster's Shell Armor (a passive ability) is handled the
+    // same way as any stored effect.
+    receiving_pokemon
+        .get_effective_card_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::ReduceDamageFromAttacks { amount } => Some(*amount),
+            _ => None,
+        })
+        .sum()
 }
 
 fn get_ability_damage_increase(
@@ -796,6 +800,12 @@ enum WeaknessApplication {
 const DAMAGE_UNAFFECTED_BY_WEAKNESS_EFFECT: &str =
     "This attack's damage isn't affected by Weakness.";
 
+/// Sawk's Brick Break (and any card sharing this text): the attack's damage ignores every effect
+/// on the opponent's Active Pokémon — ability-derived reductions/preventions, stored CardEffects,
+/// and damage-reducing Tools alike. See `attack_ignores_opponent_active_effects`.
+pub(crate) const DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT: &str =
+    "This attack's damage isn't affected by any effects on your opponent's Active Pokémon.";
+
 #[derive(Clone, Copy, Default)]
 pub(crate) struct DamageModifierContext<'a> {
     pub(crate) attack_name: Option<&'a str>,
@@ -806,6 +816,10 @@ fn attack_effect_ignores_weakness(context: DamageModifierContext<'_>) -> bool {
     // TODO: If more attack text needs to alter damage-modifier stages, replace this
     // effect-string check with a typed attack metadata/damage-modifier capability.
     context.attack_effect == Some(DAMAGE_UNAFFECTED_BY_WEAKNESS_EFFECT)
+}
+
+fn attack_ignores_opponent_active_effects(context: DamageModifierContext<'_>) -> bool {
+    context.attack_effect == Some(DAMAGE_UNAFFECTED_BY_OPPONENT_ACTIVE_EFFECTS_EFFECT)
 }
 
 fn get_weakness_application(
@@ -882,20 +896,38 @@ pub(crate) fn modify_damage(
         .as_ref()
         .expect("Receiving Pokemon should be there when modifying damage");
 
-    // Check for Safeguard ability (prevents all damage from opponent's Pokémon ex)
-    if matches!(
-        get_ability_mechanic(&receiving_pokemon.card),
-        Some(AbilityMechanic::PreventAllDamageFromEx)
-    ) && is_from_active_attack
+    // "Effects on the opponent's Active Pokémon" (Sawk's Brick Break) — when this attack ignores
+    // them, treat the receiver's effect list as empty for every defensive stage below, and also
+    // bypass its damage-reducing Tools. Only the opponent's Active is targeted by such attacks.
+    let skip_target_effects = attack_ignores_opponent_active_effects(context)
+        && is_from_active_attack
+        && target_idx == 0
+        && attacking_player != target_player;
+
+    // The unified "effects on this Pokémon" list: stored CardEffects plus any derived from the
+    // receiver's passive ability (Cloyster's Shell Armor, Oricorio's Safeguard, Meowth's Carefree
+    // Steps, ...). Damage code checks this single list instead of scanning the board for abilities.
+    let target_effects: Vec<CardEffect> = if skip_target_effects {
+        Vec::new()
+    } else {
+        receiving_pokemon.get_effective_card_effects()
+    };
+
+    // Safeguard (Oricorio): prevent all damage from the opponent's Pokémon ex.
+    if target_effects
+        .iter()
+        .any(|e| matches!(e, CardEffect::PreventAllDamageFromEx))
+        && is_from_active_attack
         && attacking_pokemon.card.is_ex()
     {
         debug!("Safeguard: Preventing all damage from opponent's Pokémon ex");
         return 0;
     }
-    if matches!(
-        get_ability_mechanic(&receiving_pokemon.card),
-        Some(AbilityMechanic::PreventDamageWhileBenched)
-    ) && is_from_active_attack
+    // Shell Shield (Wartortle): prevent all damage while benched.
+    if target_effects
+        .iter()
+        .any(|e| matches!(e, CardEffect::PreventDamageWhileBenched))
+        && is_from_active_attack
         && target_idx != 0
     {
         debug!("Shell Shield: Preventing all damage to benched Wartortle");
@@ -903,14 +935,16 @@ pub(crate) fn modify_damage(
     }
 
     // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
-    if target_idx != 0 && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho) {
+    if target_idx != 0
+        && !skip_target_effects
+        && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho)
+    {
         debug!("Protective Poncho: Preventing all damage to benched Pokémon");
         return 0;
     }
 
     // Check for PreventAllDamageAndEffects (Shinx's Hide)
-    if receiving_pokemon
-        .get_active_effects()
+    if target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
     {
@@ -920,8 +954,7 @@ pub(crate) fn modify_damage(
 
     // Check for PreventDamageFromBasic (Carracosta's Blocking Shell)
     if attacking_pokemon.card.is_basic()
-        && receiving_pokemon
-            .get_active_effects()
+        && target_effects
             .iter()
             .any(|effect| matches!(effect, CardEffect::PreventDamageFromBasic))
     {
@@ -934,19 +967,38 @@ pub(crate) fn modify_damage(
     let target_is_ex = receiving_pokemon.card.is_ex();
     let attacker_is_eevee_evolution = attacking_pokemon.evolved_from("Eevee");
 
-    let intimidating_fang_reduction =
-        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack);
-    let heavy_helmet_reduction = get_heavy_helmet_reduction(state, (target_player, target_idx));
-    let metal_core_barrier_reduction =
-        get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack);
-    let steel_apron_reduction = get_steel_apron_reduction(
-        state,
-        attacking_player,
-        (target_player, target_idx),
-        is_from_active_attack,
-    );
-    let ability_damage_reduction =
-        get_ability_damage_reduction(receiving_pokemon, is_from_active_attack);
+    // Every damage-reducing effect/tool below sits on the *target*, so an attack that ignores
+    // effects on the opponent's Active Pokémon (Sawk) zeroes all of them.
+    let intimidating_fang_reduction = if skip_target_effects {
+        0
+    } else {
+        get_intimidating_fang_reduction(state, attacking_ref, target_ref, is_from_active_attack)
+    };
+    let heavy_helmet_reduction = if skip_target_effects {
+        0
+    } else {
+        get_heavy_helmet_reduction(state, (target_player, target_idx))
+    };
+    let metal_core_barrier_reduction = if skip_target_effects {
+        0
+    } else {
+        get_metal_core_barrier_reduction(state, (target_player, target_idx), is_from_active_attack)
+    };
+    let steel_apron_reduction = if skip_target_effects {
+        0
+    } else {
+        get_steel_apron_reduction(
+            state,
+            attacking_player,
+            (target_player, target_idx),
+            is_from_active_attack,
+        )
+    };
+    let ability_damage_reduction = if skip_target_effects {
+        0
+    } else {
+        get_ability_damage_reduction(receiving_pokemon, is_from_active_attack)
+    };
     let ability_damage_increase = get_ability_damage_increase(
         state,
         attacking_player,
@@ -965,17 +1017,29 @@ pub(crate) fn modify_damage(
         is_active_to_active,
         context.attack_name,
     );
-    let reduced_card_effect_modifiers =
-        get_reduced_card_effect_modifiers(state, is_active_to_active, target_player);
-    let increased_vulnerability_modifiers =
-        get_increased_vulnerability_modifiers(state, is_active_to_active, target_player);
-    let reduced_turn_effect_modifiers = get_turn_effect_damage_reduction(
-        state,
-        target_player,
-        receiving_pokemon,
-        attacking_player,
-        is_from_active_attack,
-    );
+    // Reductions and vulnerability are both "effects on the target"; ignore *any* of them (whether
+    // they help or hurt the attacker) when the attack bypasses opponent-active effects.
+    let reduced_card_effect_modifiers = if skip_target_effects {
+        0
+    } else {
+        get_reduced_card_effect_modifiers(state, is_active_to_active, target_player)
+    };
+    let increased_vulnerability_modifiers = if skip_target_effects {
+        0
+    } else {
+        get_increased_vulnerability_modifiers(state, is_active_to_active, target_player)
+    };
+    let reduced_turn_effect_modifiers = if skip_target_effects {
+        0
+    } else {
+        get_turn_effect_damage_reduction(
+            state,
+            target_player,
+            receiving_pokemon,
+            attacking_player,
+            is_from_active_attack,
+        )
+    };
     let weakness_application = get_weakness_application(
         state,
         is_active_to_active,
@@ -1057,8 +1121,7 @@ pub(crate) fn modify_damage(
     };
 
     // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage if it is low enough.
-    let prevented_by_threshold = receiving_pokemon
-        .get_active_effects()
+    let prevented_by_threshold = target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventDamageIfLessOrEqual { threshold } if final_damage <= *threshold));
     if prevented_by_threshold {

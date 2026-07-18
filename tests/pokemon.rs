@@ -156,6 +156,8 @@ mod rampardos_head_smash_test;
 mod roaring_moon_test;
 #[path = "pokemon/salamence_test.rs"]
 mod salamence_test;
+#[path = "pokemon/sawk_test.rs"]
+mod sawk_test;
 #[path = "pokemon/shinx_hide_test.rs"]
 mod shinx_hide_test;
 #[path = "pokemon/slither_wing_test.rs"]
