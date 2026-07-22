@@ -120,6 +120,7 @@ fn can_use_ability_by_mechanic(
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
         AbilityMechanic::CoinFlipToSurviveKnockOut => false, // Passive ability
+        AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut => false, // Passive ability
         AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { .. } => false, // Passive (on_knockout)
         AbilityMechanic::CheckupDamageToOpponentActive { .. } => false,       // Passive ability
         AbilityMechanic::CheckupDamageToAllOpponentPokemon { .. } => false,   // Passive ability

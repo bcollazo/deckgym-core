@@ -7,7 +7,8 @@ use crate::State;
 
 use super::apply_action_helpers::{
     enumerate_guts_survivor_subsets, guts_flipping_targets, handle_damage_only, handle_knockouts,
-    set_guts_survivors_to_10, Mutation, Probabilities,
+    knock_out_attacker_for_perish_body, perish_body_flips, set_guts_survivors_to_10, Mutation,
+    Probabilities,
 };
 use super::outcomes::{generate_sequences_with_heads, CoinPaths, CoinSeq, Outcomes};
 use super::{Action, SimpleAction};
@@ -43,6 +44,10 @@ pub struct AttackOutcome {
     /// (their coin came up heads): after damage is applied their remaining HP is set to 10,
     /// before knockouts are resolved. Populated by `split_with_guts_survival`.
     guts_survivors: Vec<usize>,
+    /// Whether the defender's Perish Body coin came up heads in this outcome: after the
+    /// defending Active Pokémon's knockout resolves, the Attacking Pokémon is Knocked Out
+    /// too. Populated by `split_with_perish_body`.
+    perish_body_ko_attacker: bool,
 }
 
 impl AttackOutcome {
@@ -53,6 +58,7 @@ impl AttackOutcome {
             pre_damage_effect: None,
             post_damage_effect: None,
             guts_survivors: vec![],
+            perish_body_ko_attacker: false,
         }
     }
 
@@ -63,6 +69,7 @@ impl AttackOutcome {
             pre_damage_effect: None,
             post_damage_effect: None,
             guts_survivors: vec![],
+            perish_body_ko_attacker: false,
         }
     }
 
@@ -76,6 +83,7 @@ impl AttackOutcome {
             pre_damage_effect: None,
             post_damage_effect: Some(Rc::new(effect)),
             guts_survivors: vec![],
+            perish_body_ko_attacker: false,
         }
     }
 
@@ -89,6 +97,7 @@ impl AttackOutcome {
             pre_damage_effect: Some(Rc::new(effect)),
             post_damage_effect: None,
             guts_survivors: vec![],
+            perish_body_ko_attacker: false,
         }
     }
 
@@ -102,6 +111,7 @@ impl AttackOutcome {
             pre_damage_effect: None,
             post_damage_effect: Some(Rc::new(effect)),
             guts_survivors: vec![],
+            perish_body_ko_attacker: false,
         }
     }
 
@@ -162,7 +172,17 @@ impl AttackOutcome {
             // rely on the catch-all knockout pass in `wrap_with_common_logic`, matching the
             // historical behavior of effect-only outcomes.
             if !resolved.is_empty() {
+                // Perish Body only fires if the defending Active Pokémon actually got knocked
+                // out; capture that before `handle_knockouts` discards it.
+                let opponent = (action.actor + 1) % 2;
+                let perish_armed = self.perish_body_ko_attacker
+                    && state.in_play_pokemon[opponent][0]
+                        .as_ref()
+                        .is_some_and(|pokemon| pokemon.is_knocked_out());
                 handle_knockouts(state, attacking_ref, true);
+                if perish_armed {
+                    knock_out_attacker_for_perish_body(state, attacking_ref);
+                }
             }
         })
     }
@@ -308,6 +328,7 @@ impl AttackOutcomes {
                         pre_damage_effect: None,
                         post_damage_effect: Some(effect),
                         guts_survivors: vec![],
+                        perish_body_ko_attacker: false,
                     },
                     coin_paths,
                 }
@@ -447,6 +468,61 @@ impl AttackOutcomes {
             for survivors in subsets {
                 let mut outcome = branch.outcome.clone();
                 outcome.guts_survivors = survivors.into_iter().map(|(_, idx)| idx).collect();
+                branches.push(AttackBranch {
+                    probability: sub_probability,
+                    outcome,
+                    coin_paths: CoinPaths::None,
+                });
+            }
+        }
+        Self { branches }
+    }
+
+    /// Apply the defender's "if this Pokémon is in the Active Spot and is Knocked Out by
+    /// damage from an attack from your opponent's Pokémon, flip a coin; if heads, the
+    /// Attacking Pokémon is Knocked Out" ability (e.g. Galarian Cursola's Perish Body).
+    ///
+    /// Each branch whose (modified) damage would knock out the defending Active Pokémon is
+    /// split 50/50: on heads the attacker is Knocked Out after the defender's knockout
+    /// resolves (see `into_mutation`). Coin metadata is dropped (these are the defender's
+    /// coins, not the acting player's).
+    pub fn split_with_perish_body(
+        self,
+        state: &State,
+        acting_player: usize,
+        attack_name: Option<&str>,
+        attack_effect: Option<&str>,
+    ) -> Self {
+        let opponent = (acting_player + 1) % 2;
+        let mut branches = vec![];
+        for branch in self.branches {
+            let resolved: Vec<(u32, usize, usize)> = branch
+                .outcome
+                .damage
+                .iter()
+                .filter(|(_, is_opponent, _)| *is_opponent)
+                .map(|(amount, _, idx)| (*amount, opponent, *idx))
+                .collect();
+            let flips = perish_body_flips(
+                state,
+                (acting_player, 0),
+                &resolved,
+                true,
+                DamageModifierContext {
+                    attack_name,
+                    attack_effect,
+                },
+            );
+
+            if !flips {
+                branches.push(branch);
+                continue;
+            }
+
+            let sub_probability = branch.probability / 2.0;
+            for heads in [true, false] {
+                let mut outcome = branch.outcome.clone();
+                outcome.perish_body_ko_attacker = heads;
                 branches.push(AttackBranch {
                     probability: sub_probability,
                     outcome,

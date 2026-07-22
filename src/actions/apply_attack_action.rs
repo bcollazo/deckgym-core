@@ -89,7 +89,8 @@ fn apply_attack_common_modifiers(
     }
 
     outcomes = apply_defender_damage_prevention_if_needed(acting_player, state, attack, outcomes);
-    apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
+    outcomes = apply_defender_guts_if_needed(acting_player, state, attack, outcomes);
+    apply_defender_perish_body_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_copied_attack_modifiers(
@@ -100,7 +101,8 @@ fn apply_copied_attack_modifiers(
 ) -> AttackOutcomes {
     let outcomes =
         apply_defender_damage_prevention_if_needed(acting_player, state, attack, base_outcomes);
-    apply_defender_guts_if_needed(acting_player, state, attack, outcomes)
+    let outcomes = apply_defender_guts_if_needed(acting_player, state, attack, outcomes);
+    apply_defender_perish_body_if_needed(acting_player, state, attack, outcomes)
 }
 
 fn apply_defender_damage_prevention_if_needed(
@@ -162,6 +164,34 @@ fn apply_defender_guts_if_needed(
         return outcomes;
     }
     outcomes.split_with_guts_survival(
+        state,
+        acting_player,
+        Some(&attack.title),
+        attack.effect.as_deref(),
+    )
+}
+
+/// Apply the defender's Perish Body ability (e.g. Galarian Cursola): if this attack's damage
+/// would knock out the opponent's Active Pokémon and it has the ability, it flips a coin; on
+/// heads the Attacking Pokémon is Knocked Out after the knockout resolves.
+fn apply_defender_perish_body_if_needed(
+    acting_player: usize,
+    state: &State,
+    attack: &Attack,
+    outcomes: AttackOutcomes,
+) -> AttackOutcomes {
+    let opponent = (acting_player + 1) % 2;
+    let has_perish_body = state.in_play_pokemon[opponent][0]
+        .as_ref()
+        .and_then(|pokemon| pokemon.card.get_ability())
+        .and_then(|a| ability_mechanic_from_effect(&a.effect))
+        .map(|m| matches!(m, AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut))
+        .unwrap_or(false);
+
+    if !has_perish_body {
+        return outcomes;
+    }
+    outcomes.split_with_perish_body(
         state,
         acting_player,
         Some(&attack.title),

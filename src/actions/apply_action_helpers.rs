@@ -485,6 +485,80 @@ pub(crate) fn set_guts_survivors_to_10(state: &mut State, survivors: &[(usize, u
     }
 }
 
+/// True if the Pokémon in the attacker's opponent's Active Spot has the Perish Body ability
+/// and `raw_damage` (after modifiers) from an opponent's attack would knock it out — i.e. it
+/// should flip a Perish Body coin for this damage.
+fn perish_body_would_flip(
+    state: &State,
+    attacking_ref: (usize, usize),
+    raw_damage: u32,
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
+    if !is_from_active_attack || raw_damage == 0 {
+        return false;
+    }
+    let target = ((attacking_ref.0 + 1) % 2, 0);
+    let Some(pokemon) = state.in_play_pokemon[target.0][target.1].as_ref() else {
+        return false;
+    };
+    if !matches!(
+        get_ability_mechanic(&pokemon.card),
+        Some(AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut)
+    ) {
+        return false;
+    }
+    let modified = modify_damage(
+        state,
+        attacking_ref,
+        (raw_damage, target.0, target.1),
+        is_from_active_attack,
+        context,
+    );
+    let remaining = pokemon.get_remaining_hp();
+    remaining > 0 && modified >= remaining
+}
+
+/// Whether `targets` deal lethal attack damage to a Perish Body Pokémon in the attacker's
+/// opponent's Active Spot, requiring a Perish Body coin flip.
+pub(crate) fn perish_body_flips(
+    state: &State,
+    attacking_ref: (usize, usize),
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
+    let defender = (attacking_ref.0 + 1) % 2;
+    let raw_total: u32 = targets
+        .iter()
+        .filter(|(_, player, idx)| *player == defender && *idx == 0)
+        .map(|(damage, _, _)| *damage)
+        .sum();
+    perish_body_would_flip(
+        state,
+        attacking_ref,
+        raw_total,
+        is_from_active_attack,
+        context,
+    )
+}
+
+/// Perish Body heads: knock out the Attacking Pokémon. This is an ability knockout, not
+/// attack damage, so knockouts are resolved with `is_from_active_attack: false` — points,
+/// promotions and win checks run normally, but attack-only triggers (Lucky Egg, Offload
+/// Pass, counterattacks, etc.) do not fire. No-ops if the attacker is already gone (e.g.
+/// a counterattack knocked it out) or the game is already decided.
+pub(crate) fn knock_out_attacker_for_perish_body(state: &mut State, attacking_ref: (usize, usize)) {
+    if state.winner.is_some() {
+        return;
+    }
+    let Some(attacker) = state.in_play_pokemon[attacking_ref.0][attacking_ref.1].as_mut() else {
+        return;
+    };
+    attacker.set_remaining_hp(0);
+    handle_knockouts(state, ((attacking_ref.0 + 1) % 2, 0), false);
+}
+
 /// This function applies damage (with modifiers and counterattacks) and handles K.O.s
 /// and promotions.
 pub(crate) fn handle_damage(
