@@ -22,7 +22,8 @@ use crate::{
 use super::{
     apply_action_helpers::{
         enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
-        handle_damage_only, handle_knockouts, set_guts_survivors_to_10, Mutation, Mutations,
+        handle_damage_only, handle_knockouts, knock_out_attacker_for_perish_body,
+        perish_body_flips, set_guts_survivors_to_10, Mutation, Mutations,
     },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
@@ -174,48 +175,73 @@ fn forecast_apply_damage(
     targets: &[(u32, usize, usize)],
     is_from_active_attack: bool,
 ) -> Outcomes {
+    let context = DamageModifierContext {
+        attack_name: None,
+        attack_effect: None,
+    };
     let flipping = guts_flipping_targets(
         state,
         attacking_ref,
         targets,
         is_from_active_attack,
-        DamageModifierContext {
-            attack_name: None,
-            attack_effect: None,
-        },
+        context,
+    );
+    let perish = perish_body_flips(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        context,
     );
 
-    if flipping.is_empty() {
+    if flipping.is_empty() && !perish {
         let targets = targets.to_vec();
         return Outcomes::single_fn(move |_, state, _| {
             handle_damage(state, attacking_ref, &targets, is_from_active_attack, None);
         });
     }
 
-    // One branch per heads/tails combination; on heads the damage still applies (so on-damage
-    // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
+    // One branch per heads/tails combination (Guts flips are independent of the defender's
+    // Perish Body flip); on heads the damage still applies (so on-damage triggers fire) and
+    // the Guts survivor's remaining HP is set to 10 before knockouts resolve, while a Perish
+    // Body heads knocks out the attacker after knockouts resolve.
     let subsets = enumerate_guts_survivor_subsets(&flipping);
-    let probabilities = vec![1.0 / subsets.len() as f64; subsets.len()];
-    let mutations: Mutations = subsets
-        .into_iter()
-        .map(|survivors| {
+    let perish_options: &[bool] = if perish { &[true, false] } else { &[false] };
+    let combos = subsets.len() * perish_options.len();
+    let probabilities = vec![1.0 / combos as f64; combos];
+    let mut mutations: Mutations = vec![];
+    for survivors in subsets {
+        for perish_heads in perish_options.iter().copied() {
+            let survivors = survivors.clone();
             let targets = targets.to_vec();
-            Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
-                handle_damage_only(
-                    state,
-                    attacking_ref,
-                    &targets,
-                    is_from_active_attack,
-                    DamageModifierContext {
-                        attack_name: None,
-                        attack_effect: None,
-                    },
-                );
-                set_guts_survivors_to_10(state, &survivors);
-                handle_knockouts(state, attacking_ref, is_from_active_attack);
-            }) as Mutation
-        })
-        .collect();
+            mutations.push(
+                Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
+                    handle_damage_only(
+                        state,
+                        attacking_ref,
+                        &targets,
+                        is_from_active_attack,
+                        DamageModifierContext {
+                            attack_name: None,
+                            attack_effect: None,
+                        },
+                    );
+                    set_guts_survivors_to_10(state, &survivors);
+                    // Perish Body only fires if the defending Active Pokémon actually got knocked
+                    // out; capture that before `handle_knockouts` discards it.
+                    let defender = (attacking_ref.0 + 1) % 2;
+                    let perish_armed = perish_heads
+                        && state.in_play_pokemon[defender][0]
+                            .as_ref()
+                            .is_some_and(|pokemon| pokemon.is_knocked_out());
+                    handle_knockouts(state, attacking_ref, is_from_active_attack);
+                    if perish_armed {
+                        knock_out_attacker_for_perish_body(state, attacking_ref);
+                    }
+                }) as Mutation,
+            );
+        }
+    }
     Outcomes::from_parts(probabilities, mutations)
 }
 
