@@ -68,6 +68,12 @@ pub enum CardEffect {
     /// (e.g. Meowth's Carefree Steps). Mirrors `CoinFlipToPreventDamage`. Distinct from
     /// `CoinFlipToBlockAttack`, which is an attacker self-debuff on the holder's own attacks.
     CoinFlipToPreventIncomingDamage,
+    /// If any damage is done to this Pokémon by attacks, flip a coin; on heads this Pokémon takes
+    /// `amount` less damage from that attack (e.g. Bastiodon's Guarded Grill, Hisuian Goodra's
+    /// Securely Sheltered). Mirrors `CoinFlipToReduceDamage`.
+    CoinFlipToReduceIncomingDamage {
+        amount: u32,
+    },
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]

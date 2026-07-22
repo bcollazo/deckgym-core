@@ -119,6 +119,7 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
+        AbilityMechanic::CoinFlipToReduceDamage { .. } => false, // Passive ability
         AbilityMechanic::CoinFlipToSurviveKnockOut => false, // Passive ability
         AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut => false, // Passive ability
         AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { .. } => false, // Passive (on_knockout)

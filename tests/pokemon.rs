@@ -76,6 +76,8 @@ mod growlithe_puppy_pile_test;
 mod hatterene_test;
 #[path = "pokemon/heracross_test.rs"]
 mod heracross_test;
+#[path = "pokemon/hisuian_goodra_securely_sheltered_test.rs"]
+mod hisuian_goodra_securely_sheltered_test;
 #[path = "pokemon/hisuian_lilligant_dress_up_test.rs"]
 mod hisuian_lilligant_dress_up_test;
 #[path = "pokemon/hisuian_zoroark_ex_test.rs"]
