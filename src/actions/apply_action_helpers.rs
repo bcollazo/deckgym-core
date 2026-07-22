@@ -393,9 +393,9 @@ fn checkapply_prevent_first_attack(
     false
 }
 
-/// True if the Pokémon at `target` has the Guts ability and `raw_damage` (after modifiers)
-/// would knock it out — i.e. it should flip a Guts survival coin for this damage.
-fn guts_would_flip(
+/// True if `raw_damage` (after modifiers) would knock out the Pokémon at `target`. Shared
+/// lethality check for the knockout-triggered coin-flip abilities (Guts, Perish Body).
+fn is_lethal_after_modifiers(
     state: &State,
     attacking_ref: (usize, usize),
     raw_damage: u32,
@@ -409,12 +409,6 @@ fn guts_would_flip(
     let Some(pokemon) = state.in_play_pokemon[target.0][target.1].as_ref() else {
         return false;
     };
-    if !matches!(
-        get_ability_mechanic(&pokemon.card),
-        Some(AbilityMechanic::CoinFlipToSurviveKnockOut)
-    ) {
-        return false;
-    }
     let modified = modify_damage(
         state,
         attacking_ref,
@@ -424,6 +418,35 @@ fn guts_would_flip(
     );
     let remaining = pokemon.get_remaining_hp();
     remaining > 0 && modified >= remaining
+}
+
+/// True if the Pokémon at `target` has the Guts ability and `raw_damage` (after modifiers)
+/// would knock it out — i.e. it should flip a Guts survival coin for this damage.
+fn guts_would_flip(
+    state: &State,
+    attacking_ref: (usize, usize),
+    raw_damage: u32,
+    target: (usize, usize),
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
+    let has_guts = state.in_play_pokemon[target.0][target.1]
+        .as_ref()
+        .is_some_and(|pokemon| {
+            matches!(
+                get_ability_mechanic(&pokemon.card),
+                Some(AbilityMechanic::CoinFlipToSurviveKnockOut)
+            )
+        });
+    has_guts
+        && is_lethal_after_modifiers(
+            state,
+            attacking_ref,
+            raw_damage,
+            target,
+            is_from_active_attack,
+            context,
+        )
 }
 
 /// Sum raw damage per (player, idx) target and return the targets that must flip a Guts
@@ -458,9 +481,10 @@ pub(crate) fn guts_flipping_targets(
     flipping
 }
 
-/// All `2^k` equally likely survivor subsets of `flipping` (`k = flipping.len()`), in mask
-/// order (bit `i` of the mask set => `flipping[i]` survives its Guts coin flip).
-pub(crate) fn enumerate_guts_survivor_subsets<T: Copy>(flipping: &[T]) -> Vec<Vec<T>> {
+/// All `2^k` equally likely heads subsets of `flipping` (`k = flipping.len()`), in mask
+/// order (bit `i` of the mask set => `flipping[i]`'s coin came up heads). Shared by the
+/// defender coin-flip abilities (damage prevention/reduction, Guts, Perish Body).
+pub(crate) fn enumerate_heads_subsets<T: Copy>(flipping: &[T]) -> Vec<Vec<T>> {
     let combos = 1usize << flipping.len();
     (0..combos)
         .map(|mask| {
@@ -495,28 +519,27 @@ fn perish_body_would_flip(
     is_from_active_attack: bool,
     context: DamageModifierContext<'_>,
 ) -> bool {
-    if !is_from_active_attack || raw_damage == 0 {
+    if !is_from_active_attack {
         return false;
     }
     let target = ((attacking_ref.0 + 1) % 2, 0);
-    let Some(pokemon) = state.in_play_pokemon[target.0][target.1].as_ref() else {
-        return false;
-    };
-    if !matches!(
-        get_ability_mechanic(&pokemon.card),
-        Some(AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut)
-    ) {
-        return false;
-    }
-    let modified = modify_damage(
-        state,
-        attacking_ref,
-        (raw_damage, target.0, target.1),
-        is_from_active_attack,
-        context,
-    );
-    let remaining = pokemon.get_remaining_hp();
-    remaining > 0 && modified >= remaining
+    let has_perish_body = state.in_play_pokemon[target.0][target.1]
+        .as_ref()
+        .is_some_and(|pokemon| {
+            matches!(
+                get_ability_mechanic(&pokemon.card),
+                Some(AbilityMechanic::CoinFlipToKnockOutAttackerOnKnockOut)
+            )
+        });
+    has_perish_body
+        && is_lethal_after_modifiers(
+            state,
+            attacking_ref,
+            raw_damage,
+            target,
+            is_from_active_attack,
+            context,
+        )
 }
 
 /// Whether `targets` deal lethal attack damage to a Perish Body Pokémon in the attacker's
