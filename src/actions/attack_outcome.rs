@@ -6,7 +6,8 @@ use crate::hooks::{modify_damage, DamageModifierContext};
 use crate::State;
 
 use super::apply_action_helpers::{
-    guts_would_flip, handle_damage_only, handle_knockouts, Mutation, Probabilities,
+    enumerate_guts_survivor_subsets, guts_flipping_targets, handle_damage_only, handle_knockouts,
+    set_guts_survivors_to_10, Mutation, Probabilities,
 };
 use super::outcomes::{generate_sequences_with_heads, CoinPaths, CoinSeq, Outcomes};
 use super::{Action, SimpleAction};
@@ -38,6 +39,10 @@ pub struct AttackOutcome {
     pre_damage_effect: Option<SharedEffect>,
     /// Effect that runs after damage is applied (the common case: status, energy moves, etc.).
     post_damage_effect: Option<SharedEffect>,
+    /// Opponent in-play indices of Guts Pokémon that survive this outcome's lethal damage
+    /// (their coin came up heads): after damage is applied their remaining HP is set to 10,
+    /// before knockouts are resolved. Populated by `split_with_guts_survival`.
+    guts_survivors: Vec<usize>,
 }
 
 impl AttackOutcome {
@@ -47,6 +52,7 @@ impl AttackOutcome {
             damage: vec![],
             pre_damage_effect: None,
             post_damage_effect: None,
+            guts_survivors: vec![],
         }
     }
 
@@ -56,6 +62,7 @@ impl AttackOutcome {
             damage: targets,
             pre_damage_effect: None,
             post_damage_effect: None,
+            guts_survivors: vec![],
         }
     }
 
@@ -68,6 +75,7 @@ impl AttackOutcome {
             damage: targets,
             pre_damage_effect: None,
             post_damage_effect: Some(Rc::new(effect)),
+            guts_survivors: vec![],
         }
     }
 
@@ -80,6 +88,7 @@ impl AttackOutcome {
             damage: targets,
             pre_damage_effect: Some(Rc::new(effect)),
             post_damage_effect: None,
+            guts_survivors: vec![],
         }
     }
 
@@ -92,6 +101,7 @@ impl AttackOutcome {
             damage: vec![],
             pre_damage_effect: None,
             post_damage_effect: Some(Rc::new(effect)),
+            guts_survivors: vec![],
         }
     }
 
@@ -108,7 +118,8 @@ impl AttackOutcome {
     }
 
     /// Convert this structured outcome into a `Mutation` that applies it to the state:
-    /// pre-effect, then damage (with modifiers/counterattacks), then post-effect, then knockouts.
+    /// pre-effect, then damage (with modifiers/counterattacks), then Guts survival,
+    /// then post-effect, then knockouts.
     fn into_mutation(self) -> Mutation {
         Box::new(move |rng, state, action| {
             let attacking_ref = (action.actor, 0);
@@ -130,6 +141,17 @@ impl AttackOutcome {
                         attack_effect: attack_metadata.effect.as_deref(),
                     },
                 );
+            }
+
+            if !self.guts_survivors.is_empty() {
+                debug_assert!(!resolved.is_empty(), "Guts survivors require lethal damage");
+                let opponent = (action.actor + 1) % 2;
+                let survivors: Vec<(usize, usize)> = self
+                    .guts_survivors
+                    .iter()
+                    .map(|idx| (opponent, *idx))
+                    .collect();
+                set_guts_survivors_to_10(state, &survivors);
             }
 
             if let Some(post) = &self.post_damage_effect {
@@ -285,6 +307,7 @@ impl AttackOutcomes {
                         damage: vec![],
                         pre_damage_effect: None,
                         post_damage_effect: Some(effect),
+                        guts_survivors: vec![],
                     },
                     coin_paths,
                 }
@@ -389,67 +412,41 @@ impl AttackOutcomes {
         acting_player: usize,
         attack_name: Option<&str>,
         attack_effect: Option<&str>,
-        guts_indices: &[usize],
     ) -> Self {
         let opponent = (acting_player + 1) % 2;
         let mut branches = vec![];
         for branch in self.branches {
-            // Only the Guts Pokémon that would be knocked out by this branch's damage flip a coin.
-            let flipping: Vec<usize> = guts_indices
+            // Only the Guts Pokémon that would be knocked out by this branch's damage flip a
+            // coin. Guts applies to the defender here, so only opponent-side damage is
+            // considered (unlike the ApplyDamage path, which supports arbitrary targets).
+            let resolved: Vec<(u32, usize, usize)> = branch
+                .outcome
+                .damage
                 .iter()
-                .copied()
-                .filter(|target_idx| {
-                    let raw_total: u32 = branch
-                        .outcome
-                        .damage
-                        .iter()
-                        .filter(|(_, is_opponent, idx)| *is_opponent && idx == target_idx)
-                        .map(|(amount, _, _)| *amount)
-                        .sum();
-                    guts_would_flip(
-                        state,
-                        (acting_player, 0),
-                        raw_total,
-                        (opponent, *target_idx),
-                        true,
-                        DamageModifierContext {
-                            attack_name,
-                            attack_effect,
-                        },
-                    )
-                })
+                .filter(|(_, is_opponent, _)| *is_opponent)
+                .map(|(amount, _, idx)| (*amount, opponent, *idx))
                 .collect();
+            let flipping = guts_flipping_targets(
+                state,
+                (acting_player, 0),
+                &resolved,
+                true,
+                DamageModifierContext {
+                    attack_name,
+                    attack_effect,
+                },
+            );
 
             if flipping.is_empty() {
                 branches.push(branch);
                 continue;
             }
 
-            let combos = 1usize << flipping.len();
-            let sub_probability = branch.probability / combos as f64;
-            for mask in 0..combos {
-                // The subset of flipping Pokémon whose coin came up heads (survive at 10 HP).
-                let survivors: Vec<usize> = flipping
-                    .iter()
-                    .enumerate()
-                    .filter(|(bit, _)| (mask >> bit) & 1 == 1)
-                    .map(|(_, idx)| *idx)
-                    .collect();
+            let subsets = enumerate_guts_survivor_subsets(&flipping);
+            let sub_probability = branch.probability / subsets.len() as f64;
+            for survivors in subsets {
                 let mut outcome = branch.outcome.clone();
-                if !survivors.is_empty() {
-                    let previous_post = outcome.post_damage_effect.take();
-                    outcome.post_damage_effect = Some(Rc::new(move |rng, state, action| {
-                        let opponent = (action.actor + 1) % 2;
-                        for idx in &survivors {
-                            if let Some(pokemon) = state.in_play_pokemon[opponent][*idx].as_mut() {
-                                pokemon.set_remaining_hp(10);
-                            }
-                        }
-                        if let Some(post) = &previous_post {
-                            post(rng, state, action);
-                        }
-                    }));
-                }
+                outcome.guts_survivors = survivors.into_iter().map(|(_, idx)| idx).collect();
                 branches.push(AttackBranch {
                     probability: sub_probability,
                     outcome,
