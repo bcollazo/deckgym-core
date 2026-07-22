@@ -21,7 +21,7 @@ use crate::{
 
 use super::{
     apply_action_helpers::{
-        enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
+        enumerate_heads_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
         handle_damage_only, handle_knockouts, knock_out_attacker_for_perish_body,
         perish_body_flips, set_guts_survivors_to_10, Mutation, Mutations,
     },
@@ -205,7 +205,7 @@ fn forecast_apply_damage(
     // Perish Body flip); on heads the damage still applies (so on-damage triggers fire) and
     // the Guts survivor's remaining HP is set to 10 before knockouts resolve, while a Perish
     // Body heads knocks out the attacker after knockouts resolve.
-    let subsets = enumerate_guts_survivor_subsets(&flipping);
+    let subsets = enumerate_heads_subsets(&flipping);
     let perish_options: &[bool] = if perish { &[true, false] } else { &[false] };
     let combos = subsets.len() * perish_options.len();
     let probabilities = vec![1.0 / combos as f64; combos];

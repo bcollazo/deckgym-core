@@ -6,7 +6,7 @@ use crate::hooks::{modify_damage, DamageModifierContext};
 use crate::State;
 
 use super::apply_action_helpers::{
-    enumerate_guts_survivor_subsets, guts_flipping_targets, handle_damage_only, handle_knockouts,
+    enumerate_heads_subsets, guts_flipping_targets, handle_damage_only, handle_knockouts,
     knock_out_attacker_for_perish_body, perish_body_flips, set_guts_survivors_to_10, Mutation,
     Probabilities,
 };
@@ -201,6 +201,17 @@ struct AttackBranch {
     coin_paths: CoinPaths,
 }
 
+/// Resolve an outcome's opponent-side damage entries into absolute
+/// `(damage, target_player, in_play_idx)` targets for the defender-flip predicates.
+fn resolve_opponent_damage(outcome: &AttackOutcome, opponent: usize) -> Vec<(u32, usize, usize)> {
+    outcome
+        .damage
+        .iter()
+        .filter(|(_, is_opponent, _)| *is_opponent)
+        .map(|(amount, _, idx)| (*amount, opponent, *idx))
+        .collect()
+}
+
 impl AttackOutcomes {
     pub fn single(outcome: AttackOutcome) -> Self {
         Self {
@@ -356,6 +367,41 @@ impl AttackOutcomes {
         Self { branches }
     }
 
+    /// Shared skeleton for the defender's independent per-Pokémon coin-flip abilities
+    /// (damage prevention/reduction, Guts, Perish Body). For each branch, `flippers` decides
+    /// which defenders flip a coin given that branch's outcome; each such branch is split into
+    /// `2^k` equally likely sub-branches — one per heads/tails combination — and `apply_heads`
+    /// records that combination's heads subset on the cloned outcome. Branches with no
+    /// flippers pass through untouched. Coin metadata is dropped (these are the defender's
+    /// coins, not the acting player's, so they never enter the Will/coin-path machinery).
+    fn split_with_defender_coin_flips<T: Copy>(
+        self,
+        flippers: impl Fn(&AttackOutcome) -> Vec<T>,
+        apply_heads: impl Fn(&mut AttackOutcome, &[T]),
+    ) -> Self {
+        let mut branches = vec![];
+        for branch in self.branches {
+            let flipping = flippers(&branch.outcome);
+            if flipping.is_empty() {
+                branches.push(branch);
+                continue;
+            }
+
+            let subsets = enumerate_heads_subsets(&flipping);
+            let sub_probability = branch.probability / subsets.len() as f64;
+            for subset in subsets {
+                let mut outcome = branch.outcome.clone();
+                apply_heads(&mut outcome, &subset);
+                branches.push(AttackBranch {
+                    probability: sub_probability,
+                    outcome,
+                    coin_paths: CoinPaths::None,
+                });
+            }
+        }
+        Self { branches }
+    }
+
     /// Apply the defender's "if any damage is done to this Pokémon by attacks, flip a coin; if
     /// heads, prevent that damage / this Pokémon takes -X damage from that attack" ability
     /// (e.g. Meowth's Carefree Steps, Bastiodon's Guarded Grill, Hisuian Goodra's Securely
@@ -363,48 +409,25 @@ impl AttackOutcomes {
     /// with the amount subtracted on heads — use `u32::MAX` for full prevention.
     ///
     /// The ability applies independently to each such Pokémon — whether Active or Benched — and
-    /// only when it actually takes damage in a given branch. Each branch is therefore split into
-    /// `2^k` sub-branches (where `k` is the number of those Pokémon taking damage in that branch),
-    /// one per combination of heads/tails, reducing (saturating at 0, at which point the damage
-    /// entry is removed) the damage to the Pokémon whose coin came up heads while keeping all
-    /// other damage and all effects. Coin metadata is dropped (these are the defender's coins,
-    /// not the acting player's).
+    /// only when it actually takes damage in a given branch. On heads the damage is reduced
+    /// (saturating at 0, at which point the damage entry is removed) while all other damage and
+    /// all effects are kept.
     pub fn split_with_damage_prevention(self, reductions: &[(usize, u32)]) -> Self {
-        let mut branches = vec![];
-        for branch in self.branches {
-            // Only the protected Pokémon that actually take (>0) opponent damage flip a coin.
-            let flipping: Vec<(usize, u32)> = reductions
-                .iter()
-                .copied()
-                .filter(|(target_idx, _)| {
-                    branch
-                        .outcome
-                        .damage
-                        .iter()
-                        .any(|(amount, is_opponent, idx)| {
+        self.split_with_defender_coin_flips(
+            |outcome| {
+                // Only the protected Pokémon that actually take (>0) opponent damage flip a coin.
+                reductions
+                    .iter()
+                    .copied()
+                    .filter(|(target_idx, _)| {
+                        outcome.damage.iter().any(|(amount, is_opponent, idx)| {
                             *is_opponent && idx == target_idx && *amount > 0
                         })
-                })
-                .collect();
-
-            if flipping.is_empty() {
-                branches.push(branch);
-                continue;
-            }
-
-            let combos = 1usize << flipping.len();
-            let sub_probability = branch.probability / combos as f64;
-            for mask in 0..combos {
-                // The subset of flipping Pokémon whose coin came up heads (damage reduced).
-                let reduced_now: Vec<(usize, u32)> = flipping
-                    .iter()
-                    .enumerate()
-                    .filter(|(bit, _)| (mask >> bit) & 1 == 1)
-                    .map(|(_, pair)| *pair)
-                    .collect();
-                let mut outcome = branch.outcome.clone();
-                outcome.damage = outcome
-                    .damage
+                    })
+                    .collect()
+            },
+            |outcome, reduced_now| {
+                outcome.damage = std::mem::take(&mut outcome.damage)
                     .into_iter()
                     .filter_map(|(amount, is_opponent, idx)| {
                         if is_opponent {
@@ -418,14 +441,8 @@ impl AttackOutcomes {
                         Some((amount, is_opponent, idx))
                     })
                     .collect();
-                branches.push(AttackBranch {
-                    probability: sub_probability,
-                    outcome,
-                    coin_paths: CoinPaths::None,
-                });
-            }
-        }
-        Self { branches }
+            },
+        )
     }
 
     /// Apply the defender's "if this Pokémon would be Knocked Out by damage from an attack,
@@ -450,47 +467,27 @@ impl AttackOutcomes {
         attack_effect: Option<&str>,
     ) -> Self {
         let opponent = (acting_player + 1) % 2;
-        let mut branches = vec![];
-        for branch in self.branches {
-            // Only the Guts Pokémon that would be knocked out by this branch's damage flip a
-            // coin. Guts applies to the defender here, so only opponent-side damage is
-            // considered (unlike the ApplyDamage path, which supports arbitrary targets).
-            let resolved: Vec<(u32, usize, usize)> = branch
-                .outcome
-                .damage
-                .iter()
-                .filter(|(_, is_opponent, _)| *is_opponent)
-                .map(|(amount, _, idx)| (*amount, opponent, *idx))
-                .collect();
-            let flipping = guts_flipping_targets(
-                state,
-                (acting_player, 0),
-                &resolved,
-                true,
-                DamageModifierContext {
-                    attack_name,
-                    attack_effect,
-                },
-            );
-
-            if flipping.is_empty() {
-                branches.push(branch);
-                continue;
-            }
-
-            let subsets = enumerate_guts_survivor_subsets(&flipping);
-            let sub_probability = branch.probability / subsets.len() as f64;
-            for survivors in subsets {
-                let mut outcome = branch.outcome.clone();
-                outcome.guts_survivors = survivors.into_iter().map(|(_, idx)| idx).collect();
-                branches.push(AttackBranch {
-                    probability: sub_probability,
-                    outcome,
-                    coin_paths: CoinPaths::None,
-                });
-            }
-        }
-        Self { branches }
+        self.split_with_defender_coin_flips(
+            |outcome| {
+                // Only the Guts Pokémon that would be knocked out by this branch's damage flip
+                // a coin. Guts applies to the defender here, so only opponent-side damage is
+                // considered (unlike the ApplyDamage path, which supports arbitrary targets).
+                let resolved = resolve_opponent_damage(outcome, opponent);
+                guts_flipping_targets(
+                    state,
+                    (acting_player, 0),
+                    &resolved,
+                    true,
+                    DamageModifierContext {
+                        attack_name,
+                        attack_effect,
+                    },
+                )
+            },
+            |outcome, survivors| {
+                outcome.guts_survivors = survivors.iter().map(|(_, idx)| *idx).collect();
+            },
+        )
     }
 
     /// Apply the defender's "if this Pokémon is in the Active Spot and is Knocked Out by
@@ -509,43 +506,30 @@ impl AttackOutcomes {
         attack_effect: Option<&str>,
     ) -> Self {
         let opponent = (acting_player + 1) % 2;
-        let mut branches = vec![];
-        for branch in self.branches {
-            let resolved: Vec<(u32, usize, usize)> = branch
-                .outcome
-                .damage
-                .iter()
-                .filter(|(_, is_opponent, _)| *is_opponent)
-                .map(|(amount, _, idx)| (*amount, opponent, *idx))
-                .collect();
-            let flips = perish_body_flips(
-                state,
-                (acting_player, 0),
-                &resolved,
-                true,
-                DamageModifierContext {
-                    attack_name,
-                    attack_effect,
-                },
-            );
-
-            if !flips {
-                branches.push(branch);
-                continue;
-            }
-
-            let sub_probability = branch.probability / 2.0;
-            for heads in [true, false] {
-                let mut outcome = branch.outcome.clone();
-                outcome.perish_body_ko_attacker = heads;
-                branches.push(AttackBranch {
-                    probability: sub_probability,
-                    outcome,
-                    coin_paths: CoinPaths::None,
-                });
-            }
-        }
-        Self { branches }
+        self.split_with_defender_coin_flips(
+            |outcome| {
+                // At most one flipper: the defending Active Pokémon (represented as `()`).
+                let resolved = resolve_opponent_damage(outcome, opponent);
+                let flips = perish_body_flips(
+                    state,
+                    (acting_player, 0),
+                    &resolved,
+                    true,
+                    DamageModifierContext {
+                        attack_name,
+                        attack_effect,
+                    },
+                );
+                if flips {
+                    vec![()]
+                } else {
+                    vec![]
+                }
+            },
+            |outcome, heads| {
+                outcome.perish_body_ko_attacker = !heads.is_empty();
+            },
+        )
     }
 
     /// Expected raw+modified damage dealt to a specific target across all branches, computed
