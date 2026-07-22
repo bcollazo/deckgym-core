@@ -153,6 +153,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::CoinFlipToPreventDamage => {
             panic!("CoinFlipToPreventDamage is a passive ability")
         }
+        AbilityMechanic::CoinFlipToReduceDamage { .. } => {
+            panic!("CoinFlipToReduceDamage is a passive ability")
+        }
         AbilityMechanic::CoinFlipToSurviveKnockOut => {
             panic!("CoinFlipToSurviveKnockOut is a passive ability")
         }

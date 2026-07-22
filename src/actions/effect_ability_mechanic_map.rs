@@ -124,7 +124,14 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "If any damage is done to this Pokémon by attacks, flip a coin. If heads, prevent that damage.",
             AbilityMechanic::CoinFlipToPreventDamage,
         );
-        // map.insert("If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -100 damage from that attack.", todo_implementation);
+        map.insert(
+            "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -100 damage from that attack.",
+            AbilityMechanic::CoinFlipToReduceDamage { amount: 100 },
+        );
+        map.insert(
+            "If any damage is done to this Pokémon by attacks, flip a coin. If heads, this Pokémon takes -80 damage from that attack.",
+            AbilityMechanic::CoinFlipToReduceDamage { amount: 80 },
+        );
         // map.insert("If this Pokémon has a Pokémon Tool attached, attacks used by this Pokémon cost 1 less [G] Energy.", todo_implementation);
         map.insert(
             "If this Pokémon has any Energy attached, it has no Retreat Cost.",
@@ -546,6 +553,9 @@ pub fn card_effect_from_ability_mechanic(mechanic: &AbilityMechanic) -> Option<C
         AbilityMechanic::PreventDamageWhileBenched => Some(CardEffect::PreventDamageWhileBenched),
         AbilityMechanic::CoinFlipToPreventDamage => {
             Some(CardEffect::CoinFlipToPreventIncomingDamage)
+        }
+        AbilityMechanic::CoinFlipToReduceDamage { amount } => {
+            Some(CardEffect::CoinFlipToReduceIncomingDamage { amount: *amount })
         }
         _ => None,
     }

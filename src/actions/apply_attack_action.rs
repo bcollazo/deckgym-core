@@ -115,26 +115,32 @@ fn apply_defender_damage_prevention_if_needed(
         attack_effect_ignores_opponent_active_effects(attack.effect.as_deref());
 
     // Collect every opponent in-play Pokémon (Active and Benched) presenting the
-    // CoinFlipToPreventIncomingDamage effect (e.g. Meowth's Carefree Steps). It applies
-    // independently to each such Pokémon, and the split only adds a coin flip for the ones that
-    // actually take damage.
+    // CoinFlipToPreventIncomingDamage effect (e.g. Meowth's Carefree Steps) or the
+    // CoinFlipToReduceIncomingDamage effect (e.g. Hisuian Goodra's Securely Sheltered), paired
+    // with the heads-flip damage reduction (u32::MAX = full prevention). It applies independently
+    // to each such Pokémon, and the split only adds a coin flip for the ones that actually take
+    // damage.
     let opponent = (acting_player + 1) % 2;
-    let prevented_indices: Vec<usize> = state
+    let reductions: Vec<(usize, u32)> = state
         .enumerate_in_play_pokemon(opponent)
         .filter(|(idx, _)| !(ignores_active_effects && *idx == 0))
-        .filter(|(_, pokemon)| {
+        .filter_map(|(idx, pokemon)| {
             pokemon
                 .get_effective_card_effects()
                 .iter()
-                .any(|e| matches!(e, CardEffect::CoinFlipToPreventIncomingDamage))
+                .find_map(|e| match e {
+                    CardEffect::CoinFlipToPreventIncomingDamage => Some(u32::MAX),
+                    CardEffect::CoinFlipToReduceIncomingDamage { amount } => Some(*amount),
+                    _ => None,
+                })
+                .map(|reduction| (idx, reduction))
         })
-        .map(|(idx, _)| idx)
         .collect();
 
-    if prevented_indices.is_empty() {
+    if reductions.is_empty() {
         return outcomes;
     }
-    outcomes.split_with_damage_prevention(&prevented_indices)
+    outcomes.split_with_damage_prevention(&reductions)
 }
 
 /// Apply the defender's Guts ability (e.g. Ursaluna): each opponent in-play Pokémon with the
