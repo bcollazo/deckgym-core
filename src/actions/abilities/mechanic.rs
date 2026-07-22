@@ -94,6 +94,13 @@ pub enum AbilityMechanic {
     InfiltratingInspection,
     DiscardTopCardOpponentDeck,
     CoinFlipToPreventDamage,
+    /// Bastiodon's Guarded Grill / Hisuian Goodra's Securely Sheltered: if any damage is done to
+    /// this Pokémon by attacks, flip a coin. If heads, this Pokémon takes `amount` less damage
+    /// from that attack. Passive; handled like `CoinFlipToPreventDamage` via the
+    /// abilities-as-effects pathway.
+    CoinFlipToReduceDamage {
+        amount: u32,
+    },
     /// Ursaluna's Guts: if this Pokémon would be Knocked Out by damage from an attack, flip a
     /// coin. If heads, it is not Knocked Out and its remaining HP becomes 10.
     CoinFlipToSurviveKnockOut,
