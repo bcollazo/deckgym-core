@@ -153,20 +153,18 @@ fn apply_defender_guts_if_needed(
     outcomes: AttackOutcomes,
 ) -> AttackOutcomes {
     let opponent = (acting_player + 1) % 2;
-    let guts_indices: Vec<usize> = state
+    let any_guts = state
         .enumerate_in_play_pokemon(opponent)
-        .filter(|(_, pokemon)| {
+        .any(|(_, pokemon)| {
             pokemon
                 .card
                 .get_ability()
                 .and_then(|a| ability_mechanic_from_effect(&a.effect))
                 .map(|m| matches!(m, AbilityMechanic::CoinFlipToSurviveKnockOut))
                 .unwrap_or(false)
-        })
-        .map(|(idx, _)| idx)
-        .collect();
+        });
 
-    if guts_indices.is_empty() {
+    if !any_guts {
         return outcomes;
     }
     outcomes.split_with_guts_survival(
@@ -174,7 +172,6 @@ fn apply_defender_guts_if_needed(
         acting_player,
         Some(&attack.title),
         attack.effect.as_deref(),
-        &guts_indices,
     )
 }
 

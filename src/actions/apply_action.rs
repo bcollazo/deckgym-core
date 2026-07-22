@@ -21,8 +21,8 @@ use crate::{
 
 use super::{
     apply_action_helpers::{
-        forecast_end_turn, guts_would_flip, handle_damage, handle_damage_only, handle_knockouts,
-        Mutations,
+        enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
+        handle_damage_only, handle_knockouts, set_guts_survivors_to_10, Mutation, Mutations,
     },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
@@ -174,28 +174,16 @@ fn forecast_apply_damage(
     targets: &[(u32, usize, usize)],
     is_from_active_attack: bool,
 ) -> Outcomes {
-    // Sum raw damage per target (mirroring handle_damage_only) to find the Guts coin flips.
-    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
-    for (damage, player, idx) in targets {
-        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
-    }
-    let flipping: Vec<(usize, usize)> = damage_map
-        .into_iter()
-        .filter(|(target, raw_total)| {
-            guts_would_flip(
-                state,
-                attacking_ref,
-                *raw_total,
-                *target,
-                is_from_active_attack,
-                DamageModifierContext {
-                    attack_name: None,
-                    attack_effect: None,
-                },
-            )
-        })
-        .map(|(target, _)| target)
-        .collect();
+    let flipping = guts_flipping_targets(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        DamageModifierContext {
+            attack_name: None,
+            attack_effect: None,
+        },
+    );
 
     if flipping.is_empty() {
         let targets = targets.to_vec();
@@ -206,36 +194,28 @@ fn forecast_apply_damage(
 
     // One branch per heads/tails combination; on heads the damage still applies (so on-damage
     // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
-    let combos = 1usize << flipping.len();
-    let probabilities = vec![1.0 / combos as f64; combos];
-    let mut mutations: Mutations = vec![];
-    for mask in 0..combos {
-        let survivors: Vec<(usize, usize)> = flipping
-            .iter()
-            .enumerate()
-            .filter(|(bit, _)| (mask >> bit) & 1 == 1)
-            .map(|(_, target)| *target)
-            .collect();
-        let targets = targets.to_vec();
-        mutations.push(Box::new(move |_, state, _| {
-            handle_damage_only(
-                state,
-                attacking_ref,
-                &targets,
-                is_from_active_attack,
-                DamageModifierContext {
-                    attack_name: None,
-                    attack_effect: None,
-                },
-            );
-            for (player, idx) in &survivors {
-                if let Some(pokemon) = state.in_play_pokemon[*player][*idx].as_mut() {
-                    pokemon.set_remaining_hp(10);
-                }
-            }
-            handle_knockouts(state, attacking_ref, is_from_active_attack);
-        }));
-    }
+    let subsets = enumerate_guts_survivor_subsets(&flipping);
+    let probabilities = vec![1.0 / subsets.len() as f64; subsets.len()];
+    let mutations: Mutations = subsets
+        .into_iter()
+        .map(|survivors| {
+            let targets = targets.to_vec();
+            Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
+                handle_damage_only(
+                    state,
+                    attacking_ref,
+                    &targets,
+                    is_from_active_attack,
+                    DamageModifierContext {
+                        attack_name: None,
+                        attack_effect: None,
+                    },
+                );
+                set_guts_survivors_to_10(state, &survivors);
+                handle_knockouts(state, attacking_ref, is_from_active_attack);
+            }) as Mutation
+        })
+        .collect();
     Outcomes::from_parts(probabilities, mutations)
 }
 
