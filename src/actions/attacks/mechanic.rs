@@ -273,6 +273,13 @@ pub enum Mechanic {
     SelfDiscardAllTypeEnergy {
         energy_type: EnergyType,
     },
+    /// Mega Rayquaza ex's Mega Burst: discard every Energy of the listed types from the attacking
+    /// Pokémon, dealing `damage_per_energy` for each Energy discarded in this way (the attack's
+    /// `fixed_damage` is the per-Energy amount, so it is not added as a base).
+    SelfDiscardAllTypesEnergyDamagePerDiscarded {
+        energy_types: Vec<EnergyType>,
+        damage_per_energy: u32,
+    },
     SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
         energy_type: EnergyType,
         damage: u32,

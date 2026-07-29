@@ -2302,6 +2302,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
 
     // B4 Mechanics
+    // Mega Rayquaza ex - Mega Burst
+    map.insert(
+        "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.",
+        Mechanic::SelfDiscardAllTypesEnergyDamagePerDiscarded {
+            energy_types: vec![EnergyType::Fire, EnergyType::Lightning],
+            damage_per_energy: 50,
+        },
+    );
     // Wailord ex - Wondrous Waves
     map.insert(
         "This Pokémon recovers from all Special Conditions.",

@@ -134,6 +134,8 @@ mod mega_kangaskhan_double_punching_family_test;
 mod mega_medicham_ex_test;
 #[path = "pokemon/mega_metagross_ex_gatling_slug_test.rs"]
 mod mega_metagross_ex_gatling_slug_test;
+#[path = "pokemon/mega_rayquaza_ex_mega_burst_test.rs"]
+mod mega_rayquaza_ex_mega_burst_test;
 #[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]

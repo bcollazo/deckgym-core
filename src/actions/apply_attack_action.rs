@@ -443,6 +443,14 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfDiscardAllTypeEnergy { energy_type } => {
             discard_all_energy_of_type_attack(attack.fixed_damage, *energy_type)
         }
+        Mechanic::SelfDiscardAllTypesEnergyDamagePerDiscarded {
+            energy_types,
+            damage_per_energy,
+        } => discard_all_energy_of_types_damage_per_discarded_attack(
+            state,
+            energy_types.clone(),
+            *damage_per_energy,
+        ),
         Mechanic::SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
             energy_type,
             damage,
@@ -2258,6 +2266,35 @@ fn discard_all_energy_of_type_attack(damage: u32, energy_type: EnergyType) -> At
         // Use the state method to properly discard energies
         state.discard_from_active(action.actor, &to_discard);
     })
+}
+
+/// Mega Rayquaza ex - Mega Burst: discard every Energy of `energy_types` from the attacking
+/// Pokémon and deal `damage_per_energy` for each Energy discarded in this way.
+fn discard_all_energy_of_types_damage_per_discarded_attack(
+    state: &State,
+    energy_types: Vec<EnergyType>,
+    damage_per_energy: u32,
+) -> AttackOutcomes {
+    let matching_count = state
+        .get_active(state.current_player)
+        .attached_energy
+        .iter()
+        .filter(|e| energy_types.contains(e))
+        .count() as u32;
+
+    active_damage_effect_doutcome(
+        matching_count * damage_per_energy,
+        move |_, state, action| {
+            let to_discard: Vec<EnergyType> = state
+                .get_active(action.actor)
+                .attached_energy
+                .iter()
+                .filter(|e| energy_types.contains(e))
+                .copied()
+                .collect();
+            state.discard_from_active(action.actor, &to_discard);
+        },
+    )
 }
 
 fn discard_random_global_energy_attack(
