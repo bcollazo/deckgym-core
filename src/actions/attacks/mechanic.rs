@@ -154,6 +154,14 @@ pub enum Mechanic {
         damage: u32,
         bench_only: bool,
     },
+    /// Gigalith ex's Megaton Cannon: `DirectDamage` that additionally leaves a `CardEffect` on the
+    /// attacking Pokémon (e.g. "During your next turn, this Pokémon can't attack.").
+    DirectDamageAndSelfCardEffect {
+        damage: u32,
+        bench_only: bool,
+        effect: CardEffect,
+        duration: u8,
+    },
     DamageAndTurnEffect {
         effect: TurnEffect,
         duration: u8,

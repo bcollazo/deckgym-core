@@ -1942,7 +1942,16 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
-    // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
+    // Gigalith ex - Megaton Cannon
+    map.insert(
+        "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.",
+        Mechanic::DirectDamageAndSelfCardEffect {
+            damage: 140,
+            bench_only: false,
+            effect: CardEffect::CannotAttack,
+            duration: 2,
+        },
+    );
     map.insert(
         "This attack does 20 more damage for each Supporter card in your discard pile.",
         Mechanic::ExtraDamagePerTrainerTypeInDiscard {

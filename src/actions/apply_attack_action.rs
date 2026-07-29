@@ -413,6 +413,12 @@ fn forecast_effect_attack_by_mechanic(
             both_heads_bonus_damage_attack(attack.fixed_damage, *extra_damage)
         }
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
+        Mechanic::DirectDamageAndSelfCardEffect {
+            damage,
+            bench_only,
+            effect,
+            duration,
+        } => direct_damage_and_self_card_effect(*damage, *bench_only, effect.clone(), *duration),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
             damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
         }
@@ -1646,30 +1652,42 @@ fn coin_flip_self_charge_active(damage: u32, energies: Vec<EnergyType>) -> Attac
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
 fn direct_damage(damage: u32, bench_only: bool) -> AttackOutcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
-        let opponent = (action.actor + 1) % 2;
-        let mut choices = Vec::new();
-        if bench_only {
-            for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-                choices.push(SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
-                    is_from_active_attack: true,
-                });
-            }
-        } else {
-            for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
-                choices.push(SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
-                    is_from_active_attack: true,
-                });
-            }
-        }
-        if choices.is_empty() {
-            return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
-        }
-        state.move_generation_stack.push((action.actor, choices));
+        push_direct_damage_choices(state, action, damage, bench_only);
     })
+}
+
+/// Gigalith ex - Megaton Cannon: direct damage to a chosen opponent Pokémon, plus a card effect
+/// left on the attacking Pokémon (e.g. "During your next turn, this Pokémon can't attack.").
+fn direct_damage_and_self_card_effect(
+    damage: u32,
+    bench_only: bool,
+    effect: CardEffect,
+    duration: u8,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        state
+            .get_active_mut(action.actor)
+            .add_effect(effect.clone(), duration);
+        push_direct_damage_choices(state, action, damage, bench_only);
+    })
+}
+
+/// Queue the "pick which of your opponent's Pokémon takes the damage" decision.
+fn push_direct_damage_choices(state: &mut State, action: &Action, damage: u32, bench_only: bool) {
+    let opponent = (action.actor + 1) % 2;
+    let choices: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(in_play_idx, _)| !bench_only || *in_play_idx != 0)
+        .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+            attacking_ref: (action.actor, 0),
+            targets: vec![(damage, opponent, in_play_idx)],
+            is_from_active_attack: true,
+        })
+        .collect();
+    if choices.is_empty() {
+        return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+    }
+    state.move_generation_stack.push((action.actor, choices));
 }
 
 fn delayed_spot_damage(damage: u32) -> AttackOutcomes {

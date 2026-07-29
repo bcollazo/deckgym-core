@@ -66,6 +66,8 @@ mod flygon_ex_test;
 mod gallade_test;
 #[path = "pokemon/gardevoir_psy_turbo_test.rs"]
 mod gardevoir_psy_turbo_test;
+#[path = "pokemon/gigalith_ex_megaton_cannon_test.rs"]
+mod gigalith_ex_megaton_cannon_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/growlithe_puppy_pile_test.rs"]
