@@ -1,6 +1,6 @@
 use crate::{
     effects::{CardEffect, TurnEffect},
-    models::{EnergyType, StatusCondition},
+    models::{EnergyType, StatusCondition, TrainerType},
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -154,6 +154,14 @@ pub enum Mechanic {
         damage: u32,
         bench_only: bool,
     },
+    /// Gigalith ex's Megaton Cannon: `DirectDamage` that additionally leaves a `CardEffect` on the
+    /// attacking Pokémon (e.g. "During your next turn, this Pokémon can't attack.").
+    DirectDamageAndSelfCardEffect {
+        damage: u32,
+        bench_only: bool,
+        effect: CardEffect,
+        duration: u8,
+    },
     DamageAndTurnEffect {
         effect: TurnEffect,
         duration: u8,
@@ -225,8 +233,11 @@ pub enum Mechanic {
     ExtraDamagePerTrainerInOpponentDeck {
         damage_per_trainer: u32,
     },
-    ExtraDamagePerSupporterInDiscard {
-        damage_per_supporter: u32,
+    /// Extra damage for each card of a given Trainer kind in your discard pile (e.g. Chandelure's
+    /// Past Friends counts Supporters, Rotom ex's Junk Spark counts Items).
+    ExtraDamagePerTrainerTypeInDiscard {
+        trainer_type: TrainerType,
+        damage_per_card: u32,
     },
     ExtraDamagePerPokemonTypeInDiscard {
         energy_type: EnergyType,
@@ -270,6 +281,13 @@ pub enum Mechanic {
     SelfDiscardAllTypeEnergy {
         energy_type: EnergyType,
     },
+    /// Mega Rayquaza ex's Mega Burst: discard every Energy of the listed types from the attacking
+    /// Pokémon, dealing `damage_per_energy` for each Energy discarded in this way (the attack's
+    /// `fixed_damage` is the per-Energy amount, so it is not added as a base).
+    SelfDiscardAllTypesEnergyDamagePerDiscarded {
+        energy_types: Vec<EnergyType>,
+        damage_per_energy: u32,
+    },
     SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
         energy_type: EnergyType,
         damage: u32,
@@ -289,6 +307,13 @@ pub enum Mechanic {
         opponent: bool,
     },
     ExtraDamageIfUndamaged {
+        extra_damage: u32,
+    },
+    /// Vespiquen ex's Chase Order: "You may discard 1 of your Benched Basic [G] Pokémon. If you
+    /// do, this attack does 70 more damage." The attacker chooses between the plain damage and
+    /// discarding one eligible Benched Basic Pokémon for the boosted damage.
+    OptionalDiscardBenchedBasicForExtraDamage {
+        energy_type: EnergyType,
         extra_damage: u32,
     },
     ExtraDamageIfStage2OnBench {
@@ -408,6 +433,9 @@ pub enum Mechanic {
     SelfAsleepAndHeal {
         amount: u32,
     },
+    /// Wailord ex's Wondrous Waves: after dealing damage, the attacking Pokémon recovers from
+    /// all Special Conditions.
+    SelfCureStatusConditions,
     FlipCoinsBenchDamagePerHead {
         num_coins: usize,
         bench_damage_per_head: u32,

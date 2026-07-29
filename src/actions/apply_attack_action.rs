@@ -413,6 +413,12 @@ fn forecast_effect_attack_by_mechanic(
             both_heads_bonus_damage_attack(attack.fixed_damage, *extra_damage)
         }
         Mechanic::DirectDamage { damage, bench_only } => direct_damage(*damage, *bench_only),
+        Mechanic::DirectDamageAndSelfCardEffect {
+            damage,
+            bench_only,
+            effect,
+            duration,
+        } => direct_damage_and_self_card_effect(*damage, *bench_only, effect.clone(), *duration),
         Mechanic::DamageAndTurnEffect { effect, duration } => {
             damage_and_turn_effect_attack(attack.fixed_damage, effect.clone(), *duration)
         }
@@ -443,6 +449,14 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfDiscardAllTypeEnergy { energy_type } => {
             discard_all_energy_of_type_attack(attack.fixed_damage, *energy_type)
         }
+        Mechanic::SelfDiscardAllTypesEnergyDamagePerDiscarded {
+            energy_types,
+            damage_per_energy,
+        } => discard_all_energy_of_types_damage_per_discarded_attack(
+            state,
+            energy_types.clone(),
+            *damage_per_energy,
+        ),
         Mechanic::SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon {
             energy_type,
             damage,
@@ -469,6 +483,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfUndamaged { extra_damage } => {
             extra_damage_if_undamaged(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::OptionalDiscardBenchedBasicForExtraDamage {
+            energy_type,
+            extra_damage,
+        } => optional_discard_benched_basic_for_extra_damage(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *extra_damage,
+        ),
         Mechanic::ExtraDamageIfStage2OnBench { extra_damage } => {
             extra_damage_if_stage2_on_bench(state, attack.fixed_damage, *extra_damage)
         }
@@ -672,12 +695,14 @@ fn forecast_effect_attack_by_mechanic(
                 *damage_per_trainer,
             )
         }
-        Mechanic::ExtraDamagePerSupporterInDiscard {
-            damage_per_supporter,
-        } => extra_damage_per_supporter_in_discard_attack(
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type,
+            damage_per_card,
+        } => extra_damage_per_trainer_type_in_discard_attack(
             state,
             attack.fixed_damage,
-            *damage_per_supporter,
+            trainer_type.clone(),
+            *damage_per_card,
         ),
         Mechanic::ExtraDamagePerPokemonTypeInDiscard {
             energy_type,
@@ -730,6 +755,9 @@ fn forecast_effect_attack_by_mechanic(
         } => copy_attack(state, source, *require_attacker_energy_match),
         Mechanic::SelfAsleepAndHeal { amount } => {
             self_asleep_and_heal_attack(*amount, attack.fixed_damage)
+        }
+        Mechanic::SelfCureStatusConditions => {
+            self_cure_status_conditions_attack(attack.fixed_damage)
         }
         Mechanic::FlipCoinsBenchDamagePerHead {
             num_coins,
@@ -1633,30 +1661,42 @@ fn coin_flip_self_charge_active(damage: u32, energies: Vec<EnergyType>) -> Attac
 /// It will queue (via move_generation_stack) for the user to choose a pokemon to damage.
 fn direct_damage(damage: u32, bench_only: bool) -> AttackOutcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
-        let opponent = (action.actor + 1) % 2;
-        let mut choices = Vec::new();
-        if bench_only {
-            for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
-                choices.push(SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
-                    is_from_active_attack: true,
-                });
-            }
-        } else {
-            for (in_play_idx, _) in state.enumerate_in_play_pokemon(opponent) {
-                choices.push(SimpleAction::ApplyDamage {
-                    attacking_ref: (action.actor, 0),
-                    targets: vec![(damage, opponent, in_play_idx)],
-                    is_from_active_attack: true,
-                });
-            }
-        }
-        if choices.is_empty() {
-            return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
-        }
-        state.move_generation_stack.push((action.actor, choices));
+        push_direct_damage_choices(state, action, damage, bench_only);
     })
+}
+
+/// Gigalith ex - Megaton Cannon: direct damage to a chosen opponent Pokémon, plus a card effect
+/// left on the attacking Pokémon (e.g. "During your next turn, this Pokémon can't attack.").
+fn direct_damage_and_self_card_effect(
+    damage: u32,
+    bench_only: bool,
+    effect: CardEffect,
+    duration: u8,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        state
+            .get_active_mut(action.actor)
+            .add_effect(effect.clone(), duration);
+        push_direct_damage_choices(state, action, damage, bench_only);
+    })
+}
+
+/// Queue the "pick which of your opponent's Pokémon takes the damage" decision.
+fn push_direct_damage_choices(state: &mut State, action: &Action, damage: u32, bench_only: bool) {
+    let opponent = (action.actor + 1) % 2;
+    let choices: Vec<SimpleAction> = state
+        .enumerate_in_play_pokemon(opponent)
+        .filter(|(in_play_idx, _)| !bench_only || *in_play_idx != 0)
+        .map(|(in_play_idx, _)| SimpleAction::ApplyDamage {
+            attacking_ref: (action.actor, 0),
+            targets: vec![(damage, opponent, in_play_idx)],
+            is_from_active_attack: true,
+        })
+        .collect();
+    if choices.is_empty() {
+        return; // do nothing, since we use common_attack_mutation, turn should end, and no damage applied.
+    }
+    state.move_generation_stack.push((action.actor, choices));
 }
 
 fn delayed_spot_damage(damage: u32) -> AttackOutcomes {
@@ -2123,6 +2163,15 @@ fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> AttackOutcomes {
     })
 }
 
+/// Wailord ex - Wondrous Waves: the attacking Pokémon recovers from all Special Conditions.
+fn self_cure_status_conditions_attack(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        if let Some(attacker) = state.in_play_pokemon[action.actor][0].as_mut() {
+            attacker.cure_status_conditions();
+        }
+    })
+}
+
 /// For attacks that flip coins and deal damage per head to each of the opponent's Benched Pokémon.
 /// (e.g. Mega Slowbro ex's Laundry-Go-Round)
 fn flip_coins_bench_damage_per_head(
@@ -2244,6 +2293,35 @@ fn discard_all_energy_of_type_attack(damage: u32, energy_type: EnergyType) -> At
         // Use the state method to properly discard energies
         state.discard_from_active(action.actor, &to_discard);
     })
+}
+
+/// Mega Rayquaza ex - Mega Burst: discard every Energy of `energy_types` from the attacking
+/// Pokémon and deal `damage_per_energy` for each Energy discarded in this way.
+fn discard_all_energy_of_types_damage_per_discarded_attack(
+    state: &State,
+    energy_types: Vec<EnergyType>,
+    damage_per_energy: u32,
+) -> AttackOutcomes {
+    let matching_count = state
+        .get_active(state.current_player)
+        .attached_energy
+        .iter()
+        .filter(|e| energy_types.contains(e))
+        .count() as u32;
+
+    active_damage_effect_doutcome(
+        matching_count * damage_per_energy,
+        move |_, state, action| {
+            let to_discard: Vec<EnergyType> = state
+                .get_active(action.actor)
+                .attached_energy
+                .iter()
+                .filter(|e| energy_types.contains(e))
+                .copied()
+                .collect();
+            state.discard_from_active(action.actor, &to_discard);
+        },
+    )
 }
 
 fn discard_random_global_energy_attack(
@@ -2410,6 +2488,52 @@ fn extra_damage_if_undamaged(state: &State, base: u32, extra: u32) -> AttackOutc
     } else {
         active_damage_doutcome(base + extra)
     }
+}
+
+/// Vespiquen ex - Chase Order: the attacker may discard 1 of its Benched Basic Pokémon of the
+/// given type to boost the damage. The choice is queued as a single action per option so that the
+/// boosted damage is applied in one go (damage modifiers must not run twice).
+fn optional_discard_benched_basic_for_extra_damage(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    if benched_basic_indices_of_type(state, state.current_player, energy_type).is_empty() {
+        return active_damage_doutcome(base_damage);
+    }
+
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = vec![SimpleAction::ApplyDamage {
+            attacking_ref: (action.actor, 0),
+            targets: vec![(base_damage, opponent, 0)],
+            is_from_active_attack: true,
+        }];
+        choices.extend(
+            benched_basic_indices_of_type(state, action.actor, energy_type)
+                .into_iter()
+                .map(|in_play_idx| SimpleAction::DiscardOwnBenchedThenDamage {
+                    in_play_idx,
+                    damage: base_damage + extra_damage,
+                }),
+        );
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn benched_basic_indices_of_type(
+    state: &State,
+    player: usize,
+    energy_type: EnergyType,
+) -> Vec<usize> {
+    state
+        .enumerate_bench_pokemon(player)
+        .filter(|(_, pokemon)| {
+            pokemon.card.is_basic() && pokemon.get_energy_type() == Some(energy_type)
+        })
+        .map(|(in_play_idx, _)| in_play_idx)
+        .collect()
 }
 
 fn extra_damage_if_stage2_on_bench(state: &State, base: u32, extra: u32) -> AttackOutcomes {
@@ -3575,21 +3699,22 @@ fn extra_damage_per_trainer_in_opponent_deck_attack(
 }
 
 /// Chandelure - Past Friends: Extra damage per Supporter in your discard pile.
-fn extra_damage_per_supporter_in_discard_attack(
+fn extra_damage_per_trainer_type_in_discard_attack(
     state: &State,
     base_damage: u32,
-    damage_per_supporter: u32,
+    trainer_type: TrainerType,
+    damage_per_card: u32,
 ) -> AttackOutcomes {
-    let supporter_count = state.discard_piles[state.current_player]
+    let card_count = state.discard_piles[state.current_player]
         .iter()
         .filter(|card| {
             matches!(
                 card,
-                Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Supporter
+                Card::Trainer(trainer) if trainer.trainer_card_type == trainer_type
             )
         })
         .count() as u32;
-    let total_damage = base_damage + (supporter_count * damage_per_supporter);
+    let total_damage = base_damage + (card_count * damage_per_card);
     active_damage_doutcome(total_damage)
 }
 

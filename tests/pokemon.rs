@@ -66,6 +66,8 @@ mod flygon_ex_test;
 mod gallade_test;
 #[path = "pokemon/gardevoir_psy_turbo_test.rs"]
 mod gardevoir_psy_turbo_test;
+#[path = "pokemon/gigalith_ex_megaton_cannon_test.rs"]
+mod gigalith_ex_megaton_cannon_test;
 #[path = "pokemon/grovyle_slicing_snipe_test.rs"]
 mod grovyle_slicing_snipe_test;
 #[path = "pokemon/growlithe_puppy_pile_test.rs"]
@@ -132,6 +134,10 @@ mod mega_diancie_ex_test;
 mod mega_kangaskhan_double_punching_family_test;
 #[path = "pokemon/mega_medicham_ex_test.rs"]
 mod mega_medicham_ex_test;
+#[path = "pokemon/mega_metagross_ex_gatling_slug_test.rs"]
+mod mega_metagross_ex_gatling_slug_test;
+#[path = "pokemon/mega_rayquaza_ex_mega_burst_test.rs"]
+mod mega_rayquaza_ex_mega_burst_test;
 #[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
@@ -158,6 +164,8 @@ mod psyduck_test;
 mod rampardos_head_smash_test;
 #[path = "pokemon/roaring_moon_test.rs"]
 mod roaring_moon_test;
+#[path = "pokemon/rotom_ex_junk_spark_test.rs"]
+mod rotom_ex_junk_spark_test;
 #[path = "pokemon/salamence_test.rs"]
 mod salamence_test;
 #[path = "pokemon/sawk_test.rs"]
@@ -192,8 +200,12 @@ mod ursaluna_guts_test;
 mod vanilluxe_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
 mod vaporeon_ex_test;
+#[path = "pokemon/vespiquen_ex_chase_order_test.rs"]
+mod vespiquen_ex_chase_order_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]
 mod vulpix_tail_whip_test;
+#[path = "pokemon/wailord_ex_wondrous_waves_test.rs"]
+mod wailord_ex_wondrous_waves_test;
 #[path = "pokemon/wailord_test.rs"]
 mod wailord_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]

@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 use crate::{
     actions::attacks::{BenchSide, CopyAttackSource, Mechanic},
     effects::{CardEffect, TurnEffect},
-    models::{EnergyType, StatusCondition},
+    models::{EnergyType, StatusCondition, TrainerType},
 };
 
 /// Map from attack effect text to its implementation.
@@ -1942,11 +1942,21 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("This attack also does 30 damage to each of your opponent's Benched Pokémon that has damage on it.", todo_implementation);
-    // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
+    // Gigalith ex - Megaton Cannon
+    map.insert(
+        "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.",
+        Mechanic::DirectDamageAndSelfCardEffect {
+            damage: 140,
+            bench_only: false,
+            effect: CardEffect::CannotAttack,
+            duration: 2,
+        },
+    );
     map.insert(
         "This attack does 20 more damage for each Supporter card in your discard pile.",
-        Mechanic::ExtraDamagePerSupporterInDiscard {
-            damage_per_supporter: 20,
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type: TrainerType::Supporter,
+            damage_per_card: 20,
         },
     );
     // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
@@ -2297,6 +2307,45 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::TieredCoinFlipDamage {
             num_coins: 3,
             extra_damage_by_heads: vec![0, 20, 50, 120],
+        },
+    );
+
+    // B4 Mechanics
+    // Vespiquen ex - Chase Order
+    map.insert(
+        "You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage.",
+        Mechanic::OptionalDiscardBenchedBasicForExtraDamage {
+            energy_type: EnergyType::Grass,
+            extra_damage: 70,
+        },
+    );
+    // Mega Rayquaza ex - Mega Burst
+    map.insert(
+        "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.",
+        Mechanic::SelfDiscardAllTypesEnergyDamagePerDiscarded {
+            energy_types: vec![EnergyType::Fire, EnergyType::Lightning],
+            damage_per_energy: 50,
+        },
+    );
+    // Wailord ex - Wondrous Waves
+    map.insert(
+        "This Pokémon recovers from all Special Conditions.",
+        Mechanic::SelfCureStatusConditions,
+    );
+    // Rotom ex - Junk Spark
+    map.insert(
+        "This attack does 10 more damage for each Item card in your discard pile.",
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type: TrainerType::Item,
+            damage_per_card: 10,
+        },
+    );
+    // Mega Metagross ex - Gatling Slug
+    map.insert(
+        "This attack does 10 more damage for each [M] Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type: EnergyType::Metal,
+            damage_per_energy: 10,
         },
     );
     map
