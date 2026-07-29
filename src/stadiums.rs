@@ -50,6 +50,8 @@ static AREA_ZERO_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3a074AreaZero));
 static KIDS_ROOM_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3b069KidsRoom));
+static SOOTHING_SHORE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4154SoothingShore));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -66,6 +68,7 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == FRAGRANT_FOREST_EFFECT.as_str()
             || e == AREA_ZERO_EFFECT.as_str()
             || e == KIDS_ROOM_EFFECT.as_str()
+            || e == SOOTHING_SHORE_EFFECT.as_str()
     )
 }
 
@@ -182,6 +185,10 @@ pub fn can_use_area_zero(state: &State, player: usize) -> bool {
         return false;
     }
     state.hands[player].iter().any(|card| card.is_basic())
+}
+
+pub fn is_soothing_shore_active(state: &State) -> bool {
+    has_stadium(state, CardId::B4154SoothingShore)
 }
 
 pub fn is_kids_room_active(state: &State) -> bool {
