@@ -2299,5 +2299,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             extra_damage_by_heads: vec![0, 20, 50, 120],
         },
     );
+
+    // B4 Mechanics
+    // Mega Metagross ex - Gatling Slug
+    map.insert(
+        "This attack does 10 more damage for each [M] Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type: EnergyType::Metal,
+            damage_per_energy: 10,
+        },
+    );
     map
 });
