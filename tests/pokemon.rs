@@ -160,6 +160,8 @@ mod psyduck_test;
 mod rampardos_head_smash_test;
 #[path = "pokemon/roaring_moon_test.rs"]
 mod roaring_moon_test;
+#[path = "pokemon/rotom_ex_junk_spark_test.rs"]
+mod rotom_ex_junk_spark_test;
 #[path = "pokemon/salamence_test.rs"]
 mod salamence_test;
 #[path = "pokemon/sawk_test.rs"]

@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 use crate::{
     actions::attacks::{BenchSide, CopyAttackSource, Mechanic},
     effects::{CardEffect, TurnEffect},
-    models::{EnergyType, StatusCondition},
+    models::{EnergyType, StatusCondition, TrainerType},
 };
 
 /// Map from attack effect text to its implementation.
@@ -1945,8 +1945,9 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.", todo_implementation);
     map.insert(
         "This attack does 20 more damage for each Supporter card in your discard pile.",
-        Mechanic::ExtraDamagePerSupporterInDiscard {
-            damage_per_supporter: 20,
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type: TrainerType::Supporter,
+            damage_per_card: 20,
         },
     );
     // map.insert("This attack does 70 damage to 1 of your opponent's Benched Pokémon.", todo_implementation);
@@ -2301,6 +2302,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
 
     // B4 Mechanics
+    // Rotom ex - Junk Spark
+    map.insert(
+        "This attack does 10 more damage for each Item card in your discard pile.",
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type: TrainerType::Item,
+            damage_per_card: 10,
+        },
+    );
     // Mega Metagross ex - Gatling Slug
     map.insert(
         "This attack does 10 more damage for each [M] Energy attached to this Pokémon.",

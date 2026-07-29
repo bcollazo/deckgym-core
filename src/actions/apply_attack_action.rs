@@ -672,12 +672,14 @@ fn forecast_effect_attack_by_mechanic(
                 *damage_per_trainer,
             )
         }
-        Mechanic::ExtraDamagePerSupporterInDiscard {
-            damage_per_supporter,
-        } => extra_damage_per_supporter_in_discard_attack(
+        Mechanic::ExtraDamagePerTrainerTypeInDiscard {
+            trainer_type,
+            damage_per_card,
+        } => extra_damage_per_trainer_type_in_discard_attack(
             state,
             attack.fixed_damage,
-            *damage_per_supporter,
+            trainer_type.clone(),
+            *damage_per_card,
         ),
         Mechanic::ExtraDamagePerPokemonTypeInDiscard {
             energy_type,
@@ -3575,21 +3577,22 @@ fn extra_damage_per_trainer_in_opponent_deck_attack(
 }
 
 /// Chandelure - Past Friends: Extra damage per Supporter in your discard pile.
-fn extra_damage_per_supporter_in_discard_attack(
+fn extra_damage_per_trainer_type_in_discard_attack(
     state: &State,
     base_damage: u32,
-    damage_per_supporter: u32,
+    trainer_type: TrainerType,
+    damage_per_card: u32,
 ) -> AttackOutcomes {
-    let supporter_count = state.discard_piles[state.current_player]
+    let card_count = state.discard_piles[state.current_player]
         .iter()
         .filter(|card| {
             matches!(
                 card,
-                Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Supporter
+                Card::Trainer(trainer) if trainer.trainer_card_type == trainer_type
             )
         })
         .count() as u32;
-    let total_damage = base_damage + (supporter_count * damage_per_supporter);
+    let total_damage = base_damage + (card_count * damage_per_card);
     active_damage_doutcome(total_damage)
 }
 

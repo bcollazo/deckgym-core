@@ -1,6 +1,6 @@
 use crate::{
     effects::{CardEffect, TurnEffect},
-    models::{EnergyType, StatusCondition},
+    models::{EnergyType, StatusCondition, TrainerType},
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -225,8 +225,11 @@ pub enum Mechanic {
     ExtraDamagePerTrainerInOpponentDeck {
         damage_per_trainer: u32,
     },
-    ExtraDamagePerSupporterInDiscard {
-        damage_per_supporter: u32,
+    /// Extra damage for each card of a given Trainer kind in your discard pile (e.g. Chandelure's
+    /// Past Friends counts Supporters, Rotom ex's Junk Spark counts Items).
+    ExtraDamagePerTrainerTypeInDiscard {
+        trainer_type: TrainerType,
+        damage_per_card: u32,
     },
     ExtraDamagePerPokemonTypeInDiscard {
         energy_type: EnergyType,
