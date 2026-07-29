@@ -74857,6 +74857,5251 @@
     }
   },
   {
+    "Pokemon": {
+      "id": "B4 001",
+      "name": "Wurmple",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gnaw",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 002",
+      "name": "Silcoon",
+      "stage": 1,
+      "evolves_from": "Wurmple",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Cocoon Collector",
+          "fixed_damage": 0,
+          "effect": "Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 003",
+      "name": "Beautifly",
+      "stage": 2,
+      "evolves_from": "Silcoon",
+      "hp": 130,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Evoflight",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 more damage for each Evolution Pokémon on your Bench."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 004",
+      "name": "Cascoon",
+      "stage": 1,
+      "evolves_from": "Wurmple",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Cocoon Collector",
+          "fixed_damage": 0,
+          "effect": "Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 005",
+      "name": "Dustox",
+      "stage": 2,
+      "evolves_from": "Cascoon",
+      "hp": 120,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Variety Powder",
+        "effect": "Once during your turn, you may use this Ability. 1 Special Condition from among Burned, Confused, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Cutting Wind",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 006",
+      "name": "Lileep",
+      "stage": 1,
+      "evolves_from": "Root Fossil",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Blot",
+          "fixed_damage": 40,
+          "effect": "Heal 10 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 007",
+      "name": "Cradily",
+      "stage": 2,
+      "evolves_from": "Lileep",
+      "hp": 150,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Stick and Absorb",
+          "fixed_damage": 70,
+          "effect": "Heal 30 damage from this Pokémon. During your opponent's next turn, the Defending Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 008",
+      "name": "Kricketot",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Beat",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 009",
+      "name": "Kricketune",
+      "stage": 1,
+      "evolves_from": "Kricketot",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Bug Buzz",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 010",
+      "name": "Combee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Reckless Charge",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 011",
+      "name": "Vespiquen ex",
+      "stage": 1,
+      "evolves_from": "Combee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Chase Order",
+          "fixed_damage": 70,
+          "effect": "You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 012",
+      "name": "Karrablast",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Peck",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 013",
+      "name": "Shelmet",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Seashell Attack",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 014",
+      "name": "Accelgor",
+      "stage": 1,
+      "evolves_from": "Shelmet",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Deck and Cover",
+          "fixed_damage": 50,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 015",
+      "name": "Dhelmise",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Spinning Attack",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 016",
+      "name": "Pheromosa",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Prelude",
+          "fixed_damage": 30,
+          "effect": "If you haven't gotten any points, this attack does 60 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 017",
+      "name": "Poltchageist",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Hospitality",
+        "effect": "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may heal 20 damage from your Active [G] Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Spray Fluid",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 018",
+      "name": "Sinistcha",
+      "stage": 1,
+      "evolves_from": "Poltchageist",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Colorless"],
+          "title": "Scald",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 019",
+      "name": "Teal Mask Ogerpon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass", "Colorless"],
+          "title": "Ogre's Whip",
+          "fixed_damage": 0,
+          "effect": "This attack does damage to your opponent's Active Pokémon equal to this Pokémon's remaining HP."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 020",
+      "name": "Ponyta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Stoke",
+          "fixed_damage": 0,
+          "effect": "Take a [R] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 021",
+      "name": "Rapidash",
+      "stage": 1,
+      "evolves_from": "Ponyta",
+      "hp": 110,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Heat Blast",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 022",
+      "name": "Flareon",
+      "stage": 1,
+      "evolves_from": "Eevee",
+      "hp": 110,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Bursting Tail",
+          "fixed_damage": 70,
+          "effect": "Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 023",
+      "name": "Moltres",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless", "Colorless", "Colorless"],
+          "title": "Sky Attack",
+          "fixed_damage": 150,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 024",
+      "name": "Cyndaquil",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Singe",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 025",
+      "name": "Quilava",
+      "stage": 1,
+      "evolves_from": "Cyndaquil",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Heat Wave",
+          "fixed_damage": 30,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 026",
+      "name": "Typhlosion ex",
+      "stage": 2,
+      "evolves_from": "Quilava",
+      "hp": 180,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Destructive Inferno",
+          "fixed_damage": 110,
+          "effect": "Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 027",
+      "name": "Houndour",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Sharp Claws",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 028",
+      "name": "Houndoom",
+      "stage": 1,
+      "evolves_from": "Houndour",
+      "hp": 100,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Crunch",
+          "fixed_damage": 60,
+          "effect": "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 029",
+      "name": "Heatmor",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Colorless"],
+          "title": "Fire Claws",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 030",
+      "name": "Psyduck",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Migraine",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Confused. If tails, this Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 031",
+      "name": "Golduck",
+      "stage": 1,
+      "evolves_from": "Psyduck",
+      "hp": 110,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Surf",
+          "fixed_damage": 80,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 032",
+      "name": "Staryu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Swift",
+          "fixed_damage": 20,
+          "effect": "This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 033",
+      "name": "Starmie",
+      "stage": 1,
+      "evolves_from": "Staryu",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Swift",
+          "fixed_damage": 60,
+          "effect": "This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 034",
+      "name": "Carvanha",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Sharp Fang",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 035",
+      "name": "Mega Sharpedo ex",
+      "stage": 1,
+      "evolves_from": "Carvanha",
+      "hp": 190,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Turbo Shark",
+          "fixed_damage": 70,
+          "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": [],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 036",
+      "name": "Wailmer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 037",
+      "name": "Wailord ex",
+      "stage": 1,
+      "evolves_from": "Wailmer",
+      "hp": 250,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Water"],
+          "title": "Wondrous Waves",
+          "fixed_damage": 100,
+          "effect": "This Pokémon recovers from all Special Conditions."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 038",
+      "name": "Spheal",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Rollout",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 039",
+      "name": "Sealeo",
+      "stage": 1,
+      "evolves_from": "Spheal",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless"],
+          "title": "Frozen Splash",
+          "fixed_damage": 50,
+          "effect": "If your opponent's Active Pokémon is a [F] Pokémon, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 040",
+      "name": "Walrein",
+      "stage": 2,
+      "evolves_from": "Sealeo",
+      "hp": 160,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Colorless", "Colorless"],
+          "title": "Blizzlock",
+          "fixed_damage": 110,
+          "effect": "Your opponent can't use any Supporter cards from their hand during their next turn."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 041",
+      "name": "Kyogre",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Water"],
+          "title": "Tidal Blast",
+          "fixed_damage": 0,
+          "effect": "Discard 3 [W] Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 042",
+      "name": "Oshawott",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Water Gun",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 043",
+      "name": "Dewott",
+      "stage": 1,
+      "evolves_from": "Oshawott",
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Razor Shell",
+          "fixed_damage": 20,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 044",
+      "name": "Samurott",
+      "stage": 2,
+      "evolves_from": "Dewott",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Stance",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Pike",
+          "fixed_damage": 60,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 045",
+      "name": "Alomomola",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Mineral Pump",
+          "fixed_damage": 40,
+          "effect": "Heal 10 damage from each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 046",
+      "name": "Dewpider",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Wave Splash",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 047",
+      "name": "Araquanid",
+      "stage": 1,
+      "evolves_from": "Dewpider",
+      "hp": 100,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Corner",
+          "fixed_damage": 60,
+          "effect": "During your opponent's next turn, the Defending Pokémon can't retreat."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 048",
+      "name": "Bruxish",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Bite",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 049",
+      "name": "Pikachu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Growl",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 050",
+      "name": "Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Evoshock",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Electro Ball",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 051",
+      "name": "Shinx",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Static Shock",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 052",
+      "name": "Luxio",
+      "stage": 1,
+      "evolves_from": "Shinx",
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Zap Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": [],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 053",
+      "name": "Luxray",
+      "stage": 2,
+      "evolves_from": "Luxio",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning", "Colorless"],
+          "title": "Revenge Blast",
+          "fixed_damage": 80,
+          "effect": "This attack does 50 more damage for each point your opponent has gotten."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 054",
+      "name": "Pachirisu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Crackling Snap",
+          "fixed_damage": 30,
+          "effect": "Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 055",
+      "name": "Rotom ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Junk Spark",
+          "fixed_damage": 30,
+          "effect": "This attack does 10 more damage for each Item card in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 056",
+      "name": "Tynamo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 057",
+      "name": "Eelektrik",
+      "stage": 1,
+      "evolves_from": "Tynamo",
+      "hp": 80,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Headbutt",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 058",
+      "name": "Eelektross",
+      "stage": 2,
+      "evolves_from": "Eelektrik",
+      "hp": 140,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Energy Crush",
+          "fixed_damage": 50,
+          "effect": "This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 059",
+      "name": "Thundurus",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless", "Colorless"],
+          "title": "Disaster Volt",
+          "fixed_damage": 100,
+          "effect": "Discard a [L] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 060",
+      "name": "Helioptile",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Jumping Kick",
+          "fixed_damage": 0,
+          "effect": "This attack does 10 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 061",
+      "name": "Heliolisk",
+      "stage": 1,
+      "evolves_from": "Helioptile",
+      "hp": 80,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electrispark",
+          "fixed_damage": 40,
+          "effect": "This attack also does 10 damage to each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 062",
+      "name": "Wattrel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Peck",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 063",
+      "name": "Kilowattrel",
+      "stage": 1,
+      "evolves_from": "Wattrel",
+      "hp": 90,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Electro Ball",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 064",
+      "name": "Clefairy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Mini-Metronome",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 065",
+      "name": "Clefable",
+      "stage": 1,
+      "evolves_from": "Clefairy",
+      "hp": 110,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Hyper Voice",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 066",
+      "name": "Drowzee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Ram",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 067",
+      "name": "Hypno",
+      "stage": 1,
+      "evolves_from": "Drowzee",
+      "hp": 110,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Colorless"],
+          "title": "Psychic",
+          "fixed_damage": 60,
+          "effect": "This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 068",
+      "name": "Mime Jr.",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Mime-y Shuffle",
+          "fixed_damage": 0,
+          "effect": "Shuffle your hand into your deck. Draw a card for each card in your opponent's hand."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 069",
+      "name": "Mr. Mime",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Synchro Dance",
+          "fixed_damage": 40,
+          "effect": "If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 070",
+      "name": "Mewtwo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 10,
+          "effect": "This attack does 40 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 071",
+      "name": "Ralts",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Lead",
+          "fixed_damage": 0,
+          "effect": "Put a random Supporter card from your deck into your hand."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 072",
+      "name": "Kirlia",
+      "stage": 1,
+      "evolves_from": "Ralts",
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Double Spin",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 073",
+      "name": "Chimecho",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Extrasensory",
+          "fixed_damage": 40,
+          "effect": "If you have the same number of cards in your hand as your opponent, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 074",
+      "name": "Wynaut",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Stompy Jammer",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 075",
+      "name": "Woobat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Air Cutter",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 076",
+      "name": "Swoobat",
+      "stage": 1,
+      "evolves_from": "Woobat",
+      "hp": 90,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Mind Bend",
+          "fixed_damage": 40,
+          "effect": "Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 077",
+      "name": "Hoopa",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Mischievous Ring",
+          "fixed_damage": 20,
+          "effect": "Before doing damage, shuffle all Pokémon Tools from each of your opponent's Pokémon into their deck."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 078",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Supernatural Feather",
+          "fixed_damage": 50,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 079",
+      "name": "Makuhita",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Magnum Punch",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 080",
+      "name": "Hariyama",
+      "stage": 1,
+      "evolves_from": "Makuhita",
+      "hp": 120,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Pivot Throw",
+          "fixed_damage": 120,
+          "effect": "During your opponent's next turn, this Pokémon takes +50 damage from attacks."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 081",
+      "name": "Anorith",
+      "stage": 1,
+      "evolves_from": "Claw Fossil",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Slash",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 082",
+      "name": "Armaldo",
+      "stage": 2,
+      "evolves_from": "Anorith",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Abyssal Drop",
+          "fixed_damage": 0,
+          "effect": "Discard all Energy from this Pokémon. Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, Knock Out the Pokémon in the spot you chose."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 083",
+      "name": "Groudon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 130,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting"],
+          "title": "Earthquake",
+          "fixed_damage": 100,
+          "effect": "This attack also does 10 damage to each of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 084",
+      "name": "Mega Gallade ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 220,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Resonating Blade",
+          "fixed_damage": 100,
+          "effect": "If you played a Supporter card from your hand during this turn, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 085",
+      "name": "Drilbur",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Mud-Slap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 086",
+      "name": "Excadrill",
+      "stage": 1,
+      "evolves_from": "Drilbur",
+      "hp": 110,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Mud Shot",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 087",
+      "name": "Timburr",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Confront",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 088",
+      "name": "Gurdurr",
+      "stage": 1,
+      "evolves_from": "Timburr",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Pummel",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 089",
+      "name": "Conkeldurr",
+      "stage": 2,
+      "evolves_from": "Gurdurr",
+      "hp": 150,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Bedrock Breaker",
+          "fixed_damage": 100,
+          "effect": "Discard a Stadium in play."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 090",
+      "name": "Minior",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Cosmic Tackle",
+          "fixed_damage": 10,
+          "effect": "If your opponent's Active Pokémon has an Ability, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 091",
+      "name": "Grimer",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Gentle Slap",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 092",
+      "name": "Muk",
+      "stage": 1,
+      "evolves_from": "Grimer",
+      "hp": 130,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Ambush",
+          "fixed_damage": 30,
+          "effect": "Flip a coin. If heads, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 093",
+      "name": "Poochyena",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Team Hunt",
+          "fixed_damage": 0,
+          "effect": "Draw a card for each Poochyena you have in play."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 094",
+      "name": "Mightyena",
+      "stage": 1,
+      "evolves_from": "Poochyena",
+      "hp": 90,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Bite",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 095",
+      "name": "Galarian Zigzagoon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 096",
+      "name": "Galarian Linoone",
+      "stage": 1,
+      "evolves_from": "Galarian Zigzagoon",
+      "hp": 80,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Night Slash",
+          "fixed_damage": 30,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 097",
+      "name": "Galarian Obstagoon",
+      "stage": 2,
+      "evolves_from": "Galarian Linoone",
+      "hp": 140,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless", "Colorless"],
+          "title": "Bass Control",
+          "fixed_damage": 0,
+          "effect": "This attack does 80 damage to 1 of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 098",
+      "name": "Gulpin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 099",
+      "name": "Swalot",
+      "stage": 1,
+      "evolves_from": "Gulpin",
+      "hp": 120,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Swallow Up",
+          "fixed_damage": 30,
+          "effect": "If your opponent's Active Pokémon has less remaining HP than this Pokémon, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 100",
+      "name": "Absol",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Enhanced Blade",
+          "fixed_damage": 20,
+          "effect": "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 101",
+      "name": "Vullaby",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Run Around",
+          "fixed_damage": 0,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 102",
+      "name": "Mandibuzz",
+      "stage": 1,
+      "evolves_from": "Vullaby",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Colorless"],
+          "title": "Bone Rush",
+          "fixed_damage": 60,
+          "effect": "Flip a coin until you get tails. This attack does 60 damage for each heads."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 103",
+      "name": "Hoopa ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Shadow Bullet",
+          "fixed_damage": 30,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        },
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Dynamite Punch",
+          "fixed_damage": 100,
+          "effect": "This Pokémon also does 20 damage to itself."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 104",
+      "name": "Skarmory",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Drill Peck",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 105",
+      "name": "Mawile",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Play Rough",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If heads, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 106",
+      "name": "Beldum",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Conductive Body",
+        "effect": "If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Ram",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 107",
+      "name": "Metang",
+      "stage": 1,
+      "evolves_from": "Beldum",
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Bullet Punch",
+          "fixed_damage": 30,
+          "effect": "Flip 2 coins. This attack does 20 more damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 108",
+      "name": "Metagross",
+      "stage": 2,
+      "evolves_from": "Metang",
+      "hp": 160,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless", "Colorless"],
+          "title": "Squared Attack",
+          "fixed_damage": 50,
+          "effect": "Flip 4 coins. This attack does 50 damage for each heads."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 109",
+      "name": "Mega Metagross ex",
+      "stage": 2,
+      "evolves_from": "Metang",
+      "hp": 230,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Gatling Slug",
+          "fixed_damage": 100,
+          "effect": "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 110",
+      "name": "Escavalier",
+      "stage": 1,
+      "evolves_from": "Karrablast",
+      "hp": 120,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Iron Lance",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 111",
+      "name": "Genesect",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Techno Blast",
+          "fixed_damage": 70,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 112",
+      "name": "Duraludon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless"],
+          "title": "Metal Claw",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 113",
+      "name": "Archaludon",
+      "stage": 1,
+      "evolves_from": "Duraludon",
+      "hp": 140,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Raging Blade",
+          "fixed_damage": 80,
+          "effect": "If this Pokémon has damage on it, this attack does 80 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 114",
+      "name": "Varoom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Colorless"],
+          "title": "Headbutt Bounce",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 115",
+      "name": "Revavroom",
+      "stage": 1,
+      "evolves_from": "Varoom",
+      "hp": 120,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Dual Customization",
+        "effect": "This Pokémon may have up to 2 Pokémon Tool cards attached to it."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal", "Colorless", "Colorless"],
+          "title": "Overacceleration",
+          "fixed_damage": 70,
+          "effect": "During your next turn, this Pokémon's Overacceleration attack does +70 damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 116",
+      "name": "Dratini",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Slam",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 117",
+      "name": "Dragonair",
+      "stage": 1,
+      "evolves_from": "Dratini",
+      "hp": 80,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Dragon's Blessing",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 118",
+      "name": "Dragonite",
+      "stage": 2,
+      "evolves_from": "Dragonair",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Lightning", "Colorless"],
+          "title": "Hyper Beam",
+          "fixed_damage": 110,
+          "effect": "Discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 119",
+      "name": "Rayquaza",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Lightning", "Colorless", "Colorless"],
+          "title": "Dragon Impact",
+          "fixed_damage": 140,
+          "effect": "Discard 2 random Energy from this Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 120",
+      "name": "Mega Rayquaza ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Lightning"],
+          "title": "Mega Burst",
+          "fixed_damage": 50,
+          "effect": "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 121",
+      "name": "Noibat",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Darkness"],
+          "title": "Wing Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 122",
+      "name": "Noivern",
+      "stage": 1,
+      "evolves_from": "Noibat",
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Darkness", "Darkness"],
+          "title": "Draco Meteor",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 123",
+      "name": "Turtonator",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 110,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fighting", "Colorless"],
+          "title": "Searing Flame",
+          "fixed_damage": 70,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 124",
+      "name": "Drampa",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Power Blast",
+          "fixed_damage": 70,
+          "effect": "Discard a random Energy from this Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 125",
+      "name": "Applin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 40,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fire"],
+          "title": "Rolling Tackle",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 126",
+      "name": "Dipplin",
+      "stage": 1,
+      "evolves_from": "Applin",
+      "hp": 80,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fire"],
+          "title": "Double Hit",
+          "fixed_damage": 60,
+          "effect": "Flip 2 coins. This attack does 60 damage for each heads."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 127",
+      "name": "Hydrapple",
+      "stage": 2,
+      "evolves_from": "Dipplin",
+      "hp": 150,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Fire"],
+          "title": "Fickle Beam",
+          "fixed_damage": 100,
+          "effect": "Flip 2 coins. If both of them are heads, this attack does 100 more damage."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 128",
+      "name": "Cyclizar",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Darkness", "Colorless"],
+          "title": "Acceleration Drive",
+          "fixed_damage": 70,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 129",
+      "name": "Rattata",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Surprise Attack",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 130",
+      "name": "Raticate",
+      "stage": 1,
+      "evolves_from": "Rattata",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Treasure Collecting",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 131",
+      "name": "Eevee",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Tail Rap",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 132",
+      "name": "Aipom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Playful Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 133",
+      "name": "Ambipom",
+      "stage": 1,
+      "evolves_from": "Aipom",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 60,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 134",
+      "name": "Skitty",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Charm",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 135",
+      "name": "Delcatty",
+      "stage": 1,
+      "evolves_from": "Skitty",
+      "hp": 90,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Energy Blender",
+          "fixed_damage": 50,
+          "effect": "You may move any amount of Energy from your Pokémon in play to your other Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 136",
+      "name": "Kecleon",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Samesies Slap",
+          "fixed_damage": 20,
+          "effect": "If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 30 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 137",
+      "name": "Pidove",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gust",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 138",
+      "name": "Tranquill",
+      "stage": 1,
+      "evolves_from": "Pidove",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Speed Dive",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 139",
+      "name": "Unfezant",
+      "stage": 2,
+      "evolves_from": "Tranquill",
+      "hp": 130,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Fly",
+          "fixed_damage": 90,
+          "effect": "Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 140",
+      "name": "Ducklett",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Wing Attack",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 141",
+      "name": "Swanna ex",
+      "stage": 1,
+      "evolves_from": "Ducklett",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Jet Wing",
+          "fixed_damage": 140,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 142",
+      "name": "Furfrou",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Fur Coat",
+        "effect": "This Pokémon takes -20 damage from attacks."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Retaliate",
+          "fixed_damage": 20,
+          "effect": "If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 143",
+      "name": "Type: Null",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Tackle",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 144",
+      "name": "Silvally",
+      "stage": 1,
+      "evolves_from": "Type: Null",
+      "hp": 110,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Gold Breaker",
+          "fixed_damage": 60,
+          "effect": "If your opponent's Active Pokémon is a Pokémon ex, this attack does 90 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 145",
+      "trainer_card_type": "Item",
+      "name": "Order Pad",
+      "effect": "Flip a coin. If heads, put a random Item card from your deck into your hand.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 146",
+      "trainer_card_type": "Fossil",
+      "name": "Claw Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 147",
+      "trainer_card_type": "Fossil",
+      "name": "Root Fossil",
+      "effect": "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.",
+      "rarity": "◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 148",
+      "trainer_card_type": "Tool",
+      "name": "Deceptive Needle",
+      "effect": "At the end of your turn, if the [D] Pokémon this card is attached to is in the Active Spot, do 10 damage to your opponent's Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 149",
+      "trainer_card_type": "Tool",
+      "name": "Clear Veil",
+      "effect": "Prevent all effects of attacks used by your opponent's Pokémon done to the Pokémon this card is attached to. (Existing effects are not removed.)",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 150",
+      "trainer_card_type": "Supporter",
+      "name": "Psychic",
+      "effect": "You can use this card only if your Pokémon in the Active Spot has the Psychic attack.Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 151",
+      "trainer_card_type": "Supporter",
+      "name": "Drayden",
+      "effect": "During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 152",
+      "trainer_card_type": "Supporter",
+      "name": "Skyla",
+      "effect": "Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 153",
+      "trainer_card_type": "Supporter",
+      "name": "Wally",
+      "effect": "Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 154",
+      "trainer_card_type": "Stadium",
+      "name": "Soothing Shore",
+      "effect": "At the end of each player's turn, that player heals 20 damage from each of their Pokémon that has any [W] Energy attached.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 155",
+      "trainer_card_type": "Stadium",
+      "name": "Rainbow Cave",
+      "effect": "Once during each player's turn, that player may discard the Energy that has been generated in their Energy Zone. If they do, the next Energy is produced.",
+      "rarity": "◊◊",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 156",
+      "name": "Wurmple",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Gnaw",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 157",
+      "name": "Lileep",
+      "stage": 1,
+      "evolves_from": "Root Fossil",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Blot",
+          "fixed_damage": 40,
+          "effect": "Heal 10 damage from this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 158",
+      "name": "Kricketune",
+      "stage": 1,
+      "evolves_from": "Kricketot",
+      "hp": 90,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass"],
+          "title": "Bug Buzz",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 159",
+      "name": "Accelgor",
+      "stage": 1,
+      "evolves_from": "Shelmet",
+      "hp": 80,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Deck and Cover",
+          "fixed_damage": 50,
+          "effect": "Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 160",
+      "name": "Ponyta",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Stoke",
+          "fixed_damage": 0,
+          "effect": "Take a [R] Energy from your Energy Zone and attach it to this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 161",
+      "name": "Quilava",
+      "stage": 1,
+      "evolves_from": "Cyndaquil",
+      "hp": 80,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire"],
+          "title": "Heat Wave",
+          "fixed_damage": 30,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 162",
+      "name": "Kyogre",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Water"],
+          "title": "Tidal Blast",
+          "fixed_damage": 0,
+          "effect": "Discard 3 [W] Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 163",
+      "name": "Samurott",
+      "stage": 2,
+      "evolves_from": "Dewott",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": {
+        "title": "Stance",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Pike",
+          "fixed_damage": 60,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 164",
+      "name": "Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Evoshock",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Electro Ball",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 165",
+      "name": "Wattrel",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Peck",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 166",
+      "name": "Clefairy",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Mini-Metronome",
+          "fixed_damage": 0,
+          "effect": "Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 167",
+      "name": "Ralts",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Lead",
+          "fixed_damage": 0,
+          "effect": "Put a random Supporter card from your deck into your hand."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 168",
+      "name": "Wynaut",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 30,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": [],
+          "title": "Stompy Jammer",
+          "fixed_damage": 10,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": [],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 169",
+      "name": "Oricorio",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 80,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic"],
+          "title": "Supernatural Feather",
+          "fixed_damage": 50,
+          "effect": "Discard a card from your hand. If you can't, this attack does nothing."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 170",
+      "name": "Anorith",
+      "stage": 1,
+      "evolves_from": "Claw Fossil",
+      "hp": 90,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Slash",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 171",
+      "name": "Poochyena",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Team Hunt",
+          "fixed_damage": 0,
+          "effect": "Draw a card for each Poochyena you have in play."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 172",
+      "name": "Gulpin",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 173",
+      "name": "Vullaby",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Run Around",
+          "fixed_damage": 0,
+          "effect": "Switch this Pokémon with 1 of your Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 174",
+      "name": "Genesect",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Techno Blast",
+          "fixed_damage": 70,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 175",
+      "name": "Dragonair",
+      "stage": 1,
+      "evolves_from": "Dratini",
+      "hp": 80,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Dragon's Blessing",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 176",
+      "name": "Noivern",
+      "stage": 1,
+      "evolves_from": "Noibat",
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Darkness", "Darkness"],
+          "title": "Draco Meteor",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 177",
+      "name": "Cyclizar",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 90,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Darkness", "Colorless"],
+          "title": "Acceleration Drive",
+          "fixed_damage": 70,
+          "effect": "Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 178",
+      "name": "Raticate",
+      "stage": 1,
+      "evolves_from": "Rattata",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Treasure Collecting",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 179",
+      "name": "Aipom",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Playful Kick",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 180",
+      "name": "Vespiquen ex",
+      "stage": 1,
+      "evolves_from": "Combee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Chase Order",
+          "fixed_damage": 70,
+          "effect": "You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 181",
+      "name": "Typhlosion ex",
+      "stage": 2,
+      "evolves_from": "Quilava",
+      "hp": 180,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Destructive Inferno",
+          "fixed_damage": 110,
+          "effect": "Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 182",
+      "name": "Mega Sharpedo ex",
+      "stage": 1,
+      "evolves_from": "Carvanha",
+      "hp": 190,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Turbo Shark",
+          "fixed_damage": 70,
+          "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": [],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 183",
+      "name": "Wailord ex",
+      "stage": 1,
+      "evolves_from": "Wailmer",
+      "hp": 250,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Water"],
+          "title": "Wondrous Waves",
+          "fixed_damage": 100,
+          "effect": "This Pokémon recovers from all Special Conditions."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 184",
+      "name": "Rotom ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Junk Spark",
+          "fixed_damage": 30,
+          "effect": "This attack does 10 more damage for each Item card in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 185",
+      "name": "Mega Gallade ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 220,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Resonating Blade",
+          "fixed_damage": 100,
+          "effect": "If you played a Supporter card from your hand during this turn, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 186",
+      "name": "Hoopa ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Shadow Bullet",
+          "fixed_damage": 30,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        },
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Dynamite Punch",
+          "fixed_damage": 100,
+          "effect": "This Pokémon also does 20 damage to itself."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 187",
+      "name": "Mega Metagross ex",
+      "stage": 2,
+      "evolves_from": "Metang",
+      "hp": 230,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Gatling Slug",
+          "fixed_damage": 100,
+          "effect": "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 188",
+      "name": "Mega Rayquaza ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Lightning"],
+          "title": "Mega Burst",
+          "fixed_damage": 50,
+          "effect": "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 189",
+      "name": "Swanna ex",
+      "stage": 1,
+      "evolves_from": "Ducklett",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Jet Wing",
+          "fixed_damage": 140,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 190",
+      "trainer_card_type": "Supporter",
+      "name": "Psychic",
+      "effect": "You can use this card only if your Pokémon in the Active Spot has the Psychic attack.Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 191",
+      "trainer_card_type": "Supporter",
+      "name": "Drayden",
+      "effect": "During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 192",
+      "trainer_card_type": "Supporter",
+      "name": "Skyla",
+      "effect": "Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Trainer": {
+      "id": "B4 193",
+      "trainer_card_type": "Supporter",
+      "name": "Wally",
+      "effect": "Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.",
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 194",
+      "name": "Vespiquen ex",
+      "stage": 1,
+      "evolves_from": "Combee",
+      "hp": 140,
+      "energy_type": "Grass",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Grass", "Grass"],
+          "title": "Chase Order",
+          "fixed_damage": 70,
+          "effect": "You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 195",
+      "name": "Typhlosion ex",
+      "stage": 2,
+      "evolves_from": "Quilava",
+      "hp": 180,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Destructive Inferno",
+          "fixed_damage": 110,
+          "effect": "Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 196",
+      "name": "Mega Sharpedo ex",
+      "stage": 1,
+      "evolves_from": "Carvanha",
+      "hp": 190,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Turbo Shark",
+          "fixed_damage": 70,
+          "effect": "Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": [],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 197",
+      "name": "Wailord ex",
+      "stage": 1,
+      "evolves_from": "Wailmer",
+      "hp": 250,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water", "Water"],
+          "title": "Wondrous Waves",
+          "fixed_damage": 100,
+          "effect": "This Pokémon recovers from all Special Conditions."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 198",
+      "name": "Mega Gallade ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 220,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless", "Colorless"],
+          "title": "Resonating Blade",
+          "fixed_damage": 100,
+          "effect": "If you played a Supporter card from your hand during this turn, this attack does 50 more damage."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 199",
+      "name": "Hoopa ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Shadow Bullet",
+          "fixed_damage": 30,
+          "effect": "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+        },
+        {
+          "energy_required": ["Darkness", "Darkness", "Colorless"],
+          "title": "Dynamite Punch",
+          "fixed_damage": 100,
+          "effect": "This Pokémon also does 20 damage to itself."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 200",
+      "name": "Mega Metagross ex",
+      "stage": 2,
+      "evolves_from": "Metang",
+      "hp": 230,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Gatling Slug",
+          "fixed_damage": 100,
+          "effect": "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 201",
+      "name": "Swanna ex",
+      "stage": 1,
+      "evolves_from": "Ducklett",
+      "hp": 150,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Jet Wing",
+          "fixed_damage": 140,
+          "effect": "During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 202",
+      "name": "Rotom ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Lightning"],
+          "title": "Junk Spark",
+          "fixed_damage": 30,
+          "effect": "This attack does 10 more damage for each Item card in your discard pile."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 203",
+      "name": "Mega Rayquaza ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Lightning"],
+          "title": "Mega Burst",
+          "fixed_damage": 50,
+          "effect": "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆☆☆",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 204",
+      "name": "Alolan Vulpix",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Gnaw",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 205",
+      "name": "Mudkip",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Tackle",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 206",
+      "name": "Marshtomp",
+      "stage": 1,
+      "evolves_from": "Mudkip",
+      "hp": 90,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Colorless"],
+          "title": "Surf",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 207",
+      "name": "Swampert",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Large Whirlpool",
+          "fixed_damage": 100,
+          "effect": "Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 208",
+      "name": "Electabuzz",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Head Bolt",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 209",
+      "name": "Plusle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Electric Tail",
+          "fixed_damage": 10,
+          "effect": "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 210",
+      "name": "Minun",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Buddy Spark",
+          "fixed_damage": 30,
+          "effect": "If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 211",
+      "name": "Mr. Mime",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Colorless"],
+          "title": "Synchro Dance",
+          "fixed_damage": 40,
+          "effect": "If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 212",
+      "name": "Mewtwo",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 120,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic", "Psychic"],
+          "title": "Psychic",
+          "fixed_damage": 10,
+          "effect": "This attack does 40 more damage for each Energy attached to your opponent's Active Pokémon."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 213",
+      "name": "Roggenrola",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Colorless"],
+          "title": "Mud-Slap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 214",
+      "name": "Boldore",
+      "stage": 1,
+      "evolves_from": "Roggenrola",
+      "hp": 100,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Colorless"],
+          "title": "Power Gem",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 215",
+      "name": "Falinks",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Fighting",
+      "ability": {
+        "title": "Coordinated Unit",
+        "effect": "If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes -20 damage from attacks from your opponent's Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Fighting"],
+          "title": "Invade",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 216",
+      "name": "Koffing",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Gas Bomb",
+          "fixed_damage": 30,
+          "effect": "This Pokémon also does 10 damage to itself."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 217",
+      "name": "Weezing",
+      "stage": 1,
+      "evolves_from": "Koffing",
+      "hp": 110,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness", "Darkness"],
+          "title": "Sludge Bomb",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 218",
+      "name": "Galarian Meowth",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Slash",
+          "fixed_damage": 20,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 219",
+      "name": "Galarian Perrserker",
+      "stage": 1,
+      "evolves_from": "Galarian Meowth",
+      "hp": 100,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Dig Up",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put 2 random Pokémon Tool cards from your discard pile into your hand."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal", "Metal"],
+          "title": "Metal Claw",
+          "fixed_damage": 70,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 220",
+      "name": "Rattata",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Surprise Attack",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 221",
+      "name": "Raticate",
+      "stage": 1,
+      "evolves_from": "Rattata",
+      "hp": 80,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Treasure Collecting",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Speed Attack",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 222",
+      "name": "Smeargle",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": {
+        "title": "Portrait",
+        "effect": "Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Tail Whap",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 223",
+      "name": "Buneary",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Double Kick",
+          "fixed_damage": 20,
+          "effect": "Flip 2 coins. This attack does 20 damage for each heads."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "*",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 224",
+      "name": "Blacephalon ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 140,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire"],
+          "title": "Singe",
+          "fixed_damage": 0,
+          "effect": "Your opponent's Active Pokémon is now Burned."
+        },
+        {
+          "energy_required": ["Fire", "Fire", "Fire"],
+          "title": "Pop-Punk",
+          "fixed_damage": 140,
+          "effect": "Discard 3 [R] Energy from this Pokémon."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 225",
+      "name": "Alolan Ninetales ex",
+      "stage": 1,
+      "evolves_from": "Alolan Vulpix",
+      "hp": 150,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water"],
+          "title": "Binding Snow",
+          "fixed_damage": 80,
+          "effect": "During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon."
+        }
+      ],
+      "weakness": "Metal",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 226",
+      "name": "Mega Swampert ex",
+      "stage": 2,
+      "evolves_from": "Marshtomp",
+      "hp": 230,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water", "Water", "Water"],
+          "title": "Strong-Armed Destroyer",
+          "fixed_damage": 150,
+          "effect": "Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 227",
+      "name": "Mega Gardevoir ex",
+      "stage": 2,
+      "evolves_from": "Kirlia",
+      "hp": 210,
+      "energy_type": "Psychic",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Psychic"],
+          "title": "Fantasia Force",
+          "fixed_damage": 110,
+          "effect": "Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like."
+        }
+      ],
+      "weakness": "Darkness",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 228",
+      "name": "Mega Lopunny ex",
+      "stage": 1,
+      "evolves_from": "Buneary",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting"],
+          "title": "Rapid Smashers",
+          "fixed_damage": 90,
+          "effect": "Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused."
+        }
+      ],
+      "weakness": "Psychic",
+      "retreat_cost": ["Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 229",
+      "name": "Gigalith ex",
+      "stage": 2,
+      "evolves_from": "Boldore",
+      "hp": 190,
+      "energy_type": "Fighting",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fighting", "Fighting", "Fighting", "Fighting"],
+          "title": "Megaton Cannon",
+          "fixed_damage": 0,
+          "effect": "This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 230",
+      "name": "Zoroark ex",
+      "stage": 1,
+      "evolves_from": "Zorua",
+      "hp": 150,
+      "energy_type": "Darkness",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Darkness"],
+          "title": "Brutal Bash",
+          "fixed_damage": 30,
+          "effect": "This attack does 30 damage for each of your Benched [D] Pokémon."
+        }
+      ],
+      "weakness": "Grass",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 231",
+      "name": "Mega Kangaskhan ex",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 180,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless", "Colorless"],
+          "title": "Double-Punching Family",
+          "fixed_damage": 80,
+          "effect": "This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)"
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless", "Colorless"],
+      "rarity": "**",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 232",
+      "name": "Raichu",
+      "stage": 1,
+      "evolves_from": "Pikachu",
+      "hp": 100,
+      "energy_type": "Lightning",
+      "ability": {
+        "title": "Evoshock",
+        "effect": "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Lightning", "Colorless"],
+          "title": "Electro Ball",
+          "fixed_damage": 50,
+          "effect": null
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "B4 233",
+      "name": "Dragonair",
+      "stage": 1,
+      "evolves_from": "Dratini",
+      "hp": 80,
+      "energy_type": "Dragon",
+      "ability": {
+        "title": "Dragon's Blessing",
+        "effect": "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Draconic Whip",
+          "fixed_damage": 40,
+          "effect": null
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "♛",
+      "booster_pack": "Ruler of the Skies (B4)"
+    }
+  },
+  {
     "Trainer": {
       "id": "P-A 001",
       "trainer_card_type": "Item",
@@ -79356,6 +84601,196 @@
       ],
       "weakness": "Lightning",
       "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 079",
+      "name": "Celebi",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Grass",
+      "ability": {
+        "title": "Time Recall",
+        "effect": "Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)"
+      },
+      "attacks": [
+        {
+          "energy_required": ["Colorless", "Colorless"],
+          "title": "Smack",
+          "fixed_damage": 30,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless"],
+      "rarity": "☆",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 080",
+      "name": "Mega Houndoom ex",
+      "stage": 1,
+      "evolves_from": "Houndour",
+      "hp": 190,
+      "energy_type": "Fire",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Fire", "Fire", "Colorless"],
+          "title": "Grimhound Flare",
+          "fixed_damage": 80,
+          "effect": "Flip 3 coins. This attack does 80 damage for each heads."
+        }
+      ],
+      "weakness": "Water",
+      "retreat_cost": ["Colorless", "Colorless"],
+      "rarity": "◊◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 081",
+      "name": "Carvanha",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 50,
+      "energy_type": "Water",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Water"],
+          "title": "Aqua Jet",
+          "fixed_damage": 10,
+          "effect": "This attack also does 10 damage to 1 of your opponent's Benched Pokémon."
+        }
+      ],
+      "weakness": "Lightning",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 082",
+      "name": "Pikachu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Growl",
+          "fixed_damage": 0,
+          "effect": "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 083",
+      "name": "Noivern",
+      "stage": 1,
+      "evolves_from": "Noibat",
+      "hp": 100,
+      "energy_type": "Dragon",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Psychic", "Darkness", "Darkness"],
+          "title": "Draco Meteor",
+          "fixed_damage": 0,
+          "effect": "1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it."
+        }
+      ],
+      "weakness": null,
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 084",
+      "name": "Skitty",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Colorless",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Colorless"],
+          "title": "Whimsy Tackle",
+          "fixed_damage": 40,
+          "effect": "Flip a coin. If tails, this attack does nothing."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 085",
+      "name": "Pachirisu",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 70,
+      "energy_type": "Lightning",
+      "ability": null,
+      "attacks": [
+        {
+          "energy_required": ["Lightning"],
+          "title": "Crackling Snap",
+          "fixed_damage": 30,
+          "effect": "Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage."
+        }
+      ],
+      "weakness": "Fighting",
+      "retreat_cost": ["Colorless"],
+      "rarity": "◊◊◊",
+      "booster_pack": "Promo B (P-B)"
+    }
+  },
+  {
+    "Pokemon": {
+      "id": "P-B 086",
+      "name": "Beldum",
+      "stage": 0,
+      "evolves_from": null,
+      "hp": 60,
+      "energy_type": "Metal",
+      "ability": {
+        "title": "Conductive Body",
+        "effect": "If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less."
+      },
+      "attacks": [
+        {
+          "energy_required": ["Metal"],
+          "title": "Ram",
+          "fixed_damage": 10,
+          "effect": null
+        }
+      ],
+      "weakness": "Fire",
+      "retreat_cost": ["Colorless", "Colorless"],
       "rarity": "◊◊◊",
       "booster_pack": "Promo B (P-B)"
     }

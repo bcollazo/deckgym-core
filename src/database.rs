@@ -38,6 +38,8 @@ static DATABASE: LazyLock<HashMap<CardId, Card>> = LazyLock::new(|| {
     populate_database_chunk_25(&mut map);
     populate_database_chunk_26(&mut map);
     populate_database_chunk_27(&mut map);
+    populate_database_chunk_28(&mut map);
+    populate_database_chunk_29(&mut map);
     map
 });
 
@@ -73919,6 +73921,5192 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
         }),
     );
     map.insert(
+        CardId::B4001Wurmple,
+        Card::Pokemon(PokemonCard {
+            id: "B4 001".to_string(),
+            name: "Wurmple".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Gnaw".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4002Silcoon, Card::Pokemon(PokemonCard {
+            id: "B4 002".to_string(),
+            name: "Silcoon".to_string(),
+            stage: 1,
+            evolves_from: Some("Wurmple".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Cocoon Collector".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4003Beautifly,
+        Card::Pokemon(PokemonCard {
+            id: "B4 003".to_string(),
+            name: "Beautifly".to_string(),
+            stage: 2,
+            evolves_from: Some("Silcoon".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Evoflight".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack does 30 more damage for each Evolution Pokémon on your Bench."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+}
+
+fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
+    map.insert(CardId::B4004Cascoon, Card::Pokemon(PokemonCard {
+            id: "B4 004".to_string(),
+            name: "Cascoon".to_string(),
+            stage: 1,
+            evolves_from: Some("Wurmple".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Cocoon Collector".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4005Dustox, Card::Pokemon(PokemonCard {
+            id: "B4 005".to_string(),
+            name: "Dustox".to_string(),
+            stage: 2,
+            evolves_from: Some("Cascoon".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Variety Powder".to_string(), effect: "Once during your turn, you may use this Ability. 1 Special Condition from among Burned, Confused, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Cutting Wind".to_string(),
+                    fixed_damage: 60,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4006Lileep,
+        Card::Pokemon(PokemonCard {
+            id: "B4 006".to_string(),
+            name: "Lileep".to_string(),
+            stage: 1,
+            evolves_from: Some("Root Fossil".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Blot".to_string(),
+                fixed_damage: 40,
+                effect: Some("Heal 10 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4007Cradily, Card::Pokemon(PokemonCard {
+            id: "B4 007".to_string(),
+            name: "Cradily".to_string(),
+            stage: 2,
+            evolves_from: Some("Lileep".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Stick and Absorb".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Heal 30 damage from this Pokémon. During your opponent's next turn, the Defending Pokémon can't retreat.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4008Kricketot,
+        Card::Pokemon(PokemonCard {
+            id: "B4 008".to_string(),
+            name: "Kricketot".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Beat".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4009Kricketune,
+        Card::Pokemon(PokemonCard {
+            id: "B4 009".to_string(),
+            name: "Kricketune".to_string(),
+            stage: 1,
+            evolves_from: Some("Kricketot".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Bug Buzz".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4010Combee,
+        Card::Pokemon(PokemonCard {
+            id: "B4 010".to_string(),
+            name: "Combee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Reckless Charge".to_string(),
+                fixed_damage: 30,
+                effect: Some("This Pokémon also does 10 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4011VespiquenEx, Card::Pokemon(PokemonCard {
+            id: "B4 011".to_string(),
+            name: "Vespiquen ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Combee".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Chase Order".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4012Karrablast,
+        Card::Pokemon(PokemonCard {
+            id: "B4 012".to_string(),
+            name: "Karrablast".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Peck".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4013Shelmet,
+        Card::Pokemon(PokemonCard {
+            id: "B4 013".to_string(),
+            name: "Shelmet".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Seashell Attack".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4014Accelgor, Card::Pokemon(PokemonCard {
+            id: "B4 014".to_string(),
+            name: "Accelgor".to_string(),
+            stage: 1,
+            evolves_from: Some("Shelmet".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Deck and Cover".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4015Dhelmise,
+        Card::Pokemon(PokemonCard {
+            id: "B4 015".to_string(),
+            name: "Dhelmise".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Grass, EnergyType::Colorless],
+                title: "Spinning Attack".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4016Pheromosa,
+        Card::Pokemon(PokemonCard {
+            id: "B4 016".to_string(),
+            name: "Pheromosa".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Grass],
+                title: "Prelude".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "If you haven't gotten any points, this attack does 60 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4017Poltchageist, Card::Pokemon(PokemonCard {
+            id: "B4 017".to_string(),
+            name: "Poltchageist".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Hospitality".to_string(), effect: "Once during your turn, when you put this Pokémon from your hand onto your Bench, you may heal 20 damage from your Active [G] Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,],
+                    title: "Spray Fluid".to_string(),
+                    fixed_damage: 10,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4018Sinistcha,
+        Card::Pokemon(PokemonCard {
+            id: "B4 018".to_string(),
+            name: "Sinistcha".to_string(),
+            stage: 1,
+            evolves_from: Some("Poltchageist".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Colorless],
+                title: "Scald".to_string(),
+                fixed_damage: 40,
+                effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4019TealMaskOgerpon, Card::Pokemon(PokemonCard {
+            id: "B4 019".to_string(),
+            name: "Teal Mask Ogerpon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,EnergyType::Colorless,],
+                    title: "Ogre's Whip".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("This attack does damage to your opponent's Active Pokémon equal to this Pokémon's remaining HP.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4020Ponyta,
+        Card::Pokemon(PokemonCard {
+            id: "B4 020".to_string(),
+            name: "Ponyta".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire],
+                title: "Stoke".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Take a [R] Energy from your Energy Zone and attach it to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4021Rapidash,
+        Card::Pokemon(PokemonCard {
+            id: "B4 021".to_string(),
+            name: "Rapidash".to_string(),
+            stage: 1,
+            evolves_from: Some("Ponyta".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Colorless],
+                title: "Heat Blast".to_string(),
+                fixed_damage: 80,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4022Flareon, Card::Pokemon(PokemonCard {
+            id: "B4 022".to_string(),
+            name: "Flareon".to_string(),
+            stage: 1,
+            evolves_from: Some("Eevee".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
+                    title: "Bursting Tail".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Discard Fire[R] Energy from this Pokémon. Your opponent's Active Pokémon is now Burned.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4023Moltres,
+        Card::Pokemon(PokemonCard {
+            id: "B4 023".to_string(),
+            name: "Moltres".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fire,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Sky Attack".to_string(),
+                fixed_damage: 150,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4024Cyndaquil,
+        Card::Pokemon(PokemonCard {
+            id: "B4 024".to_string(),
+            name: "Cyndaquil".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire],
+                title: "Singe".to_string(),
+                fixed_damage: 0,
+                effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4025Quilava,
+        Card::Pokemon(PokemonCard {
+            id: "B4 025".to_string(),
+            name: "Quilava".to_string(),
+            stage: 1,
+            evolves_from: Some("Cyndaquil".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire, EnergyType::Fire],
+                title: "Heat Wave".to_string(),
+                fixed_damage: 30,
+                effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4026TyphlosionEx, Card::Pokemon(PokemonCard {
+            id: "B4 026".to_string(),
+            name: "Typhlosion ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Quilava".to_string()),
+            hp: 180,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
+                    title: "Destructive Inferno".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4027Houndour,
+        Card::Pokemon(PokemonCard {
+            id: "B4 027".to_string(),
+            name: "Houndour".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire],
+                title: "Sharp Claws".to_string(),
+                fixed_damage: 10,
+                effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4028Houndoom, Card::Pokemon(PokemonCard {
+            id: "B4 028".to_string(),
+            name: "Houndoom".to_string(),
+            stage: 1,
+            evolves_from: Some("Houndour".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,],
+                    title: "Crunch".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4029Heatmor,
+        Card::Pokemon(PokemonCard {
+            id: "B4 029".to_string(),
+            name: "Heatmor".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire, EnergyType::Colorless],
+                title: "Fire Claws".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4030Psyduck, Card::Pokemon(PokemonCard {
+            id: "B4 030".to_string(),
+            name: "Psyduck".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Migraine".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("Flip a coin. If heads, your opponent's Active Pokémon is now Confused. If tails, this Pokémon is now Confused.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4031Golduck,
+        Card::Pokemon(PokemonCard {
+            id: "B4 031".to_string(),
+            name: "Golduck".to_string(),
+            stage: 1,
+            evolves_from: Some("Psyduck".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water, EnergyType::Colorless],
+                title: "Surf".to_string(),
+                fixed_damage: 80,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4032Staryu, Card::Pokemon(PokemonCard {
+            id: "B4 032".to_string(),
+            name: "Staryu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Swift".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4033Starmie, Card::Pokemon(PokemonCard {
+            id: "B4 033".to_string(),
+            name: "Starmie".to_string(),
+            stage: 1,
+            evolves_from: Some("Staryu".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Colorless,],
+                    title: "Swift".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("This attack's damage isn't affected by Weakness or by any effects on your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4034Carvanha,
+        Card::Pokemon(PokemonCard {
+            id: "B4 034".to_string(),
+            name: "Carvanha".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Sharp Fang".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4035MegaSharpedoEx, Card::Pokemon(PokemonCard {
+            id: "B4 035".to_string(),
+            name: "Mega Sharpedo ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Carvanha".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Turbo Shark".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4036Wailmer,
+        Card::Pokemon(PokemonCard {
+            id: "B4 036".to_string(),
+            name: "Wailmer".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
+                title: "Wave Splash".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4037WailordEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 037".to_string(),
+            name: "Wailord ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Wailmer".to_string()),
+            hp: 250,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                ],
+                title: "Wondrous Waves".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon recovers from all Special Conditions.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4038Spheal,
+        Card::Pokemon(PokemonCard {
+            id: "B4 038".to_string(),
+            name: "Spheal".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Rollout".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4039Sealeo, Card::Pokemon(PokemonCard {
+            id: "B4 039".to_string(),
+            name: "Sealeo".to_string(),
+            stage: 1,
+            evolves_from: Some("Spheal".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,],
+                    title: "Frozen Splash".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("If your opponent's Active Pokémon is a [F] Pokémon, this attack does 70 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4040Walrein, Card::Pokemon(PokemonCard {
+            id: "B4 040".to_string(),
+            name: "Walrein".to_string(),
+            stage: 2,
+            evolves_from: Some("Sealeo".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Blizzlock".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Your opponent can't use any Supporter cards from their hand during their next turn.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4041Kyogre, Card::Pokemon(PokemonCard {
+            id: "B4 041".to_string(),
+            name: "Kyogre".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Tidal Blast".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Discard 3 [W] Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4042Oshawott,
+        Card::Pokemon(PokemonCard {
+            id: "B4 042".to_string(),
+            name: "Oshawott".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Water Gun".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4043Dewott,
+        Card::Pokemon(PokemonCard {
+            id: "B4 043".to_string(),
+            name: "Dewott".to_string(),
+            stage: 1,
+            evolves_from: Some("Oshawott".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Razor Shell".to_string(),
+                fixed_damage: 20,
+                effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4044Samurott, Card::Pokemon(PokemonCard {
+            id: "B4 044".to_string(),
+            name: "Samurott".to_string(),
+            stage: 2,
+            evolves_from: Some("Dewott".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Stance".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,],
+                    title: "Pike".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("This attack also does 20 damage to 1 of your opponent's Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4045Alomomola,
+        Card::Pokemon(PokemonCard {
+            id: "B4 045".to_string(),
+            name: "Alomomola".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Water],
+                title: "Mineral Pump".to_string(),
+                fixed_damage: 40,
+                effect: Some("Heal 10 damage from each of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4046Dewpider,
+        Card::Pokemon(PokemonCard {
+            id: "B4 046".to_string(),
+            name: "Dewpider".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Wave Splash".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4047Araquanid,
+        Card::Pokemon(PokemonCard {
+            id: "B4 047".to_string(),
+            name: "Araquanid".to_string(),
+            stage: 1,
+            evolves_from: Some("Dewpider".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Corner".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "During your opponent's next turn, the Defending Pokémon can't retreat."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4048Bruxish,
+        Card::Pokemon(PokemonCard {
+            id: "B4 048".to_string(),
+            name: "Bruxish".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Bite".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4049Pikachu, Card::Pokemon(PokemonCard {
+            id: "B4 049".to_string(),
+            name: "Pikachu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Growl".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4050Raichu, Card::Pokemon(PokemonCard {
+            id: "B4 050".to_string(),
+            name: "Raichu".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Evoshock".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Electro Ball".to_string(),
+                    fixed_damage: 50,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4051Shinx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 051".to_string(),
+            name: "Shinx".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Colorless],
+                title: "Static Shock".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4052Luxio,
+        Card::Pokemon(PokemonCard {
+            id: "B4 052".to_string(),
+            name: "Luxio".to_string(),
+            stage: 1,
+            evolves_from: Some("Shinx".to_string()),
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Colorless],
+                title: "Zap Kick".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4053Luxray,
+        Card::Pokemon(PokemonCard {
+            id: "B4 053".to_string(),
+            name: "Luxray".to_string(),
+            stage: 2,
+            evolves_from: Some("Luxio".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Lightning,
+                    EnergyType::Lightning,
+                    EnergyType::Colorless,
+                ],
+                title: "Revenge Blast".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "This attack does 50 more damage for each point your opponent has gotten."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4054Pachirisu, Card::Pokemon(PokemonCard {
+            id: "B4 054".to_string(),
+            name: "Pachirisu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Crackling Snap".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4055RotomEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 055".to_string(),
+            name: "Rotom ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Junk Spark".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack does 10 more damage for each Item card in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4056Tynamo,
+        Card::Pokemon(PokemonCard {
+            id: "B4 056".to_string(),
+            name: "Tynamo".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Tackle".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4057Eelektrik,
+        Card::Pokemon(PokemonCard {
+            id: "B4 057".to_string(),
+            name: "Eelektrik".to_string(),
+            stage: 1,
+            evolves_from: Some("Tynamo".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Colorless],
+                title: "Headbutt".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4058Eelektross, Card::Pokemon(PokemonCard {
+            id: "B4 058".to_string(),
+            name: "Eelektross".to_string(),
+            stage: 2,
+            evolves_from: Some("Eelektrik".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Energy Crush".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4059Thundurus,
+        Card::Pokemon(PokemonCard {
+            id: "B4 059".to_string(),
+            name: "Thundurus".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Lightning,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Disaster Volt".to_string(),
+                fixed_damage: 100,
+                effect: Some("Discard a [L] Energy from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4060Helioptile,
+        Card::Pokemon(PokemonCard {
+            id: "B4 060".to_string(),
+            name: "Helioptile".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Jumping Kick".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "This attack does 10 damage to 1 of your opponent's Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4061Heliolisk,
+        Card::Pokemon(PokemonCard {
+            id: "B4 061".to_string(),
+            name: "Heliolisk".to_string(),
+            stage: 1,
+            evolves_from: Some("Helioptile".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Electrispark".to_string(),
+                fixed_damage: 40,
+                effect: Some(
+                    "This attack also does 10 damage to each of your opponent's Benched Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4062Wattrel,
+        Card::Pokemon(PokemonCard {
+            id: "B4 062".to_string(),
+            name: "Wattrel".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Peck".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4063Kilowattrel,
+        Card::Pokemon(PokemonCard {
+            id: "B4 063".to_string(),
+            name: "Kilowattrel".to_string(),
+            stage: 1,
+            evolves_from: Some("Wattrel".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Electro Ball".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4064Clefairy, Card::Pokemon(PokemonCard {
+            id: "B4 064".to_string(),
+            name: "Clefairy".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Mini-Metronome".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4065Clefable,
+        Card::Pokemon(PokemonCard {
+            id: "B4 065".to_string(),
+            name: "Clefable".to_string(),
+            stage: 1,
+            evolves_from: Some("Clefairy".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Hyper Voice".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4066Drowzee,
+        Card::Pokemon(PokemonCard {
+            id: "B4 066".to_string(),
+            name: "Drowzee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Ram".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4067Hypno, Card::Pokemon(PokemonCard {
+            id: "B4 067".to_string(),
+            name: "Hypno".to_string(),
+            stage: 1,
+            evolves_from: Some("Drowzee".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Psychic".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("This attack does 20 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4068MimeJr, Card::Pokemon(PokemonCard {
+            id: "B4 068".to_string(),
+            name: "Mime Jr.".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![],
+                    title: "Mime-y Shuffle".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Shuffle your hand into your deck. Draw a card for each card in your opponent's hand.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4069MrMime, Card::Pokemon(PokemonCard {
+            id: "B4 069".to_string(),
+            name: "Mr. Mime".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Synchro Dance".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4070Mewtwo, Card::Pokemon(PokemonCard {
+            id: "B4 070".to_string(),
+            name: "Mewtwo".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Psychic".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("This attack does 40 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4071Ralts,
+        Card::Pokemon(PokemonCard {
+            id: "B4 071".to_string(),
+            name: "Ralts".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Lead".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Put a random Supporter card from your deck into your hand.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4072Kirlia,
+        Card::Pokemon(PokemonCard {
+            id: "B4 072".to_string(),
+            name: "Kirlia".to_string(),
+            stage: 1,
+            evolves_from: Some("Ralts".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Double Spin".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4073Chimecho, Card::Pokemon(PokemonCard {
+            id: "B4 073".to_string(),
+            name: "Chimecho".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Extrasensory".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If you have the same number of cards in your hand as your opponent, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4074Wynaut, Card::Pokemon(PokemonCard {
+            id: "B4 074".to_string(),
+            name: "Wynaut".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![],
+                    title: "Stompy Jammer".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4075Woobat,
+        Card::Pokemon(PokemonCard {
+            id: "B4 075".to_string(),
+            name: "Woobat".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Air Cutter".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4076Swoobat,
+        Card::Pokemon(PokemonCard {
+            id: "B4 076".to_string(),
+            name: "Swoobat".to_string(),
+            stage: 1,
+            evolves_from: Some("Woobat".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Mind Bend".to_string(),
+                fixed_damage: 40,
+                effect: Some("Your opponent's Active Pokémon is now Confused.".to_string()),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4077Hoopa, Card::Pokemon(PokemonCard {
+            id: "B4 077".to_string(),
+            name: "Hoopa".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Mischievous Ring".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("Before doing damage, shuffle all Pokémon Tools from each of your opponent's Pokémon into their deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4078Oricorio,
+        Card::Pokemon(PokemonCard {
+            id: "B4 078".to_string(),
+            name: "Oricorio".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Supernatural Feather".to_string(),
+                fixed_damage: 50,
+                effect: Some(
+                    "Discard a card from your hand. If you can't, this attack does nothing."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4079Makuhita,
+        Card::Pokemon(PokemonCard {
+            id: "B4 079".to_string(),
+            name: "Makuhita".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Magnum Punch".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4080Hariyama,
+        Card::Pokemon(PokemonCard {
+            id: "B4 080".to_string(),
+            name: "Hariyama".to_string(),
+            stage: 1,
+            evolves_from: Some("Makuhita".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                    EnergyType::Colorless,
+                ],
+                title: "Pivot Throw".to_string(),
+                fixed_damage: 120,
+                effect: Some(
+                    "During your opponent's next turn, this Pokémon takes +50 damage from attacks."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4081Anorith,
+        Card::Pokemon(PokemonCard {
+            id: "B4 081".to_string(),
+            name: "Anorith".to_string(),
+            stage: 1,
+            evolves_from: Some("Claw Fossil".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Slash".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4082Armaldo, Card::Pokemon(PokemonCard {
+            id: "B4 082".to_string(),
+            name: "Armaldo".to_string(),
+            stage: 2,
+            evolves_from: Some("Anorith".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Abyssal Drop".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Discard all Energy from this Pokémon. Choose a spot from among your opponent's Active Spot and Bench. At the end of your opponent's next turn, Knock Out the Pokémon in the spot you chose.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4083Groudon,
+        Card::Pokemon(PokemonCard {
+            id: "B4 083".to_string(),
+            name: "Groudon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 130,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                ],
+                title: "Earthquake".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "This attack also does 10 damage to each of your Benched Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4084MegaGalladeEx, Card::Pokemon(PokemonCard {
+            id: "B4 084".to_string(),
+            name: "Mega Gallade ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Kirlia".to_string()),
+            hp: 220,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Resonating Blade".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4085Drilbur,
+        Card::Pokemon(PokemonCard {
+            id: "B4 085".to_string(),
+            name: "Drilbur".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Mud-Slap".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4086Excadrill,
+        Card::Pokemon(PokemonCard {
+            id: "B4 086".to_string(),
+            name: "Excadrill".to_string(),
+            stage: 1,
+            evolves_from: Some("Drilbur".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Mud Shot".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4087Timburr,
+        Card::Pokemon(PokemonCard {
+            id: "B4 087".to_string(),
+            name: "Timburr".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Confront".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4088Gurdurr,
+        Card::Pokemon(PokemonCard {
+            id: "B4 088".to_string(),
+            name: "Gurdurr".to_string(),
+            stage: 1,
+            evolves_from: Some("Timburr".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Pummel".to_string(),
+                fixed_damage: 30,
+                effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4089Conkeldurr,
+        Card::Pokemon(PokemonCard {
+            id: "B4 089".to_string(),
+            name: "Conkeldurr".to_string(),
+            stage: 2,
+            evolves_from: Some("Gurdurr".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                    EnergyType::Colorless,
+                ],
+                title: "Bedrock Breaker".to_string(),
+                fixed_damage: 100,
+                effect: Some("Discard a Stadium in play.".to_string()),
+            }],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4090Minior, Card::Pokemon(PokemonCard {
+            id: "B4 090".to_string(),
+            name: "Minior".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Cosmic Tackle".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("If your opponent's Active Pokémon has an Ability, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4091Grimer,
+        Card::Pokemon(PokemonCard {
+            id: "B4 091".to_string(),
+            name: "Grimer".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Gentle Slap".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4092Muk,
+        Card::Pokemon(PokemonCard {
+            id: "B4 092".to_string(),
+            name: "Muk".to_string(),
+            stage: 1,
+            evolves_from: Some("Grimer".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Ambush".to_string(),
+                fixed_damage: 30,
+                effect: Some("Flip a coin. If heads, this attack does 30 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4093Poochyena,
+        Card::Pokemon(PokemonCard {
+            id: "B4 093".to_string(),
+            name: "Poochyena".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Team Hunt".to_string(),
+                fixed_damage: 0,
+                effect: Some("Draw a card for each Poochyena you have in play.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4094Mightyena,
+        Card::Pokemon(PokemonCard {
+            id: "B4 094".to_string(),
+            name: "Mightyena".to_string(),
+            stage: 1,
+            evolves_from: Some("Poochyena".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Bite".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4095GalarianZigzagoon,
+        Card::Pokemon(PokemonCard {
+            id: "B4 095".to_string(),
+            name: "Galarian Zigzagoon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Tackle".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4096GalarianLinoone,
+        Card::Pokemon(PokemonCard {
+            id: "B4 096".to_string(),
+            name: "Galarian Linoone".to_string(),
+            stage: 1,
+            evolves_from: Some("Galarian Zigzagoon".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Night Slash".to_string(),
+                fixed_damage: 30,
+                effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4097GalarianObstagoon,
+        Card::Pokemon(PokemonCard {
+            id: "B4 097".to_string(),
+            name: "Galarian Obstagoon".to_string(),
+            stage: 2,
+            evolves_from: Some("Galarian Linoone".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Darkness,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Bass Control".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "This attack does 80 damage to 1 of your opponent's Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4098Gulpin,
+        Card::Pokemon(PokemonCard {
+            id: "B4 098".to_string(),
+            name: "Gulpin".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Sludge Bomb".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4099Swalot, Card::Pokemon(PokemonCard {
+            id: "B4 099".to_string(),
+            name: "Swalot".to_string(),
+            stage: 1,
+            evolves_from: Some("Gulpin".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Swallow Up".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("If your opponent's Active Pokémon has less remaining HP than this Pokémon, this attack does 80 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4100Absol,
+        Card::Pokemon(PokemonCard {
+            id: "B4 100".to_string(),
+            name: "Absol".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Enhanced Blade".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "If this Pokémon has a Pokémon Tool attached, this attack does 30 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4101Vullaby,
+        Card::Pokemon(PokemonCard {
+            id: "B4 101".to_string(),
+            name: "Vullaby".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Run Around".to_string(),
+                fixed_damage: 0,
+                effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4102Mandibuzz,
+        Card::Pokemon(PokemonCard {
+            id: "B4 102".to_string(),
+            name: "Mandibuzz".to_string(),
+            stage: 1,
+            evolves_from: Some("Vullaby".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness, EnergyType::Colorless],
+                title: "Bone Rush".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "Flip a coin until you get tails. This attack does 60 damage for each heads."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4103HoopaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 103".to_string(),
+            name: "Hoopa ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness],
+                    title: "Shadow Bullet".to_string(),
+                    fixed_damage: 30,
+                    effect: Some(
+                        "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+                            .to_string(),
+                    ),
+                },
+                Attack {
+                    energy_required: vec![
+                        EnergyType::Darkness,
+                        EnergyType::Darkness,
+                        EnergyType::Colorless,
+                    ],
+                    title: "Dynamite Punch".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("This Pokémon also does 20 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4104Skarmory,
+        Card::Pokemon(PokemonCard {
+            id: "B4 104".to_string(),
+            name: "Skarmory".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Drill Peck".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4105Mawile,
+        Card::Pokemon(PokemonCard {
+            id: "B4 105".to_string(),
+            name: "Mawile".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Colorless],
+                title: "Play Rough".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If heads, this attack does 20 more damage.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4106Beldum,
+        Card::Pokemon(PokemonCard {
+            id: "B4 106".to_string(),
+            name: "Beldum".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Metal,
+            ability: Some(Ability {
+                title: "Conductive Body".to_string(),
+                effect:
+                    "If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less."
+                        .to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal],
+                title: "Ram".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4107Metang,
+        Card::Pokemon(PokemonCard {
+            id: "B4 107".to_string(),
+            name: "Metang".to_string(),
+            stage: 1,
+            evolves_from: Some("Beldum".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Colorless],
+                title: "Bullet Punch".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 more damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4108Metagross,
+        Card::Pokemon(PokemonCard {
+            id: "B4 108".to_string(),
+            name: "Metagross".to_string(),
+            stage: 2,
+            evolves_from: Some("Metang".to_string()),
+            hp: 160,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Metal,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Squared Attack".to_string(),
+                fixed_damage: 50,
+                effect: Some(
+                    "Flip 4 coins. This attack does 50 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4109MegaMetagrossEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 109".to_string(),
+            name: "Mega Metagross ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Metang".to_string()),
+            hp: 230,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Gatling Slug".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4110Escavalier,
+        Card::Pokemon(PokemonCard {
+            id: "B4 110".to_string(),
+            name: "Escavalier".to_string(),
+            stage: 1,
+            evolves_from: Some("Karrablast".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Metal],
+                title: "Iron Lance".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4111Genesect,
+        Card::Pokemon(PokemonCard {
+            id: "B4 111".to_string(),
+            name: "Genesect".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Metal],
+                title: "Techno Blast".to_string(),
+                fixed_damage: 70,
+                effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4112Duraludon,
+        Card::Pokemon(PokemonCard {
+            id: "B4 112".to_string(),
+            name: "Duraludon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Metal, EnergyType::Colorless],
+                title: "Metal Claw".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4113Archaludon,
+        Card::Pokemon(PokemonCard {
+            id: "B4 113".to_string(),
+            name: "Archaludon".to_string(),
+            stage: 1,
+            evolves_from: Some("Duraludon".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Metal,
+                    EnergyType::Metal,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Raging Blade".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "If this Pokémon has damage on it, this attack does 80 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4114Varoom,
+        Card::Pokemon(PokemonCard {
+            id: "B4 114".to_string(),
+            name: "Varoom".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Colorless],
+                title: "Headbutt Bounce".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4115Revavroom, Card::Pokemon(PokemonCard {
+            id: "B4 115".to_string(),
+            name: "Revavroom".to_string(),
+            stage: 1,
+            evolves_from: Some("Varoom".to_string()),
+            hp: 120,
+            energy_type: EnergyType::Metal,
+            ability: Some(Ability { title: "Dual Customization".to_string(), effect: "This Pokémon may have up to 2 Pokémon Tool cards attached to it.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Metal,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Overacceleration".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("During your next turn, this Pokémon's Overacceleration attack does +70 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4116Dratini,
+        Card::Pokemon(PokemonCard {
+            id: "B4 116".to_string(),
+            name: "Dratini".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Slam".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4117Dragonair, Card::Pokemon(PokemonCard {
+            id: "B4 117".to_string(),
+            name: "Dragonair".to_string(),
+            stage: 1,
+            evolves_from: Some("Dratini".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Dragon,
+            ability: Some(Ability { title: "Dragon's Blessing".to_string(), effect: "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Draconic Whip".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4118Dragonite,
+        Card::Pokemon(PokemonCard {
+            id: "B4 118".to_string(),
+            name: "Dragonite".to_string(),
+            stage: 2,
+            evolves_from: Some("Dragonair".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Water,
+                    EnergyType::Lightning,
+                    EnergyType::Colorless,
+                ],
+                title: "Hyper Beam".to_string(),
+                fixed_damage: 110,
+                effect: Some(
+                    "Discard a random Energy from your opponent's Active Pokémon.".to_string(),
+                ),
+            }],
+            weakness: None,
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4119Rayquaza,
+        Card::Pokemon(PokemonCard {
+            id: "B4 119".to_string(),
+            name: "Rayquaza".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fire,
+                    EnergyType::Lightning,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Dragon Impact".to_string(),
+                fixed_damage: 140,
+                effect: Some("Discard 2 random Energy from this Pokémon.".to_string()),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4120MegaRayquazaEx, Card::Pokemon(PokemonCard {
+            id: "B4 120".to_string(),
+            name: "Mega Rayquaza ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 180,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Lightning,],
+                    title: "Mega Burst".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4121Noibat,
+        Card::Pokemon(PokemonCard {
+            id: "B4 121".to_string(),
+            name: "Noibat".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic, EnergyType::Darkness],
+                title: "Wing Attack".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4122Noivern, Card::Pokemon(PokemonCard {
+            id: "B4 122".to_string(),
+            name: "Noivern".to_string(),
+            stage: 1,
+            evolves_from: Some("Noibat".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Draco Meteor".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4123Turtonator,
+        Card::Pokemon(PokemonCard {
+            id: "B4 123".to_string(),
+            name: "Turtonator".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 110,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fire,
+                    EnergyType::Fighting,
+                    EnergyType::Colorless,
+                ],
+                title: "Searing Flame".to_string(),
+                fixed_damage: 70,
+                effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+            }],
+            weakness: None,
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4124Drampa,
+        Card::Pokemon(PokemonCard {
+            id: "B4 124".to_string(),
+            name: "Drampa".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Power Blast".to_string(),
+                fixed_damage: 70,
+                effect: Some("Discard a random Energy from this Pokémon.".to_string()),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4125Applin,
+        Card::Pokemon(PokemonCard {
+            id: "B4 125".to_string(),
+            name: "Applin".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 40,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Fire],
+                title: "Rolling Tackle".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4126Dipplin,
+        Card::Pokemon(PokemonCard {
+            id: "B4 126".to_string(),
+            name: "Dipplin".to_string(),
+            stage: 1,
+            evolves_from: Some("Applin".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Fire],
+                title: "Double Hit".to_string(),
+                fixed_damage: 60,
+                effect: Some(
+                    "Flip 2 coins. This attack does 60 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4127Hydrapple,
+        Card::Pokemon(PokemonCard {
+            id: "B4 127".to_string(),
+            name: "Hydrapple".to_string(),
+            stage: 2,
+            evolves_from: Some("Dipplin".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass, EnergyType::Fire],
+                title: "Fickle Beam".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "Flip 2 coins. If both of them are heads, this attack does 100 more damage."
+                        .to_string(),
+                ),
+            }],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4128Cyclizar, Card::Pokemon(PokemonCard {
+            id: "B4 128".to_string(),
+            name: "Cyclizar".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Acceleration Drive".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4129Rattata,
+        Card::Pokemon(PokemonCard {
+            id: "B4 129".to_string(),
+            name: "Rattata".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Surprise Attack".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4130Raticate, Card::Pokemon(PokemonCard {
+            id: "B4 130".to_string(),
+            name: "Raticate".to_string(),
+            stage: 1,
+            evolves_from: Some("Rattata".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Treasure Collecting".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Speed Attack".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4131Eevee,
+        Card::Pokemon(PokemonCard {
+            id: "B4 131".to_string(),
+            name: "Eevee".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Tail Rap".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+}
+
+fn populate_database_chunk_27(map: &mut HashMap<CardId, Card>) {
+    map.insert(
+        CardId::B4132Aipom,
+        Card::Pokemon(PokemonCard {
+            id: "B4 132".to_string(),
+            name: "Aipom".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Playful Kick".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4133Ambipom,
+        Card::Pokemon(PokemonCard {
+            id: "B4 133".to_string(),
+            name: "Ambipom".to_string(),
+            stage: 1,
+            evolves_from: Some("Aipom".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Smack".to_string(),
+                fixed_damage: 60,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4134Skitty, Card::Pokemon(PokemonCard {
+            id: "B4 134".to_string(),
+            name: "Skitty".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Charm".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4135Delcatty, Card::Pokemon(PokemonCard {
+            id: "B4 135".to_string(),
+            name: "Delcatty".to_string(),
+            stage: 1,
+            evolves_from: Some("Skitty".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Energy Blender".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("You may move any amount of Energy from your Pokémon in play to your other Pokémon in any way you like.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4136Kecleon, Card::Pokemon(PokemonCard {
+            id: "B4 136".to_string(),
+            name: "Kecleon".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Samesies Slap".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If this Pokémon and your opponent's Active Pokémon have 1 or more of the same type of Energy attached, this attack does 30 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4137Pidove,
+        Card::Pokemon(PokemonCard {
+            id: "B4 137".to_string(),
+            name: "Pidove".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Gust".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4138Tranquill,
+        Card::Pokemon(PokemonCard {
+            id: "B4 138".to_string(),
+            name: "Tranquill".to_string(),
+            stage: 1,
+            evolves_from: Some("Pidove".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Speed Dive".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4139Unfezant, Card::Pokemon(PokemonCard {
+            id: "B4 139".to_string(),
+            name: "Unfezant".to_string(),
+            stage: 2,
+            evolves_from: Some("Tranquill".to_string()),
+            hp: 130,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Fly".to_string(),
+                    fixed_damage: 90,
+                    effect: Some("Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4140Ducklett,
+        Card::Pokemon(PokemonCard {
+            id: "B4 140".to_string(),
+            name: "Ducklett".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Wing Attack".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4141SwannaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 141".to_string(),
+            name: "Swanna ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Ducklett".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Jet Wing".to_string(),
+                fixed_damage: 140,
+                effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4142Furfrou, Card::Pokemon(PokemonCard {
+            id: "B4 142".to_string(),
+            name: "Furfrou".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Fur Coat".to_string(), effect: "This Pokémon takes -20 damage from attacks.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Retaliate".to_string(),
+                    fixed_damage: 20,
+                    effect: Some("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4143TypeNull,
+        Card::Pokemon(PokemonCard {
+            id: "B4 143".to_string(),
+            name: "Type: Null".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Tackle".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4144Silvally, Card::Pokemon(PokemonCard {
+            id: "B4 144".to_string(),
+            name: "Silvally".to_string(),
+            stage: 1,
+            evolves_from: Some("Type: Null".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Gold Breaker".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("If your opponent's Active Pokémon is a Pokémon ex, this attack does 90 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4145OrderPad,
+        Card::Trainer(TrainerCard {
+            id: "B4 145".to_string(),
+            name: "Order Pad".to_string(),
+            effect: "Flip a coin. If heads, put a random Item card from your deck into your hand."
+                .to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Item,
+        }),
+    );
+    map.insert(CardId::B4146ClawFossil, Card::Trainer(TrainerCard {
+            id: "B4 146".to_string(),
+            name: "Claw Fossil".to_string(),
+            effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Fossil,
+        }));
+    map.insert(CardId::B4147RootFossil, Card::Trainer(TrainerCard {
+            id: "B4 147".to_string(),
+            name: "Root Fossil".to_string(),
+            effect: "Play this card as if it were a 40-HP Basic [C] Pokémon.At any time during your turn, you may discard this card from play.This card can't retreat.".to_string(),
+            rarity: "◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Fossil,
+        }));
+    map.insert(CardId::B4148DeceptiveNeedle, Card::Trainer(TrainerCard {
+            id: "B4 148".to_string(),
+            name: "Deceptive Needle".to_string(),
+            effect: "At the end of your turn, if the [D] Pokémon this card is attached to is in the Active Spot, do 10 damage to your opponent's Active Pokémon.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }));
+    map.insert(CardId::B4149ClearVeil, Card::Trainer(TrainerCard {
+            id: "B4 149".to_string(),
+            name: "Clear Veil".to_string(),
+            effect: "Prevent all effects of attacks used by your opponent's Pokémon done to the Pokémon this card is attached to. (Existing effects are not removed.)".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Tool,
+        }));
+    map.insert(CardId::B4150Psychic, Card::Trainer(TrainerCard {
+            id: "B4 150".to_string(),
+            name: "Psychic".to_string(),
+            effect: "You can use this card only if your Pokémon in the Active Spot has the Psychic attack.Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B4151Drayden, Card::Trainer(TrainerCard {
+            id: "B4 151".to_string(),
+            name: "Drayden".to_string(),
+            effect: "During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(
+        CardId::B4152Skyla,
+        Card::Trainer(TrainerCard {
+            id: "B4 152".to_string(),
+            name: "Skyla".to_string(),
+            effect: "Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon."
+                .to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B4153Wally, Card::Trainer(TrainerCard {
+            id: "B4 153".to_string(),
+            name: "Wally".to_string(),
+            effect: "Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B4154SoothingShore, Card::Trainer(TrainerCard {
+            id: "B4 154".to_string(),
+            name: "Soothing Shore".to_string(),
+            effect: "At the end of each player's turn, that player heals 20 damage from each of their Pokémon that has any [W] Energy attached.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Stadium,
+        }));
+    map.insert(CardId::B4155RainbowCave, Card::Trainer(TrainerCard {
+            id: "B4 155".to_string(),
+            name: "Rainbow Cave".to_string(),
+            effect: "Once during each player's turn, that player may discard the Energy that has been generated in their Energy Zone. If they do, the next Energy is produced.".to_string(),
+            rarity: "◊◊".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Stadium,
+        }));
+    map.insert(
+        CardId::B4156Wurmple,
+        Card::Pokemon(PokemonCard {
+            id: "B4 156".to_string(),
+            name: "Wurmple".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Gnaw".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4157Lileep,
+        Card::Pokemon(PokemonCard {
+            id: "B4 157".to_string(),
+            name: "Lileep".to_string(),
+            stage: 1,
+            evolves_from: Some("Root Fossil".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Blot".to_string(),
+                fixed_damage: 40,
+                effect: Some("Heal 10 damage from this Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4158Kricketune,
+        Card::Pokemon(PokemonCard {
+            id: "B4 158".to_string(),
+            name: "Kricketune".to_string(),
+            stage: 1,
+            evolves_from: Some("Kricketot".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Grass],
+                title: "Bug Buzz".to_string(),
+                fixed_damage: 50,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4159Accelgor, Card::Pokemon(PokemonCard {
+            id: "B4 159".to_string(),
+            name: "Accelgor".to_string(),
+            stage: 1,
+            evolves_from: Some("Shelmet".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Deck and Cover".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Your opponent's Active Pokémon is now Poisoned and Paralyzed. Shuffle this Pokémon and all attached cards into your deck.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4160Ponyta,
+        Card::Pokemon(PokemonCard {
+            id: "B4 160".to_string(),
+            name: "Ponyta".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire],
+                title: "Stoke".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Take a [R] Energy from your Energy Zone and attach it to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4161Quilava,
+        Card::Pokemon(PokemonCard {
+            id: "B4 161".to_string(),
+            name: "Quilava".to_string(),
+            stage: 1,
+            evolves_from: Some("Cyndaquil".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire, EnergyType::Fire],
+                title: "Heat Wave".to_string(),
+                fixed_damage: 30,
+                effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4162Kyogre, Card::Pokemon(PokemonCard {
+            id: "B4 162".to_string(),
+            name: "Kyogre".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Tidal Blast".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Discard 3 [W] Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4163Samurott, Card::Pokemon(PokemonCard {
+            id: "B4 163".to_string(),
+            name: "Samurott".to_string(),
+            stage: 2,
+            evolves_from: Some("Dewott".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Water,
+            ability: Some(Ability { title: "Stance".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may prevent all damage from—and effects of—attacks from your opponent's Pokémon done to this Pokémon until the end of your opponent's next turn.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,],
+                    title: "Pike".to_string(),
+                    fixed_damage: 60,
+                    effect: Some("This attack also does 20 damage to 1 of your opponent's Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4164Raichu, Card::Pokemon(PokemonCard {
+            id: "B4 164".to_string(),
+            name: "Raichu".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Evoshock".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Electro Ball".to_string(),
+                    fixed_damage: 50,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4165Wattrel,
+        Card::Pokemon(PokemonCard {
+            id: "B4 165".to_string(),
+            name: "Wattrel".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Peck".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4166Clefairy, Card::Pokemon(PokemonCard {
+            id: "B4 166".to_string(),
+            name: "Clefairy".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Mini-Metronome".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Flip a coin. If heads, choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4167Ralts,
+        Card::Pokemon(PokemonCard {
+            id: "B4 167".to_string(),
+            name: "Ralts".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Lead".to_string(),
+                fixed_damage: 0,
+                effect: Some(
+                    "Put a random Supporter card from your deck into your hand.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4168Wynaut, Card::Pokemon(PokemonCard {
+            id: "B4 168".to_string(),
+            name: "Wynaut".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 30,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![],
+                    title: "Stompy Jammer".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon cost 1 [C] more.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4169Oricorio,
+        Card::Pokemon(PokemonCard {
+            id: "B4 169".to_string(),
+            name: "Oricorio".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 80,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Psychic],
+                title: "Supernatural Feather".to_string(),
+                fixed_damage: 50,
+                effect: Some(
+                    "Discard a card from your hand. If you can't, this attack does nothing."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4170Anorith,
+        Card::Pokemon(PokemonCard {
+            id: "B4 170".to_string(),
+            name: "Anorith".to_string(),
+            stage: 1,
+            evolves_from: Some("Claw Fossil".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting],
+                title: "Slash".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4171Poochyena,
+        Card::Pokemon(PokemonCard {
+            id: "B4 171".to_string(),
+            name: "Poochyena".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Team Hunt".to_string(),
+                fixed_damage: 0,
+                effect: Some("Draw a card for each Poochyena you have in play.".to_string()),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4172Gulpin,
+        Card::Pokemon(PokemonCard {
+            id: "B4 172".to_string(),
+            name: "Gulpin".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Sludge Bomb".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4173Vullaby,
+        Card::Pokemon(PokemonCard {
+            id: "B4 173".to_string(),
+            name: "Vullaby".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Run Around".to_string(),
+                fixed_damage: 0,
+                effect: Some("Switch this Pokémon with 1 of your Benched Pokémon.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4174Genesect,
+        Card::Pokemon(PokemonCard {
+            id: "B4 174".to_string(),
+            name: "Genesect".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal, EnergyType::Metal],
+                title: "Techno Blast".to_string(),
+                fixed_damage: 70,
+                effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4175Dragonair, Card::Pokemon(PokemonCard {
+            id: "B4 175".to_string(),
+            name: "Dragonair".to_string(),
+            stage: 1,
+            evolves_from: Some("Dratini".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Dragon,
+            ability: Some(Ability { title: "Dragon's Blessing".to_string(), effect: "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Draconic Whip".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4176Noivern, Card::Pokemon(PokemonCard {
+            id: "B4 176".to_string(),
+            name: "Noivern".to_string(),
+            stage: 1,
+            evolves_from: Some("Noibat".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Draco Meteor".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4177Cyclizar, Card::Pokemon(PokemonCard {
+            id: "B4 177".to_string(),
+            name: "Cyclizar".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 90,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Darkness,EnergyType::Colorless,],
+                    title: "Acceleration Drive".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Flip a coin. If heads, during your opponent's next turn, prevent all damage from—and effects of—attacks done to this Pokémon.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4178Raticate, Card::Pokemon(PokemonCard {
+            id: "B4 178".to_string(),
+            name: "Raticate".to_string(),
+            stage: 1,
+            evolves_from: Some("Rattata".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Treasure Collecting".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Speed Attack".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4179Aipom,
+        Card::Pokemon(PokemonCard {
+            id: "B4 179".to_string(),
+            name: "Aipom".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless, EnergyType::Colorless],
+                title: "Playful Kick".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4180VespiquenEx, Card::Pokemon(PokemonCard {
+            id: "B4 180".to_string(),
+            name: "Vespiquen ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Combee".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Chase Order".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4181TyphlosionEx, Card::Pokemon(PokemonCard {
+            id: "B4 181".to_string(),
+            name: "Typhlosion ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Quilava".to_string()),
+            hp: 180,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
+                    title: "Destructive Inferno".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4182MegaSharpedoEx, Card::Pokemon(PokemonCard {
+            id: "B4 182".to_string(),
+            name: "Mega Sharpedo ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Carvanha".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Turbo Shark".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4183WailordEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 183".to_string(),
+            name: "Wailord ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Wailmer".to_string()),
+            hp: 250,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                ],
+                title: "Wondrous Waves".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon recovers from all Special Conditions.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4184RotomEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 184".to_string(),
+            name: "Rotom ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Junk Spark".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack does 10 more damage for each Item card in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4185MegaGalladeEx, Card::Pokemon(PokemonCard {
+            id: "B4 185".to_string(),
+            name: "Mega Gallade ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Kirlia".to_string()),
+            hp: 220,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Resonating Blade".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4186HoopaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 186".to_string(),
+            name: "Hoopa ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness],
+                    title: "Shadow Bullet".to_string(),
+                    fixed_damage: 30,
+                    effect: Some(
+                        "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+                            .to_string(),
+                    ),
+                },
+                Attack {
+                    energy_required: vec![
+                        EnergyType::Darkness,
+                        EnergyType::Darkness,
+                        EnergyType::Colorless,
+                    ],
+                    title: "Dynamite Punch".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("This Pokémon also does 20 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4187MegaMetagrossEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 187".to_string(),
+            name: "Mega Metagross ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Metang".to_string()),
+            hp: 230,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Gatling Slug".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4188MegaRayquazaEx, Card::Pokemon(PokemonCard {
+            id: "B4 188".to_string(),
+            name: "Mega Rayquaza ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 180,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Lightning,],
+                    title: "Mega Burst".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4189SwannaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 189".to_string(),
+            name: "Swanna ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Ducklett".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Jet Wing".to_string(),
+                fixed_damage: 140,
+                effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4190Psychic, Card::Trainer(TrainerCard {
+            id: "B4 190".to_string(),
+            name: "Psychic".to_string(),
+            effect: "You can use this card only if your Pokémon in the Active Spot has the Psychic attack.Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your opponent's Active Pokémon.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B4191Drayden, Card::Trainer(TrainerCard {
+            id: "B4 191".to_string(),
+            name: "Drayden".to_string(),
+            effect: "During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor attack used by your Pokémon.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(
+        CardId::B4192Skyla,
+        Card::Trainer(TrainerCard {
+            id: "B4 192".to_string(),
+            name: "Skyla".to_string(),
+            effect: "Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon."
+                .to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }),
+    );
+    map.insert(CardId::B4193Wally, Card::Trainer(TrainerCard {
+            id: "B4 193".to_string(),
+            name: "Wally".to_string(),
+            effect: "Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.".to_string(),
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+            trainer_card_type: TrainerType::Supporter,
+        }));
+    map.insert(CardId::B4194VespiquenEx, Card::Pokemon(PokemonCard {
+            id: "B4 194".to_string(),
+            name: "Vespiquen ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Combee".to_string()),
+            hp: 140,
+            energy_type: EnergyType::Grass,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Grass,EnergyType::Grass,],
+                    title: "Chase Order".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4195TyphlosionEx, Card::Pokemon(PokemonCard {
+            id: "B4 195".to_string(),
+            name: "Typhlosion ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Quilava".to_string()),
+            hp: 180,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Fire,EnergyType::Colorless,],
+                    title: "Destructive Inferno".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Flip a coin until you get tails. For each heads, discard a random Energy from your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4196MegaSharpedoEx, Card::Pokemon(PokemonCard {
+            id: "B4 196".to_string(),
+            name: "Mega Sharpedo ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Carvanha".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,],
+                    title: "Turbo Shark".to_string(),
+                    fixed_damage: 70,
+                    effect: Some("Take a [W] Energy from your Energy Zone and attach it to 1 of your Benched [W] Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4197WailordEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 197".to_string(),
+            name: "Wailord ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Wailmer".to_string()),
+            hp: 250,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                    EnergyType::Water,
+                ],
+                title: "Wondrous Waves".to_string(),
+                fixed_damage: 100,
+                effect: Some("This Pokémon recovers from all Special Conditions.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4198MegaGalladeEx, Card::Pokemon(PokemonCard {
+            id: "B4 198".to_string(),
+            name: "Mega Gallade ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Kirlia".to_string()),
+            hp: 220,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Resonating Blade".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("If you played a Supporter card from your hand during this turn, this attack does 50 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4199HoopaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 199".to_string(),
+            name: "Hoopa ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 150,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Darkness],
+                    title: "Shadow Bullet".to_string(),
+                    fixed_damage: 30,
+                    effect: Some(
+                        "This attack also does 20 damage to 1 of your opponent's Benched Pokémon."
+                            .to_string(),
+                    ),
+                },
+                Attack {
+                    energy_required: vec![
+                        EnergyType::Darkness,
+                        EnergyType::Darkness,
+                        EnergyType::Colorless,
+                    ],
+                    title: "Dynamite Punch".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("This Pokémon also does 20 damage to itself.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4200MegaMetagrossEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 200".to_string(),
+            name: "Mega Metagross ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Metang".to_string()),
+            hp: 230,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Gatling Slug".to_string(),
+                fixed_damage: 100,
+                effect: Some(
+                    "This attack does 10 more damage for each [M] Energy attached to this Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4201SwannaEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 201".to_string(),
+            name: "Swanna ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Ducklett".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                    EnergyType::Colorless,
+                ],
+                title: "Jet Wing".to_string(),
+                fixed_damage: 140,
+                effect: Some("During your next turn, this Pokémon can't attack.".to_string()),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4202RotomEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 202".to_string(),
+            name: "Rotom ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning, EnergyType::Lightning],
+                title: "Junk Spark".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack does 10 more damage for each Item card in your discard pile."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "☆☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4203MegaRayquazaEx, Card::Pokemon(PokemonCard {
+            id: "B4 203".to_string(),
+            name: "Mega Rayquaza ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 180,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire,EnergyType::Lightning,],
+                    title: "Mega Burst".to_string(),
+                    fixed_damage: 50,
+                    effect: Some("Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆☆☆".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4204AlolanVulpix,
+        Card::Pokemon(PokemonCard {
+            id: "B4 204".to_string(),
+            name: "Alolan Vulpix".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Gnaw".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4205Mudkip,
+        Card::Pokemon(PokemonCard {
+            id: "B4 205".to_string(),
+            name: "Mudkip".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Tackle".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4206Marshtomp,
+        Card::Pokemon(PokemonCard {
+            id: "B4 206".to_string(),
+            name: "Marshtomp".to_string(),
+            stage: 1,
+            evolves_from: Some("Mudkip".to_string()),
+            hp: 90,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water, EnergyType::Colorless],
+                title: "Surf".to_string(),
+                fixed_damage: 40,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4207Swampert, Card::Pokemon(PokemonCard {
+            id: "B4 207".to_string(),
+            name: "Swampert".to_string(),
+            stage: 2,
+            evolves_from: Some("Marshtomp".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Large Whirlpool".to_string(),
+                    fixed_damage: 100,
+                    effect: Some("Discard a random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4208Electabuzz,
+        Card::Pokemon(PokemonCard {
+            id: "B4 208".to_string(),
+            name: "Electabuzz".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Head Bolt".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4209Plusle,
+        Card::Pokemon(PokemonCard {
+            id: "B4 209".to_string(),
+            name: "Plusle".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Lightning],
+                title: "Electric Tail".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4210Minun, Card::Pokemon(PokemonCard {
+            id: "B4 210".to_string(),
+            name: "Minun".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Buddy Spark".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("If Plusle is on your Bench, this attack also does 10 damage to each of your opponent's Benched Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4211MrMime, Card::Pokemon(PokemonCard {
+            id: "B4 211".to_string(),
+            name: "Mr. Mime".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Colorless,],
+                    title: "Synchro Dance".to_string(),
+                    fixed_damage: 40,
+                    effect: Some("If this Pokémon and your opponent's Active Pokémon have the same amount of Energy attached, this attack does 40 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4212Mewtwo, Card::Pokemon(PokemonCard {
+            id: "B4 212".to_string(),
+            name: "Mewtwo".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 120,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Psychic".to_string(),
+                    fixed_damage: 10,
+                    effect: Some("This attack does 40 more damage for each Energy attached to your opponent's Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4213Roggenrola,
+        Card::Pokemon(PokemonCard {
+            id: "B4 213".to_string(),
+            name: "Roggenrola".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fighting, EnergyType::Colorless],
+                title: "Mud-Slap".to_string(),
+                fixed_damage: 30,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4214Boldore,
+        Card::Pokemon(PokemonCard {
+            id: "B4 214".to_string(),
+            name: "Boldore".to_string(),
+            stage: 1,
+            evolves_from: Some("Roggenrola".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![
+                    EnergyType::Fighting,
+                    EnergyType::Fighting,
+                    EnergyType::Colorless,
+                ],
+                title: "Power Gem".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+            ],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4215Falinks, Card::Pokemon(PokemonCard {
+            id: "B4 215".to_string(),
+            name: "Falinks".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Fighting,
+            ability: Some(Ability { title: "Coordinated Unit".to_string(), effect: "If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes -20 damage from attacks from your opponent's Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,],
+                    title: "Invade".to_string(),
+                    fixed_damage: 20,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4216Koffing,
+        Card::Pokemon(PokemonCard {
+            id: "B4 216".to_string(),
+            name: "Koffing".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Gas Bomb".to_string(),
+                fixed_damage: 30,
+                effect: Some("This Pokémon also does 10 damage to itself.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4217Weezing,
+        Card::Pokemon(PokemonCard {
+            id: "B4 217".to_string(),
+            name: "Weezing".to_string(),
+            stage: 1,
+            evolves_from: Some("Koffing".to_string()),
+            hp: 110,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness, EnergyType::Darkness],
+                title: "Sludge Bomb".to_string(),
+                fixed_damage: 70,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4218GalarianMeowth,
+        Card::Pokemon(PokemonCard {
+            id: "B4 218".to_string(),
+            name: "Galarian Meowth".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Metal,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal],
+                title: "Slash".to_string(),
+                fixed_damage: 20,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4219GalarianPerrserker, Card::Pokemon(PokemonCard {
+            id: "B4 219".to_string(),
+            name: "Galarian Perrserker".to_string(),
+            stage: 1,
+            evolves_from: Some("Galarian Meowth".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Metal,
+            ability: Some(Ability { title: "Dig Up".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put 2 random Pokémon Tool cards from your discard pile into your hand.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Metal,EnergyType::Metal,],
+                    title: "Metal Claw".to_string(),
+                    fixed_damage: 70,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4220Rattata,
+        Card::Pokemon(PokemonCard {
+            id: "B4 220".to_string(),
+            name: "Rattata".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Surprise Attack".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4221Raticate, Card::Pokemon(PokemonCard {
+            id: "B4 221".to_string(),
+            name: "Raticate".to_string(),
+            stage: 1,
+            evolves_from: Some("Rattata".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Treasure Collecting".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may look at the top 4 cards of your deck and put all Item cards you find there into your hand. Shuffle the other cards back into your deck.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Speed Attack".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4222Smeargle, Card::Pokemon(PokemonCard {
+            id: "B4 222".to_string(),
+            name: "Smeargle".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: Some(Ability { title: "Portrait".to_string(), effect: "Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Tail Whap".to_string(),
+                    fixed_damage: 30,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4223Buneary,
+        Card::Pokemon(PokemonCard {
+            id: "B4 223".to_string(),
+            name: "Buneary".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Double Kick".to_string(),
+                fixed_damage: 20,
+                effect: Some(
+                    "Flip 2 coins. This attack does 20 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "*".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::B4224BlacephalonEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 224".to_string(),
+            name: "Blacephalon ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 140,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fire],
+                    title: "Singe".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("Your opponent's Active Pokémon is now Burned.".to_string()),
+                },
+                Attack {
+                    energy_required: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Fire],
+                    title: "Pop-Punk".to_string(),
+                    fixed_damage: 140,
+                    effect: Some("Discard 3 [R] Energy from this Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4225AlolanNinetalesEx, Card::Pokemon(PokemonCard {
+            id: "B4 225".to_string(),
+            name: "Alolan Ninetales ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Alolan Vulpix".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,],
+                    title: "Binding Snow".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("During your opponent's next turn, they can't take any Energy from their Energy Zone to attach to their Active Pokémon.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Metal),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4226MegaSwampertEx, Card::Pokemon(PokemonCard {
+            id: "B4 226".to_string(),
+            name: "Mega Swampert ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Marshtomp".to_string()),
+            hp: 230,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Water,EnergyType::Water,EnergyType::Water,],
+                    title: "Strong-Armed Destroyer".to_string(),
+                    fixed_damage: 150,
+                    effect: Some("Discard 2 random Energy from among the Energy attached to all Pokémon (both yours and your opponent's).".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4227MegaGardevoirEx, Card::Pokemon(PokemonCard {
+            id: "B4 227".to_string(),
+            name: "Mega Gardevoir ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Kirlia".to_string()),
+            hp: 210,
+            energy_type: EnergyType::Psychic,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Psychic,],
+                    title: "Fantasia Force".to_string(),
+                    fixed_damage: 110,
+                    effect: Some("Take 3 [P] Energy from your Energy Zone and attach it to your [P] Pokémon in any way you like.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Darkness),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4228MegaLopunnyEx, Card::Pokemon(PokemonCard {
+            id: "B4 228".to_string(),
+            name: "Mega Lopunny ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Buneary".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "Rapid Smashers".to_string(),
+                    fixed_damage: 90,
+                    effect: Some("Flip 2 coins. This attack does 90 damage for each heads. Your opponent's Active Pokémon is now Confused.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Psychic),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4229GigalithEx, Card::Pokemon(PokemonCard {
+            id: "B4 229".to_string(),
+            name: "Gigalith ex".to_string(),
+            stage: 2,
+            evolves_from: Some("Boldore".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Fighting,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,EnergyType::Fighting,],
+                    title: "Megaton Cannon".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("This attack does 140 damage to 1 of your opponent's Pokémon. During your next turn, this Pokémon can't attack.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
+        CardId::B4230ZoroarkEx,
+        Card::Pokemon(PokemonCard {
+            id: "B4 230".to_string(),
+            name: "Zoroark ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Zorua".to_string()),
+            hp: 150,
+            energy_type: EnergyType::Darkness,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Darkness],
+                title: "Brutal Bash".to_string(),
+                fixed_damage: 30,
+                effect: Some(
+                    "This attack does 30 damage for each of your Benched [D] Pokémon.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Grass),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }),
+    );
+    map.insert(CardId::B4231MegaKangaskhanEx, Card::Pokemon(PokemonCard {
+            id: "B4 231".to_string(),
+            name: "Mega Kangaskhan ex".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 180,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Double-Punching Family".to_string(),
+                    fixed_damage: 80,
+                    effect: Some("This attack is used twice in a row. The second attack does 40 damage.(If the first attack Knocks Out your opponent's Active Pokémon, the second attack is used after your opponent chooses a new Active Pokémon.)".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "**".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4232Raichu, Card::Pokemon(PokemonCard {
+            id: "B4 232".to_string(),
+            name: "Raichu".to_string(),
+            stage: 1,
+            evolves_from: Some("Pikachu".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Lightning,
+            ability: Some(Ability { title: "Evoshock".to_string(), effect: "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,EnergyType::Colorless,],
+                    title: "Electro Ball".to_string(),
+                    fixed_damage: 50,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "♛".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(CardId::B4233Dragonair, Card::Pokemon(PokemonCard {
+            id: "B4 233".to_string(),
+            name: "Dragonair".to_string(),
+            stage: 1,
+            evolves_from: Some("Dratini".to_string()),
+            hp: 80,
+            energy_type: EnergyType::Dragon,
+            ability: Some(Ability { title: "Dragon's Blessing".to_string(), effect: "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon.".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Draconic Whip".to_string(),
+                    fixed_damage: 40,
+                    effect: None,
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,EnergyType::Colorless,],
+            rarity: "♛".to_string(),
+            booster_pack: "Ruler of the Skies (B4)".to_string(),
+        }));
+    map.insert(
         CardId::PA001Potion,
         Card::Trainer(TrainerCard {
             id: "P-A 001".to_string(),
@@ -73952,9 +79140,6 @@ fn populate_database_chunk_25(map: &mut HashMap<CardId, Card>) {
             trainer_card_type: TrainerType::Item,
         }),
     );
-}
-
-fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PA004PokedEx,
         Card::Trainer(TrainerCard {
@@ -74460,6 +79645,9 @@ fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Promo A (P-A)".to_string(),
         }),
     );
+}
+
+fn populate_database_chunk_28(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PA027Snivy,
         Card::Pokemon(PokemonCard {
@@ -76927,9 +82115,6 @@ fn populate_database_chunk_26(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Promo B (P-B)".to_string(),
         }),
     );
-}
-
-fn populate_database_chunk_27(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PB015Mareep,
         Card::Pokemon(PokemonCard {
@@ -77458,6 +82643,9 @@ fn populate_database_chunk_27(map: &mut HashMap<CardId, Card>) {
             booster_pack: "Promo B (P-B)".to_string(),
         }),
     );
+}
+
+fn populate_database_chunk_29(map: &mut HashMap<CardId, Card>) {
     map.insert(
         CardId::PB038Tinkaton,
         Card::Pokemon(PokemonCard {
@@ -78431,6 +83619,188 @@ fn populate_database_chunk_27(map: &mut HashMap<CardId, Card>) {
             rarity: "◊◊◊".to_string(),
             booster_pack: "Promo B (P-B)".to_string(),
         }));
+    map.insert(CardId::PB079Celebi, Card::Pokemon(PokemonCard {
+            id: "P-B 079".to_string(),
+            name: "Celebi".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Grass,
+            ability: Some(Ability { title: "Time Recall".to_string(), effect: "Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)".to_string() }),
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,EnergyType::Colorless,],
+                    title: "Smack".to_string(),
+                    fixed_damage: 30,
+                    effect: None,
+                },
+            ],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "☆".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB080MegaHoundoomEx,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 080".to_string(),
+            name: "Mega Houndoom ex".to_string(),
+            stage: 1,
+            evolves_from: Some("Houndour".to_string()),
+            hp: 190,
+            energy_type: EnergyType::Fire,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Fire, EnergyType::Fire, EnergyType::Colorless],
+                title: "Grimhound Flare".to_string(),
+                fixed_damage: 80,
+                effect: Some(
+                    "Flip 3 coins. This attack does 80 damage for each heads.".to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Water),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(
+        CardId::PB081Carvanha,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 081".to_string(),
+            name: "Carvanha".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 50,
+            energy_type: EnergyType::Water,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Water],
+                title: "Aqua Jet".to_string(),
+                fixed_damage: 10,
+                effect: Some(
+                    "This attack also does 10 damage to 1 of your opponent's Benched Pokémon."
+                        .to_string(),
+                ),
+            }],
+            weakness: Some(EnergyType::Lightning),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB082Pikachu, Card::Pokemon(PokemonCard {
+            id: "P-B 082".to_string(),
+            name: "Pikachu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Colorless,],
+                    title: "Growl".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(CardId::PB083Noivern, Card::Pokemon(PokemonCard {
+            id: "P-B 083".to_string(),
+            name: "Noivern".to_string(),
+            stage: 1,
+            evolves_from: Some("Noibat".to_string()),
+            hp: 100,
+            energy_type: EnergyType::Dragon,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Psychic,EnergyType::Darkness,EnergyType::Darkness,],
+                    title: "Draco Meteor".to_string(),
+                    fixed_damage: 0,
+                    effect: Some("1 of your opponent's Pokémon is chosen at random 3 times. For each time a Pokémon was chosen, do 60 damage to it.".to_string()),
+                },
+            ],
+            weakness: None,
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB084Skitty,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 084".to_string(),
+            name: "Skitty".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Colorless,
+            ability: None,
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Colorless],
+                title: "Whimsy Tackle".to_string(),
+                fixed_damage: 40,
+                effect: Some("Flip a coin. If tails, this attack does nothing.".to_string()),
+            }],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless],
+            rarity: "◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
+    map.insert(CardId::PB085Pachirisu, Card::Pokemon(PokemonCard {
+            id: "P-B 085".to_string(),
+            name: "Pachirisu".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 70,
+            energy_type: EnergyType::Lightning,
+            ability: None,
+            attacks: vec![
+                Attack {
+                    energy_required: vec![EnergyType::Lightning,],
+                    title: "Crackling Snap".to_string(),
+                    fixed_damage: 30,
+                    effect: Some("Discard the top card of your deck, and if that card is an Item, this attack does 20 more damage.".to_string()),
+                },
+            ],
+            weakness: Some(EnergyType::Fighting),
+            retreat_cost: vec![EnergyType::Colorless,],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }));
+    map.insert(
+        CardId::PB086Beldum,
+        Card::Pokemon(PokemonCard {
+            id: "P-B 086".to_string(),
+            name: "Beldum".to_string(),
+            stage: 0,
+            evolves_from: None,
+            hp: 60,
+            energy_type: EnergyType::Metal,
+            ability: Some(Ability {
+                title: "Conductive Body".to_string(),
+                effect:
+                    "If you have another Beldum in play, this Pokémon's Retreat Cost is 2 less."
+                        .to_string(),
+            }),
+            attacks: vec![Attack {
+                energy_required: vec![EnergyType::Metal],
+                title: "Ram".to_string(),
+                fixed_damage: 10,
+                effect: None,
+            }],
+            weakness: Some(EnergyType::Fire),
+            retreat_cost: vec![EnergyType::Colorless, EnergyType::Colorless],
+            rarity: "◊◊◊".to_string(),
+            booster_pack: "Promo B (P-B)".to_string(),
+        }),
+    );
 }
 
 pub fn get_card_by_enum(id: CardId) -> Card {
