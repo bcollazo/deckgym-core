@@ -483,6 +483,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfUndamaged { extra_damage } => {
             extra_damage_if_undamaged(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::OptionalDiscardBenchedBasicForExtraDamage {
+            energy_type,
+            extra_damage,
+        } => optional_discard_benched_basic_for_extra_damage(
+            state,
+            attack.fixed_damage,
+            *energy_type,
+            *extra_damage,
+        ),
         Mechanic::ExtraDamageIfStage2OnBench { extra_damage } => {
             extra_damage_if_stage2_on_bench(state, attack.fixed_damage, *extra_damage)
         }
@@ -2479,6 +2488,52 @@ fn extra_damage_if_undamaged(state: &State, base: u32, extra: u32) -> AttackOutc
     } else {
         active_damage_doutcome(base + extra)
     }
+}
+
+/// Vespiquen ex - Chase Order: the attacker may discard 1 of its Benched Basic Pokémon of the
+/// given type to boost the damage. The choice is queued as a single action per option so that the
+/// boosted damage is applied in one go (damage modifiers must not run twice).
+fn optional_discard_benched_basic_for_extra_damage(
+    state: &State,
+    base_damage: u32,
+    energy_type: EnergyType,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    if benched_basic_indices_of_type(state, state.current_player, energy_type).is_empty() {
+        return active_damage_doutcome(base_damage);
+    }
+
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let mut choices = vec![SimpleAction::ApplyDamage {
+            attacking_ref: (action.actor, 0),
+            targets: vec![(base_damage, opponent, 0)],
+            is_from_active_attack: true,
+        }];
+        choices.extend(
+            benched_basic_indices_of_type(state, action.actor, energy_type)
+                .into_iter()
+                .map(|in_play_idx| SimpleAction::DiscardOwnBenchedThenDamage {
+                    in_play_idx,
+                    damage: base_damage + extra_damage,
+                }),
+        );
+        state.move_generation_stack.push((action.actor, choices));
+    })
+}
+
+fn benched_basic_indices_of_type(
+    state: &State,
+    player: usize,
+    energy_type: EnergyType,
+) -> Vec<usize> {
+    state
+        .enumerate_bench_pokemon(player)
+        .filter(|(_, pokemon)| {
+            pokemon.card.is_basic() && pokemon.get_energy_type() == Some(energy_type)
+        })
+        .map(|(in_play_idx, _)| in_play_idx)
+        .collect()
 }
 
 fn extra_damage_if_stage2_on_bench(state: &State, base: u32, extra: u32) -> AttackOutcomes {

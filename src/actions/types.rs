@@ -137,6 +137,14 @@ pub enum SimpleAction {
     DiscardFossil {
         in_play_idx: usize,
     },
+    /// Vespiquen ex's Chase Order: discard 1 of your own Benched Pokémon, then deal the attack's
+    /// boosted damage to the opponent's Active Pokémon. The two halves are one action so that the
+    /// boosted damage is applied once — splitting it would apply Weakness (and other damage
+    /// modifiers) to each half.
+    DiscardOwnBenchedThenDamage {
+        in_play_idx: usize,
+        damage: u32,
+    },
     /// Use an activated stadium effect (once per turn per player)
     UseStadium,
     /// Return a Pokemon in play to your hand (e.g., Ilima).
@@ -309,6 +317,12 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::DiscardFossil { in_play_idx } => {
                 write!(f, "DiscardFossil({in_play_idx})")
+            }
+            SimpleAction::DiscardOwnBenchedThenDamage {
+                in_play_idx,
+                damage,
+            } => {
+                write!(f, "DiscardOwnBenchedThenDamage({in_play_idx}, {damage})")
             }
             SimpleAction::ReturnPokemonToHand { in_play_idx } => {
                 write!(f, "ReturnPokemonToHand({in_play_idx})")

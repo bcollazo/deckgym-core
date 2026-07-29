@@ -65,6 +65,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
+        | SimpleAction::DiscardOwnBenchedThenDamage { .. }
         | SimpleAction::ReturnPokemonToHand { .. }
         | SimpleAction::ShuffleInPlayPokemonIntoDeck { .. }
         | SimpleAction::DiscardToolFromPokemon { .. }
@@ -318,6 +319,10 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::DiscardFossil { in_play_idx } => {
             apply_discard_fossil(action.actor, state, *in_play_idx)
         }
+        SimpleAction::DiscardOwnBenchedThenDamage {
+            in_play_idx,
+            damage,
+        } => apply_discard_own_benched_then_damage(action.actor, state, *in_play_idx, *damage),
         SimpleAction::ReturnPokemonToHand { in_play_idx } => {
             apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
         }
@@ -457,6 +462,26 @@ fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: us
     if in_play_idx == 0 {
         state.trigger_promotion_or_declare_winner(acting_player);
     }
+}
+
+/// Vespiquen ex's Chase Order: discard the chosen Benched Pokémon, then queue the (boosted)
+/// damage so it goes through the regular damage pipeline as a single application.
+fn apply_discard_own_benched_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    in_play_idx: usize,
+    damage: u32,
+) {
+    state.discard_from_play(acting_player, in_play_idx);
+    let opponent = (acting_player + 1) % 2;
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, opponent, 0)],
+            is_from_active_attack: true,
+        }],
+    ));
 }
 
 fn apply_return_pokemon_to_hand(acting_player: usize, state: &mut State, in_play_idx: usize) {

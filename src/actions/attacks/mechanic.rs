@@ -309,6 +309,13 @@ pub enum Mechanic {
     ExtraDamageIfUndamaged {
         extra_damage: u32,
     },
+    /// Vespiquen ex's Chase Order: "You may discard 1 of your Benched Basic [G] Pokémon. If you
+    /// do, this attack does 70 more damage." The attacker chooses between the plain damage and
+    /// discarding one eligible Benched Basic Pokémon for the boosted damage.
+    OptionalDiscardBenchedBasicForExtraDamage {
+        energy_type: EnergyType,
+        extra_damage: u32,
+    },
     ExtraDamageIfStage2OnBench {
         extra_damage: u32,
     },

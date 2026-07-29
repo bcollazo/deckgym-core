@@ -200,6 +200,8 @@ mod ursaluna_guts_test;
 mod vanilluxe_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
 mod vaporeon_ex_test;
+#[path = "pokemon/vespiquen_ex_chase_order_test.rs"]
+mod vespiquen_ex_chase_order_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]
 mod vulpix_tail_whip_test;
 #[path = "pokemon/wailord_ex_wondrous_waves_test.rs"]

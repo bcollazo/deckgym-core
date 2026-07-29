@@ -2311,6 +2311,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
 
     // B4 Mechanics
+    // Vespiquen ex - Chase Order
+    map.insert(
+        "You may discard 1 of your Benched Basic [G] Pokémon. If you do, this attack does 70 more damage.",
+        Mechanic::OptionalDiscardBenchedBasicForExtraDamage {
+            energy_type: EnergyType::Grass,
+            extra_damage: 70,
+        },
+    );
     // Mega Rayquaza ex - Mega Burst
     map.insert(
         "Discard all [R] and [L] Energy from this Pokémon, and this attack does 50 damage for each Energy you discarded in this way.",
