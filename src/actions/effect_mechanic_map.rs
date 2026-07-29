@@ -2302,6 +2302,11 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
 
     // B4 Mechanics
+    // Wailord ex - Wondrous Waves
+    map.insert(
+        "This Pokémon recovers from all Special Conditions.",
+        Mechanic::SelfCureStatusConditions,
+    );
     // Rotom ex - Junk Spark
     map.insert(
         "This attack does 10 more damage for each Item card in your discard pile.",

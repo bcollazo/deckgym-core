@@ -411,6 +411,9 @@ pub enum Mechanic {
     SelfAsleepAndHeal {
         amount: u32,
     },
+    /// Wailord ex's Wondrous Waves: after dealing damage, the attacking Pokémon recovers from
+    /// all Special Conditions.
+    SelfCureStatusConditions,
     FlipCoinsBenchDamagePerHead {
         num_coins: usize,
         bench_damage_per_head: u32,

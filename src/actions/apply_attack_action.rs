@@ -733,6 +733,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SelfAsleepAndHeal { amount } => {
             self_asleep_and_heal_attack(*amount, attack.fixed_damage)
         }
+        Mechanic::SelfCureStatusConditions => {
+            self_cure_status_conditions_attack(attack.fixed_damage)
+        }
         Mechanic::FlipCoinsBenchDamagePerHead {
             num_coins,
             bench_damage_per_head,
@@ -2122,6 +2125,15 @@ fn self_asleep_and_heal_attack(heal: u32, damage: u32) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         state.apply_status_condition(action.actor, 0, StatusCondition::Asleep);
         state.get_active_mut(action.actor).heal(heal);
+    })
+}
+
+/// Wailord ex - Wondrous Waves: the attacking Pokémon recovers from all Special Conditions.
+fn self_cure_status_conditions_attack(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        if let Some(attacker) = state.in_play_pokemon[action.actor][0].as_mut() {
+            attacker.cure_status_conditions();
+        }
     })
 }
 
