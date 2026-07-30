@@ -44,6 +44,8 @@ mod charmeleon_ignition_test;
 mod comfey_flower_shield_test;
 #[path = "pokemon/corviknight_line_test.rs"]
 mod corviknight_line_test;
+#[path = "pokemon/cradily_stick_and_absorb_test.rs"]
+mod cradily_stick_and_absorb_test;
 #[path = "pokemon/crawdaunt_unruly_claw_test.rs"]
 mod crawdaunt_unruly_claw_test;
 #[path = "pokemon/darkrai_ex_test.rs"]
@@ -54,6 +56,8 @@ mod durant_test;
 mod dusknoir_shadow_void_test;
 #[path = "pokemon/dustox_select_powder_test.rs"]
 mod dustox_select_powder_test;
+#[path = "pokemon/dustox_variety_powder_test.rs"]
+mod dustox_variety_powder_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
 #[path = "pokemon/emolga_dedenne_ex_tool_damage_test.rs"]
@@ -160,6 +164,8 @@ mod passimian_ex_offload_pass_test;
 mod porygonz_cyberjack_test;
 #[path = "pokemon/psyduck_test.rs"]
 mod psyduck_test;
+#[path = "pokemon/raichu_evoshock_test.rs"]
+mod raichu_evoshock_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
 mod rampardos_head_smash_test;
 #[path = "pokemon/roaring_moon_test.rs"]

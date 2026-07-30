@@ -1,5 +1,6 @@
 use crate::{
     actions::abilities::AbilityMechanic,
+    actions::selectable_status_conditions,
     actions::{ability_mechanic_from_effect, SimpleAction},
     hooks::is_ultra_beast,
     models::{EnergyType, PlayedCard},
@@ -132,6 +133,15 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::ConfuseOpponentActive => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::BurnOpponentActive => !card.ability_used,
+        AbilityMechanic::RandomStatusConditionToOpponentActive { options } => {
+            !card.ability_used
+                && !selectable_status_conditions(
+                    state,
+                    (state.current_player + 1) % 2,
+                    options.as_slice(),
+                )
+                .is_empty()
+        }
         AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
             can_use_remove_random_special_condition_from_active(state, card)
         }
@@ -161,6 +171,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::HealTypedPokemonOnEvolve { .. } => false,
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedOnEvolve { .. } => false,
         AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => false,
+        AbilityMechanic::CoinFlipParalyzeOpponentActiveOnEvolve => false,
         AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve => false,
         AbilityMechanic::CanEvolveIntoEeveeEvolution => false,
         AbilityMechanic::CanEvolveOnFirstTurnIfActive => false,

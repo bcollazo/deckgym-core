@@ -16,6 +16,7 @@ pub mod professor_sada;
 mod shared_mutations;
 mod types;
 
+pub(crate) use apply_abilities_action::selectable_status_conditions;
 pub(crate) use apply_action::apply_action;
 pub(crate) use apply_action::apply_evolve;
 pub(crate) use apply_action::apply_place_card;

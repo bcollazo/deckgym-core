@@ -816,6 +816,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::SelfHeal { amount: 30 },
     );
     map.insert(
+        "Heal 30 damage from this Pokémon. During your opponent's next turn, the Defending Pokémon can't retreat.",
+        Mechanic::SelfHealAndCardEffect {
+            heal_amount: 30,
+            opponent: true,
+            effect: CardEffect::NoRetreat,
+            duration: 1,
+        },
+    );
+    map.insert(
         "Heal 40 damage from this Pokémon.",
         Mechanic::SelfHeal { amount: 40 },
     );

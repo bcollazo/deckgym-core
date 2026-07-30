@@ -6,7 +6,7 @@ use std::sync::LazyLock;
 
 use crate::actions::abilities::AbilityMechanic;
 use crate::effects::CardEffect;
-use crate::models::{Card, EnergyType};
+use crate::models::{Card, EnergyType, StatusCondition};
 
 /// Map from ability effect text to its AbilityMechanic.
 pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMechanic>> =
@@ -213,6 +213,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may draw 2 cards.",
             AbilityMechanic::DrawCardsOnEvolve { amount: 2 },
         );
+        map.insert(
+            "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",
+            AbilityMechanic::CoinFlipParalyzeOpponentActiveOnEvolve,
+        );
         // map.insert("Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may have your opponent shuffle their hand into their deck. For each remaining point that your opponent needs to win, they draw a card.", todo_implementation);
         map.insert(
             "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may heal 60 damage from 1 of your [W] Pokémon.",
@@ -332,6 +336,16 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to this Pokémon. If you use this Ability, your turn ends.",
             AbilityMechanic::AttachEnergyFromZoneToSelfAndEndTurn {
                 energy_type: EnergyType::Psychic,
+            },
+        );
+        map.insert(
+            "Once during your turn, you may use this Ability. 1 Special Condition from among Burned, Confused, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.",
+            AbilityMechanic::RandomStatusConditionToOpponentActive {
+                options: vec![
+                    StatusCondition::Burned,
+                    StatusCondition::Confused,
+                    StatusCondition::Poisoned,
+                ],
             },
         );
         // map.insert("Pokémon (both yours and your opponent's) can't be healed.", todo_implementation);

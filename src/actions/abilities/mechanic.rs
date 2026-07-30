@@ -1,4 +1,4 @@
-use crate::models::EnergyType;
+use crate::models::{EnergyType, StatusCondition};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AbilityMechanic {
@@ -124,6 +124,12 @@ pub enum AbilityMechanic {
     PoisonOpponentActive,
     ConfuseOpponentActive,
     BurnOpponentActive,
+    /// Dustox's Variety Powder: 1 Special Condition is chosen at random from `options` and
+    /// inflicted on the opponent's Active Pokémon. Conditions already affecting that Pokémon are
+    /// excluded from the draw, so the ability is unusable once all `options` are applied.
+    RandomStatusConditionToOpponentActive {
+        options: Vec<StatusCondition>,
+    },
     RemoveRandomSpecialConditionFromActive,
     HealActiveYourPokemon {
         amount: u32,
@@ -183,6 +189,10 @@ pub enum AbilityMechanic {
     DamageOpponentActiveOnEvolve {
         amount: u32,
     },
+    /// Raichu's Evoshock: "Once during your turn, when you play this Pokémon from your hand to
+    /// evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is
+    /// now Paralyzed." Offered as an optional `UseAbility` when the evolution resolves.
+    CoinFlipParalyzeOpponentActiveOnEvolve,
     DiscardRandomEnergyFromOpponentActiveOnEvolve,
     CanEvolveIntoEeveeEvolution,
     CanEvolveOnFirstTurnIfActive,
