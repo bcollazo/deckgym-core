@@ -217,6 +217,7 @@ pub fn forecast_trainer_action(
         CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
         CardId::B4153Wally | CardId::B4193Wally => Outcomes::single_fn(wally_effect),
         CardId::B4150Psychic | CardId::B4190Psychic => Outcomes::single_fn(psychic_effect),
+        CardId::B4151Drayden | CardId::B4191Drayden => Outcomes::single_fn(drayden_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1188,6 +1189,18 @@ fn skyla_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             .move_generation_stack
             .push((action.actor, possible_activations));
     }
+}
+
+fn drayden_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor
+    // attack used by your Pokémon.
+    state.add_turn_effect(
+        TurnEffect::ExtraRandomSpreadHits {
+            amount: 1,
+            attack_name: "Draco Meteor".to_string(),
+        },
+        0,
+    );
 }
 
 fn psychic_effect(_: &mut StdRng, state: &mut State, action: &Action) {

@@ -2,6 +2,8 @@
 mod barry_test;
 #[path = "trainers/cynthia_test.rs"]
 mod cynthia_test;
+#[path = "trainers/drayden_test.rs"]
+mod drayden_test;
 #[path = "trainers/elesa_test.rs"]
 mod elesa_test;
 #[path = "trainers/field_blower_test.rs"]

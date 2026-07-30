@@ -122,6 +122,12 @@ pub enum TurnEffect {
         amount: u32,
     },
     ForceFirstHeads,
+    /// A random-spread attack with this name chooses a Pokémon `amount` more times
+    /// (e.g. Drayden boosting Draco Meteor).
+    ExtraRandomSpreadHits {
+        amount: usize,
+        attack_name: String,
+    },
     BonusPointForHaxorusActiveKO,
     ReducedAttackCostForSpecificPokemon {
         amount: u8,
