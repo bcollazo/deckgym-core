@@ -183,6 +183,10 @@ pub enum AbilityMechanic {
     DamageOpponentActiveOnEvolve {
         amount: u32,
     },
+    /// Raichu's Evoshock: "Once during your turn, when you play this Pokémon from your hand to
+    /// evolve 1 of your Pokémon, you may flip a coin. If heads, your opponent's Active Pokémon is
+    /// now Paralyzed." Offered as an optional `UseAbility` when the evolution resolves.
+    CoinFlipParalyzeOpponentActiveOnEvolve,
     DiscardRandomEnergyFromOpponentActiveOnEvolve,
     CanEvolveIntoEeveeEvolution,
     CanEvolveOnFirstTurnIfActive,

@@ -240,6 +240,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => {
             panic!("DamageOpponentActiveOnEvolve is triggered on evolve")
         }
+        AbilityMechanic::CoinFlipParalyzeOpponentActiveOnEvolve => {
+            coin_flip_paralyze_opponent_active()
+        }
         AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve => {
             panic!("DiscardRandomEnergyFromOpponentActiveOnEvolve is triggered on evolve")
         }
@@ -563,6 +566,16 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
         Box::new(|_, state, action| {
             let opponent = (action.actor + 1) % 2;
             state.apply_status_condition(opponent, 0, StatusCondition::Asleep);
+        }),
+        Box::new(|_, _, _| {}),
+    )
+}
+
+fn coin_flip_paralyze_opponent_active() -> Outcomes {
+    Outcomes::binary_coin(
+        Box::new(|_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, StatusCondition::Paralyzed);
         }),
         Box::new(|_, _, _| {}),
     )

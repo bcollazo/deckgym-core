@@ -115,7 +115,13 @@ pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) 
 }
 
 /// Called when a Pokémon evolves
-pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_hand: bool) {
+pub(crate) fn on_evolve(
+    actor: usize,
+    state: &mut State,
+    to_card: &Card,
+    in_play_idx: usize,
+    from_hand: bool,
+) {
     if !from_hand {
         return;
     }
@@ -178,6 +184,9 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_ha
                 ],
             ));
         }
+        Some(AbilityMechanic::CoinFlipParalyzeOpponentActiveOnEvolve) => {
+            offer_on_evolve_ability(actor, state, in_play_idx);
+        }
         Some(AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve) => {
             let opponent = (actor + 1) % 2;
             let has_energy = state
@@ -195,6 +204,15 @@ pub(crate) fn on_evolve(actor: usize, state: &mut State, to_card: &Card, from_ha
         }
         _ => {}
     }
+}
+
+/// Offers an optional on-evolve ability as a `UseAbility` / `Noop` choice. The ability's own
+/// logic (including any coin flip) then runs through the regular `forecast_ability` pathway.
+fn offer_on_evolve_ability(actor: usize, state: &mut State, in_play_idx: usize) {
+    state.move_generation_stack.push((
+        actor,
+        vec![SimpleAction::UseAbility { in_play_idx }, SimpleAction::Noop],
+    ));
 }
 
 /// Called when a basic Pokémon is placed from hand onto the bench (index > 0).
