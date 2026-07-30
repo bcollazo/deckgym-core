@@ -185,6 +185,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
         AbilityMechanic::ConfuseOpponentActive => confuse_opponent_active(),
         AbilityMechanic::BurnOpponentActive => burn_opponent_active(),
+        AbilityMechanic::RandomStatusConditionToOpponentActive { options } => {
+            random_status_condition_to_opponent_active(state, action.actor, options)
+        }
         AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
             remove_random_special_condition_from_active()
         }
@@ -534,6 +537,51 @@ fn burn_opponent_active() -> Outcomes {
         let opponent = (action.actor + 1) % 2;
         state.apply_status_condition(opponent, 0, StatusCondition::Burned);
     })
+}
+
+/// Dustox's Variety Powder: one Special Condition is drawn uniformly at random from the options
+/// that aren't already affecting the opponent's Active Pokémon. Each candidate gets its own branch
+/// so the random draw is visible in the forecast.
+fn random_status_condition_to_opponent_active(
+    state: &State,
+    actor: usize,
+    options: &[StatusCondition],
+) -> Outcomes {
+    let opponent = (actor + 1) % 2;
+    let candidates = selectable_status_conditions(state, opponent, options);
+    if candidates.is_empty() {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let probability = 1.0 / candidates.len() as f64;
+    let probabilities = vec![probability; candidates.len()];
+    let mutations = candidates
+        .into_iter()
+        .map(|condition| -> Mutation {
+            Box::new(move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                state.apply_status_condition(opponent, 0, condition);
+            })
+        })
+        .collect();
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+/// The subset of `options` that the given player's Active Pokémon isn't already affected by.
+pub(crate) fn selectable_status_conditions(
+    state: &State,
+    player: usize,
+    options: &[StatusCondition],
+) -> Vec<StatusCondition> {
+    let Some(active) = state.maybe_get_active(player) else {
+        return vec![];
+    };
+    let applied = active_special_conditions(active);
+    options
+        .iter()
+        .copied()
+        .filter(|condition| !applied.contains(condition))
+        .collect()
 }
 
 fn remove_random_special_condition_from_active() -> Outcomes {

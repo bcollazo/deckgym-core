@@ -54,6 +54,8 @@ mod durant_test;
 mod dusknoir_shadow_void_test;
 #[path = "pokemon/dustox_select_powder_test.rs"]
 mod dustox_select_powder_test;
+#[path = "pokemon/dustox_variety_powder_test.rs"]
+mod dustox_variety_powder_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
 #[path = "pokemon/emolga_dedenne_ex_tool_damage_test.rs"]

@@ -1,4 +1,4 @@
-use crate::models::EnergyType;
+use crate::models::{EnergyType, StatusCondition};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum AbilityMechanic {
@@ -124,6 +124,12 @@ pub enum AbilityMechanic {
     PoisonOpponentActive,
     ConfuseOpponentActive,
     BurnOpponentActive,
+    /// Dustox's Variety Powder: 1 Special Condition is chosen at random from `options` and
+    /// inflicted on the opponent's Active Pokémon. Conditions already affecting that Pokémon are
+    /// excluded from the draw, so the ability is unusable once all `options` are applied.
+    RandomStatusConditionToOpponentActive {
+        options: Vec<StatusCondition>,
+    },
     RemoveRandomSpecialConditionFromActive,
     HealActiveYourPokemon {
         amount: u32,
