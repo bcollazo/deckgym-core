@@ -14,8 +14,8 @@ use crate::{
     },
     card_ids::CardId,
     card_logic::{
-        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
-        wallace_candidates,
+        can_rare_candy_evolve, diantha_targets, ilima_targets, psychic_energy_sources,
+        quick_grow_extract_candidates, wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -214,6 +214,10 @@ pub fn forecast_trainer_action(
             puppy_loving_girl_effect(acting_player, state)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
+        CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
+        CardId::B4153Wally | CardId::B4193Wally => Outcomes::single_fn(wally_effect),
+        CardId::B4150Psychic | CardId::B4190Psychic => Outcomes::single_fn(psychic_effect),
+        CardId::B4151Drayden | CardId::B4191Drayden => Outcomes::single_fn(drayden_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1169,6 +1173,64 @@ fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((action.actor, possible_activations))
+}
+
+fn skyla_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon.
+    let possible_activations = state
+        .enumerate_bench_pokemon(action.actor)
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx,
+        })
+        .collect::<Vec<_>>();
+    if !possible_activations.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_activations));
+    }
+}
+
+fn drayden_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    // During this turn, 1 of your opponent's Pokémon is chosen 1 more time for the Draco Meteor
+    // attack used by your Pokémon.
+    state.add_turn_effect(
+        TurnEffect::ExtraRandomSpreadHits {
+            amount: 1,
+            attack_name: "Draco Meteor".to_string(),
+        },
+        0,
+    );
+}
+
+fn psychic_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your
+    // opponent's Active Pokémon.
+    let opponent = (action.actor + 1) % 2;
+    let choices = psychic_energy_sources(state, opponent)
+        .into_iter()
+        .map(|from_in_play_idx| SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx })
+        .collect::<Vec<_>>();
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
+    }
+}
+
+fn wally_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.
+    let possible_targets = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, pokemon)| get_stage(pokemon) == 2)
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Colorless, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    if !possible_targets.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_targets));
+    }
 }
 
 fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {

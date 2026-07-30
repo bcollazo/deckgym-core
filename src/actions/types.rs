@@ -164,6 +164,11 @@ pub enum SimpleAction {
     DiscardActiveStadium,
     /// Crawdaunt's Unruly Claw: discard a random Energy from the opponent's Active Pokémon
     DiscardRandomOpponentActiveEnergy,
+    /// Psychic (Supporter): move a random Energy from one of the opponent's Benched Pokémon to
+    /// the opponent's Active Pokémon.
+    MoveRandomOpponentEnergyToActive {
+        from_in_play_idx: usize,
+    },
     /// Apply a chosen Special Condition to the opponent's Active Pokémon (e.g. Dustox's Select Powder).
     ApplyStatusToOpponentActive {
         condition: StatusCondition,
@@ -336,6 +341,9 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
             SimpleAction::DiscardRandomOpponentActiveEnergy => {
                 write!(f, "DiscardRandomOpponentActiveEnergy")
+            }
+            SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx } => {
+                write!(f, "MoveRandomOpponentEnergyToActive({from_in_play_idx})")
             }
             SimpleAction::UseStadium => write!(f, "UseStadium"),
             SimpleAction::ApplyStatusToOpponentActive { condition } => {

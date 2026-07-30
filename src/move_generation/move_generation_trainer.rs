@@ -2,8 +2,8 @@ use crate::{
     actions::{abilities::AbilityMechanic, get_ability_mechanic, SimpleAction},
     card_ids::CardId,
     card_logic::{
-        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
-        wallace_candidates,
+        active_has_psychic_attack, can_rare_candy_evolve, diantha_targets, ilima_targets,
+        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
     },
     effects::TurnEffect,
     hooks::{
@@ -246,6 +246,10 @@ pub fn trainer_move_generation_implementation(
             can_play_trainer(state, trainer_card)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
+        CardId::B4152Skyla | CardId::B4192Skyla => can_play_skyla(state, trainer_card),
+        CardId::B4153Wally | CardId::B4193Wally => can_play_wally(state, trainer_card),
+        CardId::B4150Psychic | CardId::B4190Psychic => can_play_psychic(state, trainer_card),
+        CardId::B4151Drayden | CardId::B4191Drayden => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }
@@ -688,6 +692,46 @@ fn can_play_lyra(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
         }
     }
     cannot_play_trainer()
+}
+
+/// Check if Skyla can be played (requires a Stage 1 Active Pokémon and at least 1 benched Pokémon)
+fn can_play_skyla(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let active_is_stage_1 = state
+        .maybe_get_active(player)
+        .is_some_and(|active| get_stage(active) == 1);
+    let has_bench = state.enumerate_bench_pokemon(player).count() > 0;
+    if active_is_stage_1 && has_bench {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Wally can be played (requires at least 1 Stage 2 Pokémon in play)
+fn can_play_wally(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_stage_2 = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| get_stage(pokemon) == 2);
+    if has_stage_2 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Psychic (Supporter) can be played (requires the Active Pokémon to have the Psychic
+/// attack, and an opponent's Benched Pokémon with Energy to move)
+fn can_play_psychic(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let opponent = (player + 1) % 2;
+    if active_has_psychic_attack(state, player)
+        && !psychic_energy_sources(state, opponent).is_empty()
+    {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
 }
 
 /// Check if Eevee Bag can be played (requires at least 1 Pokemon that evolved from Eevee in play)

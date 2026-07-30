@@ -20,7 +20,7 @@ use crate::{
     effects::{CardEffect, TurnEffect},
     hooks::{
         attack_effect_ignores_opponent_active_effects, can_evolve_into, contains_energy,
-        get_attack_cost, get_retreat_cost, get_stage,
+        get_attack_cost, get_extra_random_spread_hits, get_retreat_cost, get_stage,
     },
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
     State,
@@ -597,7 +597,12 @@ fn forecast_effect_attack_by_mechanic(
             times,
             damage_per_hit,
             include_own_bench,
-        } => random_spread_damage(state, *times, *damage_per_hit, *include_own_bench),
+        } => random_spread_damage(
+            state,
+            *times + get_extra_random_spread_hits(state, &attack.title),
+            *damage_per_hit,
+            *include_own_bench,
+        ),
         Mechanic::ExtraDamageIfKnockedOutLastTurn { extra_damage } => {
             extra_damage_if_knocked_out_last_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
