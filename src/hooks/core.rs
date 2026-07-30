@@ -391,7 +391,34 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
 
     apply_soothing_shore_healing(player_ending_turn, state);
 
+    apply_deceptive_needle_damage(player_ending_turn, state);
+
     apply_bad_dreams_damage(state);
+}
+
+/// Deceptive Needle: At the end of your turn, if the [D] Pokémon this card is attached to is in
+/// the Active Spot, do 10 damage to your opponent's Active Pokémon.
+fn apply_deceptive_needle_damage(player_ending_turn: usize, state: &mut State) {
+    let Some(active) = state.maybe_get_active(player_ending_turn) else {
+        return;
+    };
+    if !has_tool(active, CardId::B4148DeceptiveNeedle)
+        || active.get_energy_type() != Some(EnergyType::Darkness)
+    {
+        return;
+    }
+    let opponent = (player_ending_turn + 1) % 2;
+    if state.in_play_pokemon[opponent][0].is_none() {
+        return;
+    }
+    debug!("Deceptive Needle: Doing 10 damage to opponent's Active Pokémon");
+    crate::actions::handle_damage(
+        state,
+        (player_ending_turn, 0),
+        &[(10, opponent, 0)],
+        false,
+        None,
+    );
 }
 
 /// Soothing Shore: At the end of each player's turn, that player heals 20 damage from each of
