@@ -14,8 +14,8 @@ use crate::{
     },
     card_ids::CardId,
     card_logic::{
-        can_rare_candy_evolve, diantha_targets, ilima_targets, quick_grow_extract_candidates,
-        wallace_candidates,
+        can_rare_candy_evolve, diantha_targets, ilima_targets, psychic_energy_sources,
+        quick_grow_extract_candidates, wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -216,6 +216,7 @@ pub fn forecast_trainer_action(
         CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
         CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
         CardId::B4153Wally | CardId::B4193Wally => Outcomes::single_fn(wally_effect),
+        CardId::B4150Psychic | CardId::B4190Psychic => Outcomes::single_fn(psychic_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1186,6 +1187,19 @@ fn skyla_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, possible_activations));
+    }
+}
+
+fn psychic_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Choose 1 of your opponent's Benched Pokémon and move a random Energy from it to your
+    // opponent's Active Pokémon.
+    let opponent = (action.actor + 1) % 2;
+    let choices = psychic_energy_sources(state, opponent)
+        .into_iter()
+        .map(|from_in_play_idx| SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx })
+        .collect::<Vec<_>>();
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
     }
 }
 

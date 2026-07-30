@@ -18,6 +18,8 @@ mod marlon_test;
 mod professor_sada_test;
 #[path = "trainers/professor_turo_test.rs"]
 mod professor_turo_test;
+#[path = "trainers/psychic_test.rs"]
+mod psychic_test;
 #[path = "trainers/puppy_loving_girl_test.rs"]
 mod puppy_loving_girl_test;
 #[path = "trainers/skyla_test.rs"]

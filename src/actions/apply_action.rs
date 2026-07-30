@@ -71,6 +71,7 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::DiscardToolFromPokemon { .. }
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
+        | SimpleAction::MoveRandomOpponentEnergyToActive { .. }
         | SimpleAction::ApplyStatusToOpponentActive { .. }
         | SimpleAction::Noop => forecast_deterministic_action(),
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
@@ -346,6 +347,12 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                 state.discard_from_active(opponent, &[energy]);
             }
         }
+        SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx } => {
+            let opponent = (action.actor + 1) % 2;
+            // NOTE: Using the last energy instead of a random one to avoid expanding the game
+            // tree, mirroring DiscardRandomOpponentActiveEnergy and Piers.
+            apply_move_last_energy(state, opponent, *from_in_play_idx, 0);
+        }
         SimpleAction::ApplyStatusToOpponentActive { condition } => {
             let opponent = (action.actor + 1) % 2;
             state.apply_status_condition(opponent, 0, *condition);
@@ -384,6 +391,17 @@ fn apply_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_c
         && pokemon.get_energy_type() == Some(crate::models::EnergyType::Metal)
     {
         pokemon.cure_status_conditions();
+    }
+}
+
+/// Moves 1 Energy from `from_idx` to `to_idx` within `player`'s own board, without the caller
+/// having to know which Energy types are attached.
+fn apply_move_last_energy(state: &mut State, player: usize, from_idx: usize, to_idx: usize) {
+    let energy = state.in_play_pokemon[player][from_idx]
+        .as_ref()
+        .and_then(|pokemon| pokemon.attached_energy.last().copied());
+    if let Some(energy) = energy {
+        apply_move_energy(state, player, from_idx, to_idx, energy, 1);
     }
 }
 
