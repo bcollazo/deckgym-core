@@ -34,6 +34,15 @@ pub enum Mechanic {
     CoinFlipSelfHeal {
         amount: u32,
     },
+    /// Cradily's Stick and Absorb: deal damage, heal `heal_amount` from the attacking Pokémon, then
+    /// apply a `CardEffect` to an Active Pokémon (`opponent: true` → the Defending Pokémon).
+    /// `SelfHeal` plus `DamageAndCardEffect` in one attack.
+    SelfHealAndCardEffect {
+        heal_amount: u32,
+        opponent: bool,
+        effect: CardEffect,
+        duration: u8,
+    },
     SearchToHandByEnergy {
         energy_type: EnergyType,
     },
