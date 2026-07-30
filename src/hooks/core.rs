@@ -927,6 +927,22 @@ fn get_future_booster_damage_bonus(attacking_pokemon: &PlayedCard) -> u32 {
     0
 }
 
+/// Extra times a random-spread attack (e.g. Draco Meteor) chooses a Pokémon this turn, granted
+/// by cards like Drayden.
+pub(crate) fn get_extra_random_spread_hits(state: &State, attack_name: &str) -> usize {
+    state
+        .get_current_turn_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::ExtraRandomSpreadHits {
+                amount,
+                attack_name: effect_attack_name,
+            } if effect_attack_name == attack_name => Some(*amount),
+            _ => None,
+        })
+        .sum()
+}
+
 // TODO: Confirm is_from_attack and goes to enemy active
 pub(crate) fn modify_damage(
     state: &State,
