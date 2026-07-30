@@ -16,6 +16,8 @@ mod juliana_test;
 mod korrina_cabbie_parasol_lady_test;
 #[path = "trainers/marlon_test.rs"]
 mod marlon_test;
+#[path = "trainers/order_pad_test.rs"]
+mod order_pad_test;
 #[path = "trainers/professor_sada_test.rs"]
 mod professor_sada_test;
 #[path = "trainers/professor_turo_test.rs"]

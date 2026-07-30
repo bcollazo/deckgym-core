@@ -62,6 +62,8 @@ static SMALL_BALLOON_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3b064SmallBalloon));
 static ELEGANT_CAPE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B3b065ElegantCape));
+static DECEPTIVE_NEEDLE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::B4148DeceptiveNeedle));
 
 pub fn tool_effects_equal(trainer_card: &TrainerCard, reference_tool_id: CardId) -> bool {
     ensure_tool_trainer(trainer_card);
@@ -114,5 +116,6 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == FUTURE_BOOSTER_ENERGY_CAPSULE_EFFECT.as_str()
             || e == SMALL_BALLOON_EFFECT.as_str()
             || e == ELEGANT_CAPE_EFFECT.as_str()
+            || e == DECEPTIVE_NEEDLE_EFFECT.as_str()
     )
 }

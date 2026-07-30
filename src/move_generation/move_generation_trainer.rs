@@ -246,6 +246,7 @@ pub fn trainer_move_generation_implementation(
             can_play_trainer(state, trainer_card)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
+        CardId::B4145OrderPad => can_play_trainer(state, trainer_card),
         CardId::B4152Skyla | CardId::B4192Skyla => can_play_skyla(state, trainer_card),
         CardId::B4153Wally | CardId::B4193Wally => can_play_wally(state, trainer_card),
         CardId::B4150Psychic | CardId::B4190Psychic => can_play_psychic(state, trainer_card),

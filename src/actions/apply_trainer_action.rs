@@ -26,7 +26,7 @@ use crate::{
 };
 
 use super::{
-    apply_action_helpers::Mutations,
+    apply_action_helpers::{Mutation, Mutations},
     outcomes::{CoinSeq, Outcomes},
     Action, SimpleAction,
 };
@@ -214,6 +214,7 @@ pub fn forecast_trainer_action(
             puppy_loving_girl_effect(acting_player, state)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
+        CardId::B4145OrderPad => order_pad_outcomes(acting_player, state),
         CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
         CardId::B4153Wally | CardId::B4193Wally => Outcomes::single_fn(wally_effect),
         CardId::B4150Psychic | CardId::B4190Psychic => Outcomes::single_fn(psychic_effect),
@@ -473,6 +474,22 @@ fn arven_outcomes(acting_player: usize, state: &State) -> Outcomes {
 
     Outcomes::from_coin_branches(branches)
         .expect("arven_outcomes should produce valid coin branches")
+}
+
+// Order Pad: "Flip a coin. If heads, put a random Item card from your deck into your hand."
+fn order_pad_outcomes(acting_player: usize, state: &State) -> Outcomes {
+    let (item_probs, item_mutations) = item_search_outcomes(acting_player, state).into_branches();
+
+    let mut branches: Vec<(f64, Mutation, Vec<CoinSeq>)> = Vec::with_capacity(item_probs.len() + 1);
+    for (p, m) in item_probs.into_iter().zip(item_mutations) {
+        branches.push((p * 0.5, m, vec![CoinSeq(vec![true])]));
+    }
+    let tails_mutation: Mutation = Box::new(|_, _, _| debug!("Order Pad: Flipped tails"));
+    branches.push((0.5, tails_mutation, vec![CoinSeq(vec![false])]));
+
+    // Not `binary_coin`: heads fans out into many equally-weighted search outcomes (one per
+    // distinct Item card in the deck), not a single mutation.
+    Outcomes::from_coin_branches(branches).expect("Order Pad coin branches should be valid")
 }
 
 fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {

@@ -6,5 +6,9 @@ mod arena_of_antiquity_test;
 mod fragrant_forest_test;
 #[path = "stadiums/kids_room_test.rs"]
 mod kids_room_test;
+#[path = "stadiums/rainbow_cave_test.rs"]
+mod rainbow_cave_test;
+#[path = "stadiums/soothing_shore_test.rs"]
+mod soothing_shore_test;
 #[path = "stadiums/stadium_test.rs"]
 mod stadium_test;
