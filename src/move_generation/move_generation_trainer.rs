@@ -246,6 +246,7 @@ pub fn trainer_move_generation_implementation(
             can_play_trainer(state, trainer_card)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
+        CardId::B4152Skyla | CardId::B4192Skyla => can_play_skyla(state, trainer_card),
         _ => None,
     }
 }
@@ -688,6 +689,20 @@ fn can_play_lyra(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
         }
     }
     cannot_play_trainer()
+}
+
+/// Check if Skyla can be played (requires a Stage 1 Active Pokémon and at least 1 benched Pokémon)
+fn can_play_skyla(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let player = state.current_player;
+    let active_is_stage_1 = state
+        .maybe_get_active(player)
+        .is_some_and(|active| get_stage(active) == 1);
+    let has_bench = state.enumerate_bench_pokemon(player).count() > 0;
+    if active_is_stage_1 && has_bench {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
 }
 
 /// Check if Eevee Bag can be played (requires at least 1 Pokemon that evolved from Eevee in play)

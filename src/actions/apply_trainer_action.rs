@@ -214,6 +214,7 @@ pub fn forecast_trainer_action(
             puppy_loving_girl_effect(acting_player, state)
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
+        CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1169,6 +1170,22 @@ fn lyra_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((action.actor, possible_activations))
+}
+
+fn skyla_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Switch your Active Stage 1 Pokémon with 1 of your Benched Pokémon.
+    let possible_activations = state
+        .enumerate_bench_pokemon(action.actor)
+        .map(|(in_play_idx, _)| SimpleAction::Activate {
+            player: action.actor,
+            in_play_idx,
+        })
+        .collect::<Vec<_>>();
+    if !possible_activations.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_activations));
+    }
 }
 
 fn eevee_bag_effect(_: &mut StdRng, state: &mut State, action: &Action) {
