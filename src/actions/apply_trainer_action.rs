@@ -215,6 +215,7 @@ pub fn forecast_trainer_action(
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => wallace_effect(acting_player, state),
         CardId::B4152Skyla | CardId::B4192Skyla => Outcomes::single_fn(skyla_effect),
+        CardId::B4153Wally | CardId::B4193Wally => Outcomes::single_fn(wally_effect),
         _ => panic!("Unsupported Trainer Card"),
     }
 }
@@ -1185,6 +1186,23 @@ fn skyla_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         state
             .move_generation_stack
             .push((action.actor, possible_activations));
+    }
+}
+
+fn wally_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Take a [C] Energy from your Energy Zone and attach it to 1 of your Stage 2 Pokémon.
+    let possible_targets = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, pokemon)| get_stage(pokemon) == 2)
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Colorless, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    if !possible_targets.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_targets));
     }
 }
 

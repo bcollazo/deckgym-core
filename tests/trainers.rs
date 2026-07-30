@@ -26,3 +26,5 @@ mod skyla_test;
 mod volkner_test;
 #[path = "trainers/wallace_test.rs"]
 mod wallace_test;
+#[path = "trainers/wally_test.rs"]
+mod wally_test;

@@ -247,6 +247,7 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
         CardId::B4152Skyla | CardId::B4192Skyla => can_play_skyla(state, trainer_card),
+        CardId::B4153Wally | CardId::B4193Wally => can_play_wally(state, trainer_card),
         _ => None,
     }
 }
@@ -699,6 +700,18 @@ fn can_play_skyla(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         .is_some_and(|active| get_stage(active) == 1);
     let has_bench = state.enumerate_bench_pokemon(player).count() > 0;
     if active_is_stage_1 && has_bench {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Check if Wally can be played (requires at least 1 Stage 2 Pokémon in play)
+fn can_play_wally(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_stage_2 = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| get_stage(pokemon) == 2);
+    if has_stage_2 {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
