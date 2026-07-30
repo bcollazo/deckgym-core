@@ -8,6 +8,7 @@ use crate::{
     models::{Card, EnergyType, TrainerType},
     stadiums::{
         is_area_zero_active, is_fragrant_forest_active, is_kids_room_active, is_mesagoza_active,
+        is_rainbow_cave_active,
     },
     State,
 };
@@ -33,7 +34,27 @@ pub(crate) fn forecast_use_stadium(state: &State, acting_player: usize) -> Outco
     if is_kids_room_active(state) {
         return forecast_kids_room_effect(state, acting_player);
     }
+    if is_rainbow_cave_active(state) {
+        return forecast_rainbow_cave_effect();
+    }
     Outcomes::single_fn(|_, _, _| {})
+}
+
+/// Rainbow Cave: Once during each player's turn, that player may discard the Energy that has been
+/// generated in their Energy Zone. If they do, the next Energy is produced.
+fn forecast_rainbow_cave_effect() -> Outcomes {
+    Outcomes::single_fn(|rng, state, action| {
+        let player = action.actor;
+        state.has_used_stadium[player] = true;
+        // The generated Energy is discarded like any other Energy, so it lands in the
+        // player's Energy discard pile (reachable by cards such as Professor Sada).
+        if let Some(discarded) = state.energy_zone[player].current {
+            state.discard_energies[player].push(discarded);
+            debug!("Rainbow Cave: Discarded {discarded:?} from the Energy Zone");
+        }
+        // Promote the previewed `next` Energy into `current` and queue a fresh one behind it.
+        state.rotate_energy_zone(player, rng);
+    })
 }
 
 /// Area Zero: Once during each player's turn, that player may shuffle a Basic Pokémon from their
