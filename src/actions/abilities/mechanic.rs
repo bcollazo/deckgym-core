@@ -64,6 +64,10 @@ pub enum AbilityMechanic {
         energy_type: EnergyType,
         self_damage: u32,
     },
+    /// Dragonair's Dragon's Blessing: "Once during your turn, if this Pokémon is on your Bench,
+    /// you may attach an Energy from your discard pile to your Active Pokémon." The player
+    /// chooses which discarded Energy type to attach when the discard pile holds more than one.
+    AttachEnergyFromDiscardToActiveFromBench,
     ReduceDamageFromAttacks {
         amount: u32,
     },
