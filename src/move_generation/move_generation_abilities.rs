@@ -94,6 +94,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage { energy_type, .. } => {
             !card.ability_used && state.discard_energies[state.current_player].contains(energy_type)
         }
+        AbilityMechanic::AttachEnergyFromDiscardToActiveFromBench => {
+            can_use_dragonair_dragons_blessing(state, _in_play_index, card)
+        }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
@@ -294,6 +297,18 @@ fn can_use_dismantling_keys(state: &State, in_play_idx: usize, card: &PlayedCard
     state
         .maybe_get_active(opponent)
         .is_some_and(|active| active.has_tool_attached())
+}
+
+fn can_use_dragonair_dragons_blessing(
+    state: &State,
+    in_play_idx: usize,
+    card: &PlayedCard,
+) -> bool {
+    if in_play_idx == 0 || card.ability_used {
+        return false;
+    }
+    state.maybe_get_active(state.current_player).is_some()
+        && !state.discard_energies[state.current_player].is_empty()
 }
 
 fn can_use_crobat_cunning_link(state: &State, card: &PlayedCard) -> bool {

@@ -117,6 +117,9 @@ fn forecast_ability_by_mechanic(
                 )
             }
         }),
+        AbilityMechanic::AttachEnergyFromDiscardToActiveFromBench => {
+            Outcomes::single_fn(dragonair_dragons_blessing)
+        }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => {
             panic!("ReduceDamageFromAttacks is a passive ability")
         }
@@ -826,6 +829,30 @@ fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
+}
+
+/// Dragonair's Dragon's Blessing: attach an Energy from the discard pile to the Active Pokémon.
+/// The player chooses which discarded Energy type to attach when more than one is available.
+fn dragonair_dragons_blessing(_: &mut StdRng, state: &mut State, action: &Action) {
+    let player = action.actor;
+    let mut energy_types: Vec<EnergyType> = state.discard_energies[player].clone();
+    energy_types.sort();
+    energy_types.dedup();
+
+    let possible_attachments: Vec<SimpleAction> = energy_types
+        .into_iter()
+        .map(|energy_type| SimpleAction::AttachTypedFromDiscard {
+            in_play_idx: 0,
+            energy_type,
+            count: 1,
+        })
+        .collect();
+
+    if !possible_attachments.is_empty() {
+        state
+            .move_generation_stack
+            .push((player, possible_attachments));
+    }
 }
 
 /// Lunala ex's Psychic Connect: move all `energy_type` Energy from 1 chosen Benched `energy_type`

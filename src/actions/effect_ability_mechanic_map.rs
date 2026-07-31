@@ -244,6 +244,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 self_damage: 20,
             },
         );
+        map.insert(
+            "Once during your turn, if this Pokémon is on your Bench, you may attach an Energy from your discard pile to your Active [N] Pokémon.",
+            AbilityMechanic::AttachEnergyFromDiscardToActiveFromBench,
+        );
         // map.insert("Once during your turn, you may choose either player. Look at the top card of that player's deck.", todo_implementation);
         map.insert(
             "Once during your turn, you may discard the top card of your opponent's deck.",
