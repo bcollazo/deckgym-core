@@ -162,7 +162,6 @@ impl<'a> Game<'a> {
     fn get_color(&self, actor: usize) -> String {
         let energy = self.state.decks[actor].energy_types[0];
         let color = match energy {
-            EnergyType::Colorless => todo!(),
             EnergyType::Fighting => "red",
             EnergyType::Fire => "red",
             EnergyType::Grass => "green",
@@ -171,7 +170,14 @@ impl<'a> Game<'a> {
             EnergyType::Water => "blue",
             EnergyType::Darkness => "bright_black",
             EnergyType::Metal => "bright_black",
-            EnergyType::Dragon => todo!(),
+            // The Energy Zone cannot generate these, so a deck built around one is
+            // not playable. `Deck::is_valid` rejects them, so getting here means an
+            // unvalidated deck reached `Game`.
+            EnergyType::Colorless | EnergyType::Dragon => panic!(
+                "Player {actor}'s deck declares a {} energy zone, which the Energy Zone \
+                 cannot generate. Check Deck::is_valid before starting a Game.",
+                energy.as_str()
+            ),
         };
         color.to_string()
     }
