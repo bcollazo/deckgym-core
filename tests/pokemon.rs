@@ -148,6 +148,8 @@ mod mega_rayquaza_ex_mega_burst_test;
 mod mega_sceptile_terminating_tail_test;
 #[path = "pokemon/mega_steelix_adamantine_rolling_test.rs"]
 mod mega_steelix_adamantine_rolling_test;
+#[path = "pokemon/meganium_bloomshine_test.rs"]
+mod meganium_bloomshine_test;
 #[path = "pokemon/meowstic_test.rs"]
 mod meowstic_test;
 #[path = "pokemon/meowth_carefree_steps_test.rs"]
