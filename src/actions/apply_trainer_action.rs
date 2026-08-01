@@ -14,8 +14,8 @@ use crate::{
     },
     card_ids::CardId,
     card_logic::{
-        can_rare_candy_evolve, diantha_targets, ilima_targets, psychic_energy_sources,
-        quick_grow_extract_candidates, wallace_candidates,
+        can_rare_candy_evolve, diantha_targets, ilima_targets, mallow_targets,
+        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -128,6 +128,7 @@ pub fn forecast_trainer_action(
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => Outcomes::single_fn(lusamine_effect),
         CardId::A3149Ilima | CardId::A3191Ilima => Outcomes::single_fn(ilima_effect),
+        CardId::A3154Mallow | CardId::A3196Mallow => Outcomes::single_fn(mallow_effect),
         CardId::A3150Kiawe | CardId::A3192Kiawe => Outcomes::single_fn(kiawe_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             Outcomes::single_fn(lyra_effect)
@@ -751,6 +752,30 @@ fn diantha_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             in_play_idx,
             heal_amount: 90,
             discard_energies: vec![EnergyType::Psychic; 2],
+        })
+        .collect::<Vec<_>>();
+
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
+fn mallow_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal all damage from 1 of your Shiinotic or Tsareena. If you do, discard all Energy from
+    // that Pokémon.
+    let possible_moves = mallow_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| {
+            let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
+                .as_ref()
+                .expect("Mallow target should be in play");
+            SimpleAction::HealAndDiscardEnergy {
+                in_play_idx,
+                heal_amount: pokemon.get_effective_total_hp() - pokemon.get_remaining_hp(),
+                discard_energies: pokemon.attached_energy.clone(),
+            }
         })
         .collect::<Vec<_>>();
 

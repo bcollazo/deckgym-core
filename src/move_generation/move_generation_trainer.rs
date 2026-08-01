@@ -3,7 +3,7 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         active_has_psychic_attack, can_rare_candy_evolve, diantha_targets, ilima_targets,
-        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
+        mallow_targets, psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
     },
     effects::TurnEffect,
     hooks::{
@@ -136,6 +136,7 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
         CardId::A2153Volkner | CardId::A2193Volkner => can_play_volkner(state, trainer_card),
         CardId::A3149Ilima | CardId::A3191Ilima => can_play_ilima(state, trainer_card),
+        CardId::A3154Mallow | CardId::A3196Mallow => can_play_mallow(state, trainer_card),
         CardId::A3150Kiawe | CardId::A3192Kiawe => can_play_kiawe(state, trainer_card),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             can_play_lyra(state, trainer_card)
@@ -796,6 +797,15 @@ fn can_play_piers(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
 }
 
 /// Check if Diantha can be played (requires damaged Psychic Pokemon with >= 2 Psychic Energy)
+/// Check if Mallow can be played (requires a damaged Shiinotic or Tsareena in play)
+fn can_play_mallow(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if mallow_targets(state, state.current_player).is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
 fn can_play_diantha(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let has_target = !diantha_targets(state, state.current_player).is_empty();
     if has_target {
