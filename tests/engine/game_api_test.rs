@@ -52,3 +52,59 @@ fn test_first_ko() {
     assert_eq!(game.get_state_clone().turn_count, 7);
     assert_eq!(winner, Some(GameOutcome::Win(0)));
 }
+
+/// A deck whose energy types resolve to [C] (a Colorless deck, or any deck file without an
+/// explicit `Energy:` line whose Pokémon are Colorless) must be playable: `play_tick` colors
+/// its log lines by the deck's first energy type, and every energy type needs a color.
+#[test]
+fn test_game_plays_deck_with_colorless_energy() {
+    let colorless_deck = deckgym::Deck::from_string(
+        "2 Furfrou B4 142\n\
+         2 Professor's Research P-A 007\n\
+         2 Poké Ball P-A 005\n\
+         2 Potion P-A 001\n\
+         2 X Speed P-A 002\n\
+         2 Red Card P-A 006\n\
+         2 Rare Candy A3 144\n\
+         2 Copycat B1 225\n\
+         2 Sabrina A1 225\n\
+         2 Cyrus A2 150",
+    )
+    .expect("Valid Deck Format");
+    let (_, deck_b) = load_test_decks();
+    let players: Vec<Box<dyn Player>> = vec![
+        Box::new(RandomPlayer {
+            deck: colorless_deck,
+        }),
+        Box::new(RandomPlayer { deck: deck_b }),
+    ];
+    let mut game = deckgym::Game::new(players, 0);
+    game.play();
+}
+
+/// Same for a [N] (Dragon) deck: Dragon Pokémon have no Energy of their own, so a deck file
+/// without an explicit `Energy:` line resolves to [N] and must still be playable.
+#[test]
+fn test_game_plays_deck_with_dragon_energy() {
+    let dragon_deck = deckgym::Deck::from_string(
+        "Energy: Dragon\n\
+         2 Furfrou B4 142\n\
+         2 Professor's Research P-A 007\n\
+         2 Poké Ball P-A 005\n\
+         2 Potion P-A 001\n\
+         2 X Speed P-A 002\n\
+         2 Red Card P-A 006\n\
+         2 Rare Candy A3 144\n\
+         2 Copycat B1 225\n\
+         2 Sabrina A1 225\n\
+         2 Cyrus A2 150",
+    )
+    .expect("Valid Deck Format");
+    let (_, deck_b) = load_test_decks();
+    let players: Vec<Box<dyn Player>> = vec![
+        Box::new(RandomPlayer { deck: dragon_deck }),
+        Box::new(RandomPlayer { deck: deck_b }),
+    ];
+    let mut game = deckgym::Game::new(players, 0);
+    game.play();
+}

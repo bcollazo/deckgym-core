@@ -160,9 +160,15 @@ impl<'a> Game<'a> {
 
     /// see https://github.com/colored-rs/colored?tab=readme-ov-file#colors
     fn get_color(&self, actor: usize) -> String {
-        let energy = self.state.decks[actor].energy_types[0];
+        // Decks always have at least 1 energy type, but this is only about how to color the
+        // log line, so fall back to Colorless instead of panicking if that ever changes.
+        let energy = self.state.decks[actor]
+            .energy_types
+            .first()
+            .copied()
+            .unwrap_or(EnergyType::Colorless);
         let color = match energy {
-            EnergyType::Colorless => todo!(),
+            EnergyType::Colorless => "white",
             EnergyType::Fighting => "red",
             EnergyType::Fire => "red",
             EnergyType::Grass => "green",
@@ -171,7 +177,7 @@ impl<'a> Game<'a> {
             EnergyType::Water => "blue",
             EnergyType::Darkness => "bright_black",
             EnergyType::Metal => "bright_black",
-            EnergyType::Dragon => todo!(),
+            EnergyType::Dragon => "cyan",
         };
         color.to_string()
     }
