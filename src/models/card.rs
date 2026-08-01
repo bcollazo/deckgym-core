@@ -39,6 +39,16 @@ impl EnergyType {
         }
     }
 
+    /// Whether a deck can be built around this energy, i.e. whether the Energy Zone
+    /// can generate it.
+    ///
+    /// Dragon and Colorless cannot. Colorless only ever appears as an attack cost
+    /// (payable by any energy), and there is no Dragon energy in the game — Dragon
+    /// Pokemon are powered by other types.
+    pub fn is_selectable(&self) -> bool {
+        !matches!(self, EnergyType::Dragon | EnergyType::Colorless)
+    }
+
     pub fn as_str(&self) -> &'static str {
         match self {
             EnergyType::Grass => "Grass",
