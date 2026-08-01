@@ -146,6 +146,8 @@ pub fn trainer_move_generation_implementation(
         | CardId::A4198Silver
         | CardId::A4156Will
         | CardId::A4196Will
+        | CardId::A4160Jasmine
+        | CardId::A4200Jasmine
         | CardId::A4b336Silver
         | CardId::A4b337Silver
         | CardId::PA002XSpeed

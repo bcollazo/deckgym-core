@@ -10,6 +10,8 @@ mod elesa_test;
 mod field_blower_test;
 #[path = "trainers/iris_trainer_test.rs"]
 mod iris_trainer_test;
+#[path = "trainers/jasmine_test.rs"]
+mod jasmine_test;
 #[path = "trainers/juliana_test.rs"]
 mod juliana_test;
 #[path = "trainers/korrina_cabbie_parasol_lady_test.rs"]

@@ -839,6 +839,7 @@ fn get_turn_effect_damage_reduction(
         return 0;
     }
     let target_energy_type = target_pokemon.get_energy_type();
+    let target_name = target_pokemon.get_name();
     state
         .get_current_turn_effects()
         .iter()
@@ -850,6 +851,11 @@ fn get_turn_effect_damage_reduction(
             } if *player == target_player && target_energy_type == Some(*energy_type) => {
                 Some(*amount)
             }
+            TurnEffect::ReducedDamageForSpecificPokemon {
+                amount,
+                pokemon_names,
+                player,
+            } if *player == target_player && pokemon_names.contains(&target_name) => Some(*amount),
             _ => None,
         })
         .sum::<u32>()

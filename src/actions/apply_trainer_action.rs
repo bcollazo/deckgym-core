@@ -134,6 +134,7 @@ pub fn forecast_trainer_action(
             Outcomes::single_fn(lyra_effect)
         }
         CardId::A4156Will | CardId::A4196Will => Outcomes::single_fn(will_effect),
+        CardId::A4160Jasmine | CardId::A4200Jasmine => Outcomes::single_fn(jasmine_effect),
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             Outcomes::single_fn(silver_effect)
         }
@@ -717,6 +718,19 @@ fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         TurnEffect::ReducedDamageForType {
             amount: 20,
             energy_type: EnergyType::Metal,
+            player: action.actor,
+        },
+        1,
+    );
+}
+
+fn jasmine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your Steelix and Skarmory ex take -50 damage from
+    // attacks from your opponent's Pokémon.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForSpecificPokemon {
+            amount: 50,
+            pokemon_names: vec!["Steelix".to_string(), "Skarmory ex".to_string()],
             player: action.actor,
         },
         1,
