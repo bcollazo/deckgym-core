@@ -599,6 +599,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DiscardRandomGlobalEnergy { count } => {
             discard_random_global_energy_attack(attack.fixed_damage, *count, state)
         }
+        Mechanic::RandomizeOpponentNextEnergy => {
+            randomize_opponent_next_energy_attack(attack.fixed_damage)
+        }
         Mechanic::RandomDamageToOpponentPokemonPerSelfEnergy {
             energy_type,
             damage_per_hit,
@@ -2303,6 +2306,17 @@ fn damage_and_discard_all_energy(damage: u32) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let active = state.get_active_mut(action.actor);
         active.attached_energy.clear(); // Discard all energy
+    })
+}
+
+/// Porygon-Z's Buggy Beam: the Energy previewed in the opponent's Energy Zone becomes a
+/// uniformly random one of the 8 basic Energy types (i.e. every type the Energy Zone can
+/// generate), even if their deck declares no such Energy.
+fn randomize_opponent_next_energy_attack(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |rng, state, action| {
+        let choices = EnergyType::SELECTABLE;
+        let opponent = (action.actor + 1) % 2;
+        state.energy_zone[opponent].next = Some(choices[rng.gen_range(0..choices.len())]);
     })
 }
 

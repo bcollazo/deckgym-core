@@ -164,6 +164,8 @@ mod morpeko_test;
 mod ninetales_ember_dance_test;
 #[path = "pokemon/passimian_ex_offload_pass_test.rs"]
 mod passimian_ex_offload_pass_test;
+#[path = "pokemon/porygonz_buggy_beam_test.rs"]
+mod porygonz_buggy_beam_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
 #[path = "pokemon/primarina_melodious_healing_test.rs"]

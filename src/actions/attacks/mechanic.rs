@@ -76,6 +76,9 @@ pub enum Mechanic {
     DiscardRandomGlobalEnergy {
         count: usize,
     },
+    /// Porygon-Z's Buggy Beam: replace the Energy queued up in the opponent's Energy Zone with a
+    /// uniformly random one of the 8 basic Energy types, regardless of their deck's Energy.
+    RandomizeOpponentNextEnergy,
     RandomDamageToOpponentPokemonPerSelfEnergy {
         energy_type: EnergyType,
         damage_per_hit: u32,
