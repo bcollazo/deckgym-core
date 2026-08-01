@@ -190,6 +190,7 @@ pub fn forecast_trainer_action(
         }
         CardId::B3147FieldBlower => Outcomes::single_fn(field_blower_effect),
         CardId::B3149Korrina | CardId::B3190Korrina => Outcomes::single_fn(korrina_effect),
+        CardId::B3151Cheren | CardId::B3192Cheren => Outcomes::single_fn(cheren_effect),
         CardId::B3150Cabbie | CardId::B3191Cabbie => card_search_outcomes_with_filter_multiple(
             acting_player,
             state,
@@ -732,6 +733,21 @@ fn jasmine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             amount: 50,
             pokemon_names: vec!["Steelix".to_string(), "Skarmory ex".to_string()],
             player: action.actor,
+            attacker_must_be_ex: false,
+        },
+        1,
+    );
+}
+
+fn cheren_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your Watchog and Stoutland take -100 damage from
+    // attacks from your opponent's Pokémon ex.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForSpecificPokemon {
+            amount: 100,
+            pokemon_names: vec!["Watchog".to_string(), "Stoutland".to_string()],
+            player: action.actor,
+            attacker_must_be_ex: true,
         },
         1,
     );

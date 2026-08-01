@@ -233,6 +233,7 @@ pub fn trainer_move_generation_implementation(
         }
         CardId::B3147FieldBlower => can_play_field_blower(state, trainer_card),
         CardId::B3149Korrina | CardId::B3190Korrina => can_play_trainer(state, trainer_card),
+        CardId::B3151Cheren | CardId::B3192Cheren => can_play_trainer(state, trainer_card),
         CardId::B3150Cabbie | CardId::B3191Cabbie => can_play_cabbie(state, trainer_card),
         CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
             can_play_parasol_lady(state, trainer_card)

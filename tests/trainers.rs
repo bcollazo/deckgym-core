@@ -1,5 +1,7 @@
 #[path = "trainers/barry_test.rs"]
 mod barry_test;
+#[path = "trainers/cheren_test.rs"]
+mod cheren_test;
 #[path = "trainers/cynthia_test.rs"]
 mod cynthia_test;
 #[path = "trainers/drayden_test.rs"]
