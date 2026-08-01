@@ -166,6 +166,8 @@ mod ninetales_ember_dance_test;
 mod passimian_ex_offload_pass_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
 mod porygonz_cyberjack_test;
+#[path = "pokemon/primarina_melodious_healing_test.rs"]
+mod primarina_melodious_healing_test;
 #[path = "pokemon/psyduck_test.rs"]
 mod psyduck_test;
 #[path = "pokemon/raichu_evoshock_test.rs"]
