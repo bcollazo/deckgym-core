@@ -23,6 +23,19 @@ pub enum EnergyType {
     Colorless,
 }
 impl EnergyType {
+    /// The 8 Energy types the Energy Zone can generate, i.e. the ones a deck can be built
+    /// around. See `is_selectable`.
+    pub const SELECTABLE: [EnergyType; 8] = [
+        EnergyType::Grass,
+        EnergyType::Fire,
+        EnergyType::Water,
+        EnergyType::Lightning,
+        EnergyType::Psychic,
+        EnergyType::Fighting,
+        EnergyType::Darkness,
+        EnergyType::Metal,
+    ];
+
     pub(crate) fn from_str(energy_type: &str) -> Option<Self> {
         match energy_type {
             "Grass" => Some(EnergyType::Grass),

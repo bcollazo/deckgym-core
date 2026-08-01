@@ -90,6 +90,18 @@ pub enum TurnEffect {
         energy_type: EnergyType,
         player: usize,
     },
+    /// `player`'s Pokémon named in `pokemon_names` take `amount` less damage from the opponent's
+    /// attacks (e.g. Jasmine, protecting Steelix and Skarmory ex). Like `ReducedDamageForType`,
+    /// this covers Benched Pokémon too, since the wording is "all of your ...".
+    ///
+    /// `attacker_must_be_ex` narrows the reduction to attacks from the opponent's Pokémon ex
+    /// (e.g. Cheren, protecting Watchog and Stoutland).
+    ReducedDamageForSpecificPokemon {
+        amount: u32,
+        pokemon_names: Vec<String>,
+        player: usize,
+        attacker_must_be_ex: bool,
+    },
     IncreasedDamage {
         amount: u32,
     },

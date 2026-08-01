@@ -832,13 +832,16 @@ fn get_turn_effect_damage_reduction(
     state: &State,
     target_player: usize,
     target_pokemon: &crate::models::PlayedCard,
-    attacking_player: usize,
+    attacking_ref: (usize, &crate::models::PlayedCard),
     is_from_active_attack: bool,
 ) -> u32 {
+    let (attacking_player, attacking_pokemon) = attacking_ref;
     if !is_from_active_attack || attacking_player == target_player {
         return 0;
     }
+    let attacker_is_ex = attacking_pokemon.card.is_ex();
     let target_energy_type = target_pokemon.get_energy_type();
+    let target_name = target_pokemon.get_name();
     state
         .get_current_turn_effects()
         .iter()
@@ -848,6 +851,17 @@ fn get_turn_effect_damage_reduction(
                 energy_type,
                 player,
             } if *player == target_player && target_energy_type == Some(*energy_type) => {
+                Some(*amount)
+            }
+            TurnEffect::ReducedDamageForSpecificPokemon {
+                amount,
+                pokemon_names,
+                player,
+                attacker_must_be_ex,
+            } if *player == target_player
+                && pokemon_names.contains(&target_name)
+                && (!attacker_must_be_ex || attacker_is_ex) =>
+            {
                 Some(*amount)
             }
             _ => None,
@@ -1124,7 +1138,7 @@ pub(crate) fn modify_damage(
             state,
             target_player,
             receiving_pokemon,
-            attacking_player,
+            (attacking_player, attacking_pokemon),
             is_from_active_attack,
         )
     };

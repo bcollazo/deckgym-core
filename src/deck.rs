@@ -216,16 +216,7 @@ mod tests {
 
     #[test]
     fn test_energy_type_is_selectable() {
-        for energy in [
-            EnergyType::Grass,
-            EnergyType::Fire,
-            EnergyType::Water,
-            EnergyType::Lightning,
-            EnergyType::Psychic,
-            EnergyType::Fighting,
-            EnergyType::Darkness,
-            EnergyType::Metal,
-        ] {
+        for energy in EnergyType::SELECTABLE {
             assert!(energy.is_selectable(), "{energy:?} should be selectable");
         }
         assert!(!EnergyType::Dragon.is_selectable());

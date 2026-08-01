@@ -66,7 +66,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("Change the type of a random Energy attached to your opponent's Active Pokémon to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
-    // map.insert("Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].", todo_implementation);
+    map.insert(
+        "Change the type of the next Energy that will be generated for your opponent to 1 of the following at random: [G], [R], [W], [L], [P], [F], [D], or [M].",
+        Mechanic::RandomizeOpponentNextEnergy,
+    );
     map.insert(
         "Choose 1 of your opponent's Active Pokémon's attacks and use it as this attack.",
         Mechanic::CopyAttack {
@@ -805,7 +808,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Heal 10 damage from this Pokémon.",
         Mechanic::SelfHeal { amount: 10 },
     );
-    // map.insert("Heal 20 damage from each of your Pokémon.", todo_implementation);
+    map.insert(
+        "Heal 20 damage from each of your Pokémon.",
+        Mechanic::HealAllYourPokemon { amount: 20 },
+    );
     map.insert(
         "Heal 20 damage from this Pokémon.",
         Mechanic::SelfHeal { amount: 20 },

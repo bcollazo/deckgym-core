@@ -1,5 +1,7 @@
 #[path = "trainers/barry_test.rs"]
 mod barry_test;
+#[path = "trainers/cheren_test.rs"]
+mod cheren_test;
 #[path = "trainers/cynthia_test.rs"]
 mod cynthia_test;
 #[path = "trainers/drayden_test.rs"]
@@ -10,10 +12,14 @@ mod elesa_test;
 mod field_blower_test;
 #[path = "trainers/iris_trainer_test.rs"]
 mod iris_trainer_test;
+#[path = "trainers/jasmine_test.rs"]
+mod jasmine_test;
 #[path = "trainers/juliana_test.rs"]
 mod juliana_test;
 #[path = "trainers/korrina_cabbie_parasol_lady_test.rs"]
 mod korrina_cabbie_parasol_lady_test;
+#[path = "trainers/mallow_test.rs"]
+mod mallow_test;
 #[path = "trainers/marlon_test.rs"]
 mod marlon_test;
 #[path = "trainers/order_pad_test.rs"]

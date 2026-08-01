@@ -3,8 +3,12 @@ use crate::models::{EnergyType, StatusCondition};
 #[derive(Debug, Clone, PartialEq)]
 pub enum AbilityMechanic {
     VictreebelFragranceTrap,
+    /// Heal `amount` damage from each of your Pokémon. `energy_type` restricts which Pokémon are
+    /// healed: `None` heals all of them, `Some(t)` heals only your Pokémon of that type (e.g.
+    /// Primarina's Melodious Healing, which heals only your [W] Pokémon).
     HealAllYourPokemon {
         amount: u32,
+        energy_type: Option<EnergyType>,
     },
     HealOneYourPokemon {
         amount: u32,

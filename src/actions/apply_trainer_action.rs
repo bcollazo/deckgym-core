@@ -14,8 +14,8 @@ use crate::{
     },
     card_ids::CardId,
     card_logic::{
-        can_rare_candy_evolve, diantha_targets, ilima_targets, psychic_energy_sources,
-        quick_grow_extract_candidates, wallace_candidates,
+        can_rare_candy_evolve, diantha_targets, ilima_targets, mallow_targets,
+        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
     },
     combinatorics::generate_combinations,
     effects::TurnEffect,
@@ -128,11 +128,13 @@ pub fn forecast_trainer_action(
         | CardId::A4b351Lusamine
         | CardId::A4b375Lusamine => Outcomes::single_fn(lusamine_effect),
         CardId::A3149Ilima | CardId::A3191Ilima => Outcomes::single_fn(ilima_effect),
+        CardId::A3154Mallow | CardId::A3196Mallow => Outcomes::single_fn(mallow_effect),
         CardId::A3150Kiawe | CardId::A3192Kiawe => Outcomes::single_fn(kiawe_effect),
         CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
             Outcomes::single_fn(lyra_effect)
         }
         CardId::A4156Will | CardId::A4196Will => Outcomes::single_fn(will_effect),
+        CardId::A4160Jasmine | CardId::A4200Jasmine => Outcomes::single_fn(jasmine_effect),
         CardId::A4158Silver | CardId::A4198Silver | CardId::A4b336Silver | CardId::A4b337Silver => {
             Outcomes::single_fn(silver_effect)
         }
@@ -188,6 +190,7 @@ pub fn forecast_trainer_action(
         }
         CardId::B3147FieldBlower => Outcomes::single_fn(field_blower_effect),
         CardId::B3149Korrina | CardId::B3190Korrina => Outcomes::single_fn(korrina_effect),
+        CardId::B3151Cheren | CardId::B3192Cheren => Outcomes::single_fn(cheren_effect),
         CardId::B3150Cabbie | CardId::B3191Cabbie => card_search_outcomes_with_filter_multiple(
             acting_player,
             state,
@@ -722,6 +725,34 @@ fn adaman_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     );
 }
 
+fn jasmine_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your Steelix and Skarmory ex take -50 damage from
+    // attacks from your opponent's Pokémon.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForSpecificPokemon {
+            amount: 50,
+            pokemon_names: vec!["Steelix".to_string(), "Skarmory ex".to_string()],
+            player: action.actor,
+            attacker_must_be_ex: false,
+        },
+        1,
+    );
+}
+
+fn cheren_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // During your opponent's next turn, all of your Watchog and Stoutland take -100 damage from
+    // attacks from your opponent's Pokémon ex.
+    state.add_turn_effect(
+        TurnEffect::ReducedDamageForSpecificPokemon {
+            amount: 100,
+            pokemon_names: vec!["Watchog".to_string(), "Stoutland".to_string()],
+            player: action.actor,
+            attacker_must_be_ex: true,
+        },
+        1,
+    );
+}
+
 fn piers_effect(_: &mut StdRng, state: &mut State, action: &Action) {
     // Discard 2 random Energy from your opponent's Active Pokémon.
     let opponent = (action.actor + 1) % 2;
@@ -751,6 +782,30 @@ fn diantha_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             in_play_idx,
             heal_amount: 90,
             discard_energies: vec![EnergyType::Psychic; 2],
+        })
+        .collect::<Vec<_>>();
+
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
+fn mallow_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    // Heal all damage from 1 of your Shiinotic or Tsareena. If you do, discard all Energy from
+    // that Pokémon.
+    let possible_moves = mallow_targets(state, action.actor)
+        .into_iter()
+        .map(|in_play_idx| {
+            let pokemon = state.in_play_pokemon[action.actor][in_play_idx]
+                .as_ref()
+                .expect("Mallow target should be in play");
+            SimpleAction::HealAndDiscardEnergy {
+                in_play_idx,
+                heal_amount: pokemon.get_effective_total_hp() - pokemon.get_remaining_hp(),
+                discard_energies: pokemon.attached_energy.clone(),
+            }
         })
         .collect::<Vec<_>>();
 

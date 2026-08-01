@@ -262,17 +262,29 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         // map.insert("Once during your turn, you may flip a coin. If heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
         map.insert(
             "Once during your turn, you may heal 10 damage from each of your Pokémon.",
-            AbilityMechanic::HealAllYourPokemon { amount: 10 },
+            AbilityMechanic::HealAllYourPokemon {
+                amount: 10,
+                energy_type: None,
+            },
         );
         map.insert(
             "Once during your turn, you may heal 20 damage from each of your Pokémon.",
-            AbilityMechanic::HealAllYourPokemon { amount: 20 },
+            AbilityMechanic::HealAllYourPokemon {
+                amount: 20,
+                energy_type: None,
+            },
         );
         map.insert(
             "Once during your turn, you may heal 20 damage from your Active Pokémon.",
             AbilityMechanic::HealActiveYourPokemon { amount: 20 },
         );
-        // map.insert("Once during your turn, you may heal 30 damage from each of your [W] Pokémon.", todo_implementation);
+        map.insert(
+            "Once during your turn, you may heal 30 damage from each of your [W] Pokémon.",
+            AbilityMechanic::HealAllYourPokemon {
+                amount: 30,
+                energy_type: Some(EnergyType::Water),
+            },
+        );
         // map.insert("Once during your turn, you may look at the top card of your deck.", todo_implementation);
         map.insert(
             "Once during your turn, you may make your opponent's Active Pokémon Burned.",
