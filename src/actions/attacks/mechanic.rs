@@ -49,6 +49,13 @@ pub enum Mechanic {
     SearchToBenchByName {
         name: String,
     },
+    /// Silcoon's & Cascoon's Cocoon Collector: "Put 3 random cards from among Silcoon and Cascoon
+    /// from your deck onto your Bench." Puts up to `count` random cards named after any of `names`
+    /// onto the Bench, limited by how many are in the deck and by the available Bench space.
+    SearchToBenchByNames {
+        names: Vec<String>,
+        count: usize,
+    },
     SearchToBenchBasic,
     SearchRandomPokemonToHand,
     SearchToHandByEvolvesFrom {

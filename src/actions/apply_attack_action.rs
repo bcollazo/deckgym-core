@@ -35,7 +35,8 @@ use super::{
     outcomes::{CoinSeq, Outcomes},
     shared_mutations::{
         pokemon_search_outcomes, pokemon_search_outcomes_by_type, search_and_bench_basic,
-        search_and_bench_by_name, search_to_hand_by_evolves_from, supporter_search_outcomes,
+        search_and_bench_by_name, search_and_bench_multiple_by_names,
+        search_to_hand_by_evolves_from, supporter_search_outcomes,
     },
     SimpleAction,
 };
@@ -292,6 +293,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::SearchToBenchByName { name } => {
             AttackOutcomes::from_effect_outcomes(search_and_bench_by_name(state, name.clone()))
         }
+        Mechanic::SearchToBenchByNames { names, count } => AttackOutcomes::from_effect_outcomes(
+            search_and_bench_multiple_by_names(state, names.clone(), *count),
+        ),
         Mechanic::SearchToBenchBasic => {
             AttackOutcomes::from_effect_outcomes(search_and_bench_basic(state))
         }

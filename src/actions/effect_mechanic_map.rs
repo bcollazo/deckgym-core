@@ -2355,6 +2355,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_card: 10,
         },
     );
+    // Silcoon & Cascoon - Cocoon Collector
+    map.insert(
+        "Put 3 random cards from among Silcoon and Cascoon from your deck onto your Bench.",
+        Mechanic::SearchToBenchByNames {
+            names: vec!["Silcoon".to_string(), "Cascoon".to_string()],
+            count: 3,
+        },
+    );
     // Mega Metagross ex - Gatling Slug
     map.insert(
         "This attack does 10 more damage for each [M] Energy attached to this Pokémon.",

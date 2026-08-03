@@ -186,6 +186,8 @@ mod salamence_test;
 mod sawk_test;
 #[path = "pokemon/shinx_hide_test.rs"]
 mod shinx_hide_test;
+#[path = "pokemon/silcoon_cascoon_cocoon_collector_test.rs"]
+mod silcoon_cascoon_cocoon_collector_test;
 #[path = "pokemon/slither_wing_test.rs"]
 mod slither_wing_test;
 #[path = "pokemon/smoochum_test.rs"]

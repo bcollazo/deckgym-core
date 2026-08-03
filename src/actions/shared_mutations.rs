@@ -3,7 +3,9 @@ use std::cmp::min;
 
 use crate::{
     actions::{
-        apply_action_helpers::Mutations, apply_evolve, apply_place_card, outcomes::Outcomes,
+        apply_action_helpers::{Mutation, Mutations},
+        apply_evolve, apply_place_card,
+        outcomes::Outcomes,
     },
     combinatorics::generate_combinations,
     hooks::can_evolve_into,
@@ -185,6 +187,61 @@ pub(crate) fn search_and_bench_by_name(state: &State, card_name: String) -> Outc
         move |card: &Card| card.get_name() == card_name,
         "Card should be in deck",
     )
+}
+
+/// Silcoon's & Cascoon's Cocoon Collector: put up to `count` random cards named after any of
+/// `names` from the deck onto the Bench (capped by the deck's contents and the Bench space).
+pub(crate) fn search_and_bench_multiple_by_names(
+    state: &State,
+    names: Vec<String>,
+    count: usize,
+) -> Outcomes {
+    let acting_player = state.current_player;
+    let eligible_cards: Vec<Card> = state.decks[acting_player]
+        .cards
+        .iter()
+        .filter(|card| names.contains(&card.get_name()))
+        .cloned()
+        .collect();
+    let free_slots = state.in_play_pokemon[acting_player]
+        .iter()
+        .filter(|slot| slot.is_none())
+        .count();
+    let num_to_place = min(count, min(eligible_cards.len(), free_slots));
+
+    if num_to_place == 0 {
+        // Nothing to fetch (or nowhere to put it), so just shuffle the deck.
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    let combinations = generate_combinations(&eligible_cards, num_to_place);
+    let probabilities = vec![1.0 / (combinations.len() as f64); combinations.len()];
+    let mutations: Mutations = combinations
+        .into_iter()
+        .map(|combo| -> Mutation {
+            Box::new(move |rng, state, action| {
+                for card in &combo {
+                    let Some(bench_idx) = state.in_play_pokemon[action.actor]
+                        .iter()
+                        .position(|slot| slot.is_none())
+                    else {
+                        debug!("No bench space available, skipping remaining cards");
+                        break;
+                    };
+                    debug!(
+                        "Fetched {card:?} from deck for player {} to place on bench",
+                        action.actor
+                    );
+                    apply_place_card(state, action.actor, card, bench_idx, true);
+                }
+                state.decks[action.actor].shuffle(false, rng);
+            })
+        })
+        .collect();
+
+    Outcomes::from_parts(probabilities, mutations)
 }
 
 pub(crate) fn search_and_bench_basic(state: &State) -> Outcomes {
