@@ -2276,7 +2276,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     // map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage, and your opponent's Active Pokémon is now Paralyzed.", todo_implementation);
     // map.insert("If any of your [D] Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 80 more damage.", todo_implementation);
-    // map.insert("If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If this Pokémon evolved from Poliwhirl during this turn, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfEvolvedFromThisTurn {
+            pokemon_name: "Poliwhirl".to_string(),
+            extra_damage: 50,
+        },
+    );
     // map.insert("If this Pokémon has any [F] Energy attached, this attack does 60 more damage.", todo_implementation);
     map.insert(
         "If this Pokémon has at least 1 extra [F] Energy attached, this attack does 50 more damage.",

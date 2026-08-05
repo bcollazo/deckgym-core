@@ -354,6 +354,13 @@ pub enum Mechanic {
     ExtraDamageIfEvolvedThisTurn {
         extra_damage: u32,
     },
+    /// Politoed's Raid: extra damage if this Pokémon evolved *from a specific Pokémon* during
+    /// this turn. Unlike `ExtraDamageIfEvolvedThisTurn` this also checks the card directly
+    /// underneath, so evolving via Rare Candy (which skips the named Stage 1) does not qualify.
+    ExtraDamageIfEvolvedFromThisTurn {
+        pokemon_name: String,
+        extra_damage: u32,
+    },
     BenchCountDamage {
         include_fixed_damage: bool,
         damage_per: u32,

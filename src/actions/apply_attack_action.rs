@@ -640,6 +640,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage } => {
             extra_damage_if_evolved_this_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfEvolvedFromThisTurn {
+            pokemon_name,
+            extra_damage,
+        } => extra_damage_if_evolved_from_this_turn_attack(
+            state,
+            attack.fixed_damage,
+            pokemon_name,
+            *extra_damage,
+        ),
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
@@ -2919,6 +2928,31 @@ fn extra_damage_if_evolved_this_turn_attack(
         .map(|p| p.played_this_turn)
         .unwrap_or(false);
     let damage = if evolved {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+/// Like `extra_damage_if_evolved_this_turn_attack`, but the evolution must have come from a
+/// specific Pokémon: the card directly underneath the active must be `pokemon_name`.
+fn extra_damage_if_evolved_from_this_turn_attack(
+    state: &State,
+    base_damage: u32,
+    pokemon_name: &str,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let evolved_from_named = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .is_some_and(|active| {
+            active.played_this_turn
+                && active
+                    .cards_behind
+                    .last()
+                    .is_some_and(|under| under.get_name() == pokemon_name)
+        });
+    let damage = if evolved_from_named {
         base_damage + extra_damage
     } else {
         base_damage
