@@ -409,9 +409,24 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
 
     apply_soothing_shore_healing(player_ending_turn, state);
 
+    apply_leftovers_healing(player_ending_turn, state);
+
     apply_deceptive_needle_damage(player_ending_turn, state);
 
     apply_bad_dreams_damage(state);
+}
+
+/// Leftovers: At the end of your turn, if the Pokémon this card is attached to is in the Active
+/// Spot, heal 10 damage from that Pokémon.
+fn apply_leftovers_healing(player_ending_turn: usize, state: &mut State) {
+    let Some(active) = state.in_play_pokemon[player_ending_turn][0].as_mut() else {
+        return;
+    };
+    if !has_tool(active, CardId::A3b067Leftovers) {
+        return;
+    }
+    debug!("Leftovers: Healing 10 damage from the Active Pokémon");
+    active.heal(10);
 }
 
 /// Deceptive Needle: At the end of your turn, if the [D] Pokémon this card is attached to is in
