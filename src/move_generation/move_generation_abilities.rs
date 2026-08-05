@@ -181,6 +181,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::CanEvolveOnFirstTurnIfActive => false,
         AbilityMechanic::CounterattackDamage { .. } => false,
         AbilityMechanic::PoisonAttackerOnDamaged => false,
+        AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged { .. } => false,
         AbilityMechanic::IncreaseAttackCostForOpponentActive { .. } => false,
         AbilityMechanic::IncreaseRetreatCostForOpponentActive { .. } => false,
         AbilityMechanic::PreventDamageWhileBenched => false,

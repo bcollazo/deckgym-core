@@ -544,7 +544,41 @@ pub(crate) fn handle_damage_only(
             state.apply_status_condition(attacking_player, 0, StatusCondition::Poisoned);
             debug!("Poison Barb: Poisoned the attacking Pokemon");
         }
+
+        if attacking_player != target_player {
+            apply_bouncy_body(state, target_player);
+        }
     }
+}
+
+/// Jellicent's Bouncy Body: the Active Pokémon was just damaged by an attack from the opponent's
+/// Pokémon, so its owner takes an Energy from their Energy Zone and attaches it to 1 of their
+/// Benched Pokémon (their choice).
+///
+/// Queued before knockouts resolve, so the choice is offered while the Bench is still intact
+/// (promotions are inserted at the bottom of the stack and therefore resolve afterwards).
+fn apply_bouncy_body(state: &mut State, target_player: usize) {
+    let Some(AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged { energy_type }) = state
+        .in_play_pokemon[target_player][0]
+        .as_ref()
+        .and_then(|active| get_ability_mechanic(&active.card))
+    else {
+        return;
+    };
+
+    let choices = state
+        .enumerate_bench_pokemon(target_player)
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, *energy_type, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    if choices.is_empty() {
+        return; // Nowhere to put the Energy.
+    }
+
+    debug!("Bouncy Body: Attaching a {energy_type:?} Energy to a Benched Pokemon");
+    state.move_generation_stack.push((target_player, choices));
 }
 
 fn is_iris_bonus_active(

@@ -214,6 +214,13 @@ pub enum AbilityMechanic {
         amount: u32,
     },
     PoisonAttackerOnDamaged,
+    /// Jellicent's Bouncy Body: if this Pokémon is in the Active Spot and is damaged by an attack
+    /// from the opponent's Pokémon, its owner takes an Energy of `energy_type` from their Energy
+    /// Zone and attaches it to 1 of their Benched Pokémon (their choice). Passive; triggered from
+    /// the damage path.
+    AttachEnergyFromZoneToBenchedOnDamaged {
+        energy_type: EnergyType,
+    },
     IncreaseAttackCostForOpponentActive {
         amount: u32,
     },
