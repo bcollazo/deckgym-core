@@ -1106,7 +1106,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     // map.insert("If your opponent's Active Pokémon is a [G] Pokémon, this attack does 40 more damage.", todo_implementation);
-    // map.insert("If your opponent's Active Pokémon is a [G] Pokémon, this attack does 50 more damage.", todo_implementation);
+    map.insert(
+        "If your opponent's Active Pokémon is a [G] Pokémon, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfDefenderType {
+            energy_type: EnergyType::Grass,
+            extra_damage: 50,
+        },
+    );
     // map.insert("If your opponent's Active Pokémon is a [M] Pokémon, this attack does 30 more damage.", todo_implementation);
     map.insert(
         "If your opponent's Active Pokémon is affected by a Special Condition, this attack does 60 more damage.",
