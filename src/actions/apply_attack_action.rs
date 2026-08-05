@@ -667,6 +667,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::DamageAndDiscardOpponentDeck { discard_count } => {
             damage_and_discard_opponent_deck(attack.fixed_damage, *discard_count)
         }
+        Mechanic::FlipUntilTailsDiscardOpponentDeck => {
+            flip_until_tails_discard_opponent_deck(attack.fixed_damage)
+        }
         Mechanic::MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(state),
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
         Mechanic::DarknessClaw => darkness_claw_attack(state.current_player, attack.fixed_damage),
@@ -1927,16 +1930,29 @@ fn tiered_coin_flip_damage(
 /// For attacks that deal damage and discard cards from the top of opponent's deck
 fn damage_and_discard_opponent_deck(damage: u32, discard_count: usize) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let opponent = (action.actor + 1) % 2;
-
-        for _ in 0..discard_count {
-            if let Some(card) = state.decks[opponent].draw() {
-                state.discard_piles[opponent].push(card);
-            } else {
-                break; // No more cards to discard
-            }
-        }
+        discard_top_opponent_deck(state, action.actor, discard_count);
     })
+}
+
+/// Flip a coin until tails, discarding the top card of the opponent's deck for each heads
+/// (e.g. Coalossal's Mountain Crush). Truncated at 8 heads like the other flip-until-tails
+/// attacks, to keep the probability space manageable.
+fn flip_until_tails_discard_opponent_deck(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::geometric_until_tails(8, move |heads| {
+        active_damage_effect_outcome(damage, move |_, state, action| {
+            discard_top_opponent_deck(state, action.actor, heads);
+        })
+    })
+}
+
+fn discard_top_opponent_deck(state: &mut State, actor: usize, discard_count: usize) {
+    let opponent = (actor + 1) % 2;
+    for _ in 0..discard_count {
+        let Some(card) = state.decks[opponent].draw() else {
+            break; // No more cards to discard
+        };
+        state.discard_piles[opponent].push(card);
+    }
 }
 
 fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> AttackOutcomes {

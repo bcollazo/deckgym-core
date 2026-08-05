@@ -433,6 +433,9 @@ pub enum Mechanic {
     DamageAndDiscardOpponentDeck {
         discard_count: usize,
     },
+    /// Coalossal's Mountain Crush: deal the attack's `fixed_damage`, then flip a coin until
+    /// tails, discarding the top card of the opponent's deck for each heads.
+    FlipUntilTailsDiscardOpponentDeck,
     MegaAmpharosExLightningLancer,
     OminousClaw,
     DarknessClaw,

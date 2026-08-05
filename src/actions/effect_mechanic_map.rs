@@ -2207,7 +2207,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_heads: 30,
         },
     );
-    // map.insert("Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.", todo_implementation);
+    map.insert(
+        "Flip a coin until you get tails. For each heads, discard the top card of your opponent's deck.",
+        Mechanic::FlipUntilTailsDiscardOpponentDeck,
+    );
     map.insert(
         "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to this Pokémon.",
         Mechanic::CoinFlipSelfChargeActive {
