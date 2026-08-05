@@ -98,6 +98,7 @@ fn can_use_ability_by_mechanic(
             can_use_dragonair_dragons_blessing(state, _in_play_index, card)
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
+        AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => false,
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,

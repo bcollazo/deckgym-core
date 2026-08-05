@@ -75,6 +75,12 @@ pub enum AbilityMechanic {
     ReduceDamageFromAttacks {
         amount: u32,
     },
+    /// Magnezone's Resilience Link: like `ReduceDamageFromAttacks`, but only while its owner has
+    /// Arceus or Arceus ex in play. Because it depends on the board it cannot be modeled as a
+    /// plain `CardEffect` derived from the card alone; it is resolved in `hooks::modify_damage`.
+    ReduceDamageFromAttacksIfArceusInPlay {
+        amount: u32,
+    },
     ReduceOpponentActiveDamage {
         amount: u32,
     },

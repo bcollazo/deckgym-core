@@ -626,6 +626,8 @@ fn get_intimidating_fang_reduction(
 }
 
 fn get_ability_damage_reduction(
+    state: &State,
+    target_player: usize,
     receiving_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
 ) -> u32 {
@@ -634,14 +636,36 @@ fn get_ability_damage_reduction(
     }
     // Reads the unified effect list, so Cloyster's Shell Armor (a passive ability) is handled the
     // same way as any stored effect.
-    receiving_pokemon
+    let effect_reduction: u32 = receiving_pokemon
         .get_effective_card_effects()
         .iter()
         .filter_map(|effect| match effect {
             CardEffect::ReduceDamageFromAttacks { amount } => Some(*amount),
             _ => None,
         })
-        .sum()
+        .sum();
+
+    // Magnezone's Resilience Link depends on the rest of the board, so it can't be derived as a
+    // CardEffect from the card alone.
+    let arceus_reduction = match get_ability_mechanic(&receiving_pokemon.card) {
+        Some(AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { amount })
+            if has_arceus_in_play(state, target_player) =>
+        {
+            debug!("Resilience Link: Reducing damage by {}", amount);
+            *amount
+        }
+        _ => 0,
+    };
+
+    effect_reduction + arceus_reduction
+}
+
+/// Whether `player` has Arceus or Arceus ex in play (Active or Benched).
+fn has_arceus_in_play(state: &State, player: usize) -> bool {
+    state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
+        let name = pokemon.get_name();
+        name == "Arceus" || name == "Arceus ex"
+    })
 }
 
 fn get_ability_damage_increase(
@@ -675,13 +699,7 @@ fn get_ability_damage_increase(
     if let Some(AbilityMechanic::IncreaseDamageIfArceusInPlay { amount }) =
         ability_mechanic_from_effect(&ability.effect)
     {
-        let has_arceus = state
-            .enumerate_in_play_pokemon(attacking_player)
-            .any(|(_, pokemon)| {
-                let name = pokemon.get_name();
-                name == "Arceus" || name == "Arceus ex"
-            });
-        if has_arceus {
+        if has_arceus_in_play(state, attacking_player) {
             debug!(
                 "IncreaseDamageIfArceusInPlay: Increasing damage by {}",
                 amount
@@ -1099,7 +1117,12 @@ pub(crate) fn modify_damage(
     let ability_damage_reduction = if skip_target_effects {
         0
     } else {
-        get_ability_damage_reduction(receiving_pokemon, is_from_active_attack)
+        get_ability_damage_reduction(
+            state,
+            target_player,
+            receiving_pokemon,
+            is_from_active_attack,
+        )
     };
     let ability_damage_increase = get_ability_damage_increase(
         state,

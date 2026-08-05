@@ -134,6 +134,8 @@ mod lunala_ex_test;
 mod magneton_test;
 #[path = "pokemon/magnezone_mirror_shot_test.rs"]
 mod magnezone_mirror_shot_test;
+#[path = "pokemon/magnezone_resilience_link_test.rs"]
+mod magnezone_resilience_link_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
 #[path = "pokemon/mega_camerupt_ex_test.rs"]
