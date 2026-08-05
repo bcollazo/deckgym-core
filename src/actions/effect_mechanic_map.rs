@@ -473,7 +473,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
-    // map.insert("Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.", todo_implementation);
+    map.insert(
+        "Flip 2 coins. For each heads, discard a random Energy from your opponent's Active Pokémon. If both of them are tails, this attack does nothing.",
+        Mechanic::CoinFlipsDiscardEnergyFromOpponentActiveOrNothing { num_coins: 2 },
+    );
     map.insert(
         "Flip 2 coins. If both of them are heads, this attack does 70 more damage.",
         Mechanic::ExtraDamageIfBothHeads { extra_damage: 70 },

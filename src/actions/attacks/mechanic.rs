@@ -85,6 +85,12 @@ pub enum Mechanic {
     },
     DiscardEnergyFromOpponentActive,
     CoinFlipDiscardEnergyFromOpponentActive,
+    /// Pidgeot's Twister / Mega Pidgeot ex's Giant Twister: flip `num_coins` coins and discard a
+    /// random Energy from the opponent's Active Pokémon for each heads. If every coin is tails
+    /// the attack does nothing at all — not even its `fixed_damage`.
+    CoinFlipsDiscardEnergyFromOpponentActiveOrNothing {
+        num_coins: usize,
+    },
     DiscardOpponentActiveToolsBeforeDamage,
     ExtraDamageIfEx {
         extra_damage: u32,
