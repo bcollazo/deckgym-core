@@ -321,6 +321,9 @@ fn forecast_effect_attack_by_mechanic(
             damage_and_discard_energy(attack.fixed_damage, 1)
         }
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive => mawile_crunch(),
+        Mechanic::CoinFlipsDiscardEnergyFromOpponentActiveOrNothing { num_coins } => {
+            coin_flips_discard_energy_or_nothing(attack.fixed_damage, *num_coins)
+        }
         Mechanic::DiscardOpponentActiveToolsBeforeDamage => {
             discard_opponent_active_tools_before_damage(attack.fixed_damage)
         }
@@ -640,6 +643,15 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfEvolvedThisTurn { extra_damage } => {
             extra_damage_if_evolved_this_turn_attack(state, attack.fixed_damage, *extra_damage)
         }
+        Mechanic::ExtraDamageIfEvolvedFromThisTurn {
+            pokemon_name,
+            extra_damage,
+        } => extra_damage_if_evolved_from_this_turn_attack(
+            state,
+            attack.fixed_damage,
+            pokemon_name,
+            *extra_damage,
+        ),
         Mechanic::RecoilIfKo { self_damage } => {
             recoil_if_ko_attack(attack.fixed_damage, *self_damage)
         }
@@ -657,6 +669,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::DamageAndDiscardOpponentDeck { discard_count } => {
             damage_and_discard_opponent_deck(attack.fixed_damage, *discard_count)
+        }
+        Mechanic::FlipUntilTailsDiscardOpponentDeck => {
+            flip_until_tails_discard_opponent_deck(attack.fixed_damage)
         }
         Mechanic::MegaAmpharosExLightningLancer => mega_ampharos_lightning_lancer(state),
         Mechanic::OminousClaw => ominous_claw_attack(state.current_player, attack.fixed_damage),
@@ -1859,24 +1874,47 @@ fn self_discard_energy_and_card_effect(
 /// For attacks that deal damage and discard random energy from opponent's active Pokémon
 fn damage_and_discard_energy(damage: u32, discard_count: usize) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |rng, state, action| {
-        let opponent = (action.actor + 1) % 2;
-        let mut to_discard = Vec::new();
-        let mut remaining = state.get_active(opponent).attached_energy.clone();
-
-        for _ in 0..discard_count {
-            if remaining.is_empty() {
-                break; // No more energy to discard
-            }
-
-            let energy_count = remaining.len();
-            let rand_idx = rng.gen_range(0..energy_count);
-            to_discard.push(remaining.swap_remove(rand_idx));
-        }
-
-        if !to_discard.is_empty() {
-            state.discard_from_active(opponent, &to_discard);
-        }
+        discard_random_energy_from_opponent_active(rng, state, action.actor, discard_count);
     })
+}
+
+/// Flip `num_coins` coins and discard a random Energy from the opponent's Active Pokémon for
+/// each heads (e.g. Pidgeot's Twister). On all tails the attack does nothing — including no
+/// damage — so that branch is a no-op outcome.
+fn coin_flips_discard_energy_or_nothing(damage: u32, num_coins: usize) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        if heads == 0 {
+            return AttackOutcome::noop();
+        }
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            discard_random_energy_from_opponent_active(rng, state, action.actor, heads);
+        })
+    })
+}
+
+fn discard_random_energy_from_opponent_active(
+    rng: &mut StdRng,
+    state: &mut State,
+    actor: usize,
+    discard_count: usize,
+) {
+    let opponent = (actor + 1) % 2;
+    let mut to_discard = Vec::new();
+    let mut remaining = state.get_active(opponent).attached_energy.clone();
+
+    for _ in 0..discard_count {
+        if remaining.is_empty() {
+            break; // No more energy to discard
+        }
+
+        let energy_count = remaining.len();
+        let rand_idx = rng.gen_range(0..energy_count);
+        to_discard.push(remaining.swap_remove(rand_idx));
+    }
+
+    if !to_discard.is_empty() {
+        state.discard_from_active(opponent, &to_discard);
+    }
 }
 
 fn discard_opponent_active_tools_before_damage(damage: u32) -> AttackOutcomes {
@@ -1918,16 +1956,29 @@ fn tiered_coin_flip_damage(
 /// For attacks that deal damage and discard cards from the top of opponent's deck
 fn damage_and_discard_opponent_deck(damage: u32, discard_count: usize) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let opponent = (action.actor + 1) % 2;
-
-        for _ in 0..discard_count {
-            if let Some(card) = state.decks[opponent].draw() {
-                state.discard_piles[opponent].push(card);
-            } else {
-                break; // No more cards to discard
-            }
-        }
+        discard_top_opponent_deck(state, action.actor, discard_count);
     })
+}
+
+/// Flip a coin until tails, discarding the top card of the opponent's deck for each heads
+/// (e.g. Coalossal's Mountain Crush). Truncated at 8 heads like the other flip-until-tails
+/// attacks, to keep the probability space manageable.
+fn flip_until_tails_discard_opponent_deck(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::geometric_until_tails(8, move |heads| {
+        active_damage_effect_outcome(damage, move |_, state, action| {
+            discard_top_opponent_deck(state, action.actor, heads);
+        })
+    })
+}
+
+fn discard_top_opponent_deck(state: &mut State, actor: usize, discard_count: usize) {
+    let opponent = (actor + 1) % 2;
+    for _ in 0..discard_count {
+        let Some(card) = state.decks[opponent].draw() else {
+            break; // No more cards to discard
+        };
+        state.discard_piles[opponent].push(card);
+    }
 }
 
 fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> AttackOutcomes {
@@ -2919,6 +2970,31 @@ fn extra_damage_if_evolved_this_turn_attack(
         .map(|p| p.played_this_turn)
         .unwrap_or(false);
     let damage = if evolved {
+        base_damage + extra_damage
+    } else {
+        base_damage
+    };
+    active_damage_doutcome(damage)
+}
+
+/// Like `extra_damage_if_evolved_this_turn_attack`, but the evolution must have come from a
+/// specific Pokémon: the card directly underneath the active must be `pokemon_name`.
+fn extra_damage_if_evolved_from_this_turn_attack(
+    state: &State,
+    base_damage: u32,
+    pokemon_name: &str,
+    extra_damage: u32,
+) -> AttackOutcomes {
+    let evolved_from_named = state.in_play_pokemon[state.current_player][0]
+        .as_ref()
+        .is_some_and(|active| {
+            active.played_this_turn
+                && active
+                    .cards_behind
+                    .last()
+                    .is_some_and(|under| under.get_name() == pokemon_name)
+        });
+    let damage = if evolved_from_named {
         base_damage + extra_damage
     } else {
         base_damage

@@ -151,7 +151,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 20 damage to the Attacking Pokémon.",
             AbilityMechanic::CounterattackDamage { amount: 20 },
         );
-        // map.insert("If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.", todo_implementation);
+        map.insert(
+            "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, take a [W] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
+            AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged {
+                energy_type: EnergyType::Water,
+            },
+        );
         map.insert(
             "If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, the Attacking Pokémon is now Poisoned.",
             AbilityMechanic::PoisonAttackerOnDamaged,
@@ -170,7 +175,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::IncreaseDamageIfArceusInPlay { amount: 30 },
         );
         // map.insert("If you have Arceus or Arceus ex in play, this Pokémon has no Retreat Cost.", todo_implementation);
-        // map.insert("If you have Arceus or Arceus ex in play, this Pokémon takes -30 damage from attacks.", todo_implementation);
+        map.insert(
+            "If you have Arceus or Arceus ex in play, this Pokémon takes -30 damage from attacks.",
+            AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { amount: 30 },
+        );
         // map.insert("If you have Latias in play, this Pokémon has no Retreat Cost.", todo_implementation);
         // map.insert("If you have another Falinks in play, this Pokémon's attacks do +20 damage to your opponent's Active Pokémon, and this Pokémon takes -20 damage from attacks from your opponent's Pokémon.", todo_implementation);
         map.insert(

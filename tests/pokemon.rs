@@ -40,6 +40,10 @@ mod celebi_time_recall_test;
 mod chansey_blissey_test;
 #[path = "pokemon/charmeleon_ignition_test.rs"]
 mod charmeleon_ignition_test;
+#[path = "pokemon/coalossal_coal_drop_test.rs"]
+mod coalossal_coal_drop_test;
+#[path = "pokemon/coalossal_mountain_crush_test.rs"]
+mod coalossal_mountain_crush_test;
 #[path = "pokemon/comfey_flower_shield_test.rs"]
 mod comfey_flower_shield_test;
 #[path = "pokemon/corviknight_line_test.rs"]
@@ -110,6 +114,8 @@ mod iron_moth_test;
 mod iron_thorns_test;
 #[path = "pokemon/iron_valiant_future_system_test.rs"]
 mod iron_valiant_future_system_test;
+#[path = "pokemon/jellicent_bouncy_body_test.rs"]
+mod jellicent_bouncy_body_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
 mod jolteon_ex_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
@@ -130,6 +136,8 @@ mod lunala_ex_test;
 mod magneton_test;
 #[path = "pokemon/magnezone_mirror_shot_test.rs"]
 mod magnezone_mirror_shot_test;
+#[path = "pokemon/magnezone_resilience_link_test.rs"]
+mod magnezone_resilience_link_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
 #[path = "pokemon/mega_camerupt_ex_test.rs"]
@@ -142,6 +150,8 @@ mod mega_kangaskhan_double_punching_family_test;
 mod mega_medicham_ex_test;
 #[path = "pokemon/mega_metagross_ex_gatling_slug_test.rs"]
 mod mega_metagross_ex_gatling_slug_test;
+#[path = "pokemon/mega_pidgeot_ex_giant_twister_test.rs"]
+mod mega_pidgeot_ex_giant_twister_test;
 #[path = "pokemon/mega_rayquaza_ex_mega_burst_test.rs"]
 mod mega_rayquaza_ex_mega_burst_test;
 #[path = "pokemon/mega_sceptile_terminating_tail_test.rs"]
@@ -164,6 +174,10 @@ mod morpeko_test;
 mod ninetales_ember_dance_test;
 #[path = "pokemon/passimian_ex_offload_pass_test.rs"]
 mod passimian_ex_offload_pass_test;
+#[path = "pokemon/pidgeot_twister_test.rs"]
+mod pidgeot_twister_test;
+#[path = "pokemon/politoed_raid_test.rs"]
+mod politoed_raid_test;
 #[path = "pokemon/porygonz_buggy_beam_test.rs"]
 mod porygonz_buggy_beam_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]

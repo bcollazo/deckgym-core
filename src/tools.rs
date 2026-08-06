@@ -40,6 +40,8 @@ static LEAF_CAPE_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::A3147LeafCape));
 static ELECTRICAL_CORD_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::A3a065ElectricalCord));
+static LEFTOVERS_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::A3b067Leftovers));
 static INFLATABLE_BOAT_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::A4a067InflatableBoat));
 static STEEL_APRON_EFFECT: LazyLock<String> =
@@ -105,6 +107,7 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == POISON_BARB_EFFECT.as_str()
             || e == LEAF_CAPE_EFFECT.as_str()
             || e == ELECTRICAL_CORD_EFFECT.as_str()
+            || e == LEFTOVERS_EFFECT.as_str()
             || e == INFLATABLE_BOAT_EFFECT.as_str()
             || e == STEEL_APRON_EFFECT.as_str()
             || e == HEAVY_HELMET_EFFECT.as_str()

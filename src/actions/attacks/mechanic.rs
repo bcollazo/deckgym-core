@@ -85,6 +85,12 @@ pub enum Mechanic {
     },
     DiscardEnergyFromOpponentActive,
     CoinFlipDiscardEnergyFromOpponentActive,
+    /// Pidgeot's Twister / Mega Pidgeot ex's Giant Twister: flip `num_coins` coins and discard a
+    /// random Energy from the opponent's Active Pokémon for each heads. If every coin is tails
+    /// the attack does nothing at all — not even its `fixed_damage`.
+    CoinFlipsDiscardEnergyFromOpponentActiveOrNothing {
+        num_coins: usize,
+    },
     DiscardOpponentActiveToolsBeforeDamage,
     ExtraDamageIfEx {
         extra_damage: u32,
@@ -354,6 +360,13 @@ pub enum Mechanic {
     ExtraDamageIfEvolvedThisTurn {
         extra_damage: u32,
     },
+    /// Politoed's Raid: extra damage if this Pokémon evolved *from a specific Pokémon* during
+    /// this turn. Unlike `ExtraDamageIfEvolvedThisTurn` this also checks the card directly
+    /// underneath, so evolving via Rare Candy (which skips the named Stage 1) does not qualify.
+    ExtraDamageIfEvolvedFromThisTurn {
+        pokemon_name: String,
+        extra_damage: u32,
+    },
     BenchCountDamage {
         include_fixed_damage: bool,
         damage_per: u32,
@@ -426,6 +439,9 @@ pub enum Mechanic {
     DamageAndDiscardOpponentDeck {
         discard_count: usize,
     },
+    /// Coalossal's Mountain Crush: deal the attack's `fixed_damage`, then flip a coin until
+    /// tails, discarding the top card of the opponent's deck for each heads.
+    FlipUntilTailsDiscardOpponentDeck,
     MegaAmpharosExLightningLancer,
     OminousClaw,
     DarknessClaw,
