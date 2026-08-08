@@ -853,7 +853,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamageIfDefenderAsleep { extra_damage } => {
             extra_damage_if_defender_asleep(state, attack.fixed_damage, *extra_damage)
         }
-        Mechanic::DiscardTopSelfDeck => discard_top_self_deck(attack.fixed_damage),
+        Mechanic::DiscardTopSelfDeck { count } => {
+            discard_top_self_deck(attack.fixed_damage, *count)
+        }
         Mechanic::TieredCoinFlipDamage {
             num_coins,
             extra_damage_by_heads,
@@ -1938,10 +1940,12 @@ fn discard_opponent_active_tools_before_damage(damage: u32) -> AttackOutcomes {
     ))
 }
 
-fn discard_top_self_deck(damage: u32) -> AttackOutcomes {
-    active_damage_effect_doutcome(damage, |_, state, action| {
-        if let Some(card) = state.decks[action.actor].draw() {
-            state.discard_piles[action.actor].push(card);
+fn discard_top_self_deck(damage: u32, count: usize) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        for _ in 0..count {
+            if let Some(card) = state.decks[action.actor].draw() {
+                state.discard_piles[action.actor].push(card);
+            }
         }
     })
 }
