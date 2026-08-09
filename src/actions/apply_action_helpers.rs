@@ -294,6 +294,8 @@ fn apply_pokemon_checkup(
     mutated_state.knocked_out_by_opponent_attack_last_turn =
         mutated_state.knocked_out_by_opponent_attack_this_turn;
     mutated_state.knocked_out_by_opponent_attack_this_turn = false;
+    mutated_state.knocked_out_types_last_turn =
+        std::mem::take(&mut mutated_state.knocked_out_types_this_turn);
 }
 
 fn finish_turn_after_checkup(state: &mut State, rng: &mut StdRng) {
@@ -652,21 +654,16 @@ pub(crate) fn handle_knockouts(
             }
         }
 
-        state.discard_from_play(ko_receiver, ko_pokemon_idx);
-    }
-
-    // Set knocked_out_by_opponent_attack_this_turn flag
-    // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
-    if is_from_active_attack {
-        // Only care about KOs from active attacks
-        for (ko_receiver, _) in knockouts.clone() {
-            let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-                                                               // If the receiver is NOT the initiator, it's an opponent KO
-            if ko_receiver != ko_initiator_of_this_damage {
-                state.knocked_out_by_opponent_attack_this_turn = true;
-                break; // Only need to set once
-            }
+        // Record KOs dealt by an opponent's active attack (for revenge attacks such as
+        // Marshadow's Revenge and Zarude's Dark Vengeance), along with the KO'd Pokemon's type.
+        if is_from_active_attack && ko_receiver != attacking_ref.0 {
+            let ko_pokemon_type = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+                .as_ref()
+                .and_then(|pokemon| pokemon.get_energy_type());
+            state.record_knocked_out_by_opponent_attack(ko_pokemon_type);
         }
+
+        state.discard_from_play(ko_receiver, ko_pokemon_idx);
     }
 
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic

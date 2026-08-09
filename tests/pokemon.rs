@@ -242,6 +242,8 @@ mod wailord_ex_wondrous_waves_test;
 mod wailord_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]
 mod xerneas_geoburst_test;
+#[path = "pokemon/zarude_dark_vengeance_test.rs"]
+mod zarude_dark_vengeance_test;
 #[path = "pokemon/zekrom_bolt_strike_test.rs"]
 mod zekrom_bolt_strike_test;
 #[path = "pokemon/zorua_zoroark_ex_test.rs"]

@@ -350,7 +350,11 @@ pub enum Mechanic {
     },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,
+    /// Marshadow's Revenge and friends: extra damage if any of your Pokemon were Knocked Out by
+    /// an attack during the opponent's last turn. `energy_type` restricts which of your Pokemon
+    /// count (e.g. Zarude's Dark Vengeance only counts `[D]` Pokemon); `None` counts any.
     ExtraDamageIfKnockedOutLastTurn {
+        energy_type: Option<EnergyType>,
         extra_damage: u32,
     },
     ExtraDamageIfAttackUsedDuringOwnLastTurn {

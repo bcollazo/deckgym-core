@@ -5,7 +5,7 @@ use log::{debug, trace};
 use rand::rngs::StdRng;
 use rand::{seq::SliceRandom, Rng};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::hash::Hash;
 
 use crate::{
@@ -69,6 +69,11 @@ pub struct State {
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
     pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
+    // Energy types of the Pokemon Knocked Out by an opponent's attack during that turn (e.g. for
+    // Zarude's "Dark Vengeance", which only counts [D] Pokemon). A Knocked Out Fossil has no
+    // energy type, so these can be empty while the flags above are true.
+    pub(crate) knocked_out_types_this_turn: BTreeSet<EnergyType>,
+    pub(crate) knocked_out_types_last_turn: BTreeSet<EnergyType>,
     // Name of the attack (if any) each player used during their current/previous own turn
     // (e.g. for Vanilluxe's "Sweets Relay": "If 1 of your Pokémon used Sweets Relay during
     // your last turn, this attack does more damage.").
@@ -105,6 +110,8 @@ impl State {
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
+            knocked_out_types_this_turn: BTreeSet::new(),
+            knocked_out_types_last_turn: BTreeSet::new(),
             attack_name_used_this_turn: [None, None],
             attack_name_used_last_turn: [None, None],
             attack_name_used_count: [BTreeMap::new(), BTreeMap::new()],
@@ -616,14 +623,41 @@ impl State {
     }
 
     /// Set the flag indicating a Pokemon was KO'd by opponent's attack last turn.
-    /// Used for testing Marshadow's Revenge attack and similar mechanics.
+    /// Used for testing Marshadow's Revenge attack and similar mechanics. The KO'd Pokemon's
+    /// energy type is left unknown, so type-restricted mechanics (e.g. Zarude's Dark Vengeance)
+    /// won't consider it; test those by playing out an actual KO.
     pub fn set_knocked_out_by_opponent_attack_last_turn(&mut self, value: bool) {
         self.knocked_out_by_opponent_attack_last_turn = value;
+        if !value {
+            self.knocked_out_types_last_turn.clear();
+        }
     }
 
     /// Get the flag indicating a Pokemon was KO'd by opponent's attack last turn.
     pub fn get_knocked_out_by_opponent_attack_last_turn(&self) -> bool {
         self.knocked_out_by_opponent_attack_last_turn
+    }
+
+    /// Whether one of the current player's Pokemon was KO'd by an opponent's attack last turn.
+    /// `energy_type` optionally restricts the check to KO'd Pokemon of that type.
+    pub(crate) fn was_knocked_out_by_opponent_attack_last_turn(
+        &self,
+        energy_type: Option<EnergyType>,
+    ) -> bool {
+        match energy_type {
+            Some(energy_type) => self.knocked_out_types_last_turn.contains(&energy_type),
+            None => self.knocked_out_by_opponent_attack_last_turn,
+        }
+    }
+
+    pub(crate) fn record_knocked_out_by_opponent_attack(
+        &mut self,
+        energy_type: Option<EnergyType>,
+    ) {
+        self.knocked_out_by_opponent_attack_this_turn = true;
+        if let Some(energy_type) = energy_type {
+            self.knocked_out_types_this_turn.insert(energy_type);
+        }
     }
 
     pub(crate) fn record_attack_used(&mut self, player: usize, attack_name: String) {
