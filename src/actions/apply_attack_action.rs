@@ -826,6 +826,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipDiscardRandomOpponentHandCard => {
             coin_flip_discard_random_opponent_hand_card(attack.fixed_damage)
         }
+        Mechanic::CoinFlipsShuffleOpponentHandCards { num_coins } => {
+            coin_flips_shuffle_opponent_hand_cards(attack.fixed_damage, *num_coins)
+        }
         Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast {
             threshold,
             extra_damage,
@@ -3239,6 +3242,23 @@ fn coin_flip_discard_random_opponent_hand_card(damage: u32) -> AttackOutcomes {
         // Tails: do nothing
         active_damage_outcome(damage),
     )
+}
+
+fn coin_flips_shuffle_opponent_hand_cards(damage: u32, num_coins: usize) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            for _ in 0..heads {
+                if state.hands[opponent].is_empty() {
+                    break;
+                }
+                let idx = rng.gen_range(0..state.hands[opponent].len());
+                let card = state.hands[opponent].remove(idx);
+                state.decks[opponent].cards.push(card);
+            }
+            state.decks[opponent].shuffle(false, rng);
+        })
+    })
 }
 
 /// Teal Mask Ogerpon ex – Energized Leaves:

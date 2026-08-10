@@ -95,7 +95,6 @@ fn test_whiny_voice_interaction_trainer_will() {
 
     // Will forces heads, thus forces Whiny Voice to trigger
     assert_eq!(state.hands[1].len() + state.decks[1].cards.len(), 2);
-    assert_eq!(state.hands[1].len() + state.decks[1].cards.len(), 2);
     assert!(
         state.decks[1].cards
             == vec![

@@ -491,9 +491,14 @@ pub enum Mechanic {
         damage_per: u32,
     },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
-    // Persian - Shadow Claw: flip a coin; if heads, discard a random card
-    // from the opponent's hand after dealing damage.
+    /// Persian - Shadow Claw: flip a coin; if heads, discard a random card
+    /// from the opponent's hand after dealing damage.
     CoinFlipDiscardRandomOpponentHandCard,
+    /// Krookodile - Poaching Fangs: flip 'num_coins' cions; for each heads, shuffle
+    /// a random card from the opponent's hand into their deck.
+    CoinFlipsShuffleOpponentHandCards {
+        num_coins: usize,
+    },
     /// Teal Mask Ogerpon ex – Energized Leaves:
     /// If total energy on both Active Pokémon ≥ threshold, deal extra_damage more.
     ExtraDamageIfCombinedActiveEnergyAtLeast {
