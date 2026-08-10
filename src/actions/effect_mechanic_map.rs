@@ -701,7 +701,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon.",
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive,
     );
-    // map.insert("Flip a coin. If heads, discard a random card from your opponent's hand.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, discard a random card from your opponent's hand.",
+        Mechanic::CoinFlipDiscardRandomOpponentHandCard,
+    );
     map.insert(
         "Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.",
         Mechanic::DamageAndCardEffect {

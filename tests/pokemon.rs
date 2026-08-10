@@ -174,6 +174,8 @@ mod morpeko_test;
 mod ninetales_ember_dance_test;
 #[path = "pokemon/passimian_ex_offload_pass_test.rs"]
 mod passimian_ex_offload_pass_test;
+#[path = "pokemon/persian_test.rs"]
+mod persian_test;
 #[path = "pokemon/pidgeot_twister_test.rs"]
 mod pidgeot_twister_test;
 #[path = "pokemon/politoed_raid_test.rs"]

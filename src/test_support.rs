@@ -1,8 +1,8 @@
 use crate::{
-    actions::SimpleAction,
+    actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{Attack, PlayedCard},
+    models::{Attack, Card, PlayedCard, TrainerCard},
     players::{Player, RandomPlayer},
     Deck, Game,
 };
@@ -85,4 +85,21 @@ lazy_static! {
         Deck::from_file("example_decks/venusaur-exeggutor.txt").expect("Valid Deck Format");
     pub static ref DECK_B: Deck =
         Deck::from_file("example_decks/weezing-arbok.txt").expect("Valid Deck Format");
+}
+
+/// Returns the `TrainerCard` definition for a card id.
+pub fn trainer_from_id(card_id: CardId) -> TrainerCard {
+    match get_card_by_enum(card_id) {
+        Card::Trainer(trainer_card) => trainer_card,
+        _ => panic!("Expected trainer card"),
+    }
+}
+
+/// Plays a trainer card from hand via the public `Game` API.
+pub fn play_trainer(game: &mut Game<'static>, actor: usize, trainer_card: TrainerCard) {
+    game.apply_action(&Action {
+        actor,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    });
 }

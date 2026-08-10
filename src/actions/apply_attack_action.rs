@@ -823,6 +823,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
         }
+        Mechanic::CoinFlipDiscardRandomOpponentHandCard => {
+            coin_flip_discard_random_opponent_hand_card(attack.fixed_damage)
+        }
         Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast {
             threshold,
             extra_damage,
@@ -3218,6 +3221,23 @@ fn coin_flip_shuffle_random_opponent_hand_card_into_deck() -> AttackOutcomes {
         }),
         // Tails: do nothing
         active_damage_outcome(0),
+    )
+}
+
+fn coin_flip_discard_random_opponent_hand_card(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        // Heads: damage + discard a random card from opponent's hand
+        active_damage_effect_outcome(damage, |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            if state.hands[opponent].is_empty() {
+                return;
+            }
+            let idx = rng.gen_range(0..state.hands[opponent].len());
+            let card = state.hands[opponent].remove(idx);
+            state.discard_piles[opponent].push(card);
+        }),
+        // Tails: do nothing
+        active_damage_outcome(damage),
     )
 }
 
