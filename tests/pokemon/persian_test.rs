@@ -79,5 +79,5 @@ fn test_shadow_claw_interaction_trainer_will() {
     assert_eq!(state.get_active(1).get_remaining_hp(), 150 - 40);
 
     // Will forces heads, thus forces Shadow Claw to trigger
-    assert!(state.hands[1].len() == 0);
+    assert!(state.hands[1].is_empty());
 }
