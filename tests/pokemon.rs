@@ -142,6 +142,8 @@ mod magnezone_mirror_shot_test;
 mod magnezone_resilience_link_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
+#[path = "pokemon/maushold_b2a_test.rs"]
+mod maushold_b2a_test;
 #[path = "pokemon/mega_camerupt_ex_test.rs"]
 mod mega_camerupt_ex_test;
 #[path = "pokemon/mega_diancie_ex_test.rs"]
@@ -224,6 +226,8 @@ mod spewpa_signs_of_evolution_test;
 mod sunflora_quick_grow_beam_test;
 #[path = "pokemon/swift_shot_test.rs"]
 mod swift_shot_test;
+#[path = "pokemon/tandemaus_b2_test.rs"]
+mod tandemaus_b2_test;
 #[path = "pokemon/tapu_lele_energy_arrow_test.rs"]
 mod tapu_lele_energy_arrow_test;
 #[path = "pokemon/tepig_stoke_test.rs"]

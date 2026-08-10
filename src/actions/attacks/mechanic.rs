@@ -98,6 +98,11 @@ pub enum Mechanic {
     CoinFlipsDiscardEnergyFromOpponentActiveOrNothing {
         num_coins: usize,
     },
+    /// Maushold - Triple Gnawing: flip 'num_coins'; for each heads, discard a
+    /// random Energy form the opponent's Active Pokémon. Damage always applies.
+    CoinFlipsDiscardEnergyFromOpponentActive {
+        num_coins: usize,
+    },
     DiscardOpponentActiveToolsBeforeDamage,
     ExtraDamageIfEx {
         extra_damage: u32,

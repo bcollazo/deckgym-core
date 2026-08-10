@@ -328,6 +328,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipsDiscardEnergyFromOpponentActiveOrNothing { num_coins } => {
             coin_flips_discard_energy_or_nothing(attack.fixed_damage, *num_coins)
         }
+        Mechanic::CoinFlipsDiscardEnergyFromOpponentActive { num_coins } => {
+            coin_flips_discard_energy_from_opponent_active(attack.fixed_damage, *num_coins)
+        }
         Mechanic::DiscardOpponentActiveToolsBeforeDamage => {
             discard_opponent_active_tools_before_damage(attack.fixed_damage)
         }
@@ -1898,6 +1901,16 @@ fn coin_flips_discard_energy_or_nothing(damage: u32, num_coins: usize) -> Attack
         if heads == 0 {
             return AttackOutcome::noop();
         }
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            discard_random_energy_from_opponent_active(rng, state, action.actor, heads);
+        })
+    })
+}
+
+/// Flip `num_coins` coins and discard a random Energy from the opponent's Active Pokémon for
+/// each heads (e.g. Maushold's Triple Gnawing). On all tails the attack does damage.
+fn coin_flips_discard_energy_from_opponent_active(damage: u32, num_coins: usize) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
         active_damage_effect_outcome(damage, move |rng, state, action| {
             discard_random_energy_from_opponent_active(rng, state, action.actor, heads);
         })
