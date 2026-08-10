@@ -188,6 +188,8 @@ mod porygonz_cyberjack_test;
 mod primarina_melodious_healing_test;
 #[path = "pokemon/psyduck_test.rs"]
 mod psyduck_test;
+#[path = "pokemon/purrloin_test.rs"]
+mod purrloin_test;
 #[path = "pokemon/raichu_evoshock_test.rs"]
 mod raichu_evoshock_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]

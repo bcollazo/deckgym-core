@@ -74,16 +74,10 @@ fn test_shadow_claw_interaction_trainer_will() {
     game.play_until_stable();
 
     let state = game.get_state_clone();
-    let snorlax_initial_health_points = 150;
-    let expected_damage_dealt = 40;
-    let hand_len_before = 1;
 
     // Shadow Claw: 40 damage dealt
-    assert_eq!(
-        state.get_active(1).get_remaining_hp(),
-        snorlax_initial_health_points - expected_damage_dealt
-    );
+    assert_eq!(state.get_active(1).get_remaining_hp(), 150 - 40);
 
-    // Opponent hand got smaller
-    assert!(state.hands[1].len() == hand_len_before - 1);
+    // Will forces heads, thus forces Shadow Claw to trigger
+    assert!(state.hands[1].len() == 0);
 }

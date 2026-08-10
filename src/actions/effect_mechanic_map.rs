@@ -1906,7 +1906,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: true,
         },
     );
-    // map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", todo_implementation);
+    map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck);
     map.insert(
         "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
         Mechanic::CoinFlipChargeBench {
