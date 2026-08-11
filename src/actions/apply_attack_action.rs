@@ -579,6 +579,15 @@ fn forecast_effect_attack_by_mechanic(
             pokemon_name,
             *extra_damage,
         ),
+        Mechanic::ExtraDamagePerPokemonWithNameOnBench {
+            pokemon_name,
+            damage_per,
+        } => extra_damage_per_pokemon_with_name_on_bench(
+            state,
+            attack.fixed_damage,
+            pokemon_name,
+            *damage_per,
+        ),
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -2988,6 +2997,19 @@ fn extra_damage_if_pokemon_on_bench(
     } else {
         active_damage_doutcome(base)
     }
+}
+
+fn extra_damage_per_pokemon_with_name_on_bench(
+    state: &State,
+    base: u32,
+    pokemon_name: &str,
+    damage_per: u32,
+) -> AttackOutcomes {
+    let count = state
+        .enumerate_bench_pokemon(state.current_player)
+        .filter(|(_, p)| p.get_name() == pokemon_name)
+        .count();
+    active_damage_doutcome(base + (count as u32) * damage_per)
 }
 
 fn damage_equal_to_self_damage(state: &State) -> AttackOutcomes {

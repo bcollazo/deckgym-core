@@ -1820,7 +1820,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: false,
         },
     );
-    // map.insert("This attack does 50 more damage for each of your Benched Nidoking.", todo_implementation);
+    map.insert(
+        "This attack does 50 more damage for each of your Benched Nidoking.",
+        Mechanic::ExtraDamagePerPokemonWithNameOnBench {
+            pokemon_name: "Nidoking".to_string(),
+            damage_per: 50,
+        },
+    );
     map.insert(
         "This attack does 60 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {

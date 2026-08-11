@@ -436,6 +436,12 @@ pub enum Mechanic {
         pokemon_name: String,
         extra_damage: u32,
     },
+    /// Nidoqueen - Lovestrike: +'damage_per' for EACH benched Pokémon named 'pokemon_name'
+    /// (unlike 'ExtraDamageIfPokemonBench', which is a flat bonus for a single presence).
+    ExtraDamagePerPokemonWithNameOnBench {
+        pokemon_name: String,
+        damage_per: u32,
+    },
     DamageEqualToSelfDamage,
     ExtraDamageEqualToSelfDamage,
     /// Marshadow's Revenge and friends: extra damage if any of your Pokemon were Knocked Out by

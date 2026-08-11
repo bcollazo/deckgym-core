@@ -218,6 +218,8 @@ mod milotic_ex_aqua_charge_test;
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
 mod morpeko_test;
+#[path = "pokemon/nidoqueen_test.rs"]
+mod nidoqueen_test;
 #[path = "pokemon/ninetales_ember_dance_test.rs"]
 mod ninetales_ember_dance_test;
 #[path = "pokemon/oricorio_yveltal_test.rs"]
