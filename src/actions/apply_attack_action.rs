@@ -328,6 +328,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::CoinFlipsDiscardEnergyFromOpponentActiveOrNothing { num_coins } => {
             coin_flips_discard_energy_or_nothing(attack.fixed_damage, *num_coins)
         }
+        Mechanic::CoinFlipsDiscardEnergyFromOpponentActive { num_coins } => {
+            coin_flips_discard_energy_from_opponent_active(attack.fixed_damage, *num_coins)
+        }
         Mechanic::DiscardOpponentActiveToolsBeforeDamage => {
             discard_opponent_active_tools_before_damage(attack.fixed_damage)
         }
@@ -828,6 +831,12 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck => {
             coin_flip_shuffle_random_opponent_hand_card_into_deck()
+        }
+        Mechanic::CoinFlipDiscardRandomOpponentHandCard => {
+            coin_flip_discard_random_opponent_hand_card(attack.fixed_damage)
+        }
+        Mechanic::CoinFlipsShuffleOpponentHandCards { num_coins } => {
+            coin_flips_shuffle_opponent_hand_cards(attack.fixed_damage, *num_coins)
         }
         Mechanic::ExtraDamageIfCombinedActiveEnergyAtLeast {
             threshold,
@@ -1898,6 +1907,16 @@ fn coin_flips_discard_energy_or_nothing(damage: u32, num_coins: usize) -> Attack
         if heads == 0 {
             return AttackOutcome::noop();
         }
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            discard_random_energy_from_opponent_active(rng, state, action.actor, heads);
+        })
+    })
+}
+
+/// Flip `num_coins` coins and discard a random Energy from the opponent's Active Pokémon for
+/// each heads (e.g. Maushold's Triple Gnawing). On all tails the attack does damage.
+fn coin_flips_discard_energy_from_opponent_active(damage: u32, num_coins: usize) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
         active_damage_effect_outcome(damage, move |rng, state, action| {
             discard_random_energy_from_opponent_active(rng, state, action.actor, heads);
         })
@@ -3226,6 +3245,40 @@ fn coin_flip_shuffle_random_opponent_hand_card_into_deck() -> AttackOutcomes {
         // Tails: do nothing
         active_damage_outcome(0),
     )
+}
+
+fn coin_flip_discard_random_opponent_hand_card(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        // Heads: damage + discard a random card from opponent's hand
+        active_damage_effect_outcome(damage, |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            if state.hands[opponent].is_empty() {
+                return;
+            }
+            let idx = rng.gen_range(0..state.hands[opponent].len());
+            let card = state.hands[opponent].remove(idx);
+            state.discard_piles[opponent].push(card);
+        }),
+        // Tails: do nothing
+        active_damage_outcome(damage),
+    )
+}
+
+fn coin_flips_shuffle_opponent_hand_cards(damage: u32, num_coins: usize) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            for _ in 0..heads {
+                if state.hands[opponent].is_empty() {
+                    break;
+                }
+                let idx = rng.gen_range(0..state.hands[opponent].len());
+                let card = state.hands[opponent].remove(idx);
+                state.decks[opponent].cards.push(card);
+            }
+            state.decks[opponent].shuffle(false, rng);
+        })
+    })
 }
 
 /// Teal Mask Ogerpon ex – Energized Leaves:

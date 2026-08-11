@@ -564,7 +564,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             num_coins: 2,
         },
     );
-    // map.insert("Flip 3 coins. For each heads, a card is chosen at random from your opponent's hand. Your opponent reveals that card and shuffles it into their deck.", todo_implementation);
+    map.insert("Flip 3 coins. For each heads, a card is chosen at random from your opponent's hand. Your opponent reveals that card and shuffles it into their deck.", Mechanic::CoinFlipsShuffleOpponentHandCards { num_coins: 3 });
     map.insert("Flip 3 coins. Take an amount of [R] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [R] Pokémon in any way you like.", Mechanic::MoltresExInfernoDance);
     map.insert(
         "Flip 3 coins. This attack does 10 damage for each heads.",
@@ -701,7 +701,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip a coin. If heads, discard a random Energy from your opponent's Active Pokémon.",
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive,
     );
-    // map.insert("Flip a coin. If heads, discard a random card from your opponent's hand.", todo_implementation);
+    map.insert(
+        "Flip a coin. If heads, discard a random card from your opponent's hand.",
+        Mechanic::CoinFlipDiscardRandomOpponentHandCard,
+    );
     map.insert(
         "Flip a coin. If heads, during your opponent's next turn, prevent all damage done to this Pokémon by attacks.",
         Mechanic::DamageAndCardEffect {
@@ -1903,7 +1906,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: true,
         },
     );
-    // map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", todo_implementation);
+    map.insert("Flip a coin. If heads, look at a random card from your opponent's hand and shuffle it into their deck.", Mechanic::CoinFlipShuffleRandomOpponentHandCardIntoDeck);
     map.insert(
         "Flip a coin. If heads, take 2 [R] Energy from your Energy Zone and attach it to 1 of your Benched Pokémon.",
         Mechanic::CoinFlipChargeBench {
@@ -1950,7 +1953,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     // map.insert("If you have fewer Pokémon in play than your opponent, this attack does 80 more damage.", todo_implementation);
     // map.insert("If your opponent has gotten exactly 1 points, this attack does 40 more damage.", todo_implementation);
     // map.insert("If your opponent's Active Pokémon has damage on it, this attack does 50 more damage.", todo_implementation);
-    // map.insert("Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.", todo_implementation);
+    map.insert(
+        "Put 3 random cards from among Tandemaus and Maushold from your deck onto your Bench.",
+        Mechanic::SearchToBenchByNames {
+            names: vec!["Tandemaus".to_string(), "Maushold".to_string()],
+            count: 3,
+        },
+    );
     map.insert(
         "Put a random card that evolves from Spewpa from your deck into your hand.",
         Mechanic::SearchToHandByEvolvesFrom {
@@ -2041,7 +2050,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
-    // map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", todo_implementation);
+    map.insert("Flip 3 coins. For each heads, discard a random Energy from your opponent's Active Pokémon.", Mechanic::CoinFlipsDiscardEnergyFromOpponentActive { num_coins: 3 });
     // map.insert("If this Pokémon's remaining HP is 60 or less, this attack does nothing.", todo_implementation);
     map.insert(
         "If you have 4 or more [L] Energy in play, this attack does 70 more damage.",

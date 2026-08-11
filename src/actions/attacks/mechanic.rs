@@ -98,6 +98,11 @@ pub enum Mechanic {
     CoinFlipsDiscardEnergyFromOpponentActiveOrNothing {
         num_coins: usize,
     },
+    /// Maushold - Triple Gnawing: flip 'num_coins'; for each heads, discard a
+    /// random Energy form the opponent's Active Pokémon. Damage always applies.
+    CoinFlipsDiscardEnergyFromOpponentActive {
+        num_coins: usize,
+    },
     DiscardOpponentActiveToolsBeforeDamage,
     ExtraDamageIfEx {
         extra_damage: u32,
@@ -495,6 +500,14 @@ pub enum Mechanic {
         damage_per: u32,
     },
     CoinFlipShuffleRandomOpponentHandCardIntoDeck,
+    /// Persian - Shadow Claw: flip a coin; if heads, discard a random card
+    /// from the opponent's hand after dealing damage.
+    CoinFlipDiscardRandomOpponentHandCard,
+    /// Krookodile - Poaching Fangs: flip 'num_coins' cions; for each heads, shuffle
+    /// a random card from the opponent's hand into their deck.
+    CoinFlipsShuffleOpponentHandCards {
+        num_coins: usize,
+    },
     /// Teal Mask Ogerpon ex – Energized Leaves:
     /// If total energy on both Active Pokémon ≥ threshold, deal extra_damage more.
     ExtraDamageIfCombinedActiveEnergyAtLeast {
