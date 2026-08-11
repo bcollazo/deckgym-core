@@ -548,6 +548,8 @@ pub enum Mechanic {
     /// Coalossal's Mountain Crush: deal the attack's `fixed_damage`, then flip a coin until
     /// tails, discarding the top card of the opponent's deck for each heads.
     FlipUntilTailsDiscardOpponentDeck,
+    /// Kabutops - Leech Life: heal the same amount of damage dealt.
+    HealEqualToDamageDealt,
     MegaAmpharosExLightningLancer,
     OminousClaw,
     DarknessClaw,

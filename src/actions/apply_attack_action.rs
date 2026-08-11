@@ -981,6 +981,7 @@ fn forecast_effect_attack_by_mechanic(
             attack_name,
             damage_per,
         } => damage_per_own_pokemon_with_attack_name(state, attack_name, *damage_per),
+        Mechanic::HealEqualToDamageDealt => heal_equal_to_damage_dealt_attack(attack.fixed_damage),
     }
 }
 
@@ -4081,6 +4082,14 @@ fn damage_reduced_by_self_damage_attack(state: &State, attack: &Attack) -> Attac
     let damage_taken = active.get_damage_counters();
     let actual_damage = attack.fixed_damage.saturating_sub(damage_taken);
     active_damage_doutcome(actual_damage)
+}
+
+/// Kabutops - Leech Life: heal the same aount of damage dealt.
+fn heal_equal_to_damage_dealt_attack(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let active = state.get_active_mut(action.actor);
+        active.heal(damage);
+    })
 }
 
 #[cfg(test)]

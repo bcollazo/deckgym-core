@@ -150,6 +150,8 @@ mod iron_valiant_future_system_test;
 mod jellicent_bouncy_body_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
 mod jolteon_ex_test;
+#[path = "pokemon/kabutops_test.rs"]
+mod kabutops_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
 mod klefki_dismantling_keys_test;
 #[path = "pokemon/kommo_o_clanging_scales_test.rs"]
