@@ -254,6 +254,15 @@ pub enum Mechanic {
         num_coins: usize,
         status: StatusCondition,
     },
+    /// Alolan Marowak - Burning Bonemerang: flip 'num_coins'. This attack does 70 damage
+    /// for each heads. If at least 1 of them is heads, your opponent's Active Pokémon
+    /// is now Burned.
+    ExtraDamageForEachHeadsWithStatusAtLeast {
+        num_coins: usize,
+        damage_per_head: u32,
+        status: StatusCondition,
+        min_heads: usize,
+    },
     DamageAndMultipleCardEffects {
         opponent: bool,
         effects: Vec<CardEffect>,

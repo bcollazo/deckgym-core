@@ -725,6 +725,17 @@ fn forecast_effect_attack_by_mechanic(
             attack,
             *status,
         ),
+        Mechanic::ExtraDamageForEachHeadsWithStatusAtLeast {
+            num_coins,
+            damage_per_head,
+            status,
+            min_heads,
+        } => damage_for_each_heads_with_status_at_least_attack(
+            *num_coins,
+            *damage_per_head,
+            *status,
+            *min_heads,
+        ),
         Mechanic::DamageAndMultipleCardEffects {
             opponent,
             effects,
@@ -3647,6 +3658,23 @@ fn damage_for_each_heads_with_status_attack(
             heads as u32 * damage_per_head
         };
         active_damage_effect_outcome(damage, build_status_effect(status))
+    })
+}
+
+/// Alolan Marowak - Burning Bonemerang - Flips coins for damage and inflicts status if at least 1 heads
+fn damage_for_each_heads_with_status_at_least_attack(
+    num_coins: usize,
+    damage_per_head: u32,
+    status: StatusCondition,
+    min_heads: usize,
+) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        let damage = heads as u32 * damage_per_head;
+        if heads >= min_heads {
+            active_damage_effect_outcome(damage, build_status_effect(status))
+        } else {
+            active_damage_outcome(damage)
+        }
     })
 }
 
