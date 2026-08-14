@@ -614,7 +614,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             num_coins: 3,
         },
     );
-    // map.insert("Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused.", todo_implementation);
+    map.insert(
+        "Flip 3 coins. This attack does 60 damage for each heads. This Pokémon is now Confused.",
+        Mechanic::ExtraDamageForEachHeadsSelfStatus {
+            num_coins: 3,
+            damage_per_head: 60,
+            status: StatusCondition::Confused,
+        },
+    );
     map.insert(
         "Flip 4 coins. This attack does 20 damage for each heads.",
         Mechanic::ExtraDamageForEachHeads {

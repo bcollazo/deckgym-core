@@ -371,6 +371,11 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             attack,
         ),
+        Mechanic::ExtraDamageForEachHeadsSelfStatus {
+            num_coins,
+            damage_per_head,
+            status,
+        } => damage_for_each_heads_self_status_attack(*num_coins, *damage_per_head, *status),
         Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
             num_coins,
             energy_type,
@@ -1459,6 +1464,18 @@ fn damage_for_each_heads_attack(
     };
     AttackOutcomes::binomial_by_heads(num_coins, move |heads_count| {
         active_damage_outcome(fixed_damage + damage_per_head * heads_count as u32)
+    })
+}
+
+fn damage_for_each_heads_self_status_attack(
+    num_coins: usize,
+    damage_per_head: u32,
+    status: StatusCondition,
+) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_effect_outcome(heads as u32 * damage_per_head, move |_, state, action| {
+            state.apply_status_condition(action.actor, 0, status);
+        })
     })
 }
 

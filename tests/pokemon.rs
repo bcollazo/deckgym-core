@@ -14,6 +14,8 @@ mod applin_share_test;
 mod arceus_ex_test;
 #[path = "pokemon/audino_test.rs"]
 mod audino_test;
+#[path = "pokemon/bellossom_a4_test.rs"]
+mod bellossom_a4_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
 mod blastoise_double_splash_test;
 #[path = "pokemon/bombirdier_test.rs"]

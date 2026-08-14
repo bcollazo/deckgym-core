@@ -254,6 +254,13 @@ pub enum Mechanic {
         num_coins: usize,
         status: StatusCondition,
     },
+    /// Bellossom - Petal Dance: flip 'num_coins' coins; deal 'damage_per_head' per hedas,
+    /// then apply 'status' to the ATTACKER (unlike the opponent-targeting variants).
+    ExtraDamageForEachHeadsSelfStatus {
+        num_coins: usize,
+        damage_per_head: u32,
+        status: StatusCondition,
+    },
     /// Alolan Marowak - Burning Bonemerang: flip 'num_coins'. This attack does 70 damage
     /// for each heads. If at least 1 of them is heads, your opponent's Active Pokémon
     /// is now Burned.
