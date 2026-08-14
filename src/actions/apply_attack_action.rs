@@ -16,6 +16,7 @@ use crate::{
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         Action,
     },
+    card_ids::CardId,
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
     hooks::{
@@ -23,6 +24,7 @@ use crate::{
         get_attack_cost, get_extra_random_spread_hits, get_retreat_cost, get_stage,
     },
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
+    tools::has_tool,
     State,
 };
 
@@ -376,6 +378,18 @@ fn forecast_effect_attack_by_mechanic(
             damage_per_head,
             status,
         } => damage_for_each_heads_self_status_attack(*num_coins, *damage_per_head, *status),
+        Mechanic::ExtraDamageForEachHeadsWithToolBoost {
+            num_coins,
+            damage_per_head,
+            boosted_num_coins,
+            tool,
+        } => damage_for_each_heads_with_tool_boost_attack(
+            state,
+            *num_coins,
+            *damage_per_head,
+            *boosted_num_coins,
+            *tool,
+        ),
         Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
             num_coins,
             energy_type,
@@ -1476,6 +1490,24 @@ fn damage_for_each_heads_self_status_attack(
         active_damage_effect_outcome(heads as u32 * damage_per_head, move |_, state, action| {
             state.apply_status_condition(action.actor, 0, status);
         })
+    })
+}
+
+fn damage_for_each_heads_with_tool_boost_attack(
+    state: &State,
+    num_coins: usize,
+    damage_per_head: u32,
+    boosted_num_coins: usize,
+    tool: CardId,
+) -> AttackOutcomes {
+    let active = state.get_active(state.current_player);
+    let num_coins = if has_tool(active, tool) {
+        boosted_num_coins
+    } else {
+        num_coins
+    };
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_outcome(heads as u32 * damage_per_head)
     })
 }
 

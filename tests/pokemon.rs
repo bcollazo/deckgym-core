@@ -8,6 +8,8 @@ mod alolan_marowak_test;
 mod alolan_sandslash_spike_armor_test;
 #[path = "pokemon/altaria_dragon_arcana_test.rs"]
 mod altaria_dragon_arcana_test;
+#[path = "pokemon/ambipom_b1_test.rs"]
+mod ambipom_b1_test;
 #[path = "pokemon/applin_share_test.rs"]
 mod applin_share_test;
 #[path = "pokemon/arceus_ex_test.rs"]

@@ -6,6 +6,7 @@ use std::sync::LazyLock;
 
 use crate::{
     actions::attacks::{BenchSide, CopyAttackSource, Mechanic},
+    card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{EnergyType, StatusCondition, TrainerType},
 };
@@ -522,7 +523,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             num_coins: 2,
         },
     );
-    // map.insert("Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead.", todo_implementation);
+    map.insert("Flip 2 coins. This attack does 30 damage for each heads. If this Pokémon has Lucky Mittens attached, flip 4 coins instead.",
+        Mechanic::ExtraDamageForEachHeadsWithToolBoost {
+            num_coins: 2,
+            damage_per_head: 30,
+            boosted_num_coins: 4,
+            tool: CardId::B1220LuckyMittens
+        },
+    );
     map.insert(
         "Flip 2 coins. This attack does 30 more damage for each heads.",
         Mechanic::ExtraDamageForEachHeads {

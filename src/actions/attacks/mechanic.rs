@@ -3,6 +3,8 @@ use crate::{
     models::{EnergyType, StatusCondition, TrainerType},
 };
 
+use crate::card_ids::CardId;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum BenchSide {
     YourBench,
@@ -269,6 +271,14 @@ pub enum Mechanic {
         damage_per_head: u32,
         status: StatusCondition,
         min_heads: usize,
+    },
+    /// Ambipom - Excited Tail: flip 'num_coins' coins; deal 'damage_per_head' per heads,
+    /// but frlip 'boosted_num_coins' coins instead if the attacker has 'tool' attached.
+    ExtraDamageForEachHeadsWithToolBoost {
+        num_coins: usize,
+        damage_per_head: u32,
+        boosted_num_coins: usize,
+        tool: CardId,
     },
     DamageAndMultipleCardEffects {
         opponent: bool,
