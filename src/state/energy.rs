@@ -1,10 +1,10 @@
 use crate::{
     actions::{
-        abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
-        handle_damage_only, handle_knockouts,
+        abilities::AbilityMechanic, ability_mechanic_from_effect, apply_evolve,
+        get_ability_mechanic, handle_damage_only, handle_knockouts,
     },
     effects::TurnEffect,
-    hooks::DamageModifierContext,
+    hooks::{can_evolve_into, DamageModifierContext},
     models::{EnergyType, StatusCondition},
     State,
 };
@@ -173,6 +173,32 @@ impl State {
                     .expect("Pokemon should be there if attaching energy to it");
                 pokemon.heal(20);
             }
+
+            // Check for Porygon2's Buggy Evolution ability
+            if matches!(
+                mechanic,
+                AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf
+            ) && from_zone
+            {
+                self.evolve_from_deck_on_self(actor, in_play_idx);
+            }
         }
+    }
+
+    fn evolve_from_deck_on_self(&mut self, actor: usize, in_play_idx: usize) {
+        let holder = self.in_play_pokemon[actor][in_play_idx]
+            .as_ref()
+            .expect("Pokemon should be there if evolving it");
+        // The deck is already randomly ordered from prior shuffles, so the first matching card
+        // is as good as a random pick; `apply_evolve` (from_deck: true) removes it from the deck.
+        let Some(evolution_card) = self.decks[actor]
+            .cards
+            .iter()
+            .find(|card| can_evolve_into(card, holder))
+            .cloned()
+        else {
+            return;
+        };
+        apply_evolve(actor, self, &evolution_card, in_play_idx, true);
     }
 }

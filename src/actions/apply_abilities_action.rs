@@ -46,6 +46,7 @@ fn forecast_ability_by_mechanic(
             energy_type,
         } => heal_all_your_pokemon(*amount, *energy_type),
         AbilityMechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon(*amount),
+        AbilityMechanic::HealOneYourPokemonIfHasTool { amount } => heal_one_your_pokemon(*amount),
         AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { amount } => {
             heal_one_your_pokemon_ex_and_discard_random_energy(*amount)
         }
@@ -105,6 +106,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf { .. } => {
             panic!("DamageOpponentActiveOnZoneAttachToSelf is a passive ability")
         }
+        AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf => {
+            panic!("EvolveFromDeckOnZoneEnergyAttachToSelf is a passive ability")
+        }
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage {
             energy_type,
             self_damage,
@@ -128,6 +132,12 @@ fn forecast_ability_by_mechanic(
         }
         AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => {
             panic!("ReduceDamageFromAttacksIfArceusInPlay is a passive ability")
+        }
+        AbilityMechanic::ReduceAttackCostIfArceusInPlay { .. } => {
+            panic!("ReduceAttackCostIfArceusInPlay is a passive ability")
+        }
+        AbilityMechanic::ReduceDamageFromAttacksByAttackerType { .. } => {
+            panic!("ReduceDamageFromAttacksByAttackerType is a passive ability")
         }
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => {
             panic!("ReduceOpponentActiveDamage is a passive ability")

@@ -1,3 +1,5 @@
+#[path = "pokemon/abomasnow_vigor_link_test.rs"]
+mod abomasnow_vigor_link_test;
 #[path = "pokemon/additional_ability_logic_test.rs"]
 mod additional_ability_logic_test;
 #[path = "pokemon/alcremie_test.rs"]
@@ -72,6 +74,8 @@ mod dusknoir_shadow_void_test;
 mod dustox_select_powder_test;
 #[path = "pokemon/dustox_variety_powder_test.rs"]
 mod dustox_variety_powder_test;
+#[path = "pokemon/eelektross_energy_crush_test.rs"]
+mod eelektross_energy_crush_test;
 #[path = "pokemon/emboar_flare_storm_test.rs"]
 mod emboar_flare_storm_test;
 #[path = "pokemon/emolga_dedenne_ex_tool_damage_test.rs"]
@@ -108,6 +112,8 @@ mod ho_oh_ex_phoenix_turbo_test;
 mod honchkrow_evil_admonition_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]
 mod houndstone_last_respects_test;
+#[path = "pokemon/hydrapple_fickle_beam_test.rs"]
+mod hydrapple_fickle_beam_test;
 #[path = "pokemon/iron_bundle_ex_test.rs"]
 mod iron_bundle_ex_test;
 #[path = "pokemon/iron_bundle_test.rs"]
@@ -144,12 +150,16 @@ mod lucario_fighting_coach_test;
 mod lugia_b2_test;
 #[path = "pokemon/lunala_ex_test.rs"]
 mod lunala_ex_test;
+#[path = "pokemon/luxray_revenge_blast_test.rs"]
+mod luxray_revenge_blast_test;
 #[path = "pokemon/magneton_test.rs"]
 mod magneton_test;
 #[path = "pokemon/magnezone_mirror_shot_test.rs"]
 mod magnezone_mirror_shot_test;
 #[path = "pokemon/magnezone_resilience_link_test.rs"]
 mod magnezone_resilience_link_test;
+#[path = "pokemon/mamoswine_thick_fat_test.rs"]
+mod mamoswine_thick_fat_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
 #[path = "pokemon/maushold_b2a_test.rs"]
@@ -194,6 +204,8 @@ mod persian_test;
 mod pidgeot_twister_test;
 #[path = "pokemon/politoed_raid_test.rs"]
 mod politoed_raid_test;
+#[path = "pokemon/porygon2_buggy_evolution_test.rs"]
+mod porygon2_buggy_evolution_test;
 #[path = "pokemon/porygonz_buggy_beam_test.rs"]
 mod porygonz_buggy_beam_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]
@@ -238,6 +250,8 @@ mod spewpa_signs_of_evolution_test;
 mod sunflora_quick_grow_beam_test;
 #[path = "pokemon/swift_shot_test.rs"]
 mod swift_shot_test;
+#[path = "pokemon/sylveon_soothing_ribbon_test.rs"]
+mod sylveon_soothing_ribbon_test;
 #[path = "pokemon/tandemaus_b2_test.rs"]
 mod tandemaus_b2_test;
 #[path = "pokemon/tapu_lele_energy_arrow_test.rs"]

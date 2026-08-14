@@ -57,6 +57,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::HealOneYourPokemon { .. } => {
             is_active && can_use_espeon_ex_psychic_healing(state, card)
         }
+        AbilityMechanic::HealOneYourPokemonIfHasTool { .. } => {
+            can_use_sylveon_soothing_ribbon(state, card)
+        }
         AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { .. } => {
             can_use_heal_one_your_pokemon_ex_and_discard_random_energy(state, card)
         }
@@ -91,6 +94,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::AttachEnergyFromZoneToSelfAndEndTurn { .. } => !card.ability_used,
         AbilityMechanic::AttachEnergyFromZoneToSelfAndDamage { .. } => !card.ability_used,
         AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf { .. } => false,
+        AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf => false,
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage { energy_type, .. } => {
             !card.ability_used && state.discard_energies[state.current_player].contains(energy_type)
         }
@@ -99,6 +103,8 @@ fn can_use_ability_by_mechanic(
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
         AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => false,
+        AbilityMechanic::ReduceAttackCostIfArceusInPlay { .. } => false,
+        AbilityMechanic::ReduceDamageFromAttacksByAttackerType { .. } => false,
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,
@@ -376,6 +382,15 @@ fn can_use_victreebel_fragrance_trap(state: &State, card: &PlayedCard) -> bool {
 
 fn can_use_espeon_ex_psychic_healing(state: &State, card: &PlayedCard) -> bool {
     if card.ability_used {
+        return false;
+    }
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.is_damaged())
+}
+
+fn can_use_sylveon_soothing_ribbon(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used || !card.has_tool_attached() {
         return false;
     }
     state

@@ -13,6 +13,11 @@ pub enum AbilityMechanic {
     HealOneYourPokemon {
         amount: u32,
     },
+    /// Sylveon's Soothing Ribbon: "Once during your turn, if this Pokémon has a Pokémon Tool
+    /// attached, you may heal `amount` damage from 1 of your Pokémon."
+    HealOneYourPokemonIfHasTool {
+        amount: u32,
+    },
     HealOneYourPokemonExAndDiscardRandomEnergy {
         amount: u32,
     },
@@ -64,6 +69,10 @@ pub enum AbilityMechanic {
         amount: u32,
         only_turn_energy: bool,
     },
+    /// Porygon2's Buggy Evolution: "Whenever you attach an Energy from your Energy Zone to this
+    /// Pokémon, put a random card from your deck that evolves from this Pokémon onto this
+    /// Pokémon to evolve it."
+    EvolveFromDeckOnZoneEnergyAttachToSelf,
     AttachEnergyFromDiscardToSelfAndDamage {
         energy_type: EnergyType,
         self_damage: u32,
@@ -80,6 +89,19 @@ pub enum AbilityMechanic {
     /// plain `CardEffect` derived from the card alone; it is resolved in `hooks::modify_damage`.
     ReduceDamageFromAttacksIfArceusInPlay {
         amount: u32,
+    },
+    /// Abomasnow's Vigor Link: "If you have Arceus or Arceus ex in play, attacks used by this
+    /// Pokémon cost `amount` less [C] Energy." Depends on the board, so it's resolved in
+    /// `hooks::get_attack_cost` rather than being a plain `CardEffect`.
+    ReduceAttackCostIfArceusInPlay {
+        amount: u8,
+    },
+    /// Mamoswine's Thick Fat: "This Pokémon takes `amount` less damage from attacks from
+    /// Pokémon of any of `attacker_types`." Depends on the attacker's type, so it's resolved in
+    /// `hooks::modify_damage` rather than being a plain `CardEffect`.
+    ReduceDamageFromAttacksByAttackerType {
+        amount: u32,
+        attacker_types: Vec<EnergyType>,
     },
     ReduceOpponentActiveDamage {
         amount: u32,

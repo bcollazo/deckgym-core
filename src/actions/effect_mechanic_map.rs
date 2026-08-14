@@ -489,6 +489,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip 2 coins. If both of them are heads, this attack does 80 more damage.",
         Mechanic::ExtraDamageIfBothHeads { extra_damage: 80 },
     );
+    map.insert(
+        "Flip 2 coins. If both of them are heads, this attack does 100 more damage.",
+        Mechanic::ExtraDamageIfBothHeads { extra_damage: 100 },
+    );
     // map.insert("Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.", todo_implementation);
     // map.insert("Flip 2 coins. If both of them are tails, this attack does nothing.", todo_implementation);
     map.insert(
@@ -1522,6 +1526,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert(
         "This attack does 20 damage for each Energy attached to all of your opponent's Pokémon.",
         Mechanic::DamagePerEnergyAll {
+            include_fixed_damage: false,
+            opponent: true,
+            damage_per_energy: 20,
+        },
+    );
+    map.insert(
+        "This attack does 20 more damage for each Energy attached to all of your opponent's Pokémon.",
+        Mechanic::DamagePerEnergyAll {
+            include_fixed_damage: true,
             opponent: true,
             damage_per_energy: 20,
         },
@@ -2198,6 +2211,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "This attack does 30 more damage for each point you have gotten.",
         Mechanic::ExtraDamagePerOwnPoint {
             damage_per_point: 30,
+        },
+    );
+    map.insert(
+        "This attack does 50 more damage for each point your opponent has gotten.",
+        Mechanic::ExtraDamagePerOpponentPoint {
+            damage_per_point: 50,
         },
     );
 

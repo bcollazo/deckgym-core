@@ -169,7 +169,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.",
             AbilityMechanic::CoinFlipToSurviveKnockOut,
         );
-        // map.insert("If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.", todo_implementation);
+        map.insert(
+            "If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.",
+            AbilityMechanic::ReduceAttackCostIfArceusInPlay { amount: 1 },
+        );
         map.insert(
             "If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon.",
             AbilityMechanic::IncreaseDamageIfArceusInPlay { amount: 30 },
@@ -188,6 +191,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         map.insert(
             "Once during your turn, if this Pokémon is in the Active Spot, you may heal 30 damage from 1 of your Pokémon.",
             AbilityMechanic::HealOneYourPokemon { amount: 30 },
+        );
+        map.insert(
+            "Once during your turn, if this Pokémon has a Pokémon Tool attached, you may heal 30 damage from 1 of your Pokémon.",
+            AbilityMechanic::HealOneYourPokemonIfHasTool { amount: 30 },
         );
         // map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may look at a random Supporter card from your opponent's hand. Use the effect of that card as the effect of this Ability.", todo_implementation);
         map.insert("Once during your turn, if this Pokémon is in the Active Spot, you may make your opponent's Active Pokémon Poisoned.", AbilityMechanic::PoisonOpponentActive);
@@ -406,7 +413,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::ReduceDamageFromAttacks { amount: 20 },
         );
         // map.insert("This Pokémon takes -30 damage from attacks from [F] Pokémon.", todo_implementation);
-        // map.insert("This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
+        map.insert(
+            "This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.",
+            AbilityMechanic::ReduceDamageFromAttacksByAttackerType {
+                amount: 30,
+                attacker_types: vec![EnergyType::Fire, EnergyType::Water],
+            },
+        );
         // map.insert("When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.", todo_implementation);
         map.insert(
             "When this Pokémon is first damaged by an attack after coming into play, prevent that damage.",
@@ -427,7 +440,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 amount: 20,
             },
         );
-        // map.insert("Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", todo_implementation);
+        map.insert(
+            "Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.",
+            AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf,
+        );
         map.insert(
             "You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.",
             AbilityMechanic::DiscardFromHandToDrawCard,
