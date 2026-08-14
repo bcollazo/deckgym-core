@@ -169,7 +169,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.",
             AbilityMechanic::CoinFlipToSurviveKnockOut,
         );
-        // map.insert("If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.", todo_implementation);
+        map.insert(
+            "If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.",
+            AbilityMechanic::ReduceAttackCostIfArceusInPlay { amount: 1 },
+        );
         map.insert(
             "If you have Arceus or Arceus ex in play, attacks used by this Pokémon do +30 damage to your opponent's Active Pokémon.",
             AbilityMechanic::IncreaseDamageIfArceusInPlay { amount: 30 },

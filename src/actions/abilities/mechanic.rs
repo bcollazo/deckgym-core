@@ -90,6 +90,12 @@ pub enum AbilityMechanic {
     ReduceDamageFromAttacksIfArceusInPlay {
         amount: u32,
     },
+    /// Abomasnow's Vigor Link: "If you have Arceus or Arceus ex in play, attacks used by this
+    /// Pokémon cost `amount` less [C] Energy." Depends on the board, so it's resolved in
+    /// `hooks::get_attack_cost` rather than being a plain `CardEffect`.
+    ReduceAttackCostIfArceusInPlay {
+        amount: u8,
+    },
     ReduceOpponentActiveDamage {
         amount: u32,
     },

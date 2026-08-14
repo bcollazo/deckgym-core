@@ -1,3 +1,5 @@
+#[path = "pokemon/abomasnow_vigor_link_test.rs"]
+mod abomasnow_vigor_link_test;
 #[path = "pokemon/additional_ability_logic_test.rs"]
 mod additional_ability_logic_test;
 #[path = "pokemon/alcremie_test.rs"]

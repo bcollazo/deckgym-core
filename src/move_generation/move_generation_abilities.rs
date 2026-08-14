@@ -103,6 +103,7 @@ fn can_use_ability_by_mechanic(
         }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
         AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => false,
+        AbilityMechanic::ReduceAttackCostIfArceusInPlay { .. } => false,
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,

@@ -1380,8 +1380,31 @@ pub(crate) fn get_attack_cost(
     }
 
     modified_cost = future_system_cost(modified_cost, state, attacking_player);
+    modified_cost = vigor_link_cost(modified_cost, state, attacking_player);
 
     modified_cost
+}
+
+/// Abomasnow's Vigor Link: "If you have Arceus or Arceus ex in play, attacks used by this
+/// Pokémon cost 1 less [C] Energy."
+fn vigor_link_cost(mut cost: Vec<EnergyType>, state: &State, player: usize) -> Vec<EnergyType> {
+    let Some(active) = state.in_play_pokemon[player][0].as_ref() else {
+        return cost;
+    };
+    let reduction = match get_ability_mechanic(&active.card) {
+        Some(AbilityMechanic::ReduceAttackCostIfArceusInPlay { amount })
+            if has_arceus_in_play(state, player) =>
+        {
+            *amount
+        }
+        _ => 0,
+    };
+    for _ in 0..reduction {
+        if let Some(pos) = cost.iter().position(|e| *e == EnergyType::Colorless) {
+            cost.remove(pos);
+        }
+    }
+    cost
 }
 
 fn future_system_cost(mut cost: Vec<EnergyType>, state: &State, player: usize) -> Vec<EnergyType> {

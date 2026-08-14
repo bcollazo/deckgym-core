@@ -133,6 +133,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => {
             panic!("ReduceDamageFromAttacksIfArceusInPlay is a passive ability")
         }
+        AbilityMechanic::ReduceAttackCostIfArceusInPlay { .. } => {
+            panic!("ReduceAttackCostIfArceusInPlay is a passive ability")
+        }
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => {
             panic!("ReduceOpponentActiveDamage is a passive ability")
         }
