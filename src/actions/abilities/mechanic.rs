@@ -96,6 +96,13 @@ pub enum AbilityMechanic {
     ReduceAttackCostIfArceusInPlay {
         amount: u8,
     },
+    /// Mamoswine's Thick Fat: "This Pokémon takes `amount` less damage from attacks from
+    /// Pokémon of any of `attacker_types`." Depends on the attacker's type, so it's resolved in
+    /// `hooks::modify_damage` rather than being a plain `CardEffect`.
+    ReduceDamageFromAttacksByAttackerType {
+        amount: u32,
+        attacker_types: Vec<EnergyType>,
+    },
     ReduceOpponentActiveDamage {
         amount: u32,
     },

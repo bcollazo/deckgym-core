@@ -413,7 +413,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::ReduceDamageFromAttacks { amount: 20 },
         );
         // map.insert("This Pokémon takes -30 damage from attacks from [F] Pokémon.", todo_implementation);
-        // map.insert("This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.", todo_implementation);
+        map.insert(
+            "This Pokémon takes -30 damage from attacks from [R] or [W] Pokémon.",
+            AbilityMechanic::ReduceDamageFromAttacksByAttackerType {
+                amount: 30,
+                attacker_types: vec![EnergyType::Fire, EnergyType::Water],
+            },
+        );
         // map.insert("When this Pokémon is Knocked Out, flip a coin. If heads, your opponent can't get any points for it.", todo_implementation);
         map.insert(
             "When this Pokémon is first damaged by an attack after coming into play, prevent that damage.",

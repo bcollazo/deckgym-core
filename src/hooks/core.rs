@@ -644,6 +644,7 @@ fn get_ability_damage_reduction(
     state: &State,
     target_player: usize,
     receiving_pokemon: &crate::models::PlayedCard,
+    attacking_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
 ) -> u32 {
     if !is_from_active_attack {
@@ -672,7 +673,23 @@ fn get_ability_damage_reduction(
         _ => 0,
     };
 
-    effect_reduction + arceus_reduction
+    // Mamoswine's Thick Fat depends on the attacker's type, so it can't be derived as a
+    // CardEffect from the card alone.
+    let attacker_type_reduction = match get_ability_mechanic(&receiving_pokemon.card) {
+        Some(AbilityMechanic::ReduceDamageFromAttacksByAttackerType {
+            amount,
+            attacker_types,
+        }) if attacking_pokemon
+            .get_energy_type()
+            .is_some_and(|t| attacker_types.contains(&t)) =>
+        {
+            debug!("Thick Fat: Reducing damage by {}", amount);
+            *amount
+        }
+        _ => 0,
+    };
+
+    effect_reduction + arceus_reduction + attacker_type_reduction
 }
 
 /// Whether `player` has Arceus or Arceus ex in play (Active or Benched).
@@ -1136,6 +1153,7 @@ pub(crate) fn modify_damage(
             state,
             target_player,
             receiving_pokemon,
+            attacking_pokemon,
             is_from_active_attack,
         )
     };

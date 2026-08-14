@@ -148,6 +148,8 @@ mod magneton_test;
 mod magnezone_mirror_shot_test;
 #[path = "pokemon/magnezone_resilience_link_test.rs"]
 mod magnezone_resilience_link_test;
+#[path = "pokemon/mamoswine_thick_fat_test.rs"]
+mod mamoswine_thick_fat_test;
 #[path = "pokemon/marshadow_revenge_test.rs"]
 mod marshadow_revenge_test;
 #[path = "pokemon/maushold_b2a_test.rs"]
