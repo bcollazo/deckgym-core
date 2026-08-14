@@ -58,6 +58,8 @@ mod crawdaunt_unruly_claw_test;
 mod darkrai_ex_test;
 #[path = "pokemon/dragonair_dragons_blessing_test.rs"]
 mod dragonair_dragons_blessing_test;
+#[path = "pokemon/drapion_a2_test.rs"]
+mod drapion_a2_test;
 #[path = "pokemon/durant_test.rs"]
 mod durant_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]

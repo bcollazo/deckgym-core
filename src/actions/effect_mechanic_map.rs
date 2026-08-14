@@ -631,7 +631,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             num_coins: 4,
         },
     );
-    // map.insert("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.", todo_implementation);
+    map.insert("Flip 4 coins. This attack does 40 damage for each heads. If at least 2 of them are heads, your opponent's Active Pokémon is now Poisoned.", Mechanic::ExtraDamageForEachHeadsWithStatusAtLeast { num_coins: 4, damage_per_head: 40, status: StatusCondition::Poisoned, min_heads: 2 });
     map.insert(
         "Flip 4 coins. This attack does 50 damage for each heads.",
         Mechanic::ExtraDamageForEachHeads {
