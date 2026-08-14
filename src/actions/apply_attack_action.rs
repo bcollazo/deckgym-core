@@ -573,9 +573,19 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage_per_retreat_cost(state, attack.fixed_damage, *damage_per_energy)
         }
         Mechanic::DamagePerEnergyAll {
+            include_fixed_damage,
             opponent,
             damage_per_energy,
-        } => damage_per_energy_all(state, *opponent, *damage_per_energy),
+        } => damage_per_energy_all(
+            state,
+            if *include_fixed_damage {
+                attack.fixed_damage
+            } else {
+                0
+            },
+            *opponent,
+            *damage_per_energy,
+        ),
         Mechanic::DamageToAnyOpponentPerTargetEnergy { damage_per_energy } => {
             damage_to_any_opponent_per_target_energy(*damage_per_energy)
         }
@@ -2762,7 +2772,12 @@ fn extra_damage_per_retreat_cost(
     active_damage_doutcome(damage)
 }
 
-fn damage_per_energy_all(state: &State, opponent: bool, damage_per_energy: u32) -> AttackOutcomes {
+fn damage_per_energy_all(
+    state: &State,
+    base_damage: u32,
+    opponent: bool,
+    damage_per_energy: u32,
+) -> AttackOutcomes {
     let target = if opponent {
         (state.current_player + 1) % 2
     } else {
@@ -2773,7 +2788,7 @@ fn damage_per_energy_all(state: &State, opponent: bool, damage_per_energy: u32) 
         .flatten()
         .map(|pokemon| pokemon.get_effective_attached_energy(state, target).len() as u32)
         .sum();
-    let damage = total_energy * damage_per_energy;
+    let damage = base_damage + total_energy * damage_per_energy;
     active_damage_doutcome(damage)
 }
 

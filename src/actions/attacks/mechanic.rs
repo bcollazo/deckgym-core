@@ -408,6 +408,7 @@ pub enum Mechanic {
         damage_per_energy: u32,
     },
     DamagePerEnergyAll {
+        include_fixed_damage: bool,
         opponent: bool,
         damage_per_energy: u32,
     },
