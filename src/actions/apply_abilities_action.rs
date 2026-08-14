@@ -46,6 +46,7 @@ fn forecast_ability_by_mechanic(
             energy_type,
         } => heal_all_your_pokemon(*amount, *energy_type),
         AbilityMechanic::HealOneYourPokemon { amount } => heal_one_your_pokemon(*amount),
+        AbilityMechanic::HealOneYourPokemonIfHasTool { amount } => heal_one_your_pokemon(*amount),
         AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { amount } => {
             heal_one_your_pokemon_ex_and_discard_random_energy(*amount)
         }

@@ -13,6 +13,11 @@ pub enum AbilityMechanic {
     HealOneYourPokemon {
         amount: u32,
     },
+    /// Sylveon's Soothing Ribbon: "Once during your turn, if this Pokémon has a Pokémon Tool
+    /// attached, you may heal `amount` damage from 1 of your Pokémon."
+    HealOneYourPokemonIfHasTool {
+        amount: u32,
+    },
     HealOneYourPokemonExAndDiscardRandomEnergy {
         amount: u32,
     },

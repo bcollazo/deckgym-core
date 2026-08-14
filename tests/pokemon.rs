@@ -232,6 +232,8 @@ mod spewpa_signs_of_evolution_test;
 mod sunflora_quick_grow_beam_test;
 #[path = "pokemon/swift_shot_test.rs"]
 mod swift_shot_test;
+#[path = "pokemon/sylveon_soothing_ribbon_test.rs"]
+mod sylveon_soothing_ribbon_test;
 #[path = "pokemon/tandemaus_b2_test.rs"]
 mod tandemaus_b2_test;
 #[path = "pokemon/tapu_lele_energy_arrow_test.rs"]
