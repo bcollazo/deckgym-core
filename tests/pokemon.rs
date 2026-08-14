@@ -244,6 +244,8 @@ mod vanilluxe_test;
 mod vaporeon_ex_test;
 #[path = "pokemon/vespiquen_ex_chase_order_test.rs"]
 mod vespiquen_ex_chase_order_test;
+#[path = "pokemon/victini_victory_star_test.rs"]
+mod victini_victory_star_test;
 #[path = "pokemon/vulpix_tail_whip_test.rs"]
 mod vulpix_tail_whip_test;
 #[path = "pokemon/wailord_ex_wondrous_waves_test.rs"]
