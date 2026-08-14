@@ -16,6 +16,7 @@ use crate::{
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
         Action,
     },
+    card_ids::CardId,
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
     hooks::{
@@ -23,6 +24,7 @@ use crate::{
         get_attack_cost, get_extra_random_spread_hits, get_retreat_cost, get_stage,
     },
     models::{Attack, Card, EnergyType, StatusCondition, TrainerType},
+    tools::has_tool,
     State,
 };
 
@@ -370,6 +372,23 @@ fn forecast_effect_attack_by_mechanic(
             *damage_per_head,
             *num_coins,
             attack,
+        ),
+        Mechanic::ExtraDamageForEachHeadsSelfStatus {
+            num_coins,
+            damage_per_head,
+            status,
+        } => damage_for_each_heads_self_status_attack(*num_coins, *damage_per_head, *status),
+        Mechanic::ExtraDamageForEachHeadsWithToolBoost {
+            num_coins,
+            damage_per_head,
+            boosted_num_coins,
+            tool,
+        } => damage_for_each_heads_with_tool_boost_attack(
+            state,
+            *num_coins,
+            *damage_per_head,
+            *boosted_num_coins,
+            *tool,
         ),
         Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
             num_coins,
@@ -724,6 +743,17 @@ fn forecast_effect_attack_by_mechanic(
             *num_coins,
             attack,
             *status,
+        ),
+        Mechanic::ExtraDamageForEachHeadsWithStatusAtLeast {
+            num_coins,
+            damage_per_head,
+            status,
+            min_heads,
+        } => damage_for_each_heads_with_status_at_least_attack(
+            *num_coins,
+            *damage_per_head,
+            *status,
+            *min_heads,
         ),
         Mechanic::DamageAndMultipleCardEffects {
             opponent,
@@ -1448,6 +1478,36 @@ fn damage_for_each_heads_attack(
     };
     AttackOutcomes::binomial_by_heads(num_coins, move |heads_count| {
         active_damage_outcome(fixed_damage + damage_per_head * heads_count as u32)
+    })
+}
+
+fn damage_for_each_heads_self_status_attack(
+    num_coins: usize,
+    damage_per_head: u32,
+    status: StatusCondition,
+) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_effect_outcome(heads as u32 * damage_per_head, move |_, state, action| {
+            state.apply_status_condition(action.actor, 0, status);
+        })
+    })
+}
+
+fn damage_for_each_heads_with_tool_boost_attack(
+    state: &State,
+    num_coins: usize,
+    damage_per_head: u32,
+    boosted_num_coins: usize,
+    tool: CardId,
+) -> AttackOutcomes {
+    let active = state.get_active(state.current_player);
+    let num_coins = if has_tool(active, tool) {
+        boosted_num_coins
+    } else {
+        num_coins
+    };
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_outcome(heads as u32 * damage_per_head)
     })
 }
 
@@ -3647,6 +3707,23 @@ fn damage_for_each_heads_with_status_attack(
             heads as u32 * damage_per_head
         };
         active_damage_effect_outcome(damage, build_status_effect(status))
+    })
+}
+
+/// Alolan Marowak - Burning Bonemerang - Flips coins for damage and inflicts status if at least 1 heads
+fn damage_for_each_heads_with_status_at_least_attack(
+    num_coins: usize,
+    damage_per_head: u32,
+    status: StatusCondition,
+    min_heads: usize,
+) -> AttackOutcomes {
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        let damage = heads as u32 * damage_per_head;
+        if heads >= min_heads {
+            active_damage_effect_outcome(damage, build_status_effect(status))
+        } else {
+            active_damage_outcome(damage)
+        }
     })
 }
 

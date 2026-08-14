@@ -3,6 +3,8 @@ use crate::{
     models::{EnergyType, StatusCondition, TrainerType},
 };
 
+use crate::card_ids::CardId;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum BenchSide {
     YourBench,
@@ -253,6 +255,30 @@ pub enum Mechanic {
         damage_per_head: u32,
         num_coins: usize,
         status: StatusCondition,
+    },
+    /// Bellossom - Petal Dance: flip 'num_coins' coins; deal 'damage_per_head' per hedas,
+    /// then apply 'status' to the ATTACKER (unlike the opponent-targeting variants).
+    ExtraDamageForEachHeadsSelfStatus {
+        num_coins: usize,
+        damage_per_head: u32,
+        status: StatusCondition,
+    },
+    /// Alolan Marowak - Burning Bonemerang: flip 'num_coins'. This attack does 70 damage
+    /// for each heads. If at least 1 of them is heads, your opponent's Active Pokémon
+    /// is now Burned.
+    ExtraDamageForEachHeadsWithStatusAtLeast {
+        num_coins: usize,
+        damage_per_head: u32,
+        status: StatusCondition,
+        min_heads: usize,
+    },
+    /// Ambipom - Excited Tail: flip 'num_coins' coins; deal 'damage_per_head' per heads,
+    /// but frlip 'boosted_num_coins' coins instead if the attacker has 'tool' attached.
+    ExtraDamageForEachHeadsWithToolBoost {
+        num_coins: usize,
+        damage_per_head: u32,
+        boosted_num_coins: usize,
+        tool: CardId,
     },
     DamageAndMultipleCardEffects {
         opponent: bool,

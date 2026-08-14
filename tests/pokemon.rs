@@ -2,16 +2,22 @@
 mod additional_ability_logic_test;
 #[path = "pokemon/alcremie_test.rs"]
 mod alcremie_test;
+#[path = "pokemon/alolan_marowak_test.rs"]
+mod alolan_marowak_test;
 #[path = "pokemon/alolan_sandslash_spike_armor_test.rs"]
 mod alolan_sandslash_spike_armor_test;
 #[path = "pokemon/altaria_dragon_arcana_test.rs"]
 mod altaria_dragon_arcana_test;
+#[path = "pokemon/ambipom_b1_test.rs"]
+mod ambipom_b1_test;
 #[path = "pokemon/applin_share_test.rs"]
 mod applin_share_test;
 #[path = "pokemon/arceus_ex_test.rs"]
 mod arceus_ex_test;
 #[path = "pokemon/audino_test.rs"]
 mod audino_test;
+#[path = "pokemon/bellossom_a4_test.rs"]
+mod bellossom_a4_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
 mod blastoise_double_splash_test;
 #[path = "pokemon/bombirdier_test.rs"]
@@ -56,6 +62,8 @@ mod crawdaunt_unruly_claw_test;
 mod darkrai_ex_test;
 #[path = "pokemon/dragonair_dragons_blessing_test.rs"]
 mod dragonair_dragons_blessing_test;
+#[path = "pokemon/drapion_a2_test.rs"]
+mod drapion_a2_test;
 #[path = "pokemon/durant_test.rs"]
 mod durant_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
@@ -132,6 +140,8 @@ mod legacy_ability_logic_test;
 mod lucario_b3_test;
 #[path = "pokemon/lucario_fighting_coach_test.rs"]
 mod lucario_fighting_coach_test;
+#[path = "pokemon/lugia_b2_test.rs"]
+mod lugia_b2_test;
 #[path = "pokemon/lunala_ex_test.rs"]
 mod lunala_ex_test;
 #[path = "pokemon/magneton_test.rs"]
@@ -206,6 +216,8 @@ mod roaring_moon_test;
 mod rotom_ex_junk_spark_test;
 #[path = "pokemon/salamence_test.rs"]
 mod salamence_test;
+#[path = "pokemon/sandslash_fury_swipes_test.rs"]
+mod sandslash_fury_swipes_test;
 #[path = "pokemon/sawk_test.rs"]
 mod sawk_test;
 #[path = "pokemon/shinx_hide_test.rs"]
@@ -250,6 +262,8 @@ mod vulpix_tail_whip_test;
 mod wailord_ex_wondrous_waves_test;
 #[path = "pokemon/wailord_test.rs"]
 mod wailord_test;
+#[path = "pokemon/wugtrio_b2a_test.rs"]
+mod wugtrio_b2a_test;
 #[path = "pokemon/xerneas_geoburst_test.rs"]
 mod xerneas_geoburst_test;
 #[path = "pokemon/zarude_dark_vengeance_test.rs"]
