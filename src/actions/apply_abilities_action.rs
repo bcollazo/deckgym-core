@@ -106,6 +106,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf { .. } => {
             panic!("DamageOpponentActiveOnZoneAttachToSelf is a passive ability")
         }
+        AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf => {
+            panic!("EvolveFromDeckOnZoneEnergyAttachToSelf is a passive ability")
+        }
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage {
             energy_type,
             self_damage,

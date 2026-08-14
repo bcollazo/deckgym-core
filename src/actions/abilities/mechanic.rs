@@ -69,6 +69,10 @@ pub enum AbilityMechanic {
         amount: u32,
         only_turn_energy: bool,
     },
+    /// Porygon2's Buggy Evolution: "Whenever you attach an Energy from your Energy Zone to this
+    /// Pokémon, put a random card from your deck that evolves from this Pokémon onto this
+    /// Pokémon to evolve it."
+    EvolveFromDeckOnZoneEnergyAttachToSelf,
     AttachEnergyFromDiscardToSelfAndDamage {
         energy_type: EnergyType,
         self_damage: u32,

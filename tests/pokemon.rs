@@ -190,6 +190,8 @@ mod persian_test;
 mod pidgeot_twister_test;
 #[path = "pokemon/politoed_raid_test.rs"]
 mod politoed_raid_test;
+#[path = "pokemon/porygon2_buggy_evolution_test.rs"]
+mod porygon2_buggy_evolution_test;
 #[path = "pokemon/porygonz_buggy_beam_test.rs"]
 mod porygonz_buggy_beam_test;
 #[path = "pokemon/porygonz_cyberjack_test.rs"]

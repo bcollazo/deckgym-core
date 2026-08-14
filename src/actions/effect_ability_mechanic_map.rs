@@ -431,7 +431,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
                 amount: 20,
             },
         );
-        // map.insert("Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.", todo_implementation);
+        map.insert(
+            "Whenever you attach an Energy from your Energy Zone to this Pokémon, put a random card from your deck that evolves from this Pokémon onto this Pokémon to evolve it.",
+            AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf,
+        );
         map.insert(
             "You must discard a card from your hand in order to use this Ability. Once during your turn, you may draw a card.",
             AbilityMechanic::DiscardFromHandToDrawCard,

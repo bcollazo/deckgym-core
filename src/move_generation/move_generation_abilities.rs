@@ -94,6 +94,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::AttachEnergyFromZoneToSelfAndEndTurn { .. } => !card.ability_used,
         AbilityMechanic::AttachEnergyFromZoneToSelfAndDamage { .. } => !card.ability_used,
         AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf { .. } => false,
+        AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf => false,
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage { energy_type, .. } => {
             !card.ability_used && state.discard_energies[state.current_player].contains(energy_type)
         }
