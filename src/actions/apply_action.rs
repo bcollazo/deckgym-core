@@ -15,7 +15,7 @@ use crate::{
         get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card, DamageModifierContext,
     },
     models::{Card, EnergyType},
-    state::State,
+    state::{PendingCoinReflip, State},
     tools,
 };
 
@@ -35,7 +35,27 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
-    let (probabilities, mut lazy_mutations) = forecast_action(state, action).into_branches();
+    let outcomes = forecast_action(state, action);
+
+    // Victini's Victory Star: if this is an eligible [R] coin-flip attack, sample the coins now
+    // but park the result instead of committing it, and let the player choose whether to re-flip.
+    if let Some(pending) = maybe_defer_for_victory_star(rng, state, action, &outcomes) {
+        let victini_idx = pending.victini_idx;
+        let actor = pending.actor;
+        state.set_pending_coin_reflip(pending);
+        state.move_generation_stack.push((
+            actor,
+            vec![
+                SimpleAction::Noop,
+                SimpleAction::UseAbility {
+                    in_play_idx: victini_idx,
+                },
+            ],
+        ));
+        return;
+    }
+
+    let (probabilities, mut lazy_mutations) = outcomes.into_branches();
     if probabilities.len() == 1 {
         lazy_mutations.remove(0)(rng, state, action);
     } else {
@@ -43,6 +63,103 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
         let chosen_index = dist.sample(rng);
         lazy_mutations.remove(chosen_index)(rng, state, action);
     }
+}
+
+/// Decides whether `action` should pause for a Victory Star decision, and if so pre-rolls the
+/// coins so the player is choosing with knowledge of the result (as the real card allows).
+///
+/// Returns `None` — meaning "resolve normally" — unless all of the following hold:
+///   - the action is an `Attack` that is not itself a stacked follow-up,
+///   - the attacking Pokémon is `[R]` (Fire),
+///   - the attack's outcomes actually involve coin flips,
+///   - the acting player has an unused Victini in play,
+///   - no reflip decision is already pending.
+fn maybe_defer_for_victory_star(
+    rng: &mut StdRng,
+    state: &State,
+    action: &Action,
+    outcomes: &Outcomes,
+) -> Option<PendingCoinReflip> {
+    let attack = match &action.action {
+        SimpleAction::Attack(attack) if !action.is_stack => attack,
+        _ => return None,
+    };
+    if state.pending_coin_reflip.is_some() {
+        return None;
+    }
+    if !outcomes.has_coin_flips() {
+        return None;
+    }
+    let attacker_is_fire = state.in_play_pokemon[action.actor][0]
+        .as_ref()
+        .and_then(|pokemon| pokemon.card.get_type())
+        .is_some_and(|energy_type| energy_type == EnergyType::Fire);
+    if !attacker_is_fire {
+        return None;
+    }
+    let victini_idx = state.available_victory_star_idx(action.actor)?;
+
+    // Roll the coins now; the chosen branch's sequence is what the player sees and may reject.
+    let original_flips = sample_coin_sequence(rng, outcomes)?;
+
+    Some(PendingCoinReflip {
+        actor: action.actor,
+        attack: attack.clone(),
+        original_flips,
+        victini_idx,
+    })
+}
+
+/// Samples a branch from `outcomes` by probability and returns its coin sequence.
+fn sample_coin_sequence(rng: &mut StdRng, outcomes: &Outcomes) -> Option<Vec<bool>> {
+    let probabilities = outcomes.branch_probabilities();
+    let chosen_index = if probabilities.len() == 1 {
+        0
+    } else {
+        WeightedIndex::new(&probabilities).ok()?.sample(rng)
+    };
+    outcomes.coin_sequence_at(chosen_index)
+}
+
+/// Resolves a parked Victory Star decision by re-forecasting the stored attack and either
+/// replaying the original coin sequence (`reflip == false`) or committing a fresh, independent
+/// roll (`reflip == true`).
+pub(crate) fn resolve_pending_coin_reflip(
+    rng: &mut StdRng,
+    state: &mut State,
+    pending: PendingCoinReflip,
+    reflip: bool,
+) {
+    let attack_action = Action {
+        actor: pending.actor,
+        action: SimpleAction::Attack(pending.attack.clone()),
+        is_stack: false,
+    };
+
+    if reflip {
+        state.mark_victory_star_used(pending.actor);
+    }
+
+    let outcomes = forecast_action(state, &attack_action);
+    let (probabilities, mut lazy_mutations) = if reflip {
+        // Fresh coins: resolve the re-forecast attack normally.
+        outcomes.into_branches()
+    } else {
+        // Declined: replay exactly what was already flipped.
+        match outcomes.force_sequence(&pending.original_flips) {
+            Ok(forced) => forced.into_branches(),
+            Err(original) => original.into_branches(),
+        }
+    };
+
+    let chosen_index = if probabilities.len() == 1 {
+        0
+    } else {
+        WeightedIndex::new(&probabilities)
+            .expect("attack outcomes should form a valid distribution")
+            .sample(rng)
+    };
+    lazy_mutations.remove(chosen_index)(rng, state, &attack_action);
 }
 
 /// This should be mostly a "router" function that calls the appropriate forecast function
@@ -72,8 +189,16 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
         | SimpleAction::MoveRandomOpponentEnergyToActive { .. }
-        | SimpleAction::ApplyStatusToOpponentActive { .. }
-        | SimpleAction::Noop => forecast_deterministic_action(),
+        | SimpleAction::ApplyStatusToOpponentActive { .. } => forecast_deterministic_action(),
+        // Noop is the "decline" branch of Victini's Victory Star prompt when a coin result is
+        // parked; otherwise it is an ordinary no-op ("say no" to an optional effect).
+        SimpleAction::Noop => {
+            if state.pending_coin_reflip.is_some() {
+                forecast_decline_coin_reflip()
+            } else {
+                forecast_deterministic_action()
+            }
+        }
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
         SimpleAction::ApplyDamage {
             attacking_ref,
@@ -158,6 +283,15 @@ fn is_will_eligible_action(action: &SimpleAction) -> bool {
             | SimpleAction::Play { .. }
             | SimpleAction::UseStadium
     )
+}
+
+/// Declining Victini's Victory Star: replay the coin sequence that was already flipped.
+fn forecast_decline_coin_reflip() -> Outcomes {
+    Outcomes::single_fn(move |rng, state, _action| {
+        if let Some(pending) = state.take_pending_coin_reflip() {
+            resolve_pending_coin_reflip(rng, state, pending, false);
+        }
+    })
 }
 
 fn forecast_deterministic_action() -> Outcomes {

@@ -199,6 +199,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::FutureSystem => false, // passive ability
         AbilityMechanic::TimeRecall => false,  // passive ability (consumed in attack generation)
         AbilityMechanic::QuickGrowth => false, // triggered at end of opponent's turn
+        // Reactive: only offered via the move-generation stack right after an eligible [R]
+        // coin-flip attack, never as a freely-selectable ability.
+        AbilityMechanic::VictoryStarReflip => false,
     }
 }
 

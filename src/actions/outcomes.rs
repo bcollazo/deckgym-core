@@ -253,6 +253,65 @@ impl Outcomes {
         Ok(Self { branches })
     }
 
+    /// Restricts the outcomes to the single branch whose coin metadata contains `sequence`,
+    /// collapsing it to probability 1.0. Used to *replay* an already-flipped coin result
+    /// deterministically (Victini's Victory Star, when the player declines the re-flip), as
+    /// opposed to `force_first_heads`, which biases a not-yet-flipped coin.
+    ///
+    /// Returns `Err(self)` when no branch carries that exact sequence, so callers can fall back
+    /// to the unmodified outcomes rather than constructing an empty distribution.
+    pub fn force_sequence(self, sequence: &[bool]) -> Result<Self, Self> {
+        let mut matched: Vec<OutcomeBranch> = vec![];
+        let mut passthrough: Vec<OutcomeBranch> = vec![];
+
+        for branch in self.branches {
+            let is_match = match &branch.coin_paths {
+                CoinPaths::None => false,
+                CoinPaths::Exact(seqs) => seqs.iter().any(|seq| seq.0 == sequence),
+            };
+            if is_match {
+                matched.push(OutcomeBranch {
+                    probability: 1.0,
+                    mutation: branch.mutation,
+                    coin_paths: CoinPaths::Exact(vec![CoinSeq(sequence.to_vec())]),
+                });
+            } else {
+                passthrough.push(branch);
+            }
+        }
+
+        // Exactly one branch should own any given coin sequence; anything else means the attack
+        // was re-forecast into a different shape than the one originally flipped.
+        if matched.len() == 1 {
+            Ok(Self { branches: matched })
+        } else {
+            passthrough.extend(matched);
+            Err(Self {
+                branches: passthrough,
+            })
+        }
+    }
+
+    /// The per-branch probabilities, without consuming the outcomes.
+    pub fn branch_probabilities(&self) -> Vec<f64> {
+        self.branches.iter().map(|b| b.probability).collect()
+    }
+
+    /// True if any branch carries real coin metadata, i.e. this action involves a coin flip.
+    pub fn has_coin_flips(&self) -> bool {
+        self.branches
+            .iter()
+            .any(|branch| matches!(branch.coin_paths, CoinPaths::Exact(_)))
+    }
+
+    /// The coin sequence owned by the branch at `index`, if it has coin metadata.
+    pub fn coin_sequence_at(&self, index: usize) -> Option<Vec<bool>> {
+        match self.branches.get(index).map(|b| &b.coin_paths) {
+            Some(CoinPaths::Exact(seqs)) => seqs.first().map(|seq| seq.0.clone()),
+            _ => None,
+        }
+    }
+
     pub(crate) fn binomial_coefficient(n: usize, k: usize) -> usize {
         if k > n {
             return 0;
