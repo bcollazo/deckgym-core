@@ -488,6 +488,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Flip 2 coins. If both of them are heads, this attack does 80 more damage.",
         Mechanic::ExtraDamageIfBothHeads { extra_damage: 80 },
     );
+    map.insert(
+        "Flip 2 coins. If both of them are heads, this attack does 100 more damage.",
+        Mechanic::ExtraDamageIfBothHeads { extra_damage: 100 },
+    );
     // map.insert("Flip 2 coins. If both of them are heads, your opponent's Active Pokémon is Knocked Out.", todo_implementation);
     // map.insert("Flip 2 coins. If both of them are tails, this attack does nothing.", todo_implementation);
     map.insert(

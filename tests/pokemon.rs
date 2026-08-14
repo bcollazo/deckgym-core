@@ -100,6 +100,8 @@ mod ho_oh_ex_phoenix_turbo_test;
 mod honchkrow_evil_admonition_test;
 #[path = "pokemon/houndstone_last_respects_test.rs"]
 mod houndstone_last_respects_test;
+#[path = "pokemon/hydrapple_fickle_beam_test.rs"]
+mod hydrapple_fickle_beam_test;
 #[path = "pokemon/iron_bundle_ex_test.rs"]
 mod iron_bundle_ex_test;
 #[path = "pokemon/iron_bundle_test.rs"]
