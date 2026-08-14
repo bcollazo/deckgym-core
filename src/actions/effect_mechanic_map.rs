@@ -2175,6 +2175,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_point: 30,
         },
     );
+    map.insert(
+        "This attack does 50 more damage for each point your opponent has gotten.",
+        Mechanic::ExtraDamagePerOpponentPoint {
+            damage_per_point: 50,
+        },
+    );
 
     // B3 Mechanics
     // map.insert("1 attack from among the Pokémon in your opponent's hand and deck is chosen at random, and you use the chosen attack as this attack.", todo_implementation);

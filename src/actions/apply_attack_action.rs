@@ -771,6 +771,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ExtraDamagePerOwnPoint { damage_per_point } => {
             extra_damage_per_own_point_attack(state, attack.fixed_damage, *damage_per_point)
         }
+        Mechanic::ExtraDamagePerOpponentPoint { damage_per_point } => {
+            extra_damage_per_opponent_point_attack(state, attack.fixed_damage, *damage_per_point)
+        }
         Mechanic::ExtraDamageIfCardInDiscard {
             card_name,
             extra_damage,
@@ -3950,6 +3953,18 @@ fn extra_damage_per_own_point_attack(
     damage_per_point: u32,
 ) -> AttackOutcomes {
     let points = state.points[state.current_player] as u32;
+    let total_damage = base_damage + (points * damage_per_point);
+    active_damage_doutcome(total_damage)
+}
+
+/// Luxray's Revenge Blast: Extra damage per point the opponent has gotten
+fn extra_damage_per_opponent_point_attack(
+    state: &State,
+    base_damage: u32,
+    damage_per_point: u32,
+) -> AttackOutcomes {
+    let opponent = (state.current_player + 1) % 2;
+    let points = state.points[opponent] as u32;
     let total_damage = base_damage + (points * damage_per_point);
     active_damage_doutcome(total_damage)
 }

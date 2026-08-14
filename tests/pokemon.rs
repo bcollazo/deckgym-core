@@ -136,6 +136,8 @@ mod lucario_b3_test;
 mod lucario_fighting_coach_test;
 #[path = "pokemon/lunala_ex_test.rs"]
 mod lunala_ex_test;
+#[path = "pokemon/luxray_revenge_blast_test.rs"]
+mod luxray_revenge_blast_test;
 #[path = "pokemon/magneton_test.rs"]
 mod magneton_test;
 #[path = "pokemon/magnezone_mirror_shot_test.rs"]
