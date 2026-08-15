@@ -13,7 +13,7 @@ use crate::{
     actions::{has_ability_mechanic, SimpleAction},
     deck::Deck,
     effects::TurnEffect,
-    models::{Card, EnergyType, StatusCondition},
+    models::{Attack, Card, EnergyType, StatusCondition},
     move_generation,
     stadiums::is_starting_plains_active,
     tools::has_tool,
@@ -36,6 +36,25 @@ pub enum GameOutcome {
 pub struct EnergyZone {
     pub current: Option<EnergyType>,
     pub next: Option<EnergyType>,
+}
+
+/// A coin-flip attack that has been flipped but not yet committed, parked while the acting player
+/// decides whether to use Victini's Victory Star to re-flip it.
+///
+/// Deliberately plain data: the attack is re-forecast from `attack` when the decision resolves,
+/// rather than storing a closure, so that `State` remains `Clone`/`Hash`/`Eq` for the
+/// search-based players (ExpectiMiniMax, MCTS) that clone and memoize states.
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PendingCoinReflip {
+    /// The player who used the attack (and who may use Victory Star).
+    pub actor: usize,
+    /// The attack that was used, so it can be re-forecast on either branch.
+    pub attack: Attack,
+    /// The exact coin sequence that was originally flipped. Replayed verbatim if the player
+    /// declines, so declining is a faithful "keep what happened" rather than a second draw.
+    pub original_flips: Vec<bool>,
+    /// In-play index of the Victini offering the reflip.
+    pub victini_idx: usize,
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -67,6 +86,16 @@ pub struct State {
     pub(crate) has_played_support: bool,
     pub(crate) has_retreated: bool,
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
+    // Tracks if each player has used a Victory Star Ability (Victini) this turn. The card text
+    // says "You can't use more than 1 Victory Star Ability each turn.", so this is per-player and
+    // not per-Victini.
+    #[serde(default)]
+    pub(crate) has_used_victory_star: [bool; 2],
+    // Set when an eligible coin-flip attack has been flipped but not yet committed, while the
+    // acting player decides whether to invoke Victory Star. Holds plain data only (no closures),
+    // so `State` stays Clone/Hash/Eq for the search-based players.
+    #[serde(default)]
+    pub(crate) pending_coin_reflip: Option<PendingCoinReflip>,
     pub(crate) knocked_out_by_opponent_attack_this_turn: bool,
     pub(crate) knocked_out_by_opponent_attack_last_turn: bool,
     // Energy types of the Pokemon Knocked Out by an opponent's attack during that turn (e.g. for
@@ -107,6 +136,8 @@ impl State {
             has_played_support: false,
             has_retreated: false,
             has_used_stadium: [false, false],
+            has_used_victory_star: [false, false],
+            pending_coin_reflip: None,
 
             knocked_out_by_opponent_attack_this_turn: false,
             knocked_out_by_opponent_attack_last_turn: false,
@@ -307,6 +338,7 @@ impl State {
         self.has_played_support = false;
         self.has_retreated = false;
         self.has_used_stadium[self.current_player] = false;
+        self.has_used_victory_star[self.current_player] = false;
     }
 
     /// Clear status conditions from energy-bearing Pokémon on a player's side.
@@ -327,6 +359,31 @@ impl State {
                 slot.cure_status_conditions();
             }
         }
+    }
+
+    /// In-play index of a Victini whose Victory Star is available to `player` this turn, if any.
+    /// Victory Star has no Active-Spot restriction, so a Victini anywhere in play qualifies.
+    pub(crate) fn available_victory_star_idx(&self, player: usize) -> Option<usize> {
+        if self.has_used_victory_star[player] {
+            return None;
+        }
+        self.enumerate_in_play_pokemon(player)
+            .find(|(_, pokemon)| {
+                has_ability_mechanic(&pokemon.card, &AbilityMechanic::VictoryStarReflip)
+            })
+            .map(|(idx, _)| idx)
+    }
+
+    pub(crate) fn set_pending_coin_reflip(&mut self, pending: PendingCoinReflip) {
+        self.pending_coin_reflip = Some(pending);
+    }
+
+    pub(crate) fn take_pending_coin_reflip(&mut self) -> Option<PendingCoinReflip> {
+        self.pending_coin_reflip.take()
+    }
+
+    pub(crate) fn mark_victory_star_used(&mut self, player: usize) {
+        self.has_used_victory_star[player] = true;
     }
 
     pub(crate) fn set_pending_will_first_heads(&mut self) {

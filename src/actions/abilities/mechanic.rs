@@ -284,4 +284,12 @@ pub enum AbilityMechanic {
     /// Active Spot, put a random card from your deck that evolves from this Pokémon onto this
     /// Pokémon to evolve it."
     QuickGrowth,
+    /// Victini's Victory Star: "Once during your turn, after you flip any coins for an attack of
+    /// 1 of your [R] Pokémon, you may ignore all results of those coin flips and begin flipping
+    /// those coins again. You can't use more than 1 Victory Star Ability each turn."
+    ///
+    /// Reactive rather than freely activated: it is never offered by normal ability move
+    /// generation, only pushed onto the move-generation stack by `apply_action` immediately
+    /// after an eligible [R] attack's coins are flipped. See `PendingCoinReflip`.
+    VictoryStarReflip,
 }

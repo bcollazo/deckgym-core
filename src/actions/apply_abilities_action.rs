@@ -314,7 +314,18 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::QuickGrowth => {
             panic!("QuickGrowth is triggered at the end of the opponent's turn")
         }
+        AbilityMechanic::VictoryStarReflip => victory_star_reflip(),
     }
+}
+
+/// Victini's Victory Star, chosen from the reflip prompt: discard the parked coin result and
+/// resolve the same attack again with fresh, independent coins.
+fn victory_star_reflip() -> Outcomes {
+    Outcomes::single_fn(move |rng, state, _action| {
+        if let Some(pending) = state.take_pending_coin_reflip() {
+            crate::actions::resolve_pending_coin_reflip(rng, state, pending, true);
+        }
+    })
 }
 
 fn discard_energy_to_increase_type_damage(
