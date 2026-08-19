@@ -33,6 +33,12 @@ pub enum Mechanic {
     HealAllYourPokemon {
         amount: u32,
     },
+    /// Heal `amount` from each Benched Pokémon; if `only_basic` is true, only Basic Pokémon
+    /// (Alomomola heals all, Ho-Oh heals only Basic).
+    HealAllBenchedPokemon {
+        amount: u32,
+        only_basic: bool,
+    },
     CoinFlipSelfHeal {
         amount: u32,
     },
@@ -74,6 +80,22 @@ pub enum Mechanic {
     ChanceStatusAttack {
         condition: StatusCondition,
     },
+    /// Flip a coin; heads inflicts `heads_status`, tails inflicts `tails_status`, both on the
+    /// opponent's Active (e.g. Lanturn ex).
+    CoinFlipStatusOutcome {
+        heads_status: StatusCondition,
+        tails_status: StatusCondition,
+    },
+    /// Flip a coin; heads inflicts ALL of `conditions` on the opponent's Active (e.g.
+    /// Tentacruel's Poisoned and Paralyzed).
+    ChanceMultipleStatusAttack {
+        conditions: Vec<StatusCondition>,
+    },
+    /// Flip a coin; heads inflicts `status` on the opponent's Active, tails inflicts it on the
+    /// attacking Pokémon itself (e.g. Psyduck's Confusion Wave).
+    CoinFlipStatusSelfOrOpponent {
+        status: StatusCondition,
+    },
     /// Deal damage, then let the player choose one of these Special Conditions to
     /// inflict on the opponent's Active Pokémon (e.g. Dustox's Select Powder).
     ChooseStatusToInflict {
@@ -93,6 +115,12 @@ pub enum Mechanic {
         damage_per_hit: u32,
     },
     DiscardEnergyFromOpponentActive,
+    /// Discard one `energy_type` Energy from the opponent's Active (e.g. Dedenne, Surskit).
+    DiscardOpponentActiveEnergyOfType {
+        energy_type: EnergyType,
+    },
+    /// Discard a random Energy from BOTH Active Pokémon (e.g. Oricorio, Yveltal).
+    DiscardRandomEnergyBothActive,
     CoinFlipDiscardEnergyFromOpponentActive,
     /// Pidgeot's Twister / Mega Pidgeot ex's Giant Twister: flip `num_coins` coins and discard a
     /// random Energy from the opponent's Active Pokémon for each heads. If every coin is tails
@@ -129,8 +157,19 @@ pub enum Mechanic {
         extra_damage: u32,
         self_damage: u32,
     },
+    /// Flip a coin; heads deals `damage` to the opponent's Active, tails heals `heal` from it
+    /// (e.g. Delibird's Present).
+    CoinFlipDamageOrHealOpponent {
+        damage: u32,
+        heal: u32,
+    },
     CoinFlipSelfDamage {
         self_damage: u32,
+    },
+    /// Flip a coin; on tails discard `count` random Energy from the attacking Pokémon
+    /// (e.g. Entei).
+    CoinFlipSelfDiscardRandomEnergy {
+        count: usize,
     },
     ExtraDamageForEachHeads {
         include_fixed_damage: bool,
@@ -280,6 +319,11 @@ pub enum Mechanic {
         boosted_num_coins: usize,
         tool: CardId,
     },
+    /// Croagunk / Toxicroak: flip one coin for each of your Pokémon in play, dealing
+    /// `damage_per_head` for each heads.
+    CoinFlipPerPokemonInPlay {
+        damage_per_head: u32,
+    },
     DamageAndMultipleCardEffects {
         opponent: bool,
         effects: Vec<CardEffect>,
@@ -336,6 +380,14 @@ pub enum Mechanic {
     DrawCard {
         amount: u8,
     },
+    /// Draw a card for each of your Pokémon in play named `name` (e.g. Poochyena).
+    DrawPerPokemonWithName {
+        name: String,
+    },
+    /// Flip a coin; on heads set the opponent's Active remaining HP to `hp` (e.g. Xatu).
+    CoinFlipSetOpponentHpTo {
+        hp: u32,
+    },
     SelfDiscardAllEnergy,
     SelfDiscardAllTypeEnergy {
         energy_type: EnergyType,
@@ -351,7 +403,9 @@ pub enum Mechanic {
         energy_type: EnergyType,
         damage: u32,
     },
-    SelfDiscardRandomEnergy,
+    SelfDiscardRandomEnergy {
+        count: usize,
+    },
     AlsoBenchDamage {
         opponent: bool,
         damage: u32,

@@ -244,6 +244,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::HealAllYourPokemon { amount } => {
             heal_all_your_pokemon_attack(attack.fixed_damage, *amount)
         }
+        Mechanic::HealAllBenchedPokemon { amount, only_basic } => {
+            heal_all_benched_pokemon_attack(attack.fixed_damage, *amount, *only_basic)
+        }
         Mechanic::CoinFlipSelfHeal { amount } => {
             coin_flip_self_heal_attack(attack.fixed_damage, *amount)
         }
@@ -317,6 +320,16 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::ChanceStatusAttack { condition } => {
             damage_chance_status_attack(attack.fixed_damage, *condition)
         }
+        Mechanic::CoinFlipStatusOutcome {
+            heads_status,
+            tails_status,
+        } => coin_flip_status_outcome_attack(attack.fixed_damage, *heads_status, *tails_status),
+        Mechanic::ChanceMultipleStatusAttack { conditions } => {
+            damage_chance_multiple_status_attack(attack.fixed_damage, conditions.clone())
+        }
+        Mechanic::CoinFlipStatusSelfOrOpponent { status } => {
+            coin_flip_status_self_or_opponent_attack(attack.fixed_damage, *status)
+        }
         Mechanic::ChooseStatusToInflict { options } => {
             damage_and_choose_status_attack(attack.fixed_damage, options.clone())
         }
@@ -325,6 +338,12 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::DiscardEnergyFromOpponentActive => {
             damage_and_discard_energy(attack.fixed_damage, 1)
+        }
+        Mechanic::DiscardOpponentActiveEnergyOfType { energy_type } => {
+            damage_and_discard_opponent_active_energy_of_type(attack.fixed_damage, *energy_type)
+        }
+        Mechanic::DiscardRandomEnergyBothActive => {
+            discard_random_energy_both_active(attack.fixed_damage)
         }
         Mechanic::CoinFlipDiscardEnergyFromOpponentActive => mawile_crunch(),
         Mechanic::CoinFlipsDiscardEnergyFromOpponentActiveOrNothing { num_coins } => {
@@ -360,8 +379,14 @@ fn forecast_effect_attack_by_mechanic(
             extra_damage,
             self_damage,
         } => extra_or_self_damage_attack(attack.fixed_damage, *extra_damage, *self_damage),
+        Mechanic::CoinFlipDamageOrHealOpponent { damage, heal } => {
+            coin_flip_damage_or_heal_opponent_attack(*damage, *heal)
+        }
         Mechanic::CoinFlipSelfDamage { self_damage } => {
             coinflip_self_damage_attack(attack.fixed_damage, *self_damage)
+        }
+        Mechanic::CoinFlipSelfDiscardRandomEnergy { count } => {
+            coin_flip_self_discard_random_energy(attack.fixed_damage, *count)
         }
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage,
@@ -390,6 +415,9 @@ fn forecast_effect_attack_by_mechanic(
             *boosted_num_coins,
             *tool,
         ),
+        Mechanic::CoinFlipPerPokemonInPlay { damage_per_head } => {
+            coin_flip_per_pokemon_in_play_attack(state, *damage_per_head)
+        }
         Mechanic::DiscardSelfEnergyPerHeadsExtraDamage {
             num_coins,
             energy_type,
@@ -486,6 +514,10 @@ fn forecast_effect_attack_by_mechanic(
             *duration,
         ),
         Mechanic::DrawCard { amount } => draw_and_damage_outcome(attack.fixed_damage, *amount),
+        Mechanic::DrawPerPokemonWithName { name } => {
+            draw_per_pokemon_with_name_attack(state, attack.fixed_damage, name)
+        }
+        Mechanic::CoinFlipSetOpponentHpTo { hp } => coin_flip_set_opponent_hp(*hp),
         Mechanic::SelfDiscardAllEnergy => damage_and_discard_all_energy(attack.fixed_damage),
         Mechanic::SelfDiscardAllTypeEnergy { energy_type } => {
             discard_all_energy_of_type_attack(attack.fixed_damage, *energy_type)
@@ -502,7 +534,9 @@ fn forecast_effect_attack_by_mechanic(
             energy_type,
             damage,
         } => discard_all_energy_of_type_then_damage_any_opponent_pokemon(*energy_type, *damage),
-        Mechanic::SelfDiscardRandomEnergy => damage_and_discard_random_energy(attack.fixed_damage),
+        Mechanic::SelfDiscardRandomEnergy { count } => {
+            damage_and_discard_random_energy(attack.fixed_damage, *count)
+        }
         Mechanic::AlsoBenchDamage {
             opponent,
             damage,
@@ -1524,6 +1558,17 @@ fn damage_for_each_heads_with_tool_boost_attack(
     })
 }
 
+/// Croagunk / Toxicroak: flip one coin per Pokémon the attacker has in play, dealing
+/// `damage_per_head` per heads.
+fn coin_flip_per_pokemon_in_play_attack(state: &State, damage_per_head: u32) -> AttackOutcomes {
+    let num_coins = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .count();
+    AttackOutcomes::binomial_by_heads(num_coins, move |heads| {
+        active_damage_outcome(heads as u32 * damage_per_head)
+    })
+}
+
 /// Deal damage and attach energy to a pokemon of choice in the bench.
 pub(crate) fn energy_bench_attack(
     energies: Vec<EnergyType>,
@@ -1617,6 +1662,17 @@ fn extra_or_self_damage_attack(
     )
 }
 
+/// Delibird – Present: heads deals `damage` to the opponent's Active, tails heals `heal` from it.
+fn coin_flip_damage_or_heal_opponent_attack(damage: u32, heal: u32) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_outcome(damage),
+        AttackOutcome::effect_only(move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state.get_active_mut(opponent).heal(heal);
+        }),
+    )
+}
+
 /// Deal damage, then let the player choose which Special Condition to inflict on the
 /// opponent's Active Pokémon (e.g. Dustox's Select Powder).
 fn damage_and_choose_status_attack(damage: u32, options: Vec<StatusCondition>) -> AttackOutcomes {
@@ -1637,6 +1693,50 @@ fn damage_chance_status_attack(damage: u32, status: StatusCondition) -> AttackOu
     AttackOutcomes::binary_coin(
         active_damage_effect_outcome(damage, build_status_effect(status)),
         active_damage_outcome(damage),
+    )
+}
+
+/// Lanturn ex – Flash Cannon: heads inflicts `heads_status`, tails inflicts `tails_status`,
+/// both on the opponent's Active.
+fn coin_flip_status_outcome_attack(
+    damage: u32,
+    heads_status: StatusCondition,
+    tails_status: StatusCondition,
+) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_effect_outcome(damage, build_status_effect(heads_status)),
+        active_damage_effect_outcome(damage, build_status_effect(tails_status)),
+    )
+}
+
+/// Tentacruel – Tentacle Dance / Drapion / Amoonguss: heads inflicts ALL of `conditions` on
+/// the opponent's Active.
+fn damage_chance_multiple_status_attack(
+    damage: u32,
+    conditions: Vec<StatusCondition>,
+) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_effect_outcome(damage, move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            for &status in &conditions {
+                state.apply_status_condition(opponent, 0, status);
+            }
+        }),
+        active_damage_outcome(damage),
+    )
+}
+
+/// Psyduck – Confusion Wave: heads inflicts `status` on the opponent's Active, tails inflicts
+/// it on the attacker itself.
+fn coin_flip_status_self_or_opponent_attack(
+    damage: u32,
+    status: StatusCondition,
+) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_effect_outcome(damage, build_status_effect(status)),
+        active_damage_effect_outcome(damage, move |_, state, action| {
+            state.apply_status_condition(action.actor, 0, status);
+        }),
     )
 }
 
@@ -2217,6 +2317,24 @@ fn heal_all_pokemon(state: &mut State, player: usize, amount: u32) {
     }
 }
 
+/// Heal `amount` from each of the player's Benched Pokémon; when `only_basic` is true, only
+/// Basic Pokémon are healed (Alomomola heals all, Ho-Oh heals only Basic).
+fn heal_all_benched_pokemon_attack(damage: u32, amount: u32, only_basic: bool) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let benched: Vec<usize> = state
+            .enumerate_bench_pokemon(action.actor)
+            .filter(|(_, pokemon)| !only_basic || pokemon.card.is_basic())
+            .map(|(idx, _)| idx)
+            .collect();
+        for idx in benched {
+            state.in_play_pokemon[action.actor][idx]
+                .as_mut()
+                .expect("Benched Pokémon should exist")
+                .heal(amount);
+        }
+    })
+}
+
 fn coin_flip_self_heal_attack(damage: u32, heal: u32) -> AttackOutcomes {
     AttackOutcomes::binary_coin(
         active_damage_effect_outcome(damage, move |_, state, action| {
@@ -2477,13 +2595,112 @@ fn randomize_opponent_next_energy_attack(damage: u32) -> AttackOutcomes {
     })
 }
 
-fn damage_and_discard_random_energy(damage: u32) -> AttackOutcomes {
+fn damage_and_discard_random_energy(damage: u32, count: usize) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |rng, state, action| {
         let active = state.get_active(action.actor);
-        if !active.attached_energy.is_empty() {
+        let mut to_discard = Vec::new();
+        let mut remaining = active.attached_energy.clone();
+        for _ in 0..count {
+            if remaining.is_empty() {
+                break;
+            }
+            let idx = rng.gen_range(0..remaining.len());
+            to_discard.push(remaining.swap_remove(idx));
+        }
+        if !to_discard.is_empty() {
+            state.discard_from_active(action.actor, &to_discard);
+        }
+    })
+}
+
+/// Deal damage and discard one Energy of `energy_type` from the opponent's Active
+/// (e.g. Dedenne, Surskit).
+fn damage_and_discard_opponent_active_energy_of_type(
+    damage: u32,
+    energy_type: EnergyType,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let to_discard: Vec<EnergyType> = state
+            .get_active(opponent)
+            .attached_energy
+            .iter()
+            .filter(|&&e| e == energy_type)
+            .take(1)
+            .copied()
+            .collect();
+        if !to_discard.is_empty() {
+            state.discard_from_active(opponent, &to_discard);
+        }
+    })
+}
+
+/// Deal damage and discard a random Energy from BOTH Active Pokémon (e.g. Oricorio, Yveltal).
+fn discard_random_energy_both_active(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |rng, state, action| {
+        let players = [action.actor, (action.actor + 1) % 2];
+        for player in players {
+            let active = state.get_active(player);
+            if active.attached_energy.is_empty() {
+                continue;
+            }
             let idx = rng.gen_range(0..active.attached_energy.len());
             let energy = active.attached_energy[idx];
-            state.discard_from_active(action.actor, &[energy]);
+            state.discard_from_active(player, &[energy]);
+        }
+    })
+}
+
+/// Flip a coin; on tails discard `count` random Energy from the attacker (e.g. Entei).
+fn coin_flip_self_discard_random_energy(damage: u32, count: usize) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_outcome(damage),
+        active_damage_effect_outcome(damage, move |rng, state, action| {
+            let active = state.get_active(action.actor);
+            let mut to_discard = Vec::new();
+            let mut remaining = active.attached_energy.clone();
+            for _ in 0..count {
+                if remaining.is_empty() {
+                    break;
+                }
+                let idx = rng.gen_range(0..remaining.len());
+                to_discard.push(remaining.swap_remove(idx));
+            }
+            if !to_discard.is_empty() {
+                state.discard_from_active(action.actor, &to_discard);
+            }
+        }),
+    )
+}
+
+/// Flip a coin; on heads set the opponent's Active remaining HP to `hp` (e.g. Xatu).
+fn coin_flip_set_opponent_hp(hp: u32) -> AttackOutcomes {
+    AttackOutcomes::binary_coin(
+        active_damage_effect_outcome(0, move |_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            let active = state.get_active_mut(opponent);
+            let current = active.get_remaining_hp();
+            if current > hp {
+                active.apply_damage(current - hp);
+            } else {
+                active.heal(hp - current);
+            }
+        }),
+        active_damage_outcome(0),
+    )
+}
+
+/// Draw a card for each of your Pokémon in play named `name` (e.g. Poochyena).
+fn draw_per_pokemon_with_name_attack(state: &State, damage: u32, name: &str) -> AttackOutcomes {
+    let count = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .filter(|(_, p)| p.get_name() == name)
+        .count() as u8;
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        if count > 0 {
+            state
+                .move_generation_stack
+                .push((action.actor, vec![SimpleAction::DrawCard { amount: count }]));
         }
     })
 }
