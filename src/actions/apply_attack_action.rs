@@ -43,6 +43,9 @@ use super::{
     SimpleAction,
 };
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 // This is a reducer of all actions relating to attacks.
 //
 // `is_sub_attack` is true when this attack is being resolved as a sub-action off the
@@ -4086,10 +4089,27 @@ fn damage_reduced_by_self_damage_attack(state: &State, attack: &Attack) -> Attac
 
 /// Kabutops - Leech Life: heal the same aount of damage dealt.
 fn heal_equal_to_damage_dealt_attack(damage: u32) -> AttackOutcomes {
-    active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.heal(damage);
-    })
+    let hp_before = Rc::new(Cell::new(0));
+    AttackOutcomes::single(AttackOutcome::damage_with_pre_and_post(
+        vec![(damage, true, 0)],
+        {
+            let hp_before = Rc::clone(&hp_before);
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                hp_before.set(state.get_active(opponent).get_remaining_hp());
+            }
+        },
+        {
+            let hp_before = Rc::clone(&hp_before);
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                let dealt = hp_before
+                    .get()
+                    .saturating_sub(state.get_active(opponent).get_remaining_hp());
+                state.get_active_mut(action.actor).heal(dealt);
+            }
+        },
+    ))
 }
 
 #[cfg(test)]
