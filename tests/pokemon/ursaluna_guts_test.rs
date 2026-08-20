@@ -180,6 +180,54 @@ fn test_guts_flips_again_on_kangaskhans_second_punch() {
     assert!(saw_knocked_out);
 }
 
+/// Guts flips independently for each Pokémon facing lethal damage in the same attack:
+/// Lurantis's Petal Blizzard (20 to each of the opponent's Pokémon) against two Ursalunas at
+/// 20 HP must produce every survivor count (0, 1 and 2), with each survivor at exactly 10 HP.
+#[test]
+fn test_guts_flips_independently_for_each_pokemon_in_spread_attack() {
+    let mut seen_survivor_counts = [false; 3];
+
+    for seed in 0..60u64 {
+        let mut game = get_initialized_game_with_board(
+            seed,
+            0,
+            3,
+            vec![PlayedCard::from_id(CardId::A3015Lurantis).with_energy(vec![EnergyType::Grass])],
+            vec![
+                PlayedCard::from_id(CardId::B3b058Ursaluna).with_remaining_hp(20),
+                PlayedCard::from_id(CardId::B3b058Ursaluna).with_remaining_hp(20),
+            ],
+        );
+
+        game.apply_action(&Action {
+            actor: 0,
+            action: attack_action(CardId::A3015Lurantis, 0),
+            is_stack: false,
+        });
+
+        let state = game.get_state_clone();
+        let survivors: Vec<_> = state.enumerate_in_play_pokemon(1).collect();
+        for (idx, pokemon) in &survivors {
+            assert_eq!(
+                pokemon.get_remaining_hp(),
+                10,
+                "seed {seed}: surviving Ursaluna at slot {idx} should be at exactly 10 HP"
+            );
+        }
+        assert_eq!(
+            state.points[0] as usize,
+            2 - survivors.len(),
+            "seed {seed}: each Knocked Out Ursaluna should award a point"
+        );
+        seen_survivor_counts[survivors.len()] = true;
+    }
+
+    assert!(
+        seen_survivor_counts.iter().all(|seen| *seen),
+        "expected seeds where 0, 1 and 2 Ursalunas survive, saw {seen_survivor_counts:?}"
+    );
+}
+
 /// Non-lethal damage must not trigger the Guts coin flip: damage should apply normally on
 /// every seed.
 #[test]
