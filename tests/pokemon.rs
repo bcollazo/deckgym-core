@@ -164,6 +164,8 @@ mod kubfu_training_test;
 mod lanturn_ex_test;
 #[path = "pokemon/legacy_ability_logic_test.rs"]
 mod legacy_ability_logic_test;
+#[path = "pokemon/lilligant_toughness_aroma_test.rs"]
+mod lilligant_toughness_aroma_test;
 #[path = "pokemon/lucario_b3_test.rs"]
 mod lucario_b3_test;
 #[path = "pokemon/lucario_fighting_coach_test.rs"]

@@ -23,6 +23,7 @@ pub struct PlayedCard {
     damage_counters: u32,
     base_hp: u32,
     stadium_hp_bonus: u32,
+    ability_team_hp_bonus: u32,
     pub attached_energy: Vec<EnergyType>,
     pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
@@ -55,6 +56,7 @@ impl PlayedCard {
             damage_counters,
             base_hp,
             stadium_hp_bonus: 0,
+            ability_team_hp_bonus: 0,
             attached_energy,
             played_this_turn,
             moved_to_active_this_turn: false,
@@ -195,6 +197,13 @@ impl PlayedCard {
         };
     }
 
+    /// Sets the cached team-wide HP bonus granted by abilities like Lilligant's Toughness
+    /// Aroma. Recomputed by `State::refresh_ability_team_hp_bonus_for_player` whenever a
+    /// player's board composition changes.
+    pub(crate) fn set_ability_team_hp_bonus(&mut self, bonus: u32) {
+        self.ability_team_hp_bonus = bonus;
+    }
+
     pub fn get_remaining_hp(&self) -> u32 {
         self.get_effective_total_hp()
             .saturating_sub(self.damage_counters)
@@ -233,6 +242,7 @@ impl PlayedCard {
         }
 
         effective_hp += self.stadium_hp_bonus;
+        effective_hp += self.ability_team_hp_bonus;
 
         // Reuniclus Infinite Increase: +30 HP for each Psychic Energy attached
         if has_ability_mechanic(
