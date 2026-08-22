@@ -144,6 +144,20 @@ impl AttackOutcome {
             }
         })
     }
+
+    /// Damage with both a pre-damage and a post-damage effect. The two effects can share state
+    /// via a captured 'Rc' (e.g. to heal based on the damage acutally dealt after modifier).
+    pub fn damage_with_pre_and_post<F, G>(targets: Vec<DamageTarget>, pre: F, post: G) -> Self
+    where
+        F: Fn(&mut StdRng, &mut State, &Action) + 'static,
+        G: Fn(&mut StdRng, &mut State, &Action) + 'static,
+    {
+        Self {
+            damage: targets,
+            pre_damage_effect: Some(Rc::new(pre)),
+            post_damage_effect: Some(Rc::new(post)),
+        }
+    }
 }
 
 /// A probability distribution over `AttackOutcome`s, mirroring `Outcomes` but with damage

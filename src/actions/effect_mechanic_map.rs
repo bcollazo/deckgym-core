@@ -949,7 +949,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Heal 50 damage from 1 of your Benched Pokémon.",
         Mechanic::HealOneYourBenchedPokemon { amount: 50 },
     );
-    // map.insert("Heal from this Pokémon the same amount of damage you did to your opponent's Active Pokémon.", todo_implementation);
+    map.insert("Heal from this Pokémon the same amount of damage you did to your opponent's Active Pokémon.", Mechanic::HealEqualToDamageDealt);
     map.insert(
         "If 1 of your Pokémon used Sweets Relay during your last turn, this attack does 20 more damage.",
         Mechanic::ExtraDamageIfAttackUsedDuringOwnLastTurn {
@@ -1820,7 +1820,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             bench_only: false,
         },
     );
-    // map.insert("This attack does 50 more damage for each of your Benched Nidoking.", todo_implementation);
+    map.insert(
+        "This attack does 50 more damage for each of your Benched Nidoking.",
+        Mechanic::ExtraDamagePerPokemonWithNameOnBench {
+            pokemon_name: "Nidoking".to_string(),
+            damage_per: 50,
+        },
+    );
     map.insert(
         "This attack does 60 damage to 1 of your opponent's Pokémon.",
         Mechanic::DirectDamage {

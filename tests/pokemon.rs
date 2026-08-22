@@ -150,6 +150,8 @@ mod iron_valiant_future_system_test;
 mod jellicent_bouncy_body_test;
 #[path = "pokemon/jolteon_ex_test.rs"]
 mod jolteon_ex_test;
+#[path = "pokemon/kabutops_test.rs"]
+mod kabutops_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
 mod klefki_dismantling_keys_test;
 #[path = "pokemon/kommo_o_clanging_scales_test.rs"]
@@ -218,6 +220,8 @@ mod milotic_ex_aqua_charge_test;
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
 mod morpeko_test;
+#[path = "pokemon/nidoqueen_test.rs"]
+mod nidoqueen_test;
 #[path = "pokemon/ninetales_ember_dance_test.rs"]
 mod ninetales_ember_dance_test;
 #[path = "pokemon/oricorio_yveltal_test.rs"]

@@ -43,6 +43,9 @@ use super::{
     SimpleAction,
 };
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 // This is a reducer of all actions relating to attacks.
 //
 // `is_sub_attack` is true when this attack is being resolved as a sub-action off the
@@ -579,6 +582,15 @@ fn forecast_effect_attack_by_mechanic(
             pokemon_name,
             *extra_damage,
         ),
+        Mechanic::ExtraDamagePerPokemonWithNameOnBench {
+            pokemon_name,
+            damage_per,
+        } => extra_damage_per_pokemon_with_name_on_bench(
+            state,
+            attack.fixed_damage,
+            pokemon_name,
+            *damage_per,
+        ),
         Mechanic::DamageEqualToSelfDamage => damage_equal_to_self_damage(state),
         Mechanic::ExtraDamageEqualToSelfDamage => {
             extra_damage_equal_to_self_damage(state, attack.fixed_damage)
@@ -972,6 +984,7 @@ fn forecast_effect_attack_by_mechanic(
             attack_name,
             damage_per,
         } => damage_per_own_pokemon_with_attack_name(state, attack_name, *damage_per),
+        Mechanic::HealEqualToDamageDealt => heal_equal_to_damage_dealt_attack(attack.fixed_damage),
     }
 }
 
@@ -2990,6 +3003,19 @@ fn extra_damage_if_pokemon_on_bench(
     }
 }
 
+fn extra_damage_per_pokemon_with_name_on_bench(
+    state: &State,
+    base: u32,
+    pokemon_name: &str,
+    damage_per: u32,
+) -> AttackOutcomes {
+    let count = state
+        .enumerate_bench_pokemon(state.current_player)
+        .filter(|(_, p)| p.get_name() == pokemon_name)
+        .count();
+    active_damage_doutcome(base + (count as u32) * damage_per)
+}
+
 fn damage_equal_to_self_damage(state: &State) -> AttackOutcomes {
     let attacker = state.get_active(state.current_player);
     let damage = attacker.get_damage_counters();
@@ -4059,6 +4085,31 @@ fn damage_reduced_by_self_damage_attack(state: &State, attack: &Attack) -> Attac
     let damage_taken = active.get_damage_counters();
     let actual_damage = attack.fixed_damage.saturating_sub(damage_taken);
     active_damage_doutcome(actual_damage)
+}
+
+/// Kabutops - Leech Life: heal the same aount of damage dealt.
+fn heal_equal_to_damage_dealt_attack(damage: u32) -> AttackOutcomes {
+    let hp_before = Rc::new(Cell::new(0));
+    AttackOutcomes::single(AttackOutcome::damage_with_pre_and_post(
+        vec![(damage, true, 0)],
+        {
+            let hp_before = Rc::clone(&hp_before);
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                hp_before.set(state.get_active(opponent).get_remaining_hp());
+            }
+        },
+        {
+            let hp_before = Rc::clone(&hp_before);
+            move |_, state, action| {
+                let opponent = (action.actor + 1) % 2;
+                let dealt = hp_before
+                    .get()
+                    .saturating_sub(state.get_active(opponent).get_remaining_hp());
+                state.get_active_mut(action.actor).heal(dealt);
+            }
+        },
+    ))
 }
 
 #[cfg(test)]
