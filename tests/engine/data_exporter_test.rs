@@ -7,15 +7,28 @@ use deckgym::{
 use std::{fs, path::PathBuf};
 use uuid::Uuid;
 
-fn unique_temp_dir() -> PathBuf {
-    std::env::temp_dir().join(format!("deckgym-export-test-{}", Uuid::new_v4()))
+/// Removes the export directory when dropped, so a failing assertion does not
+/// leave files behind in the system temp folder.
+struct TempExportDir(PathBuf);
+
+impl TempExportDir {
+    fn new() -> Self {
+        Self(std::env::temp_dir().join(format!("deckgym-export-test-{}", Uuid::new_v4())))
+    }
+}
+
+impl Drop for TempExportDir {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
 }
 
 /// Every simulated game should produce a folder holding its pre-action ply
 /// snapshots plus an `outcome.json` whose result matches what the engine reported.
 #[test]
 fn test_data_exporter_writes_plies_and_outcome_per_game() {
-    let output_dir = unique_temp_dir();
+    let temp_dir = TempExportDir::new();
+    let output_dir = temp_dir.0.clone();
     let export_dir = output_dir.clone();
     let (deck_a, deck_b) = load_test_decks();
     let num_games = 3;
@@ -85,6 +98,4 @@ fn test_data_exporter_writes_plies_and_outcome_per_game() {
     expected.sort();
     actual.sort();
     assert_eq!(actual, expected);
-
-    fs::remove_dir_all(&output_dir).unwrap();
 }

@@ -42,6 +42,33 @@ impl DataExporter {
     }
 }
 
+impl DataExporter {
+    fn write_outcome(&self, game_id: Uuid, result: Option<GameOutcome>) {
+        let game_folder = self.output_folder.join(game_id.to_string());
+        if let Err(e) = fs::create_dir_all(&game_folder) {
+            warn!("Failed to create game folder {:?}: {}", game_folder, e);
+            return;
+        }
+
+        let outcome = ExportedGameOutcome {
+            game_id: game_id.to_string(),
+            result,
+        };
+
+        let file_path = game_folder.join("outcome.json");
+        match serde_json::to_string_pretty(&outcome) {
+            Ok(json) => {
+                if let Err(e) = fs::write(&file_path, json) {
+                    warn!("Failed to write outcome file {:?}: {}", file_path, e);
+                }
+            }
+            Err(e) => {
+                warn!("Failed to serialize outcome for game {}: {}", game_id, e);
+            }
+        }
+    }
+}
+
 impl SimulationEventHandler for DataExporter {
     fn on_game_start(&mut self, game_id: Uuid) {
         self.current_game_id = Some(game_id);
@@ -96,27 +123,7 @@ impl SimulationEventHandler for DataExporter {
     fn on_game_end(&mut self, game_id: Uuid, _state: State, result: Option<GameOutcome>) {
         // The exported plies only contain pre-action states, so the terminal outcome
         // is never recoverable from them. Persist it alongside the plies.
-        let game_folder = self.output_folder.join(game_id.to_string());
-        if let Err(e) = fs::create_dir_all(&game_folder) {
-            warn!("Failed to create game folder {:?}: {}", game_folder, e);
-        }
-
-        let outcome = ExportedGameOutcome {
-            game_id: game_id.to_string(),
-            result,
-        };
-
-        let file_path = game_folder.join("outcome.json");
-        match serde_json::to_string_pretty(&outcome) {
-            Ok(json) => {
-                if let Err(e) = fs::write(&file_path, json) {
-                    warn!("Failed to write outcome file {:?}: {}", file_path, e);
-                }
-            }
-            Err(e) => {
-                warn!("Failed to serialize outcome for game {}: {}", game_id, e);
-            }
-        }
+        self.write_outcome(game_id, result);
 
         // Reset for next game
         self.ply_counter = 0;
