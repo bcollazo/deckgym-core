@@ -300,6 +300,8 @@ mod sylveon_soothing_ribbon_test;
 mod tandemaus_b2_test;
 #[path = "pokemon/tapu_lele_energy_arrow_test.rs"]
 mod tapu_lele_energy_arrow_test;
+#[path = "pokemon/team_rockets_electrode_destiny_burst_test.rs"]
+mod team_rockets_electrode_destiny_burst_test;
 #[path = "pokemon/team_rockets_moltres_ex_heat_charged_test.rs"]
 mod team_rockets_moltres_ex_heat_charged_test;
 #[path = "pokemon/team_rockets_raticate_ex_test.rs"]

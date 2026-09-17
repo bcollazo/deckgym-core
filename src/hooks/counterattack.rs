@@ -1,4 +1,10 @@
-use crate::{card_ids::CardId, effects::CardEffect, models::PlayedCard, tools::has_tool};
+use crate::{
+    actions::{abilities::AbilityMechanic, get_ability_mechanic},
+    card_ids::CardId,
+    effects::CardEffect,
+    models::PlayedCard,
+    tools::has_tool,
+};
 
 /// Some cards counterattack either because of RockyHelmet or because of their own ability.
 pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
@@ -33,6 +39,16 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
     }
 
     total_damage
+}
+
+/// Damage some Pokémon deal to the attacker when they themselves are Knocked Out by that hit
+/// (e.g. Team Rocket's Electrode's Destiny Burst). Callers should only add this once `card` has
+/// actually been knocked out by the damage in question — it does not check remaining HP itself.
+pub(crate) fn get_knockout_retaliation_damage(card: &PlayedCard) -> u32 {
+    match get_ability_mechanic(&card.card) {
+        Some(AbilityMechanic::DamageAttackerOnKnockout { amount }) => *amount,
+        _ => 0,
+    }
 }
 
 /// Check if the defending Pokemon should poison the attacker when damaged.

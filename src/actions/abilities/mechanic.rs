@@ -257,6 +257,15 @@ pub enum AbilityMechanic {
     CounterattackDamage {
         amount: u32,
     },
+    /// Team Rocket's Electrode's Destiny Burst: "If this Pokémon is in the Active Spot and is
+    /// Knocked Out by damage from an attack from your opponent's Pokémon, do `amount` damage to
+    /// the Attacking Pokémon." Unlike `CounterattackDamage`, which fires on every hit, this only
+    /// fires when the hit actually knocks this Pokémon out. Passive; resolved alongside
+    /// counterattack damage in `handle_damage_only`, so a resulting double-knockout is detected
+    /// in the same pass.
+    DamageAttackerOnKnockout {
+        amount: u32,
+    },
     PoisonAttackerOnDamaged,
     /// Jellicent's Bouncy Body: if this Pokémon is in the Active Spot and is damaged by an attack
     /// from the opponent's Pokémon, its owner takes an Energy of `energy_type` from their Energy

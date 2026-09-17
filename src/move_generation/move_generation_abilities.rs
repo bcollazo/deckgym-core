@@ -189,6 +189,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::CanEvolveIntoEeveeEvolution => false,
         AbilityMechanic::CanEvolveOnFirstTurnIfActive => false,
         AbilityMechanic::CounterattackDamage { .. } => false,
+        AbilityMechanic::DamageAttackerOnKnockout { .. } => false,
         AbilityMechanic::PoisonAttackerOnDamaged => false,
         AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged { .. } => false,
         AbilityMechanic::IncreaseAttackCostForOpponentActive { .. } => false,

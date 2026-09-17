@@ -284,6 +284,9 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::CounterattackDamage { .. } => {
             panic!("CounterattackDamage is a passive ability")
         }
+        AbilityMechanic::DamageAttackerOnKnockout { .. } => {
+            panic!("DamageAttackerOnKnockout is a passive ability")
+        }
         AbilityMechanic::PoisonAttackerOnDamaged => {
             panic!("PoisonAttackerOnDamaged is a passive ability")
         }
