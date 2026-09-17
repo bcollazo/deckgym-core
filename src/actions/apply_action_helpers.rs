@@ -11,8 +11,9 @@ use crate::{
     card_ids::CardId,
     effects::TurnEffect,
     hooks::{
-        get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
-        should_poison_attacker, DamageModifierContext,
+        get_counterattack_damage, get_knockout_retaliation_damage, modify_damage,
+        on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
+        DamageModifierContext,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -570,13 +571,12 @@ pub(crate) fn handle_damage_only(
         let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
             .as_ref()
             .expect("Pokemon should be there if taking damage");
-        let counter_damage = {
-            if target_pokemon_idx == 0 {
-                get_counterattack_damage(target_pokemon)
-            } else {
-                0
-            }
-        };
+        let mut counter_damage = get_counterattack_damage(target_pokemon);
+        // Destiny Burst-style abilities: only fire when this hit actually knocked the holder
+        // out, and only against an opponent's attack (not a self-KO).
+        if attacking_player != target_player && target_pokemon.get_remaining_hp() == 0 {
+            counter_damage += get_knockout_retaliation_damage(target_pokemon);
+        }
         let should_poison = should_poison_attacker(target_pokemon);
 
         // Apply counterattack damage and poison
