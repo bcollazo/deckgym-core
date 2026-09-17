@@ -2,7 +2,7 @@ mod attacks;
 mod move_generation_abilities;
 mod move_generation_trainer;
 
-use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic, Action, SimpleAction};
+use crate::actions::{abilities::AbilityMechanic, Action, SimpleAction};
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::stadiums::{
@@ -193,7 +193,7 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                         .as_ref()
                         .is_some_and(|active| {
                             matches!(
-                                get_ability_mechanic(&active.card),
+                                active.ability_mechanic(),
                                 Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
                             )
                         });
@@ -210,7 +210,7 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                             // Check if this pokemon has Boosted Evolution and is in active spot
                             let can_bypass_timing = i == 0
                                 && matches!(
-                                    get_ability_mechanic(&pokemon.card),
+                                    pokemon.ability_mechanic(),
                                     Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
                                 );
 
@@ -270,7 +270,7 @@ fn has_opponent_aerodactyl_ex_primeval_law(state: &State, player: usize) -> bool
         .enumerate_in_play_pokemon(opponent)
         .any(|(_, pokemon)| {
             matches!(
-                get_ability_mechanic(&pokemon.card),
+                pokemon.ability_mechanic(),
                 Some(AbilityMechanic::PreventOpponentActiveEvolution)
             )
         })

@@ -517,7 +517,7 @@ fn team_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     let mut eligible_energy: Vec<(usize, EnergyType)> = Vec::new();
 
     for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
-        if pokemon.card.get_ability().is_some() {
+        if pokemon.ability().is_some() {
             for energy in pokemon.attached_energy.iter().copied() {
                 eligible_energy.push((in_play_idx, energy));
             }

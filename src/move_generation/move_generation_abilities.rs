@@ -24,13 +24,12 @@ pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
 }
 
 fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -> bool {
-    if card.card.get_ability().is_none() {
+    if card.ability().is_none() {
         return false;
     }
 
     let mechanic = card
-        .card
-        .get_ability()
+        .ability()
         .and_then(|a| ability_mechanic_from_effect(&a.effect))
         .unwrap_or_else(|| {
             panic!(

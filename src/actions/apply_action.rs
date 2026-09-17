@@ -8,7 +8,11 @@ use crate::{
     actions::{
         abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
-        apply_action_helpers::{apply_activate, wrap_with_common_logic},
+        apply_action_helpers::{
+            apply_activate, shuffle_in_play_pokemon_and_attachments_into_deck,
+            wrap_with_common_logic,
+        },
+        attack_helpers::energy_blender_choices,
     },
     effects::TurnEffect,
     hooks::{
@@ -183,6 +187,8 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
         | SimpleAction::DiscardOwnBenchedThenDamage { .. }
+        | SimpleAction::DiscardOwnBenchedGroupThenDamage { .. }
+        | SimpleAction::MoveEnergyAndReoffer { .. }
         | SimpleAction::ReturnPokemonToHand { .. }
         | SimpleAction::ShuffleInPlayPokemonIntoDeck { .. }
         | SimpleAction::DiscardToolFromPokemon { .. }
@@ -231,6 +237,9 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         }
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
+        }
+        SimpleAction::ShuffleSelfAndAttachmentsIntoDeck { in_play_idx } => {
+            forecast_shuffle_self_and_attachments_into_deck(action.actor, *in_play_idx)
         }
         SimpleAction::DiscardOpponentSupporter { supporter_card } => {
             forecast_discard_opponent_supporter(action.actor, supporter_card)
@@ -463,12 +472,34 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             in_play_idx,
             damage,
         } => apply_discard_own_benched_then_damage(action.actor, state, *in_play_idx, *damage),
+        SimpleAction::DiscardOwnBenchedGroupThenDamage {
+            in_play_indices,
+            damage,
+        } => apply_discard_own_benched_group_then_damage(
+            action.actor,
+            state,
+            in_play_indices,
+            *damage,
+        ),
         SimpleAction::ReturnPokemonToHand { in_play_idx } => {
             apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
         }
         SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
             apply_shuffle_in_play_pokemon_into_deck(action.actor, state, *in_play_idx)
         }
+        SimpleAction::MoveEnergyAndReoffer {
+            from_in_play_idx,
+            to_in_play_idx,
+            energy_type,
+            remaining_moves,
+        } => apply_move_energy_and_reoffer(
+            state,
+            action.actor,
+            *from_in_play_idx,
+            *to_in_play_idx,
+            *energy_type,
+            *remaining_moves,
+        ),
         SimpleAction::DiscardToolFromPokemon {
             player,
             in_play_idx,
@@ -675,6 +706,64 @@ fn apply_discard_own_benched_then_damage(
             is_from_active_attack: true,
         }],
     ));
+}
+
+/// Gyarados's Wild Swing: discard the chosen Benched Pokémon (possibly none of them), then deal
+/// the already-computed boosted damage to the opponent's Active Pokémon in one go.
+fn apply_discard_own_benched_group_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    in_play_indices: &[usize],
+    damage: u32,
+) {
+    for in_play_idx in in_play_indices {
+        if state.in_play_pokemon[acting_player][*in_play_idx].is_some() {
+            state.discard_from_play(acting_player, *in_play_idx);
+        }
+    }
+    let opponent = (acting_player + 1) % 2;
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, opponent, 0)],
+            is_from_active_attack: true,
+        }],
+    ));
+}
+
+fn forecast_shuffle_self_and_attachments_into_deck(
+    acting_player: usize,
+    in_play_idx: usize,
+) -> Outcomes {
+    Outcomes::single_fn(move |rng, state, _action| {
+        shuffle_in_play_pokemon_and_attachments_into_deck(rng, state, acting_player, in_play_idx);
+    })
+}
+
+/// Delcatty's Energy Blender: move a single Energy, then offer the same choice again so the player
+/// can keep going (or stop) until the move budget runs out.
+fn apply_move_energy_and_reoffer(
+    state: &mut State,
+    acting_player: usize,
+    from_in_play_idx: usize,
+    to_in_play_idx: usize,
+    energy_type: EnergyType,
+    remaining_moves: usize,
+) {
+    apply_move_energy(
+        state,
+        acting_player,
+        from_in_play_idx,
+        to_in_play_idx,
+        energy_type,
+        1,
+    );
+
+    let choices = energy_blender_choices(state, acting_player, remaining_moves);
+    if !choices.is_empty() {
+        state.move_generation_stack.push((acting_player, choices));
+    }
 }
 
 fn apply_return_pokemon_to_hand(acting_player: usize, state: &mut State, in_play_idx: usize) {

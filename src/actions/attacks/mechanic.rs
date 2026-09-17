@@ -724,4 +724,117 @@ pub enum Mechanic {
     DamagePerOwnToolAttached {
         damage_per: u32,
     },
+
+    /// Tapu Koko's Volt Switch: like `SwitchSelfWithBench`, but the Bench choice is restricted to
+    /// your Pokémon of `energy_type`.
+    SwitchSelfWithBenchOfType {
+        energy_type: EnergyType,
+    },
+    /// Uxie's Mind Boost: take an Energy of `energy_type` from your Energy Zone and attach it to
+    /// one of your in-play Pokémon whose name is in `names` (e.g. Mesprit or Azelf).
+    AttachEnergyFromZoneToNamed {
+        energy_type: EnergyType,
+        names: Vec<String>,
+    },
+    /// Sableye's Jeweled Gift: take one uniformly random basic Energy (of the 8 selectable types)
+    /// from your Energy Zone and attach it to 1 of your Benched Pokémon.
+    AttachRandomBasicEnergyToBenched,
+    /// Forretress's Enormous Explosion: on top of the attack's damage to the Defending Pokémon,
+    /// deal `self_damage` to the attacking Pokémon and `bench_damage` to EVERY Benched Pokémon on
+    /// both sides.
+    SelfDamageAndAllBenchDamage {
+        self_damage: u32,
+        bench_damage: u32,
+    },
+    /// Mimikyu's Shadow Hit: this attack also does `damage` to 1 of YOUR OWN Pokémon — the
+    /// attacking Pokémon itself included (unlike `AlsoChoiceBenchDamage`, which is Bench-only).
+    AlsoChoiceOwnPokemonDamage {
+        damage: u32,
+    },
+    /// Archeops's Wild Spin: deal `damage` to each of the opponent's Pokémon, plus `increment` for
+    /// each `IncreasedDamageForAttack` effect this attack left on itself during a previous turn.
+    /// The spread damage cannot use the ordinary Active-to-Active `IncreasedDamageForAttack` hook,
+    /// so the bonus is read off the attacker here instead.
+    DamageAllOpponentPokemonEscalating {
+        attack_name: String,
+        damage: u32,
+        increment: u32,
+    },
+    /// Wishiwashi ex's School Storm: like `ExtraDamagePerPokemonWithNameOnBench`, but counts each
+    /// Benched Pokémon matching ANY of `pokemon_names` (e.g. "Wishiwashi" and "Wishiwashi ex").
+    ExtraDamagePerPokemonWithNamesOnBench {
+        pokemon_names: Vec<String>,
+        damage_per: u32,
+    },
+    /// Team Rocket's Magmar's Derisive Roasting: extra damage for each Special Condition currently
+    /// affecting the opponent's Active Pokémon.
+    ExtraDamagePerOpponentSpecialCondition {
+        damage_per: u32,
+    },
+    /// Teal Mask Ogerpon's Ogre's Whip: damage equal to the attacking Pokémon's remaining HP.
+    DamageEqualToSelfRemainingHp,
+    /// Swift: routes as ordinary Active damage. Both bypasses ("isn't affected by Weakness or by
+    /// any effects on your opponent's Active Pokémon") are applied from the attack's effect text in
+    /// `hooks::modify_damage`, exactly like `DamageUnaffectedByWeakness` and
+    /// `DamageUnaffectedByOpponentActiveEffects`.
+    DamageUnaffectedByWeaknessAndOpponentActiveEffects,
+    /// Eldegoss's Float Up / Dunsparce's Bop 'n' Burrow: after damage, the attacker MAY shuffle
+    /// itself and everything attached to it back into its owner's deck.
+    MayShuffleSelfIntoDeck,
+    /// Accelgor's Deck and Cover: inflict `conditions` on the opponent's Active Pokémon, then
+    /// shuffle the attacking Pokémon and everything attached to it into your deck (not optional).
+    InflictStatusConditionsAndShuffleSelfIntoDeck {
+        conditions: Vec<StatusCondition>,
+    },
+    /// Roserade's Poison Ring: inflict `conditions` on the opponent's Active Pokémon and leave
+    /// `effect` on it for `duration` turns (e.g. Poisoned plus "can't retreat next turn").
+    InflictStatusConditionsAndCardEffect {
+        conditions: Vec<StatusCondition>,
+        effect: CardEffect,
+        duration: u8,
+    },
+    /// Tsareena's Kick Down: a random card from the opponent's hand is shuffled into their deck.
+    /// The deterministic counterpart of `CoinFlipShuffleRandomOpponentHandCardIntoDeck`.
+    ShuffleRandomOpponentHandCardIntoDeck,
+    /// Liepard's Snatch and Flee: `ShuffleRandomOpponentHandCardIntoDeck`, and then the attacking
+    /// Pokémon is shuffled into its own owner's deck as well.
+    ShuffleRandomOpponentHandCardIntoDeckAndSelfIntoDeck,
+    /// Mew's Psy Report / Noctowl's Silent Wing: "Your opponent reveals their hand." `State` is
+    /// fully observable to both players in this engine, so revealing a hand changes nothing — the
+    /// attack reduces to its plain damage.
+    RevealOpponentHand,
+    /// Purugly's Interrupt: the opponent reveals their hand and the attacker chooses 1 card from it
+    /// to shuffle into the opponent's deck.
+    ChooseOpponentHandCardToShuffleIntoDeck,
+    /// Gyarados's Wild Swing: the attacker may discard any number of their own Benched Pokémon of
+    /// `energy_type`, dealing `damage_per` more damage for each Pokémon discarded this way.
+    OptionalDiscardBenchedTypeForExtraDamage {
+        energy_type: EnergyType,
+        damage_per: u32,
+    },
+    /// Kingambit's Overlord's Blade: `damage_per` more damage for each time one of the attacker's
+    /// own Pokémon has been Knocked Out during this game.
+    ExtraDamagePerOwnKnockoutThisGame {
+        damage_per: u32,
+    },
+    /// Hisuian Basculegion's Soul Counter: `damage_per` more damage for each point the opponent
+    /// scored during their own previous turn.
+    ExtraDamagePerOpponentPointLastTurn {
+        damage_per: u32,
+    },
+    /// Toxicroak's Toxic / Toxapex's Severe Poison: Poison the opponent's Active Pokémon, but its
+    /// Checkup damage is `poison_damage` instead of the usual 10.
+    InflictPoisonWithDamage {
+        poison_damage: u32,
+    },
+    /// Delcatty's Energy Blender: after damage, the attacker may freely redistribute the Energy
+    /// attached to their own Pokémon in play. Resolved one Energy at a time through
+    /// `SimpleAction::MoveEnergyAndReoffer`; see that variant for why.
+    MoveOwnEnergyAnyWay,
+    /// Mesprit's Supreme Blast: usable only while every Pokémon named in `required_bench_names` is
+    /// on the attacker's Bench; on use, all Energy is discarded from the attacking Pokémon. The
+    /// usability half is enforced in `move_generation::attacks`, which consults this variant.
+    RequireBenchedNamesThenDiscardAllEnergy {
+        required_bench_names: Vec<String>,
+    },
 }

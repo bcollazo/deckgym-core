@@ -1,5 +1,5 @@
 use crate::{
-    actions::{abilities::AbilityMechanic, get_ability_mechanic},
+    actions::abilities::AbilityMechanic,
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
@@ -23,7 +23,7 @@ pub(crate) fn can_retreat(state: &State) -> bool {
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
         if matches!(
-            get_ability_mechanic(&card.card),
+            card.ability_mechanic(),
             Some(AbilityMechanic::NoRetreatIfHasEnergy)
         ) && !card.attached_energy.is_empty()
         {
@@ -69,7 +69,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             let current_player = state.current_player;
             for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
                 if matches!(
-                    get_ability_mechanic(&benched_pokemon.card),
+                    benched_pokemon.ability_mechanic(),
                     Some(
                         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { amount: 1 }
                     )
@@ -84,7 +84,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
                     energy_type,
                     amount,
-                }) = get_ability_mechanic(&benched_pokemon.card)
+                }) = benched_pokemon.ability_mechanic()
                 {
                     if energy_type == &active_energy_type {
                         to_subtract += *amount as u8;
@@ -108,7 +108,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         let opponent = (state.current_player + 1) % 2;
         for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
             if matches!(
-                get_ability_mechanic(&pokemon.card),
+                pokemon.ability_mechanic(),
                 Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
             ) {
                 normal_cost.push(EnergyType::Colorless);

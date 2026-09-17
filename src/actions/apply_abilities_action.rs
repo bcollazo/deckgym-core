@@ -25,8 +25,7 @@ pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usiz
         .expect("Pokemon should be there if using ability");
 
     let mechanic = pokemon
-        .card
-        .get_ability()
+        .ability()
         .and_then(|a| ability_mechanic_from_effect(&a.effect))
         .expect("Pokemon should have ability implemented");
 

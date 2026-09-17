@@ -10,7 +10,7 @@ use std::hash::Hash;
 
 use crate::{
     actions::abilities::AbilityMechanic,
-    actions::{has_ability_mechanic, SimpleAction},
+    actions::SimpleAction,
     deck::Deck,
     effects::TurnEffect,
     models::{Attack, Card, EnergyType, StatusCondition},
@@ -112,6 +112,18 @@ pub struct State {
     // Alcremie's "Sweets Overload": "This attack does 40 damage for each time your Pokémon used
     // Sweets Relay during this game."). Using BTreeMap to keep State hashable.
     pub(crate) attack_name_used_count: [BTreeMap<String, u32>; 2],
+    // Number of each player's OWN Pokemon that have been Knocked Out over the whole game, however
+    // it happened (e.g. for Kingambit's "Overlord's Blade": "This attack does 40 more damage for
+    // each time your Pokemon have been Knocked Out during this game.").
+    #[serde(default)]
+    pub(crate) own_knocked_out_count: [u32; 2],
+    // Each player's point total as it stood when their current turn began, and how many points
+    // they gained over their previous turn. Together these answer "points your opponent got during
+    // their last turn" (e.g. Hisuian Basculegion's "Soul Counter").
+    #[serde(default)]
+    pub(crate) points_at_own_turn_start: [u8; 2],
+    #[serde(default)]
+    pub(crate) points_gained_during_own_last_turn: [u8; 2],
     // Maps turn to a vector of effects (cards) for that turn. Using BTreeMap to keep State hashable.
     turn_effects: BTreeMap<u8, Vec<TurnEffect>>,
 }
@@ -146,6 +158,9 @@ impl State {
             attack_name_used_this_turn: [None, None],
             attack_name_used_last_turn: [None, None],
             attack_name_used_count: [BTreeMap::new(), BTreeMap::new()],
+            own_knocked_out_count: [0, 0],
+            points_at_own_turn_start: [0, 0],
+            points_gained_during_own_last_turn: [0, 0],
             turn_effects: BTreeMap::new(),
         }
     }
@@ -384,9 +399,7 @@ impl State {
             return None;
         }
         self.enumerate_in_play_pokemon(player)
-            .find(|(_, pokemon)| {
-                has_ability_mechanic(&pokemon.card, &AbilityMechanic::VictoryStarReflip)
-            })
+            .find(|(_, pokemon)| pokemon.has_ability(&AbilityMechanic::VictoryStarReflip))
             .map(|(idx, _)| idx)
     }
 
@@ -511,7 +524,7 @@ impl State {
             return;
         };
 
-        if has_ability_mechanic(&pokemon.card, &AbilityMechanic::ImmuneToStatusConditions) {
+        if pokemon.has_ability(&AbilityMechanic::ImmuneToStatusConditions) {
             debug!("Fabled Luster: Pokémon is immune to status conditions");
             return;
         }
@@ -528,9 +541,7 @@ impl State {
         // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): if any of this player's Pokémon
         // has the ability, Pokémon meeting the energy requirement are immune to Special Conditions.
         for p in self.in_play_pokemon[player].iter().flatten() {
-            if let Some(AbilityMechanic::SoothingWind { energy_type }) =
-                crate::actions::get_ability_mechanic(&p.card)
-            {
+            if let Some(AbilityMechanic::SoothingWind { energy_type }) = p.ability_mechanic() {
                 let is_protected = match energy_type {
                     None => !pokemon.attached_energy.is_empty(),
                     Some(t) => pokemon.attached_energy.contains(t),
@@ -560,7 +571,13 @@ impl State {
         self.end_turn_pending = false;
         self.attack_name_used_last_turn[self.current_player] =
             self.attack_name_used_this_turn[self.current_player].take();
+        // Close out the ending player's point ledger before handing over, and open the incoming
+        // player's, so "points your opponent got during their last turn" is readable all turn.
+        self.points_gained_during_own_last_turn[self.current_player] = self.points
+            [self.current_player]
+            .saturating_sub(self.points_at_own_turn_start[self.current_player]);
         self.current_player = (self.current_player + 1) % 2;
+        self.points_at_own_turn_start[self.current_player] = self.points[self.current_player];
         self.turn_count += 1;
         if self.turn_count > 30 {
             self.winner = Some(GameOutcome::Tie);
@@ -732,6 +749,39 @@ impl State {
         self.knocked_out_by_opponent_attack_this_turn = true;
         if let Some(energy_type) = energy_type {
             self.knocked_out_types_this_turn.insert(energy_type);
+        }
+    }
+
+    /// Records that one of `player`'s own Pokemon was Knocked Out (for Kingambit's Overlord's
+    /// Blade, which counts every such knockout over the whole game).
+    pub(crate) fn record_own_knockout(&mut self, player: usize) {
+        self.own_knocked_out_count[player] = self.own_knocked_out_count[player].saturating_add(1);
+    }
+
+    /// How many of `player`'s own Pokemon have been Knocked Out so far this game.
+    pub(crate) fn count_own_knockouts(&self, player: usize) -> u32 {
+        self.own_knocked_out_count[player]
+    }
+
+    /// How many points `player` gained during their own previous turn.
+    pub(crate) fn points_gained_during_last_turn(&self, player: usize) -> u32 {
+        self.points_gained_during_own_last_turn[player] as u32
+    }
+
+    /// Poisons `player`'s Pokemon at `in_play_idx` such that Checkup deals `amount` damage instead
+    /// of the usual 10 (e.g. Toxicroak's Toxic, Toxapex's Severe Poison). If the Pokemon turns out
+    /// to be immune to Special Conditions the override is not recorded either.
+    pub(crate) fn apply_poison_with_damage(
+        &mut self,
+        player: usize,
+        in_play_idx: usize,
+        amount: u32,
+    ) {
+        self.apply_status_condition(player, in_play_idx, StatusCondition::Poisoned);
+        if let Some(pokemon) = self.in_play_pokemon[player][in_play_idx].as_mut() {
+            if pokemon.is_poisoned() {
+                pokemon.set_poison_damage_override(amount);
+            }
         }
     }
 

@@ -5,7 +5,6 @@ use super::State;
 use crate::{
     actions::{
         abilities::AbilityMechanic, card_effect_from_ability_mechanic, get_ability_mechanic,
-        has_ability_mechanic,
     },
     card_ids::CardId,
     database::get_card_by_enum,
@@ -35,6 +34,12 @@ pub struct PlayedCard {
     pub moved_to_active_this_turn: bool,
     pub ability_used: bool,
     poisoned: bool,
+    /// Checkup damage this Pokemon takes from its current Poison, when an attack replaced the usual
+    /// amount ("Do 20 damage to this Pokemon instead of the usual amount for this Special
+    /// Condition." — Toxicroak's Toxic, Toxapex's Severe Poison). Cleared whenever the Poison is
+    /// cleared or re-applied normally, so a later ordinary Poison is back to 10.
+    #[serde(default)]
+    poison_damage_override: Option<u32>,
     paralyzed: bool,
     asleep: bool,
     burned: bool,
@@ -70,6 +75,7 @@ impl PlayedCard {
             attached_tool: None,
             ability_used: false,
             poisoned: false,
+            poison_damage_override: None,
             paralyzed: false,
             asleep: false,
             burned: false,
@@ -253,7 +259,7 @@ impl PlayedCard {
         if let Some(AbilityMechanic::IncreaseHpPerAttachedEnergy {
             energy_type,
             amount,
-        }) = get_ability_mechanic(&self.card)
+        }) = self.ability_mechanic()
         {
             let mut matching_count = self
                 .attached_energy
@@ -275,6 +281,18 @@ impl PlayedCard {
         self.poisoned
     }
 
+    /// Replaces the Checkup damage of this Pokemon's current Poison. Set right after the Poison
+    /// lands; `set_status_raw(Poisoned)` and every cure path reset it.
+    pub(crate) fn set_poison_damage_override(&mut self, amount: u32) {
+        self.poison_damage_override = Some(amount);
+    }
+
+    /// The Checkup damage this Pokemon's Poison deals before any board-wide bonus, i.e. the usual
+    /// 10 unless an attack overrode it.
+    pub(crate) fn poison_base_damage(&self) -> u32 {
+        self.poison_damage_override.unwrap_or(10)
+    }
+
     pub fn is_paralyzed(&self) -> bool {
         self.paralyzed
     }
@@ -293,6 +311,21 @@ impl PlayedCard {
 
     pub(crate) fn has_status_condition(&self) -> bool {
         self.poisoned || self.paralyzed || self.asleep || self.burned || self.confused
+    }
+
+    /// How many Special Conditions currently affect this Pokémon (e.g. for Team Rocket's Magmar's
+    /// Derisive Roasting, which scales with that count).
+    pub fn count_status_conditions(&self) -> usize {
+        [
+            self.poisoned,
+            self.paralyzed,
+            self.asleep,
+            self.burned,
+            self.confused,
+        ]
+        .iter()
+        .filter(|flag| **flag)
+        .count()
     }
 
     pub(crate) fn has_tool_attached(&self) -> bool {
@@ -322,12 +355,45 @@ impl PlayedCard {
     /// are present exactly while the ability-holder is in play (no turn duration).
     pub(crate) fn get_effective_card_effects(&self) -> Vec<CardEffect> {
         let mut effects = self.get_active_effects();
-        if let Some(mechanic) = get_ability_mechanic(&self.card) {
+        if let Some(mechanic) = self.ability_mechanic() {
             if let Some(derived) = card_effect_from_ability_mechanic(mechanic) {
                 effects.push(derived);
             }
         }
         effects
+    }
+
+    /// Whether this Pokémon has been stripped of its Abilities (Budew's Prickly Powder).
+    fn abilities_disabled(&self) -> bool {
+        self.effects
+            .iter()
+            .any(|(effect, _)| matches!(effect, CardEffect::AbilitiesDisabled))
+    }
+
+    /// This Pokémon's Ability as it applies *in play*, i.e. `None` while its Abilities are
+    /// disabled. Every ability lookup that has a `PlayedCard` in hand should go through this
+    /// rather than reaching into `self.card` directly, so "loses all Abilities" is honoured
+    /// uniformly.
+    pub(crate) fn ability(&self) -> Option<crate::models::Ability> {
+        if self.abilities_disabled() {
+            return None;
+        }
+        self.card.get_ability()
+    }
+
+    /// The `AbilityMechanic` this Pokémon contributes in play, or `None` while its Abilities are
+    /// disabled. The in-play counterpart of `get_ability_mechanic(&card)`.
+    pub(crate) fn ability_mechanic(&self) -> Option<&'static AbilityMechanic> {
+        if self.abilities_disabled() {
+            return None;
+        }
+        get_ability_mechanic(&self.card)
+    }
+
+    /// Whether this Pokémon contributes `mechanic` in play. The in-play counterpart of
+    /// `has_ability_mechanic(&card, mechanic)`.
+    pub(crate) fn has_ability(&self, mechanic: &AbilityMechanic) -> bool {
+        self.ability_mechanic() == Some(mechanic)
     }
 
     pub(crate) fn get_effects(&self) -> &Vec<(CardEffect, u8)> {
@@ -336,6 +402,7 @@ impl PlayedCard {
 
     pub(crate) fn clear_status_and_effects(&mut self) {
         self.poisoned = false;
+        self.poison_damage_override = None;
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
@@ -345,6 +412,7 @@ impl PlayedCard {
 
     pub(crate) fn cure_status_conditions(&mut self) {
         self.poisoned = false;
+        self.poison_damage_override = None;
         self.paralyzed = false;
         self.asleep = false;
         self.burned = false;
@@ -353,7 +421,10 @@ impl PlayedCard {
 
     pub(crate) fn clear_status_condition(&mut self, status: StatusCondition) {
         match status {
-            StatusCondition::Poisoned => self.poisoned = false,
+            StatusCondition::Poisoned => {
+                self.poisoned = false;
+                self.poison_damage_override = None;
+            }
             StatusCondition::Paralyzed => self.paralyzed = false,
             StatusCondition::Asleep => self.asleep = false,
             StatusCondition::Burned => self.burned = false,
@@ -366,7 +437,11 @@ impl PlayedCard {
         match status {
             StatusCondition::Asleep => self.asleep = true,
             StatusCondition::Paralyzed => self.paralyzed = true,
-            StatusCondition::Poisoned => self.poisoned = true,
+            StatusCondition::Poisoned => {
+                self.poisoned = true;
+                // An ordinary Poison replaces any earlier custom-damage Poison.
+                self.poison_damage_override = None;
+            }
             StatusCondition::Burned => self.burned = true,
             StatusCondition::Confused => self.confused = true,
         }
@@ -441,9 +516,9 @@ impl fmt::Debug for PlayedCard {
 }
 
 pub fn has_serperior_jungle_totem(state: &State, player: usize) -> bool {
-    state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
-        has_ability_mechanic(&pokemon.card, &AbilityMechanic::DoubleGrassEnergy)
-    })
+    state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| pokemon.has_ability(&AbilityMechanic::DoubleGrassEnergy))
 }
 
 #[cfg(test)]

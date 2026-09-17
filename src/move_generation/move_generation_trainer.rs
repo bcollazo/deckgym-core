@@ -1,5 +1,5 @@
 use crate::{
-    actions::{abilities::AbilityMechanic, get_ability_mechanic, SimpleAction},
+    actions::{abilities::AbilityMechanic, SimpleAction},
     card_ids::CardId,
     card_logic::{
         active_has_psychic_attack, can_rare_candy_evolve, diantha_targets, ilima_targets,
@@ -325,7 +325,7 @@ fn can_play_stadium(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Sim
             .as_ref()
             .is_some_and(|opponent_active| {
                 matches!(
-                    get_ability_mechanic(&opponent_active.card),
+                    opponent_active.ability_mechanic(),
                     Some(AbilityMechanic::NoOpponentStadiumInActive)
                 )
             });
@@ -890,9 +890,7 @@ fn can_play_team(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
     let opponent = (state.current_player + 1) % 2;
     let has_target = state
         .enumerate_in_play_pokemon(opponent)
-        .any(|(_, pokemon)| {
-            pokemon.card.get_ability().is_some() && !pokemon.attached_energy.is_empty()
-        });
+        .any(|(_, pokemon)| pokemon.ability().is_some() && !pokemon.attached_energy.is_empty());
 
     if has_target {
         can_play_trainer(state, trainer_card)
