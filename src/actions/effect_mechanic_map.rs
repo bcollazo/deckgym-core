@@ -2843,6 +2843,11 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "This attack does 50 more damage for each Special Condition affecting your opponent's Active Pokémon.",
         Mechanic::ExtraDamagePerOpponentSpecialCondition { damage_per: 50 },
     );
+    // Team Rocket's Slowpoke - Scavenge
+    map.insert(
+        "Put a random Item card from your discard pile into your hand.",
+        Mechanic::RetrieveRandomItemFromDiscard,
+    );
     // Teal Mask Ogerpon - Ogre's Whip
     map.insert(
         "This attack does damage to your opponent's Active Pokémon equal to this Pokémon's remaining HP.",
