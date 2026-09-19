@@ -1122,6 +1122,9 @@ fn forecast_effect_attack_by_mechanic(
             damage_and_discard_all_energy(attack.fixed_damage)
         }
         Mechanic::MoveOwnEnergyAnyWay => move_own_energy_any_way(attack.fixed_damage),
+        Mechanic::RetrieveRandomItemFromDiscard => {
+            retrieve_random_item_from_discard(attack.fixed_damage)
+        }
     }
 }
 
@@ -5087,6 +5090,32 @@ fn coin_flip_to_block_attack_next_turn(damage: u32) -> AttackOutcomes {
             .get_active_mut(opponent)
             .add_effect(CardEffect::CoinFlipToBlockAttack, 1);
     })
+}
+
+/// Team Rocket's Slowpoke - Scavenge: put a random Item card from your discard pile into your hand
+fn retrieve_random_item_from_discard(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::single(AttackOutcome::damage_then_effect(
+        vec![(damage, true, 0)],
+        move |rng, state, action| {
+            let acting_player = action.actor;
+            let item_indices: Vec<usize> = state.discard_piles[acting_player]
+                .iter()
+                .enumerate()
+                .filter_map(|(i, card)| match card {
+                    Card::Trainer(t) if t.trainer_card_type == TrainerType::Item => Some(i),
+                    _ => None,
+                })
+                .collect();
+
+            if item_indices.is_empty() {
+                return;
+            }
+
+            let random_idx = item_indices[rng.gen_range(0..item_indices.len())];
+            let card = state.discard_piles[acting_player].remove(random_idx);
+            state.hands[acting_player].push(card);
+        },
+    ))
 }
 
 fn first_attack_bonus_turn_effect(

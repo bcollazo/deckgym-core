@@ -837,4 +837,7 @@ pub enum Mechanic {
     RequireBenchedNamesThenDiscardAllEnergy {
         required_bench_names: Vec<String>,
     },
+    /// Team Rocket's Slowpoke's Scavenge: put a random Item card
+    /// from the attacker's discard pile into their hand.
+    RetrieveRandomItemFromDiscard,
 }
