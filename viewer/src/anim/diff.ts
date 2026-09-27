@@ -2,7 +2,7 @@
 // docs/replay-viewer-plan.md's "Transition engine" section. Kept dependency-free (no Pixi/GSAP
 // imports) so it's cheaply unit-testable.
 
-import type { EnergyType, EnergyZone, GameOutcome, StatusCondition, ViewState } from "../types/replay";
+import type { EnergyType, EnergyZone, GameOutcome, PlayerView, StatusCondition, ViewState } from "../types/replay";
 
 export type PlayerIndex = 0 | 1;
 export type SlotIndex = 0 | 1 | 2 | 3;
@@ -55,6 +55,38 @@ function diffMultiset<T>(prev: T[], next: T[]): { added: T[]; removed: T[] } {
 
 function sameEnergyZone(a: EnergyZone, b: EnergyZone): boolean {
   return a.current === b.current && a.next === b.next;
+}
+
+/** Detects a whole Pokemon moving between the active slot and a bench slot — a retreat, a
+ * "switch" effect, or a promotion after a knock-out (in which case `prevActive` is absent: there's
+ * no old active to place on the bench, just a bench Pokemon taking the empty active spot).
+ *
+ * Root cause this fixes: the per-slot loop below diffs slot *index* 0 against slot index 0
+ * (old active's card vs. new active's card), and the bench slot the same way — so a swap, which
+ * changes *which Pokemon* sits in each slot without changing either Pokemon's own HP, energy,
+ * tools or status, used to be misread as an "evolution" (slot 0's card id changed) plus bogus
+ * `hpChange`/`energyChange`/`toolsChange`/`statusChange` entries (e.g. "HP dropped from 70 to 60")
+ * that were really just the two different Pokemon's own values. Detecting the move up front and
+ * excluding both slots from the per-slot diff (see `swappedSlots` below) fixes it at the source:
+ * the only change emitted for these two slots is `activeSwitch`, whose handler in
+ * `anim/buildTimeline.ts` moves each composite (card + HP + energy + tools + status) to its new
+ * slot as a unit and re-`update()`s it from the target snapshot, never tweening an HP bar. */
+function detectActiveBenchMove(
+  prevPlayer: PlayerView,
+  nextPlayer: PlayerView,
+): { benchSlot: SlotIndex; activeFrom: string | null; activeTo: string } | null {
+  const prevActive = prevPlayer.in_play[0];
+  const nextActive = nextPlayer.in_play[0];
+  if (!nextActive) return null; // active is empty (or stayed empty) — nothing moved into it
+  if (prevActive && prevActive.card === nextActive.card) return null; // same Pokemon, no move
+
+  for (const slot of [1, 2, 3] as SlotIndex[]) {
+    const prevBench = prevPlayer.in_play[slot];
+    if (prevBench?.card === nextActive.card) {
+      return { benchSlot: slot, activeFrom: prevActive?.card ?? null, activeTo: nextActive.card };
+    }
+  }
+  return null;
 }
 
 export function diffViewStates(prev: ViewState, next: ViewState): SemanticChange[] {
@@ -124,7 +156,25 @@ export function diffViewStates(prev: ViewState, next: ViewState): SemanticChange
     // (retreat to hand, self-discard effects, etc.) is a plain `cardLeft`.
     const opponentScored = next.points[(1 - p) as PlayerIndex] > prev.points[(1 - p) as PlayerIndex];
 
+    // Detected *before* the per-slot loop so the active and bench slots it names can be excluded
+    // from that loop entirely (see `detectActiveBenchMove`'s comment) — they get exactly one
+    // `activeSwitch` change, not a same-slot-index diff.
+    const activeBenchMove = detectActiveBenchMove(prevPlayer, nextPlayer);
+    const swappedSlots = new Set<SlotIndex>();
+    if (activeBenchMove) {
+      changes.push({
+        type: "activeSwitch",
+        player: p,
+        benchSlot: slotKey(p, activeBenchMove.benchSlot),
+        activeFrom: activeBenchMove.activeFrom,
+        activeTo: activeBenchMove.activeTo,
+      });
+      swappedSlots.add(0);
+      swappedSlots.add(activeBenchMove.benchSlot);
+    }
+
     for (const slot of [0, 1, 2, 3] as SlotIndex[]) {
+      if (swappedSlots.has(slot)) continue;
       const key = slotKey(p, slot);
       const prevSlot = prevPlayer.in_play[slot];
       const nextSlot = nextPlayer.in_play[slot];
@@ -166,33 +216,6 @@ export function diffViewStates(prev: ViewState, next: ViewState): SemanticChange
       const statusDiff = diffMultiset(prevSlot.status, nextSlot.status);
       if (statusDiff.added.length || statusDiff.removed.length) {
         changes.push({ type: "statusChange", slot: key, ...statusDiff });
-      }
-    }
-
-    // Active <-> bench swap: the active card identity changed, and the new active's card id
-    // matches a card that was on the bench and is no longer at that bench slot (a retreat or a
-    // forced switch), OR the old active's card reappears on a bench slot that used to hold what's
-    // now active (a full swap). Card *ids* are the only identity we have (see the "Deviations"
-    // note on hand/bench/discard instance identity), so with two identical duplicate copies this
-    // picks a plausible pairing rather than a guaranteed-correct one.
-    const prevActive = prevPlayer.in_play[0];
-    const nextActive = nextPlayer.in_play[0];
-    if (prevActive && nextActive && prevActive.card !== nextActive.card) {
-      for (const slot of [1, 2, 3] as SlotIndex[]) {
-        const prevBench = prevPlayer.in_play[slot];
-        const nextBench = nextPlayer.in_play[slot];
-        const benchNowHasOldActive = nextBench?.card === prevActive.card;
-        const benchHadNewActive = prevBench?.card === nextActive.card;
-        if (benchNowHasOldActive || benchHadNewActive) {
-          changes.push({
-            type: "activeSwitch",
-            player: p,
-            benchSlot: slotKey(p, slot),
-            activeFrom: prevActive.card,
-            activeTo: nextActive.card,
-          });
-          break;
-        }
       }
     }
   }

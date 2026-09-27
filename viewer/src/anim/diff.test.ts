@@ -134,6 +134,70 @@ describe("diffViewStates", () => {
     });
   });
 
+  it("a retreat between two Pokemon with different HP produces only the activeSwitch — no hpChange or evolution for either slot", () => {
+    // Neither Pokemon's own HP changed — the active (70/70) stays 70/70, the bench Pokemon
+    // (28/60, mid-battle) stays 28/60 — only which slot each one sits in changed. Round 4 bug: the
+    // old per-slot-index diff compared slot 0's *old* card (70/70) against slot 0's *new* card
+    // (28/60) and reported that as the active's HP dropping from 70 to 28 (and the bench slot's HP
+    // "rising" from 28 to 70), plus a same-slot card-id change read as an "evolution" — both bogus.
+    const active = { card: "A1 001", hp: 70, max_hp: 70, energy: ["Grass" as const], tools: [], status: [], played_this_turn: false };
+    const bench = { card: "A1 003", hp: 28, max_hp: 60, energy: [], tools: ["A1 tool"], status: [], played_this_turn: false };
+    const prev = state({
+      players: [emptyPlayer({ in_play: [active, bench, null, null] }), emptyPlayer()],
+    });
+    const next = state({
+      players: [emptyPlayer({ in_play: [bench, active, null, null] }), emptyPlayer()],
+    });
+    const changes = diffViewStates(prev, next);
+
+    expect(changes).toContainEqual({
+      type: "activeSwitch",
+      player: 0,
+      benchSlot: slotKey(0, 1),
+      activeFrom: "A1 001",
+      activeTo: "A1 003",
+    });
+    // No hpChange, evolution, energyChange, toolsChange or statusChange for either the active or
+    // bench slot — the whole composite moved as a unit, nothing about either Pokemon changed.
+    const spuriousTypes = ["hpChange", "evolution", "energyChange", "toolsChange", "statusChange"];
+    for (const change of changes) {
+      if (spuriousTypes.includes(change.type)) {
+        const slot = (change as { slot: string }).slot;
+        expect([slotKey(0, 0), slotKey(0, 1)]).not.toContain(slot);
+      }
+    }
+    // Only the one activeSwitch change for player 0 (no per-slot noise at all for these two slots).
+    expect(changes).toEqual([
+      {
+        type: "activeSwitch",
+        player: 0,
+        benchSlot: slotKey(0, 1),
+        activeFrom: "A1 001",
+        activeTo: "A1 003",
+      },
+    ]);
+  });
+
+  it("detects a promotion (bench -> empty active after a knock-out) as an activeSwitch with a null activeFrom", () => {
+    const bench = { card: "A1 003", hp: 60, max_hp: 60, energy: [], tools: [], status: [], played_this_turn: false };
+    const prev = state({
+      players: [emptyPlayer({ in_play: [null, bench, null, null] }), emptyPlayer()],
+    });
+    const next = state({
+      players: [emptyPlayer({ in_play: [bench, null, null, null] }), emptyPlayer()],
+    });
+    const changes = diffViewStates(prev, next);
+    expect(changes).toEqual([
+      {
+        type: "activeSwitch",
+        player: 0,
+        benchSlot: slotKey(0, 1),
+        activeFrom: null,
+        activeTo: "A1 003",
+      },
+    ]);
+  });
+
   it("reports no changes for two identical snapshots", () => {
     const s = state({ turn: 5 });
     expect(diffViewStates(s, s)).toEqual([]);
