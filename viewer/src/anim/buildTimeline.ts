@@ -245,21 +245,76 @@ export function buildTimeline(prev: ViewState, next: ViewState, chosen: SimpleAc
         break;
       }
       case "activeSwitch": {
+        // "The whole composites should switch places and that's it" — a literal positional swap,
+        // not a cross-fade: each container physically flies to the *other's* spot (on slightly
+        // offset arcs so they don't pass exactly through each other, and scaling to the
+        // destination's size along the way, since active and bench cards are different sizes), then
+        // — in the same tick, so nothing flickers — the content each slot shows is reassigned
+        // (`applySlot`) and both containers snap back to their own permanent home position/scale.
+        // That last snap is required, not cosmetic: `scene.reconcile()`'s per-slot loop (called via
+        // this timeline's `onComplete`/`onReverseComplete` in `playbackController.ts`) resets
+        // alpha/scale/rotation but never touches x/y, so a container this timeline moved would
+        // otherwise stay wherever it was left. No alpha fade, no HP tween — neither Pokemon's own
+        // stats changed (see `anim/diff.ts`'s `detectActiveBenchMove`).
         const { player } = change;
         const activeVisual = scene.slot(player, 0);
         const { slot: benchSlotIdx } = parseSlotKey(change.benchSlot);
         const benchVisual = scene.slot(player, benchSlotIdx);
-        tl.to([activeVisual.container, benchVisual.container], { alpha: 0, duration: dur(0.15) }, cursor);
+        const activePos = scene.slotPosition(player, 0);
+        const benchPos = scene.slotPosition(player, benchSlotIdx);
+
+        const dx = benchPos.x - activePos.x;
+        const dy = benchPos.y - activePos.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const arc = 22; // px, perpendicular offset at the swap's midpoint
+        const perpX = (-dy / dist) * arc;
+        const perpY = (dx / dist) * arc;
+        const midX = (activePos.x + benchPos.x) / 2;
+        const midY = (activePos.y + benchPos.y) / 2;
+
+        // Scale to the destination's own card size (active <-> bench differ) along the way, so the
+        // in-flight card visually resizes into the slot it's arriving at rather than looking
+        // mismatched the instant it lands.
+        const toBenchScale = benchVisual.width / activeVisual.width;
+        const toActiveScale = activeVisual.width / benchVisual.width;
+        const duration = dur(0.35);
+        const ease = "sine.inOut";
+
+        // The card arriving at the active spot reads as "coming to the front".
+        tl.set(benchVisual.container, { zIndex: 20 }, cursor);
+        tl.set(activeVisual.container, { zIndex: 10 }, cursor);
+
+        tl.to(
+          activeVisual.container,
+          { motionPath: { path: [{ x: midX + perpX, y: midY + perpY }, { x: benchPos.x, y: benchPos.y }], curviness: 1.2 }, duration, ease },
+          cursor,
+        );
+        tl.to(activeVisual.container.scale, { x: toBenchScale, y: toBenchScale, duration, ease }, cursor);
+
+        tl.to(
+          benchVisual.container,
+          { motionPath: { path: [{ x: midX - perpX, y: midY - perpY }, { x: activePos.x, y: activePos.y }], curviness: 1.2 }, duration, ease },
+          cursor,
+        );
+        tl.to(benchVisual.container.scale, { x: toActiveScale, y: toActiveScale, duration, ease }, cursor);
+
         tl.call(
           () => {
             applySlot(player, 0);
             applySlot(player, benchSlotIdx);
+            activeVisual.container.x = activePos.x;
+            activeVisual.container.y = activePos.y;
+            activeVisual.container.scale.set(1);
+            activeVisual.container.zIndex = 0;
+            benchVisual.container.x = benchPos.x;
+            benchVisual.container.y = benchPos.y;
+            benchVisual.container.scale.set(1);
+            benchVisual.container.zIndex = 0;
           },
           [],
-          cursor + dur(0.15),
+          cursor + duration,
         );
-        tl.to([activeVisual.container, benchVisual.container], { alpha: 1, duration: dur(0.15) }, cursor + dur(0.15));
-        advance(dur(0.3));
+        advance(duration);
         break;
       }
       case "hpChange": {
