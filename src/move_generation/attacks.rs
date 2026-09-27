@@ -17,6 +17,12 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             return actions;
         }
 
+        // In-app Tips, "Special Conditions": an Asleep Pokémon "cannot attack or retreat", and
+        // a Paralyzed Pokémon "cannot attack or retreat".
+        if active_pokemon.is_asleep() || active_pokemon.is_paralyzed() {
+            return actions;
+        }
+
         // Check if the active Pokémon has the CannotAttack effect
         let active_effects = active_pokemon.get_active_effects();
         let cannot_attack = active_effects

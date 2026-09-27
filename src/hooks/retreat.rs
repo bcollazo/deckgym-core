@@ -17,7 +17,11 @@ pub(crate) fn can_retreat(state: &State) -> bool {
     // Check if active card is a Fossil (Fossils can never retreat)
     let is_fossil = active.is_fossil();
 
-    !state.has_retreated && !has_no_retreat_effect && !is_fossil
+    // In-app Tips, "Special Conditions": Asleep and Paralyzed Pokémon "cannot attack or
+    // retreat". (Confused Pokémon can: Confusion only gates attacking, via a coin flip.)
+    let is_immobilized = active.is_asleep() || active.is_paralyzed();
+
+    !state.has_retreated && !has_no_retreat_effect && !is_fossil && !is_immobilized
 }
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {

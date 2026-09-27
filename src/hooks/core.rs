@@ -1235,6 +1235,13 @@ fn attack_ignores_opponent_active_effects(context: DamageModifierContext<'_>) ->
     attack_effect_ignores_opponent_active_effects(context.attack_effect)
 }
 
+/// Weakness applies **only** to attack damage dealt to the opponent's Active Pokémon.
+///
+/// In-app Tips, "Use your Pokémon's attacks": "Don't apply Weakness for Benched Pokémon."
+/// That is what the `is_active_to_active` gate below enforces, and it also settles Bounded
+/// Field (the ×2-Weakness Stadium): it only ever amplifies a Weakness that already applies,
+/// so it is Active-only for the same reason. Damage from a spread attack's Bench portion, and
+/// damage that is not from an attack at all, are unmodified.
 fn get_weakness_application(
     state: &State,
     is_active_to_active: bool,
@@ -1552,29 +1559,46 @@ pub(crate) fn modify_damage(
         stadium_damage_bonus,
         future_booster_damage_bonus
     );
-    let pre_weakness = (base_damage
+    // Official Detailed battle FAQ, "How do I calculate damage for Pokémon that have Weakness or
+    // effects applied?":
+    //   1. Start with the attack's damage.
+    //   2. Apply any effects that affect the Attacking Pokémon.
+    //   3. Apply Weakness.
+    //   4. Apply any effects that affect the Defending Pokémon.
+    // Its worked example is `50 × 2 - 20 = 80`, so Weakness multiplies the attacker-side total
+    // and the defender's reductions come off afterwards — and the 0 floor is applied once, at the
+    // very end, never before Weakness.
+
+    // Step 2: everything that lives on the attacking side — the attacker's own Ability, its
+    // owner's board Abilities and type boosts, Tools attached to it, Stadium attack bonuses, and
+    // the turn effects its owner played (Giovanni, Red, ...).
+    let attacker_side_damage = base_damage
         + ability_damage_increase
         + increased_turn_effect_modifiers
         + increased_attack_specific_modifiers
-        + increased_vulnerability_modifiers
         + type_boost_bonus
         + stadium_damage_bonus
         + future_booster_damage_bonus
-        + beastite_damage_bonus)
-        .saturating_sub(
-            reduced_card_effect_modifiers
-                + reduced_turn_effect_modifiers
-                + heavy_helmet_reduction
-                + metal_core_barrier_reduction
-                + steel_apron_reduction
-                + intimidating_fang_reduction
-                + ability_damage_reduction,
-        );
-    let final_damage = match weakness_application {
-        WeaknessApplication::None => pre_weakness,
-        WeaknessApplication::Flat(amount) => pre_weakness + amount,
-        WeaknessApplication::Double => pre_weakness * 2,
+        + beastite_damage_bonus;
+
+    // Step 3.
+    let after_weakness = match weakness_application {
+        WeaknessApplication::None => attacker_side_damage,
+        WeaknessApplication::Flat(amount) => attacker_side_damage + amount,
+        WeaknessApplication::Double => attacker_side_damage * 2,
     };
+
+    // Step 4: every effect that lives on the Defending Pokémon, whether it helps the attacker
+    // (IncreasedVulnerability) or the defender (reductions from effects, Abilities and Tools).
+    let final_damage = (after_weakness + increased_vulnerability_modifiers).saturating_sub(
+        reduced_card_effect_modifiers
+            + reduced_turn_effect_modifiers
+            + heavy_helmet_reduction
+            + metal_core_barrier_reduction
+            + steel_apron_reduction
+            + intimidating_fang_reduction
+            + ability_damage_reduction,
+    );
 
     // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage if it is low enough.
     let prevented_by_threshold = target_effects

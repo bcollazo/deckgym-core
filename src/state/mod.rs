@@ -625,6 +625,16 @@ impl State {
         }
     }
 
+    /// The three Special Conditions that are mutually exclusive. In-app Tips: "Asleep,
+    /// Paralyzed, and Confused cannot stack with each other. If one of these Special Conditions
+    /// is applied, it replaces any of the others." Poisoned and Burned are deliberately absent:
+    /// they "can stack with other Special Conditions".
+    const MUTUALLY_EXCLUSIVE_STATUSES: [StatusCondition; 3] = [
+        StatusCondition::Asleep,
+        StatusCondition::Paralyzed,
+        StatusCondition::Confused,
+    ];
+
     /// Apply a status condition to a Pokémon in play, enforcing all immunity rules.
     /// This is the single authoritative path for setting status conditions.
     pub fn apply_status_condition(
@@ -633,6 +643,14 @@ impl State {
         in_play_idx: usize,
         status: StatusCondition,
     ) {
+        // In-app Tips, "Special Conditions": "Only Active Pokémon can have Special Conditions
+        // applied to them." Nothing may place one on the Bench — and `apply_activate` clears
+        // them again the moment a Pokémon leaves the Active Spot.
+        if in_play_idx != 0 {
+            debug!("Special Conditions only apply to the Active Pokémon; ignoring {status:?}");
+            return;
+        }
+
         let Some(pokemon) = self.in_play_pokemon[player][in_play_idx].as_ref() else {
             return;
         };
@@ -679,10 +697,27 @@ impl State {
             }
         }
 
-        self.in_play_pokemon[player][in_play_idx]
+        let turn_count = self.turn_count;
+        let pokemon = self.in_play_pokemon[player][in_play_idx]
             .as_mut()
-            .unwrap()
-            .set_status_raw(status);
+            .expect("Pokemon was present when the immunity checks ran");
+
+        // Asleep / Paralyzed / Confused replace one another; Poisoned and Burned are untouched.
+        if Self::MUTUALLY_EXCLUSIVE_STATUSES.contains(&status) {
+            for other in Self::MUTUALLY_EXCLUSIVE_STATUSES {
+                if other != status {
+                    pokemon.clear_status_condition(other);
+                }
+            }
+        }
+
+        pokemon.set_status_raw(status);
+
+        // Remember which turn a Paralysis landed on: it recovers at the Checkup that ends its
+        // owner's *next* turn, so the Checkup ending this turn must leave it alone.
+        if status == StatusCondition::Paralyzed {
+            pokemon.set_paralyzed_on_turn(turn_count);
+        }
     }
 
     // This function should be called only from turn 1 onwards

@@ -11,24 +11,26 @@ fn test_flower_shield_prevents_poison_on_psychic_pokemon() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Player 0: Comfey active, Mewtwo on bench with [P] energy
+    // Player 0: Mewtwo active with [P] energy, Comfey on the Bench. Flower Shield is a board
+    // ability, so the holder need not be Active -- but the *protected* Pokemon must be, since
+    // Special Conditions only ever apply to the Active Spot (in-app Tips).
     state.set_board(
         vec![
-            PlayedCard::from_id(CardId::A3080Comfey),
             PlayedCard::from_id(CardId::A1129MewtwoEx).with_energy(vec![EnergyType::Psychic]),
+            PlayedCard::from_id(CardId::A3080Comfey),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     game.set_state(state);
 
-    // Try to apply Poison to Mewtwo (bench slot 1), who has [P] energy
+    // Try to apply Poison to the Active Mewtwo, who has [P] energy
     let mut state = game.get_state_clone();
-    state.apply_status_condition(0, 1, StatusCondition::Poisoned);
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
     game.set_state(state);
 
     let final_state = game.get_state_clone();
     assert!(
-        !final_state.in_play_pokemon[0][1]
+        !final_state.in_play_pokemon[0][0]
             .as_ref()
             .unwrap()
             .is_poisoned(),
@@ -42,24 +44,24 @@ fn test_flower_shield_does_not_protect_non_psychic_pokemon() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
-    // Player 0: Comfey active, Bulbasaur on bench with only [G] energy (no Psychic)
+    // Player 0: Bulbasaur active with only [G] energy (no Psychic), Comfey on the Bench
     state.set_board(
         vec![
-            PlayedCard::from_id(CardId::A3080Comfey),
             PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
+            PlayedCard::from_id(CardId::A3080Comfey),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     game.set_state(state);
 
-    // Apply Poison to Bulbasaur (bench slot 1), who has only [G] energy
+    // Apply Poison to the Active Bulbasaur, who has only [G] energy
     let mut state = game.get_state_clone();
-    state.apply_status_condition(0, 1, StatusCondition::Poisoned);
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
     game.set_state(state);
 
     let final_state = game.get_state_clone();
     assert!(
-        final_state.in_play_pokemon[0][1]
+        final_state.in_play_pokemon[0][0]
             .as_ref()
             .unwrap()
             .is_poisoned(),

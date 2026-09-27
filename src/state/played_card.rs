@@ -63,6 +63,13 @@ pub struct PlayedCard {
     #[serde(default)]
     poison_damage_override: Option<u32>,
     paralyzed: bool,
+    /// The turn number (`State::turn_count`) on which this Pokémon's current Paralysis was
+    /// inflicted. In-app Tips: a Paralyzed Pokémon "cannot attack or retreat. After its owner's
+    /// next turn, it recovers during Pokémon Checkup." The Checkup that ends the very turn the
+    /// Paralysis landed on is therefore *not* the one that clears it — whoever's turn that was —
+    /// so the Checkup needs to know which turn that was. Reset by every cure path.
+    #[serde(default)]
+    paralyzed_on_turn: Option<u8>,
     asleep: bool,
     burned: bool,
     confused: bool,
@@ -115,6 +122,7 @@ impl PlayedCard {
             poisoned: false,
             poison_damage_override: None,
             paralyzed: false,
+            paralyzed_on_turn: None,
             asleep: false,
             burned: false,
             confused: false,
@@ -426,6 +434,17 @@ impl PlayedCard {
         self.paralyzed
     }
 
+    /// The turn on which the current Paralysis was inflicted, if any. See `paralyzed_on_turn`.
+    pub(crate) fn paralyzed_on_turn(&self) -> Option<u8> {
+        self.paralyzed_on_turn
+    }
+
+    /// Stamps the turn a Paralysis was inflicted on. Set by `State::apply_status_condition`
+    /// (the single authoritative path), which is the only place that knows the turn number.
+    pub(crate) fn set_paralyzed_on_turn(&mut self, turn_count: u8) {
+        self.paralyzed_on_turn = Some(turn_count);
+    }
+
     pub fn is_asleep(&self) -> bool {
         self.asleep
     }
@@ -625,6 +644,7 @@ impl PlayedCard {
         self.poisoned = false;
         self.poison_damage_override = None;
         self.paralyzed = false;
+        self.paralyzed_on_turn = None;
         self.asleep = false;
         self.burned = false;
         self.confused = false;
@@ -635,6 +655,7 @@ impl PlayedCard {
         self.poisoned = false;
         self.poison_damage_override = None;
         self.paralyzed = false;
+        self.paralyzed_on_turn = None;
         self.asleep = false;
         self.burned = false;
         self.confused = false;
@@ -646,7 +667,10 @@ impl PlayedCard {
                 self.poisoned = false;
                 self.poison_damage_override = None;
             }
-            StatusCondition::Paralyzed => self.paralyzed = false,
+            StatusCondition::Paralyzed => {
+                self.paralyzed = false;
+                self.paralyzed_on_turn = None;
+            }
             StatusCondition::Asleep => self.asleep = false,
             StatusCondition::Burned => self.burned = false,
             StatusCondition::Confused => self.confused = false,
