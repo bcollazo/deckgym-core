@@ -15,6 +15,7 @@ pub mod models;
 pub mod move_generation;
 pub mod optimize;
 pub mod players;
+pub mod replay;
 pub mod simulate;
 pub mod simulation_event_handler;
 pub mod stadiums;
@@ -32,7 +33,7 @@ pub use optimize::{
     cli_optimize, optimize, optimize_with_configs, EnemyDeckConfig, OptimizationConfig,
     ParallelConfig, SimulationConfig,
 };
-pub use simulate::{simulate, Simulation, SimulationCallbacks};
+pub use simulate::{play, simulate, PlayConfig, PlayResult, Simulation, SimulationCallbacks};
 pub use simulation_event_handler::ComputedStats;
 pub use state::State;
 

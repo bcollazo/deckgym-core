@@ -2,6 +2,7 @@ mod attach_attack_player;
 mod end_turn_player;
 mod evolution_rusher_player;
 mod expectiminimax_player;
+mod external_player;
 mod human_player;
 mod mcts_player;
 mod random_player;
@@ -13,6 +14,7 @@ pub use attach_attack_player::AttachAttackPlayer;
 pub use end_turn_player::EndTurnPlayer;
 pub use evolution_rusher_player::EvolutionRusherPlayer;
 pub use expectiminimax_player::{ExpectiMiniMaxPlayer, ValueFunction};
+pub use external_player::ExternalPlayer;
 pub use human_player::HumanPlayer;
 pub use mcts_player::MctsPlayer;
 pub use random_player::RandomPlayer;
@@ -23,6 +25,7 @@ pub use weighted_random_player::WeightedRandomPlayer;
 use crate::{actions::Action, Deck, State};
 use rand::rngs::StdRng;
 use std::fmt::Debug;
+use std::time::Duration;
 
 pub trait Player: Debug {
     fn get_deck(&self) -> Deck;
@@ -32,6 +35,14 @@ pub trait Player: Debug {
         state: &State,
         possible_actions: &[Action],
     ) -> Action;
+
+    /// An optional short note the player wants attached to its last decision in the replay (e.g.
+    /// an external bot's own reasoning, sent back over the bot protocol — see
+    /// `docs/bot-protocol.md`). Read once per decision, right after `decision_fn` returns. Default:
+    /// no note, which is right for every built-in engine player.
+    fn last_note(&self) -> Option<String> {
+        None
+    }
 }
 
 /// Enum for allowed player strategies
@@ -44,8 +55,14 @@ pub enum PlayerCode {
     W,
     M,
     V,
-    E { max_depth: usize },
+    E {
+        max_depth: usize,
+    },
     ER, // Evolution Rusher
+    /// An external bot, spoken to over stdin/stdout (see `docs/bot-protocol.md`). The command to
+    /// run comes from `--bot-a`/`--bot-b`, not from the code itself — `create_players` panics if
+    /// asked to build an `X` player; use `create_players_with_bots`.
+    X,
 }
 /// Custom parser function enforcing case-insensitivity
 pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
@@ -74,6 +91,7 @@ pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
         "v" => Ok(PlayerCode::V),
         "e" => Ok(PlayerCode::E { max_depth: 3 }), // Default depth
         "er" => Ok(PlayerCode::ER),
+        "x" => Ok(PlayerCode::X),
         _ => Err(format!("Invalid player code: {s}")),
     }
 }
@@ -122,5 +140,43 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
             value_function: Box::new(value_functions::baseline_value_function),
         }),
         PlayerCode::ER => Box::new(EvolutionRusherPlayer { deck }),
+        PlayerCode::X => panic!(
+            "PlayerCode::X (external bot) has no command to run; use create_players_with_bots \
+             (the CLI's --bot-a/--bot-b flags) instead of create_players"
+        ),
     }
+}
+
+/// Like `create_players`, but resolves `PlayerCode::X` into an `ExternalPlayer` running
+/// `bot_commands[i]` (required for that slot) instead of panicking. Every other code behaves
+/// exactly as `create_players`/`get_player`. `bot_timeout` is the per-decision timeout passed to
+/// each `ExternalPlayer` (see `docs/bot-protocol.md`).
+pub fn create_players_with_bots(
+    deck_a: Deck,
+    deck_b: Deck,
+    players: Vec<PlayerCode>,
+    bot_commands: [Option<String>; 2],
+    bot_timeout: Duration,
+) -> Vec<Box<dyn Player>> {
+    let decks = [deck_a, deck_b];
+    let mut result: Vec<Box<dyn Player>> = Vec::with_capacity(2);
+    for (i, code) in players.into_iter().enumerate() {
+        let deck = decks[i].clone();
+        let player: Box<dyn Player> = match code {
+            PlayerCode::X => {
+                let command = bot_commands[i].clone().unwrap_or_else(|| {
+                    panic!(
+                        "Player {} is code 'x' (external bot) but no command was given; pass \
+                         --bot-{} \"<command>\"",
+                        i,
+                        if i == 0 { "a" } else { "b" }
+                    )
+                });
+                Box::new(ExternalPlayer::new(deck, command, bot_timeout))
+            }
+            other => get_player(deck, &other),
+        };
+        result.push(player);
+    }
+    result
 }

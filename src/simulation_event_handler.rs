@@ -6,7 +6,17 @@ use std::{
 };
 use uuid::Uuid;
 
-use crate::{actions::Action, state::GameOutcome, State};
+use crate::{actions::Action, state::GameOutcome, Deck, State};
+
+/// Metadata available right as a game starts: the seed and, for each player, their display name
+/// (the `Debug` of their `Player`, or a bot's own reported name) and the deck they're playing.
+/// Passed to `on_game_start_with_metadata` for handlers (like the replay recorder) that need more
+/// than just the game id.
+pub struct GameStartMetadata<'a> {
+    pub seed: u64,
+    pub player_names: [String; 2],
+    pub decks: [&'a Deck; 2],
+}
 
 /// Trait to listen to simulation events
 /// Simulations are run in parallel. One instance of SimulationEventHandler will be created
@@ -20,6 +30,13 @@ pub trait SimulationEventHandler: any::Any + Send {
 
     // Game Methods (these will be called on per-thread instances of SimulationEventHandler)
     fn on_game_start(&mut self, _game_id: Uuid) {}
+    /// Same as `on_game_start`, but with extra metadata (seed, player names, decks). The default
+    /// implementation forwards to `on_game_start`, so existing handlers that only override that
+    /// one keep compiling and behaving the same; a handler that needs the metadata (e.g. the
+    /// replay recorder) overrides this one instead.
+    fn on_game_start_with_metadata(&mut self, game_id: Uuid, _metadata: &GameStartMetadata) {
+        self.on_game_start(game_id);
+    }
     fn on_action(
         &mut self,
         _game_id: Uuid,
@@ -29,6 +46,11 @@ pub trait SimulationEventHandler: any::Any + Send {
         _action: &Action,
     ) {
     }
+    /// The acting player's `Player::last_note()` for the action just reported via `on_action`, if
+    /// any. Called right after `on_action`, only for players that returned `Some` (an external
+    /// bot's own reasoning — see `docs/bot-protocol.md`); the default no-op is right for every
+    /// handler that doesn't care about bot notes.
+    fn on_action_note(&mut self, _game_id: Uuid, _note: Option<String>) {}
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
 }
 
@@ -60,6 +82,12 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
         }
     }
 
+    fn on_game_start_with_metadata(&mut self, game_id: Uuid, metadata: &GameStartMetadata) {
+        for handler in self.handlers.iter_mut() {
+            handler.on_game_start_with_metadata(game_id, metadata);
+        }
+    }
+
     fn on_action(
         &mut self,
         game_id: Uuid,
@@ -76,6 +104,12 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
                 playable_actions,
                 action,
             );
+        }
+    }
+
+    fn on_action_note(&mut self, game_id: Uuid, note: Option<String>) {
+        for handler in self.handlers.iter_mut() {
+            handler.on_action_note(game_id, note.clone());
         }
     }
 
