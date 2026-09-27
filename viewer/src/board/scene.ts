@@ -175,9 +175,9 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
     deckStack.x = deckAnc.x;
     deckStack.y = deckAnc.y;
     root.addChild(deckStack);
-    const deckText = makeHudText("", 10);
+    const deckText = makeHudText("", 15);
     deckText.anchor.set(0.5);
-    deckText.y = DECK_DISCARD_SIZE.h / 2 + 9;
+    deckText.y = DECK_DISCARD_SIZE.h / 2 + 14;
     deckStack.addChild(deckText);
     deckStacks[player] = deckStack;
     deckTexts[player] = deckText;
@@ -192,10 +192,10 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
     discardVisual.container.alpha = 0.9;
     root.addChild(discardVisual.container);
     discardVisuals[player] = discardVisual;
-    const discardCount = makeHudText("", 10);
+    const discardCount = makeHudText("", 15);
     discardCount.anchor.set(0.5);
     discardCount.x = discAnc.x;
-    discardCount.y = discAnc.y + DECK_DISCARD_SIZE.h / 2 + 9;
+    discardCount.y = discAnc.y + DECK_DISCARD_SIZE.h / 2 + 14;
     root.addChild(discardCount);
     discardCountTexts[player] = discardCount;
 
@@ -212,7 +212,7 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
   root.addChild(handCountText);
 
   const turnBanner = new PIXI.Container();
-  const bannerBg = new PIXI.Graphics().rect(-BOARD_WIDTH, -18, BOARD_WIDTH * 2, 36).fill({ color: 0xffffff, alpha: 0.12 });
+  const bannerBg = new PIXI.Graphics().rect(-BOARD_WIDTH, -15, BOARD_WIDTH * 2, 30).fill({ color: 0xffffff, alpha: 0.12 });
   const turnText = new PIXI.Text({
     text: "",
     style: { fontFamily: "Inter, sans-serif", fontSize: 20, fill: 0xffffff, fontWeight: "800" },
@@ -322,8 +322,8 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
 
         const ez = energyZoneGraphics[player];
         ez.clear();
-        ez.circle(0, 0, 12).fill({ color: energyColor(pv.energy_zone.current) }).stroke({ width: 2, color: 0xffffff, alpha: pv.energy_zone.current ? 0.8 : 0.15 });
-        ez.circle(19, 12, 6).fill({ color: energyColor(pv.energy_zone.next), alpha: 0.7 });
+        ez.circle(0, 0, 18).fill({ color: energyColor(pv.energy_zone.current) }).stroke({ width: 2.5, color: 0xffffff, alpha: pv.energy_zone.current ? 0.8 : 0.15 });
+        ez.circle(28, 18, 9).fill({ color: energyColor(pv.energy_zone.next), alpha: 0.7 });
 
         reconcileHand(player, pv.hand, cards);
       }

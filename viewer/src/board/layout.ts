@@ -9,10 +9,16 @@
 // directly above its card (see `hpStripHeight`/`HP_STRIP_GAP` and `slotRects` below) — a compact
 // bar+number header drawn by `cardArt.ts` — so the HP number/bar can never land on a neighboring
 // row, the divider or the turn banner (see `layout.test.ts`, which checks every slot's card+strip
-// rects against every other slot's, the divider band and the turn banner for intersections). The
-// board and its cards were also both made bigger (`BOARD_WIDTH` and the bench/active/hand sizes),
-// since the previous, narrower board left much of a wide viewport empty — see this file's
-// `BOARD_WIDTH` comment and the plan doc's "Round 4" notes.
+// rects against every other slot's, the divider band and the turn banner for intersections).
+//
+// Round 4 follow-up: the deck/discard/energy-zone widgets moved out of their own dedicated
+// horizontal row (between the bench and hand rows) into a side "gutter" next to the bench/active
+// rows (`gutterAnchorX`/`gutterClusterCenterY` below) — removing that row shrinks `BOARD_HEIGHT`
+// outright (the board is scaled to fit a *height*-bound container on most screens, so a shorter
+// `BOARD_HEIGHT` directly means bigger on-screen cards for the same viewport), and `BOARD_WIDTH`
+// grew enough to give the gutters real room, which is also what finally lets a wide viewport's
+// width get used instead of sitting empty on both sides of a narrow board. See the plan doc's
+// "Round 4 follow-up" notes for the before/after numbers.
 
 /** Every card, procedural or a real image, keeps this ratio: deckgym's card images are all
  * 367x512px (Round 3 fix — 63:88, the physical card's mm ratio, was close enough to *look* right
@@ -20,12 +26,10 @@
  * and the plan doc). */
 export const CARD_ASPECT = 367 / 512;
 
-// Wider than the bench/active card block actually needs (see `benchPos`), so there's real breathing
-// room for the deck/discard/energy-zone corner icons instead of them crowding the cards — "a wider
-// center gap for deck/discard/energy is fine" per the Round 4 request — and so a wide viewport uses
-// more of its width before the board's own aspect ratio caps it (see the plan doc's "Round 4
-// deviations" for why this is a bigger static board rather than a dynamically-reflowing one).
-export const BOARD_WIDTH = 1000;
+// Wide enough for the bench/active card block *plus* a real side gutter on each side for the
+// deck/discard/energy-zone widgets (`gutterAnchorX`) — moving those out of their own horizontal row
+// and into unused side space is most of how this got wider without the board getting any taller.
+export const BOARD_WIDTH = 1600;
 
 // Every other row/gap constant below is kept as tight as it can be while still fitting its own
 // content (see each one's own comment) — the HP strip (below) and the bigger card sizes both add
@@ -34,17 +38,18 @@ export const BOARD_WIDTH = 1000;
 // every logical pixel by the same factor.
 const NAME_BAR_H = 26;
 const GAP_NAME_HAND = 2;
-const GAP_HAND_DECKSTRIP = 2;
-const DECK_STRIP_H = 52;
-const GAP_DECKSTRIP_BENCH = 2;
+const GAP_HAND_BENCH = 8; // hand row -> bench row, now that deck/discard aren't between them
 const GAP_BENCH_ACTIVE = 2;
-const DIVIDER_H = 38; // fits the 36px-tall turn banner (scene.ts) with a 1px margin each side
-const GAP_DECKSTRIP_HAND = 2;
+const DIVIDER_H = 34; // fits the 30px-tall turn banner (scene.ts) with a 2px margin each side
 
 const BENCH_H = 210;
 export const BENCH_W = Math.round(BENCH_H * CARD_ASPECT);
 export const BENCH_SIZE = { w: BENCH_W, h: BENCH_H };
-const ACTIVE_H = Math.round(BENCH_H * 1.6);
+// Still noticeably bigger than a bench card (was 1.6x through Round 4) but less extreme than
+// before, since the active row's own height is by far the largest single cost in `BOARD_HEIGHT`
+// (it's the tallest row, and there are two of them) — trimming its multiplier a bit was the
+// single biggest lever for shrinking `BOARD_HEIGHT` (and so growing every card on screen).
+const ACTIVE_H = Math.round(BENCH_H * 1.45);
 export const ACTIVE_W = Math.round(ACTIVE_H * CARD_ASPECT);
 export const ACTIVE_SIZE = { w: ACTIVE_W, h: ACTIVE_H };
 // Kept for callers that used the old flat names.
@@ -76,35 +81,38 @@ const ACTIVE_ROW_H = ACTIVE_STRIP_H + HP_STRIP_GAP + ACTIVE_H;
 // a bench card or a little bigger, fanned out (see `handCardPos`'s rotation/arc below).
 const OPP_HAND_H = Math.round(BENCH_H * 0.65);
 export const OPP_HAND_SIZE = { w: Math.round(OPP_HAND_H * CARD_ASPECT), h: OPP_HAND_H };
-const PLAYER_HAND_H = Math.round(BENCH_H * 1.05);
+const PLAYER_HAND_H = Math.round(BENCH_H * 1.0);
 export const PLAYER_HAND_SIZE = { w: Math.round(PLAYER_HAND_H * CARD_ASPECT), h: PLAYER_HAND_H };
 // Kept for callers that used the old flat names (the player's own hand card size).
 export const HAND_CARD_W = PLAYER_HAND_SIZE.w;
 export const HAND_CARD_H = PLAYER_HAND_SIZE.h;
 const HAND_ROW_H_OPP = OPP_HAND_H; // flat, non-overlapping row — no arc/rotation to clear
-const HAND_ROW_H_PLAYER = PLAYER_HAND_H + 22; // + room for the fan's rotation/arc to clear neighbors
+const HAND_ROW_H_PLAYER = PLAYER_HAND_H + 16; // + room for the fan's rotation/arc to clear neighbors
 
 const STADIUM_H = 48;
 export const STADIUM_SIZE = { w: Math.round(STADIUM_H * CARD_ASPECT), h: STADIUM_H };
 
-const DECK_DISCARD_H = 48;
+// Deck/discard moved out of their own thin horizontal strip into the side gutter (see the header
+// comment) — with real room there instead of a squeezed 52px-tall row, they can be (and, per the
+// "make the deck/discard piles legible" request, should be) drawn much bigger.
+const DECK_DISCARD_H = 130;
 export const DECK_DISCARD_SIZE = { w: Math.round(DECK_DISCARD_H * CARD_ASPECT), h: DECK_DISCARD_H };
 
 const BENCH_GAP = 10;
 
 // Row top-edges, opponent (player 1) from the board's top edge down to the divider, player
 // (player 0) mirrored from the divider down to the bottom edge. Walked cumulatively so the gap
-// constants above are the only place row spacing is tuned.
+// constants above are the only place row spacing is tuned. Deck/discard/energy no longer have a
+// row of their own here — they live in the side gutter (`gutterAnchorX`/`gutterClusterCenterY`),
+// vertically alongside the bench+active rows instead of stacked between the hand and bench rows.
 const nameBarOppTop = 0;
 const handRowOppTop = nameBarOppTop + NAME_BAR_H + GAP_NAME_HAND;
-const deckStripOppTop = handRowOppTop + HAND_ROW_H_OPP + GAP_HAND_DECKSTRIP;
-const benchRowOppTop = deckStripOppTop + DECK_STRIP_H + GAP_DECKSTRIP_BENCH;
+const benchRowOppTop = handRowOppTop + HAND_ROW_H_OPP + GAP_HAND_BENCH;
 const activeRowOppTop = benchRowOppTop + BENCH_ROW_H + GAP_BENCH_ACTIVE;
 const dividerTop = activeRowOppTop + ACTIVE_ROW_H;
 const activeRowPlayerTop = dividerTop + DIVIDER_H;
 const benchRowPlayerTop = activeRowPlayerTop + ACTIVE_ROW_H + GAP_BENCH_ACTIVE;
-const deckStripPlayerTop = benchRowPlayerTop + BENCH_ROW_H + GAP_DECKSTRIP_BENCH;
-const handRowPlayerTop = deckStripPlayerTop + DECK_STRIP_H + GAP_DECKSTRIP_HAND;
+const handRowPlayerTop = benchRowPlayerTop + BENCH_ROW_H + GAP_HAND_BENCH;
 const nameBarPlayerTop = handRowPlayerTop + HAND_ROW_H_PLAYER + GAP_NAME_HAND;
 
 export const BOARD_HEIGHT = nameBarPlayerTop + NAME_BAR_H;
@@ -227,30 +235,46 @@ export function handCardPos(player: number, index: number, count: number): { x: 
   };
 }
 
-function deckDiscardStripInfo(player: number): { top: number } {
-  return { top: player === 0 ? deckStripPlayerTop : deckStripOppTop };
+// ---- Side gutter: each player's deck, discard and energy zone sit in a vertical cluster next to
+// their own bench+active rows (right for the viewer's own side, mirrored left for the opponent's)
+// instead of a dedicated horizontal strip between the bench and hand rows — see the header
+// comment for why (shrinks `BOARD_HEIGHT`, uses the wide viewport space that used to sit empty). --
+
+const GUTTER_CENTER_INSET = 260; // px from the board's outer edge to the gutter's horizontal center
+const GUTTER_PAIR_GAP = 24; // between the deck and discard icons, side by side
+const GUTTER_ENERGY_OFFSET = 110; // px above the deck/discard pair the energy zone sits at
+
+function gutterAnchorX(player: number): number {
+  return player === 0 ? BOARD_WIDTH - GUTTER_CENTER_INSET : GUTTER_CENTER_INSET;
 }
 
-/** The player's deck/discard sit in a thin strip between their bench and hand rows, at the outer
- * edge (right for the viewer's own side, mirrored left for the opponent's), per the plan. */
+/** Vertically centers the gutter's contents on that player's own bench+active rows combined, so it
+ * reads as "belonging" to that player's half rather than drifting toward the divider or the hand. */
+function gutterClusterCenterY(player: number): number {
+  const activeTop = player === 0 ? activeRowPlayerTop : activeRowOppTop;
+  const benchTop = player === 0 ? benchRowPlayerTop : benchRowOppTop;
+  return (rowCenterY(activeTop, ACTIVE_ROW_H) + rowCenterY(benchTop, BENCH_ROW_H)) / 2;
+}
+
+/** The player's deck/discard sit side by side in the gutter — deck toward the board's outer edge,
+ * discard toward the center, mirrored for the opponent — big enough here to actually read, unlike
+ * the old cramped horizontal strip (see the "make deck/discard legible" request). */
 export function deckAnchor(player: number): { x: number; y: number } {
-  const { top } = deckDiscardStripInfo(player);
-  const y = rowCenterY(top, DECK_DISCARD_H);
-  return player === 0 ? { x: BOARD_WIDTH - 36, y } : { x: 36, y };
+  const outer = player === 0 ? 1 : -1;
+  const x = gutterAnchorX(player) + outer * (DECK_DISCARD_SIZE.w / 2 + GUTTER_PAIR_GAP / 2);
+  return { x, y: gutterClusterCenterY(player) + GUTTER_ENERGY_OFFSET / 2 };
 }
 
 export function discardAnchor(player: number): { x: number; y: number } {
-  const { top } = deckDiscardStripInfo(player);
-  const y = rowCenterY(top, DECK_DISCARD_H);
-  return player === 0 ? { x: BOARD_WIDTH - 36 - DECK_DISCARD_SIZE.w - 16, y } : { x: 36 + DECK_DISCARD_SIZE.w + 16, y };
+  const outer = player === 0 ? 1 : -1;
+  const x = gutterAnchorX(player) - outer * (DECK_DISCARD_SIZE.w / 2 + GUTTER_PAIR_GAP / 2);
+  return { x, y: gutterClusterCenterY(player) + GUTTER_ENERGY_OFFSET / 2 };
 }
 
-/** The energy zone sits in the board's outer corner nearest that player's name bar — bottom-right
- * for the viewer's own side, mirrored top-left for the opponent's. */
+/** The energy zone sits above the deck/discard pair in the same gutter, nearer that player's own
+ * active spot (energy "flows" toward the active Pokemon). */
 export function energyZoneAnchor(player: number): { x: number; y: number } {
-  return player === 0
-    ? { x: BOARD_WIDTH - 28, y: rowCenterY(nameBarPlayerTop, NAME_BAR_H) }
-    : { x: 28, y: rowCenterY(nameBarOppTop, NAME_BAR_H) };
+  return { x: gutterAnchorX(player), y: gutterClusterCenterY(player) - GUTTER_ENERGY_OFFSET };
 }
 
 export function nameAnchor(player: number): { x: number; y: number } {
