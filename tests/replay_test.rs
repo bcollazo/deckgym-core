@@ -38,6 +38,9 @@ fn simulate_with_replay_dir_writes_one_replay_per_game() {
             data_output: None,
             replay_dir: Some(dir.to_string_lossy().to_string()),
             replay_sample: None,
+            bot_a: None,
+            bot_b: None,
+            bot_timeout_ms: deckgym::simulate::DEFAULT_BOT_TIMEOUT_MS,
         },
         ParallelConfig::default(),
     );
@@ -88,6 +91,9 @@ fn replay_sample_caps_how_many_games_get_a_replay_file() {
             data_output: None,
             replay_dir: Some(dir.to_string_lossy().to_string()),
             replay_sample: Some(2),
+            bot_a: None,
+            bot_b: None,
+            bot_timeout_ms: deckgym::simulate::DEFAULT_BOT_TIMEOUT_MS,
         },
         ParallelConfig::default(),
     );

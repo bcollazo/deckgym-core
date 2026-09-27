@@ -194,6 +194,9 @@ fn simulate_against_folder(
                 data_output: None,
                 replay_dir: None,
                 replay_sample: None,
+                bot_a: None,
+                bot_b: None,
+                bot_timeout_ms: deckgym::simulate::DEFAULT_BOT_TIMEOUT_MS,
             },
             ParallelConfig {
                 enabled: false,

@@ -269,6 +269,15 @@ CustomEase registered once), `pixi-filters`. No other UI framework needed.
   decorative flourish can fire for real during that fast-forward, so you may see e.g. KO shards or
   confetti appear an instant before the reverse animation itself plays. Harmless, but worth knowing
   about if it looks like a duplicate effect.
+- **No `game_over` protocol message, and one bot subprocess per game rather than truly persistent
+  across games.** See `docs/bot-protocol.md`'s own "Deviations" section for the reasoning (no
+  `Player` end-of-game hook to send it from; the CLI already constructs a fresh `Player` per game
+  for every player type, external bots included).
+- **A replay's recorded player name for an external bot is the `--bot-a`/`--bot-b` command string,
+  not the bot's self-reported `hello` name.** `GameStartMetadata` (used to name players in the
+  replay) is built from `Debug`, right when a game starts — before `ExternalPlayer` has lazily
+  spawned its subprocess and received the bot's `hello` reply. The name is still visible in the
+  engine's own logs mid-game (`ExternalPlayer(<name>)` once spawned) and in the bot's own stderr.
 
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.

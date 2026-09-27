@@ -109,9 +109,11 @@ impl<'a> Game<'a> {
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
 
-        if self.event_handler.is_some() {
-            if let Some(handler) = &mut self.event_handler {
-                handler.on_action(self.id, &self.state, actor, &actions, &action);
+        if let Some(handler) = &mut self.event_handler {
+            handler.on_action(self.id, &self.state, actor, &actions, &action);
+            let note = self.players[actor].last_note();
+            if note.is_some() {
+                handler.on_action_note(self.id, note);
             }
         }
         self.apply_action(&action);

@@ -46,6 +46,11 @@ pub trait SimulationEventHandler: any::Any + Send {
         _action: &Action,
     ) {
     }
+    /// The acting player's `Player::last_note()` for the action just reported via `on_action`, if
+    /// any. Called right after `on_action`, only for players that returned `Some` (an external
+    /// bot's own reasoning — see `docs/bot-protocol.md`); the default no-op is right for every
+    /// handler that doesn't care about bot notes.
+    fn on_action_note(&mut self, _game_id: Uuid, _note: Option<String>) {}
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
 }
 
@@ -99,6 +104,12 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
                 playable_actions,
                 action,
             );
+        }
+    }
+
+    fn on_action_note(&mut self, game_id: Uuid, note: Option<String>) {
+        for handler in self.handlers.iter_mut() {
+            handler.on_action_note(game_id, note.clone());
         }
     }
 

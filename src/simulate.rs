@@ -10,7 +10,7 @@ use uuid::Uuid;
 use crate::{
     data_exporter::DataExporter,
     optimize::{ParallelConfig, SimulationConfig},
-    players::{create_players, fill_code_array, PlayerCode},
+    players::{create_players_with_bots, fill_code_array, PlayerCode},
     replay::ReplayRecorder,
     simulation_event_handler::{
         CompositeSimulationEventHandler, GameStartMetadata, SimulationEventHandler, StatsCollector,
@@ -19,6 +19,11 @@ use crate::{
     Deck, Game,
 };
 use std::sync::{atomic::AtomicUsize, Arc};
+use std::time::Duration;
+
+/// Default per-decision timeout for an external bot (see `docs/bot-protocol.md`), used when the
+/// CLI's `--bot-timeout-ms` isn't given.
+pub const DEFAULT_BOT_TIMEOUT_MS: u64 = 10_000;
 
 /// Type alias for player factory function
 pub type PlayerFactory =
@@ -69,6 +74,9 @@ pub struct Simulation {
     event_handler: Option<CompositeSimulationEventHandler>,
     callbacks: Option<SimulationCallbacks<Box<dyn Fn() + Sync>>>,
     player_factory: Option<PlayerFactory>,
+    /// Commands for player A/B when their `PlayerCode` is `X` (an external bot). See `with_bots`.
+    bots: [Option<String>; 2],
+    bot_timeout: Duration,
 }
 
 impl Simulation {
@@ -115,6 +123,8 @@ impl Simulation {
             event_handler: None,
             callbacks: None,
             player_factory: None,
+            bots: [None, None],
+            bot_timeout: Duration::from_millis(DEFAULT_BOT_TIMEOUT_MS),
         })
     }
 
@@ -142,6 +152,8 @@ impl Simulation {
             event_handler: None,
             callbacks: None,
             player_factory: Some(Box::new(player_factory)),
+            bots: [None, None],
+            bot_timeout: Duration::from_millis(DEFAULT_BOT_TIMEOUT_MS),
         })
     }
 
@@ -164,6 +176,20 @@ impl Simulation {
         F: Fn() + Sync + 'static,
     {
         self.callbacks = Some(SimulationCallbacks::new().with_game_callback(Box::new(callback)));
+        self
+    }
+
+    /// Sets the external-bot commands and per-decision timeout for `PlayerCode::X` slots (see
+    /// `docs/bot-protocol.md`). Ignored when a `player_factory` was supplied instead of player
+    /// codes.
+    pub fn with_bots(
+        mut self,
+        bot_a: Option<String>,
+        bot_b: Option<String>,
+        timeout: Duration,
+    ) -> Self {
+        self.bots = [bot_a, bot_b];
+        self.bot_timeout = timeout;
         self
     }
 
@@ -203,10 +229,12 @@ impl Simulation {
             let players = if let Some(ref factory) = self.player_factory {
                 factory(self.deck_a.clone(), self.deck_b.clone())
             } else {
-                create_players(
+                create_players_with_bots(
                     self.deck_a.clone(),
                     self.deck_b.clone(),
                     self.player_codes.clone(),
+                    self.bots.clone(),
+                    self.bot_timeout,
                 )
             };
             let seed = self.seed.unwrap_or(rand::random::<u64>());
@@ -366,6 +394,11 @@ pub fn simulate(
     if let Some(replay_dir) = sim_config.replay_dir {
         simulation = register_replay_recorder(simulation, replay_dir, sim_config.replay_sample);
     }
+    simulation = simulation.with_bots(
+        sim_config.bot_a,
+        sim_config.bot_b,
+        Duration::from_millis(sim_config.bot_timeout_ms),
+    );
 
     let pb_clone = pb.clone();
     simulation = simulation.with_callback(move || pb_clone.inc(1));

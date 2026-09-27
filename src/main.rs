@@ -26,7 +26,7 @@ enum Commands {
         deck_b_or_folder: String,
 
         /// Players' strategies as a comma-separated list (e.g., "e2,e4" or "r,e5")
-        /// Available codes: aa, et, r, h, w, m, v, e<depth>, er
+        /// Available codes: aa, et, r, h, w, m, v, e<depth>, er, x (external bot, see --bot-a/-b)
         /// Example: e2 = ExpectiMiniMax with depth 2
         #[arg(long, value_delimiter = ',', value_parser = parse_player_code)]
         players: Option<Vec<PlayerCode>>,
@@ -64,6 +64,20 @@ enum Commands {
         /// whole run.
         #[arg(long)]
         replay_sample: Option<usize>,
+
+        /// Command to run as an external bot for player A (requires player A's code to be `x`).
+        /// Spoken to over stdin/stdout — see docs/bot-protocol.md. Example:
+        /// --players x,r --bot-a "python3 examples/bots/random_bot.py"
+        #[arg(long)]
+        bot_a: Option<String>,
+
+        /// Same as --bot-a, for player B.
+        #[arg(long)]
+        bot_b: Option<String>,
+
+        /// Per-decision timeout for an external bot, in milliseconds
+        #[arg(long, default_value_t = deckgym::simulate::DEFAULT_BOT_TIMEOUT_MS)]
+        bot_timeout_ms: u64,
     },
     /// Optimize an incomplete deck against enemy decks
     Optimize {
@@ -117,6 +131,9 @@ fn simulate_against_folder(
     let data_output = sim_config.data_output;
     let replay_dir = sim_config.replay_dir;
     let replay_sample = sim_config.replay_sample;
+    let bot_a = sim_config.bot_a;
+    let bot_b = sim_config.bot_b;
+    let bot_timeout_ms = sim_config.bot_timeout_ms;
     let parallel = parallel_config.enabled;
     let num_threads = parallel_config.num_threads;
 
@@ -200,6 +217,9 @@ fn simulate_against_folder(
                 data_output: data_output.clone(),
                 replay_dir: replay_dir.clone(),
                 replay_sample,
+                bot_a: bot_a.clone(),
+                bot_b: bot_b.clone(),
+                bot_timeout_ms,
             },
             ParallelConfig {
                 enabled: parallel,
@@ -230,6 +250,9 @@ fn main() {
             data_output,
             replay_dir,
             replay_sample,
+            bot_a,
+            bot_b,
+            bot_timeout_ms,
         } => {
             initialize_logger(verbose);
 
@@ -248,6 +271,9 @@ fn main() {
                         data_output,
                         replay_dir,
                         replay_sample,
+                        bot_a,
+                        bot_b,
+                        bot_timeout_ms,
                     },
                     ParallelConfig {
                         enabled: parallel,
@@ -265,6 +291,9 @@ fn main() {
                         data_output,
                         replay_dir,
                         replay_sample,
+                        bot_a,
+                        bot_b,
+                        bot_timeout_ms,
                     },
                     ParallelConfig {
                         enabled: parallel,
@@ -295,6 +324,9 @@ fn main() {
                 data_output: None,
                 replay_dir: None,
                 replay_sample: None,
+                bot_a: None,
+                bot_b: None,
+                bot_timeout_ms: deckgym::simulate::DEFAULT_BOT_TIMEOUT_MS,
             };
             let parallel_config = ParallelConfig {
                 enabled: parallel,

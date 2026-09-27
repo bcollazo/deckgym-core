@@ -40,6 +40,13 @@ pub struct SimulationConfig {
     /// Cap how many of the games in this run get a replay written (only meaningful with
     /// `replay_dir` set).
     pub replay_sample: Option<usize>,
+    /// Command to run as an external bot for player A, when its code is `x`. See
+    /// `docs/bot-protocol.md`.
+    pub bot_a: Option<String>,
+    /// Same as `bot_a`, for player B.
+    pub bot_b: Option<String>,
+    /// Per-decision timeout for an external bot, in milliseconds.
+    pub bot_timeout_ms: u64,
 }
 
 /// Configuration for parallelism
@@ -536,6 +543,9 @@ mod tests {
             data_output: None,
             replay_dir: None,
             replay_sample: None,
+            bot_a: None,
+            bot_b: None,
+            bot_timeout_ms: crate::simulate::DEFAULT_BOT_TIMEOUT_MS,
         };
         let parallel_config = ParallelConfig {
             enabled: false,

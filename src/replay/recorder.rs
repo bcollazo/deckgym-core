@@ -126,6 +126,12 @@ impl SimulationEventHandler for ReplayRecorder {
         });
     }
 
+    fn on_action_note(&mut self, _game_id: Uuid, note: Option<String>) {
+        if let Some(step) = self.current.as_mut().and_then(|r| r.steps.last_mut()) {
+            step.note = note;
+        }
+    }
+
     fn on_game_end(&mut self, _game_id: Uuid, state: State, result: Option<GameOutcome>) {
         let Some(mut replay) = self.current.take() else {
             return;

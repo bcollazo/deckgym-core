@@ -118,6 +118,23 @@ cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-ar
   -n 1000 --players r,r --replay-dir replays/ --replay-sample 10
 ```
 
+## External Bots
+
+A bot written in any language can play as either seat, talking to the engine over stdin/stdout in
+JSON lines. Give that seat the player code `x` and point `--bot-a`/`--bot-b` at the command to run:
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 1 --players r,x --bot-b "python3 examples/bots/random_bot.py"
+```
+
+`examples/bots/random_bot.py` is a minimal, stdlib-only example bot (picks a random legal action
+and attaches a short note explaining its pick). See [`docs/bot-protocol.md`](./docs/bot-protocol.md)
+for the full wire protocol, including the message schemas and how failures (timeouts, invalid
+replies, a crashed process) are handled. `--bot-timeout-ms` (default 10000) controls how long the
+engine waits for one decision. A bot's notes, when set, are stored in `--replay-dir` replays and
+shown in the [web viewer](./viewer/README.md)'s options panel.
+
 ## Contributing
 
 New to Open Source? See [CONTRIBUTING.md](./CONTRIBUTING.md).
