@@ -24,7 +24,9 @@ export default function App() {
   const [replay, setReplay] = useState<Replay | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [controller, setController] = useState<PlaybackController | null>(null);
-  const sceneRef = useRef<BoardScene | null>(null);
+  // State, not a ref: the replay fetch and Pixi's async canvas init race each other on load, and
+  // the controller effect below must re-run when whichever of the two finishes last arrives.
+  const [scene, setScene] = useState<BoardScene | null>(null);
   const triedUrlParam = useRef(false);
   // Resolved once at startup (URL params > localStorage > VITE_CARD_IMAGE_URL); changing it in the
   // settings popover saves and reloads the page rather than reconfiguring this live (see
@@ -33,17 +35,15 @@ export default function App() {
 
   const state = useControllerState(controller);
 
-  const handleReady = useCallback((scene: BoardScene) => {
-    sceneRef.current = scene;
-  }, []);
+  const handleReady = useCallback((s: BoardScene) => setScene(s), []);
 
-  // Build (or rebuild) the PlaybackController whenever a new replay is loaded and the scene exists.
+  // Build (or rebuild) the PlaybackController once both a replay and the scene exist, in either order.
   useEffect(() => {
-    if (!replay || !sceneRef.current) return;
-    const c = new PlaybackController(sceneRef.current, replay);
+    if (!replay || !scene) return;
+    const c = new PlaybackController(scene, replay);
     setController(c);
     return () => c.destroy();
-  }, [replay]);
+  }, [replay, scene]);
 
   // Kick off loading every card image the replay could show, up front, so most are ready before
   // the viewer ever needs to draw them (a no-op when images are off).
