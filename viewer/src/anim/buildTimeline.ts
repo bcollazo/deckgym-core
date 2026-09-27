@@ -20,7 +20,7 @@ import { actionPayload, actionTag } from "../types/replay";
 import { diffViewStates, type SemanticChange, type SlotKey } from "./diff";
 import { energyColor } from "./colors";
 import { gsap, prefersReducedMotion } from "./gsap";
-import { shockwaveAt, type BoardScene } from "../board/scene";
+import type { BoardScene } from "../board/scene";
 import { CARD_H, CARD_W } from "../board/layout";
 
 function parseSlotKey(key: SlotKey): { player: number; slot: number } {
@@ -123,19 +123,13 @@ export function buildTimeline(prev: ViewState, next: ViewState, chosen: SimpleAc
     tl.to(attackerVisual.container, { x: lungeX, y: lungeY, duration: dur(0.14), ease: "attackLunge" }, cursor + dur(0.12));
     advance(dur(0.12) + dur(0.14));
     if (!reduced) advance(0.07); // hit-stop: a brief hold at the moment of impact
-    tl.call(
-      () => {
-        if (!reduced) {
-          shockwaveAt(scene, targetPos);
-          scene.screenShake(7, 0.3);
-        }
-      },
-      [],
-      cursor,
-    );
     tl.to(attackerVisual.container, { x: attackerPos.x, y: attackerPos.y, duration: dur(0.2), ease: "power2.out" }, cursor);
     advance(dur(0.2));
 
+    // Hit reaction: only the defending card(s) react (a small recoil, a brief white flash, the
+    // damage number) plus the ghost HP bar drain — not the whole board. Round 4 removed the
+    // whole-stage `ShockwaveFilter`/screen-shake that used to fire here (see the plan doc's
+    // "Round 4" notes): an attack should only visibly affect the two cards involved.
     for (const t of targets) {
       consumedSlots.add(t.slot);
       const { player, slot } = parseSlotKey(t.slot);
@@ -143,8 +137,11 @@ export function buildTimeline(prev: ViewState, next: ViewState, chosen: SimpleAc
       const visual = scene.slot(player, slot);
       animateHpBar(tl, visual, t.from, t.to, t.maxHp, cursor, dur);
       if (!reduced) {
+        tl.to(visual.container, { x: pos.x + 5, duration: 0.035, ease: "none", yoyo: true, repeat: 3 }, cursor);
         tl.call(
           () => {
+            const flash = scene.spawnFlash(pos, visual.width, visual.height);
+            gsap.to(flash, { alpha: 0, duration: 0.3, ease: "power1.out", onComplete: () => scene.removeFx(flash) });
             const dmg = t.from - t.to;
             const label = scene.spawnFloatingText({ x: pos.x, y: pos.y - 30 }, `-${dmg}`, 0xff5c5c, 22);
             gsap.to(label, { y: pos.y - 70, alpha: 0, duration: 0.9, ease: "popOvershoot" });

@@ -10,7 +10,7 @@
 // snapshot at end of each step" rule.
 
 import * as PIXI from "pixi.js";
-import { AdvancedBloomFilter, GlowFilter, ShockwaveFilter } from "pixi-filters";
+import { AdvancedBloomFilter, GlowFilter } from "pixi-filters";
 import { energyColor, PLAYER_COLORS } from "../anim/colors";
 import { gsap } from "../anim/gsap";
 import type { Card, EnergyType, PlayerView, ReplayPlayerInfo, ViewState } from "../types/replay";
@@ -62,7 +62,10 @@ export interface BoardScene {
   spawnShards(pos: { x: number; y: number }, color: number, count?: number): void;
   spawnConfetti(): void;
   spawnFloatingText(pos: { x: number; y: number }, text: string, color: number, size?: number): PIXI.Text;
-  screenShake(intensity?: number, duration?: number): gsap.core.Timeline;
+  /** A brief white flash over a single card (the attack's defender, say) — an fx-layer overlay
+   * sized/positioned to match it, not a whole-board effect. Caller fades/removes it (see
+   * `anim/buildTimeline.ts`'s hit-reaction handling). */
+  spawnFlash(pos: { x: number; y: number }, w: number, h: number): PIXI.Graphics;
   winPulse(): void;
   removeFx(node: PIXI.Container): void;
   /** Kills and destroys every ephemeral fx-layer child. Called before (re)building a transition's
@@ -79,29 +82,16 @@ function makeHudText(text = "", size = 13): PIXI.Text {
   });
 }
 
-/** A cheap radial-vignette background texture, generated once with a 2D canvas (Pixi v8 has no
- * built-in gradient fill), rather than shipping an image asset. */
-function createVignetteTexture(app: PIXI.Application, w: number, h: number): PIXI.Texture {
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
-  const gradient = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.hypot(w / 2, h / 2));
-  gradient.addColorStop(0, "#141826");
-  gradient.addColorStop(0.6, "#0d101a");
-  gradient.addColorStop(1, "#07090f");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, w, h);
-  return PIXI.Texture.from({ resource: canvas, resolution: app.renderer.resolution });
-}
-
 export function createBoardScene(app: PIXI.Application, images?: CardImageStore): BoardScene {
   const root = new PIXI.Container();
   root.sortableChildren = true;
   const fx = new PIXI.Container();
   app.stage.addChild(root);
 
-  const background = new PIXI.Sprite(createVignetteTexture(app, BOARD_WIDTH, BOARD_HEIGHT));
+  // Round 4: a flat near-black board, not the earlier radial vignette — the request was for
+  // "darker and cleaner", and a gradient (even a subtle one) is exactly the kind of thing that
+  // banded visibly once the board got bigger. A plain fill can't band.
+  const background = new PIXI.Graphics().rect(0, 0, BOARD_WIDTH, BOARD_HEIGHT).fill({ color: 0x07090d });
   root.addChild(background);
 
   // A faint center divider line (no illustrated playmat — just enough to separate the two halves).
@@ -437,20 +427,14 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
       return t;
     },
 
-    screenShake(intensity = 8, duration = 0.35) {
-      const tl = gsap.timeline();
-      const steps = 6;
-      for (let i = 0; i < steps; i++) {
-        const decay = 1 - i / steps;
-        tl.to(root, {
-          x: (Math.random() - 0.5) * intensity * decay,
-          y: (Math.random() - 0.5) * intensity * decay,
-          duration: duration / steps,
-          ease: "none",
-        });
-      }
-      tl.to(root, { x: 0, y: 0, duration: duration / steps });
-      return tl;
+    spawnFlash(pos, w, h) {
+      const g = new PIXI.Graphics().roundRect(-w / 2, -h / 2, w, h, w * 0.08).fill({ color: 0xffffff });
+      g.x = pos.x;
+      g.y = pos.y;
+      g.alpha = 0.85;
+      g.blendMode = "add";
+      fx.addChild(g);
+      return g;
     },
 
     winPulse() {
@@ -485,27 +469,4 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
   };
 
   return scene;
-}
-
-export function shockwaveAt(scene: BoardScene, pos: { x: number; y: number }) {
-  const filter = new ShockwaveFilter({ amplitude: 24, wavelength: 140, speed: 900 });
-  filter.center = [pos.x / BOARD_WIDTH, pos.y / BOARD_HEIGHT];
-  const existing = scene.root.filters ? (Array.isArray(scene.root.filters) ? scene.root.filters : [scene.root.filters]) : [];
-  scene.root.filters = [...existing, filter];
-  const state = { time: 0 };
-  gsap.fromTo(
-    state,
-    { time: 0 },
-    {
-      time: 1,
-      duration: 0.5,
-      ease: "power1.out",
-      onUpdate: () => {
-        filter.time = state.time;
-      },
-      onComplete: () => {
-        scene.root.filters = (scene.root.filters as PIXI.Filter[]).filter((f) => f !== filter);
-      },
-    },
-  );
 }

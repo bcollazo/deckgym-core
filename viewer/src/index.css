@@ -1,8 +1,11 @@
 :root {
   color-scheme: dark;
-  --bg: #0b0d14;
-  --panel: #12141f;
-  --panel-2: #171a26;
+  /* Round 4: darker/cleaner — a flat near-black board (matches Board.tsx's Pixi `background` and
+   * scene.ts's flat fill, no gradient/vignette) and a panel one step lighter than it, rather than
+   * the previous slightly-lighter-than-panel page background. */
+  --bg: #07090d;
+  --panel: #0d1117;
+  --panel-2: #161a24;
   --border: #262a3a;
   --text: #e8eaf2;
   --text-dim: #9aa0b4;

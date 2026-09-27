@@ -37,7 +37,7 @@ export function Board({ onReady, images }: BoardProps) {
         <Application
           width={BOARD_WIDTH}
           height={BOARD_HEIGHT}
-          background={0x07090f}
+          background={0x07090d}
           resolution={Math.min(window.devicePixelRatio || 1, 2)}
           autoDensity
           antialias
