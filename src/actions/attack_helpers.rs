@@ -8,7 +8,7 @@ pub(crate) fn collect_in_play_indices_by_type(
     state
         .enumerate_in_play_pokemon(player)
         .filter_map(|(in_play_idx, pokemon)| {
-            if pokemon.get_energy_type() == Some(energy_type) {
+            if pokemon.is_type(energy_type) {
                 Some(in_play_idx)
             } else {
                 None

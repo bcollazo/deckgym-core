@@ -60,6 +60,20 @@ pub enum CardEffect {
     Counterattack {
         amount: u32,
     },
+    /// Aegislash's Superb Shield: this Pokémon takes `amount` less damage, but only from attacks
+    /// used by the opponent's Pokémon ex. The ex-only twin of `ReducedDamage`.
+    ReducedDamageFromEx {
+        amount: u32,
+    },
+    /// Gothitelle's Stellar Cradle: the next time this Pokémon's controller attaches Energy to it
+    /// from their Energy Zone, it falls Asleep.
+    AsleepWhenEnergyAttachedFromZone,
+    /// Galarian Stunfisk's Snapping Trap: while the Pokémon carrying this effect is in the Active
+    /// Spot, an opponent retreating their Active Pokémon takes `amount` damage on the Pokémon
+    /// they promote in its place.
+    DamageNewActiveOnOpponentRetreat {
+        amount: u32,
+    },
     // ---------------------------------------------------------------------------------------------
     // Ability-derived effects. These are not added via `add_effect`; they are *derived* on the fly
     // from a Pokémon's passive ability by `PlayedCard::get_effective_card_effects` (see
@@ -123,6 +137,23 @@ pub enum TurnEffect {
         player: usize,
         attacker_must_be_ex: bool,
     },
+    /// All of `player`'s Pokémon take `amount` less damage from attacks from the opponent's
+    /// Pokémon (e.g. Blue). The untargeted sibling of `ReducedDamageForType` /
+    /// `ReducedDamageForSpecificPokemon`; like those it covers Benched Pokémon too, since the
+    /// wording is "all of your Pokémon".
+    ReducedDamageForAllPokemon {
+        amount: u32,
+        player: usize,
+    },
+    /// If one of `player`'s Pokémon named in `pokemon_names` would be Knocked Out by damage from
+    /// an attack, it is not Knocked Out and its remaining HP becomes `remaining_hp` (e.g. Hala,
+    /// protecting Hariyama and Crabominable). The deterministic, turn-scoped counterpart of
+    /// Ursaluna's coin-flip Guts ability; resolved in `handle_knockouts`.
+    SurviveKnockOutForSpecificPokemon {
+        pokemon_names: Vec<String>,
+        player: usize,
+        remaining_hp: u32,
+    },
     IncreasedDamage {
         amount: u32,
     },
@@ -153,6 +184,19 @@ pub enum TurnEffect {
         target_player: usize,
         target_in_play_idx: usize,
         amount: u32,
+    },
+    /// Armaldo's Abyssal Drop: whatever occupies `target_in_play_idx` on `target_player`'s board
+    /// at the end of their turn is Knocked Out outright. The knock-out twin of
+    /// `DelayedSpotDamage` — it is not damage, so it ignores damage reduction and prevention.
+    DelayedSpotKnockOut {
+        source_player: usize,
+        target_player: usize,
+        target_in_play_idx: usize,
+    },
+    /// Malamar's Evolution Jammer: `player` can't play Pokémon from their hand to evolve their
+    /// Pokémon.
+    NoEvolutionFromHand {
+        player: usize,
     },
     ForceFirstHeads,
     /// A random-spread attack with this name chooses a Pokémon `amount` more times

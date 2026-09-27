@@ -6,7 +6,8 @@ use crate::hooks::{modify_damage, DamageModifierContext};
 use crate::State;
 
 use super::apply_action_helpers::{
-    guts_would_flip, handle_damage_only, handle_knockouts, Mutation, Probabilities,
+    damage_would_knock_out, guts_would_flip, handle_damage_only, handle_knockouts, Mutation,
+    Probabilities,
 };
 use super::outcomes::{generate_sequences_with_heads, CoinPaths, CoinSeq, Outcomes};
 use super::{Action, SimpleAction};
@@ -489,6 +490,83 @@ impl AttackOutcomes {
         Self { branches }
     }
 
+    /// Apply a defender's "when this Pokémon is Knocked Out, flip a coin" ability to each
+    /// opponent in-play slot in `indices`. Like `split_with_guts_survival`, only the slots whose
+    /// (forecast) damage in a branch would knock them out flip a coin, and each such branch is
+    /// split into `2^k` sub-branches. On heads, `effect` is applied by a post-damage effect that
+    /// runs before `handle_knockouts` resolves the Knock Out. Coin metadata is dropped (these are
+    /// the defender's coins, not the acting player's).
+    pub fn split_with_knockout_coin_flip(
+        self,
+        state: &State,
+        acting_player: usize,
+        attack_name: Option<&str>,
+        attack_effect: Option<&str>,
+        indices: &[usize],
+        effect: KnockoutCoinEffect,
+    ) -> Self {
+        let opponent = (acting_player + 1) % 2;
+        let mut branches = vec![];
+        for branch in self.branches {
+            let flipping: Vec<usize> = indices
+                .iter()
+                .copied()
+                .filter(|target_idx| {
+                    let raw_total: u32 = branch
+                        .outcome
+                        .damage
+                        .iter()
+                        .filter(|(_, is_opponent, idx)| *is_opponent && idx == target_idx)
+                        .map(|(amount, _, _)| *amount)
+                        .sum();
+                    damage_would_knock_out(
+                        state,
+                        (acting_player, 0),
+                        raw_total,
+                        (opponent, *target_idx),
+                        true,
+                        DamageModifierContext {
+                            attack_name,
+                            attack_effect,
+                        },
+                    )
+                })
+                .collect();
+
+            if flipping.is_empty() {
+                branches.push(branch);
+                continue;
+            }
+
+            let combos = 1usize << flipping.len();
+            let sub_probability = branch.probability / combos as f64;
+            for mask in 0..combos {
+                let heads: Vec<usize> = flipping
+                    .iter()
+                    .enumerate()
+                    .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+                    .map(|(_, idx)| *idx)
+                    .collect();
+                let mut outcome = branch.outcome.clone();
+                if !heads.is_empty() {
+                    let previous_post = outcome.post_damage_effect.take();
+                    outcome.post_damage_effect = Some(Rc::new(move |rng, state, action| {
+                        apply_knockout_coin_effect(state, action.actor, &heads, effect);
+                        if let Some(post) = &previous_post {
+                            post(rng, state, action);
+                        }
+                    }));
+                }
+                branches.push(AttackBranch {
+                    probability: sub_probability,
+                    outcome,
+                    coin_paths: CoinPaths::None,
+                });
+            }
+        }
+        Self { branches }
+    }
+
     /// Expected raw+modified damage dealt to a specific target across all branches, computed
     /// purely by inspecting branch data (no closures are executed, no RNG is consumed).
     ///
@@ -582,6 +660,43 @@ impl AttackOutcomes {
             .collect::<Vec<_>>();
         Outcomes::from_branches_with_coin_paths(branches)
             .expect("attack outcome branches should form a valid distribution")
+    }
+}
+
+/// What a heads flip does for a defender's "when this Pokémon is Knocked Out, flip a coin"
+/// ability.
+#[derive(Clone, Copy)]
+pub enum KnockoutCoinEffect {
+    /// Galarian Cursola's Perish Body: the Attacking Pokémon is Knocked Out as well.
+    KnockOutAttacker,
+    /// Dusknoir's Fade into Darkness / Glimmora's Shattering Crystal: the opponent can't get any
+    /// points for this Knock Out.
+    DenyPoints,
+}
+
+fn apply_knockout_coin_effect(
+    state: &mut State,
+    acting_player: usize,
+    heads_indices: &[usize],
+    effect: KnockoutCoinEffect,
+) {
+    let opponent = (acting_player + 1) % 2;
+    match effect {
+        KnockoutCoinEffect::KnockOutAttacker => {
+            // Only ever registered for the Active Spot, so any heads knocks out the attacker.
+            if !heads_indices.is_empty() {
+                if let Some(attacker) = state.in_play_pokemon[acting_player][0].as_mut() {
+                    attacker.set_remaining_hp(0);
+                }
+            }
+        }
+        KnockoutCoinEffect::DenyPoints => {
+            for idx in heads_indices {
+                if let Some(pokemon) = state.in_play_pokemon[opponent][*idx].as_mut() {
+                    pokemon.knockout_points_denied = true;
+                }
+            }
+        }
     }
 }
 

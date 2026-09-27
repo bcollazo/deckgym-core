@@ -1,9 +1,11 @@
+use log::debug;
+
 use crate::{
     actions::{
         abilities::AbilityMechanic, ability_mechanic_from_effect, apply_evolve, handle_damage_only,
         handle_knockouts,
     },
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     hooks::{can_evolve_into, DamageModifierContext},
     models::{EnergyType, StatusCondition},
     State,
@@ -25,6 +27,21 @@ impl State {
             self.attach_energy_internal(actor, in_play_idx, energy, amount, true, is_turn_energy);
         if attached && is_turn_energy {
             self.energy_zone[actor].current = None;
+        }
+        if attached {
+            // Gothitelle's Stellar Cradle: a Pokemon carrying this effect falls Asleep the moment
+            // its controller feeds it Energy from the Energy Zone.
+            let falls_asleep = self.in_play_pokemon[actor][in_play_idx]
+                .as_ref()
+                .is_some_and(|pokemon| {
+                    pokemon.get_active_effects().iter().any(|effect| {
+                        matches!(effect, CardEffect::AsleepWhenEnergyAttachedFromZone)
+                    })
+                });
+            if falls_asleep {
+                debug!("Stellar Cradle: Energy from the Energy Zone puts the Pokemon to Sleep");
+                self.apply_status_condition(actor, in_play_idx, StatusCondition::Asleep);
+            }
         }
         attached
     }

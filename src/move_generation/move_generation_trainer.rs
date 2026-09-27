@@ -2,8 +2,10 @@ use crate::{
     actions::{abilities::AbilityMechanic, SimpleAction},
     card_ids::CardId,
     card_logic::{
-        active_has_psychic_attack, can_rare_candy_evolve, diantha_targets, ilima_targets,
-        mallow_targets, psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
+        acerola_targets, active_has_psychic_attack, can_rare_candy_evolve, diantha_targets,
+        distinct_attached_energy_types, fishing_net_candidates, ilima_targets, mallow_targets,
+        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
+        LT_SURGE_TARGETS,
     },
     effects::TurnEffect,
     hooks::{
@@ -271,7 +273,168 @@ pub fn trainer_move_generation_implementation(
         CardId::B4a071TeamRocketsBoss | CardId::B4a087TeamRocketsBoss => {
             can_play_trainer(state, trainer_card)
         }
+        // Information-only cards. Looking at cards without moving them between zones has no
+        // observable effect in this engine (the bots already forecast over the full deck
+        // distribution), so these are playable and resolve as no-ops. See the matching arms in
+        // `forecast_trainer_action` for the per-card reasoning.
+        CardId::PA003HandScope
+        | CardId::PA004PokedEx
+        | CardId::PA008PokedEx
+        | CardId::A3a068Looker
+        | CardId::A3a082Looker
+        | CardId::A4161Hiker
+        | CardId::A4201Hiker
+        | CardId::A4a071Morty
+        | CardId::A4a085Morty => can_play_trainer(state, trainer_card),
+        CardId::A3145RotomDEx => can_play_trainer(state, trainer_card),
+        CardId::A1a067Blue | CardId::A1a081Blue => can_play_trainer(state, trainer_card),
+        CardId::A1226LtSurge | CardId::A1273LtSurge => can_play_lt_surge(state, trainer_card),
+        CardId::A1a064PokemonFlute => can_play_pokemon_flute(state, trainer_card),
+        CardId::A1a066BuddingExpeditioner | CardId::A1a080BuddingExpeditioner => {
+            can_play_budding_expeditioner(state, trainer_card)
+        }
+        CardId::A2151TeamGalacticGrunt | CardId::A2191TeamGalacticGrunt => {
+            can_play_trainer(state, trainer_card)
+        }
+        CardId::A3143FishingNet => can_play_fishing_net(state, trainer_card),
+        CardId::A3148Acerola | CardId::A3190Acerola => can_play_acerola(state, trainer_card),
+        CardId::A3153Sophocles | CardId::A3195Sophocles => can_play_trainer(state, trainer_card),
+        CardId::A3a063BeastWall => can_play_beast_wall(state, trainer_card),
+        CardId::A4152SquirtBottle => can_play_squirt_bottle(state, trainer_card),
+        CardId::A4159Fisher | CardId::A4199Fisher => can_play_trainer(state, trainer_card),
+        CardId::A4a069Whitney | CardId::A4a083Whitney => can_play_whitney(state, trainer_card),
+        CardId::A4a070TravelingMerchant | CardId::A4a084TravelingMerchant => {
+            can_play_trainer(state, trainer_card)
+        }
+        CardId::B1213PrankSpinner => can_play_prank_spinner(state, trainer_card),
+        CardId::B1215HittingHammer => can_play_trainer(state, trainer_card),
+        CardId::B1222Hala | CardId::B1267Hala => can_play_trainer(state, trainer_card),
+        CardId::B2151Juggler | CardId::B2192Juggler => can_play_juggler(state, trainer_card),
+        CardId::B2a089Iono | CardId::B2a106Iono => can_play_trainer(state, trainer_card),
+        CardId::A3b069Penny | CardId::A3b086Penny | CardId::B2a092Penny | CardId::B2a109Penny => {
+            can_play_trainer(state, trainer_card)
+        }
         _ => None,
+    }
+}
+
+/// Lt. Surge: "Move all [L] Energy from your Benched Pokémon to your Raichu, Electrode, or
+/// Electabuzz in the Active Spot." Needs a matching Active and at least one [L] Energy on the Bench.
+fn can_play_lt_surge(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let active_matches = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|p| LT_SURGE_TARGETS.contains(&p.get_name().as_str()));
+    let bench_has_lightning = state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, p)| p.attached_energy.contains(&EnergyType::Lightning));
+    if active_matches && bench_has_lightning {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Budding Expeditioner: "Put your Mew ex in the Active Spot into your hand."
+fn can_play_budding_expeditioner(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let active_is_mew_ex = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|p| p.get_name() == "Mew ex");
+    if active_is_mew_ex {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Pokémon Flute: "Put a Basic Pokémon from your opponent's discard pile onto their Bench."
+fn can_play_pokemon_flute(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_basic = state.discard_piles[opponent]
+        .iter()
+        .any(|card| matches!(card, Card::Pokemon(p) if p.stage == 0));
+    let has_bench_space = state.in_play_pokemon[opponent]
+        .iter()
+        .enumerate()
+        .any(|(i, slot)| i > 0 && slot.is_none());
+    if has_basic && has_bench_space {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Fishing Net: "Put a random Basic [W] Pokémon from your discard pile into your hand."
+fn can_play_fishing_net(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if fishing_net_candidates(state, state.current_player).is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Acerola: needs one of the actor's Palossand or Mimikyu to have damage on it.
+fn can_play_acerola(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if acerola_targets(state, state.current_player).is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Beast Wall: "You can use this card only if your opponent hasn't gotten any points."
+fn can_play_beast_wall(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    if state.points[opponent] == 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Squirt Bottle: "Discard a [R] Energy from your opponent's Active Pokémon."
+fn can_play_squirt_bottle(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_fire = state
+        .maybe_get_active(opponent)
+        .is_some_and(|p| p.attached_energy.contains(&EnergyType::Fire));
+    if has_fire {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Whitney: "Heal 60 damage from 1 of your Miltank..."
+fn can_play_whitney(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_miltank = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, p)| p.get_name() == "Miltank");
+    if has_miltank {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Prank Spinner: needs at least one card across both hands to choose from.
+fn can_play_prank_spinner(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state.hands[0].is_empty() && state.hands[1].is_empty() {
+        cannot_play_trainer()
+    } else {
+        can_play_trainer(state, trainer_card)
+    }
+}
+
+/// Juggler: "You can use this card only if your Pokémon in play have 3 or more different types of
+/// Energy attached."
+fn can_play_juggler(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if distinct_attached_energy_types(state, state.current_player) >= 3 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
     }
 }
 
@@ -371,7 +534,7 @@ fn can_play_lucky_ice_pop(state: &State, trainer_card: &TrainerCard) -> Option<V
 fn can_play_erika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let damaged_grass_count = state
         .enumerate_in_play_pokemon(state.current_player)
-        .filter(|(_, x)| x.is_damaged() && x.get_energy_type() == Some(EnergyType::Grass))
+        .filter(|(_, x)| x.is_damaged() && x.is_type(EnergyType::Grass))
         .count();
     if damaged_grass_count > 0 {
         can_play_trainer(state, trainer_card)
@@ -788,7 +951,7 @@ fn can_play_flame_patch(state: &State, trainer_card: &TrainerCard) -> Option<Vec
 
     // Check if active pokemon exists and is Fire type
     let active_is_fire = active_pokemon
-        .map(|p| p.get_energy_type() == Some(EnergyType::Fire))
+        .map(|p| p.is_type(EnergyType::Fire))
         .unwrap_or(false);
 
     // Check if there's at least 1 Fire energy in discard pile
@@ -808,7 +971,7 @@ fn can_play_electric_generator(
 ) -> Option<Vec<SimpleAction>> {
     let has_lightning_bench_target = state
         .enumerate_bench_pokemon(state.current_player)
-        .any(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Lightning));
+        .any(|(_, pokemon)| pokemon.is_type(EnergyType::Lightning));
 
     if has_lightning_bench_target {
         can_play_trainer(state, trainer_card)
@@ -1013,9 +1176,7 @@ fn can_play_cabbie(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
 fn can_play_parasol_lady(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     let has_target = state
         .enumerate_in_play_pokemon(state.current_player)
-        .any(|(_, pokemon)| {
-            pokemon.get_energy_type() == Some(EnergyType::Water) && !pokemon.card.is_ex()
-        });
+        .any(|(_, pokemon)| pokemon.is_type(EnergyType::Water) && !pokemon.card.is_ex());
     if has_target {
         can_play_trainer(state, trainer_card)
     } else {

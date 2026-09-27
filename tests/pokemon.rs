@@ -6,28 +6,46 @@ mod additional_ability_logic_test;
 mod alcremie_test;
 #[path = "pokemon/alolan_marowak_test.rs"]
 mod alolan_marowak_test;
+#[path = "pokemon/alolan_muk_ex_chemical_panic_test.rs"]
+mod alolan_muk_ex_chemical_panic_test;
 #[path = "pokemon/alolan_sandslash_spike_armor_test.rs"]
 mod alolan_sandslash_spike_armor_test;
 #[path = "pokemon/alomomola_hooh_test.rs"]
 mod alomomola_hooh_test;
 #[path = "pokemon/altaria_dragon_arcana_test.rs"]
 mod altaria_dragon_arcana_test;
+#[path = "pokemon/alternate_attack_cost_test.rs"]
+mod alternate_attack_cost_test;
 #[path = "pokemon/ambipom_b1_test.rs"]
 mod ambipom_b1_test;
+#[path = "pokemon/ampharos_zapping_bullet_test.rs"]
+mod ampharos_zapping_bullet_test;
 #[path = "pokemon/applin_share_test.rs"]
 mod applin_share_test;
 #[path = "pokemon/arcanine_test.rs"]
 mod arcanine_test;
 #[path = "pokemon/arceus_ex_test.rs"]
 mod arceus_ex_test;
+#[path = "pokemon/attacks_a_hooked_effects_test.rs"]
+mod attacks_a_hooked_effects_test;
+#[path = "pokemon/attacks_a_new_mechanics_test.rs"]
+mod attacks_a_new_mechanics_test;
+#[path = "pokemon/attacks_a_reused_mechanics_test.rs"]
+mod attacks_a_reused_mechanics_test;
 #[path = "pokemon/audino_test.rs"]
 mod audino_test;
 #[path = "pokemon/azurill_spritzee_test.rs"]
 mod azurill_spritzee_test;
 #[path = "pokemon/bellossom_a4_test.rs"]
 mod bellossom_a4_test;
+#[path = "pokemon/bidoof_super_fang_test.rs"]
+mod bidoof_super_fang_test;
 #[path = "pokemon/blastoise_double_splash_test.rs"]
 mod blastoise_double_splash_test;
+#[path = "pokemon/board_state_conditional_attacks_test.rs"]
+mod board_state_conditional_attacks_test;
+#[path = "pokemon/board_state_conditional_damage_test.rs"]
+mod board_state_conditional_damage_test;
 #[path = "pokemon/bombirdier_test.rs"]
 mod bombirdier_test;
 #[path = "pokemon/bonsly_teary_attack_test.rs"]
@@ -50,6 +68,8 @@ mod cascoon_harden_test;
 mod castform_test;
 #[path = "pokemon/caterpie_quick_growth_test.rs"]
 mod caterpie_quick_growth_test;
+#[path = "pokemon/celebi_temporal_leaves_test.rs"]
+mod celebi_temporal_leaves_test;
 #[path = "pokemon/celebi_time_recall_test.rs"]
 mod celebi_time_recall_test;
 #[path = "pokemon/chansey_blissey_test.rs"]
@@ -60,6 +80,10 @@ mod charmeleon_ignition_test;
 mod coalossal_coal_drop_test;
 #[path = "pokemon/coalossal_mountain_crush_test.rs"]
 mod coalossal_mountain_crush_test;
+#[path = "pokemon/coin_flip_displacement_attacks_test.rs"]
+mod coin_flip_displacement_attacks_test;
+#[path = "pokemon/coin_flip_tails_cannot_attack_test.rs"]
+mod coin_flip_tails_cannot_attack_test;
 #[path = "pokemon/comfey_flower_shield_test.rs"]
 mod comfey_flower_shield_test;
 #[path = "pokemon/conditional_damage_attacks_d_test.rs"]
@@ -76,10 +100,14 @@ mod croagunk_toxicroak_test;
 mod darkrai_ex_test;
 #[path = "pokemon/dedenne_surskit_test.rs"]
 mod dedenne_surskit_test;
+#[path = "pokemon/defender_condition_damage_test.rs"]
+mod defender_condition_damage_test;
 #[path = "pokemon/delcatty_energy_blender_test.rs"]
 mod delcatty_energy_blender_test;
 #[path = "pokemon/delibird_test.rs"]
 mod delibird_test;
+#[path = "pokemon/diancie_diamond_storm_test.rs"]
+mod diancie_diamond_storm_test;
 #[path = "pokemon/direct_damage_attacks_d_test.rs"]
 mod direct_damage_attacks_d_test;
 #[path = "pokemon/dragonair_dragons_blessing_test.rs"]
@@ -88,6 +116,8 @@ mod dragonair_dragons_blessing_test;
 mod drampa_test;
 #[path = "pokemon/drapion_a2_test.rs"]
 mod drapion_a2_test;
+#[path = "pokemon/dudunsparce_sudden_drilling_test.rs"]
+mod dudunsparce_sudden_drilling_test;
 #[path = "pokemon/durant_test.rs"]
 mod durant_test;
 #[path = "pokemon/dusknoir_shadow_void_test.rs"]
@@ -102,6 +132,8 @@ mod eelektross_energy_crush_test;
 mod emboar_flare_storm_test;
 #[path = "pokemon/emolga_dedenne_ex_tool_damage_test.rs"]
 mod emolga_dedenne_ex_tool_damage_test;
+#[path = "pokemon/energy_comparison_attacks_test.rs"]
+mod energy_comparison_attacks_test;
 #[path = "pokemon/entei_test.rs"]
 mod entei_test;
 #[path = "pokemon/farigiraf_dipplin_test.rs"]
@@ -116,6 +148,8 @@ mod gallade_test;
 mod game_state_attacks_d_test;
 #[path = "pokemon/gardevoir_psy_turbo_test.rs"]
 mod gardevoir_psy_turbo_test;
+#[path = "pokemon/gholdengo_luxury_coin_test.rs"]
+mod gholdengo_luxury_coin_test;
 #[path = "pokemon/gigalith_ex_megaton_cannon_test.rs"]
 mod gigalith_ex_megaton_cannon_test;
 #[path = "pokemon/giratina_rayquaza_test.rs"]
@@ -146,6 +180,8 @@ mod honchkrow_evil_admonition_test;
 mod houndstone_last_respects_test;
 #[path = "pokemon/hydrapple_fickle_beam_test.rs"]
 mod hydrapple_fickle_beam_test;
+#[path = "pokemon/illumise_ire_fly_test.rs"]
+mod illumise_ire_fly_test;
 #[path = "pokemon/iron_bundle_ex_test.rs"]
 mod iron_bundle_ex_test;
 #[path = "pokemon/iron_bundle_test.rs"]
@@ -168,6 +204,8 @@ mod jolteon_ex_test;
 mod kabutops_test;
 #[path = "pokemon/klefki_dismantling_keys_test.rs"]
 mod klefki_dismantling_keys_test;
+#[path = "pokemon/knocked_out_last_turn_status_attacks_test.rs"]
+mod knocked_out_last_turn_status_attacks_test;
 #[path = "pokemon/kommo_o_clanging_scales_test.rs"]
 mod kommo_o_clanging_scales_test;
 #[path = "pokemon/koraidon_urshifu_test.rs"]
@@ -202,6 +240,8 @@ mod mamoswine_thick_fat_test;
 mod marshadow_revenge_test;
 #[path = "pokemon/maushold_b2a_test.rs"]
 mod maushold_b2a_test;
+#[path = "pokemon/maushold_family_beatdown_test.rs"]
+mod maushold_family_beatdown_test;
 #[path = "pokemon/mega_camerupt_ex_test.rs"]
 mod mega_camerupt_ex_test;
 #[path = "pokemon/mega_diancie_ex_test.rs"]
@@ -228,22 +268,34 @@ mod meganium_bloomshine_test;
 mod meowstic_test;
 #[path = "pokemon/meowth_carefree_steps_test.rs"]
 mod meowth_carefree_steps_test;
+#[path = "pokemon/mew_miraculous_memory_test.rs"]
+mod mew_miraculous_memory_test;
 #[path = "pokemon/milotic_ex_aqua_charge_test.rs"]
 mod milotic_ex_aqua_charge_test;
 #[path = "pokemon/miltank_rolling_frenzy_test.rs"]
 mod miltank_rolling_frenzy_test;
+#[path = "pokemon/mimic_shuffle_draw_test.rs"]
+mod mimic_shuffle_draw_test;
+#[path = "pokemon/mimikyu_try_to_imitate_test.rs"]
+mod mimikyu_try_to_imitate_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
 mod miraidon_ex_test;
 #[path = "pokemon/morpeko_test.rs"]
 mod morpeko_test;
+#[path = "pokemon/move_energy_to_bench_test.rs"]
+mod move_energy_to_bench_test;
 #[path = "pokemon/nidoqueen_test.rs"]
 mod nidoqueen_test;
 #[path = "pokemon/ninetales_ember_dance_test.rs"]
 mod ninetales_ember_dance_test;
+#[path = "pokemon/octillery_octazooka_test.rs"]
+mod octillery_octazooka_test;
 #[path = "pokemon/oricorio_happiny_damage_boost_test.rs"]
 mod oricorio_happiny_damage_boost_test;
 #[path = "pokemon/oricorio_yveltal_test.rs"]
 mod oricorio_yveltal_test;
+#[path = "pokemon/partner_bench_damage_attacks_test.rs"]
+mod partner_bench_damage_attacks_test;
 #[path = "pokemon/passimian_ex_offload_pass_test.rs"]
 mod passimian_ex_offload_pass_test;
 #[path = "pokemon/persian_test.rs"]
@@ -268,6 +320,8 @@ mod psyduck_b4_test;
 mod psyduck_test;
 #[path = "pokemon/purrloin_test.rs"]
 mod purrloin_test;
+#[path = "pokemon/quagsire_amnesia_test.rs"]
+mod quagsire_amnesia_test;
 #[path = "pokemon/raging_bolt_test.rs"]
 mod raging_bolt_test;
 #[path = "pokemon/raichu_evoshock_test.rs"]
@@ -276,6 +330,8 @@ mod raichu_evoshock_test;
 mod rampardos_head_smash_test;
 #[path = "pokemon/regidrago_draconic_slam_test.rs"]
 mod regidrago_draconic_slam_test;
+#[path = "pokemon/reveal_top_damage_test.rs"]
+mod reveal_top_damage_test;
 #[path = "pokemon/rhyperior_test.rs"]
 mod rhyperior_test;
 #[path = "pokemon/roaring_moon_test.rs"]
@@ -298,6 +354,8 @@ mod shinx_hide_test;
 mod silcoon_cascoon_cocoon_collector_test;
 #[path = "pokemon/slither_wing_test.rs"]
 mod slither_wing_test;
+#[path = "pokemon/smeargle_portrait_test.rs"]
+mod smeargle_portrait_test;
 #[path = "pokemon/smoochum_test.rs"]
 mod smoochum_test;
 #[path = "pokemon/snorlax_massive_body_test.rs"]
@@ -314,6 +372,8 @@ mod sunflora_quick_grow_beam_test;
 mod swift_attacks_d_test;
 #[path = "pokemon/swift_shot_test.rs"]
 mod swift_shot_test;
+#[path = "pokemon/switch_opponent_bench_in_test.rs"]
+mod switch_opponent_bench_in_test;
 #[path = "pokemon/sylveon_soothing_ribbon_test.rs"]
 mod sylveon_soothing_ribbon_test;
 #[path = "pokemon/tandemaus_b2_test.rs"]
@@ -326,6 +386,8 @@ mod team_rockets_moltres_ex_heat_charged_test;
 mod team_rockets_raticate_ex_test;
 #[path = "pokemon/team_rockets_slowking_ex_test.rs"]
 mod team_rockets_slowking_ex_test;
+#[path = "pokemon/team_rockets_slowpoke_scavenge_test.rs"]
+mod team_rockets_slowpoke_scavenge_test;
 #[path = "pokemon/team_rockets_weezing_ex_test.rs"]
 mod team_rockets_weezing_ex_test;
 #[path = "pokemon/team_rockets_zapdos_ex_thunderclaw_test.rs"]
@@ -344,6 +406,8 @@ mod toxtricity_ex_damaging_spark_test;
 mod typhlosion_fire_breath_test;
 #[path = "pokemon/ursaluna_guts_test.rs"]
 mod ursaluna_guts_test;
+#[path = "pokemon/urshifu_double_type_test.rs"]
+mod urshifu_double_type_test;
 #[path = "pokemon/vanilluxe_test.rs"]
 mod vanilluxe_test;
 #[path = "pokemon/vaporeon_ex_test.rs"]
@@ -362,6 +426,8 @@ mod wailord_test;
 mod walking_wake_test;
 #[path = "pokemon/whiscash_test.rs"]
 mod whiscash_test;
+#[path = "pokemon/wobbuffet_reply_strongly_test.rs"]
+mod wobbuffet_reply_strongly_test;
 #[path = "pokemon/wugtrio_b2a_test.rs"]
 mod wugtrio_b2a_test;
 #[path = "pokemon/xatu_test.rs"]

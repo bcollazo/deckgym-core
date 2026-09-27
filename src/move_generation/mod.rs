@@ -3,6 +3,7 @@ mod move_generation_abilities;
 mod move_generation_trainer;
 
 use crate::actions::{abilities::AbilityMechanic, Action, SimpleAction};
+use crate::effects::TurnEffect;
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::stadiums::{
@@ -199,6 +200,15 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                         });
 
                     if state.is_users_first_turn() && !has_boosted_evolution_in_active {
+                        return;
+                    }
+
+                    // Malamar's Evolution Jammer: "they can't play any Pokémon from their hand to
+                    // evolve their Pokémon."
+                    if state.get_current_turn_effects().iter().any(|effect| {
+                        matches!(effect, TurnEffect::NoEvolutionFromHand { player }
+                            if *player == current_player)
+                    }) {
                         return;
                     }
 

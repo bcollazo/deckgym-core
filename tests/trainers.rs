@@ -2,14 +2,22 @@
 mod barry_test;
 #[path = "trainers/cheren_test.rs"]
 mod cheren_test;
+#[path = "trainers/coverage_items_test.rs"]
+mod coverage_items_test;
+#[path = "trainers/coverage_supporters_test.rs"]
+mod coverage_supporters_test;
 #[path = "trainers/cynthia_test.rs"]
 mod cynthia_test;
 #[path = "trainers/drayden_test.rs"]
 mod drayden_test;
 #[path = "trainers/elesa_test.rs"]
 mod elesa_test;
+#[path = "trainers/energy_move_trainers_test.rs"]
+mod energy_move_trainers_test;
 #[path = "trainers/field_blower_test.rs"]
 mod field_blower_test;
+#[path = "trainers/information_trainers_test.rs"]
+mod information_trainers_test;
 #[path = "trainers/iris_trainer_test.rs"]
 mod iris_trainer_test;
 #[path = "trainers/jasmine_test.rs"]
@@ -26,10 +34,14 @@ mod mallow_test;
 mod marlon_test;
 #[path = "trainers/order_pad_test.rs"]
 mod order_pad_test;
+#[path = "trainers/penny_test.rs"]
+mod penny_test;
 #[path = "trainers/professor_sada_test.rs"]
 mod professor_sada_test;
 #[path = "trainers/professor_turo_test.rs"]
 mod professor_turo_test;
+#[path = "trainers/protection_trainers_test.rs"]
+mod protection_trainers_test;
 #[path = "trainers/psychic_test.rs"]
 mod psychic_test;
 #[path = "trainers/puppy_loving_girl_test.rs"]

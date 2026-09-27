@@ -6,17 +6,25 @@ use rand::{rngs::StdRng, Rng};
 use crate::{
     actions::{
         abilities::AbilityMechanic,
-        apply_action_helpers::{apply_activate, handle_damage, handle_knockouts, Mutation},
+        apply_action_helpers::{
+            apply_activate, handle_damage, handle_knockouts, Mutation, Mutations, Probabilities,
+        },
+        apply_trainer_action::forecast_trainer_action,
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         outcomes::Outcomes,
-        shared_mutations::pokemon_search_outcomes,
+        shared_mutations::{pokemon_search_outcomes, tool_search_outcomes},
         Action, SimpleAction,
     },
-    effects::TurnEffect,
+    combinatorics::generate_combinations,
+    effects::{CardEffect, TurnEffect},
     hooks::is_ultra_beast,
-    models::{Card, EnergyType, PlayedCard, StatusCondition},
+    models::{Card, EnergyType, PlayedCard, StatusCondition, TrainerCard, TrainerType},
+    move_generation::trainer_move_generation_implementation,
     State,
 };
+
+/// Points needed to win a game of Pokémon TCG Pocket.
+const POINTS_TO_WIN: u8 = 3;
 
 // This is a reducer of all actions relating to abilities.
 pub(crate) fn forecast_ability(state: &State, action: &Action, in_play_idx: usize) -> Outcomes {
@@ -141,6 +149,13 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => {
             panic!("ReduceOpponentActiveDamage is a passive ability")
         }
+        AbilityMechanic::ReduceDamageFromAttacksIfFullHp { .. }
+        | AbilityMechanic::BuffIfAnotherSameNameInPlay { .. }
+        | AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { .. }
+        | AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { .. }
+        | AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => {
+            panic!("Board-dependent damage modifier mechanics are passive abilities")
+        }
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => {
             panic!("IncreaseDamageWhenRemainingHpAtMost is a passive ability")
         }
@@ -214,10 +229,29 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::SwitchOutOpponentActiveToBench { .. } => {
             switch_out_opponent_active_to_bench()
         }
+        AbilityMechanic::LookAtCardsNoop => Outcomes::single_fn(|_, _, _| {}),
+        AbilityMechanic::UseRandomOpponentSupporterEffect => {
+            use_random_opponent_supporter_effect(action.actor, state)
+        }
+        AbilityMechanic::CoinFlipPoisonOpponentActive => coin_flip_poison_opponent_active(),
+        AbilityMechanic::CoinFlipSwitchOpponentBenchToActive => {
+            coin_flip_switch_opponent_bench_to_active()
+        }
+        AbilityMechanic::MoveAllTypedEnergyFromAllYourPokemonToSelf { energy_type } => {
+            move_all_typed_energy_to_self(in_play_idx, *energy_type)
+        }
+        AbilityMechanic::SearchRandomToolFromDeck => tool_search_outcomes(action.actor, state),
         AbilityMechanic::CoinFlipSleepOpponentActive => coin_flip_sleep_opponent_active(),
         AbilityMechanic::DiscardFromHandToDrawCard => discard_from_hand_to_draw_card(),
-        AbilityMechanic::ImmuneToStatusConditions => {
+        AbilityMechanic::ImmuneToStatusConditions
+        | AbilityMechanic::ImmuneToStatusCondition { .. } => {
             panic!("ImmuneToStatusConditions is a passive ability")
+        }
+        AbilityMechanic::ReduceTypedAttackCostIfHasTool { .. }
+        | AbilityMechanic::IncreaseHpOfYourTypedPokemon { .. }
+        | AbilityMechanic::NoHealingForAnyone
+        | AbilityMechanic::CannotAttackUnlessNamedOnBench { .. } => {
+            panic!("Board-wide static mechanics are passive abilities")
         }
         AbilityMechanic::SoothingWind { .. } => {
             panic!("SoothingWind is a passive ability")
@@ -229,6 +263,7 @@ fn forecast_ability_by_mechanic(
             panic!("NoOpponentStadiumInActive is a passive ability")
         }
         AbilityMechanic::DoubleGrassEnergy => panic!("DoubleGrassEnergy is a passive ability"),
+        AbilityMechanic::GrantedTypes { .. } => panic!("GrantedTypes is a passive ability"),
         AbilityMechanic::PreventOpponentActiveEvolution => {
             panic!("PreventOpponentActiveEvolution is a passive ability")
         }
@@ -240,6 +275,13 @@ fn forecast_ability_by_mechanic(
         }
         AbilityMechanic::NoRetreatIfHasEnergy => {
             panic!("NoRetreatIfHasEnergy is a passive ability")
+        }
+        AbilityMechanic::NoRetreatCostIfNamedPokemonInPlay { .. }
+        | AbilityMechanic::NoRetreatCostForYourActive { .. }
+        | AbilityMechanic::NoRetreatCostDuringFirstTurn
+        | AbilityMechanic::NoRetreatCostIfStadiumInPlay
+        | AbilityMechanic::ReduceRetreatCostIfAnotherSameNameInPlay { .. } => {
+            panic!("Retreat-cost mechanics are passive abilities")
         }
         AbilityMechanic::PreventAllDamageFromEx => {
             panic!("PreventAllDamageFromEx is a passive ability")
@@ -274,6 +316,22 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::MoveRandomEnergyFromOpponentActiveToSelfOnEvolve => {
             panic!("MoveRandomEnergyFromOpponentActiveToSelfOnEvolve is triggered on evolve")
         }
+        AbilityMechanic::PutRandomToolsFromDiscardToHandOnEvolve { amount } => {
+            put_random_tools_from_discard_to_hand(action.actor, state, *amount)
+        }
+        AbilityMechanic::TakeItemsFromTopOfDeckOnEvolve { amount } => {
+            take_items_from_top_of_deck(*amount)
+        }
+        AbilityMechanic::PutSupporterFromDiscardToHandOnEvolve => {
+            put_supporter_from_discard_to_hand()
+        }
+        AbilityMechanic::OpponentShuffleHandAndDrawPerRemainingPointOnEvolve => {
+            opponent_shuffle_hand_and_draw_per_remaining_point()
+        }
+        AbilityMechanic::PreventAllDamageAndEffectsOnEvolve => {
+            prevent_all_damage_and_effects_on_self(in_play_idx)
+        }
+        AbilityMechanic::HealActiveTypedOnBench { amount, .. } => heal_active_your_pokemon(*amount),
         AbilityMechanic::CanEvolveIntoEeveeEvolution => {
             panic!("CanEvolveIntoEeveeEvolution is a passive ability")
         }
@@ -282,6 +340,12 @@ fn forecast_ability_by_mechanic(
         }
         AbilityMechanic::CounterattackDamage { .. } => {
             panic!("CounterattackDamage is a passive ability")
+        }
+        AbilityMechanic::DamageAttackerOnKnockout { .. }
+        | AbilityMechanic::DamageEachOpponentPokemonOnKnockout { .. }
+        | AbilityMechanic::CoinFlipKnockOutAttackerOnKnockout
+        | AbilityMechanic::CoinFlipDenyPointsOnKnockout => {
+            panic!("Knockout retaliation mechanics are passive abilities")
         }
         AbilityMechanic::PoisonAttackerOnDamaged => {
             panic!("PoisonAttackerOnDamaged is a passive ability")
@@ -323,13 +387,15 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::HealAllYourPokemonDuringCheckup { .. } => {
             panic!("HealAllYourPokemonDuringCheckup is a passive ability triggered during Pokemon Checkup")
         }
-        AbilityMechanic::VictoryStarReflip => victory_star_reflip(),
+        AbilityMechanic::VictoryStarReflip | AbilityMechanic::LuxuryCoinReflip => {
+            coin_reflip_ability()
+        }
     }
 }
 
-/// Victini's Victory Star, chosen from the reflip prompt: discard the parked coin result and
-/// resolve the same attack again with fresh, independent coins.
-fn victory_star_reflip() -> Outcomes {
+/// Victini's Victory Star / Gholdengo's Luxury Coin, chosen from the reflip prompt: discard the
+/// parked coin result and resolve the same action again with fresh, independent coins.
+fn coin_reflip_ability() -> Outcomes {
     Outcomes::single_fn(move |rng, state, _action| {
         if let Some(pending) = state.take_pending_coin_reflip() {
             crate::actions::resolve_pending_coin_reflip(rng, state, pending, true);
@@ -360,7 +426,7 @@ fn discard_energy_to_increase_type_damage(
 fn heal_all_your_pokemon(amount: u32, energy_type: Option<EnergyType>) -> Outcomes {
     Outcomes::single_fn(move |_rng, state, action| {
         for pokemon in state.in_play_pokemon[action.actor].iter_mut().flatten() {
-            if energy_type.is_none_or(|t| pokemon.get_energy_type() == Some(t)) {
+            if energy_type.is_none_or(|t| pokemon.is_type(t)) {
                 pokemon.heal(amount);
             }
         }
@@ -450,7 +516,7 @@ fn attach_energy_from_zone_to_your_typed_outcome(energy_type: EnergyType) -> Out
     Outcomes::single_fn(move |_rng, state, action| {
         let choices = state
             .enumerate_in_play_pokemon(action.actor)
-            .filter(|(_, pokemon)| pokemon.card.get_type() == Some(energy_type))
+            .filter(|(_, pokemon)| pokemon.is_type(energy_type))
             .map(|(in_play_idx, _)| SimpleAction::Attach {
                 attachments: vec![(1, energy_type, in_play_idx)],
                 is_turn_energy: false,
@@ -672,6 +738,207 @@ fn coin_flip_sleep_opponent_active() -> Outcomes {
     )
 }
 
+/// Galarian Perrserker's Dig Up: put `amount` random Pokémon Tool cards from the discard pile
+/// into hand. Every unordered combination of that size is its own equally likely branch, so the
+/// randomness is visible in the forecast (cf. `card_search_outcomes_with_filter_multiple`).
+fn put_random_tools_from_discard_to_hand(actor: usize, state: &State, amount: usize) -> Outcomes {
+    let tools: Vec<Card> = state.discard_piles[actor]
+        .iter()
+        .filter(|card| {
+            matches!(card, Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Tool)
+        })
+        .cloned()
+        .collect();
+    if tools.is_empty() {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let combinations = generate_combinations(&tools, amount.min(tools.len()));
+    let probabilities = vec![1.0 / combinations.len() as f64; combinations.len()];
+    let mutations: Mutations = combinations
+        .into_iter()
+        .map(|combo| -> Mutation {
+            Box::new(move |_, state, action| {
+                for card in &combo {
+                    if let Some(idx) = state.discard_piles[action.actor]
+                        .iter()
+                        .position(|c| c == card)
+                    {
+                        state.discard_piles[action.actor].remove(idx);
+                        state.hands[action.actor].push(card.clone());
+                    }
+                }
+            })
+        })
+        .collect();
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+/// Raticate's Treasure Collecting: look at the top `amount` cards of the deck, keep every Item
+/// card and shuffle the rest back in.
+fn take_items_from_top_of_deck(amount: usize) -> Outcomes {
+    Outcomes::single_fn(move |rng, state, action| {
+        let deck = &mut state.decks[action.actor];
+        let take = amount.min(deck.cards.len());
+        let looked_at: Vec<Card> = deck.cards.drain(..take).collect();
+        let mut put_back = Vec::new();
+        for card in looked_at {
+            match &card {
+                Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Item => {
+                    state.hands[action.actor].push(card)
+                }
+                _ => put_back.push(card),
+            }
+        }
+        state.decks[action.actor].cards.extend(put_back);
+        state.decks[action.actor].shuffle(false, rng);
+    })
+}
+
+/// Delcatty's Search for Friends: the player picks which Supporter comes back from the discard
+/// pile, so each distinct candidate becomes a choice on the move-generation stack.
+fn put_supporter_from_discard_to_hand() -> Outcomes {
+    Outcomes::single_fn(|_rng, state, action| {
+        let mut seen = std::collections::HashSet::new();
+        let choices: Vec<SimpleAction> = state.discard_piles[action.actor]
+            .iter()
+            .filter(|card| {
+                matches!(card, Card::Trainer(trainer) if trainer.trainer_card_type == TrainerType::Supporter)
+            })
+            .filter(|card| seen.insert((*card).clone()))
+            .map(|card| SimpleAction::PutDiscardCardInHand { card: card.clone() })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
+}
+
+/// Polteageist's Refreshing Tea: the opponent shuffles their hand into their deck, then draws one
+/// card for each point they still need to win (3 points wins a game of Pocket).
+fn opponent_shuffle_hand_and_draw_per_remaining_point() -> Outcomes {
+    Outcomes::single_fn(|rng, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        let hand: Vec<Card> = std::mem::take(&mut state.hands[opponent]);
+        state.decks[opponent].cards.extend(hand);
+        state.decks[opponent].shuffle(false, rng);
+        let remaining_points = POINTS_TO_WIN.saturating_sub(state.points[opponent]);
+        for _ in 0..remaining_points {
+            state.maybe_draw_card(opponent);
+        }
+    })
+}
+
+/// Samurott's Stance: prevent all damage from — and effects of — attacks done to this Pokémon
+/// until the end of the opponent's next turn.
+fn prevent_all_damage_and_effects_on_self(in_play_idx: usize) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        if let Some(pokemon) = state.in_play_pokemon[action.actor][in_play_idx].as_mut() {
+            pokemon.add_effect(CardEffect::PreventAllDamageAndEffects, 1);
+        }
+    })
+}
+
+/// Smeargle's Portrait: pick a Supporter uniformly at random from the opponent's hand and resolve
+/// its effect as this Ability's effect. Each candidate's own outcome distribution is folded into
+/// one flat distribution, scaled by the 1/n chance of drawing that card, so the forecast shows the
+/// full randomness. The opponent keeps the card.
+fn use_random_opponent_supporter_effect(actor: usize, state: &State) -> Outcomes {
+    let candidates = copyable_opponent_supporters(actor, state);
+    if candidates.is_empty() {
+        return Outcomes::single_fn(|_, _, _| {});
+    }
+
+    let pick_probability = 1.0 / candidates.len() as f64;
+    let mut probabilities: Probabilities = vec![];
+    let mut mutations: Mutations = vec![];
+    for supporter in candidates {
+        let (branch_probabilities, branch_mutations) =
+            forecast_trainer_action(actor, state, &supporter).into_branches();
+        for (probability, mutation) in branch_probabilities.into_iter().zip(branch_mutations) {
+            probabilities.push(probability * pick_probability);
+            mutations.push(mutation);
+        }
+    }
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+/// Supporters in `actor`'s opponent's hand whose effect this engine can actually resolve right
+/// now: implemented (`trainer_move_generation_implementation` returns `Some`) and currently
+/// playable (it returns a non-empty action list). Duplicated copies are kept so that holding two
+/// of the same Supporter doubles its chance of being picked.
+fn copyable_opponent_supporters(actor: usize, state: &State) -> Vec<TrainerCard> {
+    let opponent = (actor + 1) % 2;
+    state.hands[opponent]
+        .iter()
+        .filter_map(|card| match card {
+            Card::Trainer(trainer_card)
+                if trainer_card.trainer_card_type == TrainerType::Supporter =>
+            {
+                Some(trainer_card.clone())
+            }
+            _ => None,
+        })
+        .filter(|trainer_card| {
+            trainer_move_generation_implementation(state, trainer_card)
+                .is_some_and(|actions| !actions.is_empty())
+        })
+        .collect()
+}
+
+fn coin_flip_poison_opponent_active() -> Outcomes {
+    Outcomes::binary_coin(
+        Box::new(|_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, StatusCondition::Poisoned);
+        }),
+        Box::new(|_, _, _| {}),
+    )
+}
+
+/// Rillaboom's Captivating Rhythm: on heads the acting player chooses which of the opponent's
+/// Benched Pokémon is dragged into the Active Spot.
+fn coin_flip_switch_opponent_bench_to_active() -> Outcomes {
+    Outcomes::binary_coin(
+        Box::new(|_, state, action| {
+            let opponent = (action.actor + 1) % 2;
+            let choices = state
+                .enumerate_bench_pokemon(opponent)
+                .map(|(in_play_idx, _)| SimpleAction::Activate {
+                    player: opponent,
+                    in_play_idx,
+                })
+                .collect::<Vec<_>>();
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        }),
+        Box::new(|_, _, _| {}),
+    )
+}
+
+/// Tyranitar's Energy Plunder: gather every `energy_type` Energy attached to the acting player's
+/// Pokémon onto the ability's holder.
+fn move_all_typed_energy_to_self(self_idx: usize, energy_type: EnergyType) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let mut gathered = 0usize;
+        for (idx, pokemon) in state.in_play_pokemon[action.actor].iter_mut().enumerate() {
+            if idx == self_idx {
+                continue;
+            }
+            let Some(pokemon) = pokemon else { continue };
+            let before = pokemon.attached_energy.len();
+            pokemon.attached_energy.retain(|&e| e != energy_type);
+            gathered += before - pokemon.attached_energy.len();
+        }
+        if let Some(pokemon) = state.in_play_pokemon[action.actor][self_idx].as_mut() {
+            pokemon
+                .attached_energy
+                .extend(std::iter::repeat_n(energy_type, gathered));
+        }
+    })
+}
+
 fn coin_flip_paralyze_opponent_active() -> Outcomes {
     Outcomes::binary_coin(
         Box::new(|_, state, action| {
@@ -863,7 +1130,7 @@ fn vaporeon_wash_out(_: &mut StdRng, state: &mut State, action: &Action) {
     let possible_moves = state
         .enumerate_bench_pokemon(acting_player)
         .filter(|(_, pokemon)| {
-            pokemon.card.get_type() == Some(EnergyType::Water)
+            pokemon.is_type(EnergyType::Water)
                 && pokemon.attached_energy.contains(&EnergyType::Water)
         })
         .map(|(in_play_idx, _)| SimpleAction::MoveEnergy {
@@ -916,7 +1183,7 @@ fn move_all_typed_energy_from_bench_to_active(
     let possible_moves = state
         .enumerate_bench_pokemon(acting_player)
         .filter_map(|(in_play_idx, pokemon)| {
-            if pokemon.card.get_type() != Some(energy_type) {
+            if !pokemon.is_type(energy_type) {
                 return None;
             }
             let amount = pokemon

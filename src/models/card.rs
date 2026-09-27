@@ -240,10 +240,30 @@ impl Card {
         }
     }
 
-    pub(crate) fn get_type(&self) -> Option<EnergyType> {
+    /// The Energy types this card is **printed** as.
+    ///
+    /// Today every printed Pokémon has exactly one type, so this is always a 0- or 1-element
+    /// vector. It is the single seam for printed dual-type Pokémon (e.g. Mega Mewtwo X ex,
+    /// [P] + [F]): when `PokemonCard` grows a second type, this method returns both and every
+    /// in-play type check downstream (which goes through `PlayedCard::get_energy_types` /
+    /// `PlayedCard::is_type`) picks them up with no further engine change.
+    ///
+    /// Note this is the *printed* type set — it deliberately knows nothing about Abilities, which
+    /// only apply while the card is in play. Use it for cards in a deck, hand or discard pile;
+    /// use `PlayedCard::get_energy_types` for cards on the board.
+    pub fn get_types(&self) -> Vec<EnergyType> {
         match self {
-            Card::Pokemon(pokemon_card) => Some(pokemon_card.energy_type),
-            _ => None,
+            Card::Pokemon(pokemon_card) => vec![pokemon_card.energy_type],
+            _ => vec![],
+        }
+    }
+
+    /// Whether this card's **printed** type set contains `energy_type`. Allocation-free
+    /// counterpart of `get_types().contains(..)`.
+    pub fn is_type(&self, energy_type: EnergyType) -> bool {
+        match self {
+            Card::Pokemon(pokemon_card) => pokemon_card.energy_type == energy_type,
+            _ => false,
         }
     }
 

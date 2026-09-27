@@ -15,6 +15,7 @@ use crate::{
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
+    tools::has_tool,
     State,
 };
 
@@ -454,18 +455,43 @@ pub(crate) fn guts_would_flip(
     is_from_active_attack: bool,
     context: DamageModifierContext<'_>,
 ) -> bool {
+    let has_guts = state.in_play_pokemon[target.0][target.1]
+        .as_ref()
+        .is_some_and(|pokemon| {
+            matches!(
+                pokemon.ability_mechanic(),
+                Some(AbilityMechanic::CoinFlipToSurviveKnockOut)
+            )
+        });
+    has_guts
+        && damage_would_knock_out(
+            state,
+            attacking_ref,
+            raw_damage,
+            target,
+            is_from_active_attack,
+            context,
+        )
+}
+
+/// True if `raw_damage` (after the usual modifiers) would knock out the Pokémon at `target`.
+/// Forecast against the pre-attack board, so it is an estimate for effects that need to decide
+/// "would this knock out?" before the damage is actually applied (Guts, Perish Body, Fade into
+/// Darkness).
+pub(crate) fn damage_would_knock_out(
+    state: &State,
+    attacking_ref: (usize, usize),
+    raw_damage: u32,
+    target: (usize, usize),
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
     if raw_damage == 0 {
         return false;
     }
     let Some(pokemon) = state.in_play_pokemon[target.0][target.1].as_ref() else {
         return false;
     };
-    if !matches!(
-        pokemon.ability_mechanic(),
-        Some(AbilityMechanic::CoinFlipToSurviveKnockOut)
-    ) {
-        return false;
-    }
     let modified = modify_damage(
         state,
         attacking_ref,
@@ -553,6 +579,9 @@ pub(crate) fn handle_damage_only(
                 .as_mut()
                 .expect("Pokemon should be there if taking damage");
             target_pokemon.apply_damage(damage); // Applies without surpassing 0 HP
+            if is_from_active_attack && target_pokemon_idx == 0 {
+                target_pokemon.mark_damaged_by_attack_while_active();
+            }
             debug!(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
                 damage,
@@ -577,6 +606,15 @@ pub(crate) fn handle_damage_only(
             }
         };
         let should_poison = should_poison_attacker(target_pokemon);
+        // "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from
+        // your opponent's Pokémon, do X damage to ..." (Pyukumuku's Innards Out, Team Rocket's
+        // Electrode's Destiny Burst, Spiritomb's Final Scream). Resolved here alongside the
+        // ordinary counterattack recoil so that the retaliation damage is picked up by the
+        // `handle_knockouts` pass that follows this call — exactly like Rocky Helmet's.
+        let knockout_retaliation = (attacking_player != target_player
+            && target_pokemon.is_knocked_out())
+        .then(|| target_pokemon.ability_mechanic())
+        .flatten();
 
         // Apply counterattack damage and poison
         if counter_damage > 0 {
@@ -591,6 +629,27 @@ pub(crate) fn handle_damage_only(
             );
         }
 
+        match knockout_retaliation {
+            Some(AbilityMechanic::DamageAttackerOnKnockout { amount }) => {
+                if let Some(attacking_pokemon) = state.in_play_pokemon[attacking_player][0].as_mut()
+                {
+                    debug!(
+                        "Knockout retaliation: dealing {amount} damage to the Attacking Pokemon"
+                    );
+                    attacking_pokemon.apply_damage(*amount);
+                }
+            }
+            Some(AbilityMechanic::DamageEachOpponentPokemonOnKnockout { amount }) => {
+                debug!(
+                    "Knockout retaliation: dealing {amount} damage to each of the attacker's Pokemon"
+                );
+                for pokemon in state.in_play_pokemon[attacking_player].iter_mut().flatten() {
+                    pokemon.apply_damage(*amount);
+                }
+            }
+            _ => {}
+        }
+
         if should_poison {
             state.apply_status_condition(attacking_player, 0, StatusCondition::Poisoned);
             debug!("Poison Barb: Poisoned the attacking Pokemon");
@@ -598,8 +657,33 @@ pub(crate) fn handle_damage_only(
 
         if attacking_player != target_player {
             apply_bouncy_body(state, target_player);
+            apply_dark_pendant_trigger(state, attacking_player, target_player);
         }
     }
+}
+
+/// Dark Pendant: "If the [D] Pokémon this card is attached to is in the Active Spot and is damaged
+/// by an attack from your opponent's Pokémon, your opponent reveals a random card from their hand
+/// and shuffles it into their deck."
+///
+/// The shuffle needs the shared RNG, which the damage path does not carry, so it is queued as the
+/// single option on the attacker's move-generation stack (the same trick Bouncy Body uses for its
+/// choice). With one option it is not a decision — it just resolves where an RNG is available.
+fn apply_dark_pendant_trigger(state: &mut State, attacking_player: usize, target_player: usize) {
+    let Some(defender) = state.in_play_pokemon[target_player][0].as_ref() else {
+        return;
+    };
+    if !has_tool(defender, CardId::A4154DarkPendant)
+        || !defender.is_type(crate::models::EnergyType::Darkness)
+        || state.hands[attacking_player].is_empty()
+    {
+        return;
+    }
+    debug!("Dark Pendant: Attacker shuffles a random card from their hand into their deck");
+    state.move_generation_stack.push((
+        attacking_player,
+        vec![SimpleAction::ShuffleRandomOwnHandCardIntoDeck],
+    ));
 }
 
 /// Jellicent's Bouncy Body: the Active Pokémon was just damaged by an attack from the opponent's
@@ -666,6 +750,11 @@ pub(crate) fn handle_knockouts(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     is_from_active_attack: bool,
 ) {
+    // Hala: "During your opponent's next turn, if your Hariyama or Crabominable would be Knocked
+    // Out by damage from an attack, it is not Knocked Out and its remaining HP becomes 10."
+    // Applied before the KO list is taken, so a protected Pokémon never enters it.
+    apply_survive_knockout_turn_effects(state, is_from_active_attack);
+
     let knockouts = get_knocked_out(state);
     let iris_bonus_active = is_iris_bonus_active(state, attacking_ref, is_from_active_attack);
 
@@ -687,14 +776,24 @@ pub(crate) fn handle_knockouts(
                 .as_ref()
                 .expect("Pokemon should be there if knocked out");
             let ko_initiator = (ko_receiver + 1) % 2;
-            let points_won = ko_pokemon.card.get_knockout_points();
+            // Dusknoir's Fade into Darkness / Glimmora's Shattering Crystal: on a heads flip the
+            // opponent gets no points at all for this Knock Out.
+            let points_won = if ko_pokemon.knockout_points_denied {
+                0
+            } else {
+                ko_pokemon.card.get_knockout_points()
+            };
             state.points[ko_initiator] += points_won;
             debug!(
                 "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
                 ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
             );
             // Iris bonus: 1 extra point if Haxorus KOs opponent's Active Pokemon
-            if iris_bonus_active && ko_pokemon_idx == 0 && ko_receiver != attacking_ref.0 {
+            if iris_bonus_active
+                && points_won > 0
+                && ko_pokemon_idx == 0
+                && ko_receiver != attacking_ref.0
+            {
                 state.points[ko_initiator] += 1;
                 debug!(
                     "Iris: Player {} gets 1 bonus point for Haxorus KO",
@@ -706,17 +805,32 @@ pub(crate) fn handle_knockouts(
         // Record KOs dealt by an opponent's active attack (for revenge attacks such as
         // Marshadow's Revenge and Zarude's Dark Vengeance), along with the KO'd Pokemon's type.
         if is_from_active_attack && ko_receiver != attacking_ref.0 {
-            let ko_pokemon_type = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+            // Record *every* type the KO'd Pokemon counted as in play, so a type-restricted
+            // revenge attack sees a dual-type Pokemon under either of its types.
+            let ko_pokemon_types = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
                 .as_ref()
-                .and_then(|pokemon| pokemon.get_energy_type());
-            state.record_knocked_out_by_opponent_attack(ko_pokemon_type);
+                .map(|pokemon| pokemon.get_energy_types())
+                .unwrap_or_default();
+            state.record_knocked_out_by_opponent_attack(&ko_pokemon_types);
         }
 
         // Every knockout counts against the player who lost the Pokemon, however it happened
         // (Kingambit's Overlord's Blade counts self-inflicted and Checkup knockouts too).
         state.record_own_knockout(ko_receiver);
 
-        state.discard_from_play(ko_receiver, ko_pokemon_idx);
+        // Rescue Scarf: "If the Pokémon this card is attached to is Knocked Out by damage from an
+        // attack from your opponent's Pokémon, put it into your hand instead of the discard pile."
+        let rescued = is_from_active_attack
+            && ko_receiver != attacking_ref.0
+            && state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+                .as_ref()
+                .is_some_and(|pokemon| has_tool(pokemon, CardId::A4155RescueScarf));
+        if rescued {
+            debug!("Rescue Scarf: Returning the Knocked Out Pokemon to its owner's hand");
+            state.return_from_play_to_hand(ko_receiver, ko_pokemon_idx);
+        } else {
+            state.discard_from_play(ko_receiver, ko_pokemon_idx);
+        }
     }
 
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
@@ -755,6 +869,43 @@ pub(crate) fn handle_knockouts(
         }
         // If K.O. was Active, trigger promotion or declare winner
         state.trigger_promotion_or_declare_winner(ko_receiver);
+    }
+}
+
+/// Hala-style protection: any Pokémon that would be Knocked Out by attack damage and is covered by
+/// a `SurviveKnockOutForSpecificPokemon` turn effect survives instead, at a fixed remaining HP.
+/// Only attack damage qualifies, so poison/burn/self-inflicted knockouts still resolve normally.
+fn apply_survive_knockout_turn_effects(state: &mut State, is_from_active_attack: bool) {
+    if !is_from_active_attack {
+        return;
+    }
+    let protections: Vec<(usize, Vec<String>, u32)> = state
+        .get_current_turn_effects()
+        .into_iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::SurviveKnockOutForSpecificPokemon {
+                pokemon_names,
+                player,
+                remaining_hp,
+            } => Some((player, pokemon_names, remaining_hp)),
+            _ => None,
+        })
+        .collect();
+    if protections.is_empty() {
+        return;
+    }
+
+    for (player, pokemon_names, remaining_hp) in protections {
+        for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+            if pokemon.is_knocked_out() && pokemon_names.contains(&pokemon.get_name()) {
+                debug!(
+                    "Survive Knock Out: {} survives with {} HP",
+                    pokemon.get_name(),
+                    remaining_hp
+                );
+                pokemon.set_remaining_hp(remaining_hp);
+            }
+        }
     }
 }
 

@@ -80,6 +80,12 @@ pub enum SimpleAction {
         target_in_play_idx: usize,
         amount: u32,
     },
+    /// Armaldo's Abyssal Drop: schedule an outright Knock Out of whatever occupies the chosen
+    /// spot at the end of the target player's next turn.
+    ScheduleDelayedSpotKnockOut {
+        target_player: usize,
+        target_in_play_idx: usize,
+    },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
         player: usize,
@@ -110,9 +116,24 @@ pub enum SimpleAction {
     DiscardOpponentSupporter {
         supporter_card: Card,
     },
+    /// Delcatty's Search for Friends: put a specific card from your own discard pile into your
+    /// hand. One action per eligible card, so the player picks which one.
+    PutDiscardCardInHand {
+        card: Card,
+    },
     /// Discard multiple specific cards from own hand
     DiscardOwnCards {
         cards: Vec<Card>,
+    },
+    /// Slowking's Litter: discard a chosen set of cards from your own hand, then deal `damage` to
+    /// one target. Like `DiscardOwnBenchedThenDamage`, the two halves are one action so the
+    /// damage — which depends on how many cards were discarded — is applied exactly once and goes
+    /// through the damage modifiers a single time.
+    DiscardOwnCardsThenDamage {
+        cards: Vec<Card>,
+        damage: u32,
+        target_player: usize,
+        target_in_play_idx: usize,
     },
     /// Team Rocket's Boss: put a chosen subset of Basic Pokémon found in the opponent's hand
     /// onto the opponent's Bench
@@ -218,6 +239,44 @@ pub enum SimpleAction {
     ApplyStatusesToOpponentActive {
         conditions: Vec<StatusCondition>,
     },
+    /// Whitney: heal a Pokémon and cure only the listed Special Conditions (unlike
+    /// `Heal { cure_status: true }`, which cures every condition).
+    HealAndCureConditions {
+        in_play_idx: usize,
+        amount: u32,
+        conditions: Vec<StatusCondition>,
+    },
+    /// Acerola: move `amount` damage from one of the actor's own Pokémon onto the opponent's
+    /// Active Pokémon.
+    MoveDamageToOpponentActive {
+        from_in_play_idx: usize,
+        amount: u32,
+    },
+    /// Pokémon Flute: put a Basic Pokémon from the opponent's discard pile onto their Bench.
+    BenchOpponentPokemonFromDiscard {
+        card: Card,
+    },
+    /// Rotom Dex: "Then, you may shuffle your deck." The decline branch is `Noop`.
+    ShuffleOwnDeck,
+    /// Dark Pendant: the actor reveals a random card from their own hand and shuffles it into
+    /// their deck. Queued as the single option on the move-generation stack (like Bouncy Body) so
+    /// that it resolves with the shared RNG available; it is not a real choice.
+    ShuffleRandomOwnHandCardIntoDeck,
+    /// Regice's Reflect Energy / Swanna's Feathery Cyclone: move Energy from the actor's Active
+    /// Pokémon to one of their Benched Pokémon. `amount: Some(n)` moves n Energy; `None` moves
+    /// every Energy attached.
+    MoveActiveEnergyToBench {
+        to_in_play_idx: usize,
+        amount: Option<u32>,
+    },
+    /// Sandy Shocks's Pull In and Pound / Team Rocket's Hypno's Entrap: switch the opponent's
+    /// Benched Pokémon at `in_play_idx` into their Active Spot, then deal `damage` to the new
+    /// Active Pokémon. The two halves are one action so the damage always lands on the Pokémon
+    /// that was just dragged up.
+    SwitchOpponentBenchedThenDamage {
+        in_play_idx: usize,
+        damage: u32,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -305,6 +364,13 @@ impl fmt::Display for SimpleAction {
                     attacking_ref, targets_str, is_from_active_attack
                 )
             }
+            SimpleAction::ScheduleDelayedSpotKnockOut {
+                target_player,
+                target_in_play_idx,
+            } => write!(
+                f,
+                "ScheduleDelayedSpotKnockOut(target:{target_player}:{target_in_play_idx})"
+            ),
             SimpleAction::ScheduleDelayedSpotDamage {
                 target_player,
                 target_in_play_idx,
@@ -335,6 +401,18 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardOpponentSupporter { supporter_card } => {
                 write!(f, "DiscardOpponentSupporter({supporter_card})")
             }
+            SimpleAction::PutDiscardCardInHand { card } => {
+                write!(f, "PutDiscardCardInHand({card})")
+            }
+            SimpleAction::DiscardOwnCardsThenDamage {
+                cards,
+                damage,
+                target_player,
+                target_in_play_idx,
+            } => write!(
+                f,
+                "DiscardOwnCardsThenDamage({cards:?}, {damage} to {target_player}:{target_in_play_idx})"
+            ),
             SimpleAction::DiscardOwnCards { cards } => {
                 write!(f, "DiscardOwnCards({:?})", cards)
             }
@@ -425,6 +503,41 @@ impl fmt::Display for SimpleAction {
             }
             SimpleAction::MoveOpponentActiveEnergyToSelf { to_in_play_idx } => {
                 write!(f, "MoveOpponentActiveEnergyToSelf({to_in_play_idx})")
+            }
+            SimpleAction::HealAndCureConditions {
+                in_play_idx,
+                amount,
+                conditions,
+            } => {
+                write!(
+                    f,
+                    "HealAndCureConditions({in_play_idx}, {amount}, {conditions:?})"
+                )
+            }
+            SimpleAction::MoveDamageToOpponentActive {
+                from_in_play_idx,
+                amount,
+            } => {
+                write!(f, "MoveDamageToOpponentActive({from_in_play_idx}, {amount})")
+            }
+            SimpleAction::BenchOpponentPokemonFromDiscard { card } => {
+                write!(f, "BenchOpponentPokemonFromDiscard({card})")
+            }
+            SimpleAction::ShuffleOwnDeck => write!(f, "ShuffleOwnDeck"),
+            SimpleAction::ShuffleRandomOwnHandCardIntoDeck => {
+                write!(f, "ShuffleRandomOwnHandCardIntoDeck")
+            }
+            SimpleAction::MoveActiveEnergyToBench {
+                to_in_play_idx,
+                amount,
+            } => {
+                write!(f, "MoveActiveEnergyToBench(to:{to_in_play_idx}, {amount:?})")
+            }
+            SimpleAction::SwitchOpponentBenchedThenDamage {
+                in_play_idx,
+                damage,
+            } => {
+                write!(f, "SwitchOpponentBenchedThenDamage({in_play_idx}, {damage})")
             }
             SimpleAction::Noop => write!(f, "Noop"),
         }

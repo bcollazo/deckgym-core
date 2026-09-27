@@ -12,11 +12,41 @@ pub enum BenchSide {
     BothBenches,
 }
 
+/// Condition under which an attack may be used for a cheaper Energy cost
+/// (see `Mechanic::AlternateAttackCost`).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum AttackCostCondition {
+    /// Boltund - Defiant Spark: the attacking Pokémon has damage on it.
+    SelfHasDamage,
+    /// Veluza - Shedding Spiral: the attacking player has no cards left in their deck.
+    EmptyDeck,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum CopyAttackSource {
     OpponentActive,
     OpponentInPlay,
     OwnBenchNonEx,
+    /// Mew's Miraculous Memory: the attack is picked *at random* from among the attacks of the
+    /// Pokémon in the opponent's hand and deck, rather than chosen by the attacking player.
+    OpponentHandAndDeckRandom,
+}
+
+impl CopyAttackSource {
+    /// Whether the copied attack is chosen at random instead of by the attacking player.
+    pub fn is_random(&self) -> bool {
+        matches!(self, CopyAttackSource::OpponentHandAndDeckRandom)
+    }
+}
+
+/// What counts as a "match" when an attack reveals the top cards of a deck and deals damage per
+/// matching card (e.g. Golurk's Heavy Rocket, Team Rocket's Wobbuffet's Rocket Frenzy).
+#[derive(Debug, Clone, PartialEq)]
+pub enum RevealCriterion {
+    /// A Pokémon whose printed Retreat Cost is at least this many Energy.
+    PokemonWithRetreatCostAtLeast(usize),
+    /// A Pokémon whose name contains this substring (e.g. "Team Rocket").
+    PokemonWithNameContaining(String),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -30,8 +60,11 @@ pub enum Mechanic {
     HealOneYourBenchedPokemon {
         amount: u32,
     },
+    /// Heal `amount` from each of your in-play Pokémon. `energy_type` narrows it to Pokémon of
+    /// that type (e.g. Diancie's Diamond Storm heals only your [P] Pokémon); `None` heals all.
     HealAllYourPokemon {
         amount: u32,
+        energy_type: Option<EnergyType>,
     },
     /// Heal `amount` from each Benched Pokémon; if `only_basic` is true, only Basic Pokémon
     /// (Alomomola heals all, Ho-Oh heals only Basic).
@@ -502,9 +535,13 @@ pub enum Mechanic {
     /// Marshadow's Revenge and friends: extra damage if any of your Pokemon were Knocked Out by
     /// an attack during the opponent's last turn. `energy_type` restricts which of your Pokemon
     /// count (e.g. Zarude's Dark Vengeance only counts `[D]` Pokemon); `None` counts any.
+    /// `status` additionally inflicts a Special Condition on the opponent's Active Pokémon when
+    /// the condition holds (e.g. Lapras' Raging Freeze paralyzes with no damage bonus, while
+    /// Toxtricity's Vengeful Shock adds both).
     ExtraDamageIfKnockedOutLastTurn {
         energy_type: Option<EnergyType>,
         extra_damage: u32,
+        status: Option<StatusCondition>,
     },
     ExtraDamageIfAttackUsedDuringOwnLastTurn {
         attack_name: String,
@@ -622,9 +659,13 @@ pub enum Mechanic {
     InflictStatusIfStadiumInPlay {
         status: StatusCondition,
     },
+    /// Choose one of the source's attacks and use it as this attack. When `coin_flip` is true
+    /// the copy only happens on heads (e.g. Mimikyu's Try to Imitate, Clefairy's Mini-Metronome);
+    /// otherwise it always happens (e.g. Mew ex's Genome Hacking).
     CopyAttack {
         source: CopyAttackSource,
         require_attacker_energy_match: bool,
+        coin_flip: bool,
     },
     SelfAsleepAndHeal {
         amount: u32,
@@ -718,6 +759,101 @@ pub enum Mechanic {
         attack_name: String,
         damage_per: u32,
     },
+    // ---------------------------------------------------------------------------------------------
+    // attacks-a batch
+    // ---------------------------------------------------------------------------------------------
+    /// Alolan Raticate / Alolan Meowth / Houndoom / Shiftry: discard one random card from the
+    /// opponent's hand. `trainer_type` narrows the pool to a kind of Trainer card
+    /// (`Some(Item)`, `Some(Tool)`); `None` picks from the whole hand.
+    DiscardRandomOpponentHandCard {
+        trainer_type: Option<TrainerType>,
+    },
+    /// Hoopa's Mischievous Ring: before doing damage, shuffle every Pokémon Tool attached to any
+    /// of the opponent's Pokémon back into their deck (unlike
+    /// `DiscardOpponentActiveToolsBeforeDamage`, which discards and only touches the Active).
+    ShuffleOpponentToolsIntoDeckBeforeDamage,
+    /// Machop's Shatter / Conkeldurr's Bedrock Breaker: discard the Stadium in play, if any.
+    /// Stadium effects apply to both players, so there is no choice to make.
+    DiscardStadiumInPlay,
+    /// Smeargle's Splatter Coating: re-roll the type of one random Energy attached to the
+    /// opponent's Active Pokémon into one of the 8 basic Energy types, uniformly at random.
+    RandomizeOpponentActiveEnergyType,
+    /// Groudon's Gaia Blast: discard `count` random Energy from among the Energy attached to the
+    /// attacker's OWN Pokémon (the one-sided twin of `DiscardRandomGlobalEnergy`).
+    DiscardRandomEnergyFromAllYourPokemon {
+        count: usize,
+    },
+    /// Volcarona's Volcanic Ash: discard the listed Energy from the attacking Pokémon, then deal
+    /// `damage` to 1 of the opponent's Pokémon of the attacker's choice. The fixed-Energy twin of
+    /// `SelfDiscardAllTypeEnergyAndDamageAnyOpponentPokemon`.
+    SelfDiscardEnergyAndDamageAnyOpponentPokemon {
+        energies: Vec<EnergyType>,
+        damage: u32,
+    },
+    /// Kyogre's Tidal Blast: discard the listed Energy from the attacking Pokémon, then deal
+    /// `damage` to EVERY one of the opponent's Pokémon.
+    SelfDiscardEnergyAndDamageAllOpponentPokemon {
+        energies: Vec<EnergyType>,
+        damage: u32,
+    },
+    /// Rapid Strike Urshifu's Tornado Shot: discard the listed Energy from the attacking Pokémon,
+    /// deal the attack's `fixed_damage` to the Defending Pokémon, and also deal `bench_damage` to
+    /// 1 chosen Benched Pokémon.
+    SelfDiscardEnergyAndChoiceBenchDamage {
+        energies: Vec<EnergyType>,
+        opponent: bool,
+        bench_damage: u32,
+    },
+    /// Galvantula's Electric Shock: discard ALL Energy from the attacking Pokémon and inflict the
+    /// listed Special Conditions on the opponent's Active Pokémon.
+    SelfDiscardAllEnergyAndInflictStatus {
+        conditions: Vec<StatusCondition>,
+    },
+    /// Armaldo's Abyssal Drop: discard all Energy from the attacking Pokémon, then choose a spot
+    /// among the opponent's Active Spot and Bench; whatever occupies that spot at the end of the
+    /// opponent's next turn is Knocked Out outright. The knock-out twin of `DelayedSpotDamage`.
+    SelfDiscardAllEnergyAndDelayedSpotKnockOut,
+    /// Ultra Necrozma ex's Shoegaze: discard the top `count` cards of BOTH players' decks.
+    DiscardTopEachPlayerDeck {
+        count: usize,
+    },
+    /// Pachirisu's Crackling Snap / Dugtrio's Cliff Crumbler: discard the top card of the
+    /// attacker's own deck; if it matches, the attack does `extra_damage` more. The card matches
+    /// when it is a Trainer of `trainer_type`, or a Pokémon of `energy_type` — exactly one of the
+    /// two is set.
+    DiscardTopSelfDeckExtraDamageIfMatch {
+        trainer_type: Option<TrainerType>,
+        energy_type: Option<EnergyType>,
+        extra_damage: u32,
+    },
+    /// Slowking's Litter: discard up to `max_cards` Pokémon Tool cards from your hand, dealing
+    /// `damage_per_card` for each one discarded this way (the player picks how many).
+    DiscardToolsFromHandForDamage {
+        max_cards: usize,
+        damage_per_card: u32,
+    },
+    /// Aipom's Imitate: draw until your hand holds as many cards as your opponent's.
+    DrawUntilHandMatchesOpponent,
+    /// Bewear's Superpowered Hug: flip `num_coins`; if every one is heads, the opponent's Active
+    /// Pokémon is Knocked Out (so the attacker scores the point).
+    AllHeadsKnockOutOpponentActive {
+        num_coins: usize,
+    },
+    /// Scream Tail's Shooing Shout: flip `num_coins`; if every one is heads, the opponent's
+    /// Active Pokémon is DISCARDED — it leaves play with its attached cards but scores no point,
+    /// unlike `AllHeadsKnockOutOpponentActive`.
+    AllHeadsDiscardOpponentActive {
+        num_coins: usize,
+    },
+    /// Druddigon's Giga Claw: flip `num_coins`; if every one is tails the attack does nothing at
+    /// all, otherwise it deals its plain `fixed_damage`.
+    NoDamageIfAllTails {
+        num_coins: usize,
+    },
+    /// Malamar's Evolution Jammer: during the opponent's next turn they can't play Pokémon from
+    /// their hand to evolve. The opponent's index is only known when the attack resolves, so this
+    /// is its own variant rather than a `DamageAndTurnEffect` carrying a fixed player.
+    PreventOpponentEvolutionNextTurn,
     /// Emolga (Windup Thunder) / Dedenne ex (Dede-Circuit):
     /// deal `damage_per` damage for each Pokémon Tool attached to any of your
     /// Pokémon in play (active + bench).
@@ -836,5 +972,221 @@ pub enum Mechanic {
     /// usability half is enforced in `move_generation::attacks`, which consults this variant.
     RequireBenchedNamesThenDiscardAllEnergy {
         required_bench_names: Vec<String>,
+    },
+    // ---------------------------------------------------------------------------------------
+    // Coverage batch B
+    // ---------------------------------------------------------------------------------------
+    /// Mr. Mime - Synchro Dance: extra damage when this Pokémon and the opponent's Active
+    /// Pokémon have the same amount of Energy attached.
+    ExtraDamageIfSameEnergyCountAsOpponent {
+        extra_damage: u32,
+    },
+    /// Enamorus - Smitten Strike / Kecleon - Samesies Slap: extra damage when this Pokémon and
+    /// the opponent's Active Pokémon have 1 or more of the same type of Energy attached.
+    ExtraDamageIfSharedEnergyTypeWithOpponent {
+        extra_damage: u32,
+    },
+    /// Team Rocket's Lapras - Ruthless Whirlpool / Scrafty - Crush the Weak: extra damage when
+    /// this Pokémon has strictly more Energy attached than the opponent's Active Pokémon.
+    ExtraDamageIfMoreEnergyThanOpponent {
+        extra_damage: u32,
+    },
+    /// Ludicolo - Rhythmic Steps / Luvdisc - Paired Tackle: extra damage when the attacker's
+    /// hand holds exactly one of `hand_sizes` cards.
+    ExtraDamageIfHandSizeIn {
+        hand_sizes: Vec<usize>,
+        extra_damage: u32,
+    },
+    /// Chimecho - Extrasensory: extra damage when both players hold the same number of cards.
+    ExtraDamageIfSameHandSizeAsOpponent {
+        extra_damage: u32,
+    },
+    /// Tyrantrum - Tyrannical Fang: extra damage when the attacker has fewer Pokémon in play
+    /// (Active plus Bench) than their opponent.
+    ExtraDamageIfFewerPokemonInPlay {
+        extra_damage: u32,
+    },
+    /// Pheromosa - Prelude: extra damage while the attacker has not gotten any points.
+    ExtraDamageIfNoPoints {
+        extra_damage: u32,
+    },
+    /// Ting-Lu - Arrogant Impact: the attack does nothing when the attacking Pokémon's remaining
+    /// HP is at most `threshold`. The mirror image of `ExtraDamageIfSelfHpAtMost`.
+    NoDamageIfSelfHpAtMost {
+        threshold: u32,
+    },
+    /// Flutter Mane - Hexing Flight: the attack does nothing unless this Pokémon moved from the
+    /// Bench to the Active Spot this turn.
+    DamageOnlyIfMovedFromBench,
+    /// Maushold - Family Beatdown: flip one coin for each of your in-play Pokémon whose name is
+    /// listed in `names`, dealing `damage_per_head` for each heads. Unlike
+    /// `CoinFlipPerPokemonInPlay`, only the named Pokémon are counted.
+    CoinFlipPerNamedPokemonInPlay {
+        names: Vec<String>,
+        damage_per_head: u32,
+    },
+    /// Guzzlord - Breakcore: flip a coin; on heads discard the opponent's Active Pokémon (with
+    /// its evolution chain and Tool). Discarding is not a Knock Out, so no point is scored.
+    CoinFlipDiscardOpponentActive,
+    /// Fan Rotom - Spin Storm: flip a coin; on heads put the opponent's Active Pokémon and the
+    /// cards under it into their hand. Attached Energy is discarded and any Tool goes to the
+    /// discard pile.
+    CoinFlipReturnOpponentActiveToHand,
+    /// Chinchou - Luring Glow: flip a coin; on heads the opponent switches 1 of their Benched
+    /// Pokémon into the Active Spot. The coin-flip counterpart of `KnockBackOpponentActive`.
+    CoinFlipKnockBackOpponentActive,
+    /// Origin Forme Dialga - Time Mash / Hippowdon - Crashing Fangs / Oinkologne - Leg Stomp:
+    /// deal the attack's fixed damage, then flip a coin; on TAILS leave `effect` on the
+    /// attacking Pokémon. The tails-side mirror of `DamageAndCardEffect`'s `coin_flip` branch.
+    CoinFlipTailsSelfCardEffect {
+        effect: CardEffect,
+        duration: u8,
+    },
+    /// Minun - Buddy Spark / Magmortar - Thundering Volcano: deal the attack's fixed damage and,
+    /// when a Pokémon named `pokemon_name` is on your Bench, also deal `bench_damage` to each of
+    /// your opponent's Benched Pokémon.
+    AlsoBenchDamageIfPokemonOnBench {
+        pokemon_name: String,
+        bench_damage: u32,
+    },
+    /// Dudunsparce - Sudden Drilling: when this Pokémon evolved from `pokemon_name` during this
+    /// turn, also discard `count` random Energy from the opponent's Active Pokémon.
+    DiscardOpponentEnergyIfEvolvedFromThisTurn {
+        pokemon_name: String,
+        count: usize,
+    },
+    /// Boltund - Defiant Spark / Veluza - Shedding Spiral: "this attack can be used for
+    /// <cost>" while `condition` holds. Damage-wise the attack is plain fixed damage; the cost
+    /// substitution happens in `hooks::get_effective_attack_cost`, which move generation and the
+    /// copied-attack affordability check both go through.
+    AlternateAttackCost {
+        condition: AttackCostCondition,
+        cost: Vec<EnergyType>,
+    },
+    /// Wobbuffet - Reply Strongly: extra damage when this Pokémon was damaged by an attack
+    /// during the opponent's last turn while it was in the Active Spot.
+    ExtraDamageIfDamagedWhileActiveLastTurn {
+        extra_damage: u32,
+    },
+    /// Bidoof - Super Fang: halve the opponent's Active Pokémon's remaining HP, rounded down.
+    /// Pocket tracks HP in multiples of 10, so the result is rounded down to the nearest 10
+    /// (e.g. 70 HP remaining becomes 30). This sets HP directly, so it is not affected by
+    /// Weakness or other damage modifiers.
+    HalveOpponentActiveHp,
+    /// Heatmor's Roasting Heat: extra damage if the opponent's Active Pokémon is Burned.
+    /// Sibling of `ExtraDamageIfDefenderPoisoned` / `Confused` / `Asleep`.
+    ExtraDamageIfDefenderBurned {
+        extra_damage: u32,
+    },
+    /// Rotom's Assault Laser: extra damage if the OPPONENT's Active Pokémon has a Pokémon Tool
+    /// attached. Mirror of `ExtraDamageIfToolAttached`, which checks the attacker instead.
+    ExtraDamageIfDefenderToolAttached {
+        extra_damage: u32,
+    },
+    /// Swalot's Swallow Up: extra damage if the opponent's Active Pokémon has strictly less
+    /// remaining HP than the attacking Pokémon. Mirror of `ExtraDamageIfOpponentHpMoreThanSelf`.
+    ExtraDamageIfOpponentHpLessThanSelf {
+        extra_damage: u32,
+    },
+    /// Marowak's Punish: extra damage if the opponent's Active Pokémon's name contains
+    /// `substring` (e.g. "Team Rocket").
+    ExtraDamageIfDefenderNameContains {
+        substring: String,
+        extra_damage: u32,
+    },
+    /// Seviper's Fateful Fang: extra damage if the opponent's Active Pokémon is exactly `name`.
+    ExtraDamageIfDefenderNamed {
+        name: String,
+        extra_damage: u32,
+    },
+    /// Stoutland's Dangerous Bite / Araquanid's Dangerous Claws: extra damage if the opponent's
+    /// Active Pokémon is a Basic Pokémon (Fossils count as Basic).
+    ExtraDamageIfDefenderIsBasic {
+        extra_damage: u32,
+    },
+    /// Kangaskhan's Cross-Cut: extra damage if the opponent's Active Pokémon is an Evolution
+    /// Pokémon (Stage 1 or higher).
+    ExtraDamageIfDefenderIsEvolution {
+        extra_damage: u32,
+    },
+    /// Scovillain's Red-Hot Headbutt: extra damage if the opponent's Active Pokémon is any of
+    /// `energy_types`. Multi-type sibling of `ExtraDamageIfDefenderType`.
+    ExtraDamageIfDefenderTypeIn {
+        energy_types: Vec<EnergyType>,
+        extra_damage: u32,
+    },
+    /// Bronzong's Psychic Resonance: extra damage if the opponent has any Pokémon of
+    /// `energy_type` in play (Active or Bench).
+    ExtraDamageIfOpponentHasTypeInPlay {
+        energy_type: EnergyType,
+        extra_damage: u32,
+    },
+    /// Grumpig's Swaying Dance: extra damage if the opponent's hand size is exactly one of
+    /// `sizes` (e.g. 2, 4 or 6).
+    ExtraDamageIfOpponentHandSizeIn {
+        sizes: Vec<usize>,
+        extra_damage: u32,
+    },
+    /// Buzzwole's Ground Beat: extra damage if the opponent has scored exactly `points` points.
+    ExtraDamageIfOpponentPointsEqual {
+        points: u8,
+        extra_damage: u32,
+    },
+    /// Grafaiai's Colorful Attack: extra damage if the attacker's Pokémon in play have at least
+    /// `minimum_types` distinct Energy types attached across the whole board. Board-wide sibling
+    /// of `ExtraDamageIfDifferentEnergyTypesAttached`, which only looks at the attacker.
+    ExtraDamageIfDifferentEnergyTypesInPlay {
+        minimum_types: usize,
+        extra_damage: u32,
+    },
+    /// Team Rocket's Muk's Poison Absorption: heal `amount` from the attacking Pokémon if the
+    /// opponent's Active Pokémon is Poisoned.
+    SelfHealIfDefenderPoisoned {
+        amount: u32,
+    },
+    /// Celebi's Temporal Leaves: if the opponent's Active Pokémon is evolved, devolve it by
+    /// putting the highest Stage Evolution card on it into the opponent's hand.
+    DevolveOpponentActive,
+    /// Regice's Reflect Energy / Swanna's Feathery Cyclone: move Energy from the attacking
+    /// Pokémon to 1 of the attacker's Benched Pokémon. `amount: Some(n)` moves n Energy;
+    /// `None` moves every Energy attached.
+    MoveEnergyToOneBenched {
+        amount: Option<u32>,
+    },
+    /// Alolan Muk ex's Chemical Panic: 1 Special Condition is chosen at random from `conditions`,
+    /// excluding any already affecting the opponent's Active Pokémon, and applied to it.
+    RandomStatusFromAmong {
+        conditions: Vec<StatusCondition>,
+    },
+    /// Quagsire's Amnesia: 1 of the opponent's Active Pokémon's attacks is chosen at random;
+    /// during the opponent's next turn that Pokémon can't use the chosen attack.
+    DisableRandomOpponentActiveAttack,
+    /// Ampharos's Zapping Bullet: `times` of the opponent's Benched Pokémon are chosen at random
+    /// (independently each time), taking `damage_per_hit` each. The opponent's Active still takes
+    /// the attack's `fixed_damage`. Bench-only sibling of `RandomSpreadDamage`.
+    RandomBenchDamage {
+        times: usize,
+        damage_per_hit: u32,
+    },
+    /// Team Rocket's Slowpoke's Scavenge: put a random Item card from your discard pile into
+    /// your hand.
+    RandomItemFromDiscardToHand,
+    /// Golurk's Heavy Rocket / Team Rocket's Wobbuffet's Rocket Frenzy: reveal the top `count`
+    /// cards of your deck, deal `damage_per_match` for each revealed card matching `criterion`,
+    /// then shuffle the revealed cards back in. The attack's `fixed_damage` is the per-match
+    /// amount, so it is not added as a base.
+    RevealTopDamagePerMatch {
+        count: usize,
+        damage_per_match: u32,
+        criterion: RevealCriterion,
+    },
+    /// Chatot's Mimic / Mime Jr.'s Mime-y Shuffle: shuffle your hand into your deck, then draw a
+    /// card for each card in your opponent's hand.
+    ShuffleHandAndDrawPerOpponentHandCard,
+    /// Sandy Shocks's Pull In and Pound / Team Rocket's Hypno's Entrap: switch 1 of the
+    /// opponent's Benched Pokémon into the Active Spot, then deal `damage` to the new Active
+    /// Pokémon.
+    SwitchOpponentBenchInAndDamage {
+        damage: u32,
     },
 }

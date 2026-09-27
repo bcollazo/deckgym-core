@@ -3,7 +3,7 @@ use crate::{models::EnergyType, State};
 pub fn diantha_targets(state: &State, player: usize) -> Vec<usize> {
     state
         .enumerate_in_play_pokemon(player)
-        .filter(|(_, pokemon)| pokemon.get_energy_type() == Some(EnergyType::Psychic))
+        .filter(|(_, pokemon)| pokemon.is_type(EnergyType::Psychic))
         .filter(|(_, pokemon)| pokemon.is_damaged())
         .filter(|(_, pokemon)| {
             pokemon

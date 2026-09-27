@@ -29,6 +29,9 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         {
             return vec![];
         }
+        if has_no_retreat_cost_from_abilities(state, card) {
+            return vec![];
+        }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
         let retreat_cost_increase: u8 = card
             .get_effective_card_effects()
@@ -41,9 +44,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         for _ in 0..retreat_cost_increase {
             normal_cost.push(EnergyType::Colorless);
         }
-        if has_tool(card, CardId::A4a067InflatableBoat)
-            && card.get_energy_type() == Some(EnergyType::Water)
-        {
+        if has_tool(card, CardId::A4a067InflatableBoat) && card.is_type(EnergyType::Water) {
             normal_cost.pop();
         }
         if has_tool(card, CardId::B2a087BigAirBalloon) && pokemon_card.stage == 2 {
@@ -78,25 +79,35 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 }
             }
         }
-        if let Some(active_energy_type) = card.get_energy_type() {
-            let current_player = state.current_player;
-            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
-                if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
-                    energy_type,
-                    amount,
-                }) = benched_pokemon.ability_mechanic()
-                {
-                    if energy_type == &active_energy_type {
-                        to_subtract += *amount as u8;
-                    }
+        // Each benched source applies its reduction once, even if the Active Pokémon happens to
+        // count as the required type through more than one of its in-play types.
+        let current_player = state.current_player;
+        for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
+            if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
+                energy_type,
+                amount,
+            }) = benched_pokemon.ability_mechanic()
+            {
+                if card.is_type(*energy_type) {
+                    to_subtract += *amount as u8;
                 }
             }
         }
 
-        // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
-        if let Some(energy_type) = card.get_energy_type() {
-            to_subtract += get_peculiar_plaza_retreat_reduction(state, energy_type);
+        // Beldum's Conductive Body: "If you have another Beldum in play, this Pokémon's Retreat
+        // Cost is 2 less." ("another" = a different in-play slot holding a Pokémon of the same
+        // name.)
+        if let Some(AbilityMechanic::ReduceRetreatCostIfAnotherSameNameInPlay { amount }) =
+            card.ability_mechanic()
+        {
+            if count_in_play_by_name(state, state.current_player, &card.get_name()) > 1 {
+                to_subtract += *amount;
+            }
         }
+
+        // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
+        to_subtract +=
+            get_peculiar_plaza_retreat_reduction(state, card.is_type(EnergyType::Psychic));
 
         // Retreat Effects accumulate so we add them.
         for _ in 0..to_subtract {
@@ -120,6 +131,51 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
     } else {
         vec![]
     }
+}
+
+/// Passive abilities that zero out a Pokémon's Retreat Cost outright. Two shapes are covered:
+/// self-scoped ones read off `card`'s own ability (Speed Link, Fantastical Floating, Wimp Out,
+/// Surge Surfer), and auras granted by any of the owner's in-play Pokémon (Jumpluff's Fluffy
+/// Flight, Tatsugiri's Retreat Directive).
+fn has_no_retreat_cost_from_abilities(state: &State, card: &PlayedCard) -> bool {
+    let player = state.current_player;
+    let self_scoped = match card.ability_mechanic() {
+        Some(AbilityMechanic::NoRetreatCostIfNamedPokemonInPlay { names }) => {
+            has_named_pokemon_in_play(state, player, names)
+        }
+        Some(AbilityMechanic::NoRetreatCostDuringFirstTurn) => state.is_users_first_turn(),
+        Some(AbilityMechanic::NoRetreatCostIfStadiumInPlay) => state.active_stadium.is_some(),
+        _ => false,
+    };
+    if self_scoped {
+        return true;
+    }
+
+    // Auras only free the *Active* Pokémon, so they never apply to a Benched retreat-cost query.
+    let card_name = card.get_name();
+    state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::NoRetreatCostForYourActive { pokemon_name }) => {
+                pokemon_name.as_ref().is_none_or(|name| *name == card_name)
+            }
+            _ => false,
+        })
+}
+
+/// Whether `player` has any in-play Pokémon whose name is in `names`.
+fn has_named_pokemon_in_play(state: &State, player: usize, names: &[String]) -> bool {
+    state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| names.contains(&pokemon.get_name()))
+}
+
+/// How many of `player`'s in-play Pokémon share `name`.
+fn count_in_play_by_name(state: &State, player: usize, name: &str) -> usize {
+    state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| pokemon.get_name() == name)
+        .count()
 }
 
 // Test Colorless is wildcard when counting energy

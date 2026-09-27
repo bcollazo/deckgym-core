@@ -1,8 +1,10 @@
 use crate::{
     actions::{abilities::AbilityMechanic, Mechanic, SimpleAction, EFFECT_MECHANIC_MAP},
+    card_ids::CardId,
     effects::CardEffect,
-    hooks::{contains_energy, get_attack_cost},
+    hooks::{contains_energy, get_effective_attack_cost},
     models::{Attack, PlayedCard},
+    tools::has_tool,
     State,
 };
 
@@ -24,6 +26,21 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             return actions;
         }
 
+        // Regigigas's Seal of Antiquity: "If you don't have Regirock, Regice, and Registeel on
+        // your Bench, this Pokémon can't attack."
+        if let Some(AbilityMechanic::CannotAttackUnlessNamedOnBench { names }) =
+            active_pokemon.ability_mechanic()
+        {
+            let all_on_bench = names.iter().all(|name| {
+                state
+                    .enumerate_bench_pokemon(current_player)
+                    .any(|(_, pokemon)| pokemon.get_name() == *name)
+            });
+            if !all_on_bench {
+                return actions;
+            }
+        }
+
         let restricted_attack_names: Vec<String> = active_effects
             .iter()
             .filter_map(|effect| match effect {
@@ -32,9 +49,14 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             })
             .collect();
 
-        // The active Pokémon's own attacks, plus any granted by Celebi's Time Recall.
+        // The active Pokémon's own attacks, plus any granted by Celebi's Time Recall or by a
+        // Memory Light attached to the active Pokémon itself.
         let mut available_attacks: Vec<Attack> = active_pokemon.get_attacks().clone();
-        available_attacks.extend(time_recall_attacks(state, current_player, active_pokemon));
+        if time_recall_active(state, current_player)
+            || has_tool(active_pokemon, CardId::A4a068MemoryLight)
+        {
+            available_attacks.extend(previous_evolution_attacks(active_pokemon));
+        }
 
         let mut offered: Vec<Attack> = Vec::new();
         for attack in available_attacks {
@@ -51,7 +73,7 @@ pub(crate) fn generate_attack_actions(state: &State) -> Vec<SimpleAction> {
             if !attack_precondition_met(state, current_player, &attack) {
                 continue;
             }
-            let modified_cost = get_attack_cost(&attack.energy_required, state, current_player);
+            let modified_cost = get_effective_attack_cost(&attack, state, current_player);
             if contains_energy(active_pokemon, &modified_cost, state, current_player) {
                 offered.push(attack.clone());
                 actions.push(SimpleAction::Attack(attack));
@@ -83,17 +105,18 @@ fn attack_precondition_met(state: &State, player: usize, attack: &Attack) -> boo
 }
 
 /// Celebi's Time Recall: while a Pokémon with the ability is in play, each of your evolved
-/// Pokémon can use any attack from its previous Evolutions. We only need the active Pokémon's
-/// previous-evolution attacks here, since only the active Pokémon can attack. The previous
-/// evolutions are the under-cards recorded on the active when it evolved (`cards_behind`).
-fn time_recall_attacks(state: &State, player: usize, active_pokemon: &PlayedCard) -> Vec<Attack> {
-    let time_recall_active = state
+/// Pokémon can use any attack from its previous Evolutions.
+fn time_recall_active(state: &State, player: usize) -> bool {
+    state
         .enumerate_in_play_pokemon(player)
-        .any(|(_, pokemon)| pokemon.has_ability(&AbilityMechanic::TimeRecall));
-    if !time_recall_active {
-        return Vec::new();
-    }
+        .any(|(_, pokemon)| pokemon.has_ability(&AbilityMechanic::TimeRecall))
+}
 
+/// The attacks of a Pokémon's previous Evolutions, i.e. the under-cards recorded on it when it
+/// evolved (`cards_behind`). Granted by Celebi's Time Recall (board-wide) and by Memory Light
+/// ("The Pokémon this card is attached to can use any attack from its previous Evolutions.").
+/// We only need the active Pokémon's, since only the active Pokémon can attack.
+fn previous_evolution_attacks(active_pokemon: &PlayedCard) -> Vec<Attack> {
     active_pokemon
         .cards_behind
         .iter()

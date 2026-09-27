@@ -50,6 +50,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::Attack(_) => 10,
         SimpleAction::ApplyDamage { .. } => 10,
         SimpleAction::ScheduleDelayedSpotDamage { .. } => 10,
+        SimpleAction::ScheduleDelayedSpotKnockOut { .. } => 10,
         SimpleAction::Retreat(_) => 2,
         SimpleAction::EndTurn => 1,
         SimpleAction::Heal { .. } => 5,
@@ -63,6 +64,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::ShuffleOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOpponentSupporter { .. } => 5,
         SimpleAction::DiscardOwnCards { .. } => 5,
+        SimpleAction::PutDiscardCardInHand { .. } => 5,
         SimpleAction::BenchOpponentPokemonFromHand { .. } => 5,
         SimpleAction::AttachFromDiscard { .. } => 10,
         SimpleAction::AttachTypedFromDiscard { .. } => 10,
@@ -74,6 +76,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::DiscardOwnBenchedGroupThenDamage { .. } => 5, // Same trade, several Pokemon at once
         SimpleAction::ShuffleSelfAndAttachmentsIntoDeck { .. } => 5,
         SimpleAction::MoveEnergyAndReoffer { .. } => 5,
+        SimpleAction::DiscardOwnCardsThenDamage { .. } => 5, // Trading hand Tools for damage
 
         SimpleAction::ReturnPokemonToHand { .. } => 5,
         SimpleAction::ShuffleInPlayPokemonIntoDeck { .. } => 5,
@@ -84,6 +87,13 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::ApplyStatusToOpponentActive { .. } => 10,
         SimpleAction::ApplyStatusesToOpponentActive { .. } => 10,
         SimpleAction::MoveOpponentActiveEnergyToSelf { .. } => 10,
+        SimpleAction::HealAndCureConditions { .. } => 5,
+        SimpleAction::MoveDamageToOpponentActive { .. } => 10,
+        SimpleAction::BenchOpponentPokemonFromDiscard { .. } => 5,
+        SimpleAction::ShuffleOwnDeck => 1,
+        SimpleAction::ShuffleRandomOwnHandCardIntoDeck => 1,
+        SimpleAction::MoveActiveEnergyToBench { .. } => 10,
+        SimpleAction::SwitchOpponentBenchedThenDamage { .. } => 10,
         SimpleAction::UseStadium => 5, // Stadium abilities like Mesagoza
         SimpleAction::Noop => 0,       // No operation has no weight
     }

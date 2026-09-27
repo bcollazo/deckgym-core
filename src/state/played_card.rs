@@ -28,6 +28,14 @@ pub struct PlayedCard {
     /// Kept in sync via `State::refresh_double_grass_bonus_for_player` whenever the
     /// board composition for this Pokemon's owner changes.
     double_grass_active: bool,
+    /// Extra HP granted by an ability on this Pokémon's owner's board (Lilligant's Toughness
+    /// Aroma). Kept in sync by `State::refresh_ability_board_bonuses`, like `stadium_hp_bonus`.
+    #[serde(default)]
+    ability_hp_bonus: u32,
+    /// Whether a Heal Block ability (Claydol) is in play for either player, in which case
+    /// `heal` is a no-op. Kept in sync by `State::refresh_ability_board_bonuses`.
+    #[serde(default)]
+    heal_blocked: bool,
     pub attached_energy: Vec<EnergyType>,
     pub attached_tool: Option<Card>,
     pub played_this_turn: bool,
@@ -47,6 +55,19 @@ pub struct PlayedCard {
     pub cards_behind: Vec<Card>,
     pub prevent_first_attack_damage_used: bool,
     pub has_attacked_since_play: bool,
+    /// Set when a "when this Pokémon is Knocked Out, flip a coin; if heads your opponent can't
+    /// get any points for it" ability (Dusknoir's Fade into Darkness, Glimmora's Shattering
+    /// Crystal) came up heads for the Knock Out about to be resolved. Read (and then irrelevant,
+    /// since the card leaves play) by `handle_knockouts`.
+    #[serde(default)]
+    pub(crate) knockout_points_denied: bool,
+    /// Whether this Pokémon has been damaged by an attack while in the Active Spot during the
+    /// current turn, and during the previous turn (e.g. for Wobbuffet's Reply Strongly). Rolled
+    /// over by `end_turn_maintenance`, and carried with the card if it retreats.
+    #[serde(default)]
+    damaged_by_attack_while_active_this_turn: bool,
+    #[serde(default)]
+    damaged_by_attack_while_active_last_turn: bool,
 
     /// Effects that should be cleared if moved to the bench (by retreat or similar).
     /// The second value is the number of turns left for the effect.
@@ -67,6 +88,8 @@ impl PlayedCard {
             base_hp,
             stadium_hp_bonus: 0,
             double_grass_active: false,
+            ability_hp_bonus: 0,
+            heal_blocked: false,
             attached_energy,
             played_this_turn,
             moved_to_active_this_turn: false,
@@ -83,6 +106,9 @@ impl PlayedCard {
             effects: vec![],
             prevent_first_attack_damage_used: false,
             has_attacked_since_play: false,
+            knockout_points_denied: false,
+            damaged_by_attack_while_active_this_turn: false,
+            damaged_by_attack_while_active_last_turn: false,
         }
     }
 
@@ -167,6 +193,10 @@ impl PlayedCard {
     }
 
     pub(crate) fn heal(&mut self, amount: u32) {
+        // Claydol's Heal Block: "Pokémon (both yours and your opponent's) can't be healed."
+        if self.heal_blocked {
+            return;
+        }
         self.damage_counters = self.damage_counters.saturating_sub(amount);
     }
 
@@ -174,12 +204,64 @@ impl PlayedCard {
         self.damage_counters = self.damage_counters.saturating_add(damage);
     }
 
-    // Option because if playing an item card... (?)
-    pub(crate) fn get_energy_type(&self) -> Option<EnergyType> {
-        match &self.card {
-            Card::Pokemon(pokemon_card) => Some(pokemon_card.energy_type),
-            _ => None,
+    /// Every Energy type this Pokémon counts as **while in play**: the printed type(s) of its
+    /// card (`Card::get_types`) plus any type granted by its Ability
+    /// (`AbilityMechanic::GrantedTypes`, i.e. Urshifu's Double Type). The list is deduplicated
+    /// and keeps the printed type first.
+    ///
+    /// The lookup goes through `ability_mechanic()`, so a Pokémon that has lost its Abilities
+    /// (Budew's Prickly Powder, Alolan Muk-style suppression) falls back to its printed type.
+    ///
+    /// # Which checks use the type *set* and which use the printed type
+    ///
+    /// Rule of thumb: a Pokémon **in play** is every one of its types at once, so any rule that
+    /// asks "is this a [X] Pokémon" is satisfied if *any* of its types is [X]. Cards that are
+    /// **not** in play (deck, hand, discard) have no Ability active, so they keep the printed
+    /// type. Bonuses granted this way are still applied **once**, never once per matching type.
+    ///
+    /// | Site | Rule chosen |
+    /// |---|---|
+    /// | Weakness (`hooks::core::get_weakness_application`) | Defender's Weakness vs the **attacker's type set**: weak to either type → the usual flat +20 (or Bounded Field ×2). Never doubled when more than one type is involved — Weakness names a single type, so at most one can match. |
+    /// | Typed damage auras (`IncreaseDamageForTypeInPlay`, `IncreaseDamageForTwoTypesInPlay`) | Attacker's type set. `…TwoTypes…` still adds its bonus once even if both listed types match. |
+    /// | `ReduceDamageFromAttacksByAttackerType` (Thick Fat) | Attacker's type set intersects the listed types. |
+    /// | `TurnEffect::IncreasedDamageForType{,AgainstEx}` | Attacker's type set. |
+    /// | `TurnEffect::ReducedDamageForType` | Defender's type set. |
+    /// | Arena of Antiquity ([F] attacker), Peculiar Plaza ([P] retreat) | In-play Pokémon's type set. |
+    /// | Typed retreat reductions (`ReduceRetreatCostOfYourActiveTypedFromBench`, Inflatable Boat) | Active's type set; each source still applies once. |
+    /// | Typed Tools on their holder (Leaf Cape, Steel Apron, Metal Core Barrier, Dark Pendant, Deceptive Needle, Electrical Cord) | Holder's type set — the Tool is attached to a Pokémon in play. |
+    /// | Typed HP auras (`IncreaseHpOfYourTypedPokemon`) | Recipient's type set. |
+    /// | Jungle Totem ([G] Energy doubling) | Holder's type set. |
+    /// | Typed Energy attach / move abilities and Trainers (Vaporeon, Lunala ex, Baxcalibur, Electric Generator, Misty, …) | Target's type set. |
+    /// | Typed heals and typed selection of Pokémon **in play** (Erika, Diantha, Ilima, Parasol Lady, Wallace, Quick Growth, `HealTypedPokemonOnEvolve`, …) | Target's type set. |
+    /// | `num_in_play_of_type` and every "count/choose your [X] Pokémon" attack | Type set of each in-play Pokémon; a dual-type Pokémon is still counted once per type asked about. |
+    /// | "If your opponent's Active is a [X] Pokémon" (`ExtraDamageIfDefenderType`, `…TypeIn`) | Defender's type set; the bonus applies once. |
+    /// | Victory Star (attacker must be [R]) | Attacker's type set. |
+    /// | KO bookkeeping for revenge attacks (`record_knocked_out_by_opponent_attack`) | Records **all** of the KO'd Pokémon's types, so a [D]-restricted revenge attack sees a KO'd [F]/[D] Pokémon. |
+    /// | Deck / hand / discard-pile searches and mills (`pokemon_search_outcomes_by_type`, Fishing Net, Fisher, Fragrant Forest, `milled_card_matches`, the deck side of Wallace and Quick Growth) | **Printed** type — the card is not in play, so its Ability is not active. |
+    /// | Deck building (`Deck::energy_types`), TUI colours, `card_enum_generator` | **Printed** type. |
+    pub fn get_energy_types(&self) -> Vec<EnergyType> {
+        let mut types = self.card.get_types();
+        if let Some(AbilityMechanic::GrantedTypes { energy_types }) = self.ability_mechanic() {
+            for granted in energy_types {
+                if !types.contains(granted) {
+                    types.push(*granted);
+                }
+            }
         }
+        types
+    }
+
+    /// Whether this Pokémon counts as `energy_type` while in play — the membership test over
+    /// `get_energy_types`, without the allocation. This is what almost every "is this a [X]
+    /// Pokémon" rule should call.
+    pub fn is_type(&self, energy_type: EnergyType) -> bool {
+        if self.card.is_type(energy_type) {
+            return true;
+        }
+        matches!(
+            self.ability_mechanic(),
+            Some(AbilityMechanic::GrantedTypes { energy_types }) if energy_types.contains(&energy_type)
+        )
     }
 
     /// Check if this Pokemon evolved from a specific Pokemon name
@@ -200,8 +282,24 @@ impl PlayedCard {
     /// Pokemon's owner. Called by `State::refresh_double_grass_bonus_for_player` whenever
     /// the owner's board composition changes.
     pub(crate) fn refresh_double_grass_active(&mut self, jungle_totem_active_for_owner: bool) {
-        self.double_grass_active =
-            jungle_totem_active_for_owner && self.card.get_type() == Some(EnergyType::Grass);
+        self.double_grass_active = jungle_totem_active_for_owner && self.is_type(EnergyType::Grass);
+    }
+
+    /// Keeps the ability-derived board bonuses in sync. Called by
+    /// `State::refresh_ability_board_bonuses` whenever either player's board changes.
+    pub(crate) fn refresh_ability_board_bonuses(
+        &mut self,
+        typed_hp_bonuses: &[(EnergyType, u32)],
+        heal_blocked: bool,
+    ) {
+        // One bonus per source ability, even if this Pokemon counts as several of the boosted
+        // types at once.
+        self.ability_hp_bonus = typed_hp_bonuses
+            .iter()
+            .filter(|(energy_type, _)| self.is_type(*energy_type))
+            .map(|(_, amount)| *amount)
+            .sum();
+        self.heal_blocked = heal_blocked;
     }
 
     pub(crate) fn refresh_starting_plains_bonus(&mut self, starting_plains_active: bool) {
@@ -237,9 +335,7 @@ impl PlayedCard {
         // attachable to anything, but their HP bonus is gated by the holder).
         if has_tool(self, CardId::A2147GiantCape) {
             effective_hp += 20;
-        } else if has_tool(self, CardId::A3147LeafCape)
-            && self.get_energy_type() == Some(EnergyType::Grass)
-        {
+        } else if has_tool(self, CardId::A3147LeafCape) && self.is_type(EnergyType::Grass) {
             // Leaf Cape: "The [G] Pokémon this card is attached to gets +30 HP."
             effective_hp += 30;
         } else if has_tool(self, CardId::B3b065ElegantCape)
@@ -254,6 +350,7 @@ impl PlayedCard {
         }
 
         effective_hp += self.stadium_hp_bonus;
+        effective_hp += self.ability_hp_bonus;
 
         // E.g. Reuniclus Infinite Increase, Serperior Regal Bloom: +HP for each Energy of a type attached
         if let Some(AbilityMechanic::IncreaseHpPerAttachedEnergy {
@@ -338,6 +435,22 @@ impl PlayedCard {
     ///   - 2: on your next turn
     pub fn add_effect(&mut self, effect: CardEffect, duration: u8) {
         self.effects.push((effect, duration));
+    }
+
+    /// Records that this Pokémon was damaged by an attack while in the Active Spot this turn.
+    pub(crate) fn mark_damaged_by_attack_while_active(&mut self) {
+        self.damaged_by_attack_while_active_this_turn = true;
+    }
+
+    /// Whether this Pokémon was damaged by an attack during the previous turn while it was in
+    /// the Active Spot (e.g. for Wobbuffet's Reply Strongly).
+    pub fn was_damaged_by_attack_while_active_last_turn(&self) -> bool {
+        self.damaged_by_attack_while_active_last_turn
+    }
+
+    /// Whether this Pokémon currently carries `effect`, regardless of its remaining duration.
+    pub fn has_effect(&self, effect: &CardEffect) -> bool {
+        self.effects.iter().any(|(stored, _)| stored == effect)
     }
 
     pub(crate) fn get_active_effects(&self) -> Vec<CardEffect> {
@@ -458,6 +571,13 @@ impl PlayedCard {
             }
         });
 
+        // A points-denial coin flip that didn't end up mattering (the Knock Out was prevented)
+        // must not carry over to a later Knock Out.
+        self.knockout_points_denied = false;
+        // Roll the "damaged by an attack while Active" flag over to the previous turn.
+        self.damaged_by_attack_while_active_last_turn =
+            std::mem::take(&mut self.damaged_by_attack_while_active_this_turn);
+
         // Reset played_this_turn, moved_to_active_this_turn, and ability_used
         self.played_this_turn = false;
         self.moved_to_active_this_turn = false;
@@ -487,9 +607,8 @@ impl PlayedCard {
     }
 
     pub(crate) fn has_double_grass(&self, state: &State, player: usize) -> bool {
-        let pokemon_type = self.card.get_type();
         let jungle_totem_active = has_serperior_jungle_totem(state, player);
-        jungle_totem_active && pokemon_type == Some(EnergyType::Grass)
+        jungle_totem_active && self.is_type(EnergyType::Grass)
     }
 }
 

@@ -42,7 +42,9 @@ pub(crate) fn pokemon_search_outcomes_by_type_for_player(
     energy_type: EnergyType,
 ) -> Outcomes {
     card_search_outcomes_with_filter(acting_player, state, move |card: &&Card| {
-        let type_matches = card.get_type().map(|t| t == energy_type).unwrap_or(false);
+        // The card is in the deck, so no Ability of its own is active: its *printed* type is
+        // what a typed search looks at.
+        let type_matches = card.is_type(energy_type);
         let basic_check = !basic_only || card.is_basic();
         type_matches && basic_check
     })

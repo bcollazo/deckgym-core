@@ -106,6 +106,39 @@ pub enum AbilityMechanic {
     ReduceOpponentActiveDamage {
         amount: u32,
     },
+    /// Eiscue's Ice Face: "If this Pokémon has full HP, it takes `amount` less damage from attacks
+    /// from your opponent's Pokémon." Depends on the current damage counters, so it's resolved in
+    /// `hooks::modify_damage` rather than being a plain `CardEffect`.
+    ReduceDamageFromAttacksIfFullHp {
+        amount: u32,
+    },
+    /// Falinks's Coordinated Unit: "If you have another <same name> in play, this Pokémon's
+    /// attacks do +`damage_bonus` damage to your opponent's Active Pokémon, and this Pokémon
+    /// takes -`damage_reduction` damage from attacks from your opponent's Pokémon."
+    /// Board-dependent on both sides, so it's resolved in `hooks::modify_damage`.
+    BuffIfAnotherSameNameInPlay {
+        damage_bonus: u32,
+        damage_reduction: u32,
+    },
+    /// Unown GUARD: "This Ability works if you have any Unown in play with an Ability other than
+    /// GUARD. All of your Pokémon take -`amount` damage from attacks from your opponent's
+    /// Pokémon." An aura over the owner's whole board; resolved in `hooks::modify_damage`.
+    ReduceDamageToAllYourPokemonWithOtherUnown {
+        amount: u32,
+    },
+    /// Unown POWER: "This Ability works if you have any Unown in play with an Ability other than
+    /// POWER. Attacks used by your Pokémon do +`amount` damage to your opponent's Active
+    /// Pokémon." Resolved in `hooks::modify_damage`.
+    IncreaseDamageOfYourPokemonWithOtherUnown {
+        amount: u32,
+    },
+    /// Politoed's Lordly Cheering: "As long as this Pokémon is on your Bench, attacks used by your
+    /// Pokémon that evolve from `evolves_from` do +`amount` damage to your opponent's Active
+    /// Pokémon." Resolved in `hooks::modify_damage`.
+    IncreaseDamageForEvolvesFromWhileBenched {
+        evolves_from: String,
+        amount: u32,
+    },
     IncreaseDamageWhenRemainingHpAtMost {
         amount: u32,
         hp_threshold: u32,
@@ -176,9 +209,33 @@ pub enum AbilityMechanic {
     HealActiveYourPokemon {
         amount: u32,
     },
+    /// "Once during your turn, you may switch out your opponent's Active Pokémon to the Bench."
+    /// `require_active` demands that the ability's holder itself be in the Active Spot;
+    /// `require_target_basic` restricts the ability to an opponent's Active *Basic* Pokémon
+    /// (Swellow's Repelling Wind).
     SwitchOutOpponentActiveToBench {
         require_active: bool,
+        require_target_basic: bool,
     },
+    /// Abilities whose entire effect is looking at hidden cards — Porygon's Data Scan, Unown's
+    /// CHECK, Team Rocket's Kecleon's Spy Ops. deckgym does not model per-player hidden
+    /// information, so using them changes nothing observable; they are implemented as no-ops and
+    /// never offered by move generation (offering them would only pad the search tree).
+    LookAtCardsNoop,
+    /// Grafaiai's Poison Coating: "Once during your turn, you may flip a coin. If heads, your
+    /// opponent's Active Pokémon is now Poisoned."
+    CoinFlipPoisonOpponentActive,
+    /// Rillaboom's Captivating Rhythm: "Once during your turn, you may flip a coin. If heads,
+    /// switch in 1 of your opponent's Benched Pokémon to the Active Spot." (You choose which.)
+    CoinFlipSwitchOpponentBenchToActive,
+    /// Tyranitar's Energy Plunder: "Once during your turn, you may move all [energy_type] Energy
+    /// from each of your Pokémon to this Pokémon."
+    MoveAllTypedEnergyFromAllYourPokemonToSelf {
+        energy_type: EnergyType,
+    },
+    /// Ambipom's Catching Tail: "Once during your turn, you may put a random Pokémon Tool card
+    /// from your deck into your hand."
+    SearchRandomToolFromDeck,
     BadDreamsEndOfTurn {
         amount: u32,
     },
@@ -197,6 +254,33 @@ pub enum AbilityMechanic {
     CoinFlipSleepOpponentActive,
     DiscardFromHandToDrawCard,
     ImmuneToStatusConditions,
+    /// Hoothoot's Insomnia: "This Pokémon can't be Asleep." Enforced in
+    /// `State::apply_status_condition`.
+    ImmuneToStatusCondition {
+        condition: StatusCondition,
+    },
+    /// Cherubi's En-fruits-iastic: "If this Pokémon has a Pokémon Tool attached, attacks used by
+    /// this Pokémon cost `amount` less [`energy_type`] Energy." Resolved in
+    /// `hooks::get_attack_cost`.
+    ReduceTypedAttackCostIfHasTool {
+        energy_type: EnergyType,
+        amount: u8,
+    },
+    /// Lilligant's Toughness Aroma: "Each of your [`energy_type`] Pokémon gets +`amount` HP."
+    /// Board-dependent, so it is cached on each `PlayedCard` (like the Stadium HP bonus) and
+    /// refreshed whenever the owner's board changes.
+    IncreaseHpOfYourTypedPokemon {
+        energy_type: EnergyType,
+        amount: u32,
+    },
+    /// Claydol's Heal Block: "Pokémon (both yours and your opponent's) can't be healed." Cached on
+    /// each `PlayedCard` and consulted by `PlayedCard::heal`.
+    NoHealingForAnyone,
+    /// Regigigas's Seal of Antiquity: "If you don't have <names> on your Bench, this Pokémon can't
+    /// attack." Enforced in attack move generation.
+    CannotAttackUnlessNamedOnBench {
+        names: Vec<String>,
+    },
     /// Passive ability shared by Teal Mask Ogerpon ex (Soothing Wind) and Comfey (Flower Shield):
     /// Each of your Pokémon that has the required Energy attached recovers from all Special
     /// Conditions and can't be affected by any Special Conditions.
@@ -209,6 +293,17 @@ pub enum AbilityMechanic {
     /// Snorlax's Massive Body: as long as this Pokémon is in the Active Spot, the opponent
     /// can't play any Stadium cards from their hand.
     NoOpponentStadiumInActive,
+    /// Urshifu's Double Type: "As long as this Pokémon is in play, it is [X] and [Y] type."
+    ///
+    /// Passive. The granted types are unioned with the card's printed type by
+    /// `PlayedCard::get_energy_types` / `PlayedCard::is_type`, which is what every in-play "is
+    /// this a [X] Pokémon" rule consults — so Weakness, typed auras, typed Energy attachment,
+    /// typed Tools and so on all see both types at once. Because the lookup goes through the
+    /// board-aware `PlayedCard::ability_mechanic`, suppressing the Ability reverts the Pokémon
+    /// to its printed type.
+    GrantedTypes {
+        energy_types: Vec<EnergyType>,
+    },
     DoubleGrassEnergy,
     PreventOpponentActiveEvolution,
     ReduceRetreatCostOfYourActiveBasicFromBench {
@@ -219,6 +314,29 @@ pub enum AbilityMechanic {
         amount: u32,
     },
     NoRetreatIfHasEnergy,
+    /// "If you have <names> in play, this Pokémon has no Retreat Cost." (Heatran/Rotom's Speed
+    /// Link with Arceus, Latios's Fantastical Floating with Latias.) Passive; resolved in
+    /// `hooks::get_retreat_cost`.
+    NoRetreatCostIfNamedPokemonInPlay {
+        names: Vec<String>,
+    },
+    /// "Your Active Pokémon has no Retreat Cost." (Jumpluff's Fluffy Flight; Tatsugiri's Retreat
+    /// Directive restricts it to an Active Dondozo via `pokemon_name`.) An aura: the holder can be
+    /// Active or Benched. Passive; resolved in `hooks::get_retreat_cost`.
+    NoRetreatCostForYourActive {
+        pokemon_name: Option<String>,
+    },
+    /// Wimpod's Wimp Out: "During your first turn, this Pokémon has no Retreat Cost."
+    /// Passive; resolved in `hooks::get_retreat_cost`.
+    NoRetreatCostDuringFirstTurn,
+    /// Alolan Raichu's Surge Surfer: "If a Stadium is in play, this Pokémon has no Retreat Cost."
+    /// Passive; resolved in `hooks::get_retreat_cost`.
+    NoRetreatCostIfStadiumInPlay,
+    /// Beldum's Conductive Body: "If you have another <same name> in play, this Pokémon's Retreat
+    /// Cost is `amount` less." Passive; resolved in `hooks::get_retreat_cost`.
+    ReduceRetreatCostIfAnotherSameNameInPlay {
+        amount: u8,
+    },
     PreventAllDamageFromEx,
     SleepOnZoneAttachToSelfWhileActive,
     IncreasePoisonDamage {
@@ -252,11 +370,61 @@ pub enum AbilityMechanic {
     /// instead of a random one" simplification used elsewhere (e.g.
     /// `DiscardRandomEnergyFromOpponentActiveOnEvolve`).
     MoveRandomEnergyFromOpponentActiveToSelfOnEvolve,
+    /// Galarian Perrserker's Dig Up: "Once during your turn, when you play this Pokémon from your
+    /// hand to evolve 1 of your Pokémon, you may put `amount` random Pokémon Tool cards from your
+    /// discard pile into your hand."
+    PutRandomToolsFromDiscardToHandOnEvolve {
+        amount: usize,
+    },
+    /// Raticate's Treasure Collecting: "…you may look at the top `amount` cards of your deck and
+    /// put all Item cards you find there into your hand. Shuffle the other cards back into your
+    /// deck."
+    TakeItemsFromTopOfDeckOnEvolve {
+        amount: usize,
+    },
+    /// Delcatty's Search for Friends: "…you may put a Supporter card from your discard pile into
+    /// your hand." The player chooses which Supporter.
+    PutSupporterFromDiscardToHandOnEvolve,
+    /// Polteageist's Refreshing Tea: "…you may have your opponent shuffle their hand into their
+    /// deck. For each remaining point that your opponent needs to win, they draw a card."
+    OpponentShuffleHandAndDrawPerRemainingPointOnEvolve,
+    /// Samurott's Stance: "…you may prevent all damage from—and effects of—attacks from your
+    /// opponent's Pokémon done to this Pokémon until the end of your opponent's next turn."
+    PreventAllDamageAndEffectsOnEvolve,
+    /// Poltchageist's Hospitality: "Once during your turn, when you put this Pokémon from your
+    /// hand onto your Bench, you may heal `amount` damage from your Active [`energy_type`]
+    /// Pokémon."
+    HealActiveTypedOnBench {
+        energy_type: EnergyType,
+        amount: u32,
+    },
     CanEvolveIntoEeveeEvolution,
     CanEvolveOnFirstTurnIfActive,
     CounterattackDamage {
         amount: u32,
     },
+    /// Pyukumuku's Innards Out / Team Rocket's Electrode's Destiny Burst: "If this Pokémon is in
+    /// the Active Spot and is Knocked Out by damage from an attack from your opponent's Pokémon,
+    /// do `amount` damage to the Attacking Pokémon." Passive; resolved alongside the ordinary
+    /// counterattack recoil in `handle_damage_only`.
+    DamageAttackerOnKnockout {
+        amount: u32,
+    },
+    /// Spiritomb's Final Scream: same trigger as `DamageAttackerOnKnockout`, but the damage is
+    /// dealt to *each* of the attacking player's in-play Pokémon (Active and Benched).
+    DamageEachOpponentPokemonOnKnockout {
+        amount: u32,
+    },
+    /// Galarian Cursola's Perish Body: "If this Pokémon is in the Active Spot and is Knocked Out
+    /// by damage from an attack from your opponent's Pokémon, flip a coin. If heads, the
+    /// Attacking Pokémon is Knocked Out." Passive; resolved as a defender-side coin split on the
+    /// attack's outcomes (`AttackOutcomes::split_with_knockout_coin_flip`).
+    CoinFlipKnockOutAttackerOnKnockout,
+    /// Dusknoir's Fade into Darkness / Glimmora's Shattering Crystal: "When this Pokémon is
+    /// Knocked Out, flip a coin. If heads, your opponent can't get any points for it." Passive;
+    /// resolved as a defender-side coin split on the attack's outcomes. Only Knock Outs caused by
+    /// an opponent's attack flip — see the note on `split_with_knockout_coin_flip`.
+    CoinFlipDenyPointsOnKnockout,
     PoisonAttackerOnDamaged,
     /// Jellicent's Bouncy Body: if this Pokémon is in the Active Spot and is damaged by an attack
     /// from the opponent's Pokémon, its owner takes an Energy of `energy_type` from their Energy
@@ -314,4 +482,19 @@ pub enum AbilityMechanic {
     /// generation, only pushed onto the move-generation stack by `apply_action` immediately
     /// after an eligible [R] attack's coins are flipped. See `PendingCoinReflip`.
     VictoryStarReflip,
+    /// Smeargle's Portrait: "Once during your turn, if this Pokémon is in the Active Spot, you may
+    /// look at a random Supporter card from your opponent's hand. Use the effect of that card as
+    /// the effect of this Ability."
+    ///
+    /// The opponent keeps the card (it is only copied), so nothing is removed from their hand.
+    /// Only Supporters that deckgym implements *and* that are currently playable are eligible —
+    /// copying an unplayable effect has no defined behavior in the engine.
+    UseRandomOpponentSupporterEffect,
+    /// Gholdengo's Luxury Coin: "Once during your turn, when you flip any coins for an effect of
+    /// your Trainer cards, you may ignore all results of those coin flips and begin flipping those
+    /// coins again. You can't use more than 1 Luxury Coin Ability each turn."
+    ///
+    /// The Trainer-card counterpart of `VictoryStarReflip`, resolved through the same
+    /// `PendingCoinReflip` machinery.
+    LuxuryCoinReflip,
 }
