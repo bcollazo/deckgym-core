@@ -127,7 +127,19 @@ export function createCardImageStore(config: CardImageConfig): CardImageStore {
     if (textures.has(id) || inFlight.has(id)) return;
     inFlight.add(id);
     const url = buildCardImageUrl(pattern, id, lang);
-    PIXI.Assets.load<PIXI.Texture>({ src: url, data: { crossOrigin: "anonymous" } })
+    // Round 4 "pixelated card images" fix: a card image (367x512) is almost always shown much
+    // smaller than that (a bench card is ~130px tall, a hand card smaller still), and Pixi's
+    // texture defaults are `autoGenerateMipmaps: false` with `maxAnisotropy: 1` — minifying that
+    // much with only bilinear filtering and no mip chain aliases/shimmers on fine card-art detail,
+    // which reads as "pixelated" even though the source image itself is high-resolution and
+    // `scaleMode` was already the library default of "linear" (so *that* wasn't the cause). Passing
+    // `autoGenerateMipmaps` + a higher `maxAnisotropy` here (which flow straight into the
+    // `ImageSource` Pixi's loader builds — see `loadTextures.js`'s `{...asset.data}`) fixes it at
+    // the texture level, once, rather than needing every drawing site to know about it.
+    PIXI.Assets.load<PIXI.Texture>({
+      src: url,
+      data: { crossOrigin: "anonymous", autoGenerateMipmaps: true, maxAnisotropy: 4 },
+    })
       .then((texture) => {
         textures.set(id, texture);
       })
