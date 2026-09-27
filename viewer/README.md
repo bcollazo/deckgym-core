@@ -44,10 +44,15 @@ Then either:
 
 ## Card images (optional, off by default)
 
-The repo ships **no card images** — cards render procedurally by default (a type-colored frame,
-name, HP bar, etc. — see `board/cardArt.ts`). If you have somewhere to fetch real card images by
-id, you can point the viewer at it and it'll use them instead, falling back to the procedural card
-for any id that 404s or errors.
+The repo ships **no card images** — cards render procedurally by default (a name+HP header, stage/
+`ex` badges, a type-colored art band, its attacks with their energy cost, its ability, a weakness/
+retreat-cost footer — see `board/cardArt.ts` and the plan doc's "Round 3" notes). If you have
+somewhere to fetch real card images by id, you can point the viewer at it and it'll use them
+instead, sized with `object-fit: contain` semantics (scaled uniformly, centered, never distorted),
+falling back to the procedural card for any id that 404s or errors.
+
+Images must be the same aspect ratio as deckgym's own (367x512, `board/layout.ts`'s `CARD_ASPECT`)
+to fill the card without letterboxing; a different ratio still renders correctly, just letterboxed.
 
 Give it a URL pattern with placeholders:
 
@@ -100,12 +105,20 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   header comment for how a timeline built lazily for a *backward*-first traversal is primed to have
   correct start values.
 - No card art ships with the repo: cards are drawn procedurally by default in `board/cardArt.ts`
-  (type-colored frame, name, HP bar, energy pips, status badges, a holo shimmer for `ex` cards), or
-  render a real image (see "Card images" above) with the same overlays composited on top.
-- The board's spatial layout (`board/layout.ts`) mirrors the official app: a portrait column with
-  the opponent's half (mirrored) above a center divider and the viewer's own half below, each with
-  a name bar, hand row, bench, and active spot, plus deck/discard/energy-zone icons at the outer
-  corners.
+  with real card info (see "Card images" above for what's shown, tiered by the card's own rendered
+  size — a small hand card just gets a name+HP header), or render a real image with HP
+  bar/energy-pip/status/tool overlays composited on top either way.
+- The board's spatial layout (`board/layout.ts`) mirrors the official app, matched against a
+  reference screenshot: a portrait column, tightly packed (actives overlapping the center divider
+  slightly, bench snug against the active, a large fanned/rotated player hand), with the opponent's
+  half (mirrored) above the divider and the viewer's own half below, plus deck/discard/energy-zone
+  icons at the outer corners.
+- The canvas's aspect ratio is enforced by a wrapper `<div>` carrying the real `aspect-ratio`
+  (computed from `BOARD_WIDTH`/`BOARD_HEIGHT`, `board/Board.tsx`), with the canvas filling `100%`
+  of it via a `!important` rule (`index.css`) — `<Application autoDensity>` sets the canvas's own
+  CSS size as an inline style, which otherwise silently defeats a plain responsive stylesheet rule
+  and can stretch everything on the canvas non-uniformly. See the plan doc's "Round 3" notes if
+  this needs touching again.
 
 ## Known simplifications (see the plan doc's "Deviations" section for the full list)
 

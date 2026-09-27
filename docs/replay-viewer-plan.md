@@ -322,6 +322,60 @@ A second pass on the viewer, after the user reviewed Round 1's screenshots, cove
   already-running `CardImageStore`. Simpler and more robust than clearing every in-flight texture
   subscription and forcing a redraw of every currently-visible card.
 
+## Round 3 (viewer follow-up, with a reference screenshot)
+
+The user shared an actual screenshot of the official app this time (Round 2 only had a text
+description) and reported card images looking horizontally stretched. Three things:
+
+1. **Fixed the card-image stretch — root cause, not just the aspect-ratio constant.** The
+   requested `CARD_ASPECT = 367/512` (deckgym's real image size) replaces 63:88 everywhere
+   (`layout.ts`), and `cardArt.ts`'s image sprite now sizes itself with "contain" semantics
+   (`board/imageFit.ts`'s `fitContain`, unit-tested) — scaled uniformly by
+   `min(boxW/texW, boxH/texH)` and centered, never setting width/height independently. But neither
+   of those alone explains a *visible* stretch (63:88 and 367:512 are within 0.2% of each other).
+   The actual cause: `<Application autoDensity>` sets the canvas element's CSS width/height as
+   fixed **inline** pixel values (`style.width = "640px"`), which beats any plain external
+   stylesheet rule. The viewer's `width:auto;height:auto;max-width;max-height` rule was therefore
+   dead code — only `max-width`/`max-height` (independent per axis) actually applied, so whenever
+   the wrap's available width and height weren't in the board's exact ratio, one axis got clamped
+   without the other following, stretching *everything* on the canvas non-uniformly (worst-case,
+   confirmed by testing four very different viewport shapes and finding the canvas's rendered CSS
+   ratio drifting from its intrinsic ratio). Fixed with a two-level box (`Board.tsx`,
+   `index.css`): an outer frame carries the correct `aspect-ratio` (computed inline from
+   `BOARD_WIDTH`/`BOARD_HEIGHT`, so it can't drift out of sync) and fits the wrap; the canvas then
+   fills `100% !important` of that already-correctly-shaped frame — `!important` is the only thing
+   that reliably beats Pixi's inline style.
+2. **Board now fills the canvas, matching the reference's density**: `layout.ts` was retuned with
+   much bigger cards, tight gaps, actives overlapping the divider, bench snug against actives, and
+   a large, fanned, rotated player hand (`handCardPos` now returns a rotation and a small arc
+   y-offset per card, min/max-clamped so even a full 10-card hand stays on-canvas). Deck/discard/
+   energy-zone icons stay in the corners, resized to be legible at the new scale.
+3. **Procedural cards show real card info** instead of a blank colored block: `cardArt.ts` gained
+   a `DetailTier` (`minimal`/`compact`/`full`, picked from the card's own rendered height) that
+   draws a name+HP header, a stage badge and an `EX` marker, a boxed type-colored art band, up to
+   two attacks (energy cost pips, name, damage) with the ability name at the largest tier, and a
+   weakness/retreat-cost footer — or, for a Trainer, its subtype and a word-wrapped, height-clipped
+   effect blurb. Every `Text` gets its own capped-`devicePixelRatio` `resolution` so it stays crisp
+   at any of these sizes.
+
+### Round 3 deviations
+- **The layout is a careful visual match to the reference screenshot, not a pixel-identical
+  copy** — that screenshot is itself a promotional/summary shot (a circular vignette scene with
+  Pokémon artwork, a "battle result"-style overlay) rather than the live gameplay HUD, so what was
+  actually ported is its *spatial relationships* (tight bench-to-active adjacency, actives
+  overlapping the divider, a large fanned bottom hand) rather than its background art, which the
+  request explicitly asked to leave out in favor of the dark/minimal theme.
+- **The player's hand doesn't literally bleed past the canvas edge.** The request's reference showed
+  hand cards cropped by the *photo's* own bottom edge, which reads ambiguously between "intentional
+  overflow" and "the screenshot just ends there." The safer reading implemented here: a large hand
+  sitting close to the bottom name bar with minimal gap, clamped so every card's outer edge (even a
+  fully rotated 10-card fan) stays on-canvas — overflow felt riskier to get right without a live
+  reference to compare against, and a clipped card is harder to read, not more dramatic.
+- **`PIXI.Text.resolution` is set per-instance, capped at 3x**, rather than left at Pixi's shared
+  default — the same reasoning as the Application's own `resolution` cap (Round 1), balancing
+  crispness against the texture memory a great many small on-card text objects would otherwise use
+  at an uncapped HiDPI resolution.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.
