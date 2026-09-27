@@ -181,16 +181,25 @@ button {
   min-height: 0;
 }
 
-.board-canvas-wrap canvas {
-  /* Portrait board: size to the available height first (the canvas element already carries its
-   * real width/height as HTML attributes, so the browser preserves that intrinsic ratio when
-   * shrinking to fit either constraint). */
+.board-canvas-frame {
+  /* Its own `aspect-ratio` is set inline (Board.tsx) from the real BOARD_WIDTH/BOARD_HEIGHT, so it
+   * can never drift out of sync with layout.ts. Shrinks to fit the wrap on whichever axis binds
+   * first, the browser's aspect-ratio box-sizing keeps the other axis proportional. */
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
   border-radius: 10px;
   box-shadow: 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+
+.board-canvas-frame canvas {
+  /* `!important` because Pixi's `autoDensity` sets an inline `style.width`/`style.height` (fixed
+   * px), which otherwise beats any plain stylesheet rule — see the comment in Board.tsx. Filling
+   * 100% of a frame that already has the correct aspect ratio means this never has to fight with
+   * that inline style over the *proportions*, only the pixel size. */
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 .sidebar {
