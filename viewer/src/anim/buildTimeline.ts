@@ -220,7 +220,7 @@ export function buildTimeline(prev: ViewState, next: ViewState, chosen: SimpleAc
           cursor + dur(0.16) + dur(0.35),
         );
         const opponent = player === 0 ? 1 : 0;
-        tl.to(scene.pointsText(opponent).scale, { x: 1.4, y: 1.4, duration: dur(0.15), yoyo: true, repeat: 1 }, cursor + dur(0.5));
+        tl.to(scene.pointsContainer(opponent).scale, { x: 1.5, y: 1.5, duration: dur(0.15), yoyo: true, repeat: 1 }, cursor + dur(0.5));
         advance(dur(0.16) + dur(0.35) + dur(0.15));
         break;
       }

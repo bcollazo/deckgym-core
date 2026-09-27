@@ -119,6 +119,10 @@ export function isExCard(card: Card | undefined): boolean {
   return card.Pokemon.name.toLowerCase().split(" ").at(-1) === "ex";
 }
 
+export function cardId(card: Card): string {
+  return isPokemonCard(card) ? card.Pokemon.id : card.Trainer.id;
+}
+
 /**
  * `SimpleAction` (`src/actions/types.rs`) has ~50 variants and serde's default externally-tagged
  * representation: a unit variant like `EndTurn` serializes to the string `"EndTurn"`; every other

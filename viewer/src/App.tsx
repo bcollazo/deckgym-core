@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Board } from "./board/Board";
+import { createCardImageStore, preloadCardImages, resolveCardImageConfig } from "./board/cardImages";
 import type { BoardScene } from "./board/scene";
 import { PlaybackController } from "./store/playbackController";
 import { loadReplayFromUrl } from "./store/loadReplay";
@@ -8,6 +9,7 @@ import { Loader } from "./ui/Loader";
 import { LogPanel } from "./ui/LogPanel";
 import { OptionsPanel } from "./ui/OptionsPanel";
 import { Controls } from "./ui/Controls";
+import { SettingsPopover } from "./ui/SettingsPopover";
 
 const NO_CONTROLLER_SUBSCRIBE = () => () => {};
 
@@ -24,6 +26,10 @@ export default function App() {
   const [controller, setController] = useState<PlaybackController | null>(null);
   const sceneRef = useRef<BoardScene | null>(null);
   const triedUrlParam = useRef(false);
+  // Resolved once at startup (URL params > localStorage > VITE_CARD_IMAGE_URL); changing it in the
+  // settings popover saves and reloads the page rather than reconfiguring this live (see
+  // board/cardImages.ts).
+  const images = useMemo(() => createCardImageStore(resolveCardImageConfig()), []);
 
   const state = useControllerState(controller);
 
@@ -38,6 +44,13 @@ export default function App() {
     setController(c);
     return () => c.destroy();
   }, [replay]);
+
+  // Kick off loading every card image the replay could show, up front, so most are ready before
+  // the viewer ever needs to draw them (a no-op when images are off).
+  useEffect(() => {
+    if (!replay) return;
+    preloadCardImages(images, Object.keys(replay.cards));
+  }, [replay, images]);
 
   // `?url=<replay.json>` support, falling back to the bundled sample replay so the app demos out
   // of the box. Runs once; a file dropped/picked before either resolves just wins the race.
@@ -100,17 +113,20 @@ export default function App() {
             </span>
           )}
         </div>
-        {replay && (
-          <button type="button" onClick={() => setReplay(null)}>
-            Load another replay
-          </button>
-        )}
+        <div className="header-actions">
+          <SettingsPopover />
+          {replay && (
+            <button type="button" onClick={() => setReplay(null)}>
+              Load another replay
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="app-body">
         <div className="main-column">
           <div className="app-shell">
-            <Board onReady={handleReady} />
+            <Board onReady={handleReady} images={images} />
             {!replay && (
               <Loader
                 error={loadError}

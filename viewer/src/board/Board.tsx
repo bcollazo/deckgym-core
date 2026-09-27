@@ -1,10 +1,12 @@
 import { Application } from "@pixi/react";
 import { useRef } from "react";
+import type { CardImageStore } from "./cardImages";
 import { BOARD_HEIGHT, BOARD_WIDTH } from "./layout";
 import { createBoardScene, type BoardScene } from "./scene";
 
 interface BoardProps {
   onReady: (scene: BoardScene) => void;
+  images: CardImageStore;
 }
 
 /**
@@ -15,7 +17,7 @@ interface BoardProps {
  * ownership of node state, so this uses `@pixi/react` for what it's good at (mounting/sizing/
  * disposing the canvas within React's lifecycle) and drives everything inside it directly.
  */
-export function Board({ onReady }: BoardProps) {
+export function Board({ onReady, images }: BoardProps) {
   const sceneRef = useRef<BoardScene | null>(null);
 
   return (
@@ -23,13 +25,13 @@ export function Board({ onReady }: BoardProps) {
       <Application
         width={BOARD_WIDTH}
         height={BOARD_HEIGHT}
-        background={0x0e1018}
+        background={0x07090f}
         resolution={Math.min(window.devicePixelRatio || 1, 2)}
         autoDensity
         antialias
         onInit={(app) => {
           if (sceneRef.current) return;
-          const scene = createBoardScene(app);
+          const scene = createBoardScene(app, images);
           sceneRef.current = scene;
           onReady(scene);
         }}

@@ -76,6 +76,88 @@ button {
   border-color: var(--accent);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-popover-wrap {
+  position: relative;
+}
+
+.settings-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.settings-popover label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.settings-popover input,
+.settings-popover select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
+
+.settings-hint code {
+  background: var(--panel);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.settings-actions button {
+  flex: 1;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.settings-actions button.secondary {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+}
+
 .app-body {
   flex: 1;
   display: flex;
@@ -100,10 +182,13 @@ button {
 }
 
 .board-canvas-wrap canvas {
-  width: 100%;
-  max-width: 1100px;
+  /* Portrait board: size to the available height first (the canvas element already carries its
+   * real width/height as HTML attributes, so the browser preserves that intrinsic ratio when
+   * shrinking to fit either constraint). */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
-  aspect-ratio: 960 / 640;
   border-radius: 10px;
   box-shadow: 0 0 0 1px var(--border);
 }

@@ -10,29 +10,30 @@
 // snapshot at end of each step" rule.
 
 import * as PIXI from "pixi.js";
-import { AdvancedBloomFilter, ShockwaveFilter } from "pixi-filters";
+import { AdvancedBloomFilter, GlowFilter, ShockwaveFilter } from "pixi-filters";
 import { energyColor, PLAYER_COLORS } from "../anim/colors";
 import { gsap } from "../anim/gsap";
 import type { Card, EnergyType, PlayerView, ReplayPlayerInfo, ViewState } from "../types/replay";
-import { cardName } from "../types/replay";
+import type { CardImageStore } from "./cardImages";
 import { createCardVisual, type CardVisual } from "./cardArt";
 import {
-  ACTIVE_CARD_H,
-  ACTIVE_CARD_W,
+  ACTIVE_SIZE,
+  BENCH_SIZE,
   BOARD_HEIGHT,
   BOARD_WIDTH,
-  CARD_H,
-  CARD_W,
   deckAnchor,
+  DECK_DISCARD_SIZE,
   discardAnchor,
+  dividerLineY,
   energyZoneAnchor,
-  HAND_CARD_H,
-  HAND_CARD_W,
   handAnchor,
   handCardPos,
+  handCardSize,
+  handCountAnchor,
   nameAnchor,
-  pointsAnchor,
+  pointsRowAnchor,
   slotPos,
+  STADIUM_SIZE,
   stadiumPos,
 } from "./layout";
 
@@ -46,7 +47,9 @@ export interface BoardScene {
   deckAnchorPosition(player: number): { x: number; y: number };
   discardAnchorPosition(player: number): { x: number; y: number };
   energyZoneAnchorPosition(player: number): { x: number; y: number };
-  pointsText(player: number): PIXI.Text;
+  /** The container holding a player's 3 point pips — animate the whole thing (scale/pulse) rather
+   * than an individual pip, which keeps the KO/scoring flourish simple. */
+  pointsContainer(player: number): PIXI.Container;
   energyZoneGraphic(player: number): PIXI.Graphics;
   stadium: CardVisual;
   turnBanner: PIXI.Container;
@@ -69,35 +72,63 @@ export interface BoardScene {
   destroy(): void;
 }
 
-function makeHudText(text = ""): PIXI.Text {
+function makeHudText(text = "", size = 13): PIXI.Text {
   return new PIXI.Text({
     text,
-    style: { fontFamily: "Inter, sans-serif", fontSize: 13, fill: 0xe8eaf2, fontWeight: "600" },
+    style: { fontFamily: "Inter, sans-serif", fontSize: size, fill: 0xe8eaf2, fontWeight: "600" },
   });
 }
 
-export function createBoardScene(app: PIXI.Application): BoardScene {
+/** A cheap radial-vignette background texture, generated once with a 2D canvas (Pixi v8 has no
+ * built-in gradient fill), rather than shipping an image asset. */
+function createVignetteTexture(app: PIXI.Application, w: number, h: number): PIXI.Texture {
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d")!;
+  const gradient = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.hypot(w / 2, h / 2));
+  gradient.addColorStop(0, "#141826");
+  gradient.addColorStop(0.6, "#0d101a");
+  gradient.addColorStop(1, "#07090f");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, w, h);
+  return PIXI.Texture.from({ resource: canvas, resolution: app.renderer.resolution });
+}
+
+export function createBoardScene(app: PIXI.Application, images?: CardImageStore): BoardScene {
   const root = new PIXI.Container();
+  root.sortableChildren = true;
   const fx = new PIXI.Container();
   app.stage.addChild(root);
 
-  const background = new PIXI.Graphics()
-    .rect(0, 0, BOARD_WIDTH, BOARD_HEIGHT)
-    .fill({ color: 0x0e1018 });
+  const background = new PIXI.Sprite(createVignetteTexture(app, BOARD_WIDTH, BOARD_HEIGHT));
   root.addChild(background);
 
-  // A soft center divider ("stadium row").
+  // A faint center divider line (no illustrated playmat — just enough to separate the two halves).
+  const dividerY = dividerLineY();
   const divider = new PIXI.Graphics()
-    .rect(0, BOARD_HEIGHT / 2 - 46, BOARD_WIDTH, 92)
-    .fill({ color: 0x171a26 });
+    .moveTo(20, dividerY)
+    .lineTo(BOARD_WIDTH - 20, dividerY)
+    .stroke({ width: 1, color: 0xffffff, alpha: 0.08 });
   root.addChild(divider);
+
+  function slotVisual(size: { w: number; h: number }): CardVisual {
+    return createCardVisual(size.w, size.h, { images, interactive: true });
+  }
 
   const slots: CardVisual[][] = [[], []];
   for (const player of [0, 1]) {
     for (let idx = 0; idx < 4; idx++) {
-      const size = idx === 0 ? { w: ACTIVE_CARD_W, h: ACTIVE_CARD_H } : { w: CARD_W, h: CARD_H };
-      const visual = createCardVisual(size.w, size.h);
+      const size = idx === 0 ? ACTIVE_SIZE : BENCH_SIZE;
+      // Faint rounded slot outline, drawn once, under everything — reads as an empty spot when
+      // there's no Pokemon there, matching the "faint rounded slot outlines" look.
+      const outline = new PIXI.Graphics().roundRect(-size.w / 2, -size.h / 2, size.w, size.h, size.w * 0.1).stroke({ width: 1.5, color: 0xffffff, alpha: 0.08 });
       const pos = slotPos(player, idx);
+      outline.x = pos.x;
+      outline.y = pos.y;
+      root.addChild(outline);
+
+      const visual = slotVisual(size);
       visual.container.pivot.set(size.w / 2, size.h / 2);
       visual.container.x = pos.x;
       visual.container.y = pos.y;
@@ -107,37 +138,40 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
     }
   }
 
-  const stadium = createCardVisual(96, 72);
+  const stadium = createCardVisual(STADIUM_SIZE.w, STADIUM_SIZE.h, { images, interactive: true });
   const stPos = stadiumPos();
-  stadium.container.pivot.set(48, 36);
+  stadium.container.pivot.set(STADIUM_SIZE.w / 2, STADIUM_SIZE.h / 2);
   stadium.container.x = stPos.x;
   stadium.container.y = stPos.y;
   stadium.update(undefined, undefined);
   root.addChild(stadium.container);
 
   const nameTexts: PIXI.Text[] = [];
-  const pointsTexts: PIXI.Text[] = [];
+  const pointsContainers: PIXI.Container[] = [];
   const deckStacks: PIXI.Graphics[] = [];
   const deckTexts: PIXI.Text[] = [];
-  const discardStacks: PIXI.Graphics[] = [];
-  const discardTexts: PIXI.Text[] = [];
+  const discardVisuals: CardVisual[] = [];
+  const discardCountTexts: PIXI.Text[] = [];
   const energyZoneGraphics: PIXI.Graphics[] = [];
   const handContainers: PIXI.Container[] = [];
+  const handVisuals: CardVisual[][] = [[], []];
+  let handCountText: PIXI.Text | null = null;
 
   for (const player of [0, 1]) {
     const name = makeHudText();
     const nAnchor = nameAnchor(player);
+    name.anchor.set(0, 0.5);
     name.x = nAnchor.x;
-    name.y = nAnchor.y - 8;
+    name.y = nAnchor.y;
     root.addChild(name);
     nameTexts[player] = name;
 
-    const points = makeHudText();
-    const pAnchor = pointsAnchor(player);
+    const points = new PIXI.Container();
+    const pAnchor = pointsRowAnchor(player);
     points.x = pAnchor.x;
-    points.y = pAnchor.y - 8;
+    points.y = pAnchor.y;
     root.addChild(points);
-    pointsTexts[player] = points;
+    pointsContainers[player] = points;
 
     const ez = new PIXI.Graphics();
     const ezAnchor = energyZoneAnchor(player);
@@ -151,33 +185,47 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
     deckStack.x = deckAnc.x;
     deckStack.y = deckAnc.y;
     root.addChild(deckStack);
-    const deckText = makeHudText();
+    const deckText = makeHudText("", 10);
     deckText.anchor.set(0.5);
+    deckText.y = DECK_DISCARD_SIZE.h / 2 + 9;
     deckStack.addChild(deckText);
     deckStacks[player] = deckStack;
     deckTexts[player] = deckText;
 
+    // The discard pile shows its actual top card, small, with a count badge — not just an
+    // abstract stack (unlike the deck, whose order/identity is meant to stay hidden).
     const discAnc = discardAnchor(player);
-    const discStack = new PIXI.Graphics();
-    discStack.x = discAnc.x;
-    discStack.y = discAnc.y;
-    root.addChild(discStack);
-    const discText = makeHudText();
-    discText.anchor.set(0.5);
-    discStack.addChild(discText);
-    discardStacks[player] = discStack;
-    discardTexts[player] = discText;
+    const discardVisual = createCardVisual(DECK_DISCARD_SIZE.w, DECK_DISCARD_SIZE.h, { images });
+    discardVisual.container.pivot.set(DECK_DISCARD_SIZE.w / 2, DECK_DISCARD_SIZE.h / 2);
+    discardVisual.container.x = discAnc.x;
+    discardVisual.container.y = discAnc.y;
+    discardVisual.container.alpha = 0.9;
+    root.addChild(discardVisual.container);
+    discardVisuals[player] = discardVisual;
+    const discardCount = makeHudText("", 10);
+    discardCount.anchor.set(0.5);
+    discardCount.x = discAnc.x;
+    discardCount.y = discAnc.y + DECK_DISCARD_SIZE.h / 2 + 9;
+    root.addChild(discardCount);
+    discardCountTexts[player] = discardCount;
 
     const hand = new PIXI.Container();
     root.addChild(hand);
     handContainers[player] = hand;
   }
 
+  const countAnc = handCountAnchor();
+  handCountText = makeHudText("", 12);
+  handCountText.anchor.set(1, 0.5);
+  handCountText.x = countAnc.x;
+  handCountText.y = countAnc.y;
+  root.addChild(handCountText);
+
   const turnBanner = new PIXI.Container();
   const bannerBg = new PIXI.Graphics().rect(-BOARD_WIDTH, -18, BOARD_WIDTH * 2, 36).fill({ color: 0xffffff, alpha: 0.12 });
   const turnText = new PIXI.Text({
     text: "",
-    style: { fontFamily: "Inter, sans-serif", fontSize: 22, fill: 0xffffff, fontWeight: "800" },
+    style: { fontFamily: "Inter, sans-serif", fontSize: 20, fill: 0xffffff, fontWeight: "800" },
   });
   turnText.anchor.set(0.5);
   turnBanner.addChild(bannerBg, turnText);
@@ -192,24 +240,52 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
   function drawStack(g: PIXI.Graphics, count: number, color: number) {
     g.clear();
     const layers = Math.min(3, count > 0 ? 3 : 0);
+    const { w, h } = DECK_DISCARD_SIZE;
     for (let i = layers - 1; i >= 0; i--) {
-      g.roundRect(-20 - i * 2, -28 - i * 2, 40, 56, 4).fill({ color, alpha: 0.25 + i * 0.1 }).stroke({ width: 1, color: 0x000000, alpha: 0.3 });
+      g.roundRect(-w / 2 - i * 2, -h / 2 - i * 2, w, h, 4).fill({ color, alpha: 0.3 + i * 0.12 }).stroke({ width: 1, color: 0x000000, alpha: 0.3 });
+    }
+  }
+
+  function drawPointsPips(container: PIXI.Container, points: number) {
+    container.removeChildren();
+    const radius = 7;
+    const spacing = 20;
+    for (let i = 0; i < 3; i++) {
+      const filled = i < points;
+      const pip = new PIXI.Graphics();
+      if (filled) {
+        pip.circle(0, 0, radius).fill({ color: 0xffd54f });
+        pip.filters = [new GlowFilter({ color: 0xffd54f, distance: 5, outerStrength: 0.5, innerStrength: 0 })];
+      } else {
+        pip.circle(0, 0, radius).stroke({ width: 1.5, color: 0xffffff, alpha: 0.35 });
+      }
+      pip.x = (i - 1) * spacing;
+      container.addChild(pip);
     }
   }
 
   function reconcileHand(player: number, hand: string[] | null, cards: Record<string, Card>) {
     const container = handContainers[player];
-    container.removeChildren();
     const list = hand ?? [];
+    const size = handCardSize(player);
+
+    for (const old of handVisuals[player]) old.destroy();
+    handVisuals[player] = [];
+    container.removeChildren();
+
     list.forEach((cardId, i) => {
       const pos = handCardPos(player, i, list.length);
-      const visual = createCardVisual(HAND_CARD_W, HAND_CARD_H);
+      const visual = createCardVisual(size.w, size.h, { images, interactive: player === 0 });
       visual.container.x = pos.x;
       visual.container.y = pos.y;
-      visual.container.pivot.set(HAND_CARD_W / 2, HAND_CARD_H / 2);
+      visual.container.pivot.set(size.w / 2, size.h / 2);
+      visual.container.zIndex = i;
+      if (player === 1) visual.container.alpha = 0.85; // opponent hand reads as "visible but theirs"
       visual.update(cards[cardId], undefined);
       container.addChild(visual.container);
+      handVisuals[player].push(visual);
     });
+    container.sortableChildren = true;
   }
 
   const scene: BoardScene = {
@@ -222,7 +298,7 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
     deckAnchorPosition: (player) => deckAnchor(player),
     discardAnchorPosition: (player) => discardAnchor(player),
     energyZoneAnchorPosition: (player) => energyZoneAnchor(player),
-    pointsText: (player) => pointsTexts[player],
+    pointsContainer: (player) => pointsContainers[player],
     energyZoneGraphic: (player) => energyZoneGraphics[player],
     stadium,
     turnBanner,
@@ -244,20 +320,25 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
           visual.container.scale.set(1);
           visual.container.rotation = 0;
         }
-        pointsTexts[player].text = "*".repeat(state.points[player]) + "-".repeat(Math.max(0, 3 - state.points[player]));
+        drawPointsPips(pointsContainers[player], state.points[player]);
         drawStack(deckStacks[player], pv.deck_count, PLAYER_COLORS[player]);
         deckTexts[player].text = String(pv.deck_count);
-        drawStack(discardStacks[player], pv.discard.length, 0x555555);
-        discardTexts[player].text = String(pv.discard.length);
+
+        const topDiscardId = pv.discard.at(-1);
+        discardVisuals[player].update(topDiscardId ? cards[topDiscardId] : undefined, undefined);
+        discardVisuals[player].container.alpha = topDiscardId ? 0.9 : 0;
+        discardCountTexts[player].text = pv.discard.length > 0 ? String(pv.discard.length) : "";
 
         const ez = energyZoneGraphics[player];
         ez.clear();
         ez.circle(0, 0, 12).fill({ color: energyColor(pv.energy_zone.current) }).stroke({ width: 2, color: 0xffffff, alpha: pv.energy_zone.current ? 0.8 : 0.15 });
-        ez.circle(20, 0, 7).fill({ color: energyColor(pv.energy_zone.next), alpha: 0.7 });
+        ez.circle(19, 12, 6).fill({ color: energyColor(pv.energy_zone.next), alpha: 0.7 });
 
         reconcileHand(player, pv.hand, cards);
       }
+      if (handCountText) handCountText.text = `${state.players[1].hand_count} cards`;
       stadium.update(state.stadium ? cards[state.stadium] : undefined, undefined);
+      stadium.container.alpha = state.stadium ? 1 : 0;
       turnText.text = `Turn ${state.turn}`;
       root.x = 0;
       root.y = 0;
@@ -268,7 +349,7 @@ export function createBoardScene(app: PIXI.Application): BoardScene {
     // movement tween directly to its transition timeline, so that timeline stays the single source
     // of truth for forward/backward playback and speed control (see that file's header comment).
     spawnFlightCard(card, from, _to, size) {
-      const visual = createCardVisual(size.w, size.h);
+      const visual = createCardVisual(size.w, size.h, { images });
       visual.update(card, undefined);
       visual.container.pivot.set(size.w / 2, size.h / 2);
       visual.container.x = from.x;
@@ -426,10 +507,4 @@ export function shockwaveAt(scene: BoardScene, pos: { x: number; y: number }) {
       },
     },
   );
-}
-
-export function nameOrId(cards: Record<string, Card>, id: string | null | undefined): string {
-  if (!id) return "";
-  const c = cards[id];
-  return c ? cardName(c) : id;
 }
