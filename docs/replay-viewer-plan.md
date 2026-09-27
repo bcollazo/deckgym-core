@@ -477,6 +477,64 @@ both `npm run dev` and `npm run preview`, which is what makes that link resolve.
   slot**, same limitation `diff.ts`'s original swap detection already had (see its Round 1/2
   "Deviations" note) — with two identical copies of a card, the pairing is plausible, not guaranteed.
 
+## Round 4 follow-up
+
+Two more things after reviewing Round 4's screenshots.
+
+1. **The active↔bench switch cross-faded instead of moving.** The user's own words: "The whole
+   composites should switch places and that's it." The previous `activeSwitch` handler faded both
+   slots' containers to alpha 0, reassigned their content, and faded back in — a cross-fade, not a
+   move. Replaced with a literal positional swap (`anim/buildTimeline.ts`): the active composite's
+   container tweens from the active slot's position/scale to the bench slot's, and the bench
+   composite's tweens the other way, simultaneously (`MotionPathPlugin`, ~0.35s, `sine.inOut`), each
+   on a slightly offset arc (a perpendicular offset at the midpoint) so they don't pass exactly
+   through each other, and each scaling toward the *destination's* card size along the way (active
+   and bench cards are different sizes) — the one arriving at the active spot gets a higher `zIndex`
+   so it renders in front. When the tweens finish, content is reassigned (`applySlot`) and both
+   containers snap back to their permanent home position/scale *in the same tick* (a `tl.call`, not
+   a tween) — required, not cosmetic: `scene.reconcile()` (run via this timeline's `onComplete`/
+   `onReverseComplete`) resets alpha/scale/rotation per slot but never touches x/y, so a container
+   this timeline moved would otherwise be left wherever the tween last put it. No alpha fade, no HP
+   tween, either — unchanged from the underlying fix (`detectActiveBenchMove`). A promotion into an
+   empty active (post-KO) falls out of the same code for free: the (invisible, since there's nothing
+   there yet) active container still "moves" to the bench slot, but since it's invisible nothing is
+   seen — only the bench composite's move into the active spot is visible. Verified with a slowed-
+   down (`gsap.globalTimeline.timeScale`) capture showing both cards mid-flight, overlapping near the
+   midpoint with the "arriving at active" card correctly on top and visibly bigger; and that stepping
+   backward from the settled state reverses cleanly back to the pre-swap board.
+2. **The board still only used about a third of the canvas area on a wide screen**, because the
+   board's *aspect ratio* itself was still tall/narrow (Round 4 only made it wider in absolute pixels,
+   not proportionally wider relative to its height) — a container bound by height scales the whole
+   board by that height regardless of how much horizontal room is sitting empty beside it. Fixed by
+   moving the deck/discard/energy-zone widgets out of their own dedicated horizontal strip (between
+   the bench and hand rows) into a side "gutter" next to each player's own bench+active rows
+   (`layout.ts`'s `gutterAnchorX`/`gutterClusterCenterY`) — removing that strip shrinks
+   `BOARD_HEIGHT` outright (more on-screen card size for the same viewport, since the board is
+   height-bound on most screens), and `BOARD_WIDTH` grew enough to give the gutters real room, which
+   is what actually uses the width that used to sit empty. Also trimmed the active card's size
+   multiplier (1.6x a bench card → 1.45x — still clearly bigger, but the active row was by far the
+   single largest cost in `BOARD_HEIGHT`, appearing twice) and a few remaining gaps further, since
+   shrinking `BOARD_HEIGHT` is the *only* lever (independent of `BOARD_WIDTH`) that makes cards
+   bigger on screen in the height-bound regime. Numbers: `BOARD_WIDTH` 1000→1600, `BOARD_HEIGHT`
+   ~1804→~1619 (before accounting for the gutter's own extra width), bench-card-to-board-height ratio
+   0.116→0.130 (bigger cards), board aspect ratio 0.55→0.99 (uses far more of a wide viewport's
+   width). Deck/discard also grew (48px → 130px tall) now that they have real room instead of a
+   squeezed strip, addressing "make the deck/discard piles legible" directly.
+
+### Round 4 follow-up deviations
+- **The gutters have real spare room around their contents at very wide viewports (e.g. 1920x1080)**
+  rather than the deck/discard/energy cluster expanding to fill it — the cluster is a fixed size
+  centered in the gutter, not one that grows with `BOARD_WIDTH`. Growing it further felt like it
+  would stop reading as "deck and discard piles" and start reading as unrelated decoration; the
+  spare space is the same "wider center gap...is fine" tradeoff Round 4 already made for the
+  bench/gutter gap, just larger now that the gutter itself is wider.
+- **1920x1080 still doesn't use 100% of the available width** (about 59%, up from ~33% before) —
+  push the aspect ratio close to 1:1 gets most of the win at 1400x1000's narrower available-width-to-
+  height ratio; matching 1920x1080's wider one exactly would mean a board aspect ratio wide enough to
+  look odd at 1400x1000 (or narrower windows), and the same fixed-logical-resolution-canvas
+  constraint from Round 4's own deviations note still applies — a *single* aspect ratio has to serve
+  every viewport shape, so this is a genuine tradeoff, not an oversight.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.

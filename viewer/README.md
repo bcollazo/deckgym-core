@@ -135,8 +135,8 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
 - The board's spatial layout (`board/layout.ts`) mirrors the official app, matched against a
   reference screenshot: a portrait column, tightly packed (actives overlapping the center divider
   slightly, bench snug against the active, a large fanned/rotated player hand), with the opponent's
-  half (mirrored) above the divider and the viewer's own half below, plus deck/discard/energy-zone
-  icons at the outer corners.
+  half (mirrored) above the divider and the viewer's own half below, plus each player's deck/discard/
+  energy-zone in a side gutter next to their own bench+active rows (see the next bullet).
 - The canvas's aspect ratio is enforced by a wrapper `<div>` carrying the real `aspect-ratio`
   (computed from `BOARD_WIDTH`/`BOARD_HEIGHT`, `board/Board.tsx`), with the canvas filling `100%`
   of it via a `!important` rule (`index.css`) — `<Application autoDensity>` sets the canvas's own
@@ -150,6 +150,12 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   `board/layout.test.ts`, which asserts no two slots' card/strip rects — nor the divider band —
   ever intersect), and `board/cardArt.ts` draws it at the matching offset. See the plan doc's
   "Round 4" notes.
+- Deck, discard and the energy zone live in a side gutter next to each player's own bench+active
+  rows (`board/layout.ts`'s `gutterAnchorX`/`gutterClusterCenterY`), not a dedicated horizontal strip
+  between the bench and hand rows like earlier rounds — removing that strip is most of how
+  `BOARD_HEIGHT` shrank (bigger on-screen cards, since the board is height-bound on most screens) and
+  `BOARD_WIDTH` could grow to actually use a wide viewport's width instead of leaving it empty. See
+  the plan doc's "Round 4 follow-up" notes for the numbers.
 - The board is a flat, near-black fill (`scene.ts`'s `background`), not a gradient/vignette — a
   `PIXI.Graphics` rect can't band the way even a subtle canvas gradient can once the board is big.
 - An attack's board-wide effects (screen shake, a full-stage `ShockwaveFilter`) were removed in
@@ -162,10 +168,16 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   it produces exactly one `activeSwitch` change instead of the per-slot loop misreading "which
   Pokemon is in this slot changed" as an evolution plus bogus HP/energy/tools/status deltas (the
   root cause of HP bars animating on a swap where neither Pokemon's HP changed — see the plan's
-  "Round 4" notes and `anim/diff.test.ts`'s retreat/promotion cases). `buildTimeline.ts`'s handler
-  cross-fades each slot's *content* (not position — slots are fixed per index, see "Known
-  simplifications" below) from the correct snapshot either direction, so stepping backward reverses
-  it cleanly too.
+  "Round 4" notes and `anim/diff.test.ts`'s retreat/promotion cases).
+- That swap is a literal positional move, not a cross-fade (Round 4 follow-up: "the whole composites
+  should switch places and that's it") — `buildTimeline.ts`'s `activeSwitch` handler tweens each
+  slot's container to the *other's* position/scale (a `MotionPathPlugin` arc so the two don't pass
+  exactly through each other, and a scale tween since active/bench cards differ in size), then
+  reassigns content and snaps both containers back to their own permanent home position/scale in the
+  same tick (a `tl.call`, not a tween — `scene.reconcile()` resets alpha/scale/rotation per slot but
+  never x/y, so a moved container needs this to not get left behind). Reverses cleanly since the
+  tweens themselves reverse and the content reassignment is direction-aware (`tl.reversed()`), same
+  pattern as every other content swap in that file.
 
 ## Known simplifications (see the plan doc's "Deviations" section for the full list)
 
@@ -178,8 +190,8 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
 - Decorative one-shot flourishes (particle bursts, the defender's hit-flash, confetti) animate
   independently of the reversible per-step timeline, so they don't un-play when you step backward
   through them — only the state-bearing tweens (position, alpha, scale, HP bar, card content) do.
-- An active↔bench swap cross-fades each slot's *content* in place rather than flying the two cards
-  to each other's positions — slots are persistent objects keyed by index (0 = active, 1-3 = bench),
-  not by which Pokemon currently occupies them (see `board/scene.ts`'s header comment), so "moving"
-  a Pokemon to a new slot means swapping what that fixed-position slot displays, the same way every
-  other slot update already works.
+- Slots are still persistent objects keyed by index (0 = active, 1-3 = bench), not by which Pokemon
+  currently occupies them (see `board/scene.ts`'s header comment) — an active↔bench swap's positional
+  *animation* (see "Notable implementation choices" above) is a temporary illusion on top of that:
+  the two containers fly to each other's spot and back, but which container is permanently "the
+  active slot" vs. "bench slot 2" never actually changes.
