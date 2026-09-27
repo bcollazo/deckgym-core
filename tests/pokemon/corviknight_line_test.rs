@@ -33,7 +33,7 @@ fn test_rookidee_pluck_discards_opponent_active_tool() {
     );
 
     let defender = state.get_active(1);
-    assert!(defender.attached_tool.is_none());
+    assert!(defender.attached_tools.is_empty());
     assert_eq!(defender.get_remaining_hp(), 60);
     assert!(state.discard_piles[1].contains(&get_card_by_enum(CardId::A2147GiantCape)));
 }
@@ -48,7 +48,7 @@ fn test_corvisquire_joust_discards_opponent_active_tool() {
     );
 
     let defender = state.get_active(1);
-    assert!(defender.attached_tool.is_none());
+    assert!(defender.attached_tools.is_empty());
     assert_eq!(defender.get_remaining_hp(), 40);
     assert!(state.discard_piles[1].contains(&get_card_by_enum(CardId::A2147GiantCape)));
 }

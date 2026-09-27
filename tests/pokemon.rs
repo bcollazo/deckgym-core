@@ -8,6 +8,8 @@ mod alcremie_test;
 mod alolan_marowak_test;
 #[path = "pokemon/alolan_muk_ex_chemical_panic_test.rs"]
 mod alolan_muk_ex_chemical_panic_test;
+#[path = "pokemon/alolan_muk_power_of_alchemy_test.rs"]
+mod alolan_muk_power_of_alchemy_test;
 #[path = "pokemon/alolan_sandslash_spike_armor_test.rs"]
 mod alolan_sandslash_spike_armor_test;
 #[path = "pokemon/alomomola_hooh_test.rs"]
@@ -328,6 +330,8 @@ mod raging_bolt_test;
 mod raichu_evoshock_test;
 #[path = "pokemon/rampardos_head_smash_test.rs"]
 mod rampardos_head_smash_test;
+#[path = "pokemon/regice_crystal_body_test.rs"]
+mod regice_crystal_body_test;
 #[path = "pokemon/regidrago_draconic_slam_test.rs"]
 mod regidrago_draconic_slam_test;
 #[path = "pokemon/reveal_top_damage_test.rs"]

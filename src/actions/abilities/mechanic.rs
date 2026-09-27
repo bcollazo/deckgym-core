@@ -158,6 +158,12 @@ pub enum AbilityMechanic {
     SearchRandomPokemonFromDeck,
     MoveDamageFromOneYourPokemonToThisPokemon,
     DiscardOpponentActiveToolsAndDiscardSelf,
+    /// Revavroom's Dual Customization: "This Pokémon may have up to 2 Pokémon Tool cards attached
+    /// to it." `amount` is the number of Tool slots *beyond* the usual one. Passive; read by
+    /// `PlayedCard::tool_capacity`, which gates attachment in `tools::enumerate_tool_choices`.
+    ExtraToolSlots {
+        amount: u32,
+    },
     PreventFirstAttack,
     ElectromagneticWall,
     InfiltratingInspection,
@@ -259,6 +265,18 @@ pub enum AbilityMechanic {
     ImmuneToStatusCondition {
         condition: StatusCondition,
     },
+    /// Regice's Crystal Body: "Prevent all effects of attacks used by your opponent's Pokémon
+    /// done to this Pokémon." Shares its enforcement with the Clear Veil Tool — see
+    /// `State::is_shielded_from_opponent_attack_effects`, which is consulted by
+    /// `State::add_effect_to_in_play` and `State::apply_status_condition`. Damage (and any Knock
+    /// Out that follows) is not an "effect", so it is unaffected.
+    PreventOpponentAttackEffectsOnSelf,
+    /// Alolan Muk's Power of Alchemy: "Basic Pokémon in play (both yours and your opponent's)
+    /// have no Abilities." Alolan Muk is a Stage 1, so it never suppresses its own Ability.
+    /// Board-dependent, so it is cached on each `PlayedCard` (like Claydol's Heal Block) and
+    /// refreshed by `State::refresh_ability_board_bonuses`; the suppression itself is applied by
+    /// `PlayedCard::ability()` / `ability_mechanic()`, which every in-play ability lookup uses.
+    BasicPokemonHaveNoAbilities,
     /// Cherubi's En-fruits-iastic: "If this Pokémon has a Pokémon Tool attached, attacks used by
     /// this Pokémon cost `amount` less [`energy_type`] Energy." Resolved in
     /// `hooks::get_attack_cost`.

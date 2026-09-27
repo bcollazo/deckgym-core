@@ -1863,11 +1863,12 @@ fn shuffle_opponent_tools_into_deck_before_damage(damage: u32) -> AttackOutcomes
             let opponent = (action.actor + 1) % 2;
             let mut shuffled_any = false;
             for in_play_idx in 0..state.in_play_pokemon[opponent].len() {
-                let tool = state.in_play_pokemon[opponent][in_play_idx]
+                let tools = state.in_play_pokemon[opponent][in_play_idx]
                     .as_mut()
-                    .and_then(|pokemon| pokemon.attached_tool.take());
-                if let Some(tool) = tool {
-                    state.decks[opponent].cards.push(tool);
+                    .map(|pokemon| pokemon.take_tools())
+                    .unwrap_or_default();
+                if !tools.is_empty() {
+                    state.decks[opponent].cards.extend(tools);
                     shuffled_any = true;
                 }
             }
@@ -2138,9 +2139,7 @@ fn coin_flip_return_opponent_active_to_hand() -> AttackOutcomes {
             cards_to_hand.push(active.card.clone());
             state.hands[opponent].extend(cards_to_hand);
 
-            if let Some(tool_card) = active.attached_tool.clone() {
-                state.discard_piles[opponent].push(tool_card);
-            }
+            state.discard_piles[opponent].extend(active.attached_tools.iter().cloned());
             state.discard_energies[opponent].extend(active.attached_energy.iter().cloned());
 
             state.refresh_double_grass_bonus_for_player(opponent);
@@ -3807,11 +3806,8 @@ fn discard_opponent_active_tools_before_damage(damage: u32) -> AttackOutcomes {
     AttackOutcomes::single(AttackOutcome::effect_then_damage(
         move |_, state, action| {
             let opponent = (action.actor + 1) % 2;
-            if state.in_play_pokemon[opponent][0]
-                .as_ref()
-                .is_some_and(|pokemon| pokemon.attached_tool.is_some())
-            {
-                state.discard_tool(opponent, 0);
+            if state.in_play_pokemon[opponent][0].is_some() {
+                state.discard_all_tools(opponent, 0);
             }
         },
         vec![(damage, true, 0)],
@@ -5696,7 +5692,7 @@ fn devolve_opponent_active(damage: u32) -> AttackOutcomes {
         let evolution_card = active.card.clone();
         let damage_counters = active.get_damage_counters();
         let attached_energy = active.attached_energy.clone();
-        let attached_tool = active.attached_tool.clone();
+        let attached_tools = active.attached_tools.clone();
         let mut cards_behind = active.cards_behind.clone();
         cards_behind.pop();
 
@@ -5704,7 +5700,7 @@ fn devolve_opponent_active(damage: u32) -> AttackOutcomes {
         let mut devolved = to_playable_card(&previous, false);
         devolved.cards_behind = cards_behind;
         devolved.attached_energy = attached_energy;
-        devolved.attached_tool = attached_tool;
+        devolved.attached_tools = attached_tools;
         devolved.apply_damage(damage_counters);
 
         state.in_play_pokemon[opponent][0] = Some(devolved);

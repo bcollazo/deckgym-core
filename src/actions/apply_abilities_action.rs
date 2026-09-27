@@ -247,6 +247,13 @@ fn forecast_ability_by_mechanic(
         | AbilityMechanic::ImmuneToStatusCondition { .. } => {
             panic!("ImmuneToStatusConditions is a passive ability")
         }
+        AbilityMechanic::ExtraToolSlots { .. } => panic!("ExtraToolSlots is a passive ability"),
+        AbilityMechanic::PreventOpponentAttackEffectsOnSelf => {
+            panic!("PreventOpponentAttackEffectsOnSelf is a passive ability")
+        }
+        AbilityMechanic::BasicPokemonHaveNoAbilities => {
+            panic!("BasicPokemonHaveNoAbilities is a passive ability")
+        }
         AbilityMechanic::ReduceTypedAttackCostIfHasTool { .. }
         | AbilityMechanic::IncreaseHpOfYourTypedPokemon { .. }
         | AbilityMechanic::NoHealingForAnyone
@@ -1078,7 +1085,7 @@ fn dismantling_keys(klefki_idx: usize) -> Outcomes {
             return;
         }
 
-        state.discard_tool(opponent, 0);
+        state.discard_all_tools(opponent, 0);
         handle_knockouts(state, (action.actor, klefki_idx), false);
 
         if state.in_play_pokemon[action.actor][klefki_idx].is_some() {

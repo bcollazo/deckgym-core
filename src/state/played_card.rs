@@ -36,8 +36,22 @@ pub struct PlayedCard {
     /// `heal` is a no-op. Kept in sync by `State::refresh_ability_board_bonuses`.
     #[serde(default)]
     heal_blocked: bool,
+    /// Whether this Pokémon is a Basic *and* a Power of Alchemy ability (Alolan Muk) is in play
+    /// for either player, in which case it has no Ability. Kept in sync by
+    /// `State::refresh_ability_board_bonuses`, like `heal_blocked`. Only ever set on Basics, so
+    /// the board scan that computes it can read a suppressor's Ability without recursing.
+    #[serde(default)]
+    basic_abilities_suppressed: bool,
     pub attached_energy: Vec<EnergyType>,
-    pub attached_tool: Option<Card>,
+    /// Pokémon Tools attached to this Pokémon, in attachment order.
+    ///
+    /// Normally at most one (`tool_capacity()` == 1). Revavroom's Dual Customization
+    /// (`AbilityMechanic::ExtraToolSlots`) raises the capacity, and because that is read through
+    /// `ability_mechanic()` the capacity falls back to 1 the moment the Ability is suppressed
+    /// (Budew's Prickly Powder, Alolan Muk-style board effects). Tools already attached are never
+    /// knocked off by losing the Ability — the capacity only gates *new* attachments.
+    #[serde(default)]
+    pub attached_tools: Vec<Card>,
     pub played_this_turn: bool,
     pub moved_to_active_this_turn: bool,
     pub ability_used: bool,
@@ -90,12 +104,13 @@ impl PlayedCard {
             double_grass_active: false,
             ability_hp_bonus: 0,
             heal_blocked: false,
+            basic_abilities_suppressed: false,
             attached_energy,
             played_this_turn,
             moved_to_active_this_turn: false,
             cards_behind,
 
-            attached_tool: None,
+            attached_tools: vec![],
             ability_used: false,
             poisoned: false,
             poison_damage_override: None,
@@ -158,8 +173,10 @@ impl PlayedCard {
         self.damage_counters = effective_hp.saturating_sub(clamped_remaining);
     }
 
+    /// Test/board-setup builder: attaches `tool` without checking `tool_capacity()`, so a board
+    /// can be described directly (including the two-Tool boards Dual Customization allows).
     pub fn with_tool(mut self, tool: Card) -> Self {
-        self.attached_tool = Some(tool);
+        self.attached_tools.push(tool);
         self
     }
 
@@ -285,6 +302,13 @@ impl PlayedCard {
         self.double_grass_active = jungle_totem_active_for_owner && self.is_type(EnergyType::Grass);
     }
 
+    /// Keeps `basic_abilities_suppressed` in sync with whether a Power of Alchemy Ability (Alolan
+    /// Muk) is in play for either player. Called by `State::refresh_ability_board_bonuses` before
+    /// the other board scans, since it changes which Abilities those scans can see.
+    pub(crate) fn refresh_basic_abilities_suppressed(&mut self, power_of_alchemy_active: bool) {
+        self.basic_abilities_suppressed = power_of_alchemy_active && self.is_basic_in_play();
+    }
+
     /// Keeps the ability-derived board bonuses in sync. Called by
     /// `State::refresh_ability_board_bonuses` whenever either player's board changes.
     pub(crate) fn refresh_ability_board_bonuses(
@@ -333,17 +357,25 @@ impl PlayedCard {
 
         // Tool bonuses. Type/stage-specific caps only apply to matching Pokémon (the tools are
         // attachable to anything, but their HP bonus is gated by the holder).
+        //
+        // These are independent `if`s rather than one chain: a Pokémon with two Tool slots
+        // (Revavroom's Dual Customization) can hold two different HP capes at once, and each one
+        // applies. With a single Tool attached at most one of these can match, so this is
+        // unchanged for every other Pokémon.
         if has_tool(self, CardId::A2147GiantCape) {
             effective_hp += 20;
-        } else if has_tool(self, CardId::A3147LeafCape) && self.is_type(EnergyType::Grass) {
+        }
+        if has_tool(self, CardId::A3147LeafCape) && self.is_type(EnergyType::Grass) {
             // Leaf Cape: "The [G] Pokémon this card is attached to gets +30 HP."
             effective_hp += 30;
-        } else if has_tool(self, CardId::B3b065ElegantCape)
+        }
+        if has_tool(self, CardId::B3b065ElegantCape)
             && matches!(&self.card, Card::Pokemon(p) if p.stage == 1)
         {
             // Elegant Cape: "The Stage 1 Pokémon this card is attached to gets +30 HP."
             effective_hp += 30;
-        } else if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule)
+        }
+        if has_tool(self, CardId::B3a069AncientBoosterEnergyCapsule)
             && is_ancient_pokemon(&self.get_name())
         {
             effective_hp += 40;
@@ -425,8 +457,59 @@ impl PlayedCard {
         .count()
     }
 
-    pub(crate) fn has_tool_attached(&self) -> bool {
-        self.attached_tool.is_some()
+    pub fn has_tool_attached(&self) -> bool {
+        !self.attached_tools.is_empty()
+    }
+
+    /// How many Pokémon Tools this Pokémon may hold *right now*. One by the general rule, plus
+    /// whatever `AbilityMechanic::ExtraToolSlots` grants (Revavroom's Dual Customization: "This
+    /// Pokémon may have up to 2 Pokémon Tool cards attached to it.").
+    ///
+    /// Read through `ability_mechanic()`, so a Pokémon that has lost its Abilities is back to a
+    /// single slot. A Tool attached while the Ability was live stays attached — the capacity is
+    /// only consulted when attaching — so a suppressed Revavroom can be over capacity, and simply
+    /// cannot take another Tool.
+    pub fn tool_capacity(&self) -> usize {
+        let extra = match self.ability_mechanic() {
+            Some(AbilityMechanic::ExtraToolSlots { amount }) => *amount as usize,
+            _ => 0,
+        };
+        1 + extra
+    }
+
+    /// Whether `tool` may be attached to this Pokémon now.
+    ///
+    /// Two rules apply: the Pokémon must be under its `tool_capacity()`, and it may not already
+    /// hold the same Tool. The duplicate rule is an engine ruling, not printed text — see
+    /// `crate::tools` for the reasoning.
+    pub(crate) fn can_attach_tool(&self, tool: &Card) -> bool {
+        if self.attached_tools.len() >= self.tool_capacity() {
+            return false;
+        }
+        !self.holds_same_tool_as(tool)
+    }
+
+    /// Whether one of the attached Tools is "the same Tool" as `tool`. Sameness is by effect
+    /// text, the same key `tools::has_tool` uses, so reprints of one Tool under different card
+    /// ids count as the same card.
+    pub(crate) fn holds_same_tool_as(&self, tool: &Card) -> bool {
+        let Card::Trainer(candidate) = tool else {
+            return false;
+        };
+        self.attached_tools.iter().any(|attached| {
+            matches!(attached, Card::Trainer(existing) if existing.effect == candidate.effect)
+        })
+    }
+
+    /// Attaches a Tool. Callers that represent an actual in-game attachment must have checked
+    /// `can_attach_tool` first (move generation does).
+    pub(crate) fn attach_tool(&mut self, tool: Card) {
+        self.attached_tools.push(tool);
+    }
+
+    /// Removes and returns every attached Tool ("discard/return/shuffle **all** Pokémon Tools").
+    pub(crate) fn take_tools(&mut self) -> Vec<Card> {
+        std::mem::take(&mut self.attached_tools)
     }
 
     /// Duration means:
@@ -476,11 +559,36 @@ impl PlayedCard {
         effects
     }
 
-    /// Whether this Pokémon has been stripped of its Abilities (Budew's Prickly Powder).
-    fn abilities_disabled(&self) -> bool {
+    /// Whether an effect has stripped this Pokémon of its Abilities (Budew's Prickly Powder).
+    /// Deliberately ignores `basic_abilities_suppressed`, so a Power of Alchemy board scan can
+    /// use `suppresses_basic_abilities` without recursing through the suppression it computes.
+    fn abilities_disabled_by_effect(&self) -> bool {
         self.effects
             .iter()
             .any(|(effect, _)| matches!(effect, CardEffect::AbilitiesDisabled))
+    }
+
+    /// Whether this Pokémon has no Abilities in play: either an effect stripped them (Budew's
+    /// Prickly Powder) or it is a Basic while Alolan Muk's Power of Alchemy is in play.
+    fn abilities_disabled(&self) -> bool {
+        self.abilities_disabled_by_effect() || self.basic_abilities_suppressed
+    }
+
+    /// Whether this Pokémon is currently projecting Alolan Muk's Power of Alchemy onto every
+    /// Basic in play. Only the board scan in `State::refresh_ability_board_bonuses` should call
+    /// this: it reads the card-level Ability so that it stays correct no matter what the (stale)
+    /// suppression flags say, while still honouring an effect that disabled the suppressor.
+    pub(crate) fn suppresses_basic_abilities(&self) -> bool {
+        !self.abilities_disabled_by_effect()
+            && get_ability_mechanic(&self.card)
+                == Some(&AbilityMechanic::BasicPokemonHaveNoAbilities)
+    }
+
+    /// Whether this Pokémon counts as a Basic Pokémon in play. Fossils are treated as Basics by
+    /// the engine (see `hooks::get_stage`); they carry no Abilities, so this only matters for
+    /// consistency.
+    pub(crate) fn is_basic_in_play(&self) -> bool {
+        self.card.is_basic() || self.is_fossil()
     }
 
     /// This Pokémon's Ability as it applies *in play*, i.e. `None` while its Abilities are

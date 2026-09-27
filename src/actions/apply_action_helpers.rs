@@ -943,9 +943,7 @@ pub(crate) fn shuffle_in_play_pokemon_and_attachments_into_deck(
 
     let mut cards_to_shuffle = pokemon.cards_behind.clone();
     cards_to_shuffle.push(pokemon.card.clone());
-    if let Some(tool) = pokemon.attached_tool.clone() {
-        cards_to_shuffle.push(tool);
-    }
+    cards_to_shuffle.extend(pokemon.attached_tools.iter().cloned());
     state.decks[player].cards.extend(cards_to_shuffle);
     state.discard_energies[player].extend(pokemon.attached_energy.iter().cloned());
     state.decks[player].shuffle(false, rng);

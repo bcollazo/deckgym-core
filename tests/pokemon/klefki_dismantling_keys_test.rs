@@ -41,7 +41,7 @@ fn test_klefki_dismantling_keys_discards_opponent_active_tool_and_self() {
     game.apply_action(&ability_action);
 
     let state = game.get_state_clone();
-    assert!(state.get_active(1).attached_tool.is_none());
+    assert!(state.get_active(1).attached_tools.is_empty());
     assert!(state.discard_piles[1].contains(&rocky_helmet));
     assert!(state.in_play_pokemon[0][1].is_none());
     assert!(state.discard_piles[0].contains(&klefki));

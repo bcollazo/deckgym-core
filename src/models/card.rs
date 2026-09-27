@@ -294,6 +294,11 @@ impl Card {
 
     /// Check if this card can evolve into the given evolution card
     /// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+    ///
+    /// This is a card-level evolution-legality rule with no access to the board, so the Veevee
+    /// 'volve lookup below stays card-level too: it is deliberately *not* gated on Alolan Muk's
+    /// Power of Alchemy, even though Eevee ex is a Basic. Making it board-aware would mean
+    /// threading `State` (or a `PlayedCard`) through every evolution-legality caller.
     pub fn can_evolve_into(&self, evolution_card: &Card) -> bool {
         if let Card::Pokemon(evolution_pokemon) = evolution_card {
             if let Some(evolves_from) = &evolution_pokemon.evolves_from {

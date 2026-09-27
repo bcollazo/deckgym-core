@@ -312,8 +312,8 @@ fn test_memory_light_grants_previous_evolution_attacks() {
     );
 
     let mut state = game.get_state_clone();
-    state.in_play_pokemon[0][0].as_mut().unwrap().attached_tool =
-        Some(get_card_by_enum(CardId::A4a068MemoryLight));
+    state.in_play_pokemon[0][0].as_mut().unwrap().attached_tools =
+        vec![get_card_by_enum(CardId::A4a068MemoryLight)];
     game.set_state(state);
 
     assert!(
@@ -382,5 +382,5 @@ fn test_clear_veil_is_an_attachable_tool() {
         .clone();
     game.apply_action(&attach);
 
-    assert!(game.get_state_clone().get_active(0).attached_tool.is_some());
+    assert!(game.get_state_clone().get_active(0).has_tool_attached());
 }

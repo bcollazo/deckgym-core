@@ -123,7 +123,11 @@ pub(crate) fn can_evolve_into(evolution_card: &Card, base_pokemon: &PlayedCard) 
     base_pokemon.card.can_evolve_into(evolution_card)
 }
 
-/// Called when a Pokémon evolves
+/// Called when a Pokémon evolves.
+///
+/// Reads the Ability off the card rather than the board on purpose: `to_card` is by definition an
+/// Evolution (Stage 1 or 2), so Alolan Muk's Power of Alchemy — which only removes the Abilities
+/// of *Basic* Pokémon — can never apply to it.
 pub(crate) fn on_evolve(
     actor: usize,
     state: &mut State,
@@ -255,9 +259,14 @@ fn offer_on_evolve_ability(actor: usize, state: &mut State, in_play_idx: usize) 
     ));
 }
 
-/// Called when a basic Pokémon is placed from hand onto the bench (index > 0).
-pub(crate) fn on_bench_from_hand(actor: usize, state: &mut State, card: &Card, bench_idx: usize) {
-    match get_ability_mechanic(card) {
+/// Called when a basic Pokémon is placed from hand onto the bench (index > 0). The Pokémon is
+/// already in play at `bench_idx`, so its Ability is read off the board: every Pokémon reaching
+/// this hook is a Basic, and Alolan Muk's Power of Alchemy can have removed its Ability.
+pub(crate) fn on_bench_from_hand(actor: usize, state: &mut State, bench_idx: usize) {
+    let mechanic = state.in_play_pokemon[actor][bench_idx]
+        .as_ref()
+        .and_then(|pokemon| pokemon.ability_mechanic());
+    match mechanic {
         Some(AbilityMechanic::LegendaryDrive) => {
             if state.maybe_get_active(actor).is_none() {
                 return;
@@ -447,7 +456,7 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
         .collect();
     for idx in barrier_indices {
         debug!("Metal Core Barrier: Discarding at end of opponent's turn");
-        state.discard_tool(tool_owner, idx);
+        state.discard_tool_by_id(tool_owner, idx, CardId::B2148MetalCoreBarrier);
     }
 
     // Check for Zeraora's Thunderclap Flash ability (on first turn only)
@@ -527,7 +536,9 @@ fn apply_leftovers_healing(player_ending_turn: usize, state: &mut State) {
 /// turn is ending. Both discard themselves when they fire, so each is checked once per end of
 /// turn across every Pokémon in play.
 fn apply_berry_tools(state: &mut State) {
-    let mut to_discard: Vec<(usize, usize)> = Vec::new();
+    // The berry discards *itself*, so the slot is recorded by card id: a Pokémon with two Tool
+    // slots (Revavroom) must keep its other Tool.
+    let mut to_discard: Vec<(usize, usize, CardId)> = Vec::new();
     for player in 0..2 {
         for in_play_idx in 0..4 {
             let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].as_mut() else {
@@ -538,7 +549,7 @@ fn apply_berry_tools(state: &mut State) {
             if has_tool(pokemon, CardId::A2149LumBerry) && pokemon.has_status_condition() {
                 debug!("Lum Berry: Curing all Special Conditions and discarding the tool");
                 pokemon.cure_status_conditions();
-                to_discard.push((player, in_play_idx));
+                to_discard.push((player, in_play_idx, CardId::A2149LumBerry));
                 continue;
             }
             // Sitrus Berry: "...if the Pokémon this card is attached to has half of its maximum HP
@@ -548,12 +559,12 @@ fn apply_berry_tools(state: &mut State) {
             {
                 debug!("Sitrus Berry: Healing 30 damage and discarding the tool");
                 pokemon.heal(30);
-                to_discard.push((player, in_play_idx));
+                to_discard.push((player, in_play_idx, CardId::B1218SitrusBerry));
             }
         }
     }
-    for (player, in_play_idx) in to_discard {
-        state.discard_tool(player, in_play_idx);
+    for (player, in_play_idx, berry_id) in to_discard {
+        state.discard_tool_by_id(player, in_play_idx, berry_id);
     }
 }
 

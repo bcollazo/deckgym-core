@@ -882,18 +882,22 @@ fn lillie_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 }
 
 fn field_blower_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Offer one choice per Pokémon with a tool (both players) plus one choice to discard the stadium.
+    // "Discard a Pokémon Tool card from a Pokémon" — one choice per *attached Tool*, not per
+    // Pokémon, so a Pokémon holding two (Revavroom's Dual Customization) lets the player pick
+    // which one goes.
     let mut choices: Vec<SimpleAction> = (0..2)
         .flat_map(|player| {
             state
                 .enumerate_in_play_pokemon(player)
-                .filter(|(_, pokemon)| pokemon.has_tool_attached())
-                .map(
-                    move |(in_play_idx, _)| SimpleAction::DiscardToolFromPokemon {
-                        player,
-                        in_play_idx,
-                    },
-                )
+                .flat_map(move |(in_play_idx, pokemon)| {
+                    (0..pokemon.attached_tools.len()).map(move |tool_idx| {
+                        SimpleAction::DiscardToolFromPokemon {
+                            player,
+                            in_play_idx,
+                            tool_idx,
+                        }
+                    })
+                })
                 .collect::<Vec<_>>()
         })
         .collect();
@@ -959,7 +963,7 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         .collect();
 
     for idx in tool_indices {
-        state.discard_tool(opponent, idx);
+        state.discard_all_tools(opponent, idx);
     }
 
     // Resolve knockouts only after Guzma has discarded every opponent tool.
@@ -2195,9 +2199,7 @@ fn elesa_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // their owner's hand.
     for player in 0..2 {
         for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
-            if let Some(tool) = pokemon.attached_tool.take() {
-                state.hands[player].push(tool);
-            }
+            state.hands[player].extend(pokemon.take_tools());
         }
     }
 }

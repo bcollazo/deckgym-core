@@ -169,12 +169,12 @@ fn test_hoopa_mischievous_ring_shuffles_all_opponent_tools_into_deck() {
     attack(&mut game, 0, CardId::B4077Hoopa, 0);
 
     let state = game.get_state_clone();
-    assert!(state.get_active(1).attached_tool.is_none());
+    assert!(state.get_active(1).attached_tools.is_empty());
     assert!(state.in_play_pokemon[1][1]
         .as_ref()
         .unwrap()
-        .attached_tool
-        .is_none());
+        .attached_tools
+        .is_empty());
     assert_eq!(
         state.decks[1].cards.len(),
         deck_before + 2,

@@ -211,10 +211,14 @@ pub enum SimpleAction {
     ShuffleInPlayPokemonIntoDeck {
         in_play_idx: usize,
     },
-    /// Field Blower: discard the tool attached to a specific Pokémon (any player).
+    /// Field Blower: discard one Tool attached to a specific Pokémon (any player). `tool_idx` is
+    /// the slot within that Pokémon's `attached_tools`; it is always 0 for a Pokémon with the
+    /// usual single slot, and Field Blower offers one choice per attached Tool for a Pokémon that
+    /// holds two (Revavroom's Dual Customization).
     DiscardToolFromPokemon {
         player: usize,
         in_play_idx: usize,
+        tool_idx: usize,
     },
     /// Field Blower: discard the active stadium.
     DiscardActiveStadium,
@@ -484,8 +488,12 @@ impl fmt::Display for SimpleAction {
             SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
                 write!(f, "ShuffleInPlayPokemonIntoDeck({in_play_idx})")
             }
-            SimpleAction::DiscardToolFromPokemon { player, in_play_idx } => {
-                write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")
+            SimpleAction::DiscardToolFromPokemon {
+                player,
+                in_play_idx,
+                tool_idx,
+            } => {
+                write!(f, "DiscardToolFromPokemon({player}, {in_play_idx}, {tool_idx})")
             }
             SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
             SimpleAction::DiscardRandomOpponentActiveEnergy => {

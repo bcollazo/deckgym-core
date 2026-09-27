@@ -41,7 +41,7 @@ fn test_lum_berry_cures_conditions_and_discards_itself() {
     assert!(!chansey.is_confused(), "Lum Berry should cure Confused");
     assert!(!chansey.is_poisoned(), "Lum Berry should cure Poisoned");
     assert!(
-        chansey.attached_tool.is_none(),
+        chansey.attached_tools.is_empty(),
         "Lum Berry should discard itself after firing"
     );
     assert!(
@@ -61,7 +61,7 @@ fn test_lum_berry_stays_attached_without_special_conditions() {
     end_turn(&mut game);
 
     assert!(
-        game.get_state_clone().get_active(0).attached_tool.is_some(),
+        game.get_state_clone().get_active(0).has_tool_attached(),
         "Lum Berry should remain attached while its holder is healthy"
     );
 }
@@ -85,7 +85,7 @@ fn test_sitrus_berry_heals_30_at_half_hp_and_discards_itself() {
         "Sitrus Berry should heal 30 damage"
     );
     assert!(
-        chansey.attached_tool.is_none(),
+        chansey.attached_tools.is_empty(),
         "Sitrus Berry should discard itself after healing"
     );
 }
@@ -102,7 +102,7 @@ fn test_sitrus_berry_does_nothing_above_half_hp() {
     let state = game.get_state_clone();
     assert_eq!(state.get_active(0).get_remaining_hp(), 70);
     assert!(
-        state.get_active(0).attached_tool.is_some(),
+        state.get_active(0).has_tool_attached(),
         "Sitrus Berry should stay attached above half HP"
     );
 }
@@ -126,5 +126,5 @@ fn test_sitrus_berry_fires_at_the_end_of_the_opponents_turn_too() {
         .as_ref()
         .expect("Opponent active should still be there");
     assert_eq!(chansey.get_remaining_hp(), 80);
-    assert!(chansey.attached_tool.is_none());
+    assert!(chansey.attached_tools.is_empty());
 }

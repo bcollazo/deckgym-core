@@ -61,7 +61,7 @@ fn test_giant_cape_attach_increases_hp() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     assert_eq!(active.get_remaining_hp(), base_remaining_hp + 20);
 }
 
@@ -118,7 +118,7 @@ fn test_elegant_cape_attaches_to_any_and_boosts_only_stage_1() {
         .as_ref()
         .expect("expected stage-1 target");
     let base_remaining_hp = PlayedCard::from_id(CardId::A1002Ivysaur).get_remaining_hp();
-    assert!(stage1.attached_tool.is_some());
+    assert!(stage1.has_tool_attached());
     assert_eq!(stage1.get_remaining_hp(), base_remaining_hp + 30);
 }
 
@@ -174,7 +174,7 @@ fn test_leaf_cape_attaches_to_any_and_boosts_only_grass() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     assert_eq!(active.get_remaining_hp(), base_remaining_hp + 30);
 }
 

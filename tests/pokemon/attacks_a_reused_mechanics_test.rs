@@ -94,7 +94,7 @@ fn test_purrloin_playful_knockdown_discards_opponent_active_tool() {
 
     let state = game.get_state_clone();
     assert!(
-        state.get_active(1).attached_tool.is_none(),
+        state.get_active(1).attached_tools.is_empty(),
         "the Tool should be gone from the Defending Pokémon"
     );
     assert_eq!(

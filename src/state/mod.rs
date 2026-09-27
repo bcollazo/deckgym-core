@@ -224,10 +224,24 @@ impl State {
         self.refresh_ability_board_bonuses();
     }
 
-    /// Recomputes the cached, board-dependent ability bonuses on every in-play Pokémon:
-    /// Lilligant's Toughness Aroma (+HP for the owner's Pokémon of a type) and Claydol's Heal
-    /// Block (no Pokémon on either side can be healed).
+    /// Recomputes the cached, board-dependent ability bonuses on every in-play Pokémon: Alolan
+    /// Muk's Power of Alchemy (Basics on either side have no Abilities), Lilligant's Toughness
+    /// Aroma (+HP for the owner's Pokémon of a type) and Claydol's Heal Block (no Pokémon on
+    /// either side can be healed).
     pub(crate) fn refresh_ability_board_bonuses(&mut self) {
+        // Power of Alchemy has to be resolved first: it decides which Abilities the scans below
+        // are even allowed to see. `suppresses_basic_abilities` reads the card-level Ability, so
+        // it neither depends on the flags being written here nor recurses through them.
+        let power_of_alchemy_active = self
+            .in_play_pokemon
+            .iter()
+            .flatten()
+            .flatten()
+            .any(|pokemon| pokemon.suppresses_basic_abilities());
+        for pokemon in self.in_play_pokemon.iter_mut().flatten().flatten() {
+            pokemon.refresh_basic_abilities_suppressed(power_of_alchemy_active);
+        }
+
         let heal_blocked = (0..2).any(|player| {
             self.enumerate_in_play_pokemon(player)
                 .any(|(_, pokemon)| pokemon.has_ability(&AbilityMechanic::NoHealingForAnyone))
@@ -560,13 +574,21 @@ impl State {
             .expect("Active Pokemon should be there")
     }
 
-    /// Clear Veil: "Prevent all effects of attacks used by your opponent's Pokémon done to the
-    /// Pokémon this card is attached to."
+    /// "Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon."
+    /// Two cards share this wording and therefore this one predicate:
+    ///   - the Clear Veil Tool (B4 149), for the Pokémon it is attached to;
+    ///   - Regice's Crystal Body Ability (A2 034), for Regice itself.
+    ///
+    /// What counts as an "effect": the Special Conditions and the `CardEffect`s an attack imposes
+    /// on the targeted Pokémon — the two channels every attack uses to place something *on* a
+    /// Pokémon, i.e. `apply_status_condition` and `add_effect_to_in_play`. Damage, and the Knock
+    /// Out that may follow from it, are explicitly *not* effects, so a shielded Pokémon still
+    /// takes full damage and can still be Knocked Out.
     ///
     /// An attack's effects are applied while its user is `current_player`, so a target belonging
     /// to the *other* player is exactly "done to it by the opponent's attack". Effects a player
-    /// applies to their own Pokémon (their own attack's self-buffs, their own Trainer cards) are
-    /// untouched, matching the card text.
+    /// applies to their own Pokémon (their own attack's self-buffs, their own Trainer cards, a
+    /// Tool like Poison Barb punishing them for attacking) are untouched, matching the card text.
     pub(crate) fn is_shielded_from_opponent_attack_effects(
         &self,
         player: usize,
@@ -577,12 +599,16 @@ impl State {
         }
         self.in_play_pokemon[player][in_play_idx]
             .as_ref()
-            .is_some_and(|pokemon| has_tool(pokemon, crate::card_ids::CardId::B4149ClearVeil))
+            .is_some_and(|pokemon| {
+                has_tool(pokemon, crate::card_ids::CardId::B4149ClearVeil)
+                    || pokemon.has_ability(&AbilityMechanic::PreventOpponentAttackEffectsOnSelf)
+            })
     }
 
     /// Adds a `CardEffect` to a Pokémon in play, honouring shields that block effects coming from
-    /// the opponent's attacks (Clear Veil). Prefer this over calling `PlayedCard::add_effect`
-    /// directly whenever the effect is being imposed on a target rather than chosen by its owner.
+    /// the opponent's attacks (Clear Veil / Crystal Body). Prefer this over calling
+    /// `PlayedCard::add_effect` directly whenever the effect is being imposed on a target rather
+    /// than chosen by its owner.
     pub(crate) fn add_effect_to_in_play(
         &mut self,
         player: usize,
@@ -591,7 +617,7 @@ impl State {
         duration: u8,
     ) {
         if self.is_shielded_from_opponent_attack_effects(player, in_play_idx) {
-            debug!("Clear Veil: Preventing {effect:?} from the opponent's attack");
+            debug!("Clear Veil / Crystal Body: Preventing {effect:?} from the opponent's attack");
             return;
         }
         if let Some(pokemon) = self.in_play_pokemon[player][in_play_idx].as_mut() {
@@ -632,7 +658,7 @@ impl State {
         }
 
         if self.is_shielded_from_opponent_attack_effects(player, in_play_idx) {
-            debug!("Clear Veil: Preventing a Special Condition from the opponent's attack");
+            debug!("Clear Veil / Crystal Body: Preventing a Special Condition from the opponent's attack");
             return;
         }
 
@@ -707,9 +733,7 @@ impl State {
             .as_ref()
             .expect("There should be a Pokemon to discard");
         let mut cards_to_discard = ko_pokemon.cards_behind.clone();
-        if let Some(tool_card) = &ko_pokemon.attached_tool {
-            cards_to_discard.push(tool_card.clone());
-        }
+        cards_to_discard.extend(ko_pokemon.attached_tools.iter().cloned());
         cards_to_discard.push(ko_pokemon.card.clone());
         debug!("Discarding: {cards_to_discard:?}");
         self.discard_piles[ko_receiver].extend(cards_to_discard);
@@ -728,23 +752,53 @@ impl State {
         let mut cards_to_hand = played_card.cards_behind.clone();
         cards_to_hand.push(played_card.card.clone());
         self.hands[player].extend(cards_to_hand);
-        if let Some(tool_card) = &played_card.attached_tool {
-            self.discard_piles[player].push(tool_card.clone());
-        }
+        self.discard_piles[player].extend(played_card.attached_tools.iter().cloned());
         self.discard_energies[player].extend(played_card.attached_energy.iter().cloned());
         self.refresh_double_grass_bonus_for_player(player);
     }
 
-    /// Removes the attached tool from a Pokémon and puts the tool card into the discard pile.
-    pub(crate) fn discard_tool(&mut self, player: usize, in_play_idx: usize) {
+    /// Removes every Tool attached to a Pokémon and puts them into the discard pile. This is the
+    /// "discard **all** Pokémon Tools" wording (Guzma, Klefki's Dismantling Keys, Weezing's
+    /// Poisonous Extermination). Returns how many Tools were discarded.
+    pub(crate) fn discard_all_tools(&mut self, player: usize, in_play_idx: usize) -> usize {
+        let pokemon = self.in_play_pokemon[player][in_play_idx]
+            .as_mut()
+            .expect("Pokemon should be there if discarding tools");
+        let tools = pokemon.take_tools();
+        let discarded = tools.len();
+        self.discard_piles[player].extend(tools);
+        discarded
+    }
+
+    /// Discards one specific attached Tool by slot. This is the "discard **a** Pokémon Tool card"
+    /// wording (Field Blower), where the player picks which one.
+    pub(crate) fn discard_tool_at(&mut self, player: usize, in_play_idx: usize, tool_idx: usize) {
         let pokemon = self.in_play_pokemon[player][in_play_idx]
             .as_mut()
             .expect("Pokemon should be there if discarding tool");
-        let tool_card = pokemon
-            .attached_tool
-            .take()
-            .expect("Expected tool to be attached when discarding tool");
+        assert!(
+            tool_idx < pokemon.attached_tools.len(),
+            "Expected tool slot {tool_idx} to be occupied when discarding tool"
+        );
+        let tool_card = pokemon.attached_tools.remove(tool_idx);
         self.discard_piles[player].push(tool_card);
+    }
+
+    /// Discards the named Tool from a Pokémon, for Tools that remove *themselves* when they fire
+    /// (Lum Berry, Sitrus Berry) or on a timer (Metal Core Barrier). With two Tool slots the
+    /// sibling Tool has to survive, so these cannot go through `discard_all_tools`.
+    pub(crate) fn discard_tool_by_id(
+        &mut self,
+        player: usize,
+        in_play_idx: usize,
+        tool_id: crate::card_ids::CardId,
+    ) {
+        let pokemon = self.in_play_pokemon[player][in_play_idx]
+            .as_ref()
+            .expect("Pokemon should be there if discarding tool");
+        let tool_idx = crate::tools::tool_position(pokemon, tool_id)
+            .expect("Expected the tool to be attached when discarding it");
+        self.discard_tool_at(player, in_play_idx, tool_idx);
     }
 
     pub(crate) fn discard_from_active(&mut self, actor: usize, to_discard: &[EnergyType]) {

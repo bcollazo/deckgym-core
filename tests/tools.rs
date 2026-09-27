@@ -6,6 +6,8 @@ mod booster_capsule_test;
 mod coverage_tools_test;
 #[path = "tools/deceptive_needle_test.rs"]
 mod deceptive_needle_test;
+#[path = "tools/dual_customization_test.rs"]
+mod dual_customization_test;
 #[path = "tools/leftovers_test.rs"]
 mod leftovers_test;
 #[path = "tools/lucky_egg_test.rs"]

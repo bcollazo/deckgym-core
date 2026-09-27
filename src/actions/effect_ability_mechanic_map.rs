@@ -268,6 +268,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             },
         );
         map.insert(
+            "This Pokémon may have up to 2 Pokémon Tool cards attached to it.",
+            AbilityMechanic::ExtraToolSlots { amount: 1 },
+        );
+        map.insert(
             "Once during your turn, if this Pokémon is on your Bench, you may discard all Pokémon Tools from your opponent's Active Pokémon. If you do, discard this Pokémon.",
             AbilityMechanic::DiscardOpponentActiveToolsAndDiscardSelf,
         );
@@ -491,7 +495,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             "Prevent all damage done to this Pokémon by attacks from your opponent's Pokémon ex.",
             AbilityMechanic::PreventAllDamageFromEx,
         );
-        // map.insert("Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon.", todo_implementation);
+        map.insert(
+            "Prevent all effects of attacks used by your opponent's Pokémon done to this Pokémon.",
+            AbilityMechanic::PreventOpponentAttackEffectsOnSelf,
+        );
         map.insert(
             "This Ability works if you have any Unown in play with an Ability other than GUARD. All of your Pokémon take -10 damage from attacks from your opponent's Pokémon.",
             AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { amount: 10 },
@@ -612,7 +619,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         );
 
         // B2 and B2a mechanics
-        // map.insert("Basic Pokémon in play (both yours and your opponent's) have no Abilities.", todo_implementation);
+        map.insert(
+            "Basic Pokémon in play (both yours and your opponent's) have no Abilities.",
+            AbilityMechanic::BasicPokemonHaveNoAbilities,
+        );
         map.insert(
             "If this Pokémon's remaining HP is 50 or less, attacks used by this Pokémon do +60 damage to your opponent's Active Pokémon.",
             AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost {
