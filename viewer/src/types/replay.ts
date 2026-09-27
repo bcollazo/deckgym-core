@@ -123,6 +123,10 @@ export function cardId(card: Card): string {
   return isPokemonCard(card) ? card.Pokemon.id : card.Trainer.id;
 }
 
+export function stageLabel(stage: number): string {
+  return stage <= 0 ? "Basic" : `Stage ${stage}`;
+}
+
 /**
  * `SimpleAction` (`src/actions/types.rs`) has ~50 variants and serde's default externally-tagged
  * representation: a unit variant like `EndTurn` serializes to the string `"EndTurn"`; every other

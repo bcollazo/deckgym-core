@@ -230,7 +230,7 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
   turnText.anchor.set(0.5);
   turnBanner.addChild(bannerBg, turnText);
   turnBanner.x = BOARD_WIDTH / 2;
-  turnBanner.y = BOARD_HEIGHT / 2;
+  turnBanner.y = dividerLineY();
   turnBanner.alpha = 0;
   turnBanner.visible = false;
   root.addChild(turnBanner);
@@ -279,6 +279,7 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
       visual.container.x = pos.x;
       visual.container.y = pos.y;
       visual.container.pivot.set(size.w / 2, size.h / 2);
+      visual.setBaseRotation(pos.rotation);
       visual.container.zIndex = i;
       if (player === 1) visual.container.alpha = 0.85; // opponent hand reads as "visible but theirs"
       visual.update(cards[cardId], undefined);
