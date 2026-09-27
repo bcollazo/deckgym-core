@@ -42,6 +42,33 @@ Then either:
   than one step jumps straight to that snapshot, no animation)
 - The speed dropdown controls `gsap.globalTimeline.timeScale()`, so it affects every animation
 
+## Card images (optional, off by default)
+
+The repo ships **no card images** — cards render procedurally by default (a type-colored frame,
+name, HP bar, etc. — see `board/cardArt.ts`). If you have somewhere to fetch real card images by
+id, you can point the viewer at it and it'll use them instead, falling back to the procedural card
+for any id that 404s or errors.
+
+Give it a URL pattern with placeholders:
+
+| Placeholder | Meaning | `"A1 001"` becomes |
+| --- | --- | --- |
+| `{id}`     | raw id, URL-encoded    | `A1%20001` |
+| `{id_}`    | id, spaces → underscores | `A1_001` |
+| `{set}`    | the set portion of the id | `A1` |
+| `{number}` | the number portion of the id | `001` |
+| `{lang}`   | the configured language (default `en_US`) | `en_US` |
+
+Configure it, highest priority first:
+1. `?cards=<pattern>&lang=<lang>` URL params,
+2. the ⚙ Images popover in the header (saved to `localStorage`, then reloads the page with it
+   reflected in the URL),
+3. `VITE_CARD_IMAGE_URL` at build time (e.g. in a `.env` file).
+
+deckgym.com happens to run a public, CORS-enabled host that works with this pattern:
+`https://cards.deckgym.com/cards/{lang}/{id_}.webp` — that's just an example to try, not a
+built-in default; the pattern field starts empty and images stay off until you set one.
+
 ## Quality checks
 
 ```bash
@@ -72,16 +99,22 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   so stepping backward `.reverse()`s the same timeline rather than re-deriving one. See that file's
   header comment for how a timeline built lazily for a *backward*-first traversal is primed to have
   correct start values.
-- No card art: cards are drawn procedurally in `board/cardArt.ts` (type-colored frame, name, HP
-  bar, energy pips, status badges, a holo shimmer for `ex` cards).
+- No card art ships with the repo: cards are drawn procedurally by default in `board/cardArt.ts`
+  (type-colored frame, name, HP bar, energy pips, status badges, a holo shimmer for `ex` cards), or
+  render a real image (see "Card images" above) with the same overlays composited on top.
+- The board's spatial layout (`board/layout.ts`) mirrors the official app: a portrait column with
+  the opponent's half (mirrored) above a center divider and the viewer's own half below, each with
+  a name bar, hand row, bench, and active spot, plus deck/discard/energy-zone icons at the outer
+  corners.
 
 ## Known simplifications (see the plan doc's "Deviations" section for the full list)
 
-- Hand/deck/discard cards are rendered by count, not tracked as individual persistent sprites
-  across snapshots (`ViewState`'s hand/deck/discard are unordered id lists with no stable
-  per-card instance identity when there are duplicates). Cards flying out of/into a board slot
-  (play, evolve, KO, attach a tool) *are* individually animated, since the action that caused them
-  names the exact card.
+- Deck and hand *counts* (not identities) drive most of the board — `ViewState`'s hand/deck are
+  unordered id lists with no stable per-card instance identity across snapshots when there are
+  duplicates, so cards flying out of/into a board slot (play, evolve, KO, attach a tool) are
+  individually animated because the action that caused them names the exact card, while other
+  hand/deck count changes (a draw, a search effect) just update the count. The discard pile is the
+  one exception: since it's a stack, its actual top card (`discard.at(-1)`) is shown small.
 - Decorative one-shot flourishes (particle bursts, screen shake, the shockwave filter, confetti)
   animate independently of the reversible per-step timeline, so they don't un-play when you step
   backward through them — only the state-bearing tweens (position, alpha, scale, HP bar, card

@@ -279,6 +279,49 @@ CustomEase registered once), `pixi-filters`. No other UI framework needed.
   spawned its subprocess and received the bot's `hello` reply. The name is still visible in the
   engine's own logs mid-game (`ExternalPlayer(<name>)` once spawned) and in the bot's own stderr.
 
+## Round 2 (viewer follow-up)
+
+A second pass on the viewer, after the user reviewed Round 1's screenshots, covering three things:
+
+1. **Optional "bring your own" card images.** `viewer/src/board/cardImages.ts` resolves a URL
+   pattern (`?cards=`/`?lang=` params → a settings-popover choice saved in `localStorage` →
+   `VITE_CARD_IMAGE_URL` at build time → off) and loads textures by id with `PIXI.Assets.load`,
+   falling back to the procedural card on a 404/error. The repo still ships zero images and images
+   stay off until configured — see `viewer/README.md`'s "Card images" section for the placeholder
+   syntax and the header's ⚙ Images popover (`ui/SettingsPopover.tsx`).
+2. **Board layout overhaul** (`board/layout.ts`, `board/scene.ts`) to mirror the official app's
+   spatial layout instead of Round 1's ad hoc landscape strip: a portrait column, mirrored
+   opponent-half-above-divider-above-viewer's-own-half, with name bars, hand rows, bench, active
+   spots, and deck/discard/energy-zone icons at the outer corners on each side. Points are now
+   filling pips (with a glow on the filled ones) instead of `**-` text. `board/cardArt.ts` was
+   rewritten to lay out its overlays (HP number, HP bar, energy pips, status badges) as *fractions*
+   of the card's own size rather than fixed pixel offsets — the fixed-offset version was the actual
+   cause of Round 1's "hands render as empty outlines" bug (a card small enough that a fixed
+   pixel band reserved for overlays left a negative-height "art" rectangle).
+3. **Fixes**: human-readable log/options text (`anim/formatAction.ts`, unit-tested), the hand
+   rendering bug above, and a subtle hover tilt on interactive cards (GSAP rotation + scale on
+   `pointerover`/`pointerout`).
+
+### Round 2 deviations
+- **The board's exact proportions are an interpretation of the official app's layout, not a
+  pixel-accurate copy** — the request described the layout in words (a numbered top-to-bottom list
+  of bands) rather than from a shared screenshot Claude could measure, so `layout.ts`'s row heights
+  and corner placements are a reasonable reading of that description, verified visually with
+  Playwright rather than diffed against a reference image.
+- **Card-image loading uses `PIXI.Assets.load`'s default texture loader**, which prefers a
+  `fetch()`-based `createImageBitmap` path over the `<img crossOrigin>` path in browsers that
+  support it; the explicit `{data: {crossOrigin: "anonymous"}}` passed to `Assets.load` only
+  affects the fallback path, but is included per the request for explicitness/robustness on
+  browsers where the fallback is what actually runs.
+- **Deck piles stay an abstract "stack" graphic** (layered semi-transparent rounded rects + a
+  count), not a `CardVisual` — unlike the discard pile, which now shows its real top card
+  (`discard.at(-1)`) small, per the request. A deck's contents are meant to stay hidden, so there's
+  no "top card" to show.
+- **The settings popover applies a new image pattern by saving to `localStorage` and reloading the
+  page** (reflecting the choice in `?cards=`/`?lang=` too) rather than live-reconfiguring an
+  already-running `CardImageStore`. Simpler and more robust than clearing every in-flight texture
+  subscription and forcing a redraw of every currently-visible card.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.
