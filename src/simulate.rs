@@ -3,6 +3,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use log::warn;
 use num_format::{Locale, ToFormattedString};
 use rayon::prelude::*;
+use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
 use uuid::Uuid;
@@ -77,6 +78,10 @@ pub struct Simulation {
     /// Commands for player A/B when their `PlayerCode` is `X` (an external bot). See `with_bots`.
     bots: [Option<String>; 2],
     bot_timeout: Duration,
+    /// The game id `run()` used for each game it played, in order — set by `run()`, empty before
+    /// then. Lets a caller that needs to know *which* game a replay file belongs to (the `play` CLI
+    /// subcommand, which runs exactly one game and prints the replay's URL) avoid re-deriving it.
+    game_ids: Vec<Uuid>,
 }
 
 impl Simulation {
@@ -125,6 +130,7 @@ impl Simulation {
             player_factory: None,
             bots: [None, None],
             bot_timeout: Duration::from_millis(DEFAULT_BOT_TIMEOUT_MS),
+            game_ids: Vec::new(),
         })
     }
 
@@ -154,6 +160,7 @@ impl Simulation {
             player_factory: Some(Box::new(player_factory)),
             bots: [None, None],
             bot_timeout: Duration::from_millis(DEFAULT_BOT_TIMEOUT_MS),
+            game_ids: Vec::new(),
         })
     }
 
@@ -261,24 +268,31 @@ impl Simulation {
                 callback();
             }
 
-            (outcome, event_handler)
+            (game_id, outcome, event_handler)
         };
 
         // Run simulations either in parallel or sequentially
-        let results: Vec<(Option<GameOutcome>, CompositeSimulationEventHandler)> = if self.parallel
-        {
-            (0..self.num_simulations)
-                .into_par_iter()
-                .map(run_single_simulation)
-                .collect()
-        } else {
-            (0..self.num_simulations)
-                .map(run_single_simulation)
-                .collect()
-        };
+        let results: Vec<(Uuid, Option<GameOutcome>, CompositeSimulationEventHandler)> =
+            if self.parallel {
+                (0..self.num_simulations)
+                    .into_par_iter()
+                    .map(run_single_simulation)
+                    .collect()
+            } else {
+                (0..self.num_simulations)
+                    .map(run_single_simulation)
+                    .collect()
+            };
 
-        // Split outcomes and event handlers
-        let (outcomes, thread_event_handlers): (Vec<_>, Vec<_>) = results.into_iter().unzip();
+        // Split ids, outcomes and event handlers
+        let mut game_ids = Vec::with_capacity(results.len());
+        let mut outcomes = Vec::with_capacity(results.len());
+        let mut thread_event_handlers = Vec::with_capacity(results.len());
+        for (game_id, outcome, handler) in results {
+            game_ids.push(game_id);
+            outcomes.push(outcome);
+            thread_event_handlers.push(handler);
+        }
 
         // Merge all thread-local event handlers into the main one
         for handler in thread_event_handlers.iter() {
@@ -286,8 +300,9 @@ impl Simulation {
         }
         main_event_handler.on_simulation_end();
 
-        // Store the merged event handler for later retrieval
+        // Store the merged event handler and the game ids for later retrieval
         self.event_handler = Some(main_event_handler);
+        self.game_ids = game_ids;
 
         outcomes
     }
@@ -295,6 +310,12 @@ impl Simulation {
     /// Get a reference to a specific event handler by type after simulation has run
     pub fn get_event_handler<T: SimulationEventHandler + 'static>(&self) -> Option<&T> {
         self.event_handler.as_ref()?.get_handler::<T>()
+    }
+
+    /// The game id `run()` used for each game it played, in the same order as `run()`'s returned
+    /// outcomes. Empty until `run()` has been called.
+    pub fn game_ids(&self) -> &[Uuid] {
+        &self.game_ids
     }
 }
 
@@ -410,6 +431,85 @@ pub fn simulate(
     if let Some(collector) = simulation.get_event_handler::<StatsCollector>() {
         let stats = collector.compute_stats();
         print_stats(&stats);
+    }
+}
+
+/// Configuration for [`play`]: like [`crate::optimize::SimulationConfig`] but scoped to exactly one
+/// game (no `num_games`, no `data_output`/`replay_sample` — a single game's replay is always
+/// written in full) and always writing a replay, since `play`'s whole point is producing one for
+/// the web viewer to open.
+pub struct PlayConfig {
+    pub players: Option<Vec<PlayerCode>>,
+    pub seed: Option<u64>,
+    pub bot_a: Option<String>,
+    pub bot_b: Option<String>,
+    pub bot_timeout_ms: u64,
+    /// Folder to write the one replay file into (`<replay_dir>/<game_id>.json`).
+    pub replay_dir: String,
+}
+
+/// What [`play`] played, for the CLI to print a summary and the viewer URL from.
+pub struct PlayResult {
+    pub game_id: Uuid,
+    pub outcome: Option<GameOutcome>,
+    /// Final points, `[player 0, player 1]` (read back from the replay's own `final_state`, the
+    /// same file a viewer would open — see `play`'s doc comment for why).
+    pub points: [u8; 2],
+    pub player_names: [String; 2],
+    pub replay_path: PathBuf,
+}
+
+/// Plays exactly one game (reusing the same `Simulation`/`ReplayRecorder`/bot plumbing `simulate`
+/// does, just for `num_games: 1`) and writes its replay to `config.replay_dir`. Used by the CLI's
+/// `play` subcommand, which prints a `viewer` URL pointing at the file this writes — see
+/// `docs/replay-viewer-plan.md`'s "Round 4" notes.
+///
+/// The final points are read back from the replay file `play` itself just wrote (rather than
+/// threading a second event handler through `Simulation` just to capture `State::points`), the same
+/// way `tests/replay_test.rs` reads replays back to assert on them — the file is already the
+/// complete, authoritative record of the game.
+pub fn play(deck_a_path: &str, deck_b_path: &str, config: PlayConfig) -> PlayResult {
+    let player_codes = fill_code_array(config.players);
+
+    let mut simulation = Simulation::new(
+        deck_a_path,
+        deck_b_path,
+        player_codes,
+        1,
+        config.seed,
+        false,
+        None,
+    )
+    .expect("Failed to create simulation");
+
+    simulation = register_replay_recorder(simulation, config.replay_dir.clone(), None);
+    simulation = simulation.with_bots(
+        config.bot_a,
+        config.bot_b,
+        Duration::from_millis(config.bot_timeout_ms),
+    );
+
+    let outcomes = simulation.run();
+    let outcome = outcomes.into_iter().next().flatten();
+    let game_id = *simulation
+        .game_ids()
+        .first()
+        .expect("play() always runs exactly one game");
+
+    let replay_path = PathBuf::from(&config.replay_dir).join(format!("{game_id}.json"));
+    let replay_json = fs::read_to_string(&replay_path).expect("play() just wrote this replay file");
+    let replay: crate::replay::Replay =
+        serde_json::from_str(&replay_json).expect("play() just wrote a valid replay file");
+
+    PlayResult {
+        game_id,
+        outcome,
+        points: replay.final_state.map(|s| s.points).unwrap_or([0, 0]),
+        player_names: [
+            replay.players[0].name.clone(),
+            replay.players[1].name.clone(),
+        ],
+        replay_path,
     }
 }
 
