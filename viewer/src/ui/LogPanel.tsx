@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { formatAction } from "../anim/formatAction";
 import type { Replay } from "../types/replay";
 
 interface LogPanelProps {
@@ -23,7 +24,10 @@ export function LogPanel({ replay, currentIndex, onSeek }: LogPanelProps) {
         {replay.steps.map((step, i) => {
           const isCurrent = i + 1 === currentIndex;
           const playerName = replay.players[step.actor]?.name ?? `Player ${step.actor}`;
-          const chosenText = step.options[step.chosen]?.text ?? "?";
+          const chosen = step.options[step.chosen];
+          const chosenText = chosen
+            ? formatAction(chosen.action, chosen.text, { cards: replay.cards, beforeState: step.state, actor: step.actor })
+            : "?";
           return (
             <div
               key={step.ply}

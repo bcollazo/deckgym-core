@@ -1,3 +1,4 @@
+import { formatAction } from "../anim/formatAction";
 import type { Replay } from "../types/replay";
 
 interface OptionsPanelProps {
@@ -19,7 +20,7 @@ export function OptionsPanel({ replay, currentIndex }: OptionsPanelProps) {
         {step?.options.map((option, i) => (
           <div key={i} className={`option-row${i === step.chosen ? " chosen" : ""}`}>
             <span className="dot" />
-            <span>{option.text}</span>
+            <span>{formatAction(option.action, option.text, { cards: replay.cards, beforeState: step.state, actor: step.actor })}</span>
           </div>
         ))}
       </div>
