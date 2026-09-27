@@ -238,6 +238,38 @@ CustomEase registered once), `pixi-filters`. No other UI framework needed.
   here rather than threading a shared counter through the folder sweep, which would have meant
   passing an `Arc` through a CLI-level function that otherwise only takes plain config structs.
 
+- **Part 3's MVP and transition-engine steps landed in one commit, not two.** The board's
+  persistent Pixi scene graph (`scene.ts`) and its GSAP timelines (`buildTimeline.ts`) turned out to
+  be tightly coupled from the start (e.g. the HP bar's "ghost" bar only makes sense once the
+  animation system exists), so splitting "static board" from "animated board" into separate commits
+  would have meant writing throwaway code. Both are in the "Add replay viewer" commit.
+- **`@pixi/react` hosts the canvas; the scene graph itself is built imperatively**, not as nested
+  `@pixi/react` JSX (`board/scene.ts`'s header comment has the reasoning: a persistent, GSAP-driven
+  scene fights a declarative reconciler for ownership of node state). `@pixi/react`'s `<Application
+  onInit>` still does the real job the plan wanted from it — mounting/sizing/disposing the Pixi
+  canvas within React's lifecycle.
+- **Hand-writing the reconciled state into two rows, not one.** The plan's ASCII mock draws each
+  player's name/hand/deck/discard/points on a single header line; in practice that many elements
+  collided (name text, hand cards, and the energy-zone dot all fighting for the same ~150px of
+  width). `board/layout.ts` splits it into an "info" row (name, energy zone, points, deck/discard)
+  and a "hand" row one step further from the board's center.
+- **Card-identity flights are only rendered where the action names the exact card** (`Place`,
+  `Evolve`, `Play`, `AttachTool`); other hand/deck/discard count changes (draws, searches, etc.) get
+  a lightweight count update with no flight animation, since `ViewState`'s hand/deck/discard are
+  unordered id lists with no stable per-card instance identity across snapshots when there are
+  duplicate cards. See `viewer/README.md`'s "Known simplifications".
+- **Decorative flourishes (particle bursts, screen shake, the shockwave filter, confetti) aren't
+  part of the reversible per-step timeline** — they animate independently via their own `gsap.to`
+  calls, triggered by a `tl.call` inside the timeline. Only the state-bearing tweens (position,
+  alpha, scale, HP-bar fraction, a slot's card content) are true children of the timeline, so
+  stepping backward correctly un-plays those; a flourish just plays again rather than reversing. One
+  visible consequence: the *first* time a step is traversed backward without ever having been played
+  forward, `playbackController.ts` has to "prime" that step's timeline (reconcile to its `prev`
+  snapshot, build it, then fast-forward to its end so the board doesn't visually flash) — a
+  decorative flourish can fire for real during that fast-forward, so you may see e.g. KO shards or
+  confetti appear an instant before the reverse animation itself plays. Harmless, but worth knowing
+  about if it looks like a duplicate effect.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.
