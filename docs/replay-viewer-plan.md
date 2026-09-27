@@ -376,10 +376,113 @@ description) and reported card images looking horizontally stretched. Three thin
   crispness against the texture memory a great many small on-card text objects would otherwise use
   at an uncapped HiDPI resolution.
 
+## Round 4 (viewer fixes + a CLI → viewer one-liner)
+
+The user reviewed Round 3's screenshots and asked for seven viewer fixes plus a `play` CLI
+subcommand/dev-server link so `cargo run` → viewer needs no manual file juggling.
+
+1. **HP numbers/bars used to collide with neighboring rows** (an opponent active's HP landing on
+   their own bench row, a player active's HP landing on the "Turn N" banner, bench HP landing on the
+   active above it) because nothing reserved vertical space for them — they simply floated over
+   whichever card's top-right corner, with the HP *bar* separately drawn near the bottom of the card
+   face. Fixed by giving every in-play slot a compact bar+number "HP strip" directly *above* its
+   card, with `layout.ts` reserving exactly that height (`hpStripHeight`/`HP_STRIP_GAP`) inside each
+   slot's row so it can never overlap anything — `layout.test.ts` asserts every slot's card/strip
+   rects (and the divider band, which bounds the turn banner) never intersect any other slot's.
+   `cardArt.ts` no longer draws an HP bar inside/below the card face at all.
+2. **No border/frame on real card images.** A real image now draws as just the image (rounded-
+   corner-masked to match every other card's shape) with no stroke or holo shimmer — those are
+   procedural-card-only treatments now (a flat color fill needs *something* to read as a card edge;
+   a real image doesn't). Status/energy/tool overlays are unaffected either way.
+3. **Attacks affected the whole board.** The full-stage `ShockwaveFilter` ripple and a whole-board
+   screen shake fired on every attack; removed entirely (`scene.ts`'s `screenShake`/`shockwaveAt`
+   are gone). In their place, only the two cards involved react: the attacker's existing pull-back/
+   lunge, and a *defender-only* small recoil, a brief white flash (`scene.spawnFlash`, an fx-layer
+   overlay sized/positioned to just that card), and the damage number — plus the ghost HP bar drain,
+   unchanged. The win-screen bloom/confetti (`winPulse`) are deliberately untouched — those are a
+   one-time board-wide celebration, not part of an attack.
+4. **An active↔bench swap (retreat, a switch effect, a post-KO promotion) animated a bogus HP-bar
+   tween.** Root cause: `anim/diff.ts`'s per-slot loop diffed slot *index* 0 against slot index 0 —
+   comparing the old active's card/HP/energy/tools/status against the new active's, and the bench
+   slot the same way — so a swap (two different Pokemon trading places, neither Pokemon's own stats
+   changing) was misread as an "evolution" (the slot's card id changed) plus HP/energy/tools/status
+   deltas that were really just two different Pokemon's own values. Fixed by detecting the swap
+   *before* the per-slot loop (`detectActiveBenchMove`) and excluding both slots from it entirely, so
+   the only change emitted is one `activeSwitch`, whose handler (already existing in
+   `buildTimeline.ts`) cross-fades each slot's full composite — card, HP, energy, tools, status — in
+   from the correct snapshot, with no HP tween. This also fixed a promotion (the old active already
+   empty from a prior KO) that the old detection's `prevActive && …` guard never matched at all,
+   reading it as an unrelated "card entered from hand" + "card left to discard" instead of a same-
+   board move. `diff.test.ts` gained a retreat-with-different-HP case (asserting *no* hpChange/
+   evolution for either slot) and a promotion case (`activeFrom: null`).
+5. **Background: flat and darker.** The radial-vignette canvas background is now a flat
+   `0x07090d` fill (a `PIXI.Graphics` rect can't band the way a gradient can once the board is big);
+   the page background/side-panel CSS tokens were darkened to match (`--bg: #07090d`,
+   `--panel: #0d1117`).
+6. **Card images looked pixelated, not HD.** Diagnosed by ruling out candidates one at a time:
+   the Application's `resolution` was already capped at `devicePixelRatio` (≤2, an intentional Round
+   1 texture-memory tradeoff, not a bug); `antialias` was already on; `scaleMode` was already Pixi's
+   own "linear" default, not "nearest"; there's no `cacheAsTexture`/`RenderTexture` anywhere in the
+   codebase rasterizing a card at low resolution. The actual cause: Pixi's texture-source defaults
+   are `autoGenerateMipmaps: false` and `maxAnisotropy: 1`, and a card image (367x512) is almost
+   always displayed far smaller than that (a bench card ~150px, a hand card smaller still) — that
+   much minification with only bilinear filtering and no mip chain aliases/shimmers on fine card-art
+   detail, which reads as "pixelated" even though the source image itself is high-resolution. Fixed
+   in `cardImages.ts` by passing `autoGenerateMipmaps: true` and `maxAnisotropy: 4` in the `data`
+   passed to `PIXI.Assets.load` (these flow straight into the `ImageSource` Pixi's own image loader
+   constructs). Verified with same-crop before/after screenshots of a hand-sized card at 6x zoom:
+   the "before" shows clear staircase aliasing on leaf edges and card text; the "after" is visibly
+   smoother — see the plan's own verification screenshots list below.
+7. **Carry-overs from the Round 3 review**: the board only used ~1/3 of the width on a wide
+   viewport, and the opponent's hand was too small to read as cards. `layout.ts`'s `BOARD_WIDTH` grew
+   640→1000 (with the extra width absorbed as breathing room around the deck/discard/energy-zone
+   corners — "a wider center gap...is fine" per the request — and to let the fanned hand spread out
+   more), and every fixed row/gap constant (name bar, deck strip, inter-row gaps, the fan's rotation
+   clearance) was retuned tighter to compensate for the HP strip's added height, so the *cards*
+   themselves ended up slightly bigger on screen too, not just the canvas wider (see "Round 4
+   deviations" below for the numbers). The opponent's hand is now sized at 65% of a bench card
+   (within the requested 60-70% range), up from ~38%.
+
+**CLI → viewer link.** `cargo run -- play <deck_a> <deck_b> [--players ...] [--seed N] [--bot-a CMD]
+[--bot-b CMD] [--bot-timeout-ms MS] [--replay-dir replays/] [--viewer-url URL]` plays exactly one
+game (reusing `Simulation`/`ReplayRecorder`/bot plumbing via a new `Simulation::game_ids()` accessor
+and `simulate::play()`, not a separate code path), prints a winner/points summary, and prints a
+`<viewer_url>/?url=/replays/<game_id>.json[&cards=...]` URL as its last line (the `&cards=` part only
+appears if `DECKGYM_CARD_IMAGE_URL` is set — the viewer already remembers a pattern in
+`localStorage` otherwise, per Round 2). `viewer/vite.config.ts` gained a small dev-only plugin
+serving the repo-root `replays/` folder at `/replays/*` (JSON only, rejecting path traversal) under
+both `npm run dev` and `npm run preview`, which is what makes that link resolve. See
+`viewer/README.md`'s new section and the root README's "Play one game and open it in the viewer".
+
+### Round 4 deviations
+- **The printed viewer URL always uses the literal path `/replays/<game_id>.json`, regardless of
+  `--replay-dir`.** The vite plugin only serves that one fixed repo-root folder (per the request), so
+  hard-coding the URL's path to match it is what makes the *default* case (`--replay-dir` unset)
+  resolve correctly out of the box; a custom `--replay-dir` still writes the file where asked, but
+  the printed link won't resolve against the dev server unless that folder is also named `replays/`
+  at the repo root (documented on the flag itself, `cargo run -- play --help`).
+- **The board is a bigger *static* size, not a dynamically-reflowing one.** "Let the board grow...
+  if space allows" could mean recomputing the layout at runtime from the container's actual aspect
+  ratio, but the board is a fixed-logical-resolution Pixi canvas (`BOARD_WIDTH`/`BOARD_HEIGHT` are
+  build-time constants the whole scene graph is laid out against) scaled to fit via CSS — genuinely
+  reflowing it would mean rebuilding the scene graph at a new resolution on container resize, a much
+  larger change. Instead, `BOARD_WIDTH` and the card-size constants were tuned once for a better
+  balance (see item 7 above), verified visually at a very wide (1800px) and narrow (480px) viewport
+  rather than made to react to either at runtime.
+- **The HP strip's height comes from a shared formula (`layout.ts`'s `hpStripHeight`) rather than a
+  fixed pixel constant**, exactly so `cardArt.ts`'s drawing and `layout.ts`'s row-reservation math
+  can't drift apart — the Round 3 "hands render as empty outlines" bug was caused by exactly that
+  kind of duplicated-but-not-shared sizing logic going out of sync.
+- **`detectActiveBenchMove` still resolves duplicate-id ambiguity by picking the first matching bench
+  slot**, same limitation `diff.ts`'s original swap detection already had (see its Round 1/2
+  "Deviations" note) — with two identical copies of a card, the pairing is plausible, not guaranteed.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.
 3. `--players r,x --bot-b "python3 examples/bots/random_bot.py"` plays games to completion and the
    bot's notes appear in the viewer.
-4. `cargo fmt`, `cargo clippy --features tui -- -D warnings`, `cargo test --features "tui test-utils"`
+4. `cargo run -- play <deck_a> <deck_b>` plays one game, writes its replay, and prints a viewer URL
+   that opens it while `npm run dev` is running.
+5. `cargo fmt`, `cargo clippy --features tui -- -D warnings`, `cargo test --features "tui test-utils"`
    pass; viewer build/typecheck/tests pass.

@@ -7,7 +7,7 @@ and steps through the game with animated transitions. See
 Stack: React 19 + TypeScript, the board is [PixiJS v8](https://pixijs.com/) hosted via
 [`@pixi/react` v8](https://react.pixijs.io/), transitions are [GSAP](https://gsap.com/) timelines
 (`PixiPlugin`, `MotionPathPlugin`, `CustomEase`), plus [`pixi-filters`](https://pixijs.io/filters/)
-for the shockwave/bloom effects. Vite for the build.
+for the glow/bloom effects. Vite for the build.
 
 ## Generating a replay
 
@@ -32,6 +32,27 @@ Then either:
 - pass `?url=/path/to/replay.json` in the URL to load one over HTTP, or
 - do nothing — the app falls back to the bundled `public/sample-replay.json` demo replay.
 
+### Playing one game and opening it straight from the terminal
+
+For the "play a game, look at it" loop, `cargo run -- play` (root README's "Replay viewer" section)
+plays exactly one game and prints a link on its last line:
+
+```bash
+cd viewer && npm run dev        # leave this running
+```
+```bash
+# in another terminal, from the repo root
+cargo run -- play example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players e2,r
+```
+
+Ctrl+Click (or Cmd+Click) the printed `http://localhost:5173/?url=/replays/<game_id>.json` link to
+open that exact game. This works because `vite.config.ts` has a small dev-only plugin that serves
+the repo-root `replays/` folder at `/replays/*` (JSON only, no path traversal) — it runs under
+`npm run dev` and `npm run preview` both, but not the static `dist/` build `npm run build` produces
+(there's no server there to serve `replays/` from). If `--viewer-url`/`DECKGYM_VIEWER_URL` points
+somewhere other than the default `http://localhost:5173`, or `--replay-dir` isn't the default
+`replays/`, see that flag's `--help` text for what has to line up for the printed link to resolve.
+
 ## Controls
 
 - `←` / `→`: step one action backward/forward (animated)
@@ -48,8 +69,11 @@ The repo ships **no card images** — cards render procedurally by default (a na
 `ex` badges, a type-colored art band, its attacks with their energy cost, its ability, a weakness/
 retreat-cost footer — see `board/cardArt.ts` and the plan doc's "Round 3" notes). If you have
 somewhere to fetch real card images by id, you can point the viewer at it and it'll use them
-instead, sized with `object-fit: contain` semantics (scaled uniformly, centered, never distorted),
-falling back to the procedural card for any id that 404s or errors.
+instead, sized with `object-fit: contain` semantics (scaled uniformly, centered, never distorted,
+clipped to the card's rounded corners), falling back to the procedural card for any id that 404s or
+errors. A real image draws with no frame/border of its own (just the image, rounded corners, and the
+live HP/energy/status/tool overlays every card gets) — the frame/holo-shimmer treatment is only for
+procedural cards, which need *something* to read as a card edge around a flat color fill.
 
 Images must be the same aspect ratio as deckgym's own (367x512, `board/layout.ts`'s `CARD_ASPECT`)
 to fill the card without letterboxing; a different ratio still renders correctly, just letterboxed.
@@ -79,7 +103,7 @@ built-in default; the pattern field starts empty and images stay off until you s
 ```bash
 npm run build       # tsc -b && vite build
 npx tsc -b           # typecheck only
-npx vitest run       # unit tests (anim/diff.ts)
+npx vitest run       # unit tests (anim/diff.ts, board/layout.ts, board/imageFit.ts, anim/formatAction.ts)
 ```
 
 ## Regenerating the sample replay
@@ -119,6 +143,29 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   CSS size as an inline style, which otherwise silently defeats a plain responsive stylesheet rule
   and can stretch everything on the canvas non-uniformly. See the plan doc's "Round 3" notes if
   this needs touching again.
+- Every in-play slot (active or bench) reserves a small "HP strip" (a bar + number, side by side)
+  directly *above* its card, not floating over the card's own corner or drawn inside/below its
+  face — `board/layout.ts`'s `hpStripHeight`/`HP_STRIP_GAP`/`slotRects` reserve exactly that much
+  row space so it can never land on a neighboring row, the divider or the turn banner (checked by
+  `board/layout.test.ts`, which asserts no two slots' card/strip rects — nor the divider band —
+  ever intersect), and `board/cardArt.ts` draws it at the matching offset. See the plan doc's
+  "Round 4" notes.
+- The board is a flat, near-black fill (`scene.ts`'s `background`), not a gradient/vignette — a
+  `PIXI.Graphics` rect can't band the way even a subtle canvas gradient can once the board is big.
+- An attack's board-wide effects (screen shake, a full-stage `ShockwaveFilter`) were removed in
+  Round 4: only the two cards involved animate (the attacker's lunge; the defender's small recoil, a
+  brief white flash via `scene.spawnFlash`, the damage number, and the ghost HP bar drain) — see
+  `anim/buildTimeline.ts`'s attack-sequence comment. The win-screen bloom/confetti are unaffected
+  (still whole-board, deliberately — see the plan's "Round 4 deviations").
+- An active↔bench swap (retreat, a switch effect, a post-KO promotion) is detected *before* the
+  generic per-slot diff (`anim/diff.ts`'s `detectActiveBenchMove`) and excluded from it entirely, so
+  it produces exactly one `activeSwitch` change instead of the per-slot loop misreading "which
+  Pokemon is in this slot changed" as an evolution plus bogus HP/energy/tools/status deltas (the
+  root cause of HP bars animating on a swap where neither Pokemon's HP changed — see the plan's
+  "Round 4" notes and `anim/diff.test.ts`'s retreat/promotion cases). `buildTimeline.ts`'s handler
+  cross-fades each slot's *content* (not position — slots are fixed per index, see "Known
+  simplifications" below) from the correct snapshot either direction, so stepping backward reverses
+  it cleanly too.
 
 ## Known simplifications (see the plan doc's "Deviations" section for the full list)
 
@@ -128,7 +175,11 @@ cp /tmp/sample/<game_id>.json viewer/public/sample-replay.json
   individually animated because the action that caused them names the exact card, while other
   hand/deck count changes (a draw, a search effect) just update the count. The discard pile is the
   one exception: since it's a stack, its actual top card (`discard.at(-1)`) is shown small.
-- Decorative one-shot flourishes (particle bursts, screen shake, the shockwave filter, confetti)
-  animate independently of the reversible per-step timeline, so they don't un-play when you step
-  backward through them — only the state-bearing tweens (position, alpha, scale, HP bar, card
-  content) do.
+- Decorative one-shot flourishes (particle bursts, the defender's hit-flash, confetti) animate
+  independently of the reversible per-step timeline, so they don't un-play when you step backward
+  through them — only the state-bearing tweens (position, alpha, scale, HP bar, card content) do.
+- An active↔bench swap cross-fades each slot's *content* in place rather than flying the two cards
+  to each other's positions — slots are persistent objects keyed by index (0 = active, 1-3 = bench),
+  not by which Pokemon currently occupies them (see `board/scene.ts`'s header comment), so "moving"
+  a Pokemon to a new slot means swapping what that fixed-position slot displays, the same way every
+  other slot update already works.

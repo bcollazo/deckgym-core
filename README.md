@@ -118,6 +118,24 @@ cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-ar
   -n 1000 --players r,r --replay-dir replays/ --replay-sample 10
 ```
 
+### Play one game and open it in the viewer
+
+`play` is a shortcut for the "run one game, then go look at it" loop: it plays exactly one game,
+writes its replay, prints a winner/points summary, and prints a `viewer` URL as its last line.
+
+```bash
+cd viewer && npm run dev        # leave this running in one terminal
+```
+```bash
+# in another terminal, from the repo root
+cargo run -- play example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players e2,r
+```
+
+Ctrl+Click (or Cmd+Click, depending on your terminal) the printed link to open that game in the
+viewer — see [`viewer/README.md`](./viewer/README.md#playing-one-game-and-opening-it-straight-from-the-terminal)
+for how that link resolves and its other flags (`--seed`, `--bot-a`/`--bot-b`, `--replay-dir`,
+`--viewer-url`).
+
 ## External Bots
 
 A bot written in any language can play as either seat, talking to the engine over stdin/stdout in
