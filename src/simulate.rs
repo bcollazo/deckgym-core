@@ -11,12 +11,14 @@ use crate::{
     data_exporter::DataExporter,
     optimize::{ParallelConfig, SimulationConfig},
     players::{create_players, fill_code_array, PlayerCode},
+    replay::ReplayRecorder,
     simulation_event_handler::{
-        CompositeSimulationEventHandler, SimulationEventHandler, StatsCollector,
+        CompositeSimulationEventHandler, GameStartMetadata, SimulationEventHandler, StatsCollector,
     },
     state::GameOutcome,
     Deck, Game,
 };
+use std::sync::{atomic::AtomicUsize, Arc};
 
 /// Type alias for player factory function
 pub type PlayerFactory =
@@ -209,7 +211,14 @@ impl Simulation {
             };
             let seed = self.seed.unwrap_or(rand::random::<u64>());
             let game_id = Uuid::new_v4();
-            event_handler.on_game_start(game_id);
+            let player_names = [format!("{:?}", players[0]), format!("{:?}", players[1])];
+            let decks = [players[0].get_deck(), players[1].get_deck()];
+            let metadata = GameStartMetadata {
+                seed,
+                player_names,
+                decks: [&decks[0], &decks[1]],
+            };
+            event_handler.on_game_start_with_metadata(game_id, &metadata);
 
             // Give the event_handler a mutable reference to the Game
             let mut game =
@@ -278,6 +287,39 @@ fn register_data_exporter(simulation: Simulation, output_folder: String) -> Simu
     simulation.register_with_closure(move || Box::new(DataExporter::new(output_path.clone())))
 }
 
+/// Registers a `ReplayRecorder` writing one JSON replay file per game into `replay_dir`.
+/// `replay_sample` (if set) caps how many of the games in this run get a replay written; the
+/// counter is shared (via `Arc`) across every per-game `ReplayRecorder` instance so the cap holds
+/// across parallel simulations too.
+fn register_replay_recorder(
+    simulation: Simulation,
+    replay_dir: String,
+    replay_sample: Option<usize>,
+) -> Simulation {
+    let output_path = PathBuf::from(replay_dir);
+
+    if let Err(e) = std::fs::create_dir_all(&output_path) {
+        panic!(
+            "Failed to create replay output folder {:?}: {}",
+            output_path, e
+        );
+    }
+
+    warn!("Recording replays to: {:?}", output_path);
+    if let Some(n) = replay_sample {
+        warn!("\tReplay sample: first {} game(s) of this run", n);
+    }
+
+    let recorded_so_far = Arc::new(AtomicUsize::new(0));
+    simulation.register_with_closure(move || {
+        Box::new(ReplayRecorder::new(
+            output_path.clone(),
+            recorded_so_far.clone(),
+            replay_sample,
+        ))
+    })
+}
+
 /// Functional API for running simulations
 pub fn simulate(
     deck_a_path: &str,
@@ -320,6 +362,9 @@ pub fn simulate(
     simulation = simulation.register::<StatsCollector>();
     if let Some(output_folder) = sim_config.data_output {
         simulation = register_data_exporter(simulation, output_folder);
+    }
+    if let Some(replay_dir) = sim_config.replay_dir {
+        simulation = register_replay_recorder(simulation, replay_dir, sim_config.replay_sample);
     }
 
     let pb_clone = pb.clone();

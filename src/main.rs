@@ -54,6 +54,16 @@ enum Commands {
         /// Output folder for exporting (state, action) pairs in JSON format
         #[arg(long)]
         data_output: Option<String>,
+
+        /// Folder to write one JSON replay file per game to, for the web viewer (see viewer/)
+        #[arg(long)]
+        replay_dir: Option<String>,
+
+        /// Cap how many games get a replay written (requires --replay-dir). When simulating
+        /// against a folder of decks, this cap applies per opponent deck rather than to the
+        /// whole run.
+        #[arg(long)]
+        replay_sample: Option<usize>,
     },
     /// Optimize an incomplete deck against enemy decks
     Optimize {
@@ -105,6 +115,8 @@ fn simulate_against_folder(
     let players = sim_config.players;
     let seed = sim_config.seed;
     let data_output = sim_config.data_output;
+    let replay_dir = sim_config.replay_dir;
+    let replay_sample = sim_config.replay_sample;
     let parallel = parallel_config.enabled;
     let num_threads = parallel_config.num_threads;
 
@@ -186,6 +198,8 @@ fn simulate_against_folder(
                 players: players.clone(),
                 seed,
                 data_output: data_output.clone(),
+                replay_dir: replay_dir.clone(),
+                replay_sample,
             },
             ParallelConfig {
                 enabled: parallel,
@@ -214,6 +228,8 @@ fn main() {
             threads,
             verbose,
             data_output,
+            replay_dir,
+            replay_sample,
         } => {
             initialize_logger(verbose);
 
@@ -230,6 +246,8 @@ fn main() {
                         players,
                         seed,
                         data_output,
+                        replay_dir,
+                        replay_sample,
                     },
                     ParallelConfig {
                         enabled: parallel,
@@ -245,6 +263,8 @@ fn main() {
                         players,
                         seed,
                         data_output,
+                        replay_dir,
+                        replay_sample,
                     },
                     ParallelConfig {
                         enabled: parallel,
@@ -273,6 +293,8 @@ fn main() {
                 players,
                 seed,
                 data_output: None,
+                replay_dir: None,
+                replay_sample: None,
             };
             let parallel_config = ParallelConfig {
                 enabled: parallel,

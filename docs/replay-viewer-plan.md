@@ -224,6 +224,20 @@ CustomEase registered once), `pixi-filters`. No other UI framework needed.
 4. Part 2 external bots + docs + example + test. Commit.
 5. Part 4 if time allows.
 
+## Deviations
+
+- **TS types are hand-written, not `ts-rs`-generated.** The plan allowed either. `viewer/src/types/replay.ts`
+  hand-mirrors `ViewState`/`Replay`/etc., and `src/replay/recorder.rs`'s integration test
+  (`tests/replay_test.rs`) round-trips a real replay through `serde_json`, so a shape drift in the
+  Rust side is still caught by CI even though the TS side isn't generated. Revisit if the schema
+  grows enough that this becomes error-prone.
+- **`--replay-sample N` caps per call to `simulate()`, not per whole folder run.** When
+  `deck_b_or_folder` is a folder, `simulate_against_folder` calls `simulate()` once per opponent
+  deck; each call gets its own sample counter, so with `-n 1000 --replay-sample 10` against a
+  10-deck folder you get up to 10 replays *per opponent deck* (100 total), not 10 total. Documented
+  here rather than threading a shared counter through the folder sweep, which would have meant
+  passing an `Arc` through a CLI-level function that otherwise only takes plain config structs.
+
 ## Acceptance criteria
 1. `cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt -n 3 --players r,r --replay-dir replays/` writes 3 replay files.
 2. Opening one in the viewer shows the board; ←/→ step with animated transitions both directions.

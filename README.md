@@ -98,6 +98,26 @@ The JSON format makes it easy to:
 - Build custom machine learning models
 - Analyze gameplay patterns and statistics
 
+## Replay Recording (Web Viewer)
+
+The simulator can record one JSON replay file per game: a full board snapshot at every decision
+point plus the legal options and the action that was chosen. These replays are meant to be opened
+in the web viewer under `viewer/` (see `viewer/README.md`), which steps through the game with
+animated transitions.
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 3 --players r,r --replay-dir replays/
+```
+
+Use `--replay-sample N` to only write replays for the first N games of a run (useful when running
+many simulations but only wanting a few to inspect):
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 1000 --players r,r --replay-dir replays/ --replay-sample 10
+```
+
 ## Contributing
 
 New to Open Source? See [CONTRIBUTING.md](./CONTRIBUTING.md).

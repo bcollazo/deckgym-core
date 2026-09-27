@@ -192,6 +192,8 @@ fn simulate_against_folder(
                 players: None,
                 seed: None,
                 data_output: None,
+                replay_dir: None,
+                replay_sample: None,
             },
             ParallelConfig {
                 enabled: false,

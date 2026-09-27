@@ -35,6 +35,11 @@ pub struct SimulationConfig {
     pub players: Option<Vec<PlayerCode>>,
     pub seed: Option<u64>,
     pub data_output: Option<String>,
+    /// Folder to write one JSON replay file per game to. See `crate::replay`.
+    pub replay_dir: Option<String>,
+    /// Cap how many of the games in this run get a replay written (only meaningful with
+    /// `replay_dir` set).
+    pub replay_sample: Option<usize>,
 }
 
 /// Configuration for parallelism
@@ -529,6 +534,8 @@ mod tests {
             players: Some(vec![PlayerCode::R, PlayerCode::R]),
             seed: None,
             data_output: None,
+            replay_dir: None,
+            replay_sample: None,
         };
         let parallel_config = ParallelConfig {
             enabled: false,
