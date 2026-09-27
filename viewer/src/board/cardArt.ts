@@ -14,6 +14,7 @@ import type { Attack, Card, EnergyType, SlotView, StatusCondition } from "../typ
 import { cardEnergyType, cardId, isExCard, isPokemonCard, stageLabel } from "../types/replay";
 import type { CardImageStore } from "./cardImages";
 import { fitContain } from "./imageFit";
+import { HP_STRIP_GAP, hpStripHeight } from "./layout";
 
 const STATUS_GLYPH: Record<StatusCondition, { glyph: string; color: number }> = {
   Poisoned: { glyph: "PSN", color: 0xab47bc },
@@ -99,21 +100,49 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
   const shimmer = new PIXI.Graphics();
   shimmer.visible = false;
 
+  // Proportional margins (fractions of the card's own size) rather than fixed pixel offsets, so
+  // this scales cleanly from a small opponent-hand card up to a large active card — a fixed-pixel
+  // "reserved band" was the Round 2 bug that made small hand cards render as empty outlines (the
+  // art rect's height went negative once the card was smaller than the reserved bands).
+  const marginX = width * 0.06;
+  const cornerRadius = width * 0.09;
+
+  // Rounded-corner clip for the real-image face (Round 4: an image card draws with no frame/border
+  // stroke at all — see `redrawStatic` — so this mask is what keeps its corners matching every
+  // other card's rounded shape instead of a hard rectangle; it also clips a "contain"-fit BYO image
+  // whose aspect ratio doesn't match the card's own, so a letterboxed edge never pokes past the
+  // rounding). `includeInBuild`/`measurable` get set false on it by Pixi itself once it's used as a
+  // mask, so adding it as a plain child (needed for it to pick up the container's transform) doesn't
+  // also render it as a visible white rectangle.
+  const imageMask = new PIXI.Graphics().roundRect(0, 0, width, height, cornerRadius).fill(0xffffff);
+  imageSprite.mask = imageMask;
+
   // Rich procedural content (name/HP header, stage/ex badges, ability, attacks, weakness/retreat)
   // — hidden when showing a real image, and rebuilt each `update()` since its content and the
-  // detail tier both vary per card. Confined to the top ~80% of the card; the bottom strip is
-  // reserved for the live overlays below (HP bar, attached energy, status), so the two never fight
-  // for space.
+  // detail tier both vary per card. Confined above `overlayTop`; the live overlays below that
+  // (attached energy, status) never fight it for space.
   const procInfo = new PIXI.Container();
 
-  // Overlays shown in both image and procedural modes, reflecting *live* in-play state.
+  // ---- HP strip: a compact bar (left) + number (right) drawn *above* the card, not inside/below
+  // its face (Round 4 fix — the HP number/bar used to float over the card's own top-right corner
+  // with no reserved space, landing on whichever row/divider/turn-banner happened to be above it;
+  // see the plan doc's "Round 4" notes and `layout.ts`'s `slotRects`). `layout.ts` reserves exactly
+  // `hpStripHeight(height)` of space above every in-play slot for this — same formula, so the two
+  // can never drift out of sync. Only in-play slots (a `slot` passed to `update()`) show it; hand/
+  // discard/stadium cards leave it invisible (and layout.ts reserves no strip space for those). ----
+  const stripH = hpStripHeight(height);
+  const stripBarH = Math.max(4, stripH * 0.4);
+  const stripMidY = -HP_STRIP_GAP - stripH / 2;
+  const stripBarW = width * 0.64;
   const hpNumber = text("", {
-    fontSize: Math.max(11, width * 0.16),
+    fontSize: Math.max(10, stripH * 0.78),
     fill: 0x66d97a,
     fontWeight: "800",
     stroke: { color: 0x0b0d14, width: 3 },
   });
-  hpNumber.anchor.set(1, 1);
+  hpNumber.anchor.set(1, 0.5);
+  hpNumber.x = width;
+  hpNumber.y = stripMidY;
   const hpBarBg = new PIXI.Graphics();
   const hpBarGhost = new PIXI.Graphics();
   const hpBarFg = new PIXI.Graphics();
@@ -121,7 +150,7 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
   const statusRow = new PIXI.Container();
   const toolBadge = text("", { fontSize: 9, fill: 0xffe08a, fontWeight: "700" });
 
-  container.addChild(bg, art, imageSprite, frame, shimmer, procInfo, energyRow, statusRow, toolBadge, hpBarBg, hpBarGhost, hpBarFg, hpNumber);
+  container.addChild(bg, art, imageSprite, imageMask, frame, shimmer, procInfo, energyRow, statusRow, toolBadge, hpBarBg, hpBarGhost, hpBarFg, hpNumber);
 
   let baseRotation = 0;
   if (interactive) {
@@ -139,20 +168,12 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
     });
   }
 
-  // Proportional margins (fractions of the card's own size) rather than fixed pixel offsets, so
-  // this scales cleanly from a small opponent-hand card up to a large active card — a fixed-pixel
-  // "reserved band" was the Round 2 bug that made small hand cards render as empty outlines (the
-  // art rect's height went negative once the card was smaller than the reserved bands).
-  const marginX = width * 0.06;
-  const cornerRadius = width * 0.09;
-  const hpBarH = Math.max(3, height * 0.032);
-  const hpBarY = height - height * 0.055;
-  const hpBarWidth = width - marginX * 2;
-  const energyY = hpBarY - height * 0.085;
-  const statusY = energyY - height * 0.1;
-  // Live overlays (HP bar, attached energy, status) live in this bottom strip; procedural content
-  // never draws below this line.
-  const overlayTop = statusY - height * 0.06;
+  // Attached-energy and status overlays now sit at the very bottom of the card face (the HP bar
+  // that used to anchor this stack lives in the strip above the card now — see above), with room
+  // above them (`overlayTop`) for procedural attack lines/footer/effect text.
+  const energyY = height - height * 0.09;
+  const statusY = energyY - height * 0.13;
+  const overlayTop = statusY - height * 0.07;
 
   function redrawStatic(type: EnergyType | null, ex: boolean, useImage: boolean, tier: DetailTier) {
     const color = energyColor(type);
@@ -176,14 +197,20 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
       art.roundRect(artMargin, artY + artH * 0.6, artW, artH * 0.4, cornerRadius * 0.5).fill({ color: 0x000000, alpha: 0.2 });
     }
 
-    frame
-      .clear()
-      .roundRect(0, 0, width, height, cornerRadius)
-      .stroke({ width: ex ? 2.5 : 1.5, color: ex ? 0xffd54f : useImage ? 0x30354a : color, alpha: 0.9 });
+    // Round 4: a real image draws with no frame/border at all — "the image only" (plus the rounded-
+    // corner mask above, and the live status/energy/tool overlays, which stay either way). Only
+    // procedural cards (which need *something* to read as a card edge around a flat color fill)
+    // keep the stroke.
+    frame.clear();
+    if (!useImage) {
+      frame.roundRect(0, 0, width, height, cornerRadius).stroke({ width: ex ? 2.5 : 1.5, color: ex ? 0xffd54f : color, alpha: 0.9 });
+    }
 
-    if (ex) {
-      const bandY = useImage ? height * 0.08 : tier === "minimal" ? height * 0.1 : height * 0.11;
-      const bandH = useImage ? height * 0.7 : tier === "minimal" ? height * 0.75 : height * 0.32;
+    // Round 4: an image card draws "the image only" (plus the required overlays) — no holo shimmer
+    // either, since it reads as another border/outline treatment. Procedural ex cards keep it.
+    if (ex && !useImage) {
+      const bandY = tier === "minimal" ? height * 0.1 : height * 0.11;
+      const bandH = tier === "minimal" ? height * 0.75 : height * 0.32;
       shimmer.clear().roundRect(marginX, bandY, width - marginX * 2, bandH, cornerRadius * 0.5).fill({ color: 0xffffff, alpha: 0.2 });
       shimmer.visible = true;
       shimmer.filters ??= [new GlowFilter({ color: 0xffe08a, distance: 6, outerStrength: 0.6, innerStrength: 0 })];
@@ -393,7 +420,7 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
     height,
     hpBarGhost,
     hpBarFg,
-    hpBarInnerWidth: hpBarWidth,
+    hpBarInnerWidth: stripBarW,
     update(card, slot, faceDown = false) {
       lastCard = card;
       if (!card) {
@@ -454,18 +481,17 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
       }
 
       hpBarBg.visible = hpBarFg.visible = hpBarGhost.visible = true;
-      hpBarBg.clear().roundRect(marginX, hpBarY, hpBarWidth, hpBarH, hpBarH / 2).fill({ color: 0x2a2e3f });
+      hpBarBg.clear().roundRect(0, stripMidY - stripBarH / 2, stripBarW, stripBarH, stripBarH / 2).fill({ color: 0x2a2e3f });
       const fraction = slot.max_hp > 0 ? Math.max(0, Math.min(1, slot.hp / slot.max_hp)) : 0;
       visual.setHpBar(fraction, "ghost");
       visual.setHpBar(fraction, "fg");
 
-      // The HP number sits just above the card's own top-right corner, not on the face — this way
-      // it reads the same whether the face below it is a procedural card or a real image, and
-      // never fights the procedural header's printed HP for space.
+      // The HP number sits in the strip above the card, to the right of the bar — this way it
+      // reads the same whether the face below it is a procedural card or a real image, and never
+      // fights the procedural header's printed HP for space (see the strip's own header comment for
+      // why it's reserved space in `layout.ts` rather than floating over the card).
       hpNumber.text = `${slot.hp}`;
       hpNumber.style.fill = fraction > 0.5 ? 0x66d97a : fraction > 0.2 ? 0xffc94d : 0xff5c5c;
-      hpNumber.x = width;
-      hpNumber.y = -3;
 
       const energyCount = slot.energy.length;
       layoutOverlayRow(energyRow, Math.max(energyCount, 1), energyY, Math.max(9, width * 0.13));
@@ -500,7 +526,7 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
       const color = which === "fg" ? (fraction > 0.5 ? 0x66d97a : fraction > 0.2 ? 0xffc94d : 0xff5c5c) : 0xff5c5c;
       bar.clear();
       if (fraction > 0) {
-        bar.roundRect(marginX, hpBarY, Math.max(2, hpBarWidth * fraction), hpBarH, hpBarH / 2).fill({ color, alpha: which === "ghost" ? 0.55 : 1 });
+        bar.roundRect(0, stripMidY - stripBarH / 2, Math.max(2, stripBarW * fraction), stripBarH, stripBarH / 2).fill({ color, alpha: which === "ghost" ? 0.55 : 1 });
       }
     },
     setBaseRotation(rotation) {
