@@ -1,0 +1,145 @@
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Board } from "./board/Board";
+import type { BoardScene } from "./board/scene";
+import { PlaybackController } from "./store/playbackController";
+import { loadReplayFromUrl } from "./store/loadReplay";
+import { outcomeLabel, type Replay } from "./types/replay";
+import { Loader } from "./ui/Loader";
+import { LogPanel } from "./ui/LogPanel";
+import { OptionsPanel } from "./ui/OptionsPanel";
+import { Controls } from "./ui/Controls";
+
+const NO_CONTROLLER_SUBSCRIBE = () => () => {};
+
+function useControllerState(controller: PlaybackController | null) {
+  return useSyncExternalStore(
+    useCallback((onChange) => (controller ? controller.subscribe(onChange) : NO_CONTROLLER_SUBSCRIBE()), [controller]),
+    () => (controller ? controller.getSnapshot() : null),
+  );
+}
+
+export default function App() {
+  const [replay, setReplay] = useState<Replay | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [controller, setController] = useState<PlaybackController | null>(null);
+  const sceneRef = useRef<BoardScene | null>(null);
+  const triedUrlParam = useRef(false);
+
+  const state = useControllerState(controller);
+
+  const handleReady = useCallback((scene: BoardScene) => {
+    sceneRef.current = scene;
+  }, []);
+
+  // Build (or rebuild) the PlaybackController whenever a new replay is loaded and the scene exists.
+  useEffect(() => {
+    if (!replay || !sceneRef.current) return;
+    const c = new PlaybackController(sceneRef.current, replay);
+    setController(c);
+    return () => c.destroy();
+  }, [replay]);
+
+  // `?url=<replay.json>` support, falling back to the bundled sample replay so the app demos out
+  // of the box. Runs once; a file dropped/picked before either resolves just wins the race.
+  useEffect(() => {
+    if (triedUrlParam.current) return;
+    triedUrlParam.current = true;
+    const explicitUrl = new URLSearchParams(window.location.search).get("url");
+    loadReplayFromUrl(explicitUrl ?? "sample-replay.json")
+      .then((r) => setReplay((current) => current ?? r))
+      .catch((e: unknown) => {
+        // A missing bundled sample fails silently (the loader overlay just stays up); a
+        // user-provided `?url=` that fails is worth surfacing.
+        if (explicitUrl) setLoadError((current) => current ?? (e instanceof Error ? e.message : String(e)));
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!controller) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (!controller) return;
+      switch (e.key) {
+        case "ArrowLeft":
+          e.preventDefault();
+          if (e.shiftKey) controller.jumpTo(controller.turnBoundaryIndex(-1));
+          else controller.stepBackward();
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          if (e.shiftKey) controller.jumpTo(controller.turnBoundaryIndex(1));
+          else controller.stepForward();
+          break;
+        case "Home":
+          e.preventDefault();
+          controller.jumpTo(0);
+          break;
+        case "End":
+          e.preventDefault();
+          controller.jumpTo(controller.maxIndex);
+          break;
+        case " ":
+          e.preventDefault();
+          controller.togglePlay();
+          break;
+        default:
+          break;
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [controller]);
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div>
+          <h1>deckgym replay viewer</h1>
+          {replay && (
+            <span className="subtitle">
+              {replay.players[0].name} vs {replay.players[1].name} &middot; {outcomeLabel(replay.outcome, replay.players)}
+            </span>
+          )}
+        </div>
+        {replay && (
+          <button type="button" onClick={() => setReplay(null)}>
+            Load another replay
+          </button>
+        )}
+      </header>
+
+      <div className="app-body">
+        <div className="main-column">
+          <div className="app-shell">
+            <Board onReady={handleReady} />
+            {!replay && (
+              <Loader
+                error={loadError}
+                onError={setLoadError}
+                onLoaded={(r) => {
+                  setLoadError(null);
+                  setReplay(r);
+                }}
+              />
+            )}
+          </div>
+          {replay && controller && state && (
+            <Controls
+              replay={replay}
+              controller={controller}
+              index={state.index}
+              playing={state.playing}
+              animating={state.animating}
+              speed={state.speed}
+            />
+          )}
+        </div>
+        {replay && state && (
+          <aside className="sidebar">
+            <LogPanel replay={replay} currentIndex={state.index} onSeek={(i) => controller?.jumpTo(i)} />
+            <OptionsPanel replay={replay} currentIndex={state.index} />
+          </aside>
+        )}
+      </div>
+    </div>
+  );
+}
