@@ -18,6 +18,8 @@ mod lucky_ice_pop_test;
 mod protective_poncho_test;
 #[path = "tools/raikou_rocky_helmet_order_test.rs"]
 mod raikou_rocky_helmet_order_test;
+#[path = "tools/rocky_helmet_delayed_counterattack_test.rs"]
+mod rocky_helmet_delayed_counterattack_test;
 #[path = "tools/small_balloon_test.rs"]
 mod small_balloon_test;
 #[path = "tools/tool_effect_gating_test.rs"]

@@ -658,6 +658,23 @@ pub(crate) fn handle_damage_only(
                 counter_damage,
                 attacking_pokemon.get_remaining_hp()
             );
+
+            // The attacking Pokemon was itself just damaged by the defender's counterattack
+            // (e.g. Mega Sableye ex's Cursed Jewel). If it's holding its own Rocky Helmet, that
+            // hit reflects 20 damage back onto the original defender too.
+            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                .as_ref()
+                .expect("Active Pokemon should be there");
+            if has_tool(attacking_pokemon, CardId::A2148RockyHelmet) {
+                let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
+                    .as_mut()
+                    .expect("Pokemon should be there if taking damage");
+                target_pokemon.apply_damage(20);
+                debug!(
+                    "Rocky Helmet reflects 20 damage back to the original defender. Remaining HP: {}",
+                    target_pokemon.get_remaining_hp()
+                );
+            }
         }
 
         match knockout_retaliation {
