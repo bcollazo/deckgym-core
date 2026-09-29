@@ -5,7 +5,7 @@ use crate::{
 
 use crate::card_ids::CardId;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum BenchSide {
     YourBench,
     OpponentBench,
@@ -14,7 +14,7 @@ pub enum BenchSide {
 
 /// Condition under which an attack may be used for a cheaper Energy cost
 /// (see `Mechanic::AlternateAttackCost`).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize)]
 pub enum AttackCostCondition {
     /// Boltund - Defiant Spark: the attacking Pokémon has damage on it.
     SelfHasDamage,
@@ -22,7 +22,7 @@ pub enum AttackCostCondition {
     EmptyDeck,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum CopyAttackSource {
     OpponentActive,
     OpponentInPlay,
@@ -41,7 +41,7 @@ impl CopyAttackSource {
 
 /// What counts as a "match" when an attack reveals the top cards of a deck and deals damage per
 /// matching card (e.g. Golurk's Heavy Rocket, Team Rocket's Wobbuffet's Rocket Frenzy).
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum RevealCriterion {
     /// A Pokémon whose printed Retreat Cost is at least this many Energy.
     PokemonWithRetreatCostAtLeast(usize),
@@ -49,7 +49,7 @@ pub enum RevealCriterion {
     PokemonWithNameContaining(String),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum Mechanic {
     SelfHeal {
         amount: u32,

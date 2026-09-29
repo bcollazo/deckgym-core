@@ -864,6 +864,22 @@ pub(crate) fn handle_knockouts(
         }
     }
 
+    // Losing an HP aura can knock out a Benched Pokemon after an earlier
+    // knockout already queued promotion choices. Never offer a now-empty slot:
+    // activating it would leave the Active Spot empty after the stack resolves.
+    let occupied = state
+        .in_play_pokemon
+        .each_ref()
+        .map(|board| board.each_ref().map(Option::is_some));
+    for (_, choices) in &mut state.move_generation_stack {
+        choices.retain(|choice| match choice {
+            SimpleAction::Activate {
+                player,
+                in_play_idx,
+            } => occupied[*player][*in_play_idx],
+            _ => true,
+        });
+    }
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
     // Note even attacking player can lose by counterattack K.O.
     if state.points[0] >= 3 && state.points[1] >= 3 {

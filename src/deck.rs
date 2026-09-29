@@ -27,6 +27,11 @@ impl Hash for Deck {
 }
 
 impl Deck {
+    /// Configured Energy Zone types, known to the deck's owner.
+    pub fn energy_types(&self) -> &[EnergyType] {
+        &self.energy_types
+    }
+
     /// Parses a deck file and returns a `Deck` struct with cards flattened based on their counts.
     pub fn from_file(file_path: &str) -> Result<Self, String> {
         let contents = fs::read_to_string(file_path)

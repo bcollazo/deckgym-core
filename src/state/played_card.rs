@@ -95,6 +95,26 @@ pub struct PlayedCard {
     effects: Vec<(CardEffect, u8)>,
 }
 impl PlayedCard {
+    /// Public, read-only information for agents. No hidden zones or RNG state.
+    pub fn public_details(&self) -> super::observation::SlotDetails {
+        super::observation::SlotDetails {
+            max_hp: self.get_effective_total_hp(),
+            damage: self.damage_counters,
+            effects: self.effects.clone(),
+            effective_effects: self.get_effective_card_effects(),
+            poison_damage: if self.poisoned {
+                self.poison_base_damage()
+            } else {
+                0
+            },
+            paralyzed_on_turn: self.paralyzed_on_turn,
+            heal_blocked: self.heal_blocked,
+            abilities_disabled: self.abilities_disabled(),
+            damaged_this_turn: self.damaged_by_attack_while_active_this_turn,
+            damaged_last_turn: self.damaged_by_attack_while_active_last_turn,
+        }
+    }
+
     pub fn new(
         card: Card,
         damage_counters: u32,

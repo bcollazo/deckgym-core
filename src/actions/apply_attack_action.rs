@@ -2154,6 +2154,13 @@ fn coin_flip_knock_back_opponent_active(damage: u32) -> AttackOutcomes {
     AttackOutcomes::binary_coin(
         active_damage_effect_outcome(damage, move |_, state, action| {
             let opponent = (action.actor + 1) % 2;
+            // A lethal hit queues promotion; do not also queue a stale switch choice.
+            if state
+                .maybe_get_active(opponent)
+                .is_none_or(|p| p.is_knocked_out())
+            {
+                return;
+            }
             let choices: Vec<SimpleAction> = state
                 .enumerate_bench_pokemon(opponent)
                 .map(|(in_play_idx, _)| SimpleAction::Activate {
@@ -5112,6 +5119,13 @@ fn extra_damage_if_evolved_from_this_turn_attack(
 fn knock_back_attack(damage: u32) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
+        // A lethal hit queues promotion; do not also queue a stale switch choice.
+        if state
+            .maybe_get_active(opponent)
+            .is_none_or(|p| p.is_knocked_out())
+        {
+            return;
+        }
         let mut choices = Vec::new();
         for (in_play_idx, _) in state.enumerate_bench_pokemon(opponent) {
             choices.push(SimpleAction::Activate {

@@ -1,4 +1,5 @@
 mod energy;
+pub mod observation;
 mod played_card;
 
 use log::{debug, trace};

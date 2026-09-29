@@ -116,3 +116,18 @@ The bot's own stderr is passed straight through to the engine's stderr (not capt
   embedding `ExternalPlayer` directly and reusing one instance across games would work too — the
   plan's own fallback ("each game gets its own `ExternalPlayer` — acceptable for now") already
   anticipated this.
+
+## Optional rule-complete agent snapshots
+
+A bot can reply to `hello` with `"agent_snapshot": true`. It then receives its
+original `Deck` as `new_game.deck_definition` (including configured energy types),
+and `decide.agent_snapshot` plus `decide.legal_actions` (complete `Action` values).
+The snapshot preserves public rule effects/history and the bot's own hand. Both
+deck orders and the opponent's hand identities are replaced with `UNKNOWN`
+placeholder cards, preserving only zone lengths; future stacked choices are
+redacted. It is a feature/input snapshot, **not a state suitable for simulation**.
+Use the supplied legal actions rather than regenerating them from placeholders.
+Bots that do not opt in retain the original compact `ViewState` protocol.
+
+On Windows external commands run through `cmd /D /S /C` without a visible console;
+other platforms use `sh -c`.

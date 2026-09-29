@@ -26,6 +26,7 @@ struct SpawnedBot {
     stdout_lines: Receiver<String>,
     /// The name the bot reported in its `hello` reply, if any (used for `Debug`/replay display).
     name: Option<String>,
+    agent_snapshot: bool,
 }
 
 /// Runs a command once (lazily, on the first decision) and keeps talking to it for the lifetime of
@@ -60,8 +61,20 @@ impl ExternalPlayer {
             return Ok(());
         }
 
-        let mut child = Command::new("sh")
-            .arg("-c")
+        #[cfg(windows)]
+        let mut command = {
+            use std::os::windows::process::CommandExt;
+            let mut command = Command::new("cmd");
+            command.args(["/D", "/S", "/C"]).creation_flags(0x08000000);
+            command
+        };
+        #[cfg(not(windows))]
+        let mut command = {
+            let mut command = Command::new("sh");
+            command.arg("-c");
+            command
+        };
+        let mut child = command
             .arg(&self.command)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -101,6 +114,10 @@ impl ExternalPlayer {
             .ok()
             .and_then(|v| v.get("name").and_then(Value::as_str).map(str::to_string));
 
+        let agent_snapshot = serde_json::from_str::<Value>(&hello_reply)
+            .ok()
+            .and_then(|v| v.get("agent_snapshot").and_then(Value::as_bool))
+            .unwrap_or(false);
         let deck_ids: Vec<String> = self.deck.cards.iter().map(|c| c.get_id()).collect();
         write_line(
             &mut stdin,
@@ -109,6 +126,7 @@ impl ExternalPlayer {
                 "game_id": Uuid::new_v4().to_string(),
                 "you": you,
                 "deck": deck_ids,
+                "deck_definition": if agent_snapshot { Some(&self.deck) } else { None },
             }),
         )
         .map_err(|e| format!("failed writing new_game to bot stdin: {e}"))?;
@@ -117,6 +135,7 @@ impl ExternalPlayer {
             child,
             stdin,
             stdout_lines: rx,
+            agent_snapshot,
             name,
         });
         Ok(())
@@ -141,7 +160,11 @@ impl ExternalPlayer {
             .collect();
         write_line(
             &mut bot.stdin,
-            &json!({"type": "decide", "ply": self.ply, "state": view, "actions": actions}),
+            &json!({"type": "decide", "ply": self.ply, "state": view, "actions": actions,
+                "actor": actor,
+                "agent_snapshot": if bot.agent_snapshot { Some(state.agent_snapshot(actor, possible_actions)) } else { None },
+                "legal_actions": if bot.agent_snapshot { Some(possible_actions) } else { None },
+            }),
         )
         .map_err(|e| format!("failed writing decide to bot stdin: {e}"))?;
 
@@ -166,8 +189,12 @@ impl ExternalPlayer {
     }
 }
 
-fn write_line(stdin: &mut ChildStdin, value: &Value) -> std::io::Result<()> {
-    writeln!(stdin, "{value}")?;
+fn write_line(stdin: &mut impl Write, value: &Value) -> std::io::Result<()> {
+    // Serialize before writing: formatting a Value directly into an unbuffered
+    // pipe can issue a system call for every JSON token.
+    let mut line = serde_json::to_vec(value)?;
+    line.push(b'\n');
+    stdin.write_all(&line)?;
     stdin.flush()
 }
 
@@ -244,5 +271,40 @@ impl Drop for ExternalPlayer {
             let _ = bot.child.kill();
             let _ = bot.child.wait();
         }
+    }
+}
+
+#[cfg(test)]
+mod pipe_write_tests {
+    use super::*;
+    #[derive(Default)]
+    struct CountingWriter {
+        bytes: Vec<u8>,
+        writes: usize,
+        flushes: usize,
+    }
+    impl Write for CountingWriter {
+        fn write(&mut self, data: &[u8]) -> std::io::Result<usize> {
+            self.writes += 1;
+            self.bytes.extend_from_slice(data);
+            Ok(data.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            self.flushes += 1;
+            Ok(())
+        }
+    }
+    #[test]
+    fn protocol_message_is_one_buffered_json_line() {
+        let message = json!({"type":"decide", "text":"line one\nline two", "values":[1,2,3]});
+        let mut output = CountingWriter::default();
+        write_line(&mut output, &message).unwrap();
+        assert_eq!(output.writes, 1);
+        assert_eq!(output.flushes, 1);
+        assert_eq!(output.bytes.iter().filter(|&&b| b == b'\n').count(), 1);
+        assert_eq!(
+            serde_json::from_slice::<Value>(&output.bytes).unwrap(),
+            message
+        );
     }
 }

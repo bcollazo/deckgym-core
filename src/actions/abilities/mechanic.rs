@@ -1,6 +1,6 @@
 use crate::models::{EnergyType, StatusCondition};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum AbilityMechanic {
     VictreebelFragranceTrap,
     /// Heal `amount` damage from each of your Pokémon. `energy_type` restricts which Pokémon are
