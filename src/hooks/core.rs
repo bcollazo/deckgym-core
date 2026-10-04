@@ -263,6 +263,12 @@ fn offer_on_evolve_ability(actor: usize, state: &mut State, in_play_idx: usize) 
 /// already in play at `bench_idx`, so its Ability is read off the board: every Pokémon reaching
 /// this hook is a Basic, and Alolan Muk's Power of Alchemy can have removed its Ability.
 pub(crate) fn on_bench_from_hand(actor: usize, state: &mut State, bench_idx: usize) {
+    // These optional on-play abilities require the owner's turn. Setup is
+    // before any turn; queuing them there can leave stale slot references
+    // after another setup effect switches Pokemon.
+    if state.turn_count == 0 || actor != state.current_player {
+        return;
+    }
     let mechanic = state.in_play_pokemon[actor][bench_idx]
         .as_ref()
         .and_then(|pokemon| pokemon.ability_mechanic());
