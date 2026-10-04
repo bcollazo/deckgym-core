@@ -1408,9 +1408,7 @@ fn kiawe_effect(_: &mut StdRng, state: &mut State, action: &Action) {
         })
         .collect();
     if !possible_targets.is_empty() {
-        state
-            .move_generation_stack
-            .push((action.actor, vec![SimpleAction::EndTurn]));
+        state.end_turn_pending = true;
         state
             .move_generation_stack
             .push((action.actor, possible_targets));

@@ -563,9 +563,7 @@ fn attach_energy_from_zone_to_self_and_end_turn(
             state.attach_energy_from_zone(action.actor, in_play_idx, energy_type, 1, false);
         if let Some(pokemon) = &state.in_play_pokemon[action.actor][in_play_idx] {
             if attached && !pokemon.is_knocked_out() {
-                state
-                    .move_generation_stack
-                    .push((action.actor, vec![SimpleAction::EndTurn]));
+                state.end_turn_pending = true;
             }
         }
     })

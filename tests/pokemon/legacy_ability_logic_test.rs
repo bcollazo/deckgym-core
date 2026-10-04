@@ -204,9 +204,11 @@ fn test_giratina_ex_broken_space_bellow_attaches_energy_and_offers_end_turn() {
     );
 
     let (_actor, actions) = state.generate_possible_actions();
-    assert!(actions
-        .iter()
-        .any(|action| matches!(action.action, SimpleAction::EndTurn)));
+    assert_eq!(actions.len(), 1);
+    assert!(matches!(actions[0].action, SimpleAction::EndTurn));
+
+    game.apply_action(&actions[0]);
+    assert_eq!(game.get_state_clone().current_player, 1);
 }
 
 #[test]
