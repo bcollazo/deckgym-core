@@ -887,22 +887,15 @@ impl State {
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {player_with_empty_active}");
 
-            // Promotion must displace a queued EndTurn: processing that frame first
-            // can read an empty Active Spot. Other effect frames retain their
-            // established ordering so their follow-up choices are not skipped.
-            let queued_end_turn = self
-                .move_generation_stack
-                .last()
-                .is_some_and(|(_, choices)| {
-                    choices.len() == 1 && matches!(choices[0], SimpleAction::EndTurn)
-                });
-            if queued_end_turn {
-                self.move_generation_stack
-                    .push((player_with_empty_active, possible_moves));
-            } else {
-                self.move_generation_stack
-                    .insert(0, (player_with_empty_active, possible_moves));
-            }
+            // If we .push, we could make idxs in items of the stack stale. Consider Dialga's
+            // user choosing to attach to idx 1, but then Dialga is K.O. by Rocky Helmet.
+            // So we .insert(0, looking to have those settle before this one.
+
+            // Using .insert(0, should not have issues with EndTurn mechanics, since ending
+            // the turn is signaled via `end_turn_pending` and only happens once
+            // move_generation_stack is stable (empty).
+            self.move_generation_stack
+                .insert(0, (player_with_empty_active, possible_moves));
         }
     }
 
@@ -1086,13 +1079,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn promotion_is_prioritized_over_a_queued_end_turn() {
+    fn promotion_is_resolved_before_a_pending_end_turn() {
         let mut state = State::default();
         state.turn_count = 1;
         state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-        state
-            .move_generation_stack
-            .push((0, vec![SimpleAction::EndTurn]));
+        state.end_turn_pending = true;
 
         state.trigger_promotion_or_declare_winner(0);
 
