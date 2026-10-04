@@ -307,6 +307,7 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
           const slotView = pv.in_play[idx];
           const visual = slots[player][idx];
           visual.update(slotView ? cards[slotView.card] : undefined, slotView ?? undefined);
+          visual.setTools((slotView?.tools ?? []).map((id) => cards[id]).filter((card) => card !== undefined));
           visual.container.alpha = 1;
           visual.container.scale.set(1);
           visual.container.rotation = 0;

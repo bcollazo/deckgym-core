@@ -39,7 +39,6 @@ export const BOARD_WIDTH = 1600;
 const NAME_BAR_H = 26;
 const GAP_NAME_HAND = 2;
 const GAP_HAND_BENCH = 8; // hand row -> bench row, now that deck/discard aren't between them
-const GAP_BENCH_ACTIVE = 2;
 const DIVIDER_H = 34; // fits the 30px-tall turn banner (scene.ts) with a 2px margin each side
 
 const BENCH_H = 210;
@@ -52,6 +51,22 @@ export const BENCH_SIZE = { w: BENCH_W, h: BENCH_H };
 const ACTIVE_H = Math.round(BENCH_H * 1.45);
 export const ACTIVE_W = Math.round(ACTIVE_H * CARD_ASPECT);
 export const ACTIVE_SIZE = { w: ACTIVE_W, h: ACTIVE_H };
+
+/** Fraction of a card's height that its attached Tool cards peek out below it (they sit behind the
+ * Pokemon, so only this sliver shows). The row gaps below are sized to keep that sliver clear of
+ * whatever sits under each slot. */
+export const TOOL_PEEK_FRACTION = 0.1;
+const TOOL_PEEK_MARGIN = 3;
+const BENCH_TOOL_PEEK = Math.ceil(BENCH_H * TOOL_PEEK_FRACTION);
+const ACTIVE_TOOL_PEEK = Math.ceil(ACTIVE_H * TOOL_PEEK_FRACTION);
+// Opponent half is bench-over-active, so only a bench sliver crosses its gap; the player half is
+// active-over-bench, so the (taller) active sliver does. The player's bench sliver also has to
+// clear the hand row below it, and the opponent's active sliver sits in the strip above the
+// divider banner.
+const GAP_BENCH_ACTIVE_OPP = BENCH_TOOL_PEEK + TOOL_PEEK_MARGIN;
+const GAP_BENCH_ACTIVE_PLAYER = ACTIVE_TOOL_PEEK + TOOL_PEEK_MARGIN;
+const GAP_BENCH_HAND_PLAYER = BENCH_TOOL_PEEK + TOOL_PEEK_MARGIN;
+const OPP_ACTIVE_PEEK_ROOM = ACTIVE_TOOL_PEEK + TOOL_PEEK_MARGIN;
 // Kept for callers that used the old flat names.
 export const CARD_W = BENCH_W;
 export const CARD_H = BENCH_H;
@@ -89,8 +104,9 @@ export const HAND_CARD_H = PLAYER_HAND_SIZE.h;
 const HAND_ROW_H_OPP = OPP_HAND_H; // flat, non-overlapping row — no arc/rotation to clear
 const HAND_ROW_H_PLAYER = PLAYER_HAND_H + 16; // + room for the fan's rotation/arc to clear neighbors
 
-const STADIUM_H = 48;
-export const STADIUM_SIZE = { w: Math.round(STADIUM_H * CARD_ASPECT), h: STADIUM_H };
+// The stadium is as big as a bench card so it reads clearly; it sits beside the centered active
+// cards (see `stadiumPos`), so the extra height only spills into the active rows' empty flanks.
+export const STADIUM_SIZE = { w: BENCH_W, h: BENCH_H };
 
 // Deck/discard moved out of their own thin horizontal strip into the side gutter (see the header
 // comment) — with real room there instead of a squeezed 52px-tall row, they can be (and, per the
@@ -108,11 +124,11 @@ const BENCH_GAP = 10;
 const nameBarOppTop = 0;
 const handRowOppTop = nameBarOppTop + NAME_BAR_H + GAP_NAME_HAND;
 const benchRowOppTop = handRowOppTop + HAND_ROW_H_OPP + GAP_HAND_BENCH;
-const activeRowOppTop = benchRowOppTop + BENCH_ROW_H + GAP_BENCH_ACTIVE;
-const dividerTop = activeRowOppTop + ACTIVE_ROW_H;
+const activeRowOppTop = benchRowOppTop + BENCH_ROW_H + GAP_BENCH_ACTIVE_OPP;
+const dividerTop = activeRowOppTop + ACTIVE_ROW_H + OPP_ACTIVE_PEEK_ROOM;
 const activeRowPlayerTop = dividerTop + DIVIDER_H;
-const benchRowPlayerTop = activeRowPlayerTop + ACTIVE_ROW_H + GAP_BENCH_ACTIVE;
-const handRowPlayerTop = benchRowPlayerTop + BENCH_ROW_H + GAP_HAND_BENCH;
+const benchRowPlayerTop = activeRowPlayerTop + ACTIVE_ROW_H + GAP_BENCH_ACTIVE_PLAYER;
+const handRowPlayerTop = benchRowPlayerTop + BENCH_ROW_H + GAP_BENCH_HAND_PLAYER;
 const nameBarPlayerTop = handRowPlayerTop + HAND_ROW_H_PLAYER + GAP_NAME_HAND;
 
 export const BOARD_HEIGHT = nameBarPlayerTop + NAME_BAR_H;
