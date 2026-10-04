@@ -376,7 +376,10 @@ fn forecast_ability_by_mechanic(
             panic!("HealSelfOnZoneAttach is a passive ability")
         }
         AbilityMechanic::EndFirstTurnAttachEnergyToSelf { .. } => {
-            panic!("EndFirstTurnAttachEnergyToSelf is triggered at end of first turn")
+            // This mechanic is resolved by the end-of-turn hook and is never a player choice.
+            // A queued choice can become stale when a Pokémon leaves play before the stack is
+            // reduced; consume it safely instead of taking down the simulator.
+            Outcomes::single_fn(|_, _, _| {})
         }
         AbilityMechanic::ProtectSelfNextTurnAfterAttackKnockout => {
             panic!("ProtectSelfNextTurnAfterAttackKnockout is a passive ability")
@@ -1212,4 +1215,27 @@ fn move_all_typed_energy_from_bench_to_active(
     state
         .move_generation_stack
         .push((acting_player, possible_moves));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stale_end_first_turn_ability_action_is_consumed_without_panicking() {
+        let state = State::default();
+        let action = Action {
+            actor: 0,
+            action: SimpleAction::UseAbility { in_play_idx: 1 },
+            is_stack: true,
+        };
+        let mechanic = AbilityMechanic::EndFirstTurnAttachEnergyToSelf {
+            energy_type: EnergyType::Lightning,
+        };
+
+        let result = std::panic::catch_unwind(|| {
+            forecast_ability_by_mechanic(&mechanic, &state, &action, 1);
+        });
+        assert!(result.is_ok());
+    }
 }
