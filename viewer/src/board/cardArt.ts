@@ -11,10 +11,10 @@ import { GlowFilter } from "pixi-filters";
 import { energyColor } from "../anim/colors";
 import { gsap } from "../anim/gsap";
 import type { Attack, Card, EnergyType, SlotView, StatusCondition } from "../types/replay";
-import { cardEnergyType, cardId, isExCard, isPokemonCard, stageLabel } from "../types/replay";
+import { cardEnergyType, cardId, cardName, isExCard, isPokemonCard, stageLabel } from "../types/replay";
 import type { CardImageStore } from "./cardImages";
 import { fitContain } from "./imageFit";
-import { HP_STRIP_GAP, hpStripHeight } from "./layout";
+import { HP_STRIP_GAP, TOOL_PEEK_FRACTION, hpStripHeight } from "./layout";
 
 const STATUS_GLYPH: Record<StatusCondition, { glyph: string; color: number }> = {
   Poisoned: { glyph: "PSN", color: 0xab47bc },
@@ -70,6 +70,9 @@ export interface CardVisual {
   /** Redraws the card face for the given card/slot. Cheap enough to call on every reconcile. */
   update(card: Card | undefined, slot: SlotView | undefined, faceDown?: boolean): void;
   setHpBar(fraction: number, which: "fg" | "ghost"): void;
+  /** Shows the Pokemon's attached Tool cards tucked behind it, each peeking out below by
+   * `TOOL_PEEK_FRACTION` of the card height with its name on the visible sliver. Pass [] to clear. */
+  setTools(tools: Card[]): void;
   /** Sets the card's rest-state rotation (a fanned hand card's tilt). Hover tilt (if interactive)
    * animates relative to this rather than assuming zero, so hovering a fanned card doesn't snap it
    * upright. */
@@ -150,7 +153,11 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
   const statusRow = new PIXI.Container();
   const toolBadge = text("", { fontSize: 9, fill: 0xffe08a, fontWeight: "700" });
 
-  container.addChild(bg, art, imageSprite, imageMask, frame, shimmer, procInfo, energyRow, statusRow, toolBadge, hpBarBg, hpBarGhost, hpBarFg, hpNumber);
+  // Tool cards tucked behind this one: drawn first so the card face covers all but a sliver.
+  const toolLayer = new PIXI.Container();
+  let toolVisuals: CardVisual[] = [];
+
+  container.addChild(toolLayer, bg, art, imageSprite, imageMask, frame, shimmer, procInfo, energyRow, statusRow, toolBadge, hpBarBg, hpBarGhost, hpBarFg, hpNumber);
 
   let baseRotation = 0;
   if (interactive) {
@@ -520,6 +527,32 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
       toolBadge.text = slot.tools.length > 0 ? `T×${slot.tools.length}` : "";
       toolBadge.x = 4;
       toolBadge.y = 4;
+    },
+    setTools(tools) {
+      for (const visual of toolVisuals) visual.destroy();
+      toolVisuals = [];
+      for (const child of toolLayer.removeChildren()) child.destroy({ children: true });
+      const peek = height * TOOL_PEEK_FRACTION;
+      // A Pokemon holds one Tool, and the board layout reserves room for exactly one sliver.
+      tools.slice(0, 1).forEach((tool, i) => {
+        const visual = createCardVisual(width, height, { images });
+        visual.update(tool, undefined);
+        visual.container.y = peek * (i + 1);
+        toolLayer.addChildAt(visual.container, 0);
+        toolVisuals.push(visual);
+      });
+      tools.slice(0, 1).forEach((tool, i) => {
+        const label = text(cardName(tool), {
+          fontSize: Math.max(8, Math.round(peek * 0.6)),
+          fill: 0xffffff,
+          fontWeight: "700",
+          stroke: { color: 0x0b0d14, width: 3 },
+        });
+        label.anchor.set(0.5);
+        label.x = width / 2;
+        label.y = height + peek * (i + 0.5);
+        toolLayer.addChild(label);
+      });
     },
     setHpBar(fraction, which) {
       const bar = which === "fg" ? hpBarFg : hpBarGhost;
