@@ -890,9 +890,12 @@ impl State {
             // Promotion must displace a queued EndTurn: processing that frame first
             // can read an empty Active Spot. Other effect frames retain their
             // established ordering so their follow-up choices are not skipped.
-            let queued_end_turn = self.move_generation_stack.last().is_some_and(
-                |(_, choices)| choices.len() == 1 && matches!(choices[0], SimpleAction::EndTurn),
-            );
+            let queued_end_turn = self
+                .move_generation_stack
+                .last()
+                .is_some_and(|(_, choices)| {
+                    choices.len() == 1 && matches!(choices[0], SimpleAction::EndTurn)
+                });
             if queued_end_turn {
                 self.move_generation_stack
                     .push((player_with_empty_active, possible_moves));
@@ -1087,14 +1090,22 @@ mod tests {
         let mut state = State::default();
         state.turn_count = 1;
         state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
-        state.move_generation_stack.push((0, vec![SimpleAction::EndTurn]));
+        state
+            .move_generation_stack
+            .push((0, vec![SimpleAction::EndTurn]));
 
         state.trigger_promotion_or_declare_winner(0);
 
         let (actor, actions) = state.generate_possible_actions();
         assert_eq!(actor, 0);
         assert!(actions.iter().all(|action| {
-            matches!(action.action, SimpleAction::Activate { player: 0, in_play_idx: 1 })
+            matches!(
+                action.action,
+                SimpleAction::Activate {
+                    player: 0,
+                    in_play_idx: 1
+                }
+            )
         }));
     }
 
