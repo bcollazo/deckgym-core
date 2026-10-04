@@ -887,14 +887,19 @@ impl State {
                 .collect::<Vec<_>>();
             debug!("Triggering Activate moves: {possible_moves:?} to player {player_with_empty_active}");
 
-            // If we .push, we could make idxs in items of the stack stale. Consider Dialga's
-            // user choosing to attach to idx 1, but then Dialga is K.O. by Rocky Helmet.
-            // So we .insert(0, looking to have those settle before this one.
-
-            // Using .insert(0, should not have issues with EndTurn mechanics, since those are
-            // done only when move_generation_stack is stable (empty).
-            self.move_generation_stack
-                .insert(0, (player_with_empty_active, possible_moves));
+            // Promotion must displace a queued EndTurn: processing that frame first
+            // can read an empty Active Spot. Other effect frames retain their
+            // established ordering so their follow-up choices are not skipped.
+            let queued_end_turn = self.move_generation_stack.last().is_some_and(
+                |(_, choices)| choices.len() == 1 && matches!(choices[0], SimpleAction::EndTurn),
+            );
+            if queued_end_turn {
+                self.move_generation_stack
+                    .push((player_with_empty_active, possible_moves));
+            } else {
+                self.move_generation_stack
+                    .insert(0, (player_with_empty_active, possible_moves));
+            }
         }
     }
 
@@ -1076,6 +1081,22 @@ mod tests {
     };
 
     use super::*;
+
+    #[test]
+    fn promotion_is_prioritized_over_a_queued_end_turn() {
+        let mut state = State::default();
+        state.turn_count = 1;
+        state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
+        state.move_generation_stack.push((0, vec![SimpleAction::EndTurn]));
+
+        state.trigger_promotion_or_declare_winner(0);
+
+        let (actor, actions) = state.generate_possible_actions();
+        assert_eq!(actor, 0);
+        assert!(actions.iter().all(|action| {
+            matches!(action.action, SimpleAction::Activate { player: 0, in_play_idx: 1 })
+        }));
+    }
 
     #[test]
     fn test_draw_transfers_to_hand() {
