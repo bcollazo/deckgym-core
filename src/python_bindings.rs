@@ -429,8 +429,9 @@ impl PyState {
     }
 
     #[getter]
-    fn points(&self) -> [u8; 2] {
-        self.state.points
+    fn points(&self) -> [u32; 2] {
+        // pyo3 >= 0.23 converts u8 arrays to `bytes`; widen to keep returning a list.
+        self.state.points.map(u32::from)
     }
 
     #[getter]
