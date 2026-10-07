@@ -16,11 +16,9 @@
 //! written by a monitor thread so operations that never finish are captured too), the
 //! elapsed time, the branch count, and the action and state before the operation.
 
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
-use std::sync::{Mutex, OnceLock};
-use std::thread::ThreadId;
+use std::sync::{Arc, Mutex, OnceLock, RwLock, Weak};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use crate::actions::Action;
@@ -67,27 +65,36 @@ impl WatchConfig {
 
 static ENABLED: AtomicBool = AtomicBool::new(false);
 static ENV_CHECKED: AtomicBool = AtomicBool::new(false);
-static CONFIG: Mutex<Option<WatchConfig>> = Mutex::new(None);
-static RUNNING: OnceLock<Mutex<HashMap<ThreadId, Running>>> = OnceLock::new();
+static CONFIG: RwLock<Option<Arc<WatchConfig>>> = RwLock::new(None);
+/// Every thread's slot, so the monitor can see operations still running.
+static SLOTS: Mutex<Vec<Weak<Mutex<Option<Running>>>>> = Mutex::new(Vec::new());
 static MONITOR: OnceLock<()> = OnceLock::new();
 static SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
+type Snapshot = Arc<(State, Option<Action>)>;
+
 thread_local! {
     static DEPTH: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    /// This thread's outermost running operation. Only the owning thread and the
+    /// monitor lock it, so watching scales across threads.
+    static SLOT: Arc<Mutex<Option<Running>>> = {
+        let slot = Arc::new(Mutex::new(None));
+        SLOTS.lock().unwrap().push(Arc::downgrade(&slot));
+        slot
+    };
 }
 
 struct Running {
     op: &'static str,
     started: Instant,
-    state: State,
-    action: Option<Action>,
+    snapshot: Snapshot,
     reported: bool,
 }
 
 /// Turn watching on (overrides the environment) and start the monitor thread.
 pub fn enable(config: WatchConfig) {
     std::fs::create_dir_all(&config.dir).ok();
-    *CONFIG.lock().unwrap() = Some(config);
+    *CONFIG.write().unwrap() = Some(Arc::new(config));
     ENV_CHECKED.store(true, Ordering::SeqCst);
     ENABLED.store(true, Ordering::SeqCst);
     start_monitor();
@@ -108,12 +115,8 @@ fn enabled() -> bool {
     ENABLED.load(Ordering::Relaxed)
 }
 
-fn config() -> Option<WatchConfig> {
-    CONFIG.lock().unwrap().clone()
-}
-
-fn running() -> &'static Mutex<HashMap<ThreadId, Running>> {
-    RUNNING.get_or_init(|| Mutex::new(HashMap::new()))
+fn config() -> Option<Arc<WatchConfig>> {
+    CONFIG.read().unwrap().clone()
 }
 
 fn start_monitor() {
@@ -126,28 +129,25 @@ fn start_monitor() {
                     continue;
                 }
                 let Some(config) = config() else { continue };
-                let mut overdue = Vec::new();
-                for entry in running().lock().unwrap().values_mut() {
-                    if !entry.reported && entry.started.elapsed() >= config.running {
-                        entry.reported = true;
-                        overdue.push((
-                            entry.op,
-                            entry.started.elapsed(),
-                            entry.state.clone(),
-                            entry.action.clone(),
-                        ));
+                let slots: Vec<_> = {
+                    let mut slots = SLOTS.lock().unwrap();
+                    slots.retain(|slot| slot.strong_count() > 0);
+                    slots.iter().filter_map(Weak::upgrade).collect()
+                };
+                for slot in slots {
+                    let overdue = {
+                        let mut running = slot.lock().unwrap();
+                        match running.as_mut() {
+                            Some(r) if !r.reported && r.started.elapsed() >= config.running => {
+                                r.reported = true;
+                                Some((r.op, r.started.elapsed(), r.snapshot.clone()))
+                            }
+                            _ => None,
+                        }
+                    };
+                    if let Some((op, elapsed, snapshot)) = overdue {
+                        write_incident(&config, op, "running", elapsed, None, &snapshot);
                     }
-                }
-                for (op, elapsed, state, action) in overdue {
-                    write_incident(
-                        &config,
-                        op,
-                        "running",
-                        elapsed,
-                        None,
-                        &state,
-                        action.as_ref(),
-                    );
                 }
             })
             .ok();
@@ -164,7 +164,7 @@ struct WatchInner {
     started: Instant,
     outermost: bool,
     branches: Option<usize>,
-    snapshot: Option<(State, Option<Action>)>,
+    snapshot: Snapshot,
 }
 
 /// Start watching an operation on `state` (and `action`). Keep the guard alive for the
@@ -179,26 +179,31 @@ pub fn watch(op: &'static str, state: &State, action: Option<&Action>) -> Watch 
         depth == 0
     });
     let started = Instant::now();
-    let snapshot = (state.clone(), action.cloned());
-    if outermost {
-        running().lock().unwrap().insert(
-            std::thread::current().id(),
-            Running {
-                op,
-                started,
-                state: snapshot.0.clone(),
-                action: snapshot.1.clone(),
-                reported: false,
-            },
-        );
-    }
+    // A nested operation (the forecast inside an apply) runs on the same state as the
+    // operation around it, so it reuses that snapshot instead of copying the state again.
+    let snapshot = SLOT.with(|slot| {
+        let mut running = slot.lock().unwrap();
+        match running.as_ref() {
+            Some(outer) if !outermost => outer.snapshot.clone(),
+            _ => {
+                let snapshot: Snapshot = Arc::new((state.clone(), action.cloned()));
+                *running = Some(Running {
+                    op,
+                    started,
+                    snapshot: snapshot.clone(),
+                    reported: false,
+                });
+                snapshot
+            }
+        }
+    });
     Watch {
         inner: Some(WatchInner {
             op,
             started,
             outermost,
             branches: None,
-            snapshot: Some(snapshot),
+            snapshot,
         }),
     }
 }
@@ -214,20 +219,13 @@ impl Watch {
 
 impl Drop for Watch {
     fn drop(&mut self) {
-        let Some(mut inner) = self.inner.take() else {
+        let Some(inner) = self.inner.take() else {
             return;
         };
         DEPTH.with(|d| d.set(d.get().saturating_sub(1)));
         let elapsed = inner.started.elapsed();
-        let already_reported = if inner.outermost {
-            running()
-                .lock()
-                .unwrap()
-                .remove(&std::thread::current().id())
-                .is_some_and(|r| r.reported)
-        } else {
-            false
-        };
+        let already_reported = inner.outermost
+            && SLOT.with(|slot| slot.lock().unwrap().take().is_some_and(|r| r.reported));
         let Some(config) = config() else { return };
         let too_wide = inner.branches.is_some_and(|b| b > config.max_branches);
         let too_slow = inner.outermost && elapsed >= config.slow;
@@ -236,15 +234,13 @@ impl Drop for Watch {
             return;
         }
         let kind = if too_wide { "branches" } else { "slow" };
-        let (state, action) = inner.snapshot.take().unwrap();
         write_incident(
             &config,
             inner.op,
             kind,
             elapsed,
             inner.branches,
-            &state,
-            action.as_ref(),
+            &inner.snapshot,
         );
     }
 }
@@ -255,9 +251,9 @@ fn write_incident(
     kind: &str,
     elapsed: Duration,
     branches: Option<usize>,
-    state: &State,
-    action: Option<&Action>,
+    snapshot: &Snapshot,
 ) {
+    let (state, action) = (&snapshot.0, snapshot.1.as_ref());
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
