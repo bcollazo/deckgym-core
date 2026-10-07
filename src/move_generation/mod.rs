@@ -26,6 +26,13 @@ pub use move_generation_trainer::{
 /// # Returns
 /// * A tuple containing the current player and a list of possible actions
 pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
+    let mut watch = crate::perf_watch::watch("generate_possible_actions", state, None);
+    let generated = generate_possible_actions_unwatched(state);
+    watch.branches(generated.1.len());
+    generated
+}
+
+fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
     let in_initial_setup_phase = state.turn_count == 0;
     if in_initial_setup_phase {
         let possible_actions = generate_initial_setup_actions(state)

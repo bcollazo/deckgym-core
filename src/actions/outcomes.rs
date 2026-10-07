@@ -32,6 +32,15 @@ pub enum ForecastBuildError {
 }
 
 impl Outcomes {
+    /// Number of branches (possible results) in this forecast.
+    pub fn len(&self) -> usize {
+        self.branches.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.branches.is_empty()
+    }
+
     pub fn single(mutation: Mutation) -> Self {
         Self {
             branches: vec![OutcomeBranch {

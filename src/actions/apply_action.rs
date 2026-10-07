@@ -38,6 +38,7 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
+    let _watch = crate::perf_watch::watch("apply_action", state, Some(action));
     let outcomes = forecast_action(state, action);
 
     // Victini's Victory Star / Gholdengo's Luxury Coin: if this is an eligible coin-flip action,
@@ -178,6 +179,13 @@ pub(crate) fn resolve_pending_coin_reflip(
 /// This should be mostly a "router" function that calls the appropriate forecast function
 /// based on the action type.
 pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
+    let mut watch = crate::perf_watch::watch("forecast_action", state, Some(action));
+    let outcomes = forecast_action_unwatched(state, action);
+    watch.branches(outcomes.len());
+    outcomes
+}
+
+fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
     let mut outcomes = match &action.action {
         // Deterministic Actions
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
