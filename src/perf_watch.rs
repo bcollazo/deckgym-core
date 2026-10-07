@@ -11,17 +11,23 @@
 //! `DECKGYM_WATCH_SLOW_MS` (default 500), `DECKGYM_WATCH_BRANCHES` (default 1000) and
 //! `DECKGYM_WATCH_RUNNING_SECS` (default 10), or call [`enable`].
 //!
+//! Incidents are grouped by cause (the attack, played card or ability, or the pending
+//! choice for move generation): [`cause_summary`] counts every incident, and at most
+//! `examples_per_cause` (`DECKGYM_WATCH_EXAMPLES`) files are written per cause, so a low
+//! threshold can inventory a whole run without writing a file per occurrence.
+//!
 //! Each incident is one JSON file: the operation, why it was reported (`slow`,
 //! `branches`, or `running` for an operation still going past the running deadline,
 //! written by a monitor thread so operations that never finish are captured too), the
 //! elapsed time, the branch count, and the action and state before the operation.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, RwLock, Weak};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
-use crate::actions::Action;
+use crate::actions::{Action, SimpleAction};
 use crate::State;
 
 /// Thresholds and output folder for watched operations.
@@ -34,6 +40,8 @@ pub struct WatchConfig {
     pub max_branches: usize,
     /// Report an operation still running after this long (once, while it runs).
     pub running: Duration,
+    /// Write at most this many incident files per cause; all are still counted.
+    pub examples_per_cause: usize,
 }
 
 impl WatchConfig {
@@ -43,6 +51,7 @@ impl WatchConfig {
             slow: Duration::from_millis(500),
             max_branches: 1000,
             running: Duration::from_secs(10),
+            examples_per_cause: usize::MAX,
         }
     }
 
@@ -59,6 +68,9 @@ impl WatchConfig {
         if let Some(secs) = number("DECKGYM_WATCH_RUNNING_SECS") {
             config.running = Duration::from_secs(secs);
         }
+        if let Some(examples) = number("DECKGYM_WATCH_EXAMPLES") {
+            config.examples_per_cause = examples as usize;
+        }
         Some(config)
     }
 }
@@ -70,6 +82,56 @@ static CONFIG: RwLock<Option<Arc<WatchConfig>>> = RwLock::new(None);
 static SLOTS: Mutex<Vec<Weak<Mutex<Option<Running>>>>> = Mutex::new(Vec::new());
 static MONITOR: OnceLock<()> = OnceLock::new();
 static SEQUENCE: AtomicU64 = AtomicU64::new(0);
+static CAUSES: Mutex<BTreeMap<String, CauseStats>> = Mutex::new(BTreeMap::new());
+
+/// Incidents seen for one cause (`"<op> | <kind> | <what>"`).
+#[derive(Clone, Debug, Default, serde::Serialize)]
+pub struct CauseStats {
+    pub count: u64,
+    pub max_elapsed_ms: u64,
+    pub max_branches: usize,
+    pub files_written: usize,
+}
+
+/// Every cause reported so far with its statistics.
+pub fn cause_summary() -> BTreeMap<String, CauseStats> {
+    CAUSES.lock().unwrap().clone()
+}
+
+/// What an incident is about: the attack, played trainer or ability for an action, or the
+/// pending choice (or ordinary turn) for move generation.
+fn describe_cause(state: &State, action: Option<&Action>) -> String {
+    let variant = |debug: String| {
+        debug
+            .split(['(', ' ', '{'])
+            .next()
+            .unwrap_or("")
+            .to_string()
+    };
+    match action.map(|a| (a.actor, &a.action)) {
+        Some((_, SimpleAction::Attack(attack))) => format!("attack {}", attack.title),
+        Some((_, SimpleAction::Play { trainer_card })) => format!("play {}", trainer_card.name),
+        Some((actor, SimpleAction::UseAbility { in_play_idx })) => {
+            let name = state.in_play_pokemon[actor]
+                .get(*in_play_idx)
+                .and_then(|p| p.as_ref())
+                .map(|p| p.get_name())
+                .unwrap_or_default();
+            format!("ability of {name}")
+        }
+        Some((_, other)) => variant(format!("{other:?}")),
+        None => match state.move_generation_stack.last() {
+            Some((_, choices)) => format!(
+                "choice {}",
+                choices
+                    .first()
+                    .map(|c| variant(format!("{c:?}")))
+                    .unwrap_or_default()
+            ),
+            None => "turn actions".to_string(),
+        },
+    }
+}
 
 type Snapshot = Arc<(State, Option<Action>)>;
 
@@ -254,6 +316,18 @@ fn write_incident(
     snapshot: &Snapshot,
 ) {
     let (state, action) = (&snapshot.0, snapshot.1.as_ref());
+    let cause = format!("{op} | {kind} | {}", describe_cause(state, action));
+    {
+        let mut causes = CAUSES.lock().unwrap();
+        let stats = causes.entry(cause.clone()).or_default();
+        stats.count += 1;
+        stats.max_elapsed_ms = stats.max_elapsed_ms.max(elapsed.as_millis() as u64);
+        stats.max_branches = stats.max_branches.max(branches.unwrap_or(0));
+        if stats.files_written >= config.examples_per_cause {
+            return;
+        }
+        stats.files_written += 1;
+    }
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
@@ -266,6 +340,7 @@ fn write_incident(
     let incident = serde_json::json!({
         "op": op,
         "kind": kind,
+        "cause": cause,
         "elapsed_ms": elapsed.as_millis() as u64,
         "branches": branches,
         "action": action,
