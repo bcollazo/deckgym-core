@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashSet};
 
 use log::trace;
 use rand::{rngs::StdRng, Rng};
@@ -5990,34 +5990,53 @@ pub(crate) fn enumerate_random_damage_outcomes(
         return vec![];
     }
 
-    let total_sequences = n.pow(times as u32);
-    let prob_per_sequence = 1.0 / total_sequences as f64;
-
-    let mut outcome_groups: HashMap<Vec<(usize, usize, u32)>, f64> = HashMap::new();
-
-    for seq_idx in 0..total_sequences {
-        let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
-        let mut remaining = seq_idx;
-        for _ in 0..times {
-            let target_idx = remaining % n;
-            remaining /= n;
-            let target = possible_targets[target_idx];
-            *damage_map.entry(target).or_insert(0) += damage_per_hit;
-        }
-
-        let mut key: Vec<(usize, usize, u32)> = damage_map
-            .into_iter()
-            .map(|((p, i), d)| (p, i, d))
-            .collect();
-        key.sort();
-
-        *outcome_groups.entry(key).or_insert(0.0) += prob_per_sequence;
+    // Only how many hits each target takes matters, so enumerate those splits
+    // (k_1 + ... + k_n = times) instead of all n^times hit sequences: a split occurs in
+    // times! / (k_1! ... k_n!) of the equally likely sequences. The number of hits can grow
+    // with the game state (one per attached Energy), so the sequence count was unbounded:
+    // 4 targets and 12 hits are 16.8M sequences but only 455 splits.
+    let mut ln_factorial = vec![0.0f64; times + 1];
+    for k in 1..=times {
+        ln_factorial[k] = ln_factorial[k - 1] + (k as f64).ln();
     }
+    let mut outcome_groups: BTreeMap<DamageDistribution, f64> = BTreeMap::new();
+    let mut hits = vec![0usize; n];
+    enumerate_hit_splits(0, times, &mut hits, &mut |hits: &[usize]| {
+        let ln_ways = ln_factorial[times] - hits.iter().map(|&k| ln_factorial[k]).sum::<f64>();
+        let probability = (ln_ways - times as f64 * (n as f64).ln()).exp();
+        let mut damage: BTreeMap<(usize, usize), u32> = BTreeMap::new();
+        for (&target, &count) in possible_targets.iter().zip(hits) {
+            if count > 0 {
+                *damage.entry(target).or_insert(0) += damage_per_hit * count as u32;
+            }
+        }
+        let key: DamageDistribution = damage.into_iter().map(|((p, i), d)| (p, i, d)).collect();
+        *outcome_groups.entry(key).or_insert(0.0) += probability;
+    });
 
     outcome_groups
         .into_iter()
         .map(|(dist, prob)| (prob, dist))
         .collect()
+}
+
+/// Calls `visit` with every way to split `left` hits over targets `target..` (earlier
+/// targets' counts are already in `hits`).
+fn enumerate_hit_splits(
+    target: usize,
+    left: usize,
+    hits: &mut [usize],
+    visit: &mut dyn FnMut(&[usize]),
+) {
+    if target == hits.len() - 1 {
+        hits[target] = left;
+        visit(hits);
+        return;
+    }
+    for count in 0..=left {
+        hits[target] = count;
+        enumerate_hit_splits(target + 1, left - count, hits, visit);
+    }
 }
 
 /// Converts enumerated damage outcomes (with absolute player indices) into structured
@@ -7068,6 +7087,78 @@ mod test {
 
     mod random_damage_outcomes_tests {
         use super::super::enumerate_random_damage_outcomes;
+        use std::collections::HashMap;
+
+        /// Every hit sequence enumerated one by one: the definition the grouped
+        /// enumeration must match.
+        fn brute_force(
+            targets: &[(usize, usize)],
+            times: usize,
+            damage: u32,
+        ) -> Vec<(f64, Vec<(usize, usize, u32)>)> {
+            let n = targets.len();
+            let total = n.pow(times as u32);
+            let mut groups: HashMap<Vec<(usize, usize, u32)>, f64> = HashMap::new();
+            for sequence in 0..total {
+                let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+                let mut rest = sequence;
+                for _ in 0..times {
+                    *damage_map.entry(targets[rest % n]).or_insert(0) += damage;
+                    rest /= n;
+                }
+                let mut key: Vec<_> = damage_map
+                    .into_iter()
+                    .map(|((p, i), d)| (p, i, d))
+                    .collect();
+                key.sort();
+                *groups.entry(key).or_insert(0.0) += 1.0 / total as f64;
+            }
+            let mut outcomes: Vec<_> = groups.into_iter().map(|(d, p)| (p, d)).collect();
+            outcomes.sort_by(|a, b| a.1.cmp(&b.1));
+            outcomes
+        }
+
+        #[test]
+        fn test_grouped_outcomes_match_every_hit_sequence() {
+            for num_targets in 1..=4 {
+                for times in 0..=7 {
+                    let targets: Vec<(usize, usize)> = (0..num_targets).map(|i| (1, i)).collect();
+                    let mut outcomes = enumerate_random_damage_outcomes(&targets, times, 40);
+                    outcomes.sort_by(|a, b| a.1.cmp(&b.1));
+                    let expected = brute_force(&targets, times, 40);
+                    assert_eq!(
+                        outcomes.len(),
+                        expected.len(),
+                        "{num_targets} targets, {times} hits"
+                    );
+                    for ((p, d), (q, e)) in outcomes.iter().zip(&expected) {
+                        assert_eq!(d, e);
+                        assert!(
+                            (p - q).abs() < 1e-12,
+                            "{num_targets} targets, {times} hits: {p} vs {q}"
+                        );
+                    }
+                }
+            }
+        }
+
+        #[test]
+        fn test_many_hits_stay_fast() {
+            // One hit per attached Energy (Spending Rush): 4 targets and 20 hits would be
+            // 4^20 (about 1.1e12) sequences; the grouped splits are C(23, 3) = 1771.
+            let targets = vec![(1, 0), (1, 1), (1, 2), (1, 3)];
+            let started = std::time::Instant::now();
+            let outcomes = enumerate_random_damage_outcomes(&targets, 20, 40);
+            assert!(started.elapsed().as_secs_f64() < 1.0);
+            assert_eq!(outcomes.len(), 1771);
+            let total: f64 = outcomes.iter().map(|(p, _)| p).sum();
+            assert!((total - 1.0).abs() < 1e-9);
+            let all_on_active = outcomes
+                .iter()
+                .find(|(_, d)| d == &vec![(1, 0, 800)])
+                .unwrap();
+            assert!((all_on_active.0 - 0.25f64.powi(20)).abs() < 1e-20);
+        }
 
         #[test]
         fn test_one_target_three_hits_single_outcome() {
