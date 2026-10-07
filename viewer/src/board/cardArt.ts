@@ -17,11 +17,11 @@ import { fitContain } from "./imageFit";
 import { HP_STRIP_GAP, TOOL_PEEK_FRACTION, hpStripHeight } from "./layout";
 
 const STATUS_GLYPH: Record<StatusCondition, { glyph: string; color: number }> = {
-  Poisoned: { glyph: "PSN", color: 0xab47bc },
-  Paralyzed: { glyph: "PRZ", color: 0xffd54f },
-  Asleep: { glyph: "SLP", color: 0x90a4ae },
-  Burned: { glyph: "BRN", color: 0xff7043 },
-  Confused: { glyph: "CNF", color: 0xff8a80 },
+  Poisoned: { glyph: "PS", color: 0xab47bc },
+  Paralyzed: { glyph: "PR", color: 0xffd54f },
+  Asleep: { glyph: "SL", color: 0x90caf9 },
+  Burned: { glyph: "BN", color: 0xff7043 },
+  Confused: { glyph: "CF", color: 0xff8a80 },
 };
 
 /** How much procedural detail fits legibly at a given rendered height — see the plan doc's
@@ -510,17 +510,20 @@ export function createCardVisual(width: number, height: number, opts: CardVisual
         energyRow.addChild(pip);
       });
 
-      const statuses = slot.status.slice(0, 2);
-      layoutOverlayRow(statusRow, Math.max(statuses.length, 1), statusY, width * 0.32);
-      statuses.forEach((s, i) => {
+      // Status conditions: round badges hugging the card's right edge, a bit above its vertical
+      // middle (like the official app), stacked downward when a Pokemon has more than one.
+      statusRow.removeChildren();
+      const badgeR = Math.max(9, width * 0.1);
+      statusRow.x = width - badgeR * 0.35;
+      statusRow.y = height * 0.36;
+      slot.status.forEach((s, i) => {
         const { glyph, color } = STATUS_GLYPH[s];
         const badge = new PIXI.Container();
-        const pill = new PIXI.Graphics().roundRect(-12, -6, 24, 12, 6).fill({ color, alpha: 0.85 });
-        const label = text(glyph, { fontSize: 7, fill: 0x111111, fontWeight: "700" });
-        label.x = -label.width / 2;
-        label.y = -label.height / 2;
-        badge.addChild(pill, label);
-        badge.x = i * width * 0.32;
+        const disc = new PIXI.Graphics().circle(0, 0, badgeR).fill({ color }).stroke({ width: Math.max(1.5, badgeR * 0.14), color: 0xffffff, alpha: 0.9 });
+        const label = text(glyph, { fontSize: badgeR * 0.82, fill: 0x111111, fontWeight: "800" });
+        label.anchor.set(0.5);
+        badge.addChild(disc, label);
+        badge.y = i * badgeR * 2.25;
         statusRow.addChild(badge);
       });
 

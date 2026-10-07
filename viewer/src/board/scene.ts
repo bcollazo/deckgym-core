@@ -148,11 +148,19 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
   let handCountText: PIXI.Text | null = null;
 
   for (const player of [0, 1]) {
-    const name = makeHudText();
+    // Just "P0"/"P1" on the board; the full player details (a bot's name can be a long path) show
+    // in a tooltip on hover instead — see `showPlayerTooltip` below.
+    const name = makeHudText(`P${player}`, 15);
+    name.style.fill = PLAYER_COLORS[player];
+    name.style.fontWeight = "800";
     const nAnchor = nameAnchor(player);
     name.anchor.set(0, 0.5);
     name.x = nAnchor.x;
     name.y = nAnchor.y;
+    name.eventMode = "static";
+    name.cursor = "help";
+    name.on("pointerover", () => showPlayerTooltip(player));
+    name.on("pointerout", hidePlayerTooltip);
     root.addChild(name);
     nameTexts[player] = name;
 
@@ -227,6 +235,50 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
 
   root.addChild(fx);
 
+  // Hover tooltip for the P0/P1 labels. Lives above the fx layer; wraps (and breaks mid-word) so a
+  // long ExternalPlayer command path stays inside the tooltip box.
+  let playerInfos: [ReplayPlayerInfo, ReplayPlayerInfo] | null = null;
+  const TOOLTIP_W = 420;
+  const tooltip = new PIXI.Container();
+  const tooltipBg = new PIXI.Graphics();
+  const tooltipText = new PIXI.Text({
+    text: "",
+    style: {
+      fontFamily: "Inter, sans-serif",
+      fontSize: 14,
+      fill: 0xe8eaf2,
+      wordWrap: true,
+      breakWords: true,
+      wordWrapWidth: TOOLTIP_W - 20,
+      lineHeight: 19,
+    },
+  });
+  tooltipText.x = 10;
+  tooltipText.y = 8;
+  tooltip.addChild(tooltipBg, tooltipText);
+  tooltip.visible = false;
+  tooltip.eventMode = "none";
+  root.addChild(tooltip);
+
+  function showPlayerTooltip(player: number) {
+    const info = playerInfos?.[player];
+    if (!info) return;
+    tooltipText.text = `Player ${player}\n${info.name}\nDeck: ${info.deck.length} cards`;
+    const h = tooltipText.height + 16;
+    const w = Math.min(TOOLTIP_W, tooltipText.width + 20);
+    tooltipBg.clear().roundRect(0, 0, w, h, 6).fill({ color: 0x151824, alpha: 0.96 }).stroke({ width: 1.5, color: PLAYER_COLORS[player], alpha: 0.9 });
+    const anchor = nameAnchor(player);
+    tooltip.x = Math.max(8, Math.min(anchor.x, BOARD_WIDTH - w - 8));
+    // Player 0's label is at the bottom edge and the opponent's at the top: open away from the edge.
+    tooltip.y = player === 0 ? anchor.y - 20 - h : anchor.y + 20;
+    tooltip.zIndex = 5000;
+    tooltip.visible = true;
+  }
+
+  function hidePlayerTooltip() {
+    tooltip.visible = false;
+  }
+
   function drawStack(g: PIXI.Graphics, count: number, color: number) {
     g.clear();
     const layers = Math.min(3, count > 0 ? 3 : 0);
@@ -296,8 +348,8 @@ export function createBoardScene(app: PIXI.Application, images?: CardImageStore)
     turnText,
 
     setPlayerNames(players) {
-      nameTexts[0].text = players[0].name;
-      nameTexts[1].text = players[1].name;
+      playerInfos = players;
+      hidePlayerTooltip();
     },
 
     reconcile(state, cards) {

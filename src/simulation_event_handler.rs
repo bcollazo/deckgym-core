@@ -51,6 +51,10 @@ pub trait SimulationEventHandler: any::Any + Send {
     /// bot's own reasoning — see `docs/bot-protocol.md`); the default no-op is right for every
     /// handler that doesn't care about bot notes.
     fn on_action_note(&mut self, _game_id: Uuid, _note: Option<String>) {}
+    /// The acting player's `Player::last_scores()` for the action just reported via `on_action`:
+    /// one value per entry of that call's `playable_actions`, in order. Only called for players
+    /// that returned `Some`.
+    fn on_action_scores(&mut self, _game_id: Uuid, _scores: Vec<f64>) {}
     fn on_game_end(&mut self, _game_id: Uuid, _state: State, _result: Option<GameOutcome>) {}
 }
 
@@ -110,6 +114,12 @@ impl SimulationEventHandler for CompositeSimulationEventHandler {
     fn on_action_note(&mut self, game_id: Uuid, note: Option<String>) {
         for handler in self.handlers.iter_mut() {
             handler.on_action_note(game_id, note.clone());
+        }
+    }
+
+    fn on_action_scores(&mut self, game_id: Uuid, scores: Vec<f64>) {
+        for handler in self.handlers.iter_mut() {
+            handler.on_action_scores(game_id, scores.clone());
         }
     }
 
