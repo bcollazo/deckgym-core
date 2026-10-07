@@ -165,6 +165,8 @@ export interface ReplayStep {
   options: ReplayOption[];
   chosen: number;
   note: string | null;
+  /** Optional per-option preference values from the acting bot, parallel to `options`. */
+  scores?: number[] | null;
 }
 
 export interface Replay {

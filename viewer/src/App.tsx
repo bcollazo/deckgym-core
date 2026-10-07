@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Group, Panel, Separator, useDefaultLayout } from "react-resizable-panels";
 import { Board } from "./board/Board";
 import { createCardImageStore, preloadCardImages, resolveCardImageConfig } from "./board/cardImages";
 import type { BoardScene } from "./board/scene";
 import { PlaybackController } from "./store/playbackController";
 import { loadReplayFromUrl } from "./store/loadReplay";
-import { outcomeLabel, type Replay } from "./types/replay";
+import type { Replay } from "./types/replay";
 import { Loader } from "./ui/Loader";
 import { LogPanel } from "./ui/LogPanel";
 import { OptionsPanel } from "./ui/OptionsPanel";
@@ -12,6 +13,39 @@ import { Controls } from "./ui/Controls";
 import { SettingsPopover } from "./ui/SettingsPopover";
 
 const NO_CONTROLLER_SUBSCRIBE = () => () => {};
+
+/** Panel sizes persist in localStorage when it's available; the viewer works the same without it. */
+const layoutStorage = {
+  getItem(key: string): string | null {
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  setItem(key: string, value: string): void {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch {
+      // Not persisting is fine.
+    }
+  },
+};
+
+const NARROW_QUERY = "(max-width: 900px)";
+
+/** True on narrow screens, where the board and the sidebar stack instead of sitting side by side. */
+function useIsNarrow(): boolean {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia(NARROW_QUERY);
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(NARROW_QUERY).matches,
+    () => false,
+  );
+}
 
 function useControllerState(controller: PlaybackController | null) {
   return useSyncExternalStore(
@@ -28,6 +62,9 @@ export default function App() {
   // the controller effect below must re-run when whichever of the two finishes last arrives.
   const [scene, setScene] = useState<BoardScene | null>(null);
   const triedUrlParam = useRef(false);
+  const narrow = useIsNarrow();
+  const mainLayout = useDefaultLayout({ id: `viewer-main-${narrow ? "stacked" : "side"}`, storage: layoutStorage });
+  const sidebarLayout = useDefaultLayout({ id: "viewer-sidebar", storage: layoutStorage });
   // Resolved once at startup (URL params > localStorage > VITE_CARD_IMAGE_URL); changing it in the
   // settings popover saves and reloads the page rather than reconfiguring this live (see
   // board/cardImages.ts).
@@ -109,7 +146,7 @@ export default function App() {
           <h1>deckgym replay viewer</h1>
           {replay && (
             <span className="subtitle">
-              {replay.players[0].name} vs {replay.players[1].name} &middot; {outcomeLabel(replay.outcome, replay.players)}
+              {replay.outcome === null ? "In progress" : replay.outcome === "Tie" ? "Tie" : `P${replay.outcome.Win} wins`}
             </span>
           )}
         </div>
@@ -124,37 +161,64 @@ export default function App() {
       </header>
 
       <div className="app-body">
-        <div className="main-column">
-          <div className="app-shell">
-            <Board onReady={handleReady} images={images} />
-            {!replay && (
-              <Loader
-                error={loadError}
-                onError={setLoadError}
-                onLoaded={(r) => {
-                  setLoadError(null);
-                  setReplay(r);
-                }}
-              />
-            )}
-          </div>
-          {replay && controller && state && (
-            <Controls
-              replay={replay}
-              controller={controller}
-              index={state.index}
-              playing={state.playing}
-              animating={state.animating}
-              speed={state.speed}
-            />
-          )}
-        </div>
-        {replay && state && (
-          <aside className="sidebar">
-            <LogPanel replay={replay} currentIndex={state.index} onSeek={(i) => controller?.jumpTo(i)} />
-            <OptionsPanel replay={replay} currentIndex={state.index} />
-          </aside>
-        )}
+        <Group
+          key={narrow ? "stacked" : "side"}
+          id={`viewer-main-${narrow ? "stacked" : "side"}`}
+          className="panel-group"
+          orientation={narrow ? "vertical" : "horizontal"}
+          defaultLayout={mainLayout.defaultLayout}
+          onLayoutChanged={mainLayout.onLayoutChanged}
+        >
+          <Panel id="board" defaultSize={narrow ? "60%" : "74%"} minSize="25%">
+            <div className="main-column">
+              <div className="app-shell">
+                <Board onReady={handleReady} images={images} />
+                {!replay && (
+                  <Loader
+                    error={loadError}
+                    onError={setLoadError}
+                    onLoaded={(r) => {
+                      setLoadError(null);
+                      setReplay(r);
+                    }}
+                  />
+                )}
+              </div>
+              {replay && controller && state && (
+                <Controls
+                  replay={replay}
+                  controller={controller}
+                  index={state.index}
+                  playing={state.playing}
+                  animating={state.animating}
+                  speed={state.speed}
+                />
+              )}
+            </div>
+          </Panel>
+          <Separator className={`resize-handle ${narrow ? "stacked" : "side"}`} />
+          <Panel id="sidebar" defaultSize={narrow ? "40%" : "26%"} minSize="12%">
+            <aside className="sidebar">
+              {replay && state && (
+                <Group
+                  id="viewer-sidebar"
+                  className="panel-group"
+                  orientation="vertical"
+                  defaultLayout={sidebarLayout.defaultLayout}
+                  onLayoutChanged={sidebarLayout.onLayoutChanged}
+                >
+                  <Panel id="log" defaultSize="62%" minSize="15%">
+                    <LogPanel replay={replay} currentIndex={state.index} onSeek={(i) => controller?.jumpTo(i)} />
+                  </Panel>
+                  <Separator className="resize-handle stacked" />
+                  <Panel id="options" defaultSize="38%" minSize="15%">
+                    <OptionsPanel replay={replay} currentIndex={state.index} />
+                  </Panel>
+                </Group>
+              )}
+            </aside>
+          </Panel>
+        </Group>
       </div>
     </div>
   );
