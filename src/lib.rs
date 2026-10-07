@@ -14,6 +14,7 @@ mod hooks;
 pub mod models;
 pub mod move_generation;
 pub mod optimize;
+pub mod perf_watch;
 pub mod players;
 pub mod replay;
 pub mod simulate;
