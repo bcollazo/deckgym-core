@@ -50,6 +50,11 @@ pub struct ReplayStep {
     /// An optional short note the acting player/bot attaches to its decision (see the external
     /// bot protocol in `docs/bot-protocol.md`). `None` for the built-in engine players.
     pub note: Option<String>,
+    /// Optional per-option preference values from the acting player/bot, parallel to `options`
+    /// (see `scores` in `docs/bot-protocol.md`). Absent for the built-in engine players and for
+    /// replays recorded before this field existed.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scores: Option<Vec<f64>>,
 }
 
 /// A full recorded game: enough to render every state it passed through without re-running the

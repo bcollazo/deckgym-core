@@ -43,6 +43,15 @@ pub trait Player: Debug {
     fn last_note(&self) -> Option<String> {
         None
     }
+
+    /// Optional per-action preference values for the decision just made: one number per entry of
+    /// the `possible_actions` slice passed to `decision_fn`, in the same order (higher means more
+    /// preferred; probabilities are fine). Recorded in replays so the viewer can show what the
+    /// player considered. Read once per decision, right after `decision_fn` returns. Default:
+    /// none, which is right for every built-in engine player.
+    fn last_scores(&self) -> Option<Vec<f64>> {
+        None
+    }
 }
 
 /// Enum for allowed player strategies
