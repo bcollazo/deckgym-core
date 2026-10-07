@@ -81,6 +81,29 @@ fn reports_slow_wide_and_still_running_operations_only_when_enabled() {
     assert_eq!(found.len(), 4);
     assert_eq!(found[3]["op"].as_str(), Some("forecast_action"));
 
+    // Causes: every incident is counted, files are capped per cause.
+    let summary = deckgym::perf_watch::cause_summary();
+    let wide = &summary["forecast_action | branches | turn actions"];
+    assert_eq!(
+        (wide.count, wide.files_written, wide.max_branches),
+        (2, 2, 50)
+    );
+    let mut capped = WatchConfig::new(&dir);
+    capped.max_branches = 10;
+    capped.examples_per_cause = 2;
+    enable(capped);
+    for _ in 0..5 {
+        watch("forecast_action", &state, None).branches(99);
+    }
+    let summary = deckgym::perf_watch::cause_summary();
+    let wide = &summary["forecast_action | branches | turn actions"];
+    assert_eq!(
+        (wide.count, wide.files_written, wide.max_branches),
+        (7, 2, 99)
+    );
+    assert_eq!(incidents(&dir).len(), 4);
+    assert!(incidents(&dir).iter().all(|i| i["cause"].is_string()));
+
     disable();
     let _ = std::fs::remove_dir_all(&dir);
 }
