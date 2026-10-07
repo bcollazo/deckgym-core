@@ -14,7 +14,7 @@ use crate::{
 };
 
 /// Python wrapper for EnergyType
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone, Copy)]
 pub struct PyEnergyType {
     energy_type: EnergyType,
@@ -43,7 +43,7 @@ impl From<EnergyType> for PyEnergyType {
 }
 
 /// Python wrapper for Attack
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyAttack {
     attack: Attack,
@@ -90,7 +90,7 @@ impl From<Attack> for PyAttack {
 }
 
 /// Python wrapper for Ability
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyAbility {
     #[pyo3(get)]
@@ -116,7 +116,7 @@ impl From<Ability> for PyAbility {
 }
 
 /// Python wrapper for Card
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyCard {
     card: Card,
@@ -222,7 +222,7 @@ impl From<Card> for PyCard {
 }
 
 /// Python wrapper for PlayedCard
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyPlayedCard {
     played_card: PlayedCard,
@@ -347,7 +347,7 @@ impl From<PlayedCard> for PyPlayedCard {
 }
 
 /// Python wrapper for GameOutcome
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyGameOutcome {
     #[pyo3(get)]
