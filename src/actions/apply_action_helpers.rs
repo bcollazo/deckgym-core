@@ -62,7 +62,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
         }
 
         let next_player = (state.current_player + 1) % 2;
-        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player);
+        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player, true);
 
         let mut outcomes: Mutations = Vec::with_capacity(start_mutations.len());
         for start_mutation in start_mutations {
@@ -105,7 +105,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
         let mut preview_after_checkup = preview_state.clone();
         apply_pokemon_checkup(&mut preview_after_checkup, &checkup_targets, &outcome);
         let (start_probs, start_mutations) =
-            start_turn_ability_outcomes(&preview_after_checkup, next_player);
+            start_turn_ability_outcomes(&preview_after_checkup, next_player, false);
         for (start_prob, start_mutation) in start_probs.into_iter().zip(start_mutations) {
             let outcome = outcome.clone();
             probabilities.push(base_probability * start_prob);
@@ -128,7 +128,14 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
     (probabilities, outcomes)
 }
 
-fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, Mutations) {
+/// Outcomes of abilities that trigger as a turn begins. `from_setup` is true when the turn is
+/// starting because setup (turn 0) just ended; setup is not a real turn, so abilities that
+/// trigger "at the end of your opponent's turn" (Quick Growth) must not fire.
+fn start_turn_ability_outcomes(
+    state: &State,
+    player: usize,
+    from_setup: bool,
+) -> (Probabilities, Mutations) {
     let Some(active) = state.maybe_get_active(player) else {
         return (vec![1.0], vec![noop_mutation()]);
     };
@@ -149,7 +156,7 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
             )
             .into_branches()
         }
-        AbilityMechanic::QuickGrowth => {
+        AbilityMechanic::QuickGrowth if !from_setup => {
             shared_mutations::quick_growth_evolution_outcomes_for_player(player, state)
                 .into_branches()
         }
