@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
-    test_support::{attack_action, get_initialized_game},
+    test_support::{attack_action, get_initialized_game, get_initialized_game_with_board},
 };
 
 /// Caterpie (B3b 001/B3b 091) Quick Growth:
@@ -133,5 +133,37 @@ fn test_caterpie_hook_attack_deals_10_damage() {
         state.get_active(1).get_remaining_hp(),
         opponent_hp_before - 10,
         "Hook should deal exactly 10 damage"
+    );
+}
+
+/// Regression: the end of setup (turn 0) is not the end of the opponent's turn, so Quick Growth
+/// must not evolve Caterpie when the game transitions from setup into turn 1.
+#[test]
+fn test_quick_growth_does_not_trigger_when_setup_ends() {
+    let mut game = get_initialized_game_with_board(
+        0,
+        1,
+        0,
+        vec![PlayedCard::from_id(CardId::B3b001Caterpie)],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    let mut state = game.get_state_clone();
+    state.decks[0].cards = vec![get_card_by_enum(CardId::B3b002Metapod)];
+    game.set_state(state);
+
+    // Player 1 finishes setup, which starts turn 1 for player 0.
+    game.apply_action(&Action {
+        actor: 1,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    });
+    game.play_until_stable();
+
+    let state = game.get_state_clone();
+    assert_eq!(state.turn_count, 1);
+    assert_eq!(
+        state.get_active(0).card.get_name(),
+        "Caterpie",
+        "Quick Growth must not trigger when setup ends"
     );
 }
