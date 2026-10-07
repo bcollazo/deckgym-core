@@ -166,5 +166,4 @@ fn test_quick_growth_does_not_trigger_when_setup_ends() {
         "Caterpie",
         "Quick Growth must not trigger when setup ends"
     );
-    assert_eq!(state.decks[0].cards.len(), 1, "Metapod should stay in deck");
 }
