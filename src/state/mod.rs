@@ -70,6 +70,10 @@ pub struct State {
     pub current_player: usize,
     pub(crate) end_turn_pending: bool,
     pub move_generation_stack: Vec<(usize, Vec<SimpleAction>)>,
+    /// Actions applied so far this turn (any actor, including pending choices). See
+    /// `MAX_ACTIONS_PER_TURN`.
+    #[serde(default)]
+    pub actions_this_turn: u16,
 
     // Core state
     pub energy_zone: [EnergyZone; 2],
@@ -143,6 +147,7 @@ impl State {
             current_player: 0,
             end_turn_pending: false,
             move_generation_stack: Vec::new(),
+            actions_this_turn: 0,
             energy_zone: [EnergyZone::default(), EnergyZone::default()],
             hands: [Vec::new(), Vec::new()],
             decks: [deck_a.clone(), deck_b.clone()],
@@ -729,6 +734,7 @@ impl State {
             (self.current_player + 1) % 2
         );
         self.end_turn_pending = false;
+        self.actions_this_turn = 0;
         self.attack_name_used_last_turn[self.current_player] =
             self.attack_name_used_this_turn[self.current_player].take();
         // Close out the ending player's point ledger before handing over, and open the incoming

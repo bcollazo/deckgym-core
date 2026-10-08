@@ -1045,6 +1045,8 @@ pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize)
 // Apply common logic in outcomes
 pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
     Box::new(move |rng, state, action| {
+        // Counted here so played games and search simulations count the same actions.
+        state.actions_this_turn = state.actions_this_turn.saturating_add(1);
         if action.is_stack {
             state.move_generation_stack.pop();
         }

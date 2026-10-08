@@ -131,6 +131,14 @@ fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
         actions.push(SimpleAction::UseStadium);
     }
 
+    // Turn timer: the app ends a turn when its timer runs out, which also bounds actions
+    // that may repeat without limit. Two Dusknoir can pass damage back and forth with Shadow
+    // Void ("as often as you like") forever, so a player that keeps choosing it never ends
+    // the turn. After MAX_ACTIONS_PER_TURN actions only actions that end the turn remain.
+    if state.actions_this_turn >= MAX_ACTIONS_PER_TURN {
+        actions.retain(|action| matches!(action, SimpleAction::EndTurn | SimpleAction::Attack(_)));
+    }
+
     let possible_actions = actions
         .iter()
         .map(|action| Action {
@@ -141,6 +149,10 @@ fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
         .collect();
     (current_player, possible_actions)
 }
+
+/// Actions a turn may take (counting pending choices) before only ending it is allowed. A
+/// real turn takes a few dozen at most; this stands in for the app's turn timer.
+pub const MAX_ACTIONS_PER_TURN: u16 = 100;
 
 fn generate_initial_setup_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
