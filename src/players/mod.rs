@@ -5,6 +5,7 @@ mod expectiminimax_player;
 mod external_player;
 mod human_player;
 mod mcts_player;
+mod new_mcts_player;
 mod random_player;
 mod value_function_player;
 pub mod value_functions;
@@ -17,6 +18,7 @@ pub use expectiminimax_player::{ExpectiMiniMaxPlayer, ValueFunction};
 pub use external_player::ExternalPlayer;
 pub use human_player::HumanPlayer;
 pub use mcts_player::MctsPlayer;
+pub use new_mcts_player::NewMctsPlayer;
 pub use random_player::RandomPlayer;
 pub use value_function_player::ValueFunctionPlayer;
 pub use value_functions::*;
@@ -63,6 +65,7 @@ pub enum PlayerCode {
     H,
     W,
     M,
+    MN, // New (arena-based UCB1) MCTS
     V,
     E {
         max_depth: usize,
@@ -97,6 +100,7 @@ pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
         "h" => Ok(PlayerCode::H),
         "w" => Ok(PlayerCode::W),
         "m" => Ok(PlayerCode::M),
+        "mn" => Ok(PlayerCode::MN),
         "v" => Ok(PlayerCode::V),
         "e" => Ok(PlayerCode::E { max_depth: 3 }), // Default depth
         "er" => Ok(PlayerCode::ER),
@@ -141,6 +145,7 @@ fn get_player(deck: Deck, player: &PlayerCode) -> Box<dyn Player> {
         PlayerCode::H => Box::new(HumanPlayer { deck }),
         PlayerCode::W => Box::new(WeightedRandomPlayer { deck }),
         PlayerCode::M => Box::new(MctsPlayer::new(deck, 100)),
+        PlayerCode::MN => Box::new(NewMctsPlayer::new(deck, 100)),
         PlayerCode::V => Box::new(ValueFunctionPlayer { deck }),
         PlayerCode::E { max_depth } => Box::new(ExpectiMiniMaxPlayer {
             deck,
