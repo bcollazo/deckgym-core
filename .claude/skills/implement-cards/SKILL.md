@@ -118,7 +118,10 @@ to see what is missing from the specified card.
   cargo run --bin search "Rare Candy"
   ```
 
-- Copy the ids of cards to implement (including full art versions) in the given JSON.
+- Note the id of the **first printing** only. Trainer logic is keyed by effect text through
+  `canonical_trainer_id` (`src/trainer_identity.rs`), so every full-art version and every later
+  reprint of the card resolves to that first printing and needs no code of its own. Listing a
+  reprint's id in a match arm is unnecessary and `rustc` will flag it as unreachable.
 - Implement the "move generation" logic.
   - In `move_generation_trainer.rs` implement the switch branch. Its often the case the Trainer/Support can always be played, so just add to this case in the switch.
 - Implement the "apply action" logic.

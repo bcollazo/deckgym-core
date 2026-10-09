@@ -15,6 +15,7 @@ use crate::{
     models::{Card, EnergyType, TrainerCard, TrainerType},
     stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
+    trainer_identity::canonical_trainer_id,
     State,
 };
 
@@ -82,238 +83,131 @@ pub fn trainer_move_generation_implementation(
         return can_place_fossil(state, trainer_card);
     }
 
-    let trainer_id = CardId::from_card_id(trainer_card.id.as_str()).expect("CardId should exist");
+    // Dispatch on the first printing of this effect text, so every reprint shares one arm.
+    let trainer_id = canonical_trainer_id(trainer_card)?;
     match trainer_id {
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
-        CardId::A1219Erika | CardId::A1266Erika | CardId::A4b328Erika | CardId::A4b329Erika => {
-            can_play_erika(state, trainer_card)
-        }
-        CardId::A1220Misty | CardId::A1267Misty => can_play_misty(state, trainer_card),
-        CardId::A1221Blaine | CardId::A1268Blaine => can_play_trainer(state, trainer_card),
-        CardId::A2152Cynthia | CardId::A2192Cynthia => can_play_trainer(state, trainer_card),
-        CardId::A1224Brock | CardId::A1271Brock => can_play_trainer(state, trainer_card),
-        CardId::A2a072Irida | CardId::A2a087Irida | CardId::A4b330Irida | CardId::A4b331Irida => {
-            can_play_irida(state, trainer_card)
-        }
-        CardId::A3155Lillie
-        | CardId::A3197Lillie
-        | CardId::A3209Lillie
-        | CardId::A4b348Lillie
-        | CardId::A4b349Lillie
-        | CardId::A4b374Lillie => can_play_lillie(state, trainer_card),
-        CardId::A1222Koga | CardId::A1269Koga => can_play_koga(state, trainer_card),
-        CardId::A1225Sabrina
-        | CardId::A1272Sabrina
-        | CardId::A4b338Sabrina
-        | CardId::A4b339Sabrina => can_play_sabrina(state, trainer_card),
-        CardId::A2150Cyrus | CardId::A2190Cyrus | CardId::A4b326Cyrus | CardId::A4b327Cyrus => {
-            can_play_cyrus(state, trainer_card)
-        }
-        CardId::A3152Lana | CardId::A3194Lana => can_play_lana(state, trainer_card),
-        CardId::A2155Mars | CardId::A2195Mars | CardId::A4b344Mars | CardId::A4b345Mars => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::A3144RareCandy
-        | CardId::A4b314RareCandy
-        | CardId::A4b315RareCandy
-        | CardId::A4b379RareCandy => can_play_rare_candy(state, trainer_card),
-        CardId::A2b070PokemonCenterLady | CardId::A2b089PokemonCenterLady => {
-            can_play_pokemon_center_lady(state, trainer_card)
-        }
-        CardId::A2154Dawn | CardId::A2194Dawn | CardId::A4b342Dawn | CardId::A4b343Dawn => {
-            can_play_dawn(state, trainer_card)
-        }
-        CardId::A4151ElementalSwitch
-        | CardId::A4b310ElementalSwitch
-        | CardId::A4b311ElementalSwitch => can_play_elemental_switch(state, trainer_card),
+        CardId::A1219Erika => can_play_erika(state, trainer_card),
+        CardId::A1220Misty => can_play_misty(state, trainer_card),
+        CardId::A1221Blaine => can_play_trainer(state, trainer_card),
+        CardId::A2152Cynthia => can_play_trainer(state, trainer_card),
+        CardId::A1224Brock => can_play_trainer(state, trainer_card),
+        CardId::A2a072Irida => can_play_irida(state, trainer_card),
+        CardId::A3155Lillie => can_play_lillie(state, trainer_card),
+        CardId::A1222Koga => can_play_koga(state, trainer_card),
+        CardId::A1225Sabrina => can_play_sabrina(state, trainer_card),
+        CardId::A2150Cyrus => can_play_cyrus(state, trainer_card),
+        CardId::A3152Lana => can_play_lana(state, trainer_card),
+        CardId::A2155Mars => can_play_trainer(state, trainer_card),
+        CardId::A3144RareCandy => can_play_rare_candy(state, trainer_card),
+        CardId::A2b070PokemonCenterLady => can_play_pokemon_center_lady(state, trainer_card),
+        CardId::A2154Dawn => can_play_dawn(state, trainer_card),
+        CardId::A4151ElementalSwitch => can_play_elemental_switch(state, trainer_card),
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
-        CardId::A2146PokemonCommunication
-        | CardId::A4b316PokemonCommunication
-        | CardId::A4b317PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
-        CardId::A3a067Gladion | CardId::A3a081Gladion => can_play_gladion(state, trainer_card),
-        CardId::A3a069Lusamine
-        | CardId::A3a083Lusamine
-        | CardId::A4b350Lusamine
-        | CardId::A4b351Lusamine
-        | CardId::A4b375Lusamine => can_play_lusamine(state, trainer_card),
-        CardId::A2153Volkner | CardId::A2193Volkner => can_play_volkner(state, trainer_card),
-        CardId::A3149Ilima | CardId::A3191Ilima => can_play_ilima(state, trainer_card),
-        CardId::A3154Mallow | CardId::A3196Mallow => can_play_mallow(state, trainer_card),
-        CardId::A3150Kiawe | CardId::A3192Kiawe => can_play_kiawe(state, trainer_card),
-        CardId::A4157Lyra | CardId::A4197Lyra | CardId::A4b332Lyra | CardId::A4b333Lyra => {
-            can_play_lyra(state, trainer_card)
-        }
+        CardId::A2146PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
+        CardId::A3a067Gladion => can_play_gladion(state, trainer_card),
+        CardId::A3a069Lusamine => can_play_lusamine(state, trainer_card),
+        CardId::A2153Volkner => can_play_volkner(state, trainer_card),
+        CardId::A3149Ilima => can_play_ilima(state, trainer_card),
+        CardId::A3154Mallow => can_play_mallow(state, trainer_card),
+        CardId::A3150Kiawe => can_play_kiawe(state, trainer_card),
+        CardId::A4157Lyra => can_play_lyra(state, trainer_card),
         // Simple cases: always can play
         CardId::A4158Silver
-        | CardId::A4198Silver
         | CardId::A4156Will
-        | CardId::A4196Will
         | CardId::A4160Jasmine
-        | CardId::A4200Jasmine
-        | CardId::A4b336Silver
-        | CardId::A4b337Silver
         | CardId::PA002XSpeed
-        | CardId::PA005PokeBall
         | CardId::A2b111PokeBall
         | CardId::PA006RedCard
-        | CardId::PA007ProfessorsResearch
         | CardId::A4b373ProfessorsResearch
         | CardId::A1223Giovanni
-        | CardId::A1270Giovanni
-        | CardId::A4b334Giovanni
-        | CardId::A4b335Giovanni
         | CardId::A1a065MythicalSlab
         | CardId::A1a068Leaf
-        | CardId::A1a082Leaf
-        | CardId::A4b346Leaf
-        | CardId::A4b347Leaf
         | CardId::A2b071Red
-        | CardId::A2b090Red
-        | CardId::A4b352Red
-        | CardId::A4b353Red
-        | CardId::A3151Guzma
-        | CardId::A3193Guzma
-        | CardId::A3208Guzma => can_play_trainer(state, trainer_card),
-        CardId::A3b066EeveeBag
-        | CardId::A3b107EeveeBag
-        | CardId::A4b308EeveeBag
-        | CardId::A4b309EeveeBag => can_play_eevee_bag(state, trainer_card),
-        CardId::B1217FlamePatch | CardId::B1331FlamePatch => {
-            can_play_flame_patch(state, trainer_card)
-        }
-        CardId::B1225Copycat | CardId::B1270Copycat => can_play_trainer(state, trainer_card),
-        CardId::A2b069Iono | CardId::A2b088Iono | CardId::A4b340Iono | CardId::A4b341Iono => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::B1221Marlon | CardId::B1266Marlon => can_play_marlon(state, trainer_card),
-        CardId::B1223May | CardId::B1268May => can_play_trainer(state, trainer_card),
-        CardId::B1224Fantina | CardId::B1269Fantina => can_play_trainer(state, trainer_card),
-        CardId::B1226Lisia | CardId::B1271Lisia => can_play_trainer(state, trainer_card),
-        CardId::A2a073CelesticTownElder | CardId::A2a088CelesticTownElder => {
-            can_play_celestic_town_elder(state, trainer_card)
-        }
-        CardId::A2a074Barry | CardId::A2a089Barry => can_play_trainer(state, trainer_card),
-        CardId::A2a075Adaman | CardId::A2a090Adaman => can_play_trainer(state, trainer_card),
-        CardId::B2149Diantha | CardId::B2190Diantha => can_play_diantha(state, trainer_card),
-        CardId::B2152Piers | CardId::B2193Piers => can_play_piers(state, trainer_card),
+        | CardId::A3151Guzma => can_play_trainer(state, trainer_card),
+        CardId::A3b066EeveeBag => can_play_eevee_bag(state, trainer_card),
+        CardId::B1217FlamePatch => can_play_flame_patch(state, trainer_card),
+        CardId::B1225Copycat => can_play_trainer(state, trainer_card),
+        CardId::A2b069Iono => can_play_trainer(state, trainer_card),
+        CardId::B1221Marlon => can_play_marlon(state, trainer_card),
+        CardId::B1223May => can_play_trainer(state, trainer_card),
+        CardId::B1224Fantina => can_play_trainer(state, trainer_card),
+        CardId::B1226Lisia => can_play_trainer(state, trainer_card),
+        CardId::A2a073CelesticTownElder => can_play_celestic_town_elder(state, trainer_card),
+        CardId::A2a074Barry => can_play_trainer(state, trainer_card),
+        CardId::A2a075Adaman => can_play_trainer(state, trainer_card),
+        CardId::B2149Diantha => can_play_diantha(state, trainer_card),
+        CardId::B2152Piers => can_play_piers(state, trainer_card),
         CardId::B1a066ClemontsBackpack => can_play_trainer(state, trainer_card),
-        CardId::B1a068Clemont | CardId::B1a081Clemont => can_play_trainer(state, trainer_card),
-        CardId::B1a067QuickGrowExtract | CardId::B1a103QuickGrowExtract => {
-            can_play_quick_grow_extract(state, trainer_card)
-        }
-        CardId::B1a069Serena | CardId::B1a082Serena => can_play_trainer(state, trainer_card),
-        CardId::B2a090Nemona | CardId::B2a107Nemona => can_play_trainer(state, trainer_card),
-        CardId::B2a091Arven | CardId::B2a108Arven | CardId::B2a115Arven => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::B2a086ElectricGenerator | CardId::B2a131ElectricGenerator => {
-            can_play_electric_generator(state, trainer_card)
-        }
-        CardId::B2a088TeamStarGrunt | CardId::B2a105TeamStarGrunt => {
-            can_play_team(state, trainer_card)
-        }
-        CardId::A1216HelixFossil
-        | CardId::A1217DomeFossil
-        | CardId::A1218OldAmber
-        | CardId::A1a063OldAmber
-        | CardId::A2144SkullFossil
-        | CardId::A2145ArmorFossil
-        | CardId::A4b312OldAmber
-        | CardId::A4b313OldAmber
-        | CardId::B1214PlumeFossil
-        | CardId::B1216CoverFossil => can_play_fossil(state, trainer_card),
+        CardId::B1a068Clemont => can_play_trainer(state, trainer_card),
+        CardId::B1a067QuickGrowExtract => can_play_quick_grow_extract(state, trainer_card),
+        CardId::B1a069Serena => can_play_trainer(state, trainer_card),
+        CardId::B2a090Nemona => can_play_trainer(state, trainer_card),
+        CardId::B2a091Arven => can_play_trainer(state, trainer_card),
+        CardId::B2a086ElectricGenerator => can_play_electric_generator(state, trainer_card),
+        CardId::B2a088TeamStarGrunt => can_play_team(state, trainer_card),
+        CardId::A1216HelixFossil => can_play_fossil(state, trainer_card),
         CardId::B2145LuckyIcePop => can_play_lucky_ice_pop(state, trainer_card),
         CardId::B2b066Maintenance => can_play_maintenance(state, trainer_card),
-        CardId::B2b067Iris | CardId::B2b081Iris => can_play_trainer(state, trainer_card),
-        CardId::B2b068Calem | CardId::B2b082Calem => can_play_trainer(state, trainer_card),
+        CardId::B2b067Iris => can_play_trainer(state, trainer_card),
+        CardId::B2b068Calem => can_play_trainer(state, trainer_card),
         CardId::B2b065NastyNotice => can_play_trainer(state, trainer_card),
-        CardId::A3b068Hau | CardId::A3b085Hau => can_play_trainer(state, trainer_card),
+        CardId::A3b068Hau => can_play_trainer(state, trainer_card),
         CardId::A3142BigMalasada => can_play_big_malasada(state, trainer_card),
-        CardId::B2150Sightseer | CardId::B2191Sightseer => can_play_trainer(state, trainer_card),
-        CardId::A2b072TeamRocketGrunt | CardId::A2b091TeamRocketGrunt => {
-            can_play_team_rocket_grunt(state, trainer_card)
-        }
+        CardId::B2150Sightseer => can_play_trainer(state, trainer_card),
+        CardId::A2b072TeamRocketGrunt => can_play_team_rocket_grunt(state, trainer_card),
         CardId::B3147FieldBlower => can_play_field_blower(state, trainer_card),
-        CardId::B3149Korrina | CardId::B3190Korrina => can_play_trainer(state, trainer_card),
-        CardId::B3151Cheren | CardId::B3192Cheren => can_play_trainer(state, trainer_card),
-        CardId::B3150Cabbie | CardId::B3191Cabbie => can_play_cabbie(state, trainer_card),
-        CardId::B3152ParasolLady | CardId::B3193ParasolLady => {
-            can_play_parasol_lady(state, trainer_card)
-        }
-        CardId::B3a071Juliana | CardId::B3a086Juliana => can_play_trainer(state, trainer_card),
-        CardId::B3a072ProfessorSada | CardId::B3a087ProfessorSada => {
-            can_play_professor_sada(state, trainer_card)
-        }
-        CardId::B3a073ProfessorTuro | CardId::B3a088ProfessorTuro => {
-            can_play_professor_turo(state, trainer_card)
-        }
-        CardId::B3b066Elesa | CardId::B3b083Elesa => can_play_trainer(state, trainer_card),
-        CardId::B3b067PuppyLovingGirl | CardId::B3b084PuppyLovingGirl => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::B3b068Wallace | CardId::B3b085Wallace => can_play_wallace(state, trainer_card),
+        CardId::B3149Korrina => can_play_trainer(state, trainer_card),
+        CardId::B3151Cheren => can_play_trainer(state, trainer_card),
+        CardId::B3150Cabbie => can_play_cabbie(state, trainer_card),
+        CardId::B3152ParasolLady => can_play_parasol_lady(state, trainer_card),
+        CardId::B3a071Juliana => can_play_trainer(state, trainer_card),
+        CardId::B3a072ProfessorSada => can_play_professor_sada(state, trainer_card),
+        CardId::B3a073ProfessorTuro => can_play_professor_turo(state, trainer_card),
+        CardId::B3b066Elesa => can_play_trainer(state, trainer_card),
+        CardId::B3b067PuppyLovingGirl => can_play_trainer(state, trainer_card),
+        CardId::B3b068Wallace => can_play_wallace(state, trainer_card),
         CardId::B4145OrderPad => can_play_trainer(state, trainer_card),
-        CardId::B4152Skyla | CardId::B4192Skyla => can_play_skyla(state, trainer_card),
-        CardId::B4153Wally | CardId::B4193Wally => can_play_wally(state, trainer_card),
-        CardId::B4150Psychic | CardId::B4190Psychic => can_play_psychic(state, trainer_card),
-        CardId::B4151Drayden | CardId::B4191Drayden => can_play_trainer(state, trainer_card),
-        CardId::B4a070TeamRocketsMasterPlan
-        | CardId::B4a086TeamRocketsMasterPlan
-        | CardId::B4a094TeamRocketsMasterPlan => can_play_trainer(state, trainer_card),
+        CardId::B4152Skyla => can_play_skyla(state, trainer_card),
+        CardId::B4153Wally => can_play_wally(state, trainer_card),
+        CardId::B4150Psychic => can_play_psychic(state, trainer_card),
+        CardId::B4151Drayden => can_play_trainer(state, trainer_card),
+        CardId::B4a070TeamRocketsMasterPlan => can_play_trainer(state, trainer_card),
         CardId::B4a067TeamRocketsThievingMachine => {
             can_play_team_rockets_thieving_machine(state, trainer_card)
         }
-        CardId::B4a068TeamRocketsGoozooka | CardId::B4a110TeamRocketsGoozooka => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::B4a069TeamRocketsResearcher | CardId::B4a085TeamRocketsResearcher => {
-            can_play_trainer(state, trainer_card)
-        }
-        CardId::B4a071TeamRocketsBoss | CardId::B4a087TeamRocketsBoss => {
-            can_play_trainer(state, trainer_card)
-        }
+        CardId::B4a068TeamRocketsGoozooka => can_play_trainer(state, trainer_card),
+        CardId::B4a069TeamRocketsResearcher => can_play_trainer(state, trainer_card),
+        CardId::B4a071TeamRocketsBoss => can_play_trainer(state, trainer_card),
         // Information-only cards. Looking at cards without moving them between zones has no
         // observable effect in this engine (the bots already forecast over the full deck
         // distribution), so these are playable and resolve as no-ops. See the matching arms in
         // `forecast_trainer_action` for the per-card reasoning.
         CardId::PA003HandScope
         | CardId::PA004PokedEx
-        | CardId::PA008PokedEx
         | CardId::A3a068Looker
-        | CardId::A3a082Looker
         | CardId::A4161Hiker
-        | CardId::A4201Hiker
-        | CardId::A4a071Morty
-        | CardId::A4a085Morty => can_play_trainer(state, trainer_card),
+        | CardId::A4a071Morty => can_play_trainer(state, trainer_card),
         CardId::A3145RotomDEx => can_play_trainer(state, trainer_card),
-        CardId::A1a067Blue | CardId::A1a081Blue => can_play_trainer(state, trainer_card),
-        CardId::A1226LtSurge | CardId::A1273LtSurge => can_play_lt_surge(state, trainer_card),
+        CardId::A1a067Blue => can_play_trainer(state, trainer_card),
+        CardId::A1226LtSurge => can_play_lt_surge(state, trainer_card),
         CardId::A1a064PokemonFlute => can_play_pokemon_flute(state, trainer_card),
-        CardId::A1a066BuddingExpeditioner | CardId::A1a080BuddingExpeditioner => {
-            can_play_budding_expeditioner(state, trainer_card)
-        }
-        CardId::A2151TeamGalacticGrunt | CardId::A2191TeamGalacticGrunt => {
-            can_play_trainer(state, trainer_card)
-        }
+        CardId::A1a066BuddingExpeditioner => can_play_budding_expeditioner(state, trainer_card),
+        CardId::A2151TeamGalacticGrunt => can_play_trainer(state, trainer_card),
         CardId::A3143FishingNet => can_play_fishing_net(state, trainer_card),
-        CardId::A3148Acerola | CardId::A3190Acerola => can_play_acerola(state, trainer_card),
-        CardId::A3153Sophocles | CardId::A3195Sophocles => can_play_trainer(state, trainer_card),
+        CardId::A3148Acerola => can_play_acerola(state, trainer_card),
+        CardId::A3153Sophocles => can_play_trainer(state, trainer_card),
         CardId::A3a063BeastWall => can_play_beast_wall(state, trainer_card),
         CardId::A4152SquirtBottle => can_play_squirt_bottle(state, trainer_card),
-        CardId::A4159Fisher | CardId::A4199Fisher => can_play_trainer(state, trainer_card),
-        CardId::A4a069Whitney | CardId::A4a083Whitney => can_play_whitney(state, trainer_card),
-        CardId::A4a070TravelingMerchant | CardId::A4a084TravelingMerchant => {
-            can_play_trainer(state, trainer_card)
-        }
+        CardId::A4159Fisher => can_play_trainer(state, trainer_card),
+        CardId::A4a069Whitney => can_play_whitney(state, trainer_card),
+        CardId::A4a070TravelingMerchant => can_play_trainer(state, trainer_card),
         CardId::B1213PrankSpinner => can_play_prank_spinner(state, trainer_card),
         CardId::B1215HittingHammer => can_play_trainer(state, trainer_card),
-        CardId::B1222Hala | CardId::B1267Hala => can_play_trainer(state, trainer_card),
-        CardId::B2151Juggler | CardId::B2192Juggler => can_play_juggler(state, trainer_card),
-        CardId::B2a089Iono | CardId::B2a106Iono => can_play_trainer(state, trainer_card),
-        CardId::A3b069Penny | CardId::A3b086Penny | CardId::B2a092Penny | CardId::B2a109Penny => {
-            can_play_trainer(state, trainer_card)
-        }
+        CardId::B1222Hala => can_play_trainer(state, trainer_card),
+        CardId::B2151Juggler => can_play_juggler(state, trainer_card),
+        CardId::A3b069Penny => can_play_trainer(state, trainer_card),
         _ => None,
     }
 }
