@@ -699,10 +699,20 @@ pub(crate) fn can_play_item(state: &State) -> bool {
     !has_modifiers
 }
 
-fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize, usize)) -> u32 {
+fn get_heavy_helmet_reduction(
+    state: &State,
+    attacking_player: usize,
+    (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Heavy Helmet");
+    // Heavy Helmet: "...it takes -20 damage from attacks from your opponent's Pokémon."
     if has_tool(defending_pokemon, CardId::B1219HeavyHelmet) {
         if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
             if pokemon_card.retreat_cost.len() >= 3 {
@@ -1390,17 +1400,21 @@ pub(crate) fn modify_damage(
         return 0;
     }
 
-    // Check for PreventAllDamageAndEffects (Shinx's Hide)
+    // Check for PreventAllDamageAndEffects (Shinx's Hide): only "damage from—and effects of—
+    // attacks", so Poison, Burn and Ability damage still go through.
     if target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
+        && is_from_active_attack
     {
         debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
         return 0;
     }
 
-    // Check for PreventDamageFromBasic (Carracosta's Blocking Shell)
-    if attacking_pokemon.card.is_basic()
+    // Check for PreventDamageFromBasic (Carracosta's Blocking Shell): only "by attacks from Basic
+    // Pokémon", so a Basic's Ability damage (e.g. Darkrai's Bad Dreams) still goes through.
+    if is_from_active_attack
+        && attacking_pokemon.card.is_basic()
         && target_effects
             .iter()
             .any(|effect| matches!(effect, CardEffect::PreventDamageFromBasic))
@@ -1424,7 +1438,12 @@ pub(crate) fn modify_damage(
     let heavy_helmet_reduction = if skip_target_effects {
         0
     } else {
-        get_heavy_helmet_reduction(state, (target_player, target_idx))
+        get_heavy_helmet_reduction(
+            state,
+            attacking_player,
+            (target_player, target_idx),
+            is_from_active_attack,
+        )
     };
     let metal_core_barrier_reduction = if skip_target_effects {
         0
@@ -1606,11 +1625,12 @@ pub(crate) fn modify_damage(
             + ability_damage_reduction,
     );
 
-    // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage if it is low enough.
+    // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage by attacks if it is
+    // low enough. Poison, Burn and Ability damage are not damage by attacks.
     let prevented_by_threshold = target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventDamageIfLessOrEqual { threshold } if final_damage <= *threshold));
-    if prevented_by_threshold {
+    if prevented_by_threshold && is_from_active_attack {
         debug!("PreventDamageIfLessOrEqual: Preventing {final_damage} damage");
         return 0;
     }
