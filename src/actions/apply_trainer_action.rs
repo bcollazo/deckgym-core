@@ -2141,56 +2141,86 @@ fn puppy_loving_girl_effect(acting_player: usize, state: &State) -> Outcomes {
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [G] Pokémon in play. Put a random [G] Pokémon from your deck
     // that evolves from that Pokémon onto that Pokémon to evolve it.
-    // Similar to rare candy but automatic random evolution from deck
-
-    // Find all valid evolution candidates
-    let evolution_choices = quick_grow_extract_candidates(state, acting_player);
-
-    if evolution_choices.is_empty() {
-        // No valid evolution targets
-        return Outcomes::single_fn(|rng, state, action| {
-            state.decks[action.actor].shuffle(false, rng);
-        });
-    }
-
-    // Create one outcome per possible evolution
-    let num_outcomes = evolution_choices.len();
-    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
-    let mut outcomes: Mutations = vec![];
-
-    for (in_play_idx, evolution_card) in evolution_choices {
-        outcomes.push(Box::new(move |rng, state, action| {
-            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
-            state.decks[action.actor].shuffle(false, rng);
-        }));
-    }
-
-    Outcomes::from_parts(probabilities, outcomes)
+    evolve_chosen_into_random_from_deck(
+        quick_grow_extract_candidates(state, acting_player),
+        EnergyType::Grass,
+    )
 }
 
 fn wallace_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W]
     // Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.
-    let evolution_choices = wallace_candidates(state, acting_player);
+    evolve_chosen_into_random_from_deck(wallace_candidates(state, acting_player), EnergyType::Water)
+}
 
-    if evolution_choices.is_empty() {
-        return Outcomes::single_fn(|rng, state, action| {
+/// "Choose 1 of your [type] Pokémon in play. Put a random [type] Pokémon from your deck that
+/// evolves from that Pokémon onto that Pokémon" (Quick-Grow Extract, Wallace). `candidates` are
+/// the (in-play index, evolution card) pairs the card allows. The Pokémon is the player's choice
+/// and only the evolution is random: with a single Pokémon to choose it evolves at once into a
+/// random one of its evolutions; with more, the player picks it (`EvolveIntoRandomFromDeck`) and
+/// the evolution is drawn then. Drawing over every pair would pick the Pokémon at random too,
+/// weighted by how many evolutions of it are left in the deck.
+fn evolve_chosen_into_random_from_deck(candidates: Vec<(usize, Card)>, energy: EnergyType) -> Outcomes {
+    let mut targets: Vec<usize> = candidates.iter().map(|(in_play_idx, _)| *in_play_idx).collect();
+    targets.dedup();
+    match targets.as_slice() {
+        [] => Outcomes::single_fn(|rng, state, action| {
             state.decks[action.actor].shuffle(false, rng);
-        });
+        }),
+        [_] => random_evolution_outcomes(candidates),
+        _ => Outcomes::single_fn(move |_, state, action| {
+            let choices = targets
+                .iter()
+                .map(|&in_play_idx| SimpleAction::EvolveIntoRandomFromDeck {
+                    in_play_idx,
+                    energy,
+                })
+                .collect();
+            state.move_generation_stack.push((action.actor, choices));
+        }),
     }
+}
 
-    let num_outcomes = evolution_choices.len();
-    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
+/// One outcome per evolution card, each as likely: the card goes from the deck onto its Pokémon,
+/// then the deck is shuffled.
+fn random_evolution_outcomes(candidates: Vec<(usize, Card)>) -> Outcomes {
+    let probabilities = vec![1.0 / (candidates.len() as f64); candidates.len()];
     let mut outcomes: Mutations = vec![];
-
-    for (in_play_idx, evolution_card) in evolution_choices {
+    for (in_play_idx, evolution_card) in candidates {
         outcomes.push(Box::new(move |rng, state, action| {
             apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
             state.decks[action.actor].shuffle(false, rng);
         }));
     }
-
     Outcomes::from_parts(probabilities, outcomes)
+}
+
+/// `EvolveIntoRandomFromDeck`: the chosen Pokémon evolves into a random `energy` Pokémon from the
+/// deck that evolves from it (nothing left to evolve into: the deck is only shuffled).
+pub(crate) fn forecast_evolve_into_random_from_deck(
+    actor: usize,
+    state: &State,
+    in_play_idx: usize,
+    energy: EnergyType,
+) -> Outcomes {
+    let candidates: Vec<(usize, Card)> = match state.in_play_pokemon[actor][in_play_idx].as_ref() {
+        Some(target) => state.decks[actor]
+            .cards
+            .iter()
+            .filter(|card| {
+                matches!(card, Card::Pokemon(pokemon) if pokemon.energy_type == energy)
+                    && target.card.can_evolve_into(card)
+            })
+            .map(|card| (in_play_idx, card.clone()))
+            .collect(),
+        None => vec![],
+    };
+    if candidates.is_empty() {
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+    random_evolution_outcomes(candidates)
 }
 
 fn team_rocket_grunt_outcomes() -> Outcomes {

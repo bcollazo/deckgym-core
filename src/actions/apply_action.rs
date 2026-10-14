@@ -33,7 +33,7 @@ use super::{
     },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
-    apply_trainer_action::forecast_trainer_action,
+    apply_trainer_action::{forecast_evolve_into_random_from_deck, forecast_trainer_action},
     outcomes::Outcomes,
     Action, SimpleAction,
 };
@@ -280,6 +280,15 @@ fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
         SimpleAction::CommunicatePokemon { hand_pokemon } => {
             forecast_pokemon_communication(action.actor, state, hand_pokemon)
         }
+        SimpleAction::EvolveIntoRandomFromDeck {
+            in_play_idx,
+            energy,
+        } => forecast_evolve_into_random_from_deck(
+            action.actor,
+            state,
+            *in_play_idx,
+            *energy,
+        ),
         SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
             forecast_shuffle_pokemon_into_deck(action.actor, hand_pokemon)
         }

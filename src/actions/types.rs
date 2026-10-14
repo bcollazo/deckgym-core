@@ -96,6 +96,12 @@ pub enum SimpleAction {
     CommunicatePokemon {
         hand_pokemon: Card,
     },
+    /// Quick-Grow Extract / Wallace: evolve the chosen Pokémon into a random `energy` Pokémon from
+    /// the deck that evolves from it (the Pokémon is the player's choice, the evolution is random).
+    EvolveIntoRandomFromDeck {
+        in_play_idx: usize,
+        energy: EnergyType,
+    },
     /// May: shuffle specific Pokemon from hand into your deck (no replacement)
     ShufflePokemonIntoDeck {
         hand_pokemon: Vec<Card>,
@@ -390,6 +396,10 @@ impl fmt::Display for SimpleAction {
             SimpleAction::CommunicatePokemon { hand_pokemon } => {
                 write!(f, "CommunicatePokemon({hand_pokemon})")
             }
+            SimpleAction::EvolveIntoRandomFromDeck {
+                in_play_idx,
+                energy,
+            } => write!(f, "EvolveIntoRandomFromDeck({in_play_idx}, {energy:?})"),
             SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
                 write!(f, "ShufflePokemonIntoDeck({:?})", hand_pokemon)
             }

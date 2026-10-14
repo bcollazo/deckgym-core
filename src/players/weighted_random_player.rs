@@ -46,6 +46,7 @@ fn get_weight(action: &SimpleAction) -> u32 {
         SimpleAction::MoveEnergy { .. } => 10,
         SimpleAction::AttachTool { .. } => 10,
         SimpleAction::Evolve { .. } => 10,
+        SimpleAction::EvolveIntoRandomFromDeck { .. } => 10,
         SimpleAction::UseAbility { .. } => 10,
         SimpleAction::Attack(_) => 10,
         SimpleAction::ApplyDamage { .. } => 10,

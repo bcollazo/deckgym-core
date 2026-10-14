@@ -6,6 +6,7 @@ mod cynthia_test;
 mod drayden_test;
 mod elesa_test;
 mod energy_move_trainers_test;
+mod evolve_chosen_target_test;
 mod field_blower_test;
 mod ilima_test;
 mod information_trainers_test;
