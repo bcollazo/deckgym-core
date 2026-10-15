@@ -14,9 +14,8 @@ pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
     let mut actions = vec![];
 
     for (in_play_idx, card) in state.enumerate_in_play_pokemon(current_player) {
-        if card.card.is_fossil() {
-            actions.push(SimpleAction::DiscardFossil { in_play_idx });
-        } else if can_use_ability(state, (in_play_idx, card)) {
+        // Fossils have no ability; their discard option comes from `generate_discard_fossil_actions`.
+        if !card.card.is_fossil() && can_use_ability(state, (in_play_idx, card)) {
             actions.push(SimpleAction::UseAbility { in_play_idx });
         }
     }
@@ -310,8 +309,10 @@ fn can_use_celesteela_ultra_thrusters(state: &State, card: &PlayedCard) -> bool 
     if card.ability_used {
         return false;
     }
-    let active = state.get_active(state.current_player);
-    if !is_ultra_beast(&active.get_name()) {
+    let active_is_ultra_beast = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|active| is_ultra_beast(&active.get_name()));
+    if !active_is_ultra_beast {
         return false;
     }
     state
@@ -327,8 +328,10 @@ fn can_use_switch_active_typed_with_bench(
     if card.ability_used {
         return false;
     }
-    let active = state.get_active(state.current_player);
-    if !active.is_type(energy_type) {
+    let active_is_typed = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|active| active.is_type(energy_type));
+    if !active_is_typed {
         return false;
     }
     state
@@ -372,8 +375,9 @@ fn can_use_attach_energy_from_zone_to_active_typed(
     if card.ability_used || !state.can_attach_energy_from_zone(0) {
         return false;
     }
-    let active = state.get_active(state.current_player);
-    active.is_type(energy_type)
+    state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|active| active.is_type(energy_type))
 }
 
 fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
@@ -431,8 +435,10 @@ fn can_use_umbreon_dark_chase(state: &State, card: &PlayedCard) -> bool {
 
 fn can_use_vaporeon_wash_out(state: &State) -> bool {
     // Check if active Pokémon is Water type
-    let active = state.get_active(state.current_player);
-    if !active.is_type(EnergyType::Water) {
+    let active_is_water = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|active| active.is_type(EnergyType::Water));
+    if !active_is_water {
         return false;
     }
     // Check if there's a benched Water Pokémon with Water energy
