@@ -77,32 +77,30 @@ pub enum PlayerCode {
 pub fn parse_player_code(s: &str) -> Result<PlayerCode, String> {
     let lower = s.to_ascii_lowercase();
 
-    // Check if it starts with 'e' followed by digits (e.g., e2, e4)
-    if lower.starts_with('e') && lower.len() > 1 {
-        let rest = &lower[1..];
+    // Exact named codes first, so codes like "et" and "er" aren't shadowed by 'e<number>' parsing.
+    match lower.as_str() {
+        "aa" => return Ok(PlayerCode::AA),
+        "et" => return Ok(PlayerCode::ET),
+        "r" => return Ok(PlayerCode::R),
+        "h" => return Ok(PlayerCode::H),
+        "w" => return Ok(PlayerCode::W),
+        "m" => return Ok(PlayerCode::M),
+        "v" => return Ok(PlayerCode::V),
+        "e" => return Ok(PlayerCode::E { max_depth: 3 }), // Default depth
+        "er" => return Ok(PlayerCode::ER),
+        "x" => return Ok(PlayerCode::X),
+        _ => {}
+    }
+
+    // 'e' followed by digits (e.g., e2, e4) is ExpectiMiniMax with that depth
+    if let Some(rest) = lower.strip_prefix('e') {
         if let Ok(max_depth) = rest.parse::<usize>() {
             return Ok(PlayerCode::E { max_depth });
-        }
-        // If it starts with 'e' but not followed by valid number, check if it's 'er'
-        if lower == "er" {
-            return Ok(PlayerCode::ER);
         }
         return Err(format!("Invalid player code: {s}. Use 'e<number>' for ExpectiMiniMax with depth, e.g., 'e2', 'e5'"));
     }
 
-    match lower.as_str() {
-        "aa" => Ok(PlayerCode::AA),
-        "et" => Ok(PlayerCode::ET),
-        "r" => Ok(PlayerCode::R),
-        "h" => Ok(PlayerCode::H),
-        "w" => Ok(PlayerCode::W),
-        "m" => Ok(PlayerCode::M),
-        "v" => Ok(PlayerCode::V),
-        "e" => Ok(PlayerCode::E { max_depth: 3 }), // Default depth
-        "er" => Ok(PlayerCode::ER),
-        "x" => Ok(PlayerCode::X),
-        _ => Err(format!("Invalid player code: {s}")),
-    }
+    Err(format!("Invalid player code: {s}"))
 }
 
 pub fn parse_player_code_generic(s: String) -> Result<PlayerCode, String> {
@@ -188,4 +186,37 @@ pub fn create_players_with_bots(
         result.push(player);
     }
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_player_code_named_codes() {
+        let cases = [
+            ("aa", PlayerCode::AA),
+            ("et", PlayerCode::ET),
+            ("r", PlayerCode::R),
+            ("h", PlayerCode::H),
+            ("w", PlayerCode::W),
+            ("m", PlayerCode::M),
+            ("v", PlayerCode::V),
+            ("e", PlayerCode::E { max_depth: 3 }),
+            ("er", PlayerCode::ER),
+            ("x", PlayerCode::X),
+            ("ET", PlayerCode::ET),
+        ];
+        for (code, expected) in cases {
+            assert_eq!(parse_player_code(code), Ok(expected), "code {code}");
+        }
+    }
+
+    #[test]
+    fn test_parse_player_code_expectiminimax_depth() {
+        assert_eq!(parse_player_code("e2"), Ok(PlayerCode::E { max_depth: 2 }));
+        assert_eq!(parse_player_code("E5"), Ok(PlayerCode::E { max_depth: 5 }));
+        assert!(parse_player_code("ex").is_err());
+        assert!(parse_player_code("z").is_err());
+    }
 }
