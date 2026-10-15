@@ -8,7 +8,7 @@ use rand::Rng;
 
 use crate::{
     actions::{
-        apply_evolve, handle_knockouts,
+        handle_knockouts,
         shared_mutations::{
             card_search_outcomes_with_filter_multiple, gladion_search_outcomes,
             item_search_outcomes, pokemon_search_outcomes, tool_search_outcomes,
@@ -17,8 +17,8 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         acerola_targets, can_rare_candy_evolve, diantha_targets, fishing_net_candidates,
-        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_candidates,
-        wallace_candidates, water_pokemon_in_discard, LT_SURGE_TARGETS,
+        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_targets,
+        wallace_targets, water_pokemon_in_discard, LT_SURGE_TARGETS,
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
@@ -2141,56 +2141,32 @@ fn puppy_loving_girl_effect(acting_player: usize, state: &State) -> Outcomes {
 fn quick_grow_extract_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [G] Pokémon in play. Put a random [G] Pokémon from your deck
     // that evolves from that Pokémon onto that Pokémon to evolve it.
-    // Similar to rare candy but automatic random evolution from deck
-
-    // Find all valid evolution candidates
-    let evolution_choices = quick_grow_extract_candidates(state, acting_player);
-
-    if evolution_choices.is_empty() {
-        // No valid evolution targets
-        return Outcomes::single_fn(|rng, state, action| {
-            state.decks[action.actor].shuffle(false, rng);
-        });
-    }
-
-    // Create one outcome per possible evolution
-    let num_outcomes = evolution_choices.len();
-    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
-    let mut outcomes: Mutations = vec![];
-
-    for (in_play_idx, evolution_card) in evolution_choices {
-        outcomes.push(Box::new(move |rng, state, action| {
-            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
-            state.decks[action.actor].shuffle(false, rng);
-        }));
-    }
-
-    Outcomes::from_parts(probabilities, outcomes)
+    let targets = quick_grow_extract_targets(state, acting_player);
+    random_evolution_target_choice(targets, EnergyType::Grass)
 }
 
 fn wallace_effect(acting_player: usize, state: &State) -> Outcomes {
     // Choose 1 of your [W] Pokémon in play with a maximum HP of 50 or less. Put a random [W]
     // Pokémon from your deck that evolves from that Pokémon onto that Pokémon to evolve it.
-    let evolution_choices = wallace_candidates(state, acting_player);
+    let targets = wallace_targets(state, acting_player);
+    random_evolution_target_choice(targets, EnergyType::Water)
+}
 
-    if evolution_choices.is_empty() {
-        return Outcomes::single_fn(|rng, state, action| {
-            state.decks[action.actor].shuffle(false, rng);
-        });
-    }
-
-    let num_outcomes = evolution_choices.len();
-    let probabilities = vec![1.0 / (num_outcomes as f64); num_outcomes];
-    let mut outcomes: Mutations = vec![];
-
-    for (in_play_idx, evolution_card) in evolution_choices {
-        outcomes.push(Box::new(move |rng, state, action| {
-            apply_evolve(action.actor, state, &evolution_card, in_play_idx, true);
-            state.decks[action.actor].shuffle(false, rng);
-        }));
-    }
-
-    Outcomes::from_parts(probabilities, outcomes)
+/// Makes user select which Pokémon to evolve; the evolution card is then drawn at random
+/// from the deck when the `EvolveRandomFromDeck` choice resolves.
+fn random_evolution_target_choice(targets: Vec<usize>, energy_type: EnergyType) -> Outcomes {
+    Outcomes::single_fn(move |_, state, action| {
+        let choices: Vec<SimpleAction> = targets
+            .iter()
+            .map(|&in_play_idx| SimpleAction::EvolveRandomFromDeck {
+                in_play_idx,
+                energy_type,
+            })
+            .collect();
+        if !choices.is_empty() {
+            state.move_generation_stack.push((action.actor, choices));
+        }
+    })
 }
 
 fn team_rocket_grunt_outcomes() -> Outcomes {

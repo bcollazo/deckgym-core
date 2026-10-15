@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
-    models::{Card, PlayedCard},
+    models::{Card, EnergyType, PlayedCard},
     test_support::get_initialized_game,
 };
 
@@ -52,6 +52,17 @@ fn test_quick_grow_extract_evolves_from_deck() {
     };
 
     game.apply_action(&play_extract);
+
+    // Choose Bulbasaur as the Pokemon to evolve
+    let choose_bulbasaur = Action {
+        actor: 0,
+        action: SimpleAction::EvolveRandomFromDeck {
+            in_play_idx: 0,
+            energy_type: EnergyType::Grass,
+        },
+        is_stack: true,
+    };
+    game.apply_action(&choose_bulbasaur);
     let state = game.get_state_clone();
 
     // Verify that Bulbasaur evolved into Ivysaur

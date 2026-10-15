@@ -17,6 +17,7 @@ use crate::{
         },
         attack_helpers::energy_blender_choices,
     },
+    card_logic::random_evolution_candidates,
     effects::{CardEffect, TurnEffect},
     hooks::{
         get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card, DamageModifierContext,
@@ -277,6 +278,10 @@ fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
         SimpleAction::CommunicatePokemon { hand_pokemon } => {
             forecast_pokemon_communication(action.actor, state, hand_pokemon)
         }
+        SimpleAction::EvolveRandomFromDeck {
+            in_play_idx,
+            energy_type,
+        } => forecast_evolve_random_from_deck(action.actor, state, *in_play_idx, *energy_type),
         SimpleAction::ShufflePokemonIntoDeck { hand_pokemon } => {
             forecast_shuffle_pokemon_into_deck(action.actor, hand_pokemon)
         }
@@ -1275,6 +1280,33 @@ pub(crate) fn apply_evolve(
 
     // Run special logic hooks on evolution
     on_evolve(acting_player, state, to_card, position, !from_deck)
+}
+
+/// Evolves the Pokémon at `in_play_idx` with a uniformly random `energy_type` Pokémon from the
+/// deck that evolves from it (Quick-Grow Extract, Wallace).
+fn forecast_evolve_random_from_deck(
+    acting_player: usize,
+    state: &State,
+    in_play_idx: usize,
+    energy_type: EnergyType,
+) -> Outcomes {
+    let evolutions = random_evolution_candidates(state, acting_player, in_play_idx, energy_type);
+    if evolutions.is_empty() {
+        // Should not happen if move generation is correct, but just shuffle deck
+        return Outcomes::single_fn(|rng, state, action| {
+            state.decks[action.actor].shuffle(false, rng);
+        });
+    }
+
+    let probabilities = vec![1.0 / (evolutions.len() as f64); evolutions.len()];
+    let mut outcomes: Mutations = vec![];
+    for evolution in evolutions {
+        outcomes.push(Box::new(move |rng, state, action| {
+            apply_evolve(action.actor, state, &evolution, in_play_idx, true);
+            state.decks[action.actor].shuffle(false, rng);
+        }));
+    }
+    Outcomes::from_parts(probabilities, outcomes)
 }
 
 fn forecast_pokemon_communication(

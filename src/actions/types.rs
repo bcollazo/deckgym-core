@@ -28,6 +28,12 @@ pub enum SimpleAction {
         in_play_idx: usize,
         from_deck: bool,
     },
+    /// Quick-Grow Extract / Wallace: evolve the chosen in-play Pokémon with a random
+    /// `energy_type` Pokémon from the deck that evolves from it.
+    EvolveRandomFromDeck {
+        in_play_idx: usize,
+        energy_type: EnergyType,
+    },
     UseAbility {
         in_play_idx: usize,
     },
@@ -300,6 +306,10 @@ impl fmt::Display for SimpleAction {
                     "Evolve({evolution}, {in_play_idx}, from_deck: {from_deck})"
                 )
             }
+            SimpleAction::EvolveRandomFromDeck {
+                in_play_idx,
+                energy_type,
+            } => write!(f, "EvolveRandomFromDeck({in_play_idx}, {energy_type:?})"),
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
             SimpleAction::Attack(attack) => write!(f, "Attack({})", attack.title),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),

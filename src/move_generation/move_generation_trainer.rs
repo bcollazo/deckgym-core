@@ -4,8 +4,7 @@ use crate::{
     card_logic::{
         acerola_targets, active_has_psychic_attack, can_rare_candy_evolve, diantha_targets,
         distinct_attached_energy_types, fishing_net_candidates, ilima_targets, mallow_targets,
-        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
-        LT_SURGE_TARGETS,
+        psychic_energy_sources, quick_grow_extract_targets, wallace_targets, LT_SURGE_TARGETS,
     },
     effects::TurnEffect,
     hooks::{
@@ -997,7 +996,7 @@ fn can_play_quick_grow_extract(
     }
 
     // Check if there are any valid evolution candidates
-    if quick_grow_extract_candidates(state, state.current_player).is_empty() {
+    if quick_grow_extract_targets(state, state.current_player).is_empty() {
         cannot_play_trainer()
     } else {
         can_play_trainer(state, trainer_card)
@@ -1008,7 +1007,7 @@ fn can_play_quick_grow_extract(
 /// Requires at least 1 Water pokemon with 50 HP or less, that wasn't played this turn,
 /// with a valid Water evolution available in deck
 fn can_play_wallace(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
-    if wallace_candidates(state, state.current_player).is_empty() {
+    if wallace_targets(state, state.current_player).is_empty() {
         cannot_play_trainer()
     } else {
         can_play_trainer(state, trainer_card)
