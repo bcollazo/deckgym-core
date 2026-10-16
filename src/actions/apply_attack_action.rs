@@ -4274,8 +4274,8 @@ fn coin_flip_no_damage_or_damage_and_card_effect_attack(
 /// Discard all energy from this Pokemon
 fn damage_and_discard_all_energy(damage: u32) -> AttackOutcomes {
     active_damage_effect_doutcome(damage, move |_, state, action| {
-        let active = state.get_active_mut(action.actor);
-        active.attached_energy.clear(); // Discard all energy
+        let to_discard = state.get_active(action.actor).attached_energy.clone();
+        state.discard_from_active(action.actor, &to_discard);
     })
 }
 
@@ -4283,7 +4283,8 @@ fn damage_and_discard_all_energy(damage: u32) -> AttackOutcomes {
 /// the opponent's Active Pokémon outright.
 fn self_discard_all_energy_and_knock_out_opponent_active() -> AttackOutcomes {
     active_damage_effect_doutcome(0, move |_, state, action| {
-        state.get_active_mut(action.actor).attached_energy.clear();
+        let to_discard = state.get_active(action.actor).attached_energy.clone();
+        state.discard_from_active(action.actor, &to_discard);
 
         let opponent = (action.actor + 1) % 2;
         let opponent_active = state.get_active_mut(opponent);
