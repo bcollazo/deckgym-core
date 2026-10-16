@@ -365,8 +365,13 @@ fn can_play_tool(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simple
     }
 }
 
-/// Check if a Stadium can be played (cannot play if same-named Stadium is already active)
+/// Check if a Stadium can be played (only 1 Stadium card per turn, and not if a same-named
+/// Stadium is already active)
 fn can_play_stadium(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state.has_played_stadium {
+        return cannot_play_trainer();
+    }
+
     // Cannot play same-name stadium
     if let Some(active_name) = state.get_active_stadium_name() {
         if active_name == trainer_card.name {

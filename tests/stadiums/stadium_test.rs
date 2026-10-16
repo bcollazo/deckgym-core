@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
-    test_support::{attack_action, get_initialized_game},
+    test_support::{attack_action, get_initialized_game, get_test_game_with_board, play_trainer},
 };
 
 fn trainer_from_id(card_id: CardId) -> deckgym::models::TrainerCard {
@@ -1000,4 +1000,49 @@ fn test_bounded_field_doubles_all_modifiers_including_red() {
         defender_hp, 110,
         "Bounded Field x2 should apply to all modifiers: (20 base + 20 Red) × 2 = 80 damage, leaving 110 HP"
     );
+}
+
+fn can_play(game: &deckgym::Game<'static>, card_id: CardId) -> bool {
+    let (_actor, actions) = game.get_state_clone().generate_possible_actions();
+    let name = trainer_from_id(card_id).name;
+    actions.iter().any(|action| match &action.action {
+        SimpleAction::Play { trainer_card } => trainer_card.name == name,
+        _ => false,
+    })
+}
+
+#[test]
+fn test_only_one_stadium_can_be_played_per_turn() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    let mut state = game.get_state_clone();
+    state.hands[0] = vec![
+        get_card_by_enum(CardId::B2a093Mesagoza),
+        get_card_by_enum(CardId::B4155RainbowCave),
+    ];
+    state.hands[1] = vec![get_card_by_enum(CardId::B4a072Arcade)];
+    game.set_state(state);
+
+    assert!(can_play(&game, CardId::B2a093Mesagoza));
+    assert!(can_play(&game, CardId::B4155RainbowCave));
+
+    play_trainer(&mut game, 0, trainer_from_id(CardId::B2a093Mesagoza));
+    assert!(
+        !can_play(&game, CardId::B4155RainbowCave),
+        "A second Stadium (different name) must not be playable in the same turn"
+    );
+
+    // The opponent's turn starts fresh: they may play one Stadium of their own.
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    });
+    // Resolve the opponent's start-of-turn draw.
+    let (actor, actions) = game.get_state_clone().generate_possible_actions();
+    game.apply_action(&actions[0]);
+    assert_eq!(actor, 1);
+    assert!(can_play(&game, CardId::B4a072Arcade));
 }

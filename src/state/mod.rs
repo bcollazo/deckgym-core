@@ -90,6 +90,7 @@ pub struct State {
 
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
+    pub(crate) has_played_stadium: bool, // Only 1 Stadium card may be played per turn
     pub(crate) has_retreated: bool,
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     // Tracks if each player has used a Victory Star Ability (Victini) this turn. The card text
@@ -157,6 +158,7 @@ impl State {
             active_stadium: None,
             active_stadium_owner: None,
             has_played_support: false,
+            has_played_stadium: false,
             has_retreated: false,
             has_used_stadium: [false, false],
             has_used_victory_star: [false, false],
@@ -415,6 +417,7 @@ impl State {
         }
 
         self.has_played_support = false;
+        self.has_played_stadium = false;
         self.has_retreated = false;
         self.has_used_stadium[self.current_player] = false;
         self.has_used_victory_star[self.current_player] = false;
