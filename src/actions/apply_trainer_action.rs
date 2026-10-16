@@ -1432,9 +1432,10 @@ fn professor_oak_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 // TODO: Actually use distribution of possibilities to capture probabilities
 // of pulling the different psychic left in deck vs pushing an item to the bottom.
 fn mythical_slab_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Look at the top card of your deck. If that card is a Psychic Pokemon,\n        put it in your hand. If it is not a Psychic Pokemon, put it on the\n        bottom of your deck.
+    // Look at the top card of your deck. If that card is a [P] Pokémon, put it into your hand.
+    // If it is not a [P] Pokémon, put it on the bottom of your deck.
     if let Some(card) = state.decks[action.actor].cards.first() {
-        if card.is_basic() {
+        if card.is_type(EnergyType::Psychic) {
             state.hands[action.actor].push(card.clone());
             state.decks[action.actor].cards.remove(0);
         } else {

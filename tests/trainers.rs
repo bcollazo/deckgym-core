@@ -32,6 +32,8 @@ mod lana_test;
 mod mallow_test;
 #[path = "trainers/marlon_test.rs"]
 mod marlon_test;
+#[path = "trainers/mythical_slab_test.rs"]
+mod mythical_slab_test;
 #[path = "trainers/order_pad_test.rs"]
 mod order_pad_test;
 #[path = "trainers/penny_test.rs"]
