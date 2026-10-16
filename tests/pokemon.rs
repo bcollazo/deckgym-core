@@ -112,6 +112,8 @@ mod delibird_test;
 mod diancie_diamond_storm_test;
 #[path = "pokemon/direct_damage_attacks_d_test.rs"]
 mod direct_damage_attacks_d_test;
+#[path = "pokemon/discard_all_energy_to_pile_test.rs"]
+mod discard_all_energy_to_pile_test;
 #[path = "pokemon/dragonair_dragons_blessing_test.rs"]
 mod dragonair_dragons_blessing_test;
 #[path = "pokemon/drampa_test.rs"]
