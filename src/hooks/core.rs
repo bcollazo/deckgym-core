@@ -804,6 +804,7 @@ fn get_intimidating_fang_reduction(
 
 fn get_ability_damage_reduction(
     state: &State,
+    attacking_player: usize,
     target_player: usize,
     receiving_pokemon: &crate::models::PlayedCard,
     attacking_pokemon: &crate::models::PlayedCard,
@@ -848,10 +849,14 @@ fn get_ability_damage_reduction(
         _ => 0,
     };
 
+    // Ice Face, Coordinated Unit and Unown GUARD only cut "attacks from your opponent's
+    // Pokémon", so they don't apply to damage from the holder's own side.
+    let from_opponent = attacking_player != target_player;
+
     // Eiscue's Ice Face: only while the defender is at full HP.
     let full_hp_reduction = match receiving_pokemon.ability_mechanic() {
         Some(AbilityMechanic::ReduceDamageFromAttacksIfFullHp { amount })
-            if receiving_pokemon.get_damage_counters() == 0 =>
+            if from_opponent && receiving_pokemon.get_damage_counters() == 0 =>
         {
             debug!("Ice Face: Reducing damage by {}", amount);
             *amount
@@ -863,7 +868,9 @@ fn get_ability_damage_reduction(
     let same_name_reduction = match receiving_pokemon.ability_mechanic() {
         Some(AbilityMechanic::BuffIfAnotherSameNameInPlay {
             damage_reduction, ..
-        }) if count_in_play_by_name(state, target_player, &receiving_pokemon.get_name()) > 1 => {
+        }) if from_opponent
+            && count_in_play_by_name(state, target_player, &receiving_pokemon.get_name()) > 1 =>
+        {
             debug!("Coordinated Unit: Reducing damage by {}", damage_reduction);
             *damage_reduction
         }
@@ -876,7 +883,8 @@ fn get_ability_damage_reduction(
         .enumerate_in_play_pokemon(target_player)
         .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
             Some(AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { amount })
-                if has_other_unown_ability(state, target_player, &pokemon.card) =>
+                if from_opponent
+                    && has_other_unown_ability(state, target_player, &pokemon.card) =>
             {
                 Some(*amount)
             }
@@ -1391,8 +1399,10 @@ pub(crate) fn modify_damage(
         return 0;
     }
 
-    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
+    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached, but only
+    // "by your opponent's attacks and Abilities"
     if target_idx != 0
+        && attacking_player != target_player
         && !skip_target_effects
         && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho)
     {
@@ -1465,6 +1475,7 @@ pub(crate) fn modify_damage(
     } else {
         get_ability_damage_reduction(
             state,
+            attacking_player,
             target_player,
             receiving_pokemon,
             attacking_pokemon,
