@@ -302,6 +302,8 @@ mod partner_bench_damage_attacks_test;
 mod passimian_ex_offload_pass_test;
 #[path = "pokemon/persian_test.rs"]
 mod persian_test;
+#[path = "pokemon/pichu_crackly_toss_test.rs"]
+mod pichu_crackly_toss_test;
 #[path = "pokemon/pidgeot_twister_test.rs"]
 mod pidgeot_twister_test;
 #[path = "pokemon/politoed_raid_test.rs"]

@@ -1693,9 +1693,8 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     );
     map.insert(
         "Take a [L] Energy from your Energy Zone and attach it to 1 of your Benched Basic Pokémon.",
-        Mechanic::ChargeBench {
-            energies: vec![EnergyType::Lightning],
-            target_benched_type: None,
+        Mechanic::AttachEnergyToBenchedBasic {
+            energy_type: EnergyType::Lightning,
         },
     );
     map.insert(
