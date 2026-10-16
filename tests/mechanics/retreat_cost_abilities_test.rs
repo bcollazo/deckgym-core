@@ -178,3 +178,29 @@ fn test_conductive_body_needs_another_beldum() {
     );
     assert!(!can_retreat_to_bench_1(&one_energy));
 }
+
+/// Ariados's Trap Territory: "Your opponent's Active Pokémon's Retreat Cost is 1 more." It is
+/// printed on each Ariados, so two Ariados in play add 2. Bulbasaur's printed cost is [C].
+#[test]
+fn test_two_ariados_each_add_one_to_the_retreat_cost() {
+    let retreat_with = |ariados: usize, energy: usize| {
+        let mut opponent = vec![PlayedCard::from_id(CardId::A1001Bulbasaur)];
+        opponent.extend((0..ariados).map(|_| PlayedCard::from_id(CardId::B1a006Ariados)));
+        let game = get_test_game_with_board(
+            vec![
+                PlayedCard::from_id(CardId::A1001Bulbasaur)
+                    .with_energy(vec![EnergyType::Grass; energy]),
+                PlayedCard::from_id(CardId::A1001Bulbasaur),
+            ],
+            opponent,
+        );
+        can_retreat_to_bench_1(&game)
+    };
+
+    assert!(retreat_with(0, 1));
+    assert!(!retreat_with(1, 1));
+    assert!(retreat_with(1, 2));
+    // Two Ariados: cost 1 + 2 = 3.
+    assert!(!retreat_with(2, 2));
+    assert!(retreat_with(2, 3));
+}
