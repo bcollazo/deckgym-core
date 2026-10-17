@@ -130,3 +130,39 @@ fn test_first_turn_in_play_rule_applies_per_pokemon_not_per_board() {
         "once it is no longer that Pokémon's first turn in play, the evolution is offered"
     );
 }
+
+/// Eevee's Boosted Evolution: "As long as this Pokémon is in the Active Spot, it can evolve
+/// during your first turn or the turn you play it." It names only that Eevee: other Pokémon
+/// still cannot evolve on the first turn.
+#[test]
+fn test_boosted_evolution_eevee_is_the_only_pokemon_that_can_evolve_on_the_first_turn() {
+    let mut game = get_initialized_game_with_board(
+        0,
+        0,
+        1,
+        vec![
+            PlayedCard::from_id(CardId::B1184Eevee),
+            PlayedCard::from_id(CardId::A1189Rattata), // Bench
+        ],
+        vec![PlayedCard::from_id(CardId::A1053Squirtle)],
+    );
+    let mut state = game.get_state_clone();
+    state.hands[0].clear();
+    state.hands[0].push(get_card_by_enum(CardId::A1080Vaporeon));
+    state.hands[0].push(get_card_by_enum(CardId::A1190Raticate));
+    game.set_state(state);
+
+    let (_, actions) = game.get_state_clone().generate_possible_actions();
+    let evolve_targets: Vec<usize> = actions
+        .iter()
+        .filter_map(|a| match a.action {
+            SimpleAction::Evolve { in_play_idx, .. } => Some(in_play_idx),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        evolve_targets,
+        vec![0],
+        "only the Active Boosted Evolution Eevee can evolve on the first turn, not the Benched Rattata"
+    );
+}
