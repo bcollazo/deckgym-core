@@ -117,8 +117,11 @@ fn select(arena: &[MctsNode], investigator: usize) -> Vec<usize> {
 fn best_ucb_child(arena: &[MctsNode], parent_idx: usize, investigator: usize) -> usize {
     let parent = &arena[parent_idx];
     let parent_visits_ln = (parent.visits as f64).ln();
-    // Flip exploitation sign based on whose turn it is
-    let sign: f64 = if parent.state.current_player == investigator {
+    // Flip exploitation sign based on who is making this decision. That is the actor of the
+    // node's actions, which is not always `current_player` (e.g. the defending player chooses
+    // their promotion after a Knock Out during the attacker's turn).
+    let decision_maker = parent.actions[0].actor;
+    let sign: f64 = if decision_maker == investigator {
         1.0
     } else {
         -1.0
@@ -206,4 +209,65 @@ fn best_action(arena: &[MctsNode]) -> Action {
         .map(|(pos, _)| pos)
         .expect("Root must have at least one child after iterations");
     root.actions[best_child_pos].clone()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        card_ids::CardId,
+        models::{EnergyType, PlayedCard},
+        test_support::{attack_action, get_test_game_with_board},
+    };
+
+    /// After the investigator's attack Knocks Out the opponent's Active, the opponent (not the
+    /// current player) picks the promotion, so UCB must prefer the child that is worse for the
+    /// investigator at that node.
+    #[test]
+    fn test_ucb_uses_decision_maker_not_current_player_for_promotion() {
+        let mut game = get_test_game_with_board(
+            vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
+            vec![
+                PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(10),
+                PlayedCard::from_id(CardId::A1001Bulbasaur),
+            ],
+        );
+        game.apply_action(&Action {
+            actor: 0,
+            action: attack_action(CardId::A1001Bulbasaur, 0),
+            is_stack: false,
+        });
+        let state = game.get_state_clone();
+        let (actor, actions) = state.generate_possible_actions();
+        assert_eq!(actor, 1, "the opponent chooses the promotion");
+        assert_eq!(
+            state.current_player, 0,
+            "while it is still the investigator's turn"
+        );
+
+        let investigator = 0;
+        let mut parent = MctsNode::new(state.clone(), actions, None);
+        parent.num_expanded = parent.actions.len();
+        parent.visits = 20;
+        let mut arena = vec![parent];
+        // Child 1 always wins for the investigator, child 2 always loses.
+        for (reward, _) in [
+            (10.0, "good for investigator"),
+            (-10.0, "bad for investigator"),
+        ] {
+            let mut child = MctsNode::new(state.clone(), vec![], Some(0));
+            child.visits = 10;
+            child.reward = reward;
+            let idx = arena.len();
+            arena.push(child);
+            arena[0].children.push(idx);
+        }
+
+        let chosen = best_ucb_child(&arena, 0, investigator);
+        assert_eq!(
+            chosen, 2,
+            "the opponent should pick the child that is worst for the investigator"
+        );
+    }
 }
