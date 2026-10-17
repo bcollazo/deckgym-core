@@ -112,6 +112,8 @@ mod delibird_test;
 mod diancie_diamond_storm_test;
 #[path = "pokemon/direct_damage_attacks_d_test.rs"]
 mod direct_damage_attacks_d_test;
+#[path = "pokemon/discard_all_energy_to_pile_test.rs"]
+mod discard_all_energy_to_pile_test;
 #[path = "pokemon/dragonair_dragons_blessing_test.rs"]
 mod dragonair_dragons_blessing_test;
 #[path = "pokemon/drampa_test.rs"]
@@ -172,6 +174,8 @@ mod hisuian_goodra_securely_sheltered_test;
 mod hisuian_lilligant_dress_up_test;
 #[path = "pokemon/hisuian_zoroark_ex_test.rs"]
 mod hisuian_zoroark_ex_test;
+#[path = "pokemon/hit_back_abilities_test.rs"]
+mod hit_back_abilities_test;
 #[path = "pokemon/hitmonchan_ex_test.rs"]
 mod hitmonchan_ex_test;
 #[path = "pokemon/ho_oh_ex_phoenix_turbo_test.rs"]
@@ -278,6 +282,8 @@ mod milotic_ex_aqua_charge_test;
 mod miltank_rolling_frenzy_test;
 #[path = "pokemon/mimic_shuffle_draw_test.rs"]
 mod mimic_shuffle_draw_test;
+#[path = "pokemon/mimikyu_ex_disguise_test.rs"]
+mod mimikyu_ex_disguise_test;
 #[path = "pokemon/mimikyu_try_to_imitate_test.rs"]
 mod mimikyu_try_to_imitate_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
@@ -302,6 +308,8 @@ mod partner_bench_damage_attacks_test;
 mod passimian_ex_offload_pass_test;
 #[path = "pokemon/persian_test.rs"]
 mod persian_test;
+#[path = "pokemon/pichu_crackly_toss_test.rs"]
+mod pichu_crackly_toss_test;
 #[path = "pokemon/pidgeot_twister_test.rs"]
 mod pidgeot_twister_test;
 #[path = "pokemon/politoed_raid_test.rs"]

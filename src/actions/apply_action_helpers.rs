@@ -10,8 +10,9 @@ use crate::{
     card_ids::CardId,
     effects::TurnEffect,
     hooks::{
-        get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
-        should_poison_attacker, DamageModifierContext,
+        get_counterattack_damage, get_delayed_counterattack_damage, modify_damage,
+        on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
+        DamageModifierContext,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -62,7 +63,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
         }
 
         let next_player = (state.current_player + 1) % 2;
-        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player);
+        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player, true);
 
         let mut outcomes: Mutations = Vec::with_capacity(start_mutations.len());
         for start_mutation in start_mutations {
@@ -105,7 +106,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
         let mut preview_after_checkup = preview_state.clone();
         apply_pokemon_checkup(&mut preview_after_checkup, &checkup_targets, &outcome);
         let (start_probs, start_mutations) =
-            start_turn_ability_outcomes(&preview_after_checkup, next_player);
+            start_turn_ability_outcomes(&preview_after_checkup, next_player, false);
         for (start_prob, start_mutation) in start_probs.into_iter().zip(start_mutations) {
             let outcome = outcome.clone();
             probabilities.push(base_probability * start_prob);
@@ -128,7 +129,14 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
     (probabilities, outcomes)
 }
 
-fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, Mutations) {
+/// Outcomes of abilities that trigger as a turn begins. `from_setup` is true when the turn is
+/// starting because setup (turn 0) just ended; setup is not a real turn, so abilities that
+/// trigger "at the end of your opponent's turn" (Quick Growth) must not fire.
+fn start_turn_ability_outcomes(
+    state: &State,
+    player: usize,
+    from_setup: bool,
+) -> (Probabilities, Mutations) {
     let Some(active) = state.maybe_get_active(player) else {
         return (vec![1.0], vec![noop_mutation()]);
     };
@@ -149,7 +157,7 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
             )
             .into_branches()
         }
-        AbilityMechanic::QuickGrowth => {
+        AbilityMechanic::QuickGrowth if !from_setup => {
             shared_mutations::quick_growth_evolution_outcomes_for_player(player, state)
                 .into_branches()
         }
@@ -478,7 +486,7 @@ fn checkapply_prevent_first_attack(
 
 /// True if the Pokémon at `target` has the Guts ability and `raw_damage` (after modifiers)
 /// would knock it out — i.e. it should flip a Guts survival coin for this damage.
-pub(crate) fn guts_would_flip(
+fn guts_would_flip(
     state: &State,
     attacking_ref: (usize, usize),
     raw_damage: u32,
@@ -532,6 +540,65 @@ pub(crate) fn damage_would_knock_out(
     );
     let remaining = pokemon.get_remaining_hp();
     remaining > 0 && modified >= remaining
+}
+
+/// Sum raw damage per (player, idx) target and return the targets that must flip a Guts
+/// survival coin, sorted for deterministic branch ordering.
+pub(crate) fn guts_flipping_targets(
+    state: &State,
+    attacking_ref: (usize, usize),
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> Vec<(usize, usize)> {
+    // Sum raw damage per target (mirroring handle_damage_only) to find the Guts coin flips.
+    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+    for (damage, player, idx) in targets {
+        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    }
+    let mut flipping: Vec<(usize, usize)> = damage_map
+        .into_iter()
+        .filter(|(target, raw_total)| {
+            guts_would_flip(
+                state,
+                attacking_ref,
+                *raw_total,
+                *target,
+                is_from_active_attack,
+                context,
+            )
+        })
+        .map(|(target, _)| target)
+        .collect();
+    flipping.sort_unstable();
+    flipping
+}
+
+/// All `2^k` equally likely survivor subsets of `flipping` (`k = flipping.len()`), in mask
+/// order (bit `i` of the mask set => `flipping[i]` survives its Guts coin flip).
+pub(crate) fn enumerate_guts_survivor_subsets<T: Copy>(flipping: &[T]) -> Vec<Vec<T>> {
+    let combos = 1usize << flipping.len();
+    (0..combos)
+        .map(|mask| {
+            flipping
+                .iter()
+                .enumerate()
+                .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+                .map(|(_, target)| *target)
+                .collect()
+        })
+        .collect()
+}
+
+/// Set each Guts survivor's remaining HP to exactly 10. Must run after damage application
+/// (so on-damage triggers like Rocky Helmet's counterattack fired) and before knockouts
+/// are resolved.
+pub(crate) fn set_guts_survivors_to_10(state: &mut State, survivors: &[(usize, usize)]) {
+    for (player, idx) in survivors {
+        if let Some(pokemon) = state.in_play_pokemon[*player][*idx].as_mut() {
+            pokemon.set_remaining_hp(10);
+        }
+    }
 }
 
 /// This function applies damage (with modifiers and counterattacks) and handles K.O.s
@@ -594,13 +661,17 @@ pub(crate) fn handle_damage_only(
 
     // Handle each target individually
     for (damage, target_player, target_pokemon_idx) in modified_targets {
+        // 0 damage is not damage, so it must not use up a "first damaged" Disguise
+        if damage == 0 {
+            continue;
+        }
         let applied = checkapply_prevent_first_attack(
             state,
             target_player,
             target_pokemon_idx,
             is_from_active_attack,
         );
-        if applied || damage == 0 {
+        if applied {
             continue;
         }
 
@@ -636,6 +707,7 @@ pub(crate) fn handle_damage_only(
                 0
             }
         };
+        let delayed_counter_damage = get_delayed_counterattack_damage(target_pokemon);
         let should_poison = should_poison_attacker(target_pokemon);
         // "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from
         // your opponent's Pokémon, do X damage to ..." (Pyukumuku's Innards Out, Team Rocket's
@@ -658,6 +730,24 @@ pub(crate) fn handle_damage_only(
                 counter_damage,
                 attacking_pokemon.get_remaining_hp()
             );
+
+            // The attacking Pokemon was itself just damaged by the defender's delayed counterattack
+            // (e.g. Mega Sableye ex's Cursed Jewel). If it's holding its own Rocky Helmet, that
+            // hit reflects 20 damage back onto the original defender too. Rocky Helmet's own
+            // recoil does not count, so two helmets don't ping-pong.
+            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                .as_ref()
+                .expect("Active Pokemon should be there");
+            if delayed_counter_damage > 0 && has_tool(attacking_pokemon, CardId::A2148RockyHelmet) {
+                let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
+                    .as_mut()
+                    .expect("Pokemon should be there if taking damage");
+                target_pokemon.apply_damage(20);
+                debug!(
+                    "Rocky Helmet reflects 20 damage back to the original defender. Remaining HP: {}",
+                    target_pokemon.get_remaining_hp()
+                );
+            }
         }
 
         match knockout_retaliation {
@@ -929,7 +1019,14 @@ pub(crate) fn handle_knockouts(
         return;
     }
 
-    // Queue up promotion actions if the game is still on after a knockout
+    // Queue up promotion actions if the game is still on after a knockout. After a double Knock
+    // Out from an attack, the attacking (turn) player promotes first, whichever seat that is.
+    // `sort_by_key` is stable, and `get_knocked_out` lists seat 0 first, so every other order
+    // (Checkup, Abilities) is unchanged.
+    let mut knockouts = knockouts;
+    if is_from_active_attack {
+        knockouts.sort_by_key(|(ko_receiver, _)| *ko_receiver != attacking_ref.0);
+    }
     for (ko_receiver, ko_pokemon_idx) in knockouts {
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
@@ -1038,12 +1135,15 @@ pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize)
 // Apply common logic in outcomes
 pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
     Box::new(move |rng, state, action| {
+        // Counted here so played games and search simulations count the same actions.
+        state.actions_this_turn = state.actions_this_turn.saturating_add(1);
         if action.is_stack {
             state.move_generation_stack.pop();
         }
         if let SimpleAction::Play { trainer_card } = &action.action {
             let card = Card::Trainer(trainer_card.clone());
             if trainer_card.trainer_card_type == TrainerType::Stadium {
+                state.has_played_stadium = true;
                 // Replaced Stadium cards go to the discard pile of the player who played them.
                 if let Some((old_stadium, old_owner)) =
                     state.set_active_stadium_for_player(action.actor, card.clone())

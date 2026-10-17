@@ -1,4 +1,7 @@
-use crate::{card_ids::CardId, effects::CardEffect, models::PlayedCard, tools::has_tool};
+use crate::{
+    actions::abilities::AbilityMechanic, card_ids::CardId, effects::CardEffect, models::PlayedCard,
+    tools::has_tool,
+};
 
 /// Some cards counterattack either because of RockyHelmet or because of their own ability.
 pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
@@ -7,32 +10,27 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
         total_damage += 20;
     }
 
-    // Temporary counterattack effects (e.g. Alolan Sandslash's Spike Armor).
-    total_damage += card
-        .get_active_effects()
+    // Temporary counterattack effects (e.g. Mega Sableye ex's Cursed Jewel).
+    total_damage += get_delayed_counterattack_damage(card);
+
+    // Some cards have it as an ability (Rough Skin and its reprints, Iron Jugulis).
+    if let Some(AbilityMechanic::CounterattackDamage { amount }) = card.ability_mechanic() {
+        total_damage += amount;
+    }
+
+    total_damage
+}
+
+/// Counterattack damage from temporary effects set up by an earlier attack (e.g. Mega Sableye
+/// ex's Cursed Jewel), as opposed to Rocky Helmet or an ability.
+pub(crate) fn get_delayed_counterattack_damage(card: &PlayedCard) -> u32 {
+    card.get_active_effects()
         .iter()
         .filter_map(|effect| match effect {
             CardEffect::Counterattack { amount } => Some(*amount),
             _ => None,
         })
-        .sum::<u32>();
-
-    // Some cards have it as an ability
-    let card_id = CardId::from_card_id(&card.card.get_id());
-    match card_id {
-        Some(CardId::A1061Poliwrath)
-        | Some(CardId::A1a056Druddigon)
-        | Some(CardId::A2b028Pawmot)
-        | Some(CardId::A3a052Ferrothorn)
-        | Some(CardId::A4a065Zangoose)
-        | Some(CardId::B1297Poliwrath)
-        | Some(CardId::PA054Pawmot) => {
-            total_damage += 20;
-        }
-        _ => {}
-    }
-
-    total_damage
+        .sum()
 }
 
 /// Check if the defending Pokemon should poison the attacker when damaged.
@@ -43,14 +41,8 @@ pub(crate) fn should_poison_attacker(card: &PlayedCard) -> bool {
     }
 
     // Some cards have it as an ability (Dragalge ex's Poison Point)
-    let card_id = CardId::from_card_id(&card.card.get_id());
-    match card_id {
-        Some(CardId::B1160DragalgeEx)
-        | Some(CardId::B1263DragalgeEx)
-        | Some(CardId::B1281DragalgeEx) => {
-            return true;
-        }
-        _ => {}
+    if card.has_ability(&AbilityMechanic::PoisonAttackerOnDamaged) {
+        return true;
     }
 
     false

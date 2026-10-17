@@ -1,8 +1,11 @@
 use deckgym::{
+    card_ids::CardId,
+    models::{PlayedCard, StatusCondition},
     players::{AttachAttackPlayer, EndTurnPlayer, MctsPlayer, Player, RandomPlayer},
     state::GameOutcome,
-    test_support::{init_random_players, load_test_decks},
+    test_support::{get_initialized_game, init_random_players, load_test_decks},
 };
+use rand::{rngs::StdRng, SeedableRng};
 
 #[test]
 fn test_game_api() {
@@ -51,4 +54,46 @@ fn test_first_ko() {
     let winner = game.play();
     assert_eq!(game.get_state_clone().turn_count, 7);
     assert_eq!(winner, Some(GameOutcome::Win(0)));
+}
+
+/// A Knock Out that gives the opponent their 3rd point ends the game before any promotion is
+/// queued, so the Active Spot stays empty. MCTS expands such terminal children and must not
+/// generate moves for them: free-play move generation assumes an Active Pokémon (it used to reach
+/// ability checks like Baxcalibur's Ice Maker that read it).
+#[test]
+fn test_mcts_handles_game_ending_checkup_knockout() {
+    let mut game = get_initialized_game(0);
+    game.play_until_stable();
+
+    // Player 1 is deciding on the last turn. If they end it, Checkup Poison Knocks Out player 0's
+    // Raikou ex (10 HP left), giving player 1 their 2nd and 3rd points. Past the turn limit no
+    // turn-start draw is queued, so the finished state has player 0 to act with an empty Active
+    // Spot, Baxcalibur on the Bench, and nothing on the move generation stack.
+    let mut state = game.get_state_clone();
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A4a025RaikouEx).with_remaining_hp(10),
+            PlayedCard::from_id(CardId::B2a036Baxcalibur),
+        ],
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+    );
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
+    state.current_player = 1;
+    state.turn_count = 30;
+    state.points = [0, 1];
+
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 1);
+    assert!(
+        actions.len() > 1,
+        "MCTS is only consulted with a real choice"
+    );
+    let (_, deck_b) = load_test_decks();
+    let mut mcts = MctsPlayer::new(deck_b, 100);
+    let mut rng = StdRng::seed_from_u64(0);
+    let chosen = mcts.decision_fn(&mut rng, &state, &actions);
+    assert!(actions.contains(&chosen));
 }

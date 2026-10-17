@@ -163,12 +163,39 @@ button {
 
 .app-body {
   flex: 1;
-  display: flex;
   min-height: 0;
+  min-width: 0;
+}
+
+.panel-group {
+  height: 100%;
+  width: 100%;
+}
+
+/* Draggable divider between resizable panels (react-resizable-panels). */
+.resize-handle {
+  flex: 0 0 auto;
+  background: var(--border);
+  transition: background 0.12s;
+}
+
+.resize-handle.side {
+  width: 6px;
+  cursor: col-resize;
+}
+
+.resize-handle.stacked {
+  height: 6px;
+  cursor: row-resize;
+}
+
+.resize-handle[data-separator="hover"],
+.resize-handle[data-separator="active"] {
+  background: var(--accent);
 }
 
 .main-column {
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -206,21 +233,17 @@ button {
 }
 
 .sidebar {
-  width: 320px;
-  flex-shrink: 0;
-  border-left: 1px solid var(--border);
+  height: 100%;
   background: var(--panel);
-  display: flex;
-  flex-direction: column;
   min-height: 0;
+  min-width: 0;
 }
 
 .sidebar-section {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  flex: 1;
-  border-bottom: 1px solid var(--border);
+  height: 100%;
 }
 
 .sidebar-section h2 {
@@ -242,6 +265,7 @@ button {
   display: flex;
   gap: 8px;
   align-items: baseline;
+  min-width: 0;
   padding: 6px 12px;
   font-size: 12.5px;
   border-left: 3px solid transparent;
@@ -269,6 +293,12 @@ button {
   flex-shrink: 0;
 }
 
+/* Long action text wraps instead of being cut off at the panel edge. */
+.log-row .log-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .log-row.player-1 .who {
   color: var(--accent-2);
 }
@@ -281,12 +311,49 @@ button {
 }
 
 .option-row {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: center;
   padding: 5px 12px;
   font-size: 12.5px;
   color: var(--text-dim);
+}
+
+.option-row .option-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  position: relative;
+}
+
+/* A bot's per-option score: a translucent bar behind the row plus a right-aligned value. */
+.option-row .score-bar {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  bottom: 1px;
+  background: var(--accent);
+  opacity: 0.22;
+  border-radius: 0 4px 4px 0;
+  pointer-events: none;
+}
+
+.option-row.chosen .score-bar {
+  background: var(--good);
+  opacity: 0.32;
+}
+
+.option-row .score-label {
+  position: relative;
+  flex-shrink: 0;
+  min-width: 38px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.option-row .dot {
+  position: relative;
 }
 
 .option-row .dot {
@@ -490,13 +557,7 @@ button {
 }
 
 @media (max-width: 900px) {
-  .app-body {
-    flex-direction: column;
-  }
   .sidebar {
-    width: 100%;
-    max-height: 40vh;
-    border-left: none;
     border-top: 1px solid var(--border);
   }
 }

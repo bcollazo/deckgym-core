@@ -14,6 +14,7 @@ mod hooks;
 pub mod models;
 pub mod move_generation;
 pub mod optimize;
+pub mod perf_watch;
 pub mod players;
 pub mod replay;
 pub mod simulate;
@@ -22,6 +23,7 @@ pub mod stadiums;
 pub mod state;
 pub mod temp_deck;
 pub mod tools;
+pub mod trainer_identity;
 
 pub mod test_support;
 

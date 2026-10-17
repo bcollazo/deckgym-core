@@ -1,7 +1,11 @@
-use std::{collections::HashMap, panic};
+use std::{
+    collections::{hash_map::DefaultHasher, HashMap},
+    hash::{Hash, Hasher},
+    panic,
+};
 
 use log::debug;
-use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng, Rng};
+use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng, Rng, SeedableRng};
 
 use crate::{
     actions::{
@@ -24,8 +28,8 @@ use crate::{
 
 use super::{
     apply_action_helpers::{
-        forecast_end_turn, guts_would_flip, handle_damage, handle_damage_only, handle_knockouts,
-        Mutations,
+        enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
+        handle_damage_only, handle_knockouts, set_guts_survivors_to_10, Mutation, Mutations,
     },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
@@ -38,7 +42,9 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
-    let outcomes = forecast_action(state, action);
+    let _watch = crate::perf_watch::watch("apply_action", state, Some(action));
+    // Play samples from the exact distribution; only search sees the capped forecast.
+    let outcomes = forecast_action_exact(state, action);
 
     // Victini's Victory Star / Gholdengo's Luxury Coin: if this is an eligible coin-flip action,
     // sample the coins now but park the result instead of committing it, and let the player
@@ -151,6 +157,9 @@ pub(crate) fn resolve_pending_coin_reflip(
         {
             state.mark_coin_reflip_used(pending.actor, mechanic);
         }
+        // Will covered the original flip (the parked coins were rolled from the forced
+        // outcomes). The reflip is a fresh batch of coins, so Will is spent.
+        state.consume_pending_will_first_heads();
     }
 
     let outcomes = forecast_action(state, &attack_action);
@@ -177,7 +186,38 @@ pub(crate) fn resolve_pending_coin_reflip(
 
 /// This should be mostly a "router" function that calls the appropriate forecast function
 /// based on the action type.
+/// Most branches `forecast_action` returns. Search players expand every branch of every
+/// chance node, so an effect with hundreds of possible results (drawing 4 of 14 deck cards
+/// has 1001) multiplies their work by that much.
+pub const MAX_FORECAST_BRANCHES: usize = 20;
+
+/// The possible results of `action` for search players: the exact distribution when it has
+/// at most `MAX_FORECAST_BRANCHES` branches, otherwise that many branches sampled from it
+/// (`Outcomes::sample_down`). The sample is seeded by the state and action, so a forecast is
+/// reproducible. Playing an action (`apply_action`) always uses the exact distribution.
 pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
+    let outcomes = forecast_action_exact(state, action);
+    if outcomes.len() <= MAX_FORECAST_BRANCHES {
+        return outcomes;
+    }
+    let mut hasher = DefaultHasher::new();
+    state.hash(&mut hasher);
+    format!("{action:?}").hash(&mut hasher);
+    outcomes.sample_down(
+        MAX_FORECAST_BRANCHES,
+        &mut StdRng::seed_from_u64(hasher.finish()),
+    )
+}
+
+/// Every possible result of `action` with its probability, however many there are.
+pub fn forecast_action_exact(state: &State, action: &Action) -> Outcomes {
+    let mut watch = crate::perf_watch::watch("forecast_action", state, Some(action));
+    let outcomes = forecast_action_unwatched(state, action);
+    watch.branches(outcomes.len());
+    outcomes
+}
+
+fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
     let mut outcomes = match &action.action {
         // Deterministic Actions
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
@@ -345,28 +385,16 @@ fn forecast_apply_damage(
     targets: &[(u32, usize, usize)],
     is_from_active_attack: bool,
 ) -> Outcomes {
-    // Sum raw damage per target (mirroring handle_damage_only) to find the Guts coin flips.
-    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
-    for (damage, player, idx) in targets {
-        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
-    }
-    let flipping: Vec<(usize, usize)> = damage_map
-        .into_iter()
-        .filter(|(target, raw_total)| {
-            guts_would_flip(
-                state,
-                attacking_ref,
-                *raw_total,
-                *target,
-                is_from_active_attack,
-                DamageModifierContext {
-                    attack_name: None,
-                    attack_effect: None,
-                },
-            )
-        })
-        .map(|(target, _)| target)
-        .collect();
+    let flipping = guts_flipping_targets(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        DamageModifierContext {
+            attack_name: None,
+            attack_effect: None,
+        },
+    );
 
     if flipping.is_empty() {
         let targets = targets.to_vec();
@@ -377,36 +405,28 @@ fn forecast_apply_damage(
 
     // One branch per heads/tails combination; on heads the damage still applies (so on-damage
     // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
-    let combos = 1usize << flipping.len();
-    let probabilities = vec![1.0 / combos as f64; combos];
-    let mut mutations: Mutations = vec![];
-    for mask in 0..combos {
-        let survivors: Vec<(usize, usize)> = flipping
-            .iter()
-            .enumerate()
-            .filter(|(bit, _)| (mask >> bit) & 1 == 1)
-            .map(|(_, target)| *target)
-            .collect();
-        let targets = targets.to_vec();
-        mutations.push(Box::new(move |_, state, _| {
-            handle_damage_only(
-                state,
-                attacking_ref,
-                &targets,
-                is_from_active_attack,
-                DamageModifierContext {
-                    attack_name: None,
-                    attack_effect: None,
-                },
-            );
-            for (player, idx) in &survivors {
-                if let Some(pokemon) = state.in_play_pokemon[*player][*idx].as_mut() {
-                    pokemon.set_remaining_hp(10);
-                }
-            }
-            handle_knockouts(state, attacking_ref, is_from_active_attack);
-        }));
-    }
+    let subsets = enumerate_guts_survivor_subsets(&flipping);
+    let probabilities = vec![1.0 / subsets.len() as f64; subsets.len()];
+    let mutations: Mutations = subsets
+        .into_iter()
+        .map(|survivors| {
+            let targets = targets.to_vec();
+            Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
+                handle_damage_only(
+                    state,
+                    attacking_ref,
+                    &targets,
+                    is_from_active_attack,
+                    DamageModifierContext {
+                        attack_name: None,
+                        attack_effect: None,
+                    },
+                );
+                set_guts_survivors_to_10(state, &survivors);
+                handle_knockouts(state, attacking_ref, is_from_active_attack);
+            }) as Mutation
+        })
+        .collect();
     Outcomes::from_parts(probabilities, mutations)
 }
 
@@ -1492,6 +1512,69 @@ mod tests {
     use rand::SeedableRng;
 
     use super::*;
+
+    /// Gholdengo ex's Spending Rush with 5 Metal Energy against 3 Pokémon: the 5 random hits
+    /// split C(7, 2) = 21 ways, one more than search players see.
+    fn spending_rush_with_21_outcomes() -> (State, Action) {
+        let game = crate::test_support::get_test_game_with_board(
+            vec![PlayedCard::from_id(CardId::B2a078GholdengoEx)
+                .with_energy(vec![EnergyType::Metal; 5])],
+            // 220+ HP each: no target is knocked out by the 200 damage, so every split shows.
+            vec![PlayedCard::from_id(CardId::B1a020MegaBlastoiseEx); 3],
+        );
+        let action = Action {
+            actor: 0,
+            action: crate::test_support::attack_action(CardId::B2a078GholdengoEx, 0),
+            is_stack: false,
+        };
+        (game.get_state_clone(), action)
+    }
+
+    #[test]
+    fn search_forecasts_are_capped_and_reproducible() {
+        let (state, action) = spending_rush_with_21_outcomes();
+        assert_eq!(forecast_action_exact(&state, &action).len(), 21);
+        let forecast = forecast_action(&state, &action);
+        assert!(forecast.len() <= MAX_FORECAST_BRANCHES);
+        let (probabilities, _) = forecast.into_branches();
+        assert!((probabilities.iter().sum::<f64>() - 1.0).abs() < 1e-9);
+        // Seeded by the state and action: the same forecast every time.
+        let (again, _) = forecast_action(&state, &action).into_branches();
+        assert_eq!(probabilities, again);
+    }
+
+    #[test]
+    fn playing_an_action_still_samples_every_outcome() {
+        // The cap is for search only: applying the attack reaches all 21 damage splits,
+        // not just the (at most 20) branches a search forecast keeps.
+        let (state, action) = spending_rush_with_21_outcomes();
+        let mut seen = std::collections::HashSet::new();
+        for seed in 0..3000 {
+            let mut played = state.clone();
+            apply_action(&mut StdRng::seed_from_u64(seed), &mut played, &action);
+            let split: Vec<u32> = (0..4)
+                .filter_map(|i| played.in_play_pokemon[1][i].as_ref())
+                .map(|p| p.get_remaining_hp())
+                .collect();
+            seen.insert(split);
+        }
+        assert_eq!(seen.len(), 21);
+    }
+
+    #[test]
+    fn sample_down_keeps_at_most_k_branches_with_valid_probabilities() {
+        let (state, action) = spending_rush_with_21_outcomes();
+        for k in [1, 5, 20] {
+            let mut rng = StdRng::seed_from_u64(k as u64);
+            let sampled = forecast_action_exact(&state, &action).sample_down(k, &mut rng);
+            assert!(sampled.len() <= k && !sampled.is_empty());
+            let (probabilities, _) = sampled.into_branches();
+            assert!((probabilities.iter().sum::<f64>() - 1.0).abs() < 1e-9);
+            assert!(probabilities
+                .iter()
+                .all(|p| (p * k as f64).fract().abs() < 1e-9));
+        }
+    }
     use crate::card_ids::CardId;
     use crate::database::get_card_by_enum;
     use crate::{

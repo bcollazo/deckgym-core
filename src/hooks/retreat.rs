@@ -119,7 +119,8 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         }
 
         // Ariados Trap Territory: Your opponent's Active Pokémon's Retreat Cost is 1 more.
-        // This check needs to look at if the OPPONENT has Ariados in play
+        // This check needs to look at if the OPPONENT has Ariados in play. It is printed on each
+        // Ariados, so every Ariados adds its own 1.
         let opponent = (state.current_player + 1) % 2;
         for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
             if matches!(
@@ -127,7 +128,6 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
             ) {
                 normal_cost.push(EnergyType::Colorless);
-                break;
             }
         }
 

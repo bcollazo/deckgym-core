@@ -61,7 +61,7 @@ engine → bot   {
     …
   ]
 }
-bot → engine   {"i": 1, "note": "attack wins the race"}
+bot → engine   {"i": 1, "note": "attack wins the race", "scores": [0.05, 0.9, 0.05]}
 ```
 
 - `ply` is a per-game counter for this bot's own decisions (starts at 1); it does **not**
@@ -78,6 +78,12 @@ bot → engine   {"i": 1, "note": "attack wins the race"}
 - The bot's reply: `i` (required) is the index into `actions` to take. `note` (optional) is a short
   string stored in the replay next to that decision, shown in the viewer's options panel — use it
   for "why" (e.g. "attack wins the race", "saving retreat for next turn").
+- `scores` (optional) is an array with exactly one finite number per entry of `actions`, in the same
+  order — how much the bot likes each option (higher is better). It is stored in the replay and the
+  viewer draws it next to each option: values that are non-negative and sum to 1 are shown as
+  percentages (use this for a policy's probabilities), anything else as raw numbers with a bar
+  scaled to the range. A `scores` array of the wrong length, or with non-numeric entries, is
+  ignored; it never invalidates the move.
 
 Only one decision is in flight at a time — the engine waits for a reply before sending the next
 `decide`.

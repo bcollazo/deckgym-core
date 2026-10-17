@@ -1,3 +1,6 @@
+use std::collections::BTreeMap;
+
+use rand::distributions::{Distribution, WeightedIndex};
 use rand::rngs::StdRng;
 
 use super::apply_action_helpers::{Mutation, Mutations, Probabilities};
@@ -32,6 +35,42 @@ pub enum ForecastBuildError {
 }
 
 impl Outcomes {
+    /// Number of branches (possible results) in this forecast.
+    pub fn len(&self) -> usize {
+        self.branches.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.branches.is_empty()
+    }
+
+    /// At most `k` branches drawn from this distribution: `k` independent samples by
+    /// probability, each weighted 1/k, with repeats of a branch merged. An unbiased
+    /// estimate of any expectation over the outcomes, which search players need, at a
+    /// bounded cost. Unchanged when there are at most `k` branches already.
+    pub fn sample_down(self, k: usize, rng: &mut StdRng) -> Self {
+        if self.branches.len() <= k || k == 0 {
+            return self;
+        }
+        let dist = WeightedIndex::new(self.branches.iter().map(|b| b.probability))
+            .expect("forecast probabilities are valid");
+        let mut draws: BTreeMap<usize, usize> = BTreeMap::new();
+        for _ in 0..k {
+            *draws.entry(dist.sample(rng)).or_insert(0) += 1;
+        }
+        let mut branches: Vec<Option<OutcomeBranch>> =
+            self.branches.into_iter().map(Some).collect();
+        let sampled = draws
+            .into_iter()
+            .map(|(index, count)| {
+                let mut branch = branches[index].take().expect("each index drawn once");
+                branch.probability = count as f64 / k as f64;
+                branch
+            })
+            .collect();
+        Self { branches: sampled }
+    }
+
     pub fn single(mutation: Mutation) -> Self {
         Self {
             branches: vec![OutcomeBranch {

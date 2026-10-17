@@ -45,7 +45,10 @@ def main() -> None:
         elif msg_type == "decide":
             actions = message["actions"]
             choice = rng.choice(actions)
-            send({"i": choice["i"], "note": f"random pick: {choice['text']}"})
+            # `scores` is optional: one number per action, in order. The viewer shows them next to
+            # each option (probabilities are shown as percentages).
+            scores = [1.0 / len(actions)] * len(actions)
+            send({"i": choice["i"], "note": f"random pick: {choice['text']}", "scores": scores})
         else:
             log(f"unrecognized message type: {msg_type!r}")
 

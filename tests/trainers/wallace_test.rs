@@ -128,3 +128,39 @@ fn test_wallace_no_valid_target_does_nothing() {
         "Wallace shouldn't be playable without a valid low-HP Water Pokémon target"
     );
 }
+
+#[test]
+fn test_wallace_counts_hp_bonus_from_giant_cape() {
+    // Wallace says "maximum HP of 50 or less". A 50 HP Staryu wearing Giant Cape (+20 HP) has a
+    // maximum HP of 70, so it isn't a valid target; the same Staryu without the Tool is.
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+    state.current_player = 0;
+    state.turn_count = 3;
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A1074Staryu)
+            .with_tool(get_card_by_enum(CardId::A2147GiantCape))],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    state.decks[0].cards = vec![get_card_by_enum(CardId::A1075Starmie)];
+
+    let wallace = make_trainer_card(CardId::B3b068Wallace);
+    state.hands[0] = vec![Card::Trainer(wallace)];
+    game.set_state(state.clone());
+
+    let is_wallace_play = |choice: &Action| matches!(&choice.action, SimpleAction::Play { trainer_card } if trainer_card.id == "B3b 068");
+    let (_, choices) = game.get_state_clone().generate_possible_actions();
+    assert!(
+        !choices.iter().any(is_wallace_play),
+        "Wallace shouldn't target a Pokémon whose maximum HP is 70 with Giant Cape"
+    );
+
+    state.in_play_pokemon[0][0] = Some(PlayedCard::from_id(CardId::A1074Staryu));
+    game.set_state(state);
+    let (_, choices) = game.get_state_clone().generate_possible_actions();
+    assert!(
+        choices.iter().any(is_wallace_play),
+        "Wallace should target a 50 HP Pokémon with no HP bonus"
+    );
+}

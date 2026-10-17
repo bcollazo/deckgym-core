@@ -336,10 +336,7 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
             AbilityMechanic::EndTurnDrawCardIfActive { amount: 1 }
         ) {
             debug!("Legendary Pulse: Drawing a card");
-            state.move_generation_stack.push((
-                player_ending_turn,
-                vec![SimpleAction::DrawCard { amount: 1 }],
-            ));
+            state.maybe_draw_card(player_ending_turn);
         }
         if let AbilityMechanic::EndTurnHealSelfIfActive { amount } = mechanic {
             debug!("Full-Mouth Manner: Healing 20 damage from active");
@@ -699,10 +696,20 @@ pub(crate) fn can_play_item(state: &State) -> bool {
     !has_modifiers
 }
 
-fn get_heavy_helmet_reduction(state: &State, (target_player, target_idx): (usize, usize)) -> u32 {
+fn get_heavy_helmet_reduction(
+    state: &State,
+    attacking_player: usize,
+    (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+
     let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
         .as_ref()
         .expect("Defending Pokemon should be there when checking Heavy Helmet");
+    // Heavy Helmet: "...it takes -20 damage from attacks from your opponent's Pokémon."
     if has_tool(defending_pokemon, CardId::B1219HeavyHelmet) {
         if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
             if pokemon_card.retreat_cost.len() >= 3 {
@@ -794,6 +801,7 @@ fn get_intimidating_fang_reduction(
 
 fn get_ability_damage_reduction(
     state: &State,
+    attacking_player: usize,
     target_player: usize,
     receiving_pokemon: &crate::models::PlayedCard,
     attacking_pokemon: &crate::models::PlayedCard,
@@ -838,10 +846,14 @@ fn get_ability_damage_reduction(
         _ => 0,
     };
 
+    // Ice Face, Coordinated Unit and Unown GUARD only cut "attacks from your opponent's
+    // Pokémon", so they don't apply to damage from the holder's own side.
+    let from_opponent = attacking_player != target_player;
+
     // Eiscue's Ice Face: only while the defender is at full HP.
     let full_hp_reduction = match receiving_pokemon.ability_mechanic() {
         Some(AbilityMechanic::ReduceDamageFromAttacksIfFullHp { amount })
-            if receiving_pokemon.get_damage_counters() == 0 =>
+            if from_opponent && receiving_pokemon.get_damage_counters() == 0 =>
         {
             debug!("Ice Face: Reducing damage by {}", amount);
             *amount
@@ -853,7 +865,9 @@ fn get_ability_damage_reduction(
     let same_name_reduction = match receiving_pokemon.ability_mechanic() {
         Some(AbilityMechanic::BuffIfAnotherSameNameInPlay {
             damage_reduction, ..
-        }) if count_in_play_by_name(state, target_player, &receiving_pokemon.get_name()) > 1 => {
+        }) if from_opponent
+            && count_in_play_by_name(state, target_player, &receiving_pokemon.get_name()) > 1 =>
+        {
             debug!("Coordinated Unit: Reducing damage by {}", damage_reduction);
             *damage_reduction
         }
@@ -866,7 +880,8 @@ fn get_ability_damage_reduction(
         .enumerate_in_play_pokemon(target_player)
         .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
             Some(AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { amount })
-                if has_other_unown_ability(state, target_player, &pokemon.card) =>
+                if from_opponent
+                    && has_other_unown_ability(state, target_player, &pokemon.card) =>
             {
                 Some(*amount)
             }
@@ -1381,8 +1396,10 @@ pub(crate) fn modify_damage(
         return 0;
     }
 
-    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached
+    // Protective Poncho: prevent all damage to benched Pokémon with this tool attached, but only
+    // "by your opponent's attacks and Abilities"
     if target_idx != 0
+        && attacking_player != target_player
         && !skip_target_effects
         && has_tool(receiving_pokemon, CardId::B2147ProtectivePoncho)
     {
@@ -1390,17 +1407,21 @@ pub(crate) fn modify_damage(
         return 0;
     }
 
-    // Check for PreventAllDamageAndEffects (Shinx's Hide)
+    // Check for PreventAllDamageAndEffects (Shinx's Hide): only "damage from—and effects of—
+    // attacks", so Poison, Burn and Ability damage still go through.
     if target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventAllDamageAndEffects))
+        && is_from_active_attack
     {
         debug!("PreventAllDamageAndEffects: Preventing all damage and effects");
         return 0;
     }
 
-    // Check for PreventDamageFromBasic (Carracosta's Blocking Shell)
-    if attacking_pokemon.card.is_basic()
+    // Check for PreventDamageFromBasic (Carracosta's Blocking Shell): only "by attacks from Basic
+    // Pokémon", so a Basic's Ability damage (e.g. Darkrai's Bad Dreams) still goes through.
+    if is_from_active_attack
+        && attacking_pokemon.card.is_basic()
         && target_effects
             .iter()
             .any(|effect| matches!(effect, CardEffect::PreventDamageFromBasic))
@@ -1424,7 +1445,12 @@ pub(crate) fn modify_damage(
     let heavy_helmet_reduction = if skip_target_effects {
         0
     } else {
-        get_heavy_helmet_reduction(state, (target_player, target_idx))
+        get_heavy_helmet_reduction(
+            state,
+            attacking_player,
+            (target_player, target_idx),
+            is_from_active_attack,
+        )
     };
     let metal_core_barrier_reduction = if skip_target_effects {
         0
@@ -1446,6 +1472,7 @@ pub(crate) fn modify_damage(
     } else {
         get_ability_damage_reduction(
             state,
+            attacking_player,
             target_player,
             receiving_pokemon,
             attacking_pokemon,
@@ -1606,11 +1633,12 @@ pub(crate) fn modify_damage(
             + ability_damage_reduction,
     );
 
-    // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage if it is low enough.
+    // Threshold-based prevention (e.g. Cascoon's Harden): prevent all damage by attacks if it is
+    // low enough. Poison, Burn and Ability damage are not damage by attacks.
     let prevented_by_threshold = target_effects
         .iter()
         .any(|effect| matches!(effect, CardEffect::PreventDamageIfLessOrEqual { threshold } if final_damage <= *threshold));
-    if prevented_by_threshold {
+    if prevented_by_threshold && is_from_active_attack {
         debug!("PreventDamageIfLessOrEqual: Preventing {final_damage} damage");
         return 0;
     }
@@ -1983,12 +2011,20 @@ fn apply_electrical_cord(
         return;
     }
 
+    // Only Energy that a Benched Pokémon can take is moved; the rest stays on the knocked out
+    // Pokémon and is discarded with it.
+    let bench_indices: Vec<_> = state
+        .enumerate_bench_pokemon(knocked_out_player)
+        .map(|(idx, _)| idx)
+        .take(2)
+        .collect();
+
     // Collect up to 2 Lightning energies from the knocked out Pokemon
     let mut lightning_energies = vec![];
     let knocked_out_pokemon_mut = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
         .as_mut()
         .expect("Pokemon should be there if knocked out");
-    for _ in 0..2 {
+    for _ in 0..bench_indices.len() {
         if let Some(pos) = knocked_out_pokemon_mut
             .attached_energy
             .iter()
@@ -2007,21 +2043,13 @@ fn apply_electrical_cord(
         "Electrical Cord: Moving {} Lightning Energy from knocked out Pokemon",
         lightning_energies.len()
     );
-    // Collect just the indices to avoid borrow checker issues
-    let bench_indices: Vec<_> = state
-        .enumerate_bench_pokemon(knocked_out_player)
-        .map(|(idx, _)| idx)
-        .collect();
-    for (i, energy) in lightning_energies.into_iter().enumerate() {
-        if i < bench_indices.len() {
-            let bench_idx = bench_indices[i];
-            if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut() {
-                pokemon.attached_energy.push(energy);
-                debug!(
-                    "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
-                    bench_idx
-                );
-            }
+    for (energy, bench_idx) in lightning_energies.into_iter().zip(bench_indices) {
+        if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut() {
+            pokemon.attached_energy.push(energy);
+            debug!(
+                "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
+                bench_idx
+            );
         }
     }
 }

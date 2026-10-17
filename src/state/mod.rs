@@ -70,6 +70,10 @@ pub struct State {
     pub current_player: usize,
     pub(crate) end_turn_pending: bool,
     pub move_generation_stack: Vec<(usize, Vec<SimpleAction>)>,
+    /// Actions applied so far this turn (any actor, including pending choices). See
+    /// `MAX_ACTIONS_PER_TURN`.
+    #[serde(default)]
+    pub actions_this_turn: u16,
 
     // Core state
     pub energy_zone: [EnergyZone; 2],
@@ -86,6 +90,7 @@ pub struct State {
 
     // Turn Flags (remember to reset these in reset_turn_states)
     pub(crate) has_played_support: bool,
+    pub(crate) has_played_stadium: bool, // Only 1 Stadium card may be played per turn
     pub(crate) has_retreated: bool,
     pub has_used_stadium: [bool; 2], // Tracks if each player has used the stadium this turn
     // Tracks if each player has used a Victory Star Ability (Victini) this turn. The card text
@@ -143,6 +148,7 @@ impl State {
             current_player: 0,
             end_turn_pending: false,
             move_generation_stack: Vec::new(),
+            actions_this_turn: 0,
             energy_zone: [EnergyZone::default(), EnergyZone::default()],
             hands: [Vec::new(), Vec::new()],
             decks: [deck_a.clone(), deck_b.clone()],
@@ -152,6 +158,7 @@ impl State {
             active_stadium: None,
             active_stadium_owner: None,
             has_played_support: false,
+            has_played_stadium: false,
             has_retreated: false,
             has_used_stadium: [false, false],
             has_used_victory_star: [false, false],
@@ -410,6 +417,7 @@ impl State {
         }
 
         self.has_played_support = false;
+        self.has_played_stadium = false;
         self.has_retreated = false;
         self.has_used_stadium[self.current_player] = false;
         self.has_used_victory_star[self.current_player] = false;
@@ -729,6 +737,7 @@ impl State {
             (self.current_player + 1) % 2
         );
         self.end_turn_pending = false;
+        self.actions_this_turn = 0;
         self.attack_name_used_last_turn[self.current_player] =
             self.attack_name_used_this_turn[self.current_player].take();
         // Close out the ending player's point ledger before handing over, and open the incoming

@@ -39,8 +39,10 @@ export function LogPanel({ replay, currentIndex, onSeek }: LogPanelProps) {
               onClick={() => onSeek(i + 1)}
             >
               <span className="ply">T{step.turn}</span>
-              <span className="who">{playerName}</span>
-              <span>{chosenText}</span>
+              <span className="who" title={playerName}>
+                P{step.actor}
+              </span>
+              <span className="log-text">{chosenText}</span>
             </div>
           );
         })}

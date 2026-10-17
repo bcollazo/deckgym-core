@@ -16,7 +16,8 @@
     "pixi-filters": "^6.1.5",
     "pixi.js": "^8.21.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-resizable-panels": "^4.14.2"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

@@ -42,6 +42,39 @@ pub struct ExternalPlayer {
     bot: Option<SpawnedBot>,
     ply: u32,
     last_note: Option<String>,
+    last_scores: Option<Vec<f64>>,
+}
+
+/// What a bot's reply to a `decide` message carries.
+#[derive(Debug, PartialEq)]
+struct BotReply {
+    i: usize,
+    note: Option<String>,
+    scores: Option<Vec<f64>>,
+}
+
+/// Parses a bot's reply line. `scores` is optional; if present it must be an array of
+/// `action_count` finite numbers, otherwise it is dropped (a bad `scores` never fails the move).
+fn parse_reply(value: &Value, action_count: usize) -> Result<BotReply, String> {
+    let i = value
+        .get("i")
+        .and_then(Value::as_u64)
+        .ok_or("bot reply is missing a numeric 'i' field")? as usize;
+    let note = value
+        .get("note")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let scores = value
+        .get("scores")
+        .and_then(Value::as_array)
+        .and_then(|values| {
+            let numbers: Option<Vec<f64>> = values
+                .iter()
+                .map(|v| v.as_f64().filter(|x| x.is_finite()))
+                .collect();
+            numbers.filter(|n| n.len() == action_count)
+        });
+    Ok(BotReply { i, note, scores })
 }
 
 impl ExternalPlayer {
@@ -53,6 +86,7 @@ impl ExternalPlayer {
             bot: None,
             ply: 0,
             last_note: None,
+            last_scores: None,
         }
     }
 
@@ -148,7 +182,7 @@ impl ExternalPlayer {
         actor: usize,
         state: &State,
         possible_actions: &[Action],
-    ) -> Result<(usize, Option<String>), String> {
+    ) -> Result<BotReply, String> {
         self.ply += 1;
         let bot = self.bot.as_mut().expect("ensure_spawned called first");
 
@@ -177,15 +211,7 @@ impl ExternalPlayer {
             })?;
         let value: Value =
             serde_json::from_str(&reply).map_err(|e| format!("invalid JSON from bot: {e}"))?;
-        let i = value
-            .get("i")
-            .and_then(Value::as_u64)
-            .ok_or("bot reply is missing a numeric 'i' field")? as usize;
-        let note = value
-            .get("note")
-            .and_then(Value::as_str)
-            .map(str::to_string);
-        Ok((i, note))
+        parse_reply(&value, possible_actions.len())
     }
 }
 
@@ -210,6 +236,7 @@ impl Player for ExternalPlayer {
         possible_actions: &[Action],
     ) -> Action {
         self.last_note = None;
+        self.last_scores = None;
         // Every element of `possible_actions` is for the same decision, so shares one actor.
         let actor = possible_actions
             .first()
@@ -221,11 +248,12 @@ impl Player for ExternalPlayer {
             .and_then(|()| self.ask_bot(actor, state, possible_actions));
 
         match outcome {
-            Ok((i, note)) if i < possible_actions.len() => {
+            Ok(BotReply { i, note, scores }) if i < possible_actions.len() => {
                 self.last_note = note;
+                self.last_scores = scores;
                 possible_actions[i].clone()
             }
-            Ok((i, _)) => {
+            Ok(BotReply { i, .. }) => {
                 let msg = format!(
                     "chose out-of-range index {i} (only {} legal actions)",
                     possible_actions.len()
@@ -250,6 +278,10 @@ impl Player for ExternalPlayer {
 
     fn last_note(&self) -> Option<String> {
         self.last_note.clone()
+    }
+
+    fn last_scores(&self) -> Option<Vec<f64>> {
+        self.last_scores.clone()
     }
 }
 
@@ -294,6 +326,32 @@ mod pipe_write_tests {
             Ok(())
         }
     }
+    #[test]
+    fn reply_scores_are_kept_only_when_they_match_the_actions() {
+        let reply = parse_reply(&json!({"i": 1, "note": "n", "scores": [0.25, 0.75]}), 2).unwrap();
+        assert_eq!(
+            reply,
+            BotReply {
+                i: 1,
+                note: Some("n".into()),
+                scores: Some(vec![0.25, 0.75])
+            }
+        );
+        // Wrong length, non-numeric entries and non-arrays are dropped without failing the move.
+        for bad in [
+            json!([0.5]),
+            json!([0.5, "x"]),
+            json!("scores"),
+            json!(null),
+        ] {
+            let reply = parse_reply(&json!({"i": 0, "scores": bad}), 2).unwrap();
+            assert_eq!(reply.scores, None);
+            assert_eq!(reply.i, 0);
+        }
+        assert_eq!(parse_reply(&json!({"i": 0}), 2).unwrap().scores, None);
+        assert!(parse_reply(&json!({"scores": [1.0]}), 1).is_err());
+    }
+
     #[test]
     fn protocol_message_is_one_buffered_json_line() {
         let message = json!({"type":"decide", "text":"line one\nline two", "values":[1,2,3]});

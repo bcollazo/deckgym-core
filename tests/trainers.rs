@@ -34,6 +34,8 @@ mod lana_test;
 mod mallow_test;
 #[path = "trainers/marlon_test.rs"]
 mod marlon_test;
+#[path = "trainers/mythical_slab_test.rs"]
+mod mythical_slab_test;
 #[path = "trainers/order_pad_test.rs"]
 mod order_pad_test;
 #[path = "trainers/penny_test.rs"]
@@ -48,6 +50,8 @@ mod protection_trainers_test;
 mod psychic_test;
 #[path = "trainers/puppy_loving_girl_test.rs"]
 mod puppy_loving_girl_test;
+#[path = "trainers/rare_candy_test.rs"]
+mod rare_candy_test;
 #[path = "trainers/skyla_test.rs"]
 mod skyla_test;
 #[path = "trainers/team_rockets_boss_test.rs"]
@@ -60,6 +64,8 @@ mod team_rockets_master_plan_test;
 mod team_rockets_researcher_test;
 #[path = "trainers/team_rockets_thieving_machine_test.rs"]
 mod team_rockets_thieving_machine_test;
+#[path = "trainers/trainer_reprints_test.rs"]
+mod trainer_reprints_test;
 #[path = "trainers/volkner_test.rs"]
 mod volkner_test;
 #[path = "trainers/wallace_test.rs"]

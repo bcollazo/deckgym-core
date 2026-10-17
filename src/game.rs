@@ -94,6 +94,9 @@ impl<'a> Game<'a> {
         let player = &self.players[actor];
         let color = self.get_color(actor);
         self.print_turn_header(actor, player.as_ref(), &color);
+        // A lone legal action is taken without consulting the player, so whatever note or scores
+        // it still holds belong to an earlier decision and must not be attached to this one.
+        let player_decided = actions.len() != 1;
         let action = if actions.len() == 1 {
             debug!("Only one possible action, selecting it.");
             actions[0].clone()
@@ -111,9 +114,14 @@ impl<'a> Game<'a> {
 
         if let Some(handler) = &mut self.event_handler {
             handler.on_action(self.id, &self.state, actor, &actions, &action);
-            let note = self.players[actor].last_note();
-            if note.is_some() {
-                handler.on_action_note(self.id, note);
+            if player_decided {
+                let note = self.players[actor].last_note();
+                if note.is_some() {
+                    handler.on_action_note(self.id, note);
+                }
+                if let Some(scores) = self.players[actor].last_scores() {
+                    handler.on_action_scores(self.id, scores);
+                }
             }
         }
         self.apply_action(&action);

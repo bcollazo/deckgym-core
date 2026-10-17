@@ -8,6 +8,8 @@ mod coverage_tools_test;
 mod deceptive_needle_test;
 #[path = "tools/dual_customization_test.rs"]
 mod dual_customization_test;
+#[path = "tools/electrical_cord_test.rs"]
+mod electrical_cord_test;
 #[path = "tools/leftovers_test.rs"]
 mod leftovers_test;
 #[path = "tools/lucky_egg_test.rs"]
@@ -18,6 +20,8 @@ mod lucky_ice_pop_test;
 mod protective_poncho_test;
 #[path = "tools/raikou_rocky_helmet_order_test.rs"]
 mod raikou_rocky_helmet_order_test;
+#[path = "tools/rocky_helmet_delayed_counterattack_test.rs"]
+mod rocky_helmet_delayed_counterattack_test;
 #[path = "tools/small_balloon_test.rs"]
 mod small_balloon_test;
 #[path = "tools/tool_effect_gating_test.rs"]

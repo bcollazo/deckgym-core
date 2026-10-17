@@ -123,12 +123,19 @@ impl SimulationEventHandler for ReplayRecorder {
             options,
             chosen,
             note: None,
+            scores: None,
         });
     }
 
     fn on_action_note(&mut self, _game_id: Uuid, note: Option<String>) {
         if let Some(step) = self.current.as_mut().and_then(|r| r.steps.last_mut()) {
             step.note = note;
+        }
+    }
+
+    fn on_action_scores(&mut self, _game_id: Uuid, scores: Vec<f64>) {
+        if let Some(step) = self.current.as_mut().and_then(|r| r.steps.last_mut()) {
+            step.scores = Some(scores);
         }
     }
 
@@ -234,6 +241,100 @@ mod tests {
         }
         assert_eq!(replay.outcome, outcome);
         assert_eq!(replay.final_state.unwrap().winner, outcome);
+
+        fs::remove_dir_all(&dir).ok();
+    }
+
+    /// An `EndTurnPlayer` that also reports a one-hot score vector over the legal actions.
+    struct ScoredEndTurnPlayer {
+        inner: EndTurnPlayer,
+        scores: Option<Vec<f64>>,
+    }
+
+    impl std::fmt::Debug for ScoredEndTurnPlayer {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "ScoredEndTurnPlayer")
+        }
+    }
+
+    impl Player for ScoredEndTurnPlayer {
+        fn get_deck(&self) -> Deck {
+            self.inner.get_deck()
+        }
+
+        fn decision_fn(
+            &mut self,
+            rng: &mut rand::rngs::StdRng,
+            state: &crate::State,
+            possible_actions: &[crate::actions::Action],
+        ) -> crate::actions::Action {
+            let action = self.inner.decision_fn(rng, state, possible_actions);
+            self.scores = Some(
+                possible_actions
+                    .iter()
+                    .map(|a| if *a == action { 1.0 } else { 0.0 })
+                    .collect(),
+            );
+            action
+        }
+
+        fn last_scores(&self) -> Option<Vec<f64>> {
+            self.scores.clone()
+        }
+    }
+
+    #[test]
+    fn records_player_scores_alongside_options_and_omits_them_otherwise() {
+        let dir = std::env::temp_dir().join(format!("deckgym-replay-scores-{}", Uuid::new_v4()));
+        let (deck_a, deck_b): (Deck, Deck) = load_test_decks();
+        let players: Vec<Box<dyn Player>> = vec![
+            Box::new(ScoredEndTurnPlayer {
+                inner: EndTurnPlayer {
+                    deck: deck_a.clone(),
+                },
+                scores: None,
+            }),
+            Box::new(EndTurnPlayer {
+                deck: deck_b.clone(),
+            }),
+        ];
+        let mut event_handler = CompositeSimulationEventHandler::new(vec![Box::new(
+            ReplayRecorder::new(dir.clone(), Arc::new(AtomicUsize::new(0)), None),
+        )]);
+        let game_id = Uuid::new_v4();
+        let metadata = GameStartMetadata {
+            seed: 3,
+            player_names: ["Scored".to_string(), "EndTurnPlayer".to_string()],
+            decks: [&deck_a, &deck_b],
+        };
+        event_handler.on_game_start_with_metadata(game_id, &metadata);
+        let mut game = Game::new_with_event_handlers(game_id, players, 3, &mut event_handler);
+        let outcome = game.play();
+        let final_state = game.get_state_clone();
+        event_handler.on_game_end(game_id, final_state, outcome);
+
+        let json = fs::read_to_string(dir.join(format!("{game_id}.json"))).unwrap();
+        let replay: Replay = serde_json::from_str(&json).unwrap();
+        let mut scored = 0;
+        for step in &replay.steps {
+            // A forced move (one legal action) never reaches the player, so it has no scores.
+            if step.actor == 0 && step.options.len() > 1 {
+                let scores = step.scores.as_ref().expect("player 0 reports scores");
+                assert_eq!(scores.len(), step.options.len());
+                assert_eq!(scores[step.chosen], 1.0);
+                scored += 1;
+            } else {
+                assert!(step.scores.is_none());
+            }
+        }
+        assert!(scored > 0);
+        // Absent scores are omitted from the file entirely, so older readers see no new key.
+        let raw: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let steps = raw["steps"].as_array().unwrap();
+        assert!(steps
+            .iter()
+            .filter(|s| s["actor"] == 1)
+            .all(|s| s.get("scores").is_none()));
 
         fs::remove_dir_all(&dir).ok();
     }
