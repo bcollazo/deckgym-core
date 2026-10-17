@@ -13,6 +13,7 @@ use crate::{
         is_ultra_beast,
     },
     models::{Card, EnergyType, TrainerCard, TrainerType},
+    move_generation::can_evolve_at_position,
     stadiums::is_stadium_effect_implemented,
     tools::{enumerate_tool_choices, is_tool_effect_implemented},
     trainer_identity::canonical_trainer_id,
@@ -627,7 +628,10 @@ fn can_play_rare_candy(state: &State, trainer_card: &TrainerCard) -> Option<Vec<
     // Check if there's at least 1 basic pokemon in field with a corresponding stage2-rare-candy-evolvable in hand
     let has_valid_evolution_pair = state
         .enumerate_in_play_pokemon(player)
-        .any(|(_, in_play)| hand.iter().any(|card| can_rare_candy_evolve(card, in_play)));
+        .any(|(idx, in_play)| {
+            can_evolve_at_position(state, player, idx)
+                && hand.iter().any(|card| can_rare_candy_evolve(card, in_play))
+        });
     if has_valid_evolution_pair {
         can_play_trainer(state, trainer_card)
     } else {

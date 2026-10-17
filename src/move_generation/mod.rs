@@ -222,15 +222,6 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                         return;
                     }
 
-                    // Malamar's Evolution Jammer: "they can't play any Pokémon from their hand to
-                    // evolve their Pokémon."
-                    if state.get_current_turn_effects().iter().any(|effect| {
-                        matches!(effect, TurnEffect::NoEvolutionFromHand { player }
-                            if *player == current_player)
-                    }) {
-                        return;
-                    }
-
                     // For each non-zero stage pokemon in hand, check if it can evolve
                     // from any pokemon in play (using can_evolve_into which handles special abilities)
                     state
@@ -282,8 +273,16 @@ fn generate_discard_fossil_actions(state: &State, actions: &mut Vec<SimpleAction
         });
 }
 
-/// Checks if evolution is allowed at the given position, considering ability restrictions
-fn can_evolve_at_position(state: &State, player: usize, position: usize) -> bool {
+/// Checks if playing a Pokémon from hand to evolve the Pokémon at the given position is allowed,
+/// considering ability restrictions. Also used for Rare Candy, which evolves from hand too.
+pub(crate) fn can_evolve_at_position(state: &State, player: usize, position: usize) -> bool {
+    // Malamar's Evolution Jammer: "they can't play any Pokémon from their hand to evolve their
+    // Pokémon."
+    if state.get_current_turn_effects().iter().any(|effect| {
+        matches!(effect, TurnEffect::NoEvolutionFromHand { player: jammed } if *jammed == player)
+    }) {
+        return false;
+    }
     // Aerodactyl Ex's Primeval Law blocks evolution of opponent's active Pokemon
     if position == 0 && has_opponent_aerodactyl_ex_primeval_law(state, player) {
         return false;
