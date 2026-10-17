@@ -2,7 +2,8 @@ mod attacks;
 mod move_generation_abilities;
 mod move_generation_trainer;
 
-use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic, Action, SimpleAction};
+use crate::actions::{abilities::AbilityMechanic, Action, SimpleAction};
+use crate::effects::TurnEffect;
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::stadiums::{
@@ -25,6 +26,13 @@ pub use move_generation_trainer::{
 /// # Returns
 /// * A tuple containing the current player and a list of possible actions
 pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
+    let mut watch = crate::perf_watch::watch("generate_possible_actions", state, None);
+    let generated = generate_possible_actions_unwatched(state);
+    watch.branches(generated.1.len());
+    generated
+}
+
+fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
     let in_initial_setup_phase = state.turn_count == 0;
     if in_initial_setup_phase {
         let possible_actions = generate_initial_setup_actions(state)
@@ -64,6 +72,14 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
 
     // Free play actions. User can always end turn.
     let current_player = state.current_player;
+    // An empty Active Spot always queues a promotion or ends the game, so free play should never
+    // see one. Reaching here without an Active means a caller is generating moves for a finished
+    // game (or a removal path forgot to call `trigger_promotion_or_declare_winner`).
+    debug_assert!(
+        state.in_play_pokemon[current_player][0].is_some(),
+        "Free-play move generation without an Active Pokemon (winner: {:?})",
+        state.winner
+    );
     let mut actions = vec![SimpleAction::EndTurn];
 
     // Hand actions (Play Support Cards, Trainer, or Place Pokemons in mat)
@@ -123,6 +139,14 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
         actions.push(SimpleAction::UseStadium);
     }
 
+    // Turn timer: the app ends a turn when its timer runs out, which also bounds actions
+    // that may repeat without limit. Two Dusknoir can pass damage back and forth with Shadow
+    // Void ("as often as you like") forever, so a player that keeps choosing it never ends
+    // the turn. After MAX_ACTIONS_PER_TURN actions only actions that end the turn remain.
+    if state.actions_this_turn >= MAX_ACTIONS_PER_TURN {
+        actions.retain(|action| matches!(action, SimpleAction::EndTurn | SimpleAction::Attack(_)));
+    }
+
     let possible_actions = actions
         .iter()
         .map(|action| Action {
@@ -133,6 +157,10 @@ pub fn generate_possible_actions(state: &State) -> (usize, Vec<Action>) {
         .collect();
     (current_player, possible_actions)
 }
+
+/// Actions a turn may take (counting pending choices) before only ending it is allowed. A
+/// real turn takes a few dozen at most; this stands in for the app's turn timer.
+pub const MAX_ACTIONS_PER_TURN: u16 = 100;
 
 fn generate_initial_setup_actions(state: &State) -> Vec<SimpleAction> {
     let current_player = state.current_player;
@@ -185,22 +213,7 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     // Evolutions can only be played if previous stage
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
                     // Exception: Eevee with Boosted Evolution ability can evolve on first turn
-                    // or turn it was played, if it's in the active spot.
-
-                    // Check if we should skip evolution checks due to first turn
-                    // (unless there's a Boosted Evolution Eevee in active spot)
-                    let has_boosted_evolution_in_active = state.in_play_pokemon[current_player][0]
-                        .as_ref()
-                        .is_some_and(|active| {
-                            matches!(
-                                get_ability_mechanic(&active.card),
-                                Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
-                            )
-                        });
-
-                    if state.is_users_first_turn() && !has_boosted_evolution_in_active {
-                        return;
-                    }
+                    // or turn it was played, if it's in the active spot (that Eevee only).
 
                     // For each non-zero stage pokemon in hand, check if it can evolve
                     // from any pokemon in play (using can_evolve_into which handles special abilities)
@@ -210,9 +223,13 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                             // Check if this pokemon has Boosted Evolution and is in active spot
                             let can_bypass_timing = i == 0
                                 && matches!(
-                                    get_ability_mechanic(&pokemon.card),
+                                    pokemon.ability_mechanic(),
                                     Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
                                 );
+
+                            if state.is_users_first_turn() && !can_bypass_timing {
+                                return;
+                            }
 
                             if (!pokemon.played_this_turn || can_bypass_timing)
                                 && can_evolve_into(hand_card, pokemon)
@@ -253,8 +270,16 @@ fn generate_discard_fossil_actions(state: &State, actions: &mut Vec<SimpleAction
         });
 }
 
-/// Checks if evolution is allowed at the given position, considering ability restrictions
-fn can_evolve_at_position(state: &State, player: usize, position: usize) -> bool {
+/// Checks if playing a Pokémon from hand to evolve the Pokémon at the given position is allowed,
+/// considering ability restrictions. Also used for Rare Candy, which evolves from hand too.
+pub(crate) fn can_evolve_at_position(state: &State, player: usize, position: usize) -> bool {
+    // Malamar's Evolution Jammer: "they can't play any Pokémon from their hand to evolve their
+    // Pokémon."
+    if state.get_current_turn_effects().iter().any(|effect| {
+        matches!(effect, TurnEffect::NoEvolutionFromHand { player: jammed } if *jammed == player)
+    }) {
+        return false;
+    }
     // Aerodactyl Ex's Primeval Law blocks evolution of opponent's active Pokemon
     if position == 0 && has_opponent_aerodactyl_ex_primeval_law(state, player) {
         return false;
@@ -270,7 +295,7 @@ fn has_opponent_aerodactyl_ex_primeval_law(state: &State, player: usize) -> bool
         .enumerate_in_play_pokemon(opponent)
         .any(|(_, pokemon)| {
             matches!(
-                get_ability_mechanic(&pokemon.card),
+                pokemon.ability_mechanic(),
                 Some(AbilityMechanic::PreventOpponentActiveEvolution)
             )
         })

@@ -48,7 +48,7 @@ fn test_ancient_booster_increases_hp_for_ancient_pokemon() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     // Brute Bonnet base HP = 100, +40 from Ancient Booster Energy Capsule = 140
     assert_eq!(active.get_remaining_hp(), 140);
 }
@@ -71,7 +71,7 @@ fn test_ancient_booster_no_hp_bonus_for_non_ancient_pokemon() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     // No HP bonus — Bulbasaur is not Ancient
     assert_eq!(active.get_remaining_hp(), 70);
 }

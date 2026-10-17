@@ -19,6 +19,77 @@ pub fn find_card_id(id: &str) -> Option<CardId> {
 
 /// Generate a temporary deck for testing based on the card type.
 pub fn generate_temp_deck(card: &Card) -> String {
+    let deck = generate_temp_deck_unchecked(card);
+    dedupe_staples_by_name(deck, card)
+}
+
+/// Staple substitutes used when the card under test is itself one of the template staples.
+/// Any printing counts: testing "P-A 007" Professor's Research while the template carries
+/// "A4b 373" would otherwise put four copies of one card name in the deck and fail
+/// `Deck::is_valid` (max 2 per name) before a single game is played.
+const SUBSTITUTE_STAPLES: [&str; 5] = [
+    "2 Potion P-A 1",
+    "2 X Speed P-A 2",
+    "2 Hand Scope P-A 3",
+    "2 Pokédex P-A 4",
+    "2 Red Card P-A 6",
+];
+
+/// Parse a deck line ("2 Professor's Research A4b 373") into (canonical id, card name).
+fn deck_line_card(line: &str) -> Option<(String, String)> {
+    let tokens: Vec<&str> = line.split_whitespace().collect();
+    if tokens.len() < 3 || line.starts_with("Energy:") {
+        return None;
+    }
+    let set = tokens[tokens.len() - 2];
+    let number: u32 = tokens[tokens.len() - 1].parse().ok()?;
+    let id = format!("{set} {number:03}");
+    let card_id = find_card_id(&id)?;
+    Some((id, get_card_by_enum(card_id).get_name()))
+}
+
+/// Replace any staple line that shares the tested card's *name* (a different printing) with a
+/// substitute staple not already in the deck, so the deck stays at 20 cards and <= 2 per name.
+fn dedupe_staples_by_name(deck: String, card: &Card) -> String {
+    let tested_id = card.get_id();
+    let tested_name = card.get_name();
+    let mut lines: Vec<String> = deck.lines().map(str::to_string).collect();
+    let mut names_in_deck: HashSet<String> = lines
+        .iter()
+        .filter_map(|l| deck_line_card(l))
+        .map(|(_, name)| name)
+        .collect();
+    // The first line carrying the tested card's own id is the card under test; any further line
+    // with that id (a template staple that happens to be the same printing) or with the same name
+    // under another printing is a collision.
+    let mut seen_tested_line = false;
+    for line in lines.iter_mut() {
+        let Some((id, name)) = deck_line_card(line) else {
+            continue;
+        };
+        if id == tested_id && !seen_tested_line {
+            seen_tested_line = true;
+            continue;
+        }
+        if name != tested_name {
+            continue;
+        }
+        let substitute = SUBSTITUTE_STAPLES.iter().find(|s| {
+            deck_line_card(s).is_some_and(|(_, n)| n != tested_name && !names_in_deck.contains(&n))
+        });
+        if let Some(sub) = substitute {
+            if let Some((_, n)) = deck_line_card(sub) {
+                names_in_deck.insert(n);
+            }
+            *line = (*sub).to_string();
+        }
+    }
+    let mut out = lines.join("\n");
+    out.push('\n');
+    out
+}
+
+fn generate_temp_deck_unchecked(card: &Card) -> String {
     match card {
         Card::Pokemon(pokemon) => {
             let (basic, stage1, stage2) = get_evolution_line(card);

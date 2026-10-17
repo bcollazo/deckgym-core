@@ -225,16 +225,21 @@ pub(crate) fn render_pokemon_card<'a>(
             let mut lines = vec![name_hp_line];
 
             // Add tool name if attached
-            if let Some(tool_card) = &played_card.attached_tool {
-                let tool_name = tool_card.get_name();
+            if played_card.attached_tools.is_empty() {
+                lines.push(Line::from("")); // Empty line if no tool
+            } else {
+                let tool_names = played_card
+                    .attached_tools
+                    .iter()
+                    .map(|tool_card| tool_card.get_name())
+                    .collect::<Vec<_>>()
+                    .join(" + ");
                 lines.push(Line::from(vec![Span::styled(
-                    format!("🔧{}", tool_name),
+                    format!("🔧{}", tool_names),
                     Style::default()
                         .fg(Color::Yellow)
                         .add_modifier(Modifier::ITALIC),
                 )]));
-            } else {
-                lines.push(Line::from("")); // Empty line if no tool
             }
 
             // Add attack names

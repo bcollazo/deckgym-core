@@ -27,7 +27,7 @@ pub fn quick_grow_extract_candidates(state: &State, player: usize) -> Vec<(usize
     let mut evolution_choices = vec![];
 
     for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player) {
-        if pokemon.get_energy_type() != Some(EnergyType::Grass) || pokemon.played_this_turn {
+        if !pokemon.is_type(EnergyType::Grass) || pokemon.played_this_turn {
             continue;
         }
 

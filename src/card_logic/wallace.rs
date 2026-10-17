@@ -8,7 +8,7 @@ use crate::{
 /// Returns a vector of (in_play_index, evolution_card) tuples for all Water-type Pokémon in
 /// play that:
 /// - Are owned by the specified player
-/// - Have a maximum HP of 50 or less
+/// - Have a maximum HP of 50 or less, counting HP bonuses such as Giant Cape
 /// - Have at least one valid Water-type evolution in the player's deck
 ///
 /// Unlike a normal evolution, Wallace has no restriction against evolving a Pokémon that was
@@ -17,10 +17,10 @@ pub fn wallace_candidates(state: &State, player: usize) -> Vec<(usize, Card)> {
     let mut evolution_choices = vec![];
 
     for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player) {
-        let Card::Pokemon(pokemon_card) = &pokemon.card else {
+        let Card::Pokemon(_) = &pokemon.card else {
             continue;
         };
-        if pokemon.get_energy_type() != Some(EnergyType::Water) || pokemon_card.hp > 50 {
+        if !pokemon.is_type(EnergyType::Water) || pokemon.get_effective_total_hp() > 50 {
             continue;
         }
 

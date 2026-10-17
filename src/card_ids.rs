@@ -3675,6 +3675,435 @@ pub enum CardId {
     B4a108MegaMawileEx,
     B4a109Gholdengo,
     B4a110TeamRocketsGoozooka,
+    B4b001Bulbasaur,
+    B4b002Ivysaur,
+    B4b003MegaVenusaurEx,
+    B4b004Caterpie,
+    B4b005Metapod,
+    B4b006Butterfree,
+    B4b007Scyther,
+    B4b008MegaPinsirEx,
+    B4b009Celebi,
+    B4b010Treecko,
+    B4b011Grovyle,
+    B4b012MegaSceptileEx,
+    B4b013Budew,
+    B4b014Combee,
+    B4b015VespiquenEx,
+    B4b016Cottonee,
+    B4b017WhimsicottEx,
+    B4b018Petilil,
+    B4b019Lilligant,
+    B4b020Durant,
+    B4b021Sprigatito,
+    B4b022Floragato,
+    B4b023MeowscaradaEx,
+    B4b024Smoliv,
+    B4b025Dolliv,
+    B4b026Arboliva,
+    B4b027TealMaskOgerpon,
+    B4b028TealMaskOgerponEx,
+    B4b029Charmander,
+    B4b030Charmeleon,
+    B4b031MegaCharizardXEx,
+    B4b032MegaCharizardYEx,
+    B4b033Growlithe,
+    B4b034Ponyta,
+    B4b035RapidashEx,
+    B4b036Cyndaquil,
+    B4b037Quilava,
+    B4b038TyphlosionEx,
+    B4b039Torchic,
+    B4b040Combusken,
+    B4b041MegaBlazikenEx,
+    B4b042Numel,
+    B4b043MegaCameruptEx,
+    B4b044Victini,
+    B4b045BlacephalonEx,
+    B4b046Fuecoco,
+    B4b047Crocalor,
+    B4b048Skeledirge,
+    B4b049Charcadet,
+    B4b050ArmarougeEx,
+    B4b051HearthflameMaskOgerpon,
+    B4b052Squirtle,
+    B4b053Wartortle,
+    B4b054MegaBlastoiseEx,
+    B4b055AlolanVulpix,
+    B4b056AlolanNinetalesEx,
+    B4b057Slowpoke,
+    B4b058MegaSlowbroEx,
+    B4b059Magikarp,
+    B4b060MegaGyaradosEx,
+    B4b061VaporeonEx,
+    B4b062Mudkip,
+    B4b063Marshtomp,
+    B4b064MegaSwampertEx,
+    B4b065Carvanha,
+    B4b066MegaSharpedoEx,
+    B4b067Wailmer,
+    B4b068WailordEx,
+    B4b069Feebas,
+    B4b070MiloticEx,
+    B4b071Froakie,
+    B4b072Frogadier,
+    B4b073GreninjaEx,
+    B4b074Sobble,
+    B4b075Drizzile,
+    B4b076Inteleon,
+    B4b077IronBundleEx,
+    B4b078Frigibax,
+    B4b079Arctibax,
+    B4b080Baxcalibur,
+    B4b081ChienPaoEx,
+    B4b082Pikachu,
+    B4b083Raichu,
+    B4b084Magnemite,
+    B4b085Magneton,
+    B4b086MagnezoneEx,
+    B4b087JolteonEx,
+    B4b088Mareep,
+    B4b089Flaaffy,
+    B4b090MegaAmpharosEx,
+    B4b091Electrike,
+    B4b092MegaManectricEx,
+    B4b093RotomEx,
+    B4b094Helioptile,
+    B4b095Heliolisk,
+    B4b096DedenneEx,
+    B4b097Yamper,
+    B4b098Toxel,
+    B4b099ToxtricityEx,
+    B4b100Tadbulb,
+    B4b101BelliboltEx,
+    B4b102IronThorns,
+    B4b103MiraidonEx,
+    B4b104Ralts,
+    B4b105Kirlia,
+    B4b106MegaGardevoirEx,
+    B4b107MegaAltariaEx,
+    B4b108Wynaut,
+    B4b109Chingling,
+    B4b110MimeJr,
+    B4b111Meloetta,
+    B4b112Sylveon,
+    B4b113Klefki,
+    B4b114MegaDiancieEx,
+    B4b115MimikyuEx,
+    B4b116IndeedeeEx,
+    B4b117Fidough,
+    B4b118Bramblin,
+    B4b119Brambleghast,
+    B4b120FlutterManeEx,
+    B4b121Gimmighoul,
+    B4b122Onix,
+    B4b123HitmonchanEx,
+    B4b124Trapinch,
+    B4b125MegaLopunnyEx,
+    B4b126Riolu,
+    B4b127MegaLucarioEx,
+    B4b128MegaGalladeEx,
+    B4b129Roggenrola,
+    B4b130Boldore,
+    B4b131GigalithEx,
+    B4b132Dwebble,
+    B4b133CrustleEx,
+    B4b134Rockruff,
+    B4b135Falinks,
+    B4b136KoraidonEx,
+    B4b137AlolanGrimer,
+    B4b138AlolanMuk,
+    B4b139Gastly,
+    B4b140Haunter,
+    B4b141MegaGengarEx,
+    B4b142MegaSableyeEx,
+    B4b143MegaAbsolEx,
+    B4b144Darkrai,
+    B4b145Zorua,
+    B4b146ZoroarkEx,
+    B4b147Skrelp,
+    B4b148DragalgeEx,
+    B4b149HoopaEx,
+    B4b150Zarude,
+    B4b151Bombirdier,
+    B4b152RoaringMoon,
+    B4b153GalarianMeowth,
+    B4b154GalarianPerrserker,
+    B4b155MegaSteelixEx,
+    B4b156MegaScizorEx,
+    B4b157MegaMawileEx,
+    B4b158Beldum,
+    B4b159Metang,
+    B4b160MegaMetagrossEx,
+    B4b161Honedge,
+    B4b162Doublade,
+    B4b163Aegislash,
+    B4b164Aegislash,
+    B4b165Meltan,
+    B4b166MelmetalEx,
+    B4b167CorviknightEx,
+    B4b168GholdengoEx,
+    B4b169Dratini,
+    B4b170Dragonair,
+    B4b171Vibrava,
+    B4b172FlygonEx,
+    B4b173MegaRayquazaEx,
+    B4b174Axew,
+    B4b175Fraxure,
+    B4b176Haxorus,
+    B4b177Drampa,
+    B4b178Rattata,
+    B4b179Raticate,
+    B4b180Meowth,
+    B4b181MegaKangaskhanEx,
+    B4b182TaurosEx,
+    B4b183Eevee,
+    B4b184Skitty,
+    B4b185Delcatty,
+    B4b186Swablu,
+    B4b187Buneary,
+    B4b188Munchlax,
+    B4b189Lillipup,
+    B4b190MegaAudinoEx,
+    B4b191HisuianZorua,
+    B4b192HisuianZoroarkEx,
+    B4b193Ducklett,
+    B4b194SwannaEx,
+    B4b195Rookidee,
+    B4b196Corvisquire,
+    B4b197TerapagosEx,
+    B4b198LuckyIcePop,
+    B4b199ElectricGenerator,
+    B4b200OrderPad,
+    B4b201QuickGrowExtract,
+    B4b202FieldBlower,
+    B4b203FlamePatch,
+    B4b204DeceptiveNeedle,
+    B4b205LuckyEgg,
+    B4b206SmallBalloon,
+    B4b207AncientBoosterEnergyCapsule,
+    B4b208FutureBoosterEnergyCapsule,
+    B4b209ProtectivePoncho,
+    B4b210MetalCoreBarrier,
+    B4b211ElegantCape,
+    B4b212Iris,
+    B4b213Juliana,
+    B4b214Diantha,
+    B4b215Calem,
+    B4b216PuppyLovingGirl,
+    B4b217Korrina,
+    B4b218Clemont,
+    B4b219Serena,
+    B4b220May,
+    B4b221Skyla,
+    B4b222Arven,
+    B4b223Wallace,
+    B4b224Wally,
+    B4b225Copycat,
+    B4b226Lisia,
+    B4b227FragrantForest,
+    B4b228ArenaofAntiquity,
+    B4b229SoothingShore,
+    B4b230BoundedField,
+    B4b231Mesagoza,
+    B4b232TrainingArea,
+    B4b233RainbowCave,
+    B4b234HikingTrail,
+    B4b235StartingPlains,
+    B4b236PeculiarPlaza,
+    B4b237Bulbasaur,
+    B4b238Ivysaur,
+    B4b239Caterpie,
+    B4b240Metapod,
+    B4b241Butterfree,
+    B4b242Scyther,
+    B4b243Celebi,
+    B4b244Treecko,
+    B4b245Grovyle,
+    B4b246Budew,
+    B4b247Combee,
+    B4b248Cottonee,
+    B4b249Petilil,
+    B4b250Lilligant,
+    B4b251Durant,
+    B4b252Sprigatito,
+    B4b253Floragato,
+    B4b254Smoliv,
+    B4b255Dolliv,
+    B4b256Arboliva,
+    B4b257TealMaskOgerpon,
+    B4b258Charmander,
+    B4b259Charmeleon,
+    B4b260Growlithe,
+    B4b261Ponyta,
+    B4b262Cyndaquil,
+    B4b263Quilava,
+    B4b264Torchic,
+    B4b265Combusken,
+    B4b266Numel,
+    B4b267Victini,
+    B4b268Fuecoco,
+    B4b269Crocalor,
+    B4b270Skeledirge,
+    B4b271Charcadet,
+    B4b272HearthflameMaskOgerpon,
+    B4b273Squirtle,
+    B4b274Wartortle,
+    B4b275AlolanVulpix,
+    B4b276Slowpoke,
+    B4b277Magikarp,
+    B4b278Mudkip,
+    B4b279Marshtomp,
+    B4b280Carvanha,
+    B4b281Wailmer,
+    B4b282Feebas,
+    B4b283Froakie,
+    B4b284Frogadier,
+    B4b285Sobble,
+    B4b286Drizzile,
+    B4b287Inteleon,
+    B4b288Frigibax,
+    B4b289Arctibax,
+    B4b290Baxcalibur,
+    B4b291Pikachu,
+    B4b292Raichu,
+    B4b293Magnemite,
+    B4b294Magneton,
+    B4b295Mareep,
+    B4b296Flaaffy,
+    B4b297Electrike,
+    B4b298Helioptile,
+    B4b299Heliolisk,
+    B4b300Yamper,
+    B4b301Toxel,
+    B4b302Tadbulb,
+    B4b303IronThorns,
+    B4b304Ralts,
+    B4b305Kirlia,
+    B4b306Wynaut,
+    B4b307Chingling,
+    B4b308MimeJr,
+    B4b309Meloetta,
+    B4b310Sylveon,
+    B4b311Klefki,
+    B4b312Fidough,
+    B4b313Bramblin,
+    B4b314Brambleghast,
+    B4b315Gimmighoul,
+    B4b316Onix,
+    B4b317Trapinch,
+    B4b318Riolu,
+    B4b319Roggenrola,
+    B4b320Boldore,
+    B4b321Dwebble,
+    B4b322Rockruff,
+    B4b323Falinks,
+    B4b324AlolanGrimer,
+    B4b325AlolanMuk,
+    B4b326Gastly,
+    B4b327Haunter,
+    B4b328Darkrai,
+    B4b329Zorua,
+    B4b330Skrelp,
+    B4b331Zarude,
+    B4b332Bombirdier,
+    B4b333RoaringMoon,
+    B4b334GalarianMeowth,
+    B4b335GalarianPerrserker,
+    B4b336Beldum,
+    B4b337Metang,
+    B4b338Honedge,
+    B4b339Doublade,
+    B4b340Aegislash,
+    B4b341Aegislash,
+    B4b342Meltan,
+    B4b343Dratini,
+    B4b344Dragonair,
+    B4b345Vibrava,
+    B4b346Axew,
+    B4b347Fraxure,
+    B4b348Haxorus,
+    B4b349Drampa,
+    B4b350Rattata,
+    B4b351Raticate,
+    B4b352Meowth,
+    B4b353Eevee,
+    B4b354Skitty,
+    B4b355Delcatty,
+    B4b356Swablu,
+    B4b357Buneary,
+    B4b358Munchlax,
+    B4b359Lillipup,
+    B4b360HisuianZorua,
+    B4b361Ducklett,
+    B4b362Rookidee,
+    B4b363Corvisquire,
+    B4b364LuckyIcePop,
+    B4b365ElectricGenerator,
+    B4b366OrderPad,
+    B4b367QuickGrowExtract,
+    B4b368FieldBlower,
+    B4b369FlamePatch,
+    B4b370DeceptiveNeedle,
+    B4b371LuckyEgg,
+    B4b372SmallBalloon,
+    B4b373AncientBoosterEnergyCapsule,
+    B4b374FutureBoosterEnergyCapsule,
+    B4b375ProtectivePoncho,
+    B4b376MetalCoreBarrier,
+    B4b377ElegantCape,
+    B4b378Iris,
+    B4b379Juliana,
+    B4b380Diantha,
+    B4b381Calem,
+    B4b382PuppyLovingGirl,
+    B4b383Korrina,
+    B4b384Clemont,
+    B4b385Serena,
+    B4b386May,
+    B4b387Skyla,
+    B4b388Arven,
+    B4b389Wallace,
+    B4b390Wally,
+    B4b391Copycat,
+    B4b392Lisia,
+    B4b393FragrantForest,
+    B4b394ArenaofAntiquity,
+    B4b395SoothingShore,
+    B4b396BoundedField,
+    B4b397Mesagoza,
+    B4b398TrainingArea,
+    B4b399RainbowCave,
+    B4b400HikingTrail,
+    B4b401StartingPlains,
+    B4b402PeculiarPlaza,
+    B4b403Charmeleon,
+    B4b404Baxcalibur,
+    B4b405Meloetta,
+    B4b406Fidough,
+    B4b407Dratini,
+    B4b408Eevee,
+    B4b409MegaVenusaurEx,
+    B4b410MegaSceptileEx,
+    B4b411MegaCharizardXEx,
+    B4b412MegaCharizardYEx,
+    B4b413MegaBlazikenEx,
+    B4b414MegaBlastoiseEx,
+    B4b415MegaGyaradosEx,
+    B4b416MegaGardevoirEx,
+    B4b417MegaAltariaEx,
+    B4b418MegaLucarioEx,
+    B4b419MegaGengarEx,
+    B4b420MegaRayquazaEx,
+    B4b421Iris,
+    B4b422Elesa,
+    B4b423Arven,
+    B4b424Copycat,
+    B4b425MegaCharizardXEx,
+    B4b426DedenneEx,
+    B4b427MegaDiancieEx,
+    B4b428MiraidonEx,
+    B4b429KoraidonEx,
     PA001Potion,
     PA002XSpeed,
     PA003HandScope,
@@ -3886,6 +4315,15 @@ pub enum CardId {
     PB092Marowak,
     PB093Fennekin,
     PB094Meowstic,
+    PB095Darkrai,
+    PB096Falinks,
+    PB097Gible,
+    PB098Gabite,
+    PB099MegaGarchompEx,
+    PB100Delcatty,
+    PB101Charmander,
+    PB102Drampa,
+    PB103PikachuEx,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
@@ -7558,6 +7996,435 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4a 108", CardId::B4a108MegaMawileEx);
     map.insert("B4a 109", CardId::B4a109Gholdengo);
     map.insert("B4a 110", CardId::B4a110TeamRocketsGoozooka);
+    map.insert("B4b 001", CardId::B4b001Bulbasaur);
+    map.insert("B4b 002", CardId::B4b002Ivysaur);
+    map.insert("B4b 003", CardId::B4b003MegaVenusaurEx);
+    map.insert("B4b 004", CardId::B4b004Caterpie);
+    map.insert("B4b 005", CardId::B4b005Metapod);
+    map.insert("B4b 006", CardId::B4b006Butterfree);
+    map.insert("B4b 007", CardId::B4b007Scyther);
+    map.insert("B4b 008", CardId::B4b008MegaPinsirEx);
+    map.insert("B4b 009", CardId::B4b009Celebi);
+    map.insert("B4b 010", CardId::B4b010Treecko);
+    map.insert("B4b 011", CardId::B4b011Grovyle);
+    map.insert("B4b 012", CardId::B4b012MegaSceptileEx);
+    map.insert("B4b 013", CardId::B4b013Budew);
+    map.insert("B4b 014", CardId::B4b014Combee);
+    map.insert("B4b 015", CardId::B4b015VespiquenEx);
+    map.insert("B4b 016", CardId::B4b016Cottonee);
+    map.insert("B4b 017", CardId::B4b017WhimsicottEx);
+    map.insert("B4b 018", CardId::B4b018Petilil);
+    map.insert("B4b 019", CardId::B4b019Lilligant);
+    map.insert("B4b 020", CardId::B4b020Durant);
+    map.insert("B4b 021", CardId::B4b021Sprigatito);
+    map.insert("B4b 022", CardId::B4b022Floragato);
+    map.insert("B4b 023", CardId::B4b023MeowscaradaEx);
+    map.insert("B4b 024", CardId::B4b024Smoliv);
+    map.insert("B4b 025", CardId::B4b025Dolliv);
+    map.insert("B4b 026", CardId::B4b026Arboliva);
+    map.insert("B4b 027", CardId::B4b027TealMaskOgerpon);
+    map.insert("B4b 028", CardId::B4b028TealMaskOgerponEx);
+    map.insert("B4b 029", CardId::B4b029Charmander);
+    map.insert("B4b 030", CardId::B4b030Charmeleon);
+    map.insert("B4b 031", CardId::B4b031MegaCharizardXEx);
+    map.insert("B4b 032", CardId::B4b032MegaCharizardYEx);
+    map.insert("B4b 033", CardId::B4b033Growlithe);
+    map.insert("B4b 034", CardId::B4b034Ponyta);
+    map.insert("B4b 035", CardId::B4b035RapidashEx);
+    map.insert("B4b 036", CardId::B4b036Cyndaquil);
+    map.insert("B4b 037", CardId::B4b037Quilava);
+    map.insert("B4b 038", CardId::B4b038TyphlosionEx);
+    map.insert("B4b 039", CardId::B4b039Torchic);
+    map.insert("B4b 040", CardId::B4b040Combusken);
+    map.insert("B4b 041", CardId::B4b041MegaBlazikenEx);
+    map.insert("B4b 042", CardId::B4b042Numel);
+    map.insert("B4b 043", CardId::B4b043MegaCameruptEx);
+    map.insert("B4b 044", CardId::B4b044Victini);
+    map.insert("B4b 045", CardId::B4b045BlacephalonEx);
+    map.insert("B4b 046", CardId::B4b046Fuecoco);
+    map.insert("B4b 047", CardId::B4b047Crocalor);
+    map.insert("B4b 048", CardId::B4b048Skeledirge);
+    map.insert("B4b 049", CardId::B4b049Charcadet);
+    map.insert("B4b 050", CardId::B4b050ArmarougeEx);
+    map.insert("B4b 051", CardId::B4b051HearthflameMaskOgerpon);
+    map.insert("B4b 052", CardId::B4b052Squirtle);
+    map.insert("B4b 053", CardId::B4b053Wartortle);
+    map.insert("B4b 054", CardId::B4b054MegaBlastoiseEx);
+    map.insert("B4b 055", CardId::B4b055AlolanVulpix);
+    map.insert("B4b 056", CardId::B4b056AlolanNinetalesEx);
+    map.insert("B4b 057", CardId::B4b057Slowpoke);
+    map.insert("B4b 058", CardId::B4b058MegaSlowbroEx);
+    map.insert("B4b 059", CardId::B4b059Magikarp);
+    map.insert("B4b 060", CardId::B4b060MegaGyaradosEx);
+    map.insert("B4b 061", CardId::B4b061VaporeonEx);
+    map.insert("B4b 062", CardId::B4b062Mudkip);
+    map.insert("B4b 063", CardId::B4b063Marshtomp);
+    map.insert("B4b 064", CardId::B4b064MegaSwampertEx);
+    map.insert("B4b 065", CardId::B4b065Carvanha);
+    map.insert("B4b 066", CardId::B4b066MegaSharpedoEx);
+    map.insert("B4b 067", CardId::B4b067Wailmer);
+    map.insert("B4b 068", CardId::B4b068WailordEx);
+    map.insert("B4b 069", CardId::B4b069Feebas);
+    map.insert("B4b 070", CardId::B4b070MiloticEx);
+    map.insert("B4b 071", CardId::B4b071Froakie);
+    map.insert("B4b 072", CardId::B4b072Frogadier);
+    map.insert("B4b 073", CardId::B4b073GreninjaEx);
+    map.insert("B4b 074", CardId::B4b074Sobble);
+    map.insert("B4b 075", CardId::B4b075Drizzile);
+    map.insert("B4b 076", CardId::B4b076Inteleon);
+    map.insert("B4b 077", CardId::B4b077IronBundleEx);
+    map.insert("B4b 078", CardId::B4b078Frigibax);
+    map.insert("B4b 079", CardId::B4b079Arctibax);
+    map.insert("B4b 080", CardId::B4b080Baxcalibur);
+    map.insert("B4b 081", CardId::B4b081ChienPaoEx);
+    map.insert("B4b 082", CardId::B4b082Pikachu);
+    map.insert("B4b 083", CardId::B4b083Raichu);
+    map.insert("B4b 084", CardId::B4b084Magnemite);
+    map.insert("B4b 085", CardId::B4b085Magneton);
+    map.insert("B4b 086", CardId::B4b086MagnezoneEx);
+    map.insert("B4b 087", CardId::B4b087JolteonEx);
+    map.insert("B4b 088", CardId::B4b088Mareep);
+    map.insert("B4b 089", CardId::B4b089Flaaffy);
+    map.insert("B4b 090", CardId::B4b090MegaAmpharosEx);
+    map.insert("B4b 091", CardId::B4b091Electrike);
+    map.insert("B4b 092", CardId::B4b092MegaManectricEx);
+    map.insert("B4b 093", CardId::B4b093RotomEx);
+    map.insert("B4b 094", CardId::B4b094Helioptile);
+    map.insert("B4b 095", CardId::B4b095Heliolisk);
+    map.insert("B4b 096", CardId::B4b096DedenneEx);
+    map.insert("B4b 097", CardId::B4b097Yamper);
+    map.insert("B4b 098", CardId::B4b098Toxel);
+    map.insert("B4b 099", CardId::B4b099ToxtricityEx);
+    map.insert("B4b 100", CardId::B4b100Tadbulb);
+    map.insert("B4b 101", CardId::B4b101BelliboltEx);
+    map.insert("B4b 102", CardId::B4b102IronThorns);
+    map.insert("B4b 103", CardId::B4b103MiraidonEx);
+    map.insert("B4b 104", CardId::B4b104Ralts);
+    map.insert("B4b 105", CardId::B4b105Kirlia);
+    map.insert("B4b 106", CardId::B4b106MegaGardevoirEx);
+    map.insert("B4b 107", CardId::B4b107MegaAltariaEx);
+    map.insert("B4b 108", CardId::B4b108Wynaut);
+    map.insert("B4b 109", CardId::B4b109Chingling);
+    map.insert("B4b 110", CardId::B4b110MimeJr);
+    map.insert("B4b 111", CardId::B4b111Meloetta);
+    map.insert("B4b 112", CardId::B4b112Sylveon);
+    map.insert("B4b 113", CardId::B4b113Klefki);
+    map.insert("B4b 114", CardId::B4b114MegaDiancieEx);
+    map.insert("B4b 115", CardId::B4b115MimikyuEx);
+    map.insert("B4b 116", CardId::B4b116IndeedeeEx);
+    map.insert("B4b 117", CardId::B4b117Fidough);
+    map.insert("B4b 118", CardId::B4b118Bramblin);
+    map.insert("B4b 119", CardId::B4b119Brambleghast);
+    map.insert("B4b 120", CardId::B4b120FlutterManeEx);
+    map.insert("B4b 121", CardId::B4b121Gimmighoul);
+    map.insert("B4b 122", CardId::B4b122Onix);
+    map.insert("B4b 123", CardId::B4b123HitmonchanEx);
+    map.insert("B4b 124", CardId::B4b124Trapinch);
+    map.insert("B4b 125", CardId::B4b125MegaLopunnyEx);
+    map.insert("B4b 126", CardId::B4b126Riolu);
+    map.insert("B4b 127", CardId::B4b127MegaLucarioEx);
+    map.insert("B4b 128", CardId::B4b128MegaGalladeEx);
+    map.insert("B4b 129", CardId::B4b129Roggenrola);
+    map.insert("B4b 130", CardId::B4b130Boldore);
+    map.insert("B4b 131", CardId::B4b131GigalithEx);
+    map.insert("B4b 132", CardId::B4b132Dwebble);
+    map.insert("B4b 133", CardId::B4b133CrustleEx);
+    map.insert("B4b 134", CardId::B4b134Rockruff);
+    map.insert("B4b 135", CardId::B4b135Falinks);
+    map.insert("B4b 136", CardId::B4b136KoraidonEx);
+    map.insert("B4b 137", CardId::B4b137AlolanGrimer);
+    map.insert("B4b 138", CardId::B4b138AlolanMuk);
+    map.insert("B4b 139", CardId::B4b139Gastly);
+    map.insert("B4b 140", CardId::B4b140Haunter);
+    map.insert("B4b 141", CardId::B4b141MegaGengarEx);
+    map.insert("B4b 142", CardId::B4b142MegaSableyeEx);
+    map.insert("B4b 143", CardId::B4b143MegaAbsolEx);
+    map.insert("B4b 144", CardId::B4b144Darkrai);
+    map.insert("B4b 145", CardId::B4b145Zorua);
+    map.insert("B4b 146", CardId::B4b146ZoroarkEx);
+    map.insert("B4b 147", CardId::B4b147Skrelp);
+    map.insert("B4b 148", CardId::B4b148DragalgeEx);
+    map.insert("B4b 149", CardId::B4b149HoopaEx);
+    map.insert("B4b 150", CardId::B4b150Zarude);
+    map.insert("B4b 151", CardId::B4b151Bombirdier);
+    map.insert("B4b 152", CardId::B4b152RoaringMoon);
+    map.insert("B4b 153", CardId::B4b153GalarianMeowth);
+    map.insert("B4b 154", CardId::B4b154GalarianPerrserker);
+    map.insert("B4b 155", CardId::B4b155MegaSteelixEx);
+    map.insert("B4b 156", CardId::B4b156MegaScizorEx);
+    map.insert("B4b 157", CardId::B4b157MegaMawileEx);
+    map.insert("B4b 158", CardId::B4b158Beldum);
+    map.insert("B4b 159", CardId::B4b159Metang);
+    map.insert("B4b 160", CardId::B4b160MegaMetagrossEx);
+    map.insert("B4b 161", CardId::B4b161Honedge);
+    map.insert("B4b 162", CardId::B4b162Doublade);
+    map.insert("B4b 163", CardId::B4b163Aegislash);
+    map.insert("B4b 164", CardId::B4b164Aegislash);
+    map.insert("B4b 165", CardId::B4b165Meltan);
+    map.insert("B4b 166", CardId::B4b166MelmetalEx);
+    map.insert("B4b 167", CardId::B4b167CorviknightEx);
+    map.insert("B4b 168", CardId::B4b168GholdengoEx);
+    map.insert("B4b 169", CardId::B4b169Dratini);
+    map.insert("B4b 170", CardId::B4b170Dragonair);
+    map.insert("B4b 171", CardId::B4b171Vibrava);
+    map.insert("B4b 172", CardId::B4b172FlygonEx);
+    map.insert("B4b 173", CardId::B4b173MegaRayquazaEx);
+    map.insert("B4b 174", CardId::B4b174Axew);
+    map.insert("B4b 175", CardId::B4b175Fraxure);
+    map.insert("B4b 176", CardId::B4b176Haxorus);
+    map.insert("B4b 177", CardId::B4b177Drampa);
+    map.insert("B4b 178", CardId::B4b178Rattata);
+    map.insert("B4b 179", CardId::B4b179Raticate);
+    map.insert("B4b 180", CardId::B4b180Meowth);
+    map.insert("B4b 181", CardId::B4b181MegaKangaskhanEx);
+    map.insert("B4b 182", CardId::B4b182TaurosEx);
+    map.insert("B4b 183", CardId::B4b183Eevee);
+    map.insert("B4b 184", CardId::B4b184Skitty);
+    map.insert("B4b 185", CardId::B4b185Delcatty);
+    map.insert("B4b 186", CardId::B4b186Swablu);
+    map.insert("B4b 187", CardId::B4b187Buneary);
+    map.insert("B4b 188", CardId::B4b188Munchlax);
+    map.insert("B4b 189", CardId::B4b189Lillipup);
+    map.insert("B4b 190", CardId::B4b190MegaAudinoEx);
+    map.insert("B4b 191", CardId::B4b191HisuianZorua);
+    map.insert("B4b 192", CardId::B4b192HisuianZoroarkEx);
+    map.insert("B4b 193", CardId::B4b193Ducklett);
+    map.insert("B4b 194", CardId::B4b194SwannaEx);
+    map.insert("B4b 195", CardId::B4b195Rookidee);
+    map.insert("B4b 196", CardId::B4b196Corvisquire);
+    map.insert("B4b 197", CardId::B4b197TerapagosEx);
+    map.insert("B4b 198", CardId::B4b198LuckyIcePop);
+    map.insert("B4b 199", CardId::B4b199ElectricGenerator);
+    map.insert("B4b 200", CardId::B4b200OrderPad);
+    map.insert("B4b 201", CardId::B4b201QuickGrowExtract);
+    map.insert("B4b 202", CardId::B4b202FieldBlower);
+    map.insert("B4b 203", CardId::B4b203FlamePatch);
+    map.insert("B4b 204", CardId::B4b204DeceptiveNeedle);
+    map.insert("B4b 205", CardId::B4b205LuckyEgg);
+    map.insert("B4b 206", CardId::B4b206SmallBalloon);
+    map.insert("B4b 207", CardId::B4b207AncientBoosterEnergyCapsule);
+    map.insert("B4b 208", CardId::B4b208FutureBoosterEnergyCapsule);
+    map.insert("B4b 209", CardId::B4b209ProtectivePoncho);
+    map.insert("B4b 210", CardId::B4b210MetalCoreBarrier);
+    map.insert("B4b 211", CardId::B4b211ElegantCape);
+    map.insert("B4b 212", CardId::B4b212Iris);
+    map.insert("B4b 213", CardId::B4b213Juliana);
+    map.insert("B4b 214", CardId::B4b214Diantha);
+    map.insert("B4b 215", CardId::B4b215Calem);
+    map.insert("B4b 216", CardId::B4b216PuppyLovingGirl);
+    map.insert("B4b 217", CardId::B4b217Korrina);
+    map.insert("B4b 218", CardId::B4b218Clemont);
+    map.insert("B4b 219", CardId::B4b219Serena);
+    map.insert("B4b 220", CardId::B4b220May);
+    map.insert("B4b 221", CardId::B4b221Skyla);
+    map.insert("B4b 222", CardId::B4b222Arven);
+    map.insert("B4b 223", CardId::B4b223Wallace);
+    map.insert("B4b 224", CardId::B4b224Wally);
+    map.insert("B4b 225", CardId::B4b225Copycat);
+    map.insert("B4b 226", CardId::B4b226Lisia);
+    map.insert("B4b 227", CardId::B4b227FragrantForest);
+    map.insert("B4b 228", CardId::B4b228ArenaofAntiquity);
+    map.insert("B4b 229", CardId::B4b229SoothingShore);
+    map.insert("B4b 230", CardId::B4b230BoundedField);
+    map.insert("B4b 231", CardId::B4b231Mesagoza);
+    map.insert("B4b 232", CardId::B4b232TrainingArea);
+    map.insert("B4b 233", CardId::B4b233RainbowCave);
+    map.insert("B4b 234", CardId::B4b234HikingTrail);
+    map.insert("B4b 235", CardId::B4b235StartingPlains);
+    map.insert("B4b 236", CardId::B4b236PeculiarPlaza);
+    map.insert("B4b 237", CardId::B4b237Bulbasaur);
+    map.insert("B4b 238", CardId::B4b238Ivysaur);
+    map.insert("B4b 239", CardId::B4b239Caterpie);
+    map.insert("B4b 240", CardId::B4b240Metapod);
+    map.insert("B4b 241", CardId::B4b241Butterfree);
+    map.insert("B4b 242", CardId::B4b242Scyther);
+    map.insert("B4b 243", CardId::B4b243Celebi);
+    map.insert("B4b 244", CardId::B4b244Treecko);
+    map.insert("B4b 245", CardId::B4b245Grovyle);
+    map.insert("B4b 246", CardId::B4b246Budew);
+    map.insert("B4b 247", CardId::B4b247Combee);
+    map.insert("B4b 248", CardId::B4b248Cottonee);
+    map.insert("B4b 249", CardId::B4b249Petilil);
+    map.insert("B4b 250", CardId::B4b250Lilligant);
+    map.insert("B4b 251", CardId::B4b251Durant);
+    map.insert("B4b 252", CardId::B4b252Sprigatito);
+    map.insert("B4b 253", CardId::B4b253Floragato);
+    map.insert("B4b 254", CardId::B4b254Smoliv);
+    map.insert("B4b 255", CardId::B4b255Dolliv);
+    map.insert("B4b 256", CardId::B4b256Arboliva);
+    map.insert("B4b 257", CardId::B4b257TealMaskOgerpon);
+    map.insert("B4b 258", CardId::B4b258Charmander);
+    map.insert("B4b 259", CardId::B4b259Charmeleon);
+    map.insert("B4b 260", CardId::B4b260Growlithe);
+    map.insert("B4b 261", CardId::B4b261Ponyta);
+    map.insert("B4b 262", CardId::B4b262Cyndaquil);
+    map.insert("B4b 263", CardId::B4b263Quilava);
+    map.insert("B4b 264", CardId::B4b264Torchic);
+    map.insert("B4b 265", CardId::B4b265Combusken);
+    map.insert("B4b 266", CardId::B4b266Numel);
+    map.insert("B4b 267", CardId::B4b267Victini);
+    map.insert("B4b 268", CardId::B4b268Fuecoco);
+    map.insert("B4b 269", CardId::B4b269Crocalor);
+    map.insert("B4b 270", CardId::B4b270Skeledirge);
+    map.insert("B4b 271", CardId::B4b271Charcadet);
+    map.insert("B4b 272", CardId::B4b272HearthflameMaskOgerpon);
+    map.insert("B4b 273", CardId::B4b273Squirtle);
+    map.insert("B4b 274", CardId::B4b274Wartortle);
+    map.insert("B4b 275", CardId::B4b275AlolanVulpix);
+    map.insert("B4b 276", CardId::B4b276Slowpoke);
+    map.insert("B4b 277", CardId::B4b277Magikarp);
+    map.insert("B4b 278", CardId::B4b278Mudkip);
+    map.insert("B4b 279", CardId::B4b279Marshtomp);
+    map.insert("B4b 280", CardId::B4b280Carvanha);
+    map.insert("B4b 281", CardId::B4b281Wailmer);
+    map.insert("B4b 282", CardId::B4b282Feebas);
+    map.insert("B4b 283", CardId::B4b283Froakie);
+    map.insert("B4b 284", CardId::B4b284Frogadier);
+    map.insert("B4b 285", CardId::B4b285Sobble);
+    map.insert("B4b 286", CardId::B4b286Drizzile);
+    map.insert("B4b 287", CardId::B4b287Inteleon);
+    map.insert("B4b 288", CardId::B4b288Frigibax);
+    map.insert("B4b 289", CardId::B4b289Arctibax);
+    map.insert("B4b 290", CardId::B4b290Baxcalibur);
+    map.insert("B4b 291", CardId::B4b291Pikachu);
+    map.insert("B4b 292", CardId::B4b292Raichu);
+    map.insert("B4b 293", CardId::B4b293Magnemite);
+    map.insert("B4b 294", CardId::B4b294Magneton);
+    map.insert("B4b 295", CardId::B4b295Mareep);
+    map.insert("B4b 296", CardId::B4b296Flaaffy);
+    map.insert("B4b 297", CardId::B4b297Electrike);
+    map.insert("B4b 298", CardId::B4b298Helioptile);
+    map.insert("B4b 299", CardId::B4b299Heliolisk);
+    map.insert("B4b 300", CardId::B4b300Yamper);
+    map.insert("B4b 301", CardId::B4b301Toxel);
+    map.insert("B4b 302", CardId::B4b302Tadbulb);
+    map.insert("B4b 303", CardId::B4b303IronThorns);
+    map.insert("B4b 304", CardId::B4b304Ralts);
+    map.insert("B4b 305", CardId::B4b305Kirlia);
+    map.insert("B4b 306", CardId::B4b306Wynaut);
+    map.insert("B4b 307", CardId::B4b307Chingling);
+    map.insert("B4b 308", CardId::B4b308MimeJr);
+    map.insert("B4b 309", CardId::B4b309Meloetta);
+    map.insert("B4b 310", CardId::B4b310Sylveon);
+    map.insert("B4b 311", CardId::B4b311Klefki);
+    map.insert("B4b 312", CardId::B4b312Fidough);
+    map.insert("B4b 313", CardId::B4b313Bramblin);
+    map.insert("B4b 314", CardId::B4b314Brambleghast);
+    map.insert("B4b 315", CardId::B4b315Gimmighoul);
+    map.insert("B4b 316", CardId::B4b316Onix);
+    map.insert("B4b 317", CardId::B4b317Trapinch);
+    map.insert("B4b 318", CardId::B4b318Riolu);
+    map.insert("B4b 319", CardId::B4b319Roggenrola);
+    map.insert("B4b 320", CardId::B4b320Boldore);
+    map.insert("B4b 321", CardId::B4b321Dwebble);
+    map.insert("B4b 322", CardId::B4b322Rockruff);
+    map.insert("B4b 323", CardId::B4b323Falinks);
+    map.insert("B4b 324", CardId::B4b324AlolanGrimer);
+    map.insert("B4b 325", CardId::B4b325AlolanMuk);
+    map.insert("B4b 326", CardId::B4b326Gastly);
+    map.insert("B4b 327", CardId::B4b327Haunter);
+    map.insert("B4b 328", CardId::B4b328Darkrai);
+    map.insert("B4b 329", CardId::B4b329Zorua);
+    map.insert("B4b 330", CardId::B4b330Skrelp);
+    map.insert("B4b 331", CardId::B4b331Zarude);
+    map.insert("B4b 332", CardId::B4b332Bombirdier);
+    map.insert("B4b 333", CardId::B4b333RoaringMoon);
+    map.insert("B4b 334", CardId::B4b334GalarianMeowth);
+    map.insert("B4b 335", CardId::B4b335GalarianPerrserker);
+    map.insert("B4b 336", CardId::B4b336Beldum);
+    map.insert("B4b 337", CardId::B4b337Metang);
+    map.insert("B4b 338", CardId::B4b338Honedge);
+    map.insert("B4b 339", CardId::B4b339Doublade);
+    map.insert("B4b 340", CardId::B4b340Aegislash);
+    map.insert("B4b 341", CardId::B4b341Aegislash);
+    map.insert("B4b 342", CardId::B4b342Meltan);
+    map.insert("B4b 343", CardId::B4b343Dratini);
+    map.insert("B4b 344", CardId::B4b344Dragonair);
+    map.insert("B4b 345", CardId::B4b345Vibrava);
+    map.insert("B4b 346", CardId::B4b346Axew);
+    map.insert("B4b 347", CardId::B4b347Fraxure);
+    map.insert("B4b 348", CardId::B4b348Haxorus);
+    map.insert("B4b 349", CardId::B4b349Drampa);
+    map.insert("B4b 350", CardId::B4b350Rattata);
+    map.insert("B4b 351", CardId::B4b351Raticate);
+    map.insert("B4b 352", CardId::B4b352Meowth);
+    map.insert("B4b 353", CardId::B4b353Eevee);
+    map.insert("B4b 354", CardId::B4b354Skitty);
+    map.insert("B4b 355", CardId::B4b355Delcatty);
+    map.insert("B4b 356", CardId::B4b356Swablu);
+    map.insert("B4b 357", CardId::B4b357Buneary);
+    map.insert("B4b 358", CardId::B4b358Munchlax);
+    map.insert("B4b 359", CardId::B4b359Lillipup);
+    map.insert("B4b 360", CardId::B4b360HisuianZorua);
+    map.insert("B4b 361", CardId::B4b361Ducklett);
+    map.insert("B4b 362", CardId::B4b362Rookidee);
+    map.insert("B4b 363", CardId::B4b363Corvisquire);
+    map.insert("B4b 364", CardId::B4b364LuckyIcePop);
+    map.insert("B4b 365", CardId::B4b365ElectricGenerator);
+    map.insert("B4b 366", CardId::B4b366OrderPad);
+    map.insert("B4b 367", CardId::B4b367QuickGrowExtract);
+    map.insert("B4b 368", CardId::B4b368FieldBlower);
+    map.insert("B4b 369", CardId::B4b369FlamePatch);
+    map.insert("B4b 370", CardId::B4b370DeceptiveNeedle);
+    map.insert("B4b 371", CardId::B4b371LuckyEgg);
+    map.insert("B4b 372", CardId::B4b372SmallBalloon);
+    map.insert("B4b 373", CardId::B4b373AncientBoosterEnergyCapsule);
+    map.insert("B4b 374", CardId::B4b374FutureBoosterEnergyCapsule);
+    map.insert("B4b 375", CardId::B4b375ProtectivePoncho);
+    map.insert("B4b 376", CardId::B4b376MetalCoreBarrier);
+    map.insert("B4b 377", CardId::B4b377ElegantCape);
+    map.insert("B4b 378", CardId::B4b378Iris);
+    map.insert("B4b 379", CardId::B4b379Juliana);
+    map.insert("B4b 380", CardId::B4b380Diantha);
+    map.insert("B4b 381", CardId::B4b381Calem);
+    map.insert("B4b 382", CardId::B4b382PuppyLovingGirl);
+    map.insert("B4b 383", CardId::B4b383Korrina);
+    map.insert("B4b 384", CardId::B4b384Clemont);
+    map.insert("B4b 385", CardId::B4b385Serena);
+    map.insert("B4b 386", CardId::B4b386May);
+    map.insert("B4b 387", CardId::B4b387Skyla);
+    map.insert("B4b 388", CardId::B4b388Arven);
+    map.insert("B4b 389", CardId::B4b389Wallace);
+    map.insert("B4b 390", CardId::B4b390Wally);
+    map.insert("B4b 391", CardId::B4b391Copycat);
+    map.insert("B4b 392", CardId::B4b392Lisia);
+    map.insert("B4b 393", CardId::B4b393FragrantForest);
+    map.insert("B4b 394", CardId::B4b394ArenaofAntiquity);
+    map.insert("B4b 395", CardId::B4b395SoothingShore);
+    map.insert("B4b 396", CardId::B4b396BoundedField);
+    map.insert("B4b 397", CardId::B4b397Mesagoza);
+    map.insert("B4b 398", CardId::B4b398TrainingArea);
+    map.insert("B4b 399", CardId::B4b399RainbowCave);
+    map.insert("B4b 400", CardId::B4b400HikingTrail);
+    map.insert("B4b 401", CardId::B4b401StartingPlains);
+    map.insert("B4b 402", CardId::B4b402PeculiarPlaza);
+    map.insert("B4b 403", CardId::B4b403Charmeleon);
+    map.insert("B4b 404", CardId::B4b404Baxcalibur);
+    map.insert("B4b 405", CardId::B4b405Meloetta);
+    map.insert("B4b 406", CardId::B4b406Fidough);
+    map.insert("B4b 407", CardId::B4b407Dratini);
+    map.insert("B4b 408", CardId::B4b408Eevee);
+    map.insert("B4b 409", CardId::B4b409MegaVenusaurEx);
+    map.insert("B4b 410", CardId::B4b410MegaSceptileEx);
+    map.insert("B4b 411", CardId::B4b411MegaCharizardXEx);
+    map.insert("B4b 412", CardId::B4b412MegaCharizardYEx);
+    map.insert("B4b 413", CardId::B4b413MegaBlazikenEx);
+    map.insert("B4b 414", CardId::B4b414MegaBlastoiseEx);
+    map.insert("B4b 415", CardId::B4b415MegaGyaradosEx);
+    map.insert("B4b 416", CardId::B4b416MegaGardevoirEx);
+    map.insert("B4b 417", CardId::B4b417MegaAltariaEx);
+    map.insert("B4b 418", CardId::B4b418MegaLucarioEx);
+    map.insert("B4b 419", CardId::B4b419MegaGengarEx);
+    map.insert("B4b 420", CardId::B4b420MegaRayquazaEx);
+    map.insert("B4b 421", CardId::B4b421Iris);
+    map.insert("B4b 422", CardId::B4b422Elesa);
+    map.insert("B4b 423", CardId::B4b423Arven);
+    map.insert("B4b 424", CardId::B4b424Copycat);
+    map.insert("B4b 425", CardId::B4b425MegaCharizardXEx);
+    map.insert("B4b 426", CardId::B4b426DedenneEx);
+    map.insert("B4b 427", CardId::B4b427MegaDiancieEx);
+    map.insert("B4b 428", CardId::B4b428MiraidonEx);
+    map.insert("B4b 429", CardId::B4b429KoraidonEx);
     map.insert("P-A 001", CardId::PA001Potion);
     map.insert("P-A 002", CardId::PA002XSpeed);
     map.insert("P-A 003", CardId::PA003HandScope);
@@ -7769,6 +8636,15 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 092", CardId::PB092Marowak);
     map.insert("P-B 093", CardId::PB093Fennekin);
     map.insert("P-B 094", CardId::PB094Meowstic);
+    map.insert("P-B 095", CardId::PB095Darkrai);
+    map.insert("P-B 096", CardId::PB096Falinks);
+    map.insert("P-B 097", CardId::PB097Gible);
+    map.insert("P-B 098", CardId::PB098Gabite);
+    map.insert("P-B 099", CardId::PB099MegaGarchompEx);
+    map.insert("P-B 100", CardId::PB100Delcatty);
+    map.insert("P-B 101", CardId::PB101Charmander);
+    map.insert("P-B 102", CardId::PB102Drampa);
+    map.insert("P-B 103", CardId::PB103PikachuEx);
     map
 });
 

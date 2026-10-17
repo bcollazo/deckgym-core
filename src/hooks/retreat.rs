@@ -1,5 +1,5 @@
 use crate::{
-    actions::{abilities::AbilityMechanic, get_ability_mechanic},
+    actions::abilities::AbilityMechanic,
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     models::{Card, EnergyType, PlayedCard},
@@ -17,16 +17,23 @@ pub(crate) fn can_retreat(state: &State) -> bool {
     // Check if active card is a Fossil (Fossils can never retreat)
     let is_fossil = active.is_fossil();
 
-    !state.has_retreated && !has_no_retreat_effect && !is_fossil
+    // In-app Tips, "Special Conditions": Asleep and Paralyzed Pokémon "cannot attack or
+    // retreat". (Confused Pokémon can: Confusion only gates attacking, via a coin flip.)
+    let is_immobilized = active.is_asleep() || active.is_paralyzed();
+
+    !state.has_retreated && !has_no_retreat_effect && !is_fossil && !is_immobilized
 }
 
 pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
         if matches!(
-            get_ability_mechanic(&card.card),
+            card.ability_mechanic(),
             Some(AbilityMechanic::NoRetreatIfHasEnergy)
         ) && !card.attached_energy.is_empty()
         {
+            return vec![];
+        }
+        if has_no_retreat_cost_from_abilities(state, card) {
             return vec![];
         }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
@@ -41,9 +48,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         for _ in 0..retreat_cost_increase {
             normal_cost.push(EnergyType::Colorless);
         }
-        if has_tool(card, CardId::A4a067InflatableBoat)
-            && card.get_energy_type() == Some(EnergyType::Water)
-        {
+        if has_tool(card, CardId::A4a067InflatableBoat) && card.is_type(EnergyType::Water) {
             normal_cost.pop();
         }
         if has_tool(card, CardId::B2a087BigAirBalloon) && pokemon_card.stage == 2 {
@@ -69,7 +74,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             let current_player = state.current_player;
             for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
                 if matches!(
-                    get_ability_mechanic(&benched_pokemon.card),
+                    benched_pokemon.ability_mechanic(),
                     Some(
                         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { amount: 1 }
                     )
@@ -78,25 +83,35 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
                 }
             }
         }
-        if let Some(active_energy_type) = card.get_energy_type() {
-            let current_player = state.current_player;
-            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
-                if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
-                    energy_type,
-                    amount,
-                }) = get_ability_mechanic(&benched_pokemon.card)
-                {
-                    if energy_type == &active_energy_type {
-                        to_subtract += *amount as u8;
-                    }
+        // Each benched source applies its reduction once, even if the Active Pokémon happens to
+        // count as the required type through more than one of its in-play types.
+        let current_player = state.current_player;
+        for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
+            if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
+                energy_type,
+                amount,
+            }) = benched_pokemon.ability_mechanic()
+            {
+                if card.is_type(*energy_type) {
+                    to_subtract += *amount as u8;
                 }
             }
         }
 
-        // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
-        if let Some(energy_type) = card.get_energy_type() {
-            to_subtract += get_peculiar_plaza_retreat_reduction(state, energy_type);
+        // Beldum's Conductive Body: "If you have another Beldum in play, this Pokémon's Retreat
+        // Cost is 2 less." ("another" = a different in-play slot holding a Pokémon of the same
+        // name.)
+        if let Some(AbilityMechanic::ReduceRetreatCostIfAnotherSameNameInPlay { amount }) =
+            card.ability_mechanic()
+        {
+            if count_in_play_by_name(state, state.current_player, &card.get_name()) > 1 {
+                to_subtract += *amount;
+            }
         }
+
+        // Peculiar Plaza: Psychic Pokemon retreat cost is 2 less
+        to_subtract +=
+            get_peculiar_plaza_retreat_reduction(state, card.is_type(EnergyType::Psychic));
 
         // Retreat Effects accumulate so we add them.
         for _ in 0..to_subtract {
@@ -104,15 +119,15 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         }
 
         // Ariados Trap Territory: Your opponent's Active Pokémon's Retreat Cost is 1 more.
-        // This check needs to look at if the OPPONENT has Ariados in play
+        // This check needs to look at if the OPPONENT has Ariados in play. It is printed on each
+        // Ariados, so every Ariados adds its own 1.
         let opponent = (state.current_player + 1) % 2;
         for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
             if matches!(
-                get_ability_mechanic(&pokemon.card),
+                pokemon.ability_mechanic(),
                 Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
             ) {
                 normal_cost.push(EnergyType::Colorless);
-                break;
             }
         }
 
@@ -120,6 +135,51 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
     } else {
         vec![]
     }
+}
+
+/// Passive abilities that zero out a Pokémon's Retreat Cost outright. Two shapes are covered:
+/// self-scoped ones read off `card`'s own ability (Speed Link, Fantastical Floating, Wimp Out,
+/// Surge Surfer), and auras granted by any of the owner's in-play Pokémon (Jumpluff's Fluffy
+/// Flight, Tatsugiri's Retreat Directive).
+fn has_no_retreat_cost_from_abilities(state: &State, card: &PlayedCard) -> bool {
+    let player = state.current_player;
+    let self_scoped = match card.ability_mechanic() {
+        Some(AbilityMechanic::NoRetreatCostIfNamedPokemonInPlay { names }) => {
+            has_named_pokemon_in_play(state, player, names)
+        }
+        Some(AbilityMechanic::NoRetreatCostDuringFirstTurn) => state.is_users_first_turn(),
+        Some(AbilityMechanic::NoRetreatCostIfStadiumInPlay) => state.active_stadium.is_some(),
+        _ => false,
+    };
+    if self_scoped {
+        return true;
+    }
+
+    // Auras only free the *Active* Pokémon, so they never apply to a Benched retreat-cost query.
+    let card_name = card.get_name();
+    state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::NoRetreatCostForYourActive { pokemon_name }) => {
+                pokemon_name.as_ref().is_none_or(|name| *name == card_name)
+            }
+            _ => false,
+        })
+}
+
+/// Whether `player` has any in-play Pokémon whose name is in `names`.
+fn has_named_pokemon_in_play(state: &State, player: usize, names: &[String]) -> bool {
+    state
+        .enumerate_in_play_pokemon(player)
+        .any(|(_, pokemon)| names.contains(&pokemon.get_name()))
+}
+
+/// How many of `player`'s in-play Pokémon share `name`.
+fn count_in_play_by_name(state: &State, player: usize, name: &str) -> usize {
+    state
+        .enumerate_in_play_pokemon(player)
+        .filter(|(_, pokemon)| pokemon.get_name() == name)
+        .count()
 }
 
 // Test Colorless is wildcard when counting energy
@@ -178,7 +238,7 @@ mod tests {
         let state = State::default();
         let card = get_card_by_enum(CardId::A1055Blastoise);
         let mut playable_card = to_playable_card(&card, false);
-        playable_card.attached_tool = Some(crate::database::get_card_by_enum(
+        playable_card = playable_card.with_tool(crate::database::get_card_by_enum(
             CardId::A4a067InflatableBoat,
         ));
         let retreat_cost = get_retreat_cost(&state, &playable_card);

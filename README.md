@@ -98,6 +98,61 @@ The JSON format makes it easy to:
 - Build custom machine learning models
 - Analyze gameplay patterns and statistics
 
+## Replay Recording (Web Viewer)
+
+The simulator can record one JSON replay file per game: a full board snapshot at every decision
+point plus the legal options and the action that was chosen. These replays are meant to be opened
+in the web viewer under `viewer/` (see `viewer/README.md`), which steps through the game with
+animated transitions.
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 3 --players r,r --replay-dir replays/
+```
+
+Use `--replay-sample N` to only write replays for the first N games of a run (useful when running
+many simulations but only wanting a few to inspect):
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 1000 --players r,r --replay-dir replays/ --replay-sample 10
+```
+
+### Play one game and open it in the viewer
+
+`play` is a shortcut for the "run one game, then go look at it" loop: it plays exactly one game,
+writes its replay, prints a winner/points summary, and prints a `viewer` URL as its last line.
+
+```bash
+cd viewer && npm run dev        # leave this running in one terminal
+```
+```bash
+# in another terminal, from the repo root
+cargo run -- play example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt --players e2,r
+```
+
+Ctrl+Click (or Cmd+Click, depending on your terminal) the printed link to open that game in the
+viewer — see [`viewer/README.md`](./viewer/README.md#playing-one-game-and-opening-it-straight-from-the-terminal)
+for how that link resolves and its other flags (`--seed`, `--bot-a`/`--bot-b`, `--replay-dir`,
+`--viewer-url`).
+
+## External Bots
+
+A bot written in any language can play as either seat, talking to the engine over stdin/stdout in
+JSON lines. Give that seat the player code `x` and point `--bot-a`/`--bot-b` at the command to run:
+
+```bash
+cargo run simulate example_decks/venusaur-exeggutor.txt example_decks/weezing-arbok.txt \
+  -n 1 --players r,x --bot-b "python3 examples/bots/random_bot.py"
+```
+
+`examples/bots/random_bot.py` is a minimal, stdlib-only example bot (picks a random legal action
+and attaches a short note explaining its pick). See [`docs/bot-protocol.md`](./docs/bot-protocol.md)
+for the full wire protocol, including the message schemas and how failures (timeouts, invalid
+replies, a crashed process) are handled. `--bot-timeout-ms` (default 10000) controls how long the
+engine waits for one decision. A bot's notes, when set, are stored in `--replay-dir` replays and
+shown in the [web viewer](./viewer/README.md)'s options panel.
+
 ## Contributing
 
 New to Open Source? See [CONTRIBUTING.md](./CONTRIBUTING.md).

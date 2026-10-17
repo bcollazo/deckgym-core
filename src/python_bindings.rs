@@ -14,7 +14,7 @@ use crate::{
 };
 
 /// Python wrapper for EnergyType
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone, Copy)]
 pub struct PyEnergyType {
     energy_type: EnergyType,
@@ -43,7 +43,7 @@ impl From<EnergyType> for PyEnergyType {
 }
 
 /// Python wrapper for Attack
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyAttack {
     attack: Attack,
@@ -90,7 +90,7 @@ impl From<Attack> for PyAttack {
 }
 
 /// Python wrapper for Ability
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyAbility {
     #[pyo3(get)]
@@ -116,7 +116,7 @@ impl From<Ability> for PyAbility {
 }
 
 /// Python wrapper for Card
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyCard {
     card: Card,
@@ -154,9 +154,22 @@ impl PyCard {
         self.card.is_ex()
     }
 
+    /// The Pokémon's first printed type. See `energy_types` for the whole printed set.
     #[getter]
     fn energy_type(&self) -> Option<PyEnergyType> {
-        self.card.get_type().map(|t| t.into())
+        self.card.get_types().first().map(|t| (*t).into())
+    }
+
+    /// Every type printed on the card. Today always 0 or 1 entries; dual-type Pokémon will have
+    /// two. For a Pokémon in play, prefer `PlayedCard.energy_types`, which also counts types
+    /// granted by an Ability.
+    #[getter]
+    fn energy_types(&self) -> Vec<PyEnergyType> {
+        self.card
+            .get_types()
+            .into_iter()
+            .map(|t| t.into())
+            .collect()
     }
 
     #[getter]
@@ -209,7 +222,7 @@ impl From<Card> for PyCard {
 }
 
 /// Python wrapper for PlayedCard
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyPlayedCard {
     played_card: PlayedCard,
@@ -281,9 +294,25 @@ impl PyPlayedCard {
         self.played_card.get_name()
     }
 
+    /// The Pokémon's first *printed* type, as on the card.
     #[getter]
     fn energy_type(&self) -> Option<PyEnergyType> {
-        self.played_card.get_energy_type().map(|t| t.into())
+        self.played_card
+            .card
+            .get_types()
+            .first()
+            .map(|t| (*t).into())
+    }
+
+    /// Every type this Pokémon counts as while in play: its printed type plus any granted by an
+    /// Ability (Urshifu's Double Type). This is what the engine's rules checks use.
+    #[getter]
+    fn energy_types(&self) -> Vec<PyEnergyType> {
+        self.played_card
+            .get_energy_types()
+            .into_iter()
+            .map(|t| t.into())
+            .collect()
     }
 
     #[getter]
@@ -318,7 +347,7 @@ impl From<PlayedCard> for PyPlayedCard {
 }
 
 /// Python wrapper for GameOutcome
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct PyGameOutcome {
     #[pyo3(get)]
@@ -400,8 +429,9 @@ impl PyState {
     }
 
     #[getter]
-    fn points(&self) -> [u8; 2] {
-        self.state.points
+    fn points(&self) -> [u32; 2] {
+        // pyo3 >= 0.23 converts u8 arrays to `bytes`; widen to keep returning a list.
+        self.state.points.map(u32::from)
     }
 
     #[getter]

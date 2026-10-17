@@ -1,8 +1,11 @@
 use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
-    models::{EnergyType, PlayedCard},
-    test_support::{attack_action, get_initialized_game_with_board, get_test_game_with_board},
+    models::{Card, EnergyType, PlayedCard},
+    test_support::{
+        attack_action, get_initialized_game_with_board, get_test_game_with_board, play_trainer,
+        trainer_from_id,
+    },
 };
 
 /// Victini's "Victory Star": "Once during your turn, after you flip any coins for an attack of
@@ -310,4 +313,75 @@ fn test_victory_star_can_only_be_used_once_per_turn() {
         "Victory Star should not be offered twice in one turn, got: {:?}",
         choices.iter().map(|c| &c.action).collect::<Vec<_>>()
     );
+}
+
+/// Will: "The next time you flip any number of coins for the effect of an attack, Ability, or
+/// Trainer card after using this card on this turn, the first coin flip will definitely be
+/// heads."
+///
+/// Will covers the first flip of the attack. Victory Star's reflip is a new batch of coins
+/// ("begin flipping those coins again"), so Will must not force it to heads.
+fn will_then_attack_with_victory_star(seed: u64, reflip: bool) -> u32 {
+    let will = trainer_from_id(CardId::A4156Will);
+    let mut game = get_initialized_game_with_board(
+        seed,
+        0,
+        3,
+        vec![
+            PlayedCard::from_id(CardId::A1a010Ponyta).with_energy(vec![EnergyType::Fire]),
+            PlayedCard::from_id(CardId::B3025Victini),
+        ],
+        vec![PlayedCard::from_id(CardId::A1211Snorlax)],
+    );
+    let mut state = game.get_state_clone();
+    state.hands[0] = vec![Card::Trainer(will.clone())];
+    game.set_state(state);
+
+    play_trainer(&mut game, 0, will);
+    game.apply_action(&Action {
+        actor: 0,
+        action: attack_action(CardId::A1a010Ponyta, 0),
+        is_stack: false,
+    });
+    game.apply_action(&Action {
+        actor: 0,
+        action: if reflip {
+            SimpleAction::UseAbility { in_play_idx: 1 }
+        } else {
+            SimpleAction::Noop
+        },
+        is_stack: true,
+    });
+    game.play_until_stable();
+    game.get_state_clone().get_active(1).get_remaining_hp()
+}
+
+#[test]
+fn test_will_does_not_force_the_victory_star_reflip() {
+    // Snorlax has 150 HP: Ponyta's Stomp leaves 140 on tails and 110 on heads.
+    let mut saw_heads = false;
+    let mut saw_tails = false;
+    for seed in 0..100 {
+        match will_then_attack_with_victory_star(seed, true) {
+            110 => saw_heads = true,
+            140 => saw_tails = true,
+            other => panic!("Seed {seed}: unexpected resulting HP {other}"),
+        }
+    }
+    assert!(saw_heads, "The reflip should still be able to land heads");
+    assert!(
+        saw_tails,
+        "Will must not force the reflip to heads: it covers only the original flip"
+    );
+}
+
+#[test]
+fn test_will_still_forces_the_original_flip_when_victory_star_is_declined() {
+    for seed in 0..100 {
+        assert_eq!(
+            will_then_attack_with_victory_star(seed, false),
+            110,
+            "Seed {seed}: Will should make the original flip heads"
+        );
+    }
 }

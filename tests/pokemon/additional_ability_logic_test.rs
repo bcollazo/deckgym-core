@@ -80,6 +80,7 @@ fn test_intimidating_fang_check_does_not_panic_when_defenders_active_was_knocked
         action: SimpleAction::DiscardToolFromPokemon {
             player: 0,
             in_play_idx: 0,
+            tool_idx: 0,
         },
         is_stack: true,
     });

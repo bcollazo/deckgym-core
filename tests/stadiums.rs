@@ -6,6 +6,8 @@ mod area_zero_test;
 mod arena_of_antiquity_test;
 #[path = "stadiums/fragrant_forest_test.rs"]
 mod fragrant_forest_test;
+#[path = "stadiums/hiking_trail_test.rs"]
+mod hiking_trail_test;
 #[path = "stadiums/kids_room_test.rs"]
 mod kids_room_test;
 #[path = "stadiums/rainbow_cave_test.rs"]

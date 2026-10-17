@@ -25,6 +25,16 @@ pub enum CardEffect {
         attack_name: String,
         amount: u32,
     },
+    /// Like `IncreasedDamageForAttack`, but for a *spread* attack, whose bonus has to reach every
+    /// target rather than only the Active-to-Active damage that `hooks::modify_damage` sees (e.g.
+    /// Archeops's Wild Spin: "+20 damage to each of your opponent's Pokémon"). The attack's own
+    /// mechanic reads this off the attacker and folds it into every target's damage, so
+    /// `modify_damage` deliberately ignores it — using `IncreasedDamageForAttack` here would
+    /// double-count the bonus on the Active.
+    IncreasedSpreadDamageForAttack {
+        attack_name: String,
+        amount: u32,
+    },
     PreventAllDamageAndEffects,
     /// Prevent all damage from attacks if the incoming damage is at most `threshold` (e.g. Cascoon's Harden).
     PreventDamageIfLessOrEqual {
@@ -33,6 +43,13 @@ pub enum CardEffect {
     /// Prevent all damage done by attacks from Basic Pokémon (e.g. Carracosta's Blocking Shell).
     PreventDamageFromBasic,
     NoWeakness,
+    /// Budew's Prickly Powder: "The Defending Pokémon loses all Abilities." While this effect is on
+    /// a Pokémon, `PlayedCard::ability` / `PlayedCard::ability_mechanic` report it as having none,
+    /// which is what every ability lookup in the engine goes through — so the Pokémon stops
+    /// offering activated abilities, stops contributing passive ones, and stops deriving
+    /// ability-based `CardEffect`s. Applied with a very long duration; the wording is "until the
+    /// Defending Pokémon leaves the Active Spot", and leaving the Active Spot clears effects.
+    AbilitiesDisabled,
     CoinFlipToBlockAttack,
     DelayedDamage {
         amount: u32,
@@ -41,6 +58,20 @@ pub enum CardEffect {
     /// damage to the Attacking Pokémon (e.g. Alolan Sandslash's Spike Armor). Temporary
     /// counterpart to RockyHelmet's always-on recoil.
     Counterattack {
+        amount: u32,
+    },
+    /// Aegislash's Superb Shield: this Pokémon takes `amount` less damage, but only from attacks
+    /// used by the opponent's Pokémon ex. The ex-only twin of `ReducedDamage`.
+    ReducedDamageFromEx {
+        amount: u32,
+    },
+    /// Gothitelle's Stellar Cradle: the next time this Pokémon's controller attaches Energy to it
+    /// from their Energy Zone, it falls Asleep.
+    AsleepWhenEnergyAttachedFromZone,
+    /// Galarian Stunfisk's Snapping Trap: while the Pokémon carrying this effect is in the Active
+    /// Spot, an opponent retreating their Active Pokémon takes `amount` damage on the Pokémon
+    /// they promote in its place.
+    DamageNewActiveOnOpponentRetreat {
         amount: u32,
     },
     // ---------------------------------------------------------------------------------------------
@@ -106,6 +137,23 @@ pub enum TurnEffect {
         player: usize,
         attacker_must_be_ex: bool,
     },
+    /// All of `player`'s Pokémon take `amount` less damage from attacks from the opponent's
+    /// Pokémon (e.g. Blue). The untargeted sibling of `ReducedDamageForType` /
+    /// `ReducedDamageForSpecificPokemon`; like those it covers Benched Pokémon too, since the
+    /// wording is "all of your Pokémon".
+    ReducedDamageForAllPokemon {
+        amount: u32,
+        player: usize,
+    },
+    /// If one of `player`'s Pokémon named in `pokemon_names` would be Knocked Out by damage from
+    /// an attack, it is not Knocked Out and its remaining HP becomes `remaining_hp` (e.g. Hala,
+    /// protecting Hariyama and Crabominable). The deterministic, turn-scoped counterpart of
+    /// Ursaluna's coin-flip Guts ability; resolved in `handle_knockouts`.
+    SurviveKnockOutForSpecificPokemon {
+        pokemon_names: Vec<String>,
+        player: usize,
+        remaining_hp: u32,
+    },
     IncreasedDamage {
         amount: u32,
     },
@@ -136,6 +184,19 @@ pub enum TurnEffect {
         target_player: usize,
         target_in_play_idx: usize,
         amount: u32,
+    },
+    /// Armaldo's Abyssal Drop: whatever occupies `target_in_play_idx` on `target_player`'s board
+    /// at the end of their turn is Knocked Out outright. The knock-out twin of
+    /// `DelayedSpotDamage` — it is not damage, so it ignores damage reduction and prevention.
+    DelayedSpotKnockOut {
+        source_player: usize,
+        target_player: usize,
+        target_in_play_idx: usize,
+    },
+    /// Malamar's Evolution Jammer: `player` can't play Pokémon from their hand to evolve their
+    /// Pokémon.
+    NoEvolutionFromHand {
+        player: usize,
     },
     ForceFirstHeads,
     /// A random-spread attack with this name chooses a Pokémon `amount` more times
