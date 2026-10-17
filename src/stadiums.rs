@@ -48,6 +48,14 @@ static FRAGRANT_FOREST_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3153FragrantForest));
 static AREA_ZERO_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3a074AreaZero));
+static KIDS_ROOM_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B3b069KidsRoom));
+static SOOTHING_SHORE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4154SoothingShore));
+static RAINBOW_CAVE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4155RainbowCave));
+static ARCADE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4a072Arcade));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -63,6 +71,10 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == ARENA_OF_ANTIQUITY_EFFECT.as_str()
             || e == FRAGRANT_FOREST_EFFECT.as_str()
             || e == AREA_ZERO_EFFECT.as_str()
+            || e == KIDS_ROOM_EFFECT.as_str()
+            || e == SOOTHING_SHORE_EFFECT.as_str()
+            || e == RAINBOW_CAVE_EFFECT.as_str()
+            || e == ARCADE_EFFECT.as_str()
     )
 }
 
@@ -109,8 +121,10 @@ pub fn is_starting_plains_active(state: &State) -> bool {
 
 /// Returns the retreat cost reduction for Peculiar Plaza.
 /// Peculiar Plaza: "The Retreat Cost of each [P] Pokemon in play (both yours and your opponent's) is 2 less."
-pub fn get_peculiar_plaza_retreat_reduction(state: &State, energy_type: EnergyType) -> u8 {
-    if energy_type == EnergyType::Psychic && has_stadium(state, CardId::B2155PeculiarPlaza) {
+/// `is_psychic` is membership in the Pokémon's *in-play* type set, so a dual-type [P] Pokémon
+/// gets the reduction (once — the caller asks a single yes/no question).
+pub fn get_peculiar_plaza_retreat_reduction(state: &State, is_psychic: bool) -> u8 {
+    if is_psychic && has_stadium(state, CardId::B2155PeculiarPlaza) {
         2
     } else {
         0
@@ -133,15 +147,14 @@ pub fn is_arena_of_antiquity_active(state: &State) -> bool {
 
 /// Returns the damage bonus for Arena of Antiquity.
 /// Arena of Antiquity: "Attacks used by each [F] Pokémon in play (both yours and your opponent's) do +20 damage to the opponent's Active Pokémon ex."
+/// `attacker_is_fighting` is membership in the attacker's *in-play* type set, so a dual-type [F]
+/// attacker gets the bonus (once).
 pub fn get_arena_of_antiquity_damage_bonus(
     state: &State,
-    attacker_energy_type: EnergyType,
+    attacker_is_fighting: bool,
     target_is_ex: bool,
 ) -> u32 {
-    if attacker_energy_type == EnergyType::Fighting
-        && target_is_ex
-        && is_arena_of_antiquity_active(state)
-    {
+    if attacker_is_fighting && target_is_ex && is_arena_of_antiquity_active(state) {
         20
     } else {
         0
@@ -179,4 +192,52 @@ pub fn can_use_area_zero(state: &State, player: usize) -> bool {
         return false;
     }
     state.hands[player].iter().any(|card| card.is_basic())
+}
+
+pub fn is_soothing_shore_active(state: &State) -> bool {
+    has_stadium(state, CardId::B4154SoothingShore)
+}
+
+pub fn is_rainbow_cave_active(state: &State) -> bool {
+    has_stadium(state, CardId::B4155RainbowCave)
+}
+
+/// Returns true if the player can use Rainbow Cave's effect (stadium is active, not used this
+/// turn, and there is an Energy currently generated in their Energy Zone to discard).
+pub fn can_use_rainbow_cave(state: &State, player: usize) -> bool {
+    is_rainbow_cave_active(state)
+        && !state.has_used_stadium[player]
+        && state.energy_zone[player].current.is_some()
+}
+
+pub fn is_kids_room_active(state: &State) -> bool {
+    has_stadium(state, CardId::B3b069KidsRoom)
+}
+
+/// Returns true if the player can use Kid's Room's effect (stadium is active, not used this turn,
+/// hand has a card, and deck has a Pokemon Tool card)
+pub fn can_use_kids_room(state: &State, player: usize) -> bool {
+    if !is_kids_room_active(state) {
+        return false;
+    }
+    if state.has_used_stadium[player] {
+        return false;
+    }
+    if state.hands[player].is_empty() {
+        return false;
+    }
+    state.decks[player]
+        .cards
+        .iter()
+        .any(|card| matches!(card, Card::Trainer(t) if t.trainer_card_type == TrainerType::Tool))
+}
+
+pub fn is_arcade_active(state: &State) -> bool {
+    has_stadium(state, CardId::B4a072Arcade)
+}
+
+/// Returns true if the player can use Arcade's effect (stadium is active, not used this turn,
+/// and the player has room in hand to benefit from drawing up to 7 cards).
+pub fn can_use_arcade(state: &State, player: usize) -> bool {
+    is_arcade_active(state) && !state.has_used_stadium[player] && state.hands[player].len() < 7
 }

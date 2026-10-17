@@ -43,7 +43,7 @@ fn test_barry_reduces_heracross_attack_cost_by_2_colorless() {
     assert!(
         choices
             .iter()
-            .any(|c| matches!(c.action, SimpleAction::Attack(0))),
+            .any(|c| matches!(c.action, SimpleAction::Attack(_))),
         "Heracross should be able to attack after Barry reduces the energy cost"
     );
 }

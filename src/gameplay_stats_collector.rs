@@ -19,7 +19,7 @@ pub struct AggregatedStats {
     /// Average turn cards first appeared, indexed by player then card_id
     pub cards_seen: [HashMap<String, f64>; 2],
     /// Average turn attacks first used, indexed by player then (card_id, attack_idx)
-    pub attacks_used: [HashMap<(String, u8), f64>; 2],
+    pub attacks_used: [HashMap<(String, String), f64>; 2],
 }
 
 /// Collects detailed gameplay statistics during simulations
@@ -51,12 +51,12 @@ pub struct GameplayStatsCollector {
     card_seen_count: HashMap<(usize, String), usize>,
 
     // Attack first used statistics per (player, card, attack_idx) - sum and count
-    attack_used_sum: HashMap<(usize, String, u8), f64>,
-    attack_used_count: HashMap<(usize, String, u8), usize>,
+    attack_used_sum: HashMap<(usize, String, String), f64>,
+    attack_used_count: HashMap<(usize, String, String), usize>,
 
     // Temporary tracking for current game
     seen_cards: HashMap<usize, HashSet<String>>,
-    used_attacks: HashMap<usize, HashSet<(String, u8)>>,
+    used_attacks: HashMap<usize, HashSet<(String, String)>>,
 }
 
 impl Default for GameplayStatsCollector {
@@ -157,14 +157,15 @@ impl GameplayStatsCollector {
 
     /// Track when a card uses an attack
     fn track_attack_used(&mut self, state: &State, actor: usize, action: &Action) {
-        if let SimpleAction::Attack(attack_idx) = action.action {
+        if let SimpleAction::Attack(attack) = &action.action {
             // Get the active Pokemon that used the attack (index 0)
             if let Some((_idx, active_pokemon)) = state
                 .enumerate_in_play_pokemon(actor)
                 .find(|(i, _)| *i == 0)
             {
                 let card_id = active_pokemon.card.get_id();
-                let attack_key = (card_id.clone(), attack_idx as u8);
+                let attack_title = attack.title.clone();
+                let attack_key = (card_id.clone(), attack_title.clone());
 
                 // Check if this is the first time this specific attack was used in this game
                 if !self
@@ -179,7 +180,7 @@ impl GameplayStatsCollector {
                         .insert(attack_key.clone());
 
                     // Add to sum and count
-                    let key = (actor, card_id, attack_idx as u8);
+                    let key = (actor, card_id, attack_title);
                     *self.attack_used_sum.entry(key.clone()).or_insert(0.0) +=
                         self.current_turn as f64;
                     *self.attack_used_count.entry(key).or_insert(0) += 1;
@@ -231,14 +232,14 @@ impl GameplayStatsCollector {
 
         // 5. Attack Usage Statistics (indexed by player, then (card_id, attack_idx))
         let mut attacks_used = [HashMap::new(), HashMap::new()];
-        for ((player, card_id, attack_idx), count) in &self.attack_used_count {
+        for ((player, card_id, attack_title), count) in &self.attack_used_count {
             if *count > 0 {
                 let sum = self
                     .attack_used_sum
-                    .get(&(*player, card_id.clone(), *attack_idx))
+                    .get(&(*player, card_id.clone(), attack_title.clone()))
                     .unwrap_or(&0.0);
                 let avg = sum / *count as f64;
-                attacks_used[*player].insert((card_id.clone(), *attack_idx), avg);
+                attacks_used[*player].insert((card_id.clone(), attack_title.clone()), avg);
             }
         }
 

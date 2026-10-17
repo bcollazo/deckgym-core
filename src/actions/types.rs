@@ -1,4 +1,4 @@
-use crate::models::{Card, EnergyType, TrainerCard};
+use crate::models::{Attack, Card, EnergyType, StatusCondition, TrainerCard};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -32,17 +32,11 @@ pub enum SimpleAction {
         in_play_idx: usize,
     },
 
-    // Its given it is with the active pokemon, to the other active.
-    // usize is the index of the attack in the pokemon's attacks
-    Attack(usize),
-    /// Use another Pokemon's attack definition as the current attack.
-    /// This is used as a stack sub-action after copy-attack effects.
-    UseCopiedAttack {
-        source_player: usize,
-        source_in_play_idx: usize,
-        attack_index: usize,
-        require_attacker_energy_match: bool,
-    },
+    // Use the carried Attack definition as the current attack of the active Pokemon.
+    // Carrying the whole Attack (instead of an index) lets a single codepath serve the
+    // active's own attacks, copied attacks (e.g. Mew ex's Genome Hacking), and attacks
+    // granted from previous evolutions (e.g. Celebi's Time Recall).
+    Attack(Attack),
     // usize is in_play_pokemon index to retreat to. Can't Retreat(0)
     Retreat(usize),
     EndTurn,
@@ -86,6 +80,12 @@ pub enum SimpleAction {
         target_in_play_idx: usize,
         amount: u32,
     },
+    /// Armaldo's Abyssal Drop: schedule an outright Knock Out of whatever occupies the chosen
+    /// spot at the end of the target player's next turn.
+    ScheduleDelayedSpotKnockOut {
+        target_player: usize,
+        target_in_play_idx: usize,
+    },
     /// Switch the in_play_idx pokemon with the active pokemon.
     Activate {
         player: usize,
@@ -104,6 +104,10 @@ pub enum SimpleAction {
     ShuffleOwnCardsIntoDeck {
         cards: Vec<Card>,
     },
+    /// Kid's Room: switch a specific card from hand with a random Pokemon Tool card from deck
+    SwitchHandCardForRandomTool {
+        hand_card: Card,
+    },
     /// Silver: shuffle a specific Supporter from opponent's hand into their deck
     ShuffleOpponentSupporter {
         supporter_card: Card,
@@ -112,14 +116,40 @@ pub enum SimpleAction {
     DiscardOpponentSupporter {
         supporter_card: Card,
     },
+    /// Delcatty's Search for Friends: put a specific card from your own discard pile into your
+    /// hand. One action per eligible card, so the player picks which one.
+    PutDiscardCardInHand {
+        card: Card,
+    },
     /// Discard multiple specific cards from own hand
     DiscardOwnCards {
+        cards: Vec<Card>,
+    },
+    /// Slowking's Litter: discard a chosen set of cards from your own hand, then deal `damage` to
+    /// one target. Like `DiscardOwnBenchedThenDamage`, the two halves are one action so the
+    /// damage — which depends on how many cards were discarded — is applied exactly once and goes
+    /// through the damage modifiers a single time.
+    DiscardOwnCardsThenDamage {
+        cards: Vec<Card>,
+        damage: u32,
+        target_player: usize,
+        target_in_play_idx: usize,
+    },
+    /// Team Rocket's Boss: put a chosen subset of Basic Pokémon found in the opponent's hand
+    /// onto the opponent's Bench
+    BenchOpponentPokemonFromHand {
         cards: Vec<Card>,
     },
     /// Lusamine: attach energies from discard to a Pokemon
     AttachFromDiscard {
         in_play_idx: usize,
         num_random_energies: usize,
+    },
+    /// Volkner: attach a fixed number of a specific energy type from discard to a Pokemon
+    AttachTypedFromDiscard {
+        in_play_idx: usize,
+        energy_type: EnergyType,
+        count: usize,
     },
     /// Professor Sada: attach 3 specific different-typed energies from discard to Ancient Pokémon
     SadaAttach {
@@ -133,6 +163,44 @@ pub enum SimpleAction {
     DiscardFossil {
         in_play_idx: usize,
     },
+    /// Vespiquen ex's Chase Order: discard 1 of your own Benched Pokémon, then deal the attack's
+    /// boosted damage to the opponent's Active Pokémon. The two halves are one action so that the
+    /// boosted damage is applied once — splitting it would apply Weakness (and other damage
+    /// modifiers) to each half.
+    DiscardOwnBenchedThenDamage {
+        in_play_idx: usize,
+        damage: u32,
+    },
+    /// Gyarados's Wild Swing: discard any number (possibly zero) of your own Benched Pokémon, then
+    /// deal the attack's resulting boosted damage to the opponent's Active Pokémon. Like
+    /// `DiscardOwnBenchedThenDamage` this is one action so the boosted damage is applied once.
+    DiscardOwnBenchedGroupThenDamage {
+        in_play_indices: Vec<usize>,
+        damage: u32,
+    },
+    /// Delcatty's Energy Blender: move a single Energy between two of your own Pokémon, then offer
+    /// the same choice again (with `remaining_moves` one lower) plus the option to stop.
+    ///
+    /// "You may move any amount of Energy from your Pokémon in play to your other Pokémon in any
+    /// way you like" is played out one Energy at a time rather than enumerated as whole
+    /// redistributions: the number of redistributions is exponential in the Energy on the board
+    /// (thousands of actions in an ordinary mid-game position), while one-at-a-time keeps the
+    /// branching factor to a few dozen and reaches exactly the same set of final boards.
+    /// `remaining_moves` starts at the player's total attached Energy — enough for any
+    /// redistribution, since no Energy ever needs to move twice — and guarantees termination.
+    MoveEnergyAndReoffer {
+        from_in_play_idx: usize,
+        to_in_play_idx: usize,
+        energy_type: EnergyType,
+        remaining_moves: usize,
+    },
+    /// Eldegoss's Float Up / Accelgor's Deck and Cover: shuffle one of your own Pokémon in play,
+    /// and everything attached to it (evolution cards, Tool), back into your deck. Attached Energy
+    /// goes to the discarded-Energy pile. Distinct from `ShuffleInPlayPokemonIntoDeck`, which
+    /// leaves the Tool and Energy behind.
+    ShuffleSelfAndAttachmentsIntoDeck {
+        in_play_idx: usize,
+    },
     /// Use an activated stadium effect (once per turn per player)
     UseStadium,
     /// Return a Pokemon in play to your hand (e.g., Ilima).
@@ -143,15 +211,76 @@ pub enum SimpleAction {
     ShuffleInPlayPokemonIntoDeck {
         in_play_idx: usize,
     },
-    /// Field Blower: discard the tool attached to a specific Pokémon (any player).
+    /// Field Blower: discard one Tool attached to a specific Pokémon (any player). `tool_idx` is
+    /// the slot within that Pokémon's `attached_tools`; it is always 0 for a Pokémon with the
+    /// usual single slot, and Field Blower offers one choice per attached Tool for a Pokémon that
+    /// holds two (Revavroom's Dual Customization).
     DiscardToolFromPokemon {
         player: usize,
         in_play_idx: usize,
+        tool_idx: usize,
     },
     /// Field Blower: discard the active stadium.
     DiscardActiveStadium,
     /// Crawdaunt's Unruly Claw: discard a random Energy from the opponent's Active Pokémon
     DiscardRandomOpponentActiveEnergy,
+    /// Psychic (Supporter): move a random Energy from one of the opponent's Benched Pokémon to
+    /// the opponent's Active Pokémon.
+    MoveRandomOpponentEnergyToActive {
+        from_in_play_idx: usize,
+    },
+    /// Apply a chosen Special Condition to the opponent's Active Pokémon (e.g. Dustox's Select Powder).
+    ApplyStatusToOpponentActive {
+        condition: StatusCondition,
+    },
+    /// Team Rocket's Raticate ex's Thieving Incisors: move the last-attached Energy from the
+    /// opponent's Active Pokémon to `to_in_play_idx` on the actor's own board.
+    MoveOpponentActiveEnergyToSelf {
+        to_in_play_idx: usize,
+    },
+    /// Team Rocket's Weezing ex's Boiler Smog: apply ALL of these Special Conditions at once to
+    /// the opponent's Active Pokémon (e.g. Poisoned and Burned together).
+    ApplyStatusesToOpponentActive {
+        conditions: Vec<StatusCondition>,
+    },
+    /// Whitney: heal a Pokémon and cure only the listed Special Conditions (unlike
+    /// `Heal { cure_status: true }`, which cures every condition).
+    HealAndCureConditions {
+        in_play_idx: usize,
+        amount: u32,
+        conditions: Vec<StatusCondition>,
+    },
+    /// Acerola: move `amount` damage from one of the actor's own Pokémon onto the opponent's
+    /// Active Pokémon.
+    MoveDamageToOpponentActive {
+        from_in_play_idx: usize,
+        amount: u32,
+    },
+    /// Pokémon Flute: put a Basic Pokémon from the opponent's discard pile onto their Bench.
+    BenchOpponentPokemonFromDiscard {
+        card: Card,
+    },
+    /// Rotom Dex: "Then, you may shuffle your deck." The decline branch is `Noop`.
+    ShuffleOwnDeck,
+    /// Dark Pendant: the actor reveals a random card from their own hand and shuffles it into
+    /// their deck. Queued as the single option on the move-generation stack (like Bouncy Body) so
+    /// that it resolves with the shared RNG available; it is not a real choice.
+    ShuffleRandomOwnHandCardIntoDeck,
+    /// Regice's Reflect Energy / Swanna's Feathery Cyclone: move Energy from the actor's Active
+    /// Pokémon to one of their Benched Pokémon. `amount: Some(n)` moves n Energy; `None` moves
+    /// every Energy attached.
+    MoveActiveEnergyToBench {
+        to_in_play_idx: usize,
+        amount: Option<u32>,
+    },
+    /// Sandy Shocks's Pull In and Pound / Team Rocket's Hypno's Entrap: switch the opponent's
+    /// Benched Pokémon at `in_play_idx` into their Active Spot, then deal `damage` to the new
+    /// Active Pokémon. The two halves are one action so the damage always lands on the Pokémon
+    /// that was just dragged up.
+    SwitchOpponentBenchedThenDamage {
+        in_play_idx: usize,
+        damage: u32,
+    },
     Noop, // No operation, used to have the user say "no" to a question
 }
 
@@ -172,16 +301,7 @@ impl fmt::Display for SimpleAction {
                 )
             }
             SimpleAction::UseAbility { in_play_idx } => write!(f, "UseAbility({in_play_idx})"),
-            SimpleAction::Attack(index) => write!(f, "Attack({index})"),
-            SimpleAction::UseCopiedAttack {
-                source_player,
-                source_in_play_idx,
-                attack_index,
-                require_attacker_energy_match,
-            } => write!(
-                f,
-                "UseCopiedAttack(source:{source_player}:{source_in_play_idx}, attack:{attack_index}, require_energy:{require_attacker_energy_match})"
-            ),
+            SimpleAction::Attack(attack) => write!(f, "Attack({})", attack.title),
             SimpleAction::Retreat(index) => write!(f, "Retreat({index})"),
             SimpleAction::EndTurn => write!(f, "EndTurn"),
             SimpleAction::Attach {
@@ -248,6 +368,13 @@ impl fmt::Display for SimpleAction {
                     attacking_ref, targets_str, is_from_active_attack
                 )
             }
+            SimpleAction::ScheduleDelayedSpotKnockOut {
+                target_player,
+                target_in_play_idx,
+            } => write!(
+                f,
+                "ScheduleDelayedSpotKnockOut(target:{target_player}:{target_in_play_idx})"
+            ),
             SimpleAction::ScheduleDelayedSpotDamage {
                 target_player,
                 target_in_play_idx,
@@ -269,20 +396,45 @@ impl fmt::Display for SimpleAction {
             SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
                 write!(f, "ShuffleOwnCardsIntoDeck({:?})", cards)
             }
+            SimpleAction::SwitchHandCardForRandomTool { hand_card } => {
+                write!(f, "SwitchHandCardForRandomTool({hand_card})")
+            }
             SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
                 write!(f, "ShuffleOpponentSupporter({supporter_card})")
             }
             SimpleAction::DiscardOpponentSupporter { supporter_card } => {
                 write!(f, "DiscardOpponentSupporter({supporter_card})")
             }
+            SimpleAction::PutDiscardCardInHand { card } => {
+                write!(f, "PutDiscardCardInHand({card})")
+            }
+            SimpleAction::DiscardOwnCardsThenDamage {
+                cards,
+                damage,
+                target_player,
+                target_in_play_idx,
+            } => write!(
+                f,
+                "DiscardOwnCardsThenDamage({cards:?}, {damage} to {target_player}:{target_in_play_idx})"
+            ),
             SimpleAction::DiscardOwnCards { cards } => {
                 write!(f, "DiscardOwnCards({:?})", cards)
+            }
+            SimpleAction::BenchOpponentPokemonFromHand { cards } => {
+                write!(f, "BenchOpponentPokemonFromHand({:?})", cards)
             }
             SimpleAction::AttachFromDiscard {
                 in_play_idx,
                 num_random_energies,
             } => {
                 write!(f, "AttachFromDiscard({in_play_idx}, {num_random_energies})")
+            }
+            SimpleAction::AttachTypedFromDiscard {
+                in_play_idx,
+                energy_type,
+                count,
+            } => {
+                write!(f, "AttachTypedFromDiscard({in_play_idx}, {energy_type:?}, {count})")
             }
             SimpleAction::SadaAttach { assignments } => {
                 let s = assignments
@@ -301,20 +453,100 @@ impl fmt::Display for SimpleAction {
             SimpleAction::DiscardFossil { in_play_idx } => {
                 write!(f, "DiscardFossil({in_play_idx})")
             }
+            SimpleAction::DiscardOwnBenchedThenDamage {
+                in_play_idx,
+                damage,
+            } => {
+                write!(f, "DiscardOwnBenchedThenDamage({in_play_idx}, {damage})")
+            }
+            SimpleAction::DiscardOwnBenchedGroupThenDamage {
+                in_play_indices,
+                damage,
+            } => {
+                write!(
+                    f,
+                    "DiscardOwnBenchedGroupThenDamage({in_play_indices:?}, {damage})"
+                )
+            }
+            SimpleAction::ShuffleSelfAndAttachmentsIntoDeck { in_play_idx } => {
+                write!(f, "ShuffleSelfAndAttachmentsIntoDeck({in_play_idx})")
+            }
+            SimpleAction::MoveEnergyAndReoffer {
+                from_in_play_idx,
+                to_in_play_idx,
+                energy_type,
+                remaining_moves,
+            } => {
+                write!(
+                    f,
+                    "MoveEnergyAndReoffer({from_in_play_idx} -> {to_in_play_idx}, {energy_type:?}, {remaining_moves} left)"
+                )
+            }
             SimpleAction::ReturnPokemonToHand { in_play_idx } => {
                 write!(f, "ReturnPokemonToHand({in_play_idx})")
             }
             SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
                 write!(f, "ShuffleInPlayPokemonIntoDeck({in_play_idx})")
             }
-            SimpleAction::DiscardToolFromPokemon { player, in_play_idx } => {
-                write!(f, "DiscardToolFromPokemon({player}, {in_play_idx})")
+            SimpleAction::DiscardToolFromPokemon {
+                player,
+                in_play_idx,
+                tool_idx,
+            } => {
+                write!(f, "DiscardToolFromPokemon({player}, {in_play_idx}, {tool_idx})")
             }
             SimpleAction::DiscardActiveStadium => write!(f, "DiscardActiveStadium"),
             SimpleAction::DiscardRandomOpponentActiveEnergy => {
                 write!(f, "DiscardRandomOpponentActiveEnergy")
             }
+            SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx } => {
+                write!(f, "MoveRandomOpponentEnergyToActive({from_in_play_idx})")
+            }
             SimpleAction::UseStadium => write!(f, "UseStadium"),
+            SimpleAction::ApplyStatusToOpponentActive { condition } => {
+                write!(f, "ApplyStatusToOpponentActive({condition:?})")
+            }
+            SimpleAction::ApplyStatusesToOpponentActive { conditions } => {
+                write!(f, "ApplyStatusesToOpponentActive({conditions:?})")
+            }
+            SimpleAction::MoveOpponentActiveEnergyToSelf { to_in_play_idx } => {
+                write!(f, "MoveOpponentActiveEnergyToSelf({to_in_play_idx})")
+            }
+            SimpleAction::HealAndCureConditions {
+                in_play_idx,
+                amount,
+                conditions,
+            } => {
+                write!(
+                    f,
+                    "HealAndCureConditions({in_play_idx}, {amount}, {conditions:?})"
+                )
+            }
+            SimpleAction::MoveDamageToOpponentActive {
+                from_in_play_idx,
+                amount,
+            } => {
+                write!(f, "MoveDamageToOpponentActive({from_in_play_idx}, {amount})")
+            }
+            SimpleAction::BenchOpponentPokemonFromDiscard { card } => {
+                write!(f, "BenchOpponentPokemonFromDiscard({card})")
+            }
+            SimpleAction::ShuffleOwnDeck => write!(f, "ShuffleOwnDeck"),
+            SimpleAction::ShuffleRandomOwnHandCardIntoDeck => {
+                write!(f, "ShuffleRandomOwnHandCardIntoDeck")
+            }
+            SimpleAction::MoveActiveEnergyToBench {
+                to_in_play_idx,
+                amount,
+            } => {
+                write!(f, "MoveActiveEnergyToBench(to:{to_in_play_idx}, {amount:?})")
+            }
+            SimpleAction::SwitchOpponentBenchedThenDamage {
+                in_play_idx,
+                damage,
+            } => {
+                write!(f, "SwitchOpponentBenchedThenDamage({in_play_idx}, {damage})")
+            }
             SimpleAction::Noop => write!(f, "Noop"),
         }
     }

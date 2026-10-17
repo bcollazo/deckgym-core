@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn bulbasaur_with_hp(hp: u32) -> PlayedCard {
@@ -38,7 +38,7 @@ fn test_iron_bundle_cold_start_first_attack_extra_damage_and_paralysis() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a013IronBundleEx, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -76,7 +76,7 @@ fn test_iron_bundle_cold_start_second_attack_base_damage_only() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a013IronBundleEx, 0),
         is_stack: false,
     });
     game.play_until_stable();

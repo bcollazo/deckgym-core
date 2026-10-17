@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn high_hp_target(card: CardId) -> PlayedCard {
@@ -32,7 +32,7 @@ fn test_terapagos_prism_impact_single_type() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a068TerapagosEx, 0),
         is_stack: false,
     });
 
@@ -61,7 +61,7 @@ fn test_terapagos_prism_impact_two_types() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a068TerapagosEx, 0),
         is_stack: false,
     });
 

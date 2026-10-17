@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn trainer_from_id(card_id: CardId) -> TrainerCard {
@@ -40,7 +40,7 @@ fn test_tepig_stoke_heads_attaches_two_fire_energy_to_self() {
     play_will(&mut game, 0);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3026Tepig, 0),
         is_stack: false,
     });
 
@@ -69,7 +69,7 @@ fn test_tepig_stoke_has_tails_branch_without_will() {
 
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::B3026Tepig, 0),
             is_stack: false,
         });
 

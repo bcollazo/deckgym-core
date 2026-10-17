@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -49,7 +49,7 @@ fn use_bolt_strike(seed: u64, force_heads: bool) -> (u32, u32) {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3059Zekrom, 0),
         is_stack: false,
     });
     game.play_until_stable();

@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn trainer_from_id(card_id: CardId) -> TrainerCard {
@@ -43,7 +43,7 @@ fn test_flutter_mane_spellbinding_start_first_attack_blocks_trainers() {
     // First attack
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a026FlutterManeEx, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -91,7 +91,7 @@ fn test_flutter_mane_spellbinding_start_second_attack_no_trainer_block() {
     // Second attack — no first-attack bonus
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a026FlutterManeEx, 0),
         is_stack: false,
     });
     game.play_until_stable();

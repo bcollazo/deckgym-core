@@ -5,17 +5,18 @@ use rand::rngs::StdRng;
 
 use crate::{
     actions::{
-        abilities::AbilityMechanic, ability_mechanic_from_effect,
-        effect_ability_mechanic_map::get_ability_mechanic, shared_mutations, SimpleAction,
+        abilities::AbilityMechanic, ability_mechanic_from_effect, shared_mutations, SimpleAction,
     },
     card_ids::CardId,
     effects::TurnEffect,
     hooks::{
-        get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
-        should_poison_attacker,
+        get_counterattack_damage, get_delayed_counterattack_damage, modify_damage,
+        on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
+        DamageModifierContext,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
+    tools::has_tool,
     State,
 };
 
@@ -32,6 +33,12 @@ pub(crate) type Mutations = Vec<Mutation>;
 
 #[derive(Clone)]
 struct CheckupTargets {
+    /// Every Pokemon carrying at least one Checkup-relevant Special Condition, in the order the
+    /// in-app Tips panel prescribes: "If both players' Pokemon are affected by Special
+    /// Conditions, the player whose turn just ended checks their Special Conditions first", and
+    /// within a side the Active Spot before the Bench. Each Pokemon's own conditions are then
+    /// resolved Poisoned -> Burned -> Asleep -> Paralyzed.
+    order: Vec<(usize, usize)>,
     sleeps: Vec<(usize, usize)>,
     paralyzed: Vec<(usize, usize)>,
     poisoned: Vec<(usize, usize)>,
@@ -56,7 +63,7 @@ pub(crate) fn forecast_end_turn(state: &State) -> (Probabilities, Mutations) {
         }
 
         let next_player = (state.current_player + 1) % 2;
-        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player);
+        let (start_probs, start_mutations) = start_turn_ability_outcomes(state, next_player, true);
 
         let mut outcomes: Mutations = Vec::with_capacity(start_mutations.len());
         for start_mutation in start_mutations {
@@ -99,7 +106,7 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
         let mut preview_after_checkup = preview_state.clone();
         apply_pokemon_checkup(&mut preview_after_checkup, &checkup_targets, &outcome);
         let (start_probs, start_mutations) =
-            start_turn_ability_outcomes(&preview_after_checkup, next_player);
+            start_turn_ability_outcomes(&preview_after_checkup, next_player, false);
         for (start_prob, start_mutation) in start_probs.into_iter().zip(start_mutations) {
             let outcome = outcome.clone();
             probabilities.push(base_probability * start_prob);
@@ -110,17 +117,30 @@ fn forecast_pokemon_checkup(state: &State) -> (Probabilities, Mutations) {
                 finish_turn_after_checkup(state, rng);
 
                 start_mutation(rng, state, action);
+
+                // Some end-of-turn damage (e.g. Deceptive Needle) defers its knockout check so
+                // that abilities triggered in this same window (e.g. Caterpie's Quick Growth,
+                // applied by `start_mutation` above) get a chance to evolve — and thus save —
+                // the target before it is finally checked for being Knocked Out.
+                handle_knockouts(state, (action.actor, 0), false);
             }));
         }
     }
     (probabilities, outcomes)
 }
 
-fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, Mutations) {
+/// Outcomes of abilities that trigger as a turn begins. `from_setup` is true when the turn is
+/// starting because setup (turn 0) just ended; setup is not a real turn, so abilities that
+/// trigger "at the end of your opponent's turn" (Quick Growth) must not fire.
+fn start_turn_ability_outcomes(
+    state: &State,
+    player: usize,
+    from_setup: bool,
+) -> (Probabilities, Mutations) {
     let Some(active) = state.maybe_get_active(player) else {
         return (vec![1.0], vec![noop_mutation()]);
     };
-    let Some(ability) = active.card.get_ability() else {
+    let Some(ability) = active.ability() else {
         return (vec![1.0], vec![noop_mutation()]);
     };
     let Some(mechanic) = ability_mechanic_from_effect(&ability.effect) else {
@@ -137,6 +157,10 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
             )
             .into_branches()
         }
+        AbilityMechanic::QuickGrowth if !from_setup => {
+            shared_mutations::quick_growth_evolution_outcomes_for_player(player, state)
+                .into_branches()
+        }
         _ => (vec![1.0], vec![noop_mutation()]),
     }
 }
@@ -144,9 +168,13 @@ fn start_turn_ability_outcomes(state: &State, player: usize) -> (Probabilities, 
 /// Calculate poison damage based on base damage (10) plus +10 for each opponent's Nihilego with More Poison ability
 /// Only applies the bonus if the poisoned Pokemon is in the active spot (index 0)
 fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
-    use crate::actions::{abilities::AbilityMechanic, get_ability_mechanic};
+    use crate::actions::abilities::AbilityMechanic;
 
-    let base_damage = 10;
+    // Usually 10, unless the attack that inflicted the Poison replaced that amount
+    // (Toxicroak's Toxic does 20, Toxapex's Severe Poison does 40).
+    let base_damage = state.in_play_pokemon[player][in_play_idx]
+        .as_ref()
+        .map_or(10, |pokemon| pokemon.poison_base_damage());
 
     // Nihilego's More Poison ability only affects the active Pokemon
     if in_play_idx != 0 {
@@ -158,7 +186,7 @@ fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
         .enumerate_in_play_pokemon(opponent)
         .filter(|(_, pokemon)| {
             matches!(
-                get_ability_mechanic(&pokemon.card),
+                pokemon.ability_mechanic(),
                 Some(AbilityMechanic::IncreasePoisonDamage { amount: 10 })
             )
         })
@@ -178,27 +206,39 @@ fn get_poison_damage(state: &State, player: usize, in_play_idx: usize) -> u32 {
 
 fn collect_checkup_targets(state: &State) -> CheckupTargets {
     let mut targets = CheckupTargets {
+        order: vec![],
         sleeps: vec![],
         paralyzed: vec![],
         poisoned: vec![],
         burned: vec![],
     };
 
-    for player in 0..2 {
+    // "the player whose turn just ended checks their Special Conditions first". Checkup runs
+    // before `advance_turn`, so the player whose turn just ended is still `current_player`.
+    let ending_player = state.current_player;
+    for player in [ending_player, (ending_player + 1) % 2] {
         for (i, pokemon) in state.enumerate_in_play_pokemon(player) {
-            if pokemon.is_asleep() {
-                targets.sleeps.push((player, i));
-            }
-            if pokemon.is_paralyzed() {
-                targets.paralyzed.push((player, i));
-            }
+            let mut has_any = false;
             if pokemon.is_poisoned() {
                 targets.poisoned.push((player, i));
                 debug!("{player}'s Pokemon {i} is poisoned");
+                has_any = true;
             }
             if pokemon.is_burned() {
                 targets.burned.push((player, i));
                 debug!("{player}'s Pokemon {i} is burned");
+                has_any = true;
+            }
+            if pokemon.is_asleep() {
+                targets.sleeps.push((player, i));
+                has_any = true;
+            }
+            if pokemon.is_paralyzed() {
+                targets.paralyzed.push((player, i));
+                has_any = true;
+            }
+            if has_any {
+                targets.order.push((player, i));
             }
         }
     }
@@ -215,73 +255,93 @@ fn apply_pokemon_checkup(
     let num_sleeps = checkup_targets.sleeps.len();
     debug_assert!(outcome.len() >= num_sleeps + checkup_targets.burned.len());
 
-    // Official Pokemon Checkup order: Poisoned -> Burned -> Asleep -> Paralyzed.
-    for (player, in_play_idx) in checkup_targets.poisoned.iter().copied() {
-        if mutated_state.in_play_pokemon[player][in_play_idx].is_none() {
-            continue;
-        }
-        let attacking_ref = (player, in_play_idx); // present it as self-damage
-        let poison_damage = get_poison_damage(mutated_state, player, in_play_idx);
+    // In-app Tips, "What is Pokemon Checkup?": each Pokemon's own Special Conditions resolve in
+    // the order Poisoned -> Burned -> Asleep -> Paralyzed, and when both players have afflicted
+    // Pokemon, "the player whose turn just ended checks their Special Conditions first".
+    // `checkup_targets.order` is built in exactly that order, so one pass over it is the whole
+    // rule.
+    //
+    // Knock Outs are deliberately NOT resolved in this loop: "Any Pokemon that has no HP
+    // remaining at the end of Pokemon Checkup is Knocked Out", so the single `handle_knockouts`
+    // call that closes the end-of-turn sequence (see `forecast_pokemon_checkup`) decides them
+    // all at once -- after the healing and Checkup abilities below have had their chance.
+    let ending_player = mutated_state.current_player;
+    let ending_turn = mutated_state.turn_count;
 
-        handle_damage(
-            mutated_state,
-            attacking_ref,
-            &[(poison_damage, player, in_play_idx)],
-            false,
-            None,
-        );
-    }
-
-    // Burn always deals 20 damage, then coin flip for healing
-    for (i, (player, in_play_idx)) in checkup_targets.burned.iter().copied().enumerate() {
+    for (player, in_play_idx) in checkup_targets.order.iter().copied() {
         if mutated_state.in_play_pokemon[player][in_play_idx].is_none() {
             continue;
         }
 
-        let attacking_ref = (player, in_play_idx); // present it as self-damage
-        handle_damage(
-            mutated_state,
-            attacking_ref,
-            &[(20, player, in_play_idx)],
-            false,
-            None,
-        );
-
-        let heals_from_burn = outcome[num_sleeps + i];
-        if !heals_from_burn {
-            continue;
+        // 1. Poisoned: "take 10 damage during each Pokemon Checkup" (unless an attack replaced
+        //    the usual amount).
+        if checkup_targets.poisoned.contains(&(player, in_play_idx)) {
+            let poison_damage = get_poison_damage(mutated_state, player, in_play_idx);
+            handle_damage_only(
+                mutated_state,
+                (player, in_play_idx), // present it as self-damage
+                &[(poison_damage, player, in_play_idx)],
+                false,
+                DamageModifierContext::default(),
+            );
         }
-        let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
-            continue;
-        };
-        pokemon.clear_status_condition(StatusCondition::Burned);
-        debug!("{player}'s Pokemon {in_play_idx} healed from burn");
-    }
 
-    // Handle sleep coin flips after poison/burn damage has resolved.
-    for ((player, in_play_idx), is_awake) in checkup_targets
-        .sleeps
-        .iter()
-        .copied()
-        .zip(&outcome[0..num_sleeps])
-    {
-        if !*is_awake {
-            continue;
+        // 2. Burned: 20 damage, then a coin flip -- on heads the Pokemon recovers.
+        if let Some(burn_flip) = checkup_targets
+            .burned
+            .iter()
+            .position(|target| *target == (player, in_play_idx))
+        {
+            handle_damage_only(
+                mutated_state,
+                (player, in_play_idx), // present it as self-damage
+                &[(20, player, in_play_idx)],
+                false,
+                DamageModifierContext::default(),
+            );
+            if outcome[num_sleeps + burn_flip] {
+                if let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() {
+                    pokemon.clear_status_condition(StatusCondition::Burned);
+                    debug!("{player}'s Pokemon {in_play_idx} healed from burn");
+                }
+            }
         }
-        let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
-            continue;
-        };
-        pokemon.clear_status_condition(StatusCondition::Asleep);
-        debug!("{player}'s Pokemon {in_play_idx} woke up");
+
+        // 3. Asleep: a coin flip -- on heads the Pokemon recovers, on tails it stays Asleep.
+        if let Some(sleep_flip) = checkup_targets
+            .sleeps
+            .iter()
+            .position(|target| *target == (player, in_play_idx))
+        {
+            if outcome[sleep_flip] {
+                if let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() {
+                    pokemon.clear_status_condition(StatusCondition::Asleep);
+                    debug!("{player}'s Pokemon {in_play_idx} woke up");
+                }
+            }
+        }
+
+        // 4. Paralyzed: "After its owner's next turn, it recovers during Pokemon Checkup." So it
+        //    clears only at a Checkup that ends its OWN owner's turn, and not at the one ending
+        //    the turn it was inflicted on -- that turn is not yet "its owner's next turn". This
+        //    covers both the ordinary case (inflicted on the opponent's turn, so the owner's
+        //    whole next turn is denied) and a Paralysis applied during the owner's own turn,
+        //    which survives the intervening opponent turn and denies the owner's turn after it.
+        if checkup_targets.paralyzed.contains(&(player, in_play_idx)) && player == ending_player {
+            if let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() {
+                if pokemon.paralyzed_on_turn() == Some(ending_turn) {
+                    debug!(
+                        "{player}'s Pokemon {in_play_idx} was paralyzed this turn; it stays Paralyzed"
+                    );
+                } else {
+                    pokemon.clear_status_condition(StatusCondition::Paralyzed);
+                    debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
+                }
+            }
+        }
     }
 
-    for (player, in_play_idx) in checkup_targets.paralyzed.iter().copied() {
-        let Some(pokemon) = mutated_state.in_play_pokemon[player][in_play_idx].as_mut() else {
-            continue;
-        };
-        pokemon.clear_status_condition(StatusCondition::Paralyzed);
-        debug!("{player}'s Pokemon {in_play_idx} is un-paralyzed");
-    }
+    apply_checkup_healing_abilities(mutated_state);
 
     apply_snowy_terrain_checkup_damage(mutated_state);
 
@@ -290,10 +350,41 @@ fn apply_pokemon_checkup(
     mutated_state.knocked_out_by_opponent_attack_last_turn =
         mutated_state.knocked_out_by_opponent_attack_this_turn;
     mutated_state.knocked_out_by_opponent_attack_this_turn = false;
+    mutated_state.knocked_out_types_last_turn =
+        std::mem::take(&mut mutated_state.knocked_out_types_this_turn);
 }
 
 fn finish_turn_after_checkup(state: &mut State, rng: &mut StdRng) {
     state.advance_turn(rng);
+}
+
+/// Garganacl's Blessed Salt: "During Pokémon Checkup, heal `amount` damage from each of your
+/// Pokémon." Applies once per in-play Pokémon with this ability (so it stacks if a player somehow
+/// has more than one in play), healing every one of that ability's owner's in-play Pokémon
+/// (Active and Benched).
+fn apply_checkup_healing_abilities(state: &mut State) {
+    let healers: Vec<(usize, u32)> = (0..2)
+        .flat_map(|player| {
+            state
+                .enumerate_in_play_pokemon(player)
+                .filter_map(move |(_, pokemon)| match pokemon.ability_mechanic() {
+                    Some(AbilityMechanic::HealAllYourPokemonDuringCheckup { amount }) => {
+                        Some((player, *amount))
+                    }
+                    _ => None,
+                })
+        })
+        .collect();
+
+    for (player, amount) in healers {
+        debug!(
+            "Blessed Salt: Healing {} damage from each of player {}'s Pokémon",
+            amount, player
+        );
+        for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+            pokemon.heal(amount);
+        }
+    }
 }
 
 fn apply_snowy_terrain_checkup_damage(state: &mut State) {
@@ -307,7 +398,7 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
         if active.is_knocked_out() {
             continue;
         }
-        match get_ability_mechanic(&active.card) {
+        match active.ability_mechanic() {
             Some(AbilityMechanic::CheckupDamageToOpponentActive { amount }) => {
                 active_only_damage.push((player, *amount));
             }
@@ -325,12 +416,12 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
                 "Snowy Terrain: Player {} active Pokémon deals {} checkup damage to opponent active",
                 source_player, checkup_damage
             );
-            handle_damage(
+            handle_damage_only(
                 state,
                 (source_player, 0),
                 &[(checkup_damage, target_player, 0)],
                 false,
-                None,
+                DamageModifierContext::default(),
             );
         }
     }
@@ -346,7 +437,13 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
                 "Sand Slammer: Player {} active Pokémon deals {} checkup damage to all opponent Pokémon",
                 source_player, checkup_damage
             );
-            handle_damage(state, (source_player, 0), &targets, false, None);
+            handle_damage_only(
+                state,
+                (source_player, 0),
+                &targets,
+                false,
+                DamageModifierContext::default(),
+            );
         }
     }
 }
@@ -377,9 +474,7 @@ fn checkapply_prevent_first_attack(
     if let Some(target_pokemon) = state.in_play_pokemon[target_player][target_pokemon_idx].as_mut()
     {
         if !target_pokemon.prevent_first_attack_damage_used {
-            if let Some(AbilityMechanic::PreventFirstAttack) =
-                get_ability_mechanic(&target_pokemon.card)
-            {
+            if let Some(AbilityMechanic::PreventFirstAttack) = target_pokemon.ability_mechanic() {
                 debug!("PreventFirstAttackDamageAfterEnteringPlay: Preventing first attack damage");
                 target_pokemon.prevent_first_attack_damage_used = true;
                 return true;
@@ -387,6 +482,123 @@ fn checkapply_prevent_first_attack(
         }
     }
     false
+}
+
+/// True if the Pokémon at `target` has the Guts ability and `raw_damage` (after modifiers)
+/// would knock it out — i.e. it should flip a Guts survival coin for this damage.
+fn guts_would_flip(
+    state: &State,
+    attacking_ref: (usize, usize),
+    raw_damage: u32,
+    target: (usize, usize),
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
+    let has_guts = state.in_play_pokemon[target.0][target.1]
+        .as_ref()
+        .is_some_and(|pokemon| {
+            matches!(
+                pokemon.ability_mechanic(),
+                Some(AbilityMechanic::CoinFlipToSurviveKnockOut)
+            )
+        });
+    has_guts
+        && damage_would_knock_out(
+            state,
+            attacking_ref,
+            raw_damage,
+            target,
+            is_from_active_attack,
+            context,
+        )
+}
+
+/// True if `raw_damage` (after the usual modifiers) would knock out the Pokémon at `target`.
+/// Forecast against the pre-attack board, so it is an estimate for effects that need to decide
+/// "would this knock out?" before the damage is actually applied (Guts, Perish Body, Fade into
+/// Darkness).
+pub(crate) fn damage_would_knock_out(
+    state: &State,
+    attacking_ref: (usize, usize),
+    raw_damage: u32,
+    target: (usize, usize),
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> bool {
+    if raw_damage == 0 {
+        return false;
+    }
+    let Some(pokemon) = state.in_play_pokemon[target.0][target.1].as_ref() else {
+        return false;
+    };
+    let modified = modify_damage(
+        state,
+        attacking_ref,
+        (raw_damage, target.0, target.1),
+        is_from_active_attack,
+        context,
+    );
+    let remaining = pokemon.get_remaining_hp();
+    remaining > 0 && modified >= remaining
+}
+
+/// Sum raw damage per (player, idx) target and return the targets that must flip a Guts
+/// survival coin, sorted for deterministic branch ordering.
+pub(crate) fn guts_flipping_targets(
+    state: &State,
+    attacking_ref: (usize, usize),
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+    context: DamageModifierContext<'_>,
+) -> Vec<(usize, usize)> {
+    // Sum raw damage per target (mirroring handle_damage_only) to find the Guts coin flips.
+    let mut damage_map: HashMap<(usize, usize), u32> = HashMap::new();
+    for (damage, player, idx) in targets {
+        *damage_map.entry((*player, *idx)).or_insert(0) += damage;
+    }
+    let mut flipping: Vec<(usize, usize)> = damage_map
+        .into_iter()
+        .filter(|(target, raw_total)| {
+            guts_would_flip(
+                state,
+                attacking_ref,
+                *raw_total,
+                *target,
+                is_from_active_attack,
+                context,
+            )
+        })
+        .map(|(target, _)| target)
+        .collect();
+    flipping.sort_unstable();
+    flipping
+}
+
+/// All `2^k` equally likely survivor subsets of `flipping` (`k = flipping.len()`), in mask
+/// order (bit `i` of the mask set => `flipping[i]` survives its Guts coin flip).
+pub(crate) fn enumerate_guts_survivor_subsets<T: Copy>(flipping: &[T]) -> Vec<Vec<T>> {
+    let combos = 1usize << flipping.len();
+    (0..combos)
+        .map(|mask| {
+            flipping
+                .iter()
+                .enumerate()
+                .filter(|(bit, _)| (mask >> bit) & 1 == 1)
+                .map(|(_, target)| *target)
+                .collect()
+        })
+        .collect()
+}
+
+/// Set each Guts survivor's remaining HP to exactly 10. Must run after damage application
+/// (so on-damage triggers like Rocky Helmet's counterattack fired) and before knockouts
+/// are resolved.
+pub(crate) fn set_guts_survivors_to_10(state: &mut State, survivors: &[(usize, usize)]) {
+    for (player, idx) in survivors {
+        if let Some(pokemon) = state.in_play_pokemon[*player][*idx].as_mut() {
+            pokemon.set_remaining_hp(10);
+        }
+    }
 }
 
 /// This function applies damage (with modifiers and counterattacks) and handles K.O.s
@@ -403,7 +615,10 @@ pub(crate) fn handle_damage(
         attacking_ref,
         targets,
         is_from_active_attack,
-        attack_name,
+        DamageModifierContext {
+            attack_name,
+            attack_effect: None,
+        },
     );
     handle_knockouts(state, attacking_ref, is_from_active_attack);
 }
@@ -415,7 +630,7 @@ pub(crate) fn handle_damage_only(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
     is_from_active_attack: bool,
-    attack_name: Option<&str>,
+    context: DamageModifierContext<'_>,
 ) {
     let attacking_player = attacking_ref.0;
 
@@ -438,7 +653,7 @@ pub(crate) fn handle_damage_only(
                 attacking_ref,
                 *target_ref,
                 is_from_active_attack,
-                attack_name,
+                context,
             );
             (modified_damage, target_ref.1, target_ref.2)
         })
@@ -446,13 +661,17 @@ pub(crate) fn handle_damage_only(
 
     // Handle each target individually
     for (damage, target_player, target_pokemon_idx) in modified_targets {
+        // 0 damage is not damage, so it must not use up a "first damaged" Disguise
+        if damage == 0 {
+            continue;
+        }
         let applied = checkapply_prevent_first_attack(
             state,
             target_player,
             target_pokemon_idx,
             is_from_active_attack,
         );
-        if applied || damage == 0 {
+        if applied {
             continue;
         }
 
@@ -462,6 +681,9 @@ pub(crate) fn handle_damage_only(
                 .as_mut()
                 .expect("Pokemon should be there if taking damage");
             target_pokemon.apply_damage(damage); // Applies without surpassing 0 HP
+            if is_from_active_attack && target_pokemon_idx == 0 {
+                target_pokemon.mark_damaged_by_attack_while_active();
+            }
             debug!(
                 "Dealt {} damage to opponent's {} Pokemon. Remaining HP: {}",
                 damage,
@@ -485,7 +707,17 @@ pub(crate) fn handle_damage_only(
                 0
             }
         };
+        let delayed_counter_damage = get_delayed_counterattack_damage(target_pokemon);
         let should_poison = should_poison_attacker(target_pokemon);
+        // "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from
+        // your opponent's Pokémon, do X damage to ..." (Pyukumuku's Innards Out, Team Rocket's
+        // Electrode's Destiny Burst, Spiritomb's Final Scream). Resolved here alongside the
+        // ordinary counterattack recoil so that the retaliation damage is picked up by the
+        // `handle_knockouts` pass that follows this call — exactly like Rocky Helmet's.
+        let knockout_retaliation = (attacking_player != target_player
+            && target_pokemon.is_knocked_out())
+        .then(|| target_pokemon.ability_mechanic())
+        .flatten();
 
         // Apply counterattack damage and poison
         if counter_damage > 0 {
@@ -498,13 +730,111 @@ pub(crate) fn handle_damage_only(
                 counter_damage,
                 attacking_pokemon.get_remaining_hp()
             );
+
+            // The attacking Pokemon was itself just damaged by the defender's delayed counterattack
+            // (e.g. Mega Sableye ex's Cursed Jewel). If it's holding its own Rocky Helmet, that
+            // hit reflects 20 damage back onto the original defender too. Rocky Helmet's own
+            // recoil does not count, so two helmets don't ping-pong.
+            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                .as_ref()
+                .expect("Active Pokemon should be there");
+            if delayed_counter_damage > 0 && has_tool(attacking_pokemon, CardId::A2148RockyHelmet) {
+                let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
+                    .as_mut()
+                    .expect("Pokemon should be there if taking damage");
+                target_pokemon.apply_damage(20);
+                debug!(
+                    "Rocky Helmet reflects 20 damage back to the original defender. Remaining HP: {}",
+                    target_pokemon.get_remaining_hp()
+                );
+            }
+        }
+
+        match knockout_retaliation {
+            Some(AbilityMechanic::DamageAttackerOnKnockout { amount }) => {
+                if let Some(attacking_pokemon) = state.in_play_pokemon[attacking_player][0].as_mut()
+                {
+                    debug!(
+                        "Knockout retaliation: dealing {amount} damage to the Attacking Pokemon"
+                    );
+                    attacking_pokemon.apply_damage(*amount);
+                }
+            }
+            Some(AbilityMechanic::DamageEachOpponentPokemonOnKnockout { amount }) => {
+                debug!(
+                    "Knockout retaliation: dealing {amount} damage to each of the attacker's Pokemon"
+                );
+                for pokemon in state.in_play_pokemon[attacking_player].iter_mut().flatten() {
+                    pokemon.apply_damage(*amount);
+                }
+            }
+            _ => {}
         }
 
         if should_poison {
             state.apply_status_condition(attacking_player, 0, StatusCondition::Poisoned);
             debug!("Poison Barb: Poisoned the attacking Pokemon");
         }
+
+        if attacking_player != target_player {
+            apply_bouncy_body(state, target_player);
+            apply_dark_pendant_trigger(state, attacking_player, target_player);
+        }
     }
+}
+
+/// Dark Pendant: "If the [D] Pokémon this card is attached to is in the Active Spot and is damaged
+/// by an attack from your opponent's Pokémon, your opponent reveals a random card from their hand
+/// and shuffles it into their deck."
+///
+/// The shuffle needs the shared RNG, which the damage path does not carry, so it is queued as the
+/// single option on the attacker's move-generation stack (the same trick Bouncy Body uses for its
+/// choice). With one option it is not a decision — it just resolves where an RNG is available.
+fn apply_dark_pendant_trigger(state: &mut State, attacking_player: usize, target_player: usize) {
+    let Some(defender) = state.in_play_pokemon[target_player][0].as_ref() else {
+        return;
+    };
+    if !has_tool(defender, CardId::A4154DarkPendant)
+        || !defender.is_type(crate::models::EnergyType::Darkness)
+        || state.hands[attacking_player].is_empty()
+    {
+        return;
+    }
+    debug!("Dark Pendant: Attacker shuffles a random card from their hand into their deck");
+    state.move_generation_stack.push((
+        attacking_player,
+        vec![SimpleAction::ShuffleRandomOwnHandCardIntoDeck],
+    ));
+}
+
+/// Jellicent's Bouncy Body: the Active Pokémon was just damaged by an attack from the opponent's
+/// Pokémon, so its owner takes an Energy from their Energy Zone and attaches it to 1 of their
+/// Benched Pokémon (their choice).
+///
+/// Queued before knockouts resolve, so the choice is offered while the Bench is still intact
+/// (promotions are inserted at the bottom of the stack and therefore resolve afterwards).
+fn apply_bouncy_body(state: &mut State, target_player: usize) {
+    let Some(AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged { energy_type }) = state
+        .in_play_pokemon[target_player][0]
+        .as_ref()
+        .and_then(|active| active.ability_mechanic())
+    else {
+        return;
+    };
+
+    let choices = state
+        .enumerate_bench_pokemon(target_player)
+        .map(|(in_play_idx, _)| SimpleAction::Attach {
+            attachments: vec![(1, *energy_type, in_play_idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
+    if choices.is_empty() {
+        return; // Nowhere to put the Energy.
+    }
+
+    debug!("Bouncy Body: Attaching a {energy_type:?} Energy to a Benched Pokemon");
+    state.move_generation_stack.push((target_player, choices));
 }
 
 fn is_iris_bonus_active(
@@ -541,6 +871,11 @@ pub(crate) fn handle_knockouts(
     attacking_ref: (usize, usize), // (attacking_player, attacking_pokemon_idx)
     is_from_active_attack: bool,
 ) {
+    // Hala: "During your opponent's next turn, if your Hariyama or Crabominable would be Knocked
+    // Out by damage from an attack, it is not Knocked Out and its remaining HP becomes 10."
+    // Applied before the KO list is taken, so a protected Pokémon never enters it.
+    apply_survive_knockout_turn_effects(state, is_from_active_attack);
+
     let knockouts = get_knocked_out(state);
     let iris_bonus_active = is_iris_bonus_active(state, attacking_ref, is_from_active_attack);
 
@@ -562,14 +897,24 @@ pub(crate) fn handle_knockouts(
                 .as_ref()
                 .expect("Pokemon should be there if knocked out");
             let ko_initiator = (ko_receiver + 1) % 2;
-            let points_won = ko_pokemon.card.get_knockout_points();
+            // Dusknoir's Fade into Darkness / Glimmora's Shattering Crystal: on a heads flip the
+            // opponent gets no points at all for this Knock Out.
+            let points_won = if ko_pokemon.knockout_points_denied {
+                0
+            } else {
+                ko_pokemon.card.get_knockout_points()
+            };
             state.points[ko_initiator] += points_won;
             debug!(
                 "Pokemon {:?} fainted. Player {} won {} points for a total of {}",
                 ko_pokemon, ko_initiator, points_won, state.points[ko_initiator]
             );
             // Iris bonus: 1 extra point if Haxorus KOs opponent's Active Pokemon
-            if iris_bonus_active && ko_pokemon_idx == 0 && ko_receiver != attacking_ref.0 {
+            if iris_bonus_active
+                && points_won > 0
+                && ko_pokemon_idx == 0
+                && ko_receiver != attacking_ref.0
+            {
                 state.points[ko_initiator] += 1;
                 debug!(
                     "Iris: Player {} gets 1 bonus point for Haxorus KO",
@@ -578,28 +923,78 @@ pub(crate) fn handle_knockouts(
             }
         }
 
-        state.discard_from_play(ko_receiver, ko_pokemon_idx);
-    }
+        // Record KOs dealt by an opponent's active attack (for revenge attacks such as
+        // Marshadow's Revenge and Zarude's Dark Vengeance), along with the KO'd Pokemon's type.
+        if is_from_active_attack && ko_receiver != attacking_ref.0 {
+            // Record *every* type the KO'd Pokemon counted as in play, so a type-restricted
+            // revenge attack sees a dual-type Pokemon under either of its types.
+            let ko_pokemon_types = state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+                .as_ref()
+                .map(|pokemon| pokemon.get_energy_types())
+                .unwrap_or_default();
+            state.record_knocked_out_by_opponent_attack(&ko_pokemon_types);
+        }
 
-    // Set knocked_out_by_opponent_attack_this_turn flag
-    // Check if any of the current player's Pokémon were knocked out by an opponent's active attack
-    if is_from_active_attack {
-        // Only care about KOs from active attacks
-        for (ko_receiver, _) in knockouts.clone() {
-            let ko_initiator_of_this_damage = attacking_ref.0; // The player who caused the damage
-                                                               // If the receiver is NOT the initiator, it's an opponent KO
-            if ko_receiver != ko_initiator_of_this_damage {
-                state.knocked_out_by_opponent_attack_this_turn = true;
-                break; // Only need to set once
-            }
+        // Every knockout counts against the player who lost the Pokemon, however it happened
+        // (Kingambit's Overlord's Blade counts self-inflicted and Checkup knockouts too).
+        state.record_own_knockout(ko_receiver);
+
+        // Rescue Scarf: "If the Pokémon this card is attached to is Knocked Out by damage from an
+        // attack from your opponent's Pokémon, put it into your hand instead of the discard pile."
+        let rescued = is_from_active_attack
+            && ko_receiver != attacking_ref.0
+            && state.in_play_pokemon[ko_receiver][ko_pokemon_idx]
+                .as_ref()
+                .is_some_and(|pokemon| has_tool(pokemon, CardId::A4155RescueScarf));
+        if rescued {
+            debug!("Rescue Scarf: Returning the Knocked Out Pokemon to its owner's hand");
+            state.return_from_play_to_hand(ko_receiver, ko_pokemon_idx);
+        } else {
+            state.discard_from_play(ko_receiver, ko_pokemon_idx);
         }
     }
 
+    // Losing an HP aura can knock out a Benched Pokemon after an earlier
+    // knockout already queued promotion choices. Never offer a now-empty slot:
+    // activating it would leave the Active Spot empty after the stack resolves.
+    let occupied = state
+        .in_play_pokemon
+        .each_ref()
+        .map(|board| board.each_ref().map(Option::is_some));
+    for (_, choices) in &mut state.move_generation_stack {
+        choices.retain(|choice| match choice {
+            SimpleAction::Activate {
+                player,
+                in_play_idx,
+            } => occupied[*player][*in_play_idx],
+            _ => true,
+        });
+    }
     // If game ends because of knockouts, set winner and return so as to short-circuit promotion logic
     // Note even attacking player can lose by counterattack K.O.
     if state.points[0] >= 3 && state.points[1] >= 3 {
-        debug!("Both players have 3 points, it's a tie");
-        state.winner = Some(GameOutcome::Tie);
+        // Both players reached the target on the same action. In-app Tips: "If a player doesn't
+        // have any Pokemon remaining in play, that player loses the battle regardless of the
+        // number of points each player has." So an empty board still loses here -- a
+        // simultaneous point win does not rescue it into a tie. It is only a tie when the
+        // no-Pokemon rule cannot separate the players: either both still have Pokemon, or
+        // neither does.
+        let p0_has_pokemon = state.enumerate_in_play_pokemon(0).next().is_some();
+        let p1_has_pokemon = state.enumerate_in_play_pokemon(1).next().is_some();
+        state.winner = Some(match (p0_has_pokemon, p1_has_pokemon) {
+            (false, true) => {
+                debug!("Both players have 3 points, but player 0 has no Pokemon left and loses");
+                GameOutcome::Win(1)
+            }
+            (true, false) => {
+                debug!("Both players have 3 points, but player 1 has no Pokemon left and loses");
+                GameOutcome::Win(0)
+            }
+            _ => {
+                debug!("Both players have 3 points, it's a tie");
+                GameOutcome::Tie
+            }
+        });
         return;
     } else if state.points[0] >= 3 {
         state.winner = Some(GameOutcome::Win(0));
@@ -624,13 +1019,57 @@ pub(crate) fn handle_knockouts(
         return;
     }
 
-    // Queue up promotion actions if the game is still on after a knockout
+    // Queue up promotion actions if the game is still on after a knockout. After a double Knock
+    // Out from an attack, the attacking (turn) player promotes first, whichever seat that is.
+    // `sort_by_key` is stable, and `get_knocked_out` lists seat 0 first, so every other order
+    // (Checkup, Abilities) is unchanged.
+    let mut knockouts = knockouts;
+    if is_from_active_attack {
+        knockouts.sort_by_key(|(ko_receiver, _)| *ko_receiver != attacking_ref.0);
+    }
     for (ko_receiver, ko_pokemon_idx) in knockouts {
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
         }
         // If K.O. was Active, trigger promotion or declare winner
         state.trigger_promotion_or_declare_winner(ko_receiver);
+    }
+}
+
+/// Hala-style protection: any Pokémon that would be Knocked Out by attack damage and is covered by
+/// a `SurviveKnockOutForSpecificPokemon` turn effect survives instead, at a fixed remaining HP.
+/// Only attack damage qualifies, so poison/burn/self-inflicted knockouts still resolve normally.
+fn apply_survive_knockout_turn_effects(state: &mut State, is_from_active_attack: bool) {
+    if !is_from_active_attack {
+        return;
+    }
+    let protections: Vec<(usize, Vec<String>, u32)> = state
+        .get_current_turn_effects()
+        .into_iter()
+        .filter_map(|effect| match effect {
+            TurnEffect::SurviveKnockOutForSpecificPokemon {
+                pokemon_names,
+                player,
+                remaining_hp,
+            } => Some((player, pokemon_names, remaining_hp)),
+            _ => None,
+        })
+        .collect();
+    if protections.is_empty() {
+        return;
+    }
+
+    for (player, pokemon_names, remaining_hp) in protections {
+        for pokemon in state.in_play_pokemon[player].iter_mut().flatten() {
+            if pokemon.is_knocked_out() && pokemon_names.contains(&pokemon.get_name()) {
+                debug!(
+                    "Survive Knock Out: {} survives with {} HP",
+                    pokemon.get_name(),
+                    remaining_hp
+                );
+                pokemon.set_remaining_hp(remaining_hp);
+            }
+        }
     }
 }
 
@@ -649,6 +1088,36 @@ fn get_knocked_out(state: &State) -> Vec<(usize, usize)> {
     knockouts
 }
 
+/// Shuffle `player`'s Pokémon at `in_play_idx`, and everything attached to it, back into their
+/// deck: the card itself, every card it evolved from, and any attached Tool all go into the deck
+/// (which is then shuffled), while attached Energy returns to the discarded-Energy pile.
+///
+/// This is the "and all attached cards" form used by attacks like Eldegoss's Float Up and
+/// Accelgor's Deck and Cover. It differs from `apply_shuffle_in_play_pokemon_into_deck` (Professor
+/// Turo), which returns only the Pokémon cards and leaves the Tool and Energy behind.
+pub(crate) fn shuffle_in_play_pokemon_and_attachments_into_deck(
+    rng: &mut StdRng,
+    state: &mut State,
+    player: usize,
+    in_play_idx: usize,
+) {
+    let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].take() else {
+        return;
+    };
+
+    let mut cards_to_shuffle = pokemon.cards_behind.clone();
+    cards_to_shuffle.push(pokemon.card.clone());
+    cards_to_shuffle.extend(pokemon.attached_tools.iter().cloned());
+    state.decks[player].cards.extend(cards_to_shuffle);
+    state.discard_energies[player].extend(pokemon.attached_energy.iter().cloned());
+    state.decks[player].shuffle(false, rng);
+    state.refresh_double_grass_bonus_for_player(player);
+
+    if in_play_idx == 0 {
+        state.trigger_promotion_or_declare_winner(player);
+    }
+}
+
 /// Swap a bench pokemon into the active spot, clearing status/effects and setting turn flags.
 /// This is the swap portion of retreat without energy payment.
 pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize) {
@@ -661,19 +1130,20 @@ pub(crate) fn apply_activate(player: usize, state: &mut State, bench_idx: usize)
     if let Some(pokemon) = state.in_play_pokemon[player][0].as_mut() {
         pokemon.moved_to_active_this_turn = true;
     }
-
-    state.has_retreated = true;
 }
 
 // Apply common logic in outcomes
 pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
     Box::new(move |rng, state, action| {
+        // Counted here so played games and search simulations count the same actions.
+        state.actions_this_turn = state.actions_this_turn.saturating_add(1);
         if action.is_stack {
             state.move_generation_stack.pop();
         }
         if let SimpleAction::Play { trainer_card } = &action.action {
             let card = Card::Trainer(trainer_card.clone());
             if trainer_card.trainer_card_type == TrainerType::Stadium {
+                state.has_played_stadium = true;
                 // Replaced Stadium cards go to the discard pile of the player who played them.
                 if let Some((old_stadium, old_owner)) =
                     state.set_active_stadium_for_player(action.actor, card.clone())
@@ -698,8 +1168,23 @@ pub(crate) fn wrap_with_common_logic(mutation: Mutation) -> Mutation {
                 .expect("Pokemon should be there if using ability");
             pokemon.ability_used = true;
         }
+        if let SimpleAction::Attack(attack) = &action.action {
+            state.record_attack_used(action.actor, attack.title.clone());
+        }
 
         mutation(rng, state, action); // in the case of attacks, have this be damage + effect.
+
+        // Catch-all knockout check: any action could have reduced a Pokemon's
+        // effective HP below its damage taken (e.g. Field Blower discarding a
+        // Giant Cape). This way individual mutations don't need to remember to
+        // check for knockouts themselves. Damage-dealing mutations already call
+        // handle_knockouts with the proper attacking context, so this is a no-op
+        // for them.
+        // Skipped during the initial setup phase, where players place their boards
+        // one at a time and "0 Pokemon in play" doesn't mean a loss.
+        if state.turn_count > 0 {
+            handle_knockouts(state, (action.actor, 0), false);
+        }
 
         if let SimpleAction::Attack(_) = &action.action {
             // We use a flag instead of .move_generation_stack to reduce

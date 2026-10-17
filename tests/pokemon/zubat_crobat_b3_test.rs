@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -27,7 +27,7 @@ fn test_zubat_spin_turn_damages_and_can_switch_with_bench() {
     game.set_state(state);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3098Zubat, 0),
         is_stack: false,
     });
 
@@ -101,7 +101,7 @@ fn test_crobat_surprise_strike_bonus_after_moving_from_bench() {
     });
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3100Crobat, 0),
         is_stack: false,
     });
 
@@ -128,7 +128,7 @@ fn test_crobat_surprise_strike_base_damage_without_bench_move() {
     game.set_state(state);
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3100Crobat, 0),
         is_stack: false,
     });
 

@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -42,7 +42,7 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
     // This should apply NoWeakness and ReducedDamage effects to Mega Steelix
     let steelix_attack = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1a052MegaSteelixEx, 0),
         is_stack: false,
     };
 
@@ -66,7 +66,7 @@ fn test_mega_steelix_adamantine_rolling_no_weakness() {
     // So: 30 damage (base) - 20 (ReducedDamage) = 10 damage
     let charmander_attack = Action {
         actor: 1,
-        action: SimpleAction::Attack(0), // Ember
+        action: attack_action(CardId::A1033Charmander, 0), // Ember
         is_stack: false,
     };
 

@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -50,7 +50,7 @@ fn test_emboar_flare_storm_adds_damage_for_fire_energy_heads() {
         play_trainer(&mut game, 0, will.clone());
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::B3028Emboar, 0),
             is_stack: false,
         });
 
@@ -87,7 +87,7 @@ fn test_emboar_flare_storm_flips_only_for_fire_energy() {
         play_trainer(&mut game, 0, will.clone());
         game.apply_action(&Action {
             actor: 0,
-            action: SimpleAction::Attack(0),
+            action: attack_action(CardId::B3028Emboar, 0),
             is_stack: false,
         });
 

@@ -14,13 +14,16 @@ mod hooks;
 pub mod models;
 pub mod move_generation;
 pub mod optimize;
+pub mod perf_watch;
 pub mod players;
+pub mod replay;
 pub mod simulate;
 pub mod simulation_event_handler;
 pub mod stadiums;
 pub mod state;
 pub mod temp_deck;
 pub mod tools;
+pub mod trainer_identity;
 
 pub mod test_support;
 
@@ -32,7 +35,7 @@ pub use optimize::{
     cli_optimize, optimize, optimize_with_configs, EnemyDeckConfig, OptimizationConfig,
     ParallelConfig, SimulationConfig,
 };
-pub use simulate::{simulate, Simulation, SimulationCallbacks};
+pub use simulate::{play, simulate, PlayConfig, PlayResult, Simulation, SimulationCallbacks};
 pub use simulation_event_handler::ComputedStats;
 pub use state::State;
 

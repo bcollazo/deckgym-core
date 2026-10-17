@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 // ============================================================================
@@ -136,7 +136,7 @@ fn test_protective_poncho_no_protection_when_active() {
     // Attack with Vine Whip (40 damage)
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

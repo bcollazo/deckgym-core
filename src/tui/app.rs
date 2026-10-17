@@ -43,7 +43,7 @@ fn action_priority_for_tui(action: &SimpleAction) -> u8 {
         SimpleAction::Attach { .. }
         | SimpleAction::AttachFromDiscard { .. }
         | SimpleAction::AttachTool { .. } => 3,
-        SimpleAction::Attack(_) | SimpleAction::UseCopiedAttack { .. } => 4,
+        SimpleAction::Attack(_) => 4,
         SimpleAction::Retreat(_) => 5,
         SimpleAction::EndTurn => 255,
         _ => 6,
@@ -510,7 +510,7 @@ mod tests {
     use super::sort_actions_for_tui;
     use crate::{
         actions::{Action, SimpleAction},
-        models::{Card, EnergyType, PokemonCard, TrainerCard, TrainerType},
+        models::{Attack, Card, EnergyType, PokemonCard, TrainerCard, TrainerType},
     };
 
     fn action(action: SimpleAction) -> Action {
@@ -543,7 +543,12 @@ mod tests {
         let mut actions = vec![
             action(SimpleAction::EndTurn),
             action(SimpleAction::Retreat(1)),
-            action(SimpleAction::Attack(0)),
+            action(SimpleAction::Attack(Attack {
+                energy_required: vec![],
+                title: "Test Attack".to_string(),
+                fixed_damage: 0,
+                effect: None,
+            })),
             action(SimpleAction::Attach {
                 attachments: vec![],
                 is_turn_energy: true,

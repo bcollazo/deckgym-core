@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -42,7 +42,7 @@ fn test_metallic_turbo_does_not_panic_if_target_ko_by_jolteon() {
     // Dialga ex uses Metallic Turbo to queue attach-to-bench actions
     let attack_action = Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2119DialgaEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -96,7 +96,7 @@ fn test_weedle_multiply_attack() {
     // Apply Multiply attack
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0), // First attack (Multiply)
+        action: attack_action(CardId::A2b001Weedle, 0), // First attack (Multiply)
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -125,6 +125,64 @@ fn test_weedle_multiply_attack() {
 /// Test Dialga ex's Metallic Turbo attack which attaches 2 Metal energies to bench Pokemon
 /// and triggers a Rocky Helmet knockout counterattack. This is an edge case to ensure that
 /// attack effects are resolved before handling knockouts and promotions.
+#[test]
+fn test_altaria_dragon_arcana_bonus_damage_with_multiple_energy_types() {
+    let mut game = get_initialized_game(7);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4a055Altaria)
+            .with_energy(vec![
+                EnergyType::Colorless,
+                EnergyType::Colorless,
+                EnergyType::Dragon,
+            ])
+            .with_remaining_hp(120)],
+        vec![PlayedCard::from_id(CardId::A2119DialgaEx).with_remaining_hp(200)],
+    );
+    state.current_player = 0;
+    game.set_state(state.clone());
+
+    let initial_hp = state.get_active(1).get_remaining_hp();
+
+    let attack_action = Action {
+        actor: 0,
+        action: attack_action(CardId::A4a055Altaria, 0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_remaining_hp(), initial_hp - 100);
+}
+
+#[test]
+fn test_altaria_dragon_arcana_no_bonus_damage_with_single_energy_type() {
+    let mut game = get_initialized_game(8);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![PlayedCard::from_id(CardId::A4a055Altaria)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
+            .with_remaining_hp(120)],
+        vec![PlayedCard::from_id(CardId::A2119DialgaEx).with_remaining_hp(200)],
+    );
+    state.current_player = 0;
+    game.set_state(state.clone());
+
+    let initial_hp = state.get_active(1).get_remaining_hp();
+
+    let attack_action = Action {
+        actor: 0,
+        action: attack_action(CardId::A4a055Altaria, 0),
+        is_stack: false,
+    };
+    game.apply_action(&attack_action);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_remaining_hp(), initial_hp - 40);
+}
+
 #[test]
 fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     // Start with an initialized game to have proper deck structures
@@ -158,7 +216,7 @@ fn test_dialga_rocky_helmet_knockout_with_energy_attach() {
     // Apply the Attack action (index 0 = Metallic Turbo)
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2119DialgaEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

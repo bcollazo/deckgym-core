@@ -1,8 +1,10 @@
 use crate::{
     actions::abilities::AbilityMechanic,
+    actions::selectable_status_conditions,
     actions::{ability_mechanic_from_effect, SimpleAction},
     hooks::is_ultra_beast,
     models::{EnergyType, PlayedCard},
+    move_generation::trainer_move_generation_implementation,
     State,
 };
 
@@ -12,9 +14,8 @@ pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
     let mut actions = vec![];
 
     for (in_play_idx, card) in state.enumerate_in_play_pokemon(current_player) {
-        if card.card.is_fossil() {
-            actions.push(SimpleAction::DiscardFossil { in_play_idx });
-        } else if can_use_ability(state, (in_play_idx, card)) {
+        // Fossils have no ability; their discard option comes from `generate_discard_fossil_actions`.
+        if !card.card.is_fossil() && can_use_ability(state, (in_play_idx, card)) {
             actions.push(SimpleAction::UseAbility { in_play_idx });
         }
     }
@@ -23,13 +24,12 @@ pub(crate) fn generate_ability_actions(state: &State) -> Vec<SimpleAction> {
 }
 
 fn can_use_ability(state: &State, (in_play_index, card): (usize, &PlayedCard)) -> bool {
-    if card.card.get_ability().is_none() {
+    if card.ability().is_none() {
         return false;
     }
 
     let mechanic = card
-        .card
-        .get_ability()
+        .ability()
         .and_then(|a| ability_mechanic_from_effect(&a.effect))
         .unwrap_or_else(|| {
             panic!(
@@ -56,6 +56,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::HealOneYourPokemon { .. } => {
             is_active && can_use_espeon_ex_psychic_healing(state, card)
         }
+        AbilityMechanic::HealOneYourPokemonIfHasTool { .. } => {
+            can_use_sylveon_soothing_ribbon(state, card)
+        }
         AbilityMechanic::HealOneYourPokemonExAndDiscardRandomEnergy { .. } => {
             can_use_heal_one_your_pokemon_ex_and_discard_random_energy(state, card)
         }
@@ -77,6 +80,9 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::MoveTypedEnergyFromBenchToActive { .. } => {
             can_use_vaporeon_wash_out(state)
         }
+        AbilityMechanic::MoveAllTypedEnergyFromBenchToActive { energy_type } => {
+            !card.ability_used && has_benched_typed_pokemon_with_typed_energy(state, *energy_type)
+        }
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon { energy_type } => {
             can_use_attach_energy_from_zone_to_active_typed(state, card, *energy_type)
         }
@@ -87,11 +93,23 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::AttachEnergyFromZoneToSelfAndEndTurn { .. } => !card.ability_used,
         AbilityMechanic::AttachEnergyFromZoneToSelfAndDamage { .. } => !card.ability_used,
         AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf { .. } => false,
+        AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf => false,
         AbilityMechanic::AttachEnergyFromDiscardToSelfAndDamage { energy_type, .. } => {
             !card.ability_used && state.discard_energies[state.current_player].contains(energy_type)
         }
+        AbilityMechanic::AttachEnergyFromDiscardToActiveFromBench => {
+            can_use_dragonair_dragons_blessing(state, _in_play_index, card)
+        }
         AbilityMechanic::ReduceDamageFromAttacks { .. } => false,
+        AbilityMechanic::ReduceDamageFromAttacksIfArceusInPlay { .. } => false,
+        AbilityMechanic::ReduceAttackCostIfArceusInPlay { .. } => false,
+        AbilityMechanic::ReduceDamageFromAttacksByAttackerType { .. } => false,
         AbilityMechanic::ReduceOpponentActiveDamage { .. } => false,
+        AbilityMechanic::ReduceDamageFromAttacksIfFullHp { .. } => false,
+        AbilityMechanic::BuffIfAnotherSameNameInPlay { .. } => false,
+        AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { .. } => false,
+        AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { .. } => false,
+        AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,
         AbilityMechanic::IncreaseDamageForTwoTypesInPlay { .. } => false,
@@ -116,35 +134,98 @@ fn can_use_ability_by_mechanic(
             !card.ability_used && !state.decks[(state.current_player + 1) % 2].cards.is_empty()
         }
         AbilityMechanic::CoinFlipToPreventDamage => false, // Passive ability
-        AbilityMechanic::CheckupDamageToOpponentActive { .. } => false, // Passive ability
-        AbilityMechanic::CheckupDamageToAllOpponentPokemon { .. } => false, // Passive ability
-        AbilityMechanic::BadDreamsEndOfTurn { .. } => false, // Passive ability
+        AbilityMechanic::CoinFlipToReduceDamage { .. } => false, // Passive ability
+        AbilityMechanic::CoinFlipToSurviveKnockOut => false, // Passive ability
+        AbilityMechanic::MoveAllTypedEnergyToBenchOnKnockout { .. } => false, // Passive (on_knockout)
+        AbilityMechanic::CheckupDamageToOpponentActive { .. } => false,       // Passive ability
+        AbilityMechanic::CheckupDamageToAllOpponentPokemon { .. } => false,   // Passive ability
+        AbilityMechanic::BadDreamsEndOfTurn { .. } => false,                  // Passive ability
         AbilityMechanic::CoinFlipSleepOpponentActive => !card.ability_used,
         AbilityMechanic::DiscardEnergyToIncreaseTypeDamage { discard_energy, .. } => {
             !card.ability_used && card.attached_energy.contains(discard_energy)
         }
         AbilityMechanic::PoisonOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::DrawCardIfActive { .. } => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::ConfuseOpponentActive => _in_play_index == 0 && !card.ability_used,
+        AbilityMechanic::BurnOpponentActive => !card.ability_used,
+        AbilityMechanic::RandomStatusConditionToOpponentActive { options } => {
+            !card.ability_used
+                && !selectable_status_conditions(
+                    state,
+                    (state.current_player + 1) % 2,
+                    options.as_slice(),
+                )
+                .is_empty()
+        }
         AbilityMechanic::RemoveRandomSpecialConditionFromActive => {
             can_use_remove_random_special_condition_from_active(state, card)
         }
         AbilityMechanic::HealActiveYourPokemon { .. } => !card.ability_used,
-        AbilityMechanic::SwitchOutOpponentActiveToBench { require_active } => {
+        AbilityMechanic::SwitchOutOpponentActiveToBench {
+            require_active,
+            require_target_basic,
+        } => {
             let opponent = (state.current_player + 1) % 2;
             !card.ability_used
                 && (!require_active || is_active)
+                && (!require_target_basic
+                    || state
+                        .maybe_get_active(opponent)
+                        .is_some_and(|active| active.card.is_basic()))
                 && state.enumerate_bench_pokemon(opponent).next().is_some()
+        }
+        // Information-only; never offered (see `AbilityMechanic::LookAtCardsNoop`).
+        AbilityMechanic::LookAtCardsNoop => false,
+        AbilityMechanic::UseRandomOpponentSupporterEffect => {
+            is_active && !card.ability_used && has_copyable_opponent_supporter(state)
+        }
+        // Grafaiai's Poison Coating has no Active-Spot restriction.
+        AbilityMechanic::CoinFlipPoisonOpponentActive => !card.ability_used,
+        AbilityMechanic::CoinFlipSwitchOpponentBenchToActive => {
+            let opponent = (state.current_player + 1) % 2;
+            !card.ability_used && state.enumerate_bench_pokemon(opponent).next().is_some()
+        }
+        AbilityMechanic::MoveAllTypedEnergyFromAllYourPokemonToSelf { energy_type } => {
+            !card.ability_used
+                && state
+                    .enumerate_in_play_pokemon(state.current_player)
+                    .any(|(idx, pokemon)| {
+                        idx != _in_play_index && pokemon.attached_energy.contains(energy_type)
+                    })
+        }
+        AbilityMechanic::SearchRandomToolFromDeck => {
+            !card.ability_used
+                && state.decks[state.current_player].cards.iter().any(|card| {
+                    matches!(card, crate::models::Card::Trainer(trainer)
+                        if trainer.trainer_card_type == crate::models::TrainerType::Tool)
+                })
         }
         AbilityMechanic::DiscardFromHandToDrawCard => {
             !card.ability_used && !state.hands[state.current_player].is_empty()
         }
         AbilityMechanic::ImmuneToStatusConditions => false, // Passive ability
+        AbilityMechanic::ImmuneToStatusCondition { .. } => false, // Passive ability
+        AbilityMechanic::ExtraToolSlots { .. } => false,    // Passive ability
+        AbilityMechanic::PreventOpponentAttackEffectsOnSelf => false, // Passive ability
+        AbilityMechanic::BasicPokemonHaveNoAbilities => false, // Passive ability
+        AbilityMechanic::ReduceTypedAttackCostIfHasTool { .. } => false, // Passive ability
+        AbilityMechanic::IncreaseHpOfYourTypedPokemon { .. } => false, // Passive ability
+        AbilityMechanic::NoHealingForAnyone => false,       // Passive ability
+        AbilityMechanic::CannotAttackUnlessNamedOnBench { .. } => false, // Passive ability
         AbilityMechanic::SoothingWind { .. } => false,      // Passive ability
         AbilityMechanic::NoOpponentSupportInActive => false,
+        AbilityMechanic::NoOpponentStadiumInActive => false, // Passive ability
         AbilityMechanic::DoubleGrassEnergy => false,
+        AbilityMechanic::GrantedTypes { .. } => false,
         AbilityMechanic::PreventOpponentActiveEvolution => false,
         AbilityMechanic::ReduceRetreatCostOfYourActiveBasicFromBench { .. } => false,
         AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench { .. } => false,
         AbilityMechanic::NoRetreatIfHasEnergy => false,
+        AbilityMechanic::NoRetreatCostIfNamedPokemonInPlay { .. } => false,
+        AbilityMechanic::NoRetreatCostForYourActive { .. } => false,
+        AbilityMechanic::NoRetreatCostDuringFirstTurn => false,
+        AbilityMechanic::NoRetreatCostIfStadiumInPlay => false,
+        AbilityMechanic::ReduceRetreatCostIfAnotherSameNameInPlay { .. } => false,
         AbilityMechanic::PreventAllDamageFromEx => false,
         AbilityMechanic::SleepOnZoneAttachToSelfWhileActive => false,
         AbilityMechanic::IncreasePoisonDamage { .. } => false,
@@ -152,11 +233,26 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::HealTypedPokemonOnEvolve { .. } => false,
         AbilityMechanic::AttachEnergyFromZoneToActiveTypedOnEvolve { .. } => false,
         AbilityMechanic::DamageOpponentActiveOnEvolve { .. } => false,
+        AbilityMechanic::CoinFlipParalyzeOpponentActiveOnEvolve => false,
         AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve => false,
+        AbilityMechanic::PoisonAndBurnOpponentActiveOnEvolve => false,
+        AbilityMechanic::MoveRandomEnergyFromOpponentActiveToSelfOnEvolve => false,
+        // Offered by the on-evolve / on-bench hooks, not by free ability move generation.
+        AbilityMechanic::PutRandomToolsFromDiscardToHandOnEvolve { .. } => false,
+        AbilityMechanic::TakeItemsFromTopOfDeckOnEvolve { .. } => false,
+        AbilityMechanic::PutSupporterFromDiscardToHandOnEvolve => false,
+        AbilityMechanic::OpponentShuffleHandAndDrawPerRemainingPointOnEvolve => false,
+        AbilityMechanic::PreventAllDamageAndEffectsOnEvolve => false,
+        AbilityMechanic::HealActiveTypedOnBench { .. } => false,
         AbilityMechanic::CanEvolveIntoEeveeEvolution => false,
         AbilityMechanic::CanEvolveOnFirstTurnIfActive => false,
         AbilityMechanic::CounterattackDamage { .. } => false,
+        AbilityMechanic::DamageAttackerOnKnockout { .. } => false,
+        AbilityMechanic::DamageEachOpponentPokemonOnKnockout { .. } => false,
+        AbilityMechanic::CoinFlipKnockOutAttackerOnKnockout => false,
+        AbilityMechanic::CoinFlipDenyPointsOnKnockout => false,
         AbilityMechanic::PoisonAttackerOnDamaged => false,
+        AbilityMechanic::AttachEnergyFromZoneToBenchedOnDamaged { .. } => false,
         AbilityMechanic::IncreaseAttackCostForOpponentActive { .. } => false,
         AbilityMechanic::IncreaseRetreatCostForOpponentActive { .. } => false,
         AbilityMechanic::PreventDamageWhileBenched => false,
@@ -172,7 +268,28 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::LegendaryDrive => false, // triggered on bench placement, not via UseAbility
         AbilityMechanic::AncientRoar => false, // triggered on bench placement, not via UseAbility
         AbilityMechanic::FutureSystem => false, // passive ability
+        AbilityMechanic::TimeRecall => false,  // passive ability (consumed in attack generation)
+        AbilityMechanic::QuickGrowth => false, // triggered at end of opponent's turn
+        AbilityMechanic::HealAllYourPokemonDuringCheckup { .. } => false, // passive, during Pokemon Checkup
+        // Reactive: only offered via the move-generation stack right after an eligible [R]
+        // coin-flip attack, never as a freely-selectable ability.
+        AbilityMechanic::VictoryStarReflip | AbilityMechanic::LuxuryCoinReflip => false,
     }
+}
+
+/// Smeargle's Portrait is only worth offering when the opponent holds a Supporter whose effect
+/// this engine implements and that is playable right now.
+fn has_copyable_opponent_supporter(state: &State) -> bool {
+    let opponent = (state.current_player + 1) % 2;
+    state.hands[opponent].iter().any(|card| match card {
+        crate::models::Card::Trainer(trainer_card)
+            if trainer_card.trainer_card_type == crate::models::TrainerType::Supporter =>
+        {
+            trainer_move_generation_implementation(state, trainer_card)
+                .is_some_and(|actions| !actions.is_empty())
+        }
+        _ => false,
+    })
 }
 
 fn can_use_accept_pain(
@@ -210,7 +327,7 @@ fn can_use_switch_active_typed_with_bench(
         return false;
     }
     let active = state.get_active(state.current_player);
-    if active.get_energy_type() != Some(energy_type) {
+    if !active.is_type(energy_type) {
         return false;
     }
     state
@@ -255,7 +372,7 @@ fn can_use_attach_energy_from_zone_to_active_typed(
         return false;
     }
     let active = state.get_active(state.current_player);
-    active.get_energy_type() == Some(energy_type)
+    active.is_type(energy_type)
 }
 
 fn can_use_dusknoir_shadow_void(state: &State, dusknoir_idx: usize) -> bool {
@@ -272,6 +389,18 @@ fn can_use_dismantling_keys(state: &State, in_play_idx: usize, card: &PlayedCard
     state
         .maybe_get_active(opponent)
         .is_some_and(|active| active.has_tool_attached())
+}
+
+fn can_use_dragonair_dragons_blessing(
+    state: &State,
+    in_play_idx: usize,
+    card: &PlayedCard,
+) -> bool {
+    if in_play_idx == 0 || card.ability_used {
+        return false;
+    }
+    state.maybe_get_active(state.current_player).is_some()
+        && !state.discard_energies[state.current_player].is_empty()
 }
 
 fn can_use_crobat_cunning_link(state: &State, card: &PlayedCard) -> bool {
@@ -302,15 +431,25 @@ fn can_use_umbreon_dark_chase(state: &State, card: &PlayedCard) -> bool {
 fn can_use_vaporeon_wash_out(state: &State) -> bool {
     // Check if active Pokémon is Water type
     let active = state.get_active(state.current_player);
-    if active.get_energy_type() != Some(EnergyType::Water) {
+    if !active.is_type(EnergyType::Water) {
         return false;
     }
     // Check if there's a benched Water Pokémon with Water energy
     state
         .enumerate_bench_pokemon(state.current_player)
         .any(|(_, pokemon)| {
-            pokemon.card.get_type() == Some(EnergyType::Water)
+            pokemon.is_type(EnergyType::Water)
                 && pokemon.attached_energy.contains(&EnergyType::Water)
+        })
+}
+
+/// True if the current player has a benched Pokémon of `energy_type` that has at least one
+/// `energy_type` Energy attached (a valid source for Lunala ex's Psychic Connect).
+fn has_benched_typed_pokemon_with_typed_energy(state: &State, energy_type: EnergyType) -> bool {
+    state
+        .enumerate_bench_pokemon(state.current_player)
+        .any(|(_, pokemon)| {
+            pokemon.is_type(energy_type) && pokemon.attached_energy.contains(&energy_type)
         })
 }
 
@@ -326,6 +465,15 @@ fn can_use_victreebel_fragrance_trap(state: &State, card: &PlayedCard) -> bool {
 
 fn can_use_espeon_ex_psychic_healing(state: &State, card: &PlayedCard) -> bool {
     if card.ability_used {
+        return false;
+    }
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, pokemon)| pokemon.is_damaged())
+}
+
+fn can_use_sylveon_soothing_ribbon(state: &State, card: &PlayedCard) -> bool {
+    if card.ability_used || !card.has_tool_attached() {
         return false;
     }
     state

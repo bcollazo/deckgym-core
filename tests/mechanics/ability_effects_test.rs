@@ -55,8 +55,8 @@ fn test_serperior_jungle_totem_ability() {
         "Should have exactly one attack action available"
     );
 
-    if let SimpleAction::Attack(index) = attack_actions[0].action {
-        assert_eq!(index, 0, "Attack index should be 0 (Vine Whip)");
+    if let SimpleAction::Attack(attack) = &attack_actions[0].action {
+        assert_eq!(attack.title, "Vine Whip", "Attack should be Vine Whip");
     }
 }
 

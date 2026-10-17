@@ -61,12 +61,69 @@ fn test_giant_cape_attach_increases_hp() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     assert_eq!(active.get_remaining_hp(), base_remaining_hp + 20);
 }
 
 #[test]
-fn test_leaf_cape_only_attaches_to_grass() {
+fn test_elegant_cape_attaches_to_any_and_boosts_only_stage_1() {
+    let mut game = get_initialized_game(0);
+    let mut state = game.get_state_clone();
+
+    state.set_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1002Ivysaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur)],
+    );
+    state.current_player = 0;
+
+    state.hands[0] = vec![get_card_by_enum(CardId::B3b065ElegantCape)];
+    game.set_state(state);
+
+    let trainer_card = trainer_from_id(CardId::B3b065ElegantCape);
+    let play_action = Action {
+        actor: 0,
+        action: SimpleAction::Play { trainer_card },
+        is_stack: false,
+    };
+    game.apply_action(&play_action);
+
+    let state = game.get_state_clone();
+    let (_actor, choices) = state.generate_possible_actions();
+
+    let mut attachable_indices: Vec<usize> = choices
+        .iter()
+        .filter_map(|choice| match choice.action {
+            SimpleAction::AttachTool { in_play_idx, .. } => Some(in_play_idx),
+            _ => None,
+        })
+        .collect();
+    attachable_indices.sort_unstable();
+
+    // Attachable to both the Basic (Bulbasaur) and the Stage 1 (Ivysaur); only the Stage 1
+    // holder gets the +30 HP.
+    assert_eq!(attachable_indices, vec![0, 1]);
+
+    let attach_action = Action {
+        actor: 0,
+        action: attach_choice_for_idx(&choices, 1),
+        is_stack: false,
+    };
+    game.apply_action(&attach_action);
+
+    let state = game.get_state_clone();
+    let stage1 = state.in_play_pokemon[0][1]
+        .as_ref()
+        .expect("expected stage-1 target");
+    let base_remaining_hp = PlayedCard::from_id(CardId::A1002Ivysaur).get_remaining_hp();
+    assert!(stage1.has_tool_attached());
+    assert_eq!(stage1.get_remaining_hp(), base_remaining_hp + 30);
+}
+
+#[test]
+fn test_leaf_cape_attaches_to_any_and_boosts_only_grass() {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
 
@@ -95,15 +152,18 @@ fn test_leaf_cape_only_attaches_to_grass() {
     let state = game.get_state_clone();
     let (_actor, choices) = state.generate_possible_actions();
 
-    let attachable_indices: Vec<usize> = choices
+    let mut attachable_indices: Vec<usize> = choices
         .iter()
         .filter_map(|choice| match choice.action {
             SimpleAction::AttachTool { in_play_idx, .. } => Some(in_play_idx),
             _ => None,
         })
         .collect();
+    attachable_indices.sort_unstable();
 
-    assert_eq!(attachable_indices, vec![0]);
+    // Attachable to both the Grass Bulbasaur and the Fire Charmander; only the Grass holder
+    // gets the +30 HP.
+    assert_eq!(attachable_indices, vec![0, 1]);
 
     let attach_action = Action {
         actor: 0,
@@ -114,7 +174,7 @@ fn test_leaf_cape_only_attaches_to_grass() {
 
     let state = game.get_state_clone();
     let active = state.get_active(0);
-    assert!(active.attached_tool.is_some());
+    assert!(active.has_tool_attached());
     assert_eq!(active.get_remaining_hp(), base_remaining_hp + 30);
 }
 

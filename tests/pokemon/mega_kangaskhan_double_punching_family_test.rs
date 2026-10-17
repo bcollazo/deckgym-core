@@ -4,7 +4,7 @@ use deckgym::{
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard},
     state::GameOutcome,
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -43,7 +43,7 @@ fn test_mega_kangaskhan_double_punching_family_ko_then_promotion_then_ko() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2127MegaKangaskhanEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -86,7 +86,7 @@ fn test_mega_kangaskhan_double_punching_family_red_vs_ex_with_rocky_helmet() {
 
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2127MegaKangaskhanEx, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

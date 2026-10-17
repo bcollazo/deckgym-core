@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, EnergyType, PlayedCard, TrainerCard},
-    test_support::{get_initialized_game, get_test_game_with_board},
+    test_support::{attack_action, get_initialized_game, get_test_game_with_board},
 };
 
 fn trainer_from_id(card_id: CardId) -> TrainerCard {
@@ -38,7 +38,7 @@ fn test_bullet_slugger_no_bonus_when_not_moved_from_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2b047MegaScizorEx, 0),
         is_stack: false,
     });
 
@@ -78,7 +78,7 @@ fn test_bullet_slugger_bonus_after_regular_retreat() {
     // Mega Scizor ex is now active and moved from bench this turn.
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2b047MegaScizorEx, 0),
         is_stack: false,
     });
 
@@ -122,7 +122,7 @@ fn test_bullet_slugger_bonus_after_revavroom_metal_transport() {
     // Mega Scizor ex is now active and moved from bench this turn.
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2b047MegaScizorEx, 0),
         is_stack: false,
     });
 
@@ -177,7 +177,7 @@ fn test_bullet_slugger_bonus_after_lyra_switch() {
     // Mega Scizor ex is now active and moved from bench this turn.
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B2b047MegaScizorEx, 0),
         is_stack: false,
     });
 

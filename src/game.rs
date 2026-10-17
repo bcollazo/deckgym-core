@@ -94,6 +94,9 @@ impl<'a> Game<'a> {
         let player = &self.players[actor];
         let color = self.get_color(actor);
         self.print_turn_header(actor, player.as_ref(), &color);
+        // A lone legal action is taken without consulting the player, so whatever note or scores
+        // it still holds belong to an earlier decision and must not be attached to this one.
+        let player_decided = actions.len() != 1;
         let action = if actions.len() == 1 {
             debug!("Only one possible action, selecting it.");
             actions[0].clone()
@@ -109,9 +112,16 @@ impl<'a> Game<'a> {
         let player = &self.players[actor];
         self.print_action(&action, actor, player.as_ref(), &color);
 
-        if self.event_handler.is_some() {
-            if let Some(handler) = &mut self.event_handler {
-                handler.on_action(self.id, &self.state, actor, &actions, &action);
+        if let Some(handler) = &mut self.event_handler {
+            handler.on_action(self.id, &self.state, actor, &actions, &action);
+            if player_decided {
+                let note = self.players[actor].last_note();
+                if note.is_some() {
+                    handler.on_action_note(self.id, note);
+                }
+                if let Some(scores) = self.players[actor].last_scores() {
+                    handler.on_action_scores(self.id, scores);
+                }
             }
         }
         self.apply_action(&action);
@@ -162,7 +172,6 @@ impl<'a> Game<'a> {
     fn get_color(&self, actor: usize) -> String {
         let energy = self.state.decks[actor].energy_types[0];
         let color = match energy {
-            EnergyType::Colorless => todo!(),
             EnergyType::Fighting => "red",
             EnergyType::Fire => "red",
             EnergyType::Grass => "green",
@@ -171,7 +180,14 @@ impl<'a> Game<'a> {
             EnergyType::Water => "blue",
             EnergyType::Darkness => "bright_black",
             EnergyType::Metal => "bright_black",
-            EnergyType::Dragon => todo!(),
+            // The Energy Zone cannot generate these, so a deck built around one is
+            // not playable. `Deck::is_valid` rejects them, so getting here means an
+            // unvalidated deck reached `Game`.
+            EnergyType::Colorless | EnergyType::Dragon => panic!(
+                "Player {actor}'s deck declares a {} energy zone, which the Energy Zone \
+                 cannot generate. Check Deck::is_valid before starting a Game.",
+                energy.as_str()
+            ),
         };
         color.to_string()
     }

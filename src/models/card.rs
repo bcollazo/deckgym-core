@@ -23,6 +23,19 @@ pub enum EnergyType {
     Colorless,
 }
 impl EnergyType {
+    /// The 8 Energy types the Energy Zone can generate, i.e. the ones a deck can be built
+    /// around. See `is_selectable`.
+    pub const SELECTABLE: [EnergyType; 8] = [
+        EnergyType::Grass,
+        EnergyType::Fire,
+        EnergyType::Water,
+        EnergyType::Lightning,
+        EnergyType::Psychic,
+        EnergyType::Fighting,
+        EnergyType::Darkness,
+        EnergyType::Metal,
+    ];
+
     pub(crate) fn from_str(energy_type: &str) -> Option<Self> {
         match energy_type {
             "Grass" => Some(EnergyType::Grass),
@@ -37,6 +50,16 @@ impl EnergyType {
             "Colorless" => Some(EnergyType::Colorless),
             _ => None,
         }
+    }
+
+    /// Whether a deck can be built around this energy, i.e. whether the Energy Zone
+    /// can generate it.
+    ///
+    /// Dragon and Colorless cannot. Colorless only ever appears as an attack cost
+    /// (payable by any energy), and there is no Dragon energy in the game — Dragon
+    /// Pokemon are powered by other types.
+    pub fn is_selectable(&self) -> bool {
+        !matches!(self, EnergyType::Dragon | EnergyType::Colorless)
     }
 
     pub fn as_str(&self) -> &'static str {
@@ -56,7 +79,7 @@ impl EnergyType {
 }
 
 /// Represents an attack of a card.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Attack {
     pub energy_required: Vec<EnergyType>,
     pub title: String,
@@ -217,10 +240,30 @@ impl Card {
         }
     }
 
-    pub(crate) fn get_type(&self) -> Option<EnergyType> {
+    /// The Energy types this card is **printed** as.
+    ///
+    /// Today every printed Pokémon has exactly one type, so this is always a 0- or 1-element
+    /// vector. It is the single seam for printed dual-type Pokémon (e.g. Mega Mewtwo X ex,
+    /// [P] + [F]): when `PokemonCard` grows a second type, this method returns both and every
+    /// in-play type check downstream (which goes through `PlayedCard::get_energy_types` /
+    /// `PlayedCard::is_type`) picks them up with no further engine change.
+    ///
+    /// Note this is the *printed* type set — it deliberately knows nothing about Abilities, which
+    /// only apply while the card is in play. Use it for cards in a deck, hand or discard pile;
+    /// use `PlayedCard::get_energy_types` for cards on the board.
+    pub fn get_types(&self) -> Vec<EnergyType> {
         match self {
-            Card::Pokemon(pokemon_card) => Some(pokemon_card.energy_type),
-            _ => None,
+            Card::Pokemon(pokemon_card) => vec![pokemon_card.energy_type],
+            _ => vec![],
+        }
+    }
+
+    /// Whether this card's **printed** type set contains `energy_type`. Allocation-free
+    /// counterpart of `get_types().contains(..)`.
+    pub fn is_type(&self, energy_type: EnergyType) -> bool {
+        match self {
+            Card::Pokemon(pokemon_card) => pokemon_card.energy_type == energy_type,
+            _ => false,
         }
     }
 
@@ -251,6 +294,11 @@ impl Card {
 
     /// Check if this card can evolve into the given evolution card
     /// This handles special evolution rules like Eevee ex's Veevee 'volve ability
+    ///
+    /// This is a card-level evolution-legality rule with no access to the board, so the Veevee
+    /// 'volve lookup below stays card-level too: it is deliberately *not* gated on Alolan Muk's
+    /// Power of Alchemy, even though Eevee ex is a Basic. Making it board-aware would mean
+    /// threading `State` (or a `PlayedCard`) through every evolution-legality caller.
     pub fn can_evolve_into(&self, evolution_card: &Card) -> bool {
         if let Card::Pokemon(evolution_pokemon) = evolution_card {
             if let Some(evolves_from) = &evolution_pokemon.evolves_from {
@@ -272,7 +320,7 @@ impl Card {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum StatusCondition {
     Poisoned,
     Paralyzed,

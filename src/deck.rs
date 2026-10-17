@@ -27,6 +27,11 @@ impl Hash for Deck {
 }
 
 impl Deck {
+    /// Configured Energy Zone types, known to the deck's owner.
+    pub fn energy_types(&self) -> &[EnergyType] {
+        &self.energy_types
+    }
+
     /// Parses a deck file and returns a `Deck` struct with cards flattened based on their counts.
     pub fn from_file(file_path: &str) -> Result<Self, String> {
         let contents = fs::read_to_string(file_path)
@@ -95,6 +100,14 @@ impl Deck {
         let has_correct_size = self.cards.len() == 20 && basic >= 1;
 
         if !has_correct_size {
+            return false;
+        }
+
+        // The Energy Zone has to be able to generate what the deck declares, so every
+        // energy must be selectable (i.e. not Dragon or Colorless). A Dragon deck is
+        // legal, but it is built around the energy its attacks actually cost.
+        if self.energy_types.is_empty() || !self.energy_types.iter().all(EnergyType::is_selectable)
+        {
             return false;
         }
 
@@ -177,6 +190,43 @@ mod tests {
     use rand::thread_rng;
 
     use super::*;
+
+    /// The Energy Zone cannot generate Dragon or Colorless energy, so a deck
+    /// declaring either is not buildable in-game. This is easy to get wrong when
+    /// energy is inferred from a deck's Pokemon types rather than its attack costs:
+    /// an all-Dragon deck yields `Energy: Dragon`, which is not playable.
+    #[test]
+    fn test_is_valid_rejects_non_selectable_energy() {
+        let cards = "\n1 A1 225\n1 A2 150\n1 A2b 70\n2 A3 66\n1 A4 66\n1 B1 223\n2 B1 225\n2 B2b 51\n2 B4 117\n1 B4 120\n2 B4 155\n2 P-A 5\n2 P-A 7";
+
+        for energy in ["Dragon", "Colorless"] {
+            let deck = Deck::from_string(&format!("Energy: {energy}{cards}"))
+                .expect("deck should still parse");
+            assert_eq!(deck.cards.len(), 20);
+            assert!(
+                deck.cards.iter().filter(|c| c.is_basic()).count() >= 1,
+                "deck should otherwise be legal, so only the energy is at fault"
+            );
+            assert!(!deck.is_valid(), "{energy} energy zone should be rejected");
+        }
+
+        // Same 20 cards, but declaring energy the Energy Zone can actually make.
+        let deck = Deck::from_string(&format!("Energy: Fire, Lightning{cards}")).unwrap();
+        assert!(deck.is_valid());
+
+        // A mix is only as valid as its worst member.
+        let deck = Deck::from_string(&format!("Energy: Fire, Dragon{cards}")).unwrap();
+        assert!(!deck.is_valid());
+    }
+
+    #[test]
+    fn test_energy_type_is_selectable() {
+        for energy in EnergyType::SELECTABLE {
+            assert!(energy.is_selectable(), "{energy:?} should be selectable");
+        }
+        assert!(!EnergyType::Dragon.is_selectable());
+        assert!(!EnergyType::Colorless.is_selectable());
+    }
 
     #[test]
     fn test_deck_from_file() {

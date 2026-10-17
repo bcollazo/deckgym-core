@@ -7,3 +7,10 @@ TODO.md
 __pycache__/
 *.so
 *.pyd
+
+# Replays written by --replay-dir
+replays/
+
+# Viewer (viewer/)
+viewer/node_modules
+viewer/dist

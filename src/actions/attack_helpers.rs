@@ -8,13 +8,71 @@ pub(crate) fn collect_in_play_indices_by_type(
     state
         .enumerate_in_play_pokemon(player)
         .filter_map(|(in_play_idx, pokemon)| {
-            if pokemon.get_energy_type() == Some(energy_type) {
+            if pokemon.is_type(energy_type) {
                 Some(in_play_idx)
             } else {
                 None
             }
         })
         .collect()
+}
+
+/// Delcatty's Energy Blender: the choices offered at one step of "move any amount of Energy from
+/// your Pokémon in play to your other Pokémon in any way you like" — every single-Energy move
+/// between two distinct Pokémon of `player`, plus `Noop` to stop.
+///
+/// Returns an empty list (i.e. nothing to offer) once no move is possible or the move budget is
+/// spent, so callers can skip pushing a pointless prompt.
+pub(crate) fn energy_blender_choices(
+    state: &State,
+    player: usize,
+    remaining_moves: usize,
+) -> Vec<SimpleAction> {
+    if remaining_moves == 0 {
+        return Vec::new();
+    }
+
+    let occupied: Vec<usize> = state
+        .enumerate_in_play_pokemon(player)
+        .map(|(idx, _)| idx)
+        .collect();
+
+    let mut choices = Vec::new();
+    for (from_in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player) {
+        let mut types_seen: Vec<EnergyType> = Vec::new();
+        for energy_type in &pokemon.attached_energy {
+            if types_seen.contains(energy_type) {
+                continue;
+            }
+            types_seen.push(*energy_type);
+            for &to_in_play_idx in &occupied {
+                if to_in_play_idx == from_in_play_idx {
+                    continue;
+                }
+                choices.push(SimpleAction::MoveEnergyAndReoffer {
+                    from_in_play_idx,
+                    to_in_play_idx,
+                    energy_type: *energy_type,
+                    remaining_moves: remaining_moves - 1,
+                });
+            }
+        }
+    }
+
+    if choices.is_empty() {
+        return choices;
+    }
+    choices.push(SimpleAction::Noop);
+    choices
+}
+
+/// The total Energy attached across all of `player`'s Pokémon in play. Used as the move budget for
+/// `energy_blender_choices`: no Energy ever has to move more than once to reach a given board.
+pub(crate) fn total_attached_energy(state: &State, player: usize) -> usize {
+    state
+        .enumerate_in_play_pokemon(player)
+        .map(|(_, pokemon)| pokemon.attached_energy.len())
+        .sum()
 }
 
 pub(crate) fn energy_any_way_choices(

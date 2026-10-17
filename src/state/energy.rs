@@ -1,9 +1,12 @@
+use log::debug;
+
 use crate::{
     actions::{
-        abilities::AbilityMechanic, ability_mechanic_from_effect, get_ability_mechanic,
-        handle_damage_only, handle_knockouts,
+        abilities::AbilityMechanic, ability_mechanic_from_effect, apply_evolve, handle_damage_only,
+        handle_knockouts,
     },
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
+    hooks::{can_evolve_into, DamageModifierContext},
     models::{EnergyType, StatusCondition},
     State,
 };
@@ -24,6 +27,21 @@ impl State {
             self.attach_energy_internal(actor, in_play_idx, energy, amount, true, is_turn_energy);
         if attached && is_turn_energy {
             self.energy_zone[actor].current = None;
+        }
+        if attached {
+            // Gothitelle's Stellar Cradle: a Pokemon carrying this effect falls Asleep the moment
+            // its controller feeds it Energy from the Energy Zone.
+            let falls_asleep = self.in_play_pokemon[actor][in_play_idx]
+                .as_ref()
+                .is_some_and(|pokemon| {
+                    pokemon.get_active_effects().iter().any(|effect| {
+                        matches!(effect, CardEffect::AsleepWhenEnergyAttachedFromZone)
+                    })
+                });
+            if falls_asleep {
+                debug!("Stellar Cradle: Energy from the Energy Zone puts the Pokemon to Sleep");
+                self.apply_status_condition(actor, in_play_idx, StatusCondition::Asleep);
+            }
         }
         attached
     }
@@ -99,7 +117,7 @@ impl State {
             let pokemon = self.in_play_pokemon[actor][in_play_idx]
                 .as_ref()
                 .expect("Pokemon should be there if attaching energy to it");
-            get_ability_mechanic(&pokemon.card).cloned()
+            pokemon.ability_mechanic().cloned()
         };
 
         if from_zone {
@@ -116,7 +134,7 @@ impl State {
                         (opponent, 0),
                         &[(20, actor, in_play_idx)],
                         false,
-                        None,
+                        DamageModifierContext::default(),
                     );
                 }
             }
@@ -141,7 +159,7 @@ impl State {
                     (actor, in_play_idx),
                     &[(20, opponent, 0)],
                     false,
-                    None,
+                    DamageModifierContext::default(),
                 );
             }
 
@@ -172,6 +190,32 @@ impl State {
                     .expect("Pokemon should be there if attaching energy to it");
                 pokemon.heal(20);
             }
+
+            // Check for Porygon2's Buggy Evolution ability
+            if matches!(
+                mechanic,
+                AbilityMechanic::EvolveFromDeckOnZoneEnergyAttachToSelf
+            ) && from_zone
+            {
+                self.evolve_from_deck_on_self(actor, in_play_idx);
+            }
         }
+    }
+
+    fn evolve_from_deck_on_self(&mut self, actor: usize, in_play_idx: usize) {
+        let holder = self.in_play_pokemon[actor][in_play_idx]
+            .as_ref()
+            .expect("Pokemon should be there if evolving it");
+        // The deck is already randomly ordered from prior shuffles, so the first matching card
+        // is as good as a random pick; `apply_evolve` (from_deck: true) removes it from the deck.
+        let Some(evolution_card) = self.decks[actor]
+            .cards
+            .iter()
+            .find(|card| can_evolve_into(card, holder))
+            .cloned()
+        else {
+            return;
+        };
+        apply_evolve(actor, self, &evolution_card, in_play_idx, true);
     }
 }

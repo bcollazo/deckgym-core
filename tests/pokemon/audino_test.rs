@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -30,7 +30,7 @@ fn test_audino_healing_light_heals_each_of_your_pokemon() {
     // Apply Healing Light attack (does 40 damage + heals 10 from each of your Pokemon)
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3140Audino, 0),
         is_stack: false,
     });
 
@@ -68,7 +68,7 @@ fn test_mega_audino_ex_heartfelt_shine_heals_all_pokemon() {
     // Apply Heartfelt Shine attack (does 90 damage + heals 30 from each of your Pokemon)
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3141MegaAudinoEx, 0),
         is_stack: false,
     });
 

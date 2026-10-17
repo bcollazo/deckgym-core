@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -32,7 +32,7 @@ fn test_marshadow_revenge_base_damage() {
     // Apply Revenge attack (attack index 0)
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a047Marshadow, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);
@@ -70,7 +70,7 @@ fn test_marshadow_revenge_boosted_damage() {
     // Apply Revenge attack
     let attack_action = Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1a047Marshadow, 0),
         is_stack: false,
     };
     game.apply_action(&attack_action);

@@ -1,9 +1,9 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -33,7 +33,7 @@ fn test_gallade_ex_energized_blade_scales_with_opponent_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2095GalladeEx, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -63,7 +63,7 @@ fn test_gallade_ex_energized_blade_no_bonus_without_opponent_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A2095GalladeEx, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -97,7 +97,7 @@ fn test_gallade_earthen_sword_bonus_damage_with_stadium() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3084Gallade, 0),
         is_stack: false,
     });
     game.play_until_stable();
@@ -131,7 +131,7 @@ fn test_gallade_earthen_sword_base_damage_without_stadium() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3084Gallade, 0),
         is_stack: false,
     });
     game.play_until_stable();

@@ -48,7 +48,8 @@ fn test_field_blower_discards_opponents_tool() {
             a.action,
             SimpleAction::DiscardToolFromPokemon {
                 player: 1,
-                in_play_idx: 0
+                in_play_idx: 0,
+                tool_idx: 0
             }
         )),
         "Should offer discarding opponent's tool"
@@ -62,7 +63,8 @@ fn test_field_blower_discards_opponents_tool() {
                 a.action,
                 SimpleAction::DiscardToolFromPokemon {
                     player: 1,
-                    in_play_idx: 0
+                    in_play_idx: 0,
+                    tool_idx: 0
                 }
             )
         })
@@ -75,8 +77,8 @@ fn test_field_blower_discards_opponents_tool() {
         state.in_play_pokemon[1][0]
             .as_ref()
             .unwrap()
-            .attached_tool
-            .is_none(),
+            .attached_tools
+            .is_empty(),
         "Opponent's tool should be discarded"
     );
     assert!(

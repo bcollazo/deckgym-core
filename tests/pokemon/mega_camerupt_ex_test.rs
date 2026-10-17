@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -27,7 +27,7 @@ fn test_mega_camerupt_ex_volcanic_kaboom_knocks_out_only_opponent_pokemon() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3023MegaCameruptEx, 0),
         is_stack: false,
     });
     game.play_until_stable();

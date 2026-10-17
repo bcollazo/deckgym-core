@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 /// Test Bonsly's Teary Attack deals 10 damage to the opponent
@@ -21,7 +21,7 @@ fn test_bonsly_teary_attack_deals_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3078Bonsly, 0),
         is_stack: false,
     });
 
@@ -51,7 +51,7 @@ fn test_bonsly_teary_attack_reduces_opponent_damage() {
     // Bonsly uses Teary Attack (no energy required): 10 damage + -30 effect on opponent
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3078Bonsly, 0),
         is_stack: false,
     });
 
@@ -65,7 +65,7 @@ fn test_bonsly_teary_attack_reduces_opponent_damage() {
     // Bulbasaur attacks with Vine Whip (normally 40 damage, should be 40-30=10 with effect)
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 

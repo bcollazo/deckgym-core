@@ -2,7 +2,7 @@ use deckgym::{
     actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 #[test]
@@ -25,7 +25,7 @@ fn test_grovyle_slicing_snipe_targets_only_opponents_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3006Grovyle, 0),
         is_stack: false,
     });
 
@@ -97,7 +97,7 @@ fn test_grovyle_slicing_snipe_does_nothing_without_opponents_bench() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3006Grovyle, 0),
         is_stack: false,
     });
 

@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::{get_initialized_game, get_test_game_with_board},
+    test_support::{attack_action, get_initialized_game, get_test_game_with_board},
     Game,
 };
 
@@ -63,7 +63,7 @@ fn test_poliwrath_counterattack_damages_attacker() {
 
     game.apply_action(&Action {
         actor: 1,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1001Bulbasaur, 0),
         is_stack: false,
     });
 
@@ -204,9 +204,11 @@ fn test_giratina_ex_broken_space_bellow_attaches_energy_and_offers_end_turn() {
     );
 
     let (_actor, actions) = state.generate_possible_actions();
-    assert!(actions
-        .iter()
-        .any(|action| matches!(action.action, SimpleAction::EndTurn)));
+    assert_eq!(actions.len(), 1);
+    assert!(matches!(actions[0].action, SimpleAction::EndTurn));
+
+    game.apply_action(&actions[0]);
+    assert_eq!(game.get_state_clone().current_player, 1);
 }
 
 #[test]
@@ -420,7 +422,7 @@ fn test_oricorio_safeguard_prevents_damage_from_ex_attack() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A1129MewtwoEx, 0),
         is_stack: false,
     });
 
@@ -539,7 +541,7 @@ fn test_milotic_healing_ripples_heals_on_evolve() {
     state.set_board(
         vec![
             PlayedCard::from_id(CardId::A4a021Feebas),
-            PlayedCard::from_id(CardId::A1053Squirtle).with_damage(60),
+            PlayedCard::from_id(CardId::A1053Squirtle).with_damage(40),
         ],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
@@ -631,7 +633,7 @@ fn test_wartortle_shell_shield_prevents_bench_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::A4a025RaikouEx, 0),
         is_stack: false,
     });
 
@@ -672,6 +674,47 @@ fn test_reuniclus_infinite_increase_raises_effective_hp_on_attach() {
 }
 
 #[test]
+fn test_serperior_regal_bloom_raises_effective_hp_on_attach() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::B4a005Serperior)],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: SimpleAction::Attach {
+            attachments: vec![(1, EnergyType::Grass, 0)],
+            is_turn_energy: true,
+        },
+        is_stack: false,
+    });
+
+    assert_eq!(game.get_state_clone().get_active(0).get_remaining_hp(), 130);
+}
+
+/// A benched Serperior with Jungle Totem doubles the [G] Energy that a second, Active
+/// Serperior with Regal Bloom sees: 3 attached [G] Energy count as 6, for +180 HP.
+#[test]
+fn test_serperior_jungle_totem_doubles_grass_energy_for_serperior_regal_bloom_hp() {
+    let game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::B4a005Serperior).with_energy(vec![
+                EnergyType::Grass,
+                EnergyType::Grass,
+                EnergyType::Grass,
+            ]),
+            PlayedCard::from_id(CardId::A1a006Serperior),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+
+    assert_eq!(
+        game.get_state_clone().get_active(0).get_remaining_hp(),
+        100 + 180
+    );
+}
+
+#[test]
 fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
     let game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::A2091Riolu).with_energy(vec![EnergyType::Fighting])],
@@ -681,7 +724,7 @@ fn test_goomy_sticky_membrane_blocks_exact_cost_attack() {
     let (_actor, actions) = game.get_state_clone().generate_possible_actions();
     assert!(!actions
         .iter()
-        .any(|action| matches!(action.action, SimpleAction::Attack(0))));
+        .any(|action| matches!(&action.action, SimpleAction::Attack(atk) if atk.title == "Jab")));
 }
 
 #[test]
@@ -699,7 +742,7 @@ fn test_aegislash_cursed_metal_boosts_its_own_attack_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B1172Aegislash, 0),
         is_stack: false,
     });
 

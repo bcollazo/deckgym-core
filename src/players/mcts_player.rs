@@ -115,7 +115,15 @@ impl MctsNode {
             // will take the actor from the action itself. This is different
             // than how .play_tick does it, because there we need the actor
             // to choose who plays.
-            let (_, new_actions) = new_state.generate_possible_actions();
+            //
+            // A finished game has no moves (and may have an empty Active Spot, e.g. after a
+            // game-ending Knock Out), so terminal children get none; `is_terminal` keeps them
+            // from being expanded.
+            let new_actions = if new_state.is_game_over() {
+                vec![]
+            } else {
+                new_state.generate_possible_actions().1
+            };
             self.children.push(MctsNode::new(new_state, new_actions));
         }
     }

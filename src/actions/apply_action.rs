@@ -1,29 +1,40 @@
-use std::{collections::HashMap, panic};
+use std::{
+    collections::{hash_map::DefaultHasher, HashMap},
+    hash::{Hash, Hasher},
+    panic,
+};
 
 use log::debug;
-use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng};
+use rand::{distributions::WeightedIndex, prelude::Distribution, rngs::StdRng, Rng, SeedableRng};
 
 use crate::{
-    actions::effect_ability_mechanic_map::{get_ability_mechanic, has_ability_mechanic},
     actions::{
         abilities::AbilityMechanic,
         apply_abilities_action::forecast_ability,
-        apply_action_helpers::{apply_activate, wrap_with_common_logic, Mutation},
-        shared_mutations::{pokemon_search_outcomes, pokemon_search_outcomes_by_type_for_player},
+        apply_action_helpers::{
+            apply_activate, shuffle_in_play_pokemon_and_attachments_into_deck,
+            wrap_with_common_logic,
+        },
+        attack_helpers::energy_blender_choices,
     },
-    effects::TurnEffect,
-    hooks::{get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card},
+    effects::{CardEffect, TurnEffect},
+    hooks::{
+        get_retreat_cost, on_bench_from_hand, on_evolve, to_playable_card, DamageModifierContext,
+    },
     models::{Card, EnergyType},
-    stadiums::{is_area_zero_active, is_fragrant_forest_active, is_mesagoza_active},
-    state::State,
+    state::{PendingCoinReflip, State},
     tools,
 };
 
 use super::{
-    apply_action_helpers::{forecast_end_turn, handle_damage, Mutations},
-    apply_attack_action::{forecast_attack, forecast_copied_attack},
+    apply_action_helpers::{
+        enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
+        handle_damage_only, handle_knockouts, set_guts_survivors_to_10, Mutation, Mutations,
+    },
+    apply_attack_action::forecast_attack,
+    apply_stadium_action::{self, forecast_use_stadium},
     apply_trainer_action::forecast_trainer_action,
-    outcomes::{CoinSeq, Outcomes},
+    outcomes::Outcomes,
     Action, SimpleAction,
 };
 
@@ -31,7 +42,30 @@ use super::{
 /// and then chooses one of them to apply. This is so that bot implementations can re-use the
 /// `forecast_action` function.
 pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
-    let (probabilities, mut lazy_mutations) = forecast_action(state, action).into_branches();
+    let _watch = crate::perf_watch::watch("apply_action", state, Some(action));
+    // Play samples from the exact distribution; only search sees the capped forecast.
+    let outcomes = forecast_action_exact(state, action);
+
+    // Victini's Victory Star / Gholdengo's Luxury Coin: if this is an eligible coin-flip action,
+    // sample the coins now but park the result instead of committing it, and let the player
+    // choose whether to re-flip.
+    if let Some(pending) = maybe_defer_for_coin_reflip(rng, state, action, &outcomes) {
+        let reflipper_idx = pending.reflipper_idx;
+        let actor = pending.actor;
+        state.set_pending_coin_reflip(pending);
+        state.move_generation_stack.push((
+            actor,
+            vec![
+                SimpleAction::Noop,
+                SimpleAction::UseAbility {
+                    in_play_idx: reflipper_idx,
+                },
+            ],
+        ));
+        return;
+    }
+
+    let (probabilities, mut lazy_mutations) = outcomes.into_branches();
     if probabilities.len() == 1 {
         lazy_mutations.remove(0)(rng, state, action);
     } else {
@@ -41,9 +75,149 @@ pub fn apply_action(rng: &mut StdRng, state: &mut State, action: &Action) {
     }
 }
 
+/// Decides whether `action` should pause for a coin-reflip Ability decision, and if so pre-rolls
+/// the coins so the player is choosing with knowledge of the result (as the real cards allow).
+///
+/// Returns `None` — meaning "resolve normally" — unless all of the following hold:
+///   - the action is not itself a stacked follow-up and actually involves coin flips,
+///   - no reflip decision is already pending,
+///   - and either
+///       * it is an `Attack` by a `[R]` (Fire) Pokémon and the acting player has an unused
+///         Victini in play (Victory Star), or
+///       * it is a Trainer card being played and the acting player has an unused Gholdengo in
+///         play (Luxury Coin).
+fn maybe_defer_for_coin_reflip(
+    rng: &mut StdRng,
+    state: &State,
+    action: &Action,
+    outcomes: &Outcomes,
+) -> Option<PendingCoinReflip> {
+    if action.is_stack || state.pending_coin_reflip.is_some() || !outcomes.has_coin_flips() {
+        return None;
+    }
+
+    let reflipper_idx = match &action.action {
+        SimpleAction::Attack(_) => {
+            let attacker_is_fire = state.in_play_pokemon[action.actor][0]
+                .as_ref()
+                .is_some_and(|pokemon| pokemon.is_type(EnergyType::Fire));
+            if !attacker_is_fire {
+                return None;
+            }
+            state.available_coin_reflip_idx(action.actor, &AbilityMechanic::VictoryStarReflip)?
+        }
+        SimpleAction::Play { .. } => {
+            state.available_coin_reflip_idx(action.actor, &AbilityMechanic::LuxuryCoinReflip)?
+        }
+        _ => return None,
+    };
+
+    // Roll the coins now; the chosen branch's sequence is what the player sees and may reject.
+    let original_flips = sample_coin_sequence(rng, outcomes)?;
+
+    Some(PendingCoinReflip {
+        actor: action.actor,
+        action: action.action.clone(),
+        original_flips,
+        reflipper_idx,
+    })
+}
+
+/// Samples a branch from `outcomes` by probability and returns its coin sequence.
+fn sample_coin_sequence(rng: &mut StdRng, outcomes: &Outcomes) -> Option<Vec<bool>> {
+    let probabilities = outcomes.branch_probabilities();
+    let chosen_index = if probabilities.len() == 1 {
+        0
+    } else {
+        WeightedIndex::new(&probabilities).ok()?.sample(rng)
+    };
+    outcomes.coin_sequence_at(chosen_index)
+}
+
+/// Resolves a parked coin-reflip decision by re-forecasting the stored action and either
+/// replaying the original coin sequence (`reflip == false`) or committing a fresh, independent
+/// roll (`reflip == true`).
+pub(crate) fn resolve_pending_coin_reflip(
+    rng: &mut StdRng,
+    state: &mut State,
+    pending: PendingCoinReflip,
+    reflip: bool,
+) {
+    let attack_action = Action {
+        actor: pending.actor,
+        action: pending.action.clone(),
+        is_stack: false,
+    };
+
+    if reflip {
+        // Which "once per turn" flag to burn depends on the Ability that offered the reflip.
+        if let Some(mechanic) = state.in_play_pokemon[pending.actor][pending.reflipper_idx]
+            .as_ref()
+            .and_then(|pokemon| pokemon.ability_mechanic())
+        {
+            state.mark_coin_reflip_used(pending.actor, mechanic);
+        }
+        // Will covered the original flip (the parked coins were rolled from the forced
+        // outcomes). The reflip is a fresh batch of coins, so Will is spent.
+        state.consume_pending_will_first_heads();
+    }
+
+    let outcomes = forecast_action(state, &attack_action);
+    let (probabilities, mut lazy_mutations) = if reflip {
+        // Fresh coins: resolve the re-forecast attack normally.
+        outcomes.into_branches()
+    } else {
+        // Declined: replay exactly what was already flipped.
+        match outcomes.force_sequence(&pending.original_flips) {
+            Ok(forced) => forced.into_branches(),
+            Err(original) => original.into_branches(),
+        }
+    };
+
+    let chosen_index = if probabilities.len() == 1 {
+        0
+    } else {
+        WeightedIndex::new(&probabilities)
+            .expect("attack outcomes should form a valid distribution")
+            .sample(rng)
+    };
+    lazy_mutations.remove(chosen_index)(rng, state, &attack_action);
+}
+
 /// This should be mostly a "router" function that calls the appropriate forecast function
 /// based on the action type.
+/// Most branches `forecast_action` returns. Search players expand every branch of every
+/// chance node, so an effect with hundreds of possible results (drawing 4 of 14 deck cards
+/// has 1001) multiplies their work by that much.
+pub const MAX_FORECAST_BRANCHES: usize = 20;
+
+/// The possible results of `action` for search players: the exact distribution when it has
+/// at most `MAX_FORECAST_BRANCHES` branches, otherwise that many branches sampled from it
+/// (`Outcomes::sample_down`). The sample is seeded by the state and action, so a forecast is
+/// reproducible. Playing an action (`apply_action`) always uses the exact distribution.
 pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
+    let outcomes = forecast_action_exact(state, action);
+    if outcomes.len() <= MAX_FORECAST_BRANCHES {
+        return outcomes;
+    }
+    let mut hasher = DefaultHasher::new();
+    state.hash(&mut hasher);
+    format!("{action:?}").hash(&mut hasher);
+    outcomes.sample_down(
+        MAX_FORECAST_BRANCHES,
+        &mut StdRng::seed_from_u64(hasher.finish()),
+    )
+}
+
+/// Every possible result of `action` with its probability, however many there are.
+pub fn forecast_action_exact(state: &State, action: &Action) -> Outcomes {
+    let mut watch = crate::perf_watch::watch("forecast_action", state, Some(action));
+    let outcomes = forecast_action_unwatched(state, action);
+    watch.branches(outcomes.len());
+    outcomes
+}
+
+fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
     let mut outcomes = match &action.action {
         // Deterministic Actions
         SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
@@ -54,35 +228,52 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::Evolve { .. }
         | SimpleAction::Activate { .. }
         | SimpleAction::Retreat(_)
-        | SimpleAction::ApplyDamage { .. }
         | SimpleAction::ScheduleDelayedSpotDamage { .. }
+        | SimpleAction::ScheduleDelayedSpotKnockOut { .. }
         | SimpleAction::Heal { .. }
         | SimpleAction::HealAndDiscardEnergy { .. }
         | SimpleAction::MoveAllDamage { .. }
         | SimpleAction::ApplyEeveeBagDamageBoost
         | SimpleAction::HealAllEeveeEvolutions
         | SimpleAction::DiscardFossil { .. }
+        | SimpleAction::DiscardOwnBenchedThenDamage { .. }
+        | SimpleAction::DiscardOwnBenchedGroupThenDamage { .. }
+        | SimpleAction::MoveEnergyAndReoffer { .. }
+        | SimpleAction::DiscardOwnCardsThenDamage { .. }
         | SimpleAction::ReturnPokemonToHand { .. }
         | SimpleAction::ShuffleInPlayPokemonIntoDeck { .. }
         | SimpleAction::DiscardToolFromPokemon { .. }
         | SimpleAction::DiscardActiveStadium
         | SimpleAction::DiscardRandomOpponentActiveEnergy
-        | SimpleAction::Noop => forecast_deterministic_action(),
+        | SimpleAction::MoveRandomOpponentEnergyToActive { .. }
+        | SimpleAction::ApplyStatusToOpponentActive { .. }
+        | SimpleAction::ApplyStatusesToOpponentActive { .. }
+        | SimpleAction::HealAndCureConditions { .. }
+        | SimpleAction::MoveDamageToOpponentActive { .. }
+        | SimpleAction::BenchOpponentPokemonFromDiscard { .. }
+        | SimpleAction::ShuffleOwnDeck
+        | SimpleAction::ShuffleRandomOwnHandCardIntoDeck
+        | SimpleAction::MoveOpponentActiveEnergyToSelf { .. }
+        | SimpleAction::MoveActiveEnergyToBench { .. }
+        | SimpleAction::SwitchOpponentBenchedThenDamage { .. } => forecast_deterministic_action(),
+        // Noop is the "decline" branch of Victini's Victory Star prompt when a coin result is
+        // parked; otherwise it is an ordinary no-op ("say no" to an optional effect).
+        SimpleAction::Noop => {
+            if state.pending_coin_reflip.is_some() {
+                forecast_decline_coin_reflip()
+            } else {
+                forecast_deterministic_action()
+            }
+        }
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
-        SimpleAction::Attack(index) => forecast_attack(action.actor, state, *index),
-        SimpleAction::UseCopiedAttack {
-            source_player,
-            source_in_play_idx,
-            attack_index,
-            require_attacker_energy_match,
-        } => forecast_copied_attack(
-            action.actor,
-            state,
-            *source_player,
-            *source_in_play_idx,
-            *attack_index,
-            *require_attacker_energy_match,
-        ),
+        SimpleAction::ApplyDamage {
+            attacking_ref,
+            targets,
+            is_from_active_attack,
+        } => forecast_apply_damage(state, *attacking_ref, targets, *is_from_active_attack),
+        SimpleAction::Attack(attack) => {
+            forecast_attack(action.actor, state, attack, action.is_stack)
+        }
         SimpleAction::Play { trainer_card } => {
             forecast_trainer_action(action.actor, state, trainer_card)
         }
@@ -95,13 +286,29 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
         SimpleAction::ShuffleOwnCardsIntoDeck { cards } => {
             forecast_shuffle_own_cards_into_deck(action.actor, cards)
         }
+        SimpleAction::SwitchHandCardForRandomTool { hand_card } => {
+            apply_stadium_action::forecast_switch_hand_card_for_random_tool(
+                state,
+                action.actor,
+                hand_card,
+            )
+        }
         SimpleAction::ShuffleOpponentSupporter { supporter_card } => {
             forecast_shuffle_opponent_supporter(action.actor, supporter_card)
+        }
+        SimpleAction::ShuffleSelfAndAttachmentsIntoDeck { in_play_idx } => {
+            forecast_shuffle_self_and_attachments_into_deck(action.actor, *in_play_idx)
         }
         SimpleAction::DiscardOpponentSupporter { supporter_card } => {
             forecast_discard_opponent_supporter(action.actor, supporter_card)
         }
         SimpleAction::DiscardOwnCards { cards } => forecast_discard_own_cards(action.actor, cards),
+        SimpleAction::PutDiscardCardInHand { card } => {
+            forecast_put_discard_card_in_hand(action.actor, card)
+        }
+        SimpleAction::BenchOpponentPokemonFromHand { cards } => {
+            forecast_bench_opponent_pokemon_from_hand(action.actor, cards)
+        }
         SimpleAction::AttachFromDiscard {
             in_play_idx,
             num_random_energies,
@@ -111,6 +318,11 @@ pub fn forecast_action(state: &State, action: &Action) -> Outcomes {
             *in_play_idx,
             *num_random_energies,
         ),
+        SimpleAction::AttachTypedFromDiscard {
+            in_play_idx,
+            energy_type,
+            count,
+        } => forecast_attach_typed_from_discard(*in_play_idx, *energy_type, *count),
         SimpleAction::SadaAttach { assignments } => forecast_sada_attach(assignments),
         SimpleAction::UseStadium => forecast_use_stadium(state, action.actor),
         // acting_player is not passed here, because there is only 1 turn to end. The current turn.
@@ -142,20 +354,83 @@ fn is_will_eligible_action(action: &SimpleAction) -> bool {
     matches!(
         action,
         SimpleAction::Attack(_)
-            | SimpleAction::UseCopiedAttack { .. }
             | SimpleAction::UseAbility { .. }
             | SimpleAction::Play { .. }
             | SimpleAction::UseStadium
     )
 }
 
-fn forecast_deterministic_action() -> Outcomes {
-    Outcomes::single_fn(move |_, state, action| {
-        apply_deterministic_action(state, action);
+/// Declining Victini's Victory Star: replay the coin sequence that was already flipped.
+fn forecast_decline_coin_reflip() -> Outcomes {
+    Outcomes::single_fn(move |rng, state, _action| {
+        if let Some(pending) = state.take_pending_coin_reflip() {
+            resolve_pending_coin_reflip(rng, state, pending, false);
+        }
     })
 }
 
-fn apply_deterministic_action(state: &mut State, action: &Action) {
+fn forecast_deterministic_action() -> Outcomes {
+    Outcomes::single_fn(move |rng, state, action| {
+        apply_deterministic_action(rng, state, action);
+    })
+}
+
+/// ApplyDamage (damage queued through the move-generation stack, e.g. Mega Kangaskhan's second
+/// punch or Raikou ex's spot damage) is deterministic unless a target has the Guts ability and
+/// would be knocked out: each such target flips its own survival coin, independently of any
+/// Guts flip already resolved earlier in the same attack.
+fn forecast_apply_damage(
+    state: &State,
+    attacking_ref: (usize, usize),
+    targets: &[(u32, usize, usize)],
+    is_from_active_attack: bool,
+) -> Outcomes {
+    let flipping = guts_flipping_targets(
+        state,
+        attacking_ref,
+        targets,
+        is_from_active_attack,
+        DamageModifierContext {
+            attack_name: None,
+            attack_effect: None,
+        },
+    );
+
+    if flipping.is_empty() {
+        let targets = targets.to_vec();
+        return Outcomes::single_fn(move |_, state, _| {
+            handle_damage(state, attacking_ref, &targets, is_from_active_attack, None);
+        });
+    }
+
+    // One branch per heads/tails combination; on heads the damage still applies (so on-damage
+    // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
+    let subsets = enumerate_guts_survivor_subsets(&flipping);
+    let probabilities = vec![1.0 / subsets.len() as f64; subsets.len()];
+    let mutations: Mutations = subsets
+        .into_iter()
+        .map(|survivors| {
+            let targets = targets.to_vec();
+            Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
+                handle_damage_only(
+                    state,
+                    attacking_ref,
+                    &targets,
+                    is_from_active_attack,
+                    DamageModifierContext {
+                        attack_name: None,
+                        attack_effect: None,
+                    },
+                );
+                set_guts_survivors_to_10(state, &survivors);
+                handle_knockouts(state, attacking_ref, is_from_active_attack);
+            }) as Mutation
+        })
+        .collect();
+    Outcomes::from_parts(probabilities, mutations)
+}
+
+fn apply_deterministic_action(rng: &mut StdRng, state: &mut State, action: &Action) {
     match &action.action {
         SimpleAction::DrawCard { amount } => {
             for _ in 0..*amount {
@@ -196,11 +471,6 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             in_play_idx,
         } => apply_retreat(*player, state, *in_play_idx, true),
         SimpleAction::Retreat(position) => apply_retreat(action.actor, state, *position, false),
-        SimpleAction::ApplyDamage {
-            attacking_ref,
-            targets,
-            is_from_active_attack,
-        } => handle_damage(state, *attacking_ref, targets, *is_from_active_attack, None),
         SimpleAction::ScheduleDelayedSpotDamage {
             target_player,
             target_in_play_idx,
@@ -212,9 +482,15 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
             *target_in_play_idx,
             *amount,
         ),
-        SimpleAction::UseCopiedAttack { .. } => {
-            panic!("Copied attacks should not be applied through deterministic actions")
-        }
+        SimpleAction::ScheduleDelayedSpotKnockOut {
+            target_player,
+            target_in_play_idx,
+        } => apply_schedule_delayed_spot_knock_out(
+            state,
+            action.actor,
+            *target_player,
+            *target_in_play_idx,
+        ),
         // Trainer-Specific Actions
         SimpleAction::Heal {
             in_play_idx,
@@ -242,17 +518,57 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
         SimpleAction::DiscardFossil { in_play_idx } => {
             apply_discard_fossil(action.actor, state, *in_play_idx)
         }
+        SimpleAction::DiscardOwnBenchedThenDamage {
+            in_play_idx,
+            damage,
+        } => apply_discard_own_benched_then_damage(action.actor, state, *in_play_idx, *damage),
+        SimpleAction::DiscardOwnBenchedGroupThenDamage {
+            in_play_indices,
+            damage,
+        } => apply_discard_own_benched_group_then_damage(
+            action.actor,
+            state,
+            in_play_indices,
+            *damage,
+        ),
+        SimpleAction::DiscardOwnCardsThenDamage {
+            cards,
+            damage,
+            target_player,
+            target_in_play_idx,
+        } => apply_discard_own_cards_then_damage(
+            action.actor,
+            state,
+            cards,
+            *damage,
+            *target_player,
+            *target_in_play_idx,
+        ),
         SimpleAction::ReturnPokemonToHand { in_play_idx } => {
             apply_return_pokemon_to_hand(action.actor, state, *in_play_idx)
         }
         SimpleAction::ShuffleInPlayPokemonIntoDeck { in_play_idx } => {
             apply_shuffle_in_play_pokemon_into_deck(action.actor, state, *in_play_idx)
         }
+        SimpleAction::MoveEnergyAndReoffer {
+            from_in_play_idx,
+            to_in_play_idx,
+            energy_type,
+            remaining_moves,
+        } => apply_move_energy_and_reoffer(
+            state,
+            action.actor,
+            *from_in_play_idx,
+            *to_in_play_idx,
+            *energy_type,
+            *remaining_moves,
+        ),
         SimpleAction::DiscardToolFromPokemon {
             player,
             in_play_idx,
+            tool_idx,
         } => {
-            state.discard_tool(*player, *in_play_idx);
+            state.discard_tool_at(*player, *in_play_idx, *tool_idx);
         }
         SimpleAction::DiscardActiveStadium => {
             if let Some((stadium, owner)) = state.take_active_stadium() {
@@ -265,9 +581,109 @@ fn apply_deterministic_action(state: &mut State, action: &Action) {
                 state.discard_from_active(opponent, &[energy]);
             }
         }
+        SimpleAction::MoveRandomOpponentEnergyToActive { from_in_play_idx } => {
+            let opponent = (action.actor + 1) % 2;
+            // NOTE: Using the last energy instead of a random one to avoid expanding the game
+            // tree, mirroring DiscardRandomOpponentActiveEnergy and Piers.
+            apply_move_last_energy(state, opponent, *from_in_play_idx, 0);
+        }
+        SimpleAction::ApplyStatusToOpponentActive { condition } => {
+            let opponent = (action.actor + 1) % 2;
+            state.apply_status_condition(opponent, 0, *condition);
+        }
+        SimpleAction::ApplyStatusesToOpponentActive { conditions } => {
+            let opponent = (action.actor + 1) % 2;
+            for condition in conditions {
+                state.apply_status_condition(opponent, 0, *condition);
+            }
+        }
+        SimpleAction::MoveOpponentActiveEnergyToSelf { to_in_play_idx } => {
+            let opponent = (action.actor + 1) % 2;
+            apply_move_energy_between_players(state, opponent, 0, action.actor, *to_in_play_idx);
+        }
+        SimpleAction::HealAndCureConditions {
+            in_play_idx,
+            amount,
+            conditions,
+        } => {
+            if let Some(pokemon) = state.in_play_pokemon[action.actor][*in_play_idx].as_mut() {
+                pokemon.heal(*amount);
+                for condition in conditions {
+                    pokemon.clear_status_condition(*condition);
+                }
+            }
+        }
+        SimpleAction::MoveDamageToOpponentActive {
+            from_in_play_idx,
+            amount,
+        } => apply_move_damage_to_opponent_active(state, action.actor, *from_in_play_idx, *amount),
+        SimpleAction::BenchOpponentPokemonFromDiscard { card } => {
+            apply_bench_opponent_pokemon_from_discard(state, action.actor, card)
+        }
+        SimpleAction::ShuffleOwnDeck => state.decks[action.actor].shuffle(false, rng),
+        SimpleAction::ShuffleRandomOwnHandCardIntoDeck => {
+            if !state.hands[action.actor].is_empty() {
+                let idx = rng.gen_range(0..state.hands[action.actor].len());
+                let card = state.hands[action.actor].remove(idx);
+                debug!("Shuffling {card} from hand into deck");
+                state.decks[action.actor].cards.push(card);
+                state.decks[action.actor].shuffle(false, rng);
+            }
+        }
+        SimpleAction::MoveActiveEnergyToBench {
+            to_in_play_idx,
+            amount,
+        } => apply_move_active_energy_to_bench(state, action.actor, *to_in_play_idx, *amount),
+        SimpleAction::SwitchOpponentBenchedThenDamage {
+            in_play_idx,
+            damage,
+        } => apply_switch_opponent_benched_then_damage(action.actor, state, *in_play_idx, *damage),
         SimpleAction::Noop => {}
         _ => panic!("Deterministic Action expected"),
     }
+}
+
+/// Acerola: move up to `amount` damage from one of the actor's own Pokémon onto the opponent's
+/// Active Pokémon. Only the damage actually present is moved, so a Pokémon with 20 damage moves
+/// 20 rather than conjuring the full amount.
+fn apply_move_damage_to_opponent_active(
+    state: &mut State,
+    actor: usize,
+    from_in_play_idx: usize,
+    amount: u32,
+) {
+    let opponent = (actor + 1) % 2;
+    let moved = {
+        let Some(source) = state.in_play_pokemon[actor][from_in_play_idx].as_mut() else {
+            return;
+        };
+        let moved = amount.min(source.get_damage_counters());
+        source.heal(moved);
+        moved
+    };
+    if moved == 0 || state.in_play_pokemon[opponent][0].is_none() {
+        return;
+    }
+    // Not an attack, so no weakness/damage modifiers apply — mirrors how other "place damage
+    // counters" effects resolve.
+    state.in_play_pokemon[opponent][0]
+        .as_mut()
+        .expect("Opponent active should be there")
+        .apply_damage(moved);
+    handle_knockouts(state, (actor, 0), false);
+}
+
+/// Pokémon Flute: put a Basic Pokémon from the opponent's discard pile onto their Bench.
+fn apply_bench_opponent_pokemon_from_discard(state: &mut State, actor: usize, card: &Card) {
+    let opponent = (actor + 1) % 2;
+    let Some(discard_idx) = state.discard_piles[opponent].iter().position(|c| c == card) else {
+        return;
+    };
+    let Some(bench_idx) = (1..4).find(|i| state.in_play_pokemon[opponent][*i].is_none()) else {
+        return;
+    };
+    let card = state.discard_piles[opponent].remove(discard_idx);
+    place_pokemon_in_play(state, opponent, &card, bench_idx);
 }
 
 fn apply_attach_energy(
@@ -292,10 +708,24 @@ fn apply_attach_tool(state: &mut State, actor: usize, in_play_idx: usize, tool_c
     let pokemon = state.in_play_pokemon[actor][in_play_idx]
         .as_mut()
         .expect("Pokemon should be there if attaching tool to it");
-    pokemon.attached_tool = Some(tool_card.clone());
+    pokemon.attach_tool(tool_card.clone());
 
-    if tools::has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron) {
+    // Steel Apron: "...recovers from all Special Conditions..." only for a [M] holder.
+    if tools::has_tool(pokemon, crate::card_ids::CardId::A4153SteelApron)
+        && pokemon.is_type(crate::models::EnergyType::Metal)
+    {
         pokemon.cure_status_conditions();
+    }
+}
+
+/// Moves 1 Energy from `from_idx` to `to_idx` within `player`'s own board, without the caller
+/// having to know which Energy types are attached.
+fn apply_move_last_energy(state: &mut State, player: usize, from_idx: usize, to_idx: usize) {
+    let energy = state.in_play_pokemon[player][from_idx]
+        .as_ref()
+        .and_then(|pokemon| pokemon.attached_energy.last().copied());
+    if let Some(energy) = energy {
+        apply_move_energy(state, player, from_idx, to_idx, energy, 1);
     }
 }
 
@@ -337,6 +767,31 @@ fn apply_move_energy(
     }
 }
 
+/// Like `apply_move_energy`, but moves the last-attached Energy across the two players' boards
+/// (e.g. Team Rocket's Raticate ex's Thieving Incisors, which steals Energy from the opponent's
+/// Active Pokémon). Deterministically moves the *last* attached Energy rather than a random one,
+/// mirroring `DiscardRandomOpponentActiveEnergy` and friends.
+fn apply_move_energy_between_players(
+    state: &mut State,
+    from_player: usize,
+    from_idx: usize,
+    to_player: usize,
+    to_idx: usize,
+) {
+    let energy = state.in_play_pokemon[from_player][from_idx]
+        .as_mut()
+        .and_then(|from_card| from_card.attached_energy.pop());
+    let Some(energy) = energy else {
+        return;
+    };
+    if let Some(to_card) = state.in_play_pokemon[to_player][to_idx].as_mut() {
+        to_card.attached_energy.push(energy);
+    } else if let Some(from_card) = state.in_play_pokemon[from_player][from_idx].as_mut() {
+        // Put the energy back if the destination vanished (should not normally happen).
+        from_card.attached_energy.push(energy);
+    }
+}
+
 pub(crate) fn apply_place_card(
     state: &mut State,
     actor: usize,
@@ -344,25 +799,43 @@ pub(crate) fn apply_place_card(
     index: usize,
     from_deck: bool,
 ) {
-    let played_card = to_playable_card(card, true);
-    state.in_play_pokemon[actor][index] = Some(played_card);
-    state.refresh_starting_plains_bonus_for_idx(actor, index);
-    // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): cure status conditions on entry.
-    if let Some(AbilityMechanic::SoothingWind { energy_type }) = get_ability_mechanic(card) {
-        debug!("SoothingWind: Pokémon entered play – curing status conditions for player {actor}");
-        state.apply_soothing_wind_for_player(actor, energy_type.as_ref());
-    }
+    place_pokemon_in_play(state, actor, card, index);
     if from_deck {
         state.remove_card_from_deck(actor, card);
     } else {
         state.remove_card_from_hand(actor, card);
         let placed_in_bench = index != 0;
-        if placed_in_bench && has_ability_mechanic(card, &AbilityMechanic::InfiltratingInspection) {
+        // The card is already in play at `index`, so read the Ability off the board: a Basic's
+        // Ability may be suppressed there (Alolan Muk's Power of Alchemy).
+        let in_play_ability = state.in_play_pokemon[actor][index]
+            .as_ref()
+            .and_then(|pokemon| pokemon.ability_mechanic());
+        if placed_in_bench && in_play_ability == Some(&AbilityMechanic::InfiltratingInspection) {
             debug!("Misdreavus's Infiltrating Inspection: Opponent's hand is revealed (no-op in AI context)");
         }
         if placed_in_bench {
-            on_bench_from_hand(actor, state, card, index);
+            on_bench_from_hand(actor, state, index);
         }
+    }
+}
+
+/// Puts `card` into `actor`'s in-play slot `index` and runs the on-entry bookkeeping, without
+/// removing the card from any source zone. Callers that move a card out of the hand or deck
+/// should use `apply_place_card`; this is for zones that have no dedicated path (e.g. Pokémon
+/// Flute, which benches a Basic straight out of the discard pile).
+pub(crate) fn place_pokemon_in_play(state: &mut State, actor: usize, card: &Card, index: usize) {
+    let played_card = to_playable_card(card, true);
+    state.in_play_pokemon[actor][index] = Some(played_card);
+    state.refresh_starting_plains_bonus_for_idx(actor, index);
+    state.refresh_double_grass_bonus_for_player(actor);
+    // SoothingWind (Ogerpon ex) / Flower Shield (Comfey): cure status conditions on entry. Read
+    // the Ability off the board (both cards are Basics, so Power of Alchemy can remove it).
+    let entering_ability = state.in_play_pokemon[actor][index]
+        .as_ref()
+        .and_then(|pokemon| pokemon.ability_mechanic());
+    if let Some(AbilityMechanic::SoothingWind { energy_type }) = entering_ability {
+        debug!("SoothingWind: Pokémon entered play – curing status conditions for player {actor}");
+        state.apply_soothing_wind_for_player(actor, energy_type.as_ref());
     }
 }
 
@@ -373,6 +846,157 @@ fn apply_discard_fossil(acting_player: usize, state: &mut State, in_play_idx: us
     // If discarding from active spot, trigger promotion or declare winner
     if in_play_idx == 0 {
         state.trigger_promotion_or_declare_winner(acting_player);
+    }
+}
+
+/// Vespiquen ex's Chase Order: discard the chosen Benched Pokémon, then queue the (boosted)
+/// damage so it goes through the regular damage pipeline as a single application.
+fn apply_discard_own_benched_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    in_play_idx: usize,
+    damage: u32,
+) {
+    state.discard_from_play(acting_player, in_play_idx);
+    let opponent = (acting_player + 1) % 2;
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, opponent, 0)],
+            is_from_active_attack: true,
+        }],
+    ));
+}
+
+/// Gyarados's Wild Swing: discard the chosen Benched Pokémon (possibly none of them), then deal
+/// the already-computed boosted damage to the opponent's Active Pokémon in one go.
+fn apply_discard_own_benched_group_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    in_play_indices: &[usize],
+    damage: u32,
+) {
+    for in_play_idx in in_play_indices {
+        if state.in_play_pokemon[acting_player][*in_play_idx].is_some() {
+            state.discard_from_play(acting_player, *in_play_idx);
+        }
+    }
+    let opponent = (acting_player + 1) % 2;
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, opponent, 0)],
+            is_from_active_attack: true,
+        }],
+    ));
+}
+
+/// Regice's Reflect Energy / Swanna's Feathery Cyclone: move Energy off the actor's Active
+/// Pokémon onto one of their Benched Pokémon. `amount: None` moves every attached Energy.
+///
+/// NOTE: for the "N random Energy" wording we move the last N attached instead of sampling, to
+/// avoid expanding the game tree — mirroring `DiscardRandomOpponentActiveEnergy`.
+fn apply_move_active_energy_to_bench(
+    state: &mut State,
+    actor: usize,
+    to_in_play_idx: usize,
+    amount: Option<u32>,
+) {
+    let Some(active) = state.in_play_pokemon[actor][0].as_mut() else {
+        return;
+    };
+    let attached = &mut active.attached_energy;
+    let moved: Vec<EnergyType> = match amount {
+        None => std::mem::take(attached),
+        Some(n) => {
+            let take = (n as usize).min(attached.len());
+            attached.split_off(attached.len() - take)
+        }
+    };
+    if moved.is_empty() {
+        return;
+    }
+    if let Some(target) = state.in_play_pokemon[actor][to_in_play_idx].as_mut() {
+        target.attached_energy.extend(moved);
+    }
+}
+
+/// Sandy Shocks's Pull In and Pound / Team Rocket's Hypno's Entrap: drag the opponent's Benched
+/// Pokémon at `in_play_idx` into the Active Spot, then damage whatever is now Active.
+fn apply_switch_opponent_benched_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    in_play_idx: usize,
+    damage: u32,
+) {
+    let opponent = (acting_player + 1) % 2;
+    apply_retreat(opponent, state, in_play_idx, true);
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, opponent, 0)],
+            is_from_active_attack: true,
+        }],
+    ));
+}
+
+/// Slowking's Litter: discard the chosen Tool cards from hand, then queue the resulting damage so
+/// it goes through the regular damage pipeline as a single application.
+fn apply_discard_own_cards_then_damage(
+    acting_player: usize,
+    state: &mut State,
+    cards: &[Card],
+    damage: u32,
+    target_player: usize,
+    target_in_play_idx: usize,
+) {
+    for card in cards {
+        state.discard_card_from_hand(acting_player, card);
+    }
+    state.move_generation_stack.push((
+        acting_player,
+        vec![SimpleAction::ApplyDamage {
+            attacking_ref: (acting_player, 0),
+            targets: vec![(damage, target_player, target_in_play_idx)],
+            is_from_active_attack: true,
+        }],
+    ));
+}
+
+fn forecast_shuffle_self_and_attachments_into_deck(
+    acting_player: usize,
+    in_play_idx: usize,
+) -> Outcomes {
+    Outcomes::single_fn(move |rng, state, _action| {
+        shuffle_in_play_pokemon_and_attachments_into_deck(rng, state, acting_player, in_play_idx);
+    })
+}
+
+/// Delcatty's Energy Blender: move a single Energy, then offer the same choice again so the player
+/// can keep going (or stop) until the move budget runs out.
+fn apply_move_energy_and_reoffer(
+    state: &mut State,
+    acting_player: usize,
+    from_in_play_idx: usize,
+    to_in_play_idx: usize,
+    energy_type: EnergyType,
+    remaining_moves: usize,
+) {
+    apply_move_energy(
+        state,
+        acting_player,
+        from_in_play_idx,
+        to_in_play_idx,
+        energy_type,
+        1,
+    );
+
+    let choices = energy_blender_choices(state, acting_player, remaining_moves);
+    if !choices.is_empty() {
+        state.move_generation_stack.push((acting_player, choices));
     }
 }
 
@@ -436,6 +1060,22 @@ fn apply_schedule_delayed_spot_damage(
             target_player,
             target_in_play_idx,
             amount,
+        },
+        1,
+    );
+}
+
+fn apply_schedule_delayed_spot_knock_out(
+    state: &mut State,
+    source_player: usize,
+    target_player: usize,
+    target_in_play_idx: usize,
+) {
+    state.add_turn_effect(
+        TurnEffect::DelayedSpotKnockOut {
+            source_player,
+            target_player,
+            target_in_play_idx,
         },
         1,
     );
@@ -517,8 +1157,10 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
 
         // Start walking from the back in the attached, removing energies until retreat cost is paid
         let mut remaining_cost = retreat_cost;
+        let mut discarded: Vec<EnergyType> = vec![];
         while remaining_cost > 0 && !attached_energy.is_empty() {
             let energy = attached_energy.pop().unwrap();
+            discarded.push(energy);
             if energy == EnergyType::Grass && double_grass {
                 remaining_cost = remaining_cost.saturating_sub(2);
             } else {
@@ -528,9 +1170,50 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
         if remaining_cost > 0 {
             panic!("Not enough energy to pay retreat cost");
         }
+
+        if !discarded.is_empty() {
+            state.discard_energies[player].extend(discarded);
+        }
+
+        state.has_retreated = true;
     }
 
     apply_activate(player, state, bench_idx);
+
+    if !is_free {
+        apply_snapping_trap_on_retreat(state, player);
+    }
+}
+
+/// Galarian Stunfisk's Snapping Trap: if the player who just retreated faces an Active Pokemon
+/// carrying the effect, the Pokemon they promoted takes the trap's damage. Only a real (paid)
+/// retreat springs the trap; being switched by an effect does not count.
+fn apply_snapping_trap_on_retreat(state: &mut State, retreating_player: usize) {
+    let opponent = (retreating_player + 1) % 2;
+    let Some(trap_damage) = state.maybe_get_active(opponent).and_then(|pokemon| {
+        pokemon
+            .get_active_effects()
+            .iter()
+            .find_map(|effect| match effect {
+                CardEffect::DamageNewActiveOnOpponentRetreat { amount } => Some(*amount),
+                _ => None,
+            })
+    }) else {
+        return;
+    };
+    if state.in_play_pokemon[retreating_player][0].is_none() {
+        return;
+    }
+
+    debug!("Snapping Trap: dealing {trap_damage} to the newly promoted Active Pokemon");
+    handle_damage_only(
+        state,
+        (opponent, 0),
+        &[(trap_damage, retreating_player, 0)],
+        false, // not an attack: no Weakness, counterattacks or Rocky Helmet recoil
+        DamageModifierContext::default(),
+    );
+    handle_knockouts(state, (opponent, 0), false);
 }
 
 // We will replace the PlayedCard, but taking into account the attached energy
@@ -556,11 +1239,12 @@ pub(crate) fn apply_evolve(
         let damage_taken = from_pokemon.get_damage_counters();
         played_card.apply_damage(damage_taken);
         played_card.attached_energy = from_pokemon.attached_energy.clone();
-        played_card.attached_tool = from_pokemon.attached_tool.clone();
+        played_card.attached_tools = from_pokemon.attached_tools.clone();
         played_card.cards_behind = from_pokemon.cards_behind.clone();
         played_card.cards_behind.push(from_pokemon.card.clone());
         state.in_play_pokemon[acting_player][position] = Some(played_card);
         state.refresh_starting_plains_bonus_for_idx(acting_player, position);
+        state.refresh_double_grass_bonus_for_player(acting_player);
     } else {
         panic!("Only Pokemon cards can be evolved");
     }
@@ -573,7 +1257,7 @@ pub(crate) fn apply_evolve(
     }
 
     // Run special logic hooks on evolution
-    on_evolve(acting_player, state, to_card, !from_deck)
+    on_evolve(acting_player, state, to_card, position, !from_deck)
 }
 
 fn forecast_pokemon_communication(
@@ -683,6 +1367,44 @@ fn forecast_discard_own_cards(acting_player: usize, cards: &[Card]) -> Outcomes 
     })
 }
 
+/// Put a chosen card from the acting player's own discard pile into their hand.
+fn forecast_put_discard_card_in_hand(acting_player: usize, card: &Card) -> Outcomes {
+    let card = card.clone();
+    Outcomes::single_fn(move |_rng, state, _action| {
+        if let Some(idx) = state.discard_piles[acting_player]
+            .iter()
+            .position(|c| c == &card)
+        {
+            state.discard_piles[acting_player].remove(idx);
+            state.hands[acting_player].push(card.clone());
+            debug!("Put {card} from the discard pile into hand");
+        }
+    })
+}
+
+/// Team Rocket's Boss: put the chosen Basic Pokémon found in the opponent's hand onto the
+/// opponent's Bench.
+fn forecast_bench_opponent_pokemon_from_hand(acting_player: usize, cards: &[Card]) -> Outcomes {
+    let cards_clone = cards.to_vec();
+    Outcomes::single_fn(move |_rng, state, _action| {
+        let opponent = (acting_player + 1) % 2;
+        for card in &cards_clone {
+            let Some(bench_idx) = state.in_play_pokemon[opponent]
+                .iter()
+                .position(|slot| slot.is_none())
+            else {
+                debug!("No bench space available, skipping remaining Pokemon");
+                break;
+            };
+            apply_place_card(state, opponent, card, bench_idx, false);
+        }
+        debug!(
+            "Team Rocket's Boss: Put {:?} from opponent's hand onto their Bench",
+            cards_clone
+        );
+    })
+}
+
 fn forecast_attach_from_discard(
     state: &State,
     acting_player: usize,
@@ -728,6 +1450,22 @@ fn forecast_attach_from_discard(
     Outcomes::from_parts(probabilities, mutations)
 }
 
+/// Volkner: deterministically attach up to `count` energies of `energy_type` from discard.
+fn forecast_attach_typed_from_discard(
+    in_play_idx: usize,
+    energy_type: EnergyType,
+    count: usize,
+) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        let available = state.discard_energies[action.actor]
+            .iter()
+            .filter(|e| **e == energy_type)
+            .count();
+        let energies = vec![energy_type; std::cmp::min(count, available)];
+        state.attach_energy_from_discard(action.actor, in_play_idx, &energies);
+    })
+}
+
 /// Generate all unique 2-energy combinations from a list of energies in discard pile.
 /// Returns a vector of (combination, count) tuples where count is how many times
 /// this combination appears when considering all possible pairs.
@@ -768,85 +1506,75 @@ fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
     }
 }
 
-/// Forecasts the UseStadium action for activated stadiums like Mesagoza, Fragrant Forest, and Area Zero.
-fn forecast_use_stadium(state: &State, acting_player: usize) -> Outcomes {
-    if is_mesagoza_active(state) {
-        return forecast_mesagoza_effect(state, acting_player);
-    }
-    if is_fragrant_forest_active(state) {
-        return forecast_fragrant_forest_effect(state, acting_player);
-    }
-    if is_area_zero_active(state) {
-        return forecast_area_zero_effect(state, acting_player);
-    }
-    Outcomes::single_fn(|_, _, _| {})
-}
-
-/// Area Zero: Once during each player's turn, that player may shuffle a Basic Pokémon from their
-/// hand into their deck. If they do, they draw a card.
-fn forecast_area_zero_effect(state: &State, acting_player: usize) -> Outcomes {
-    let choices: Vec<SimpleAction> = state.hands[acting_player]
-        .iter()
-        .filter(|card| card.is_basic())
-        .map(|card| SimpleAction::ShuffleOwnCardsIntoDeck {
-            cards: vec![card.clone()],
-        })
-        .collect();
-
-    Outcomes::single_fn(move |_, state, action| {
-        state.has_used_stadium[action.actor] = true;
-        if !choices.is_empty() {
-            state
-                .move_generation_stack
-                .push((action.actor, choices.clone()));
-        }
-    })
-}
-
-/// Mesagoza: Once during each player's turn, that player may flip a coin.
-/// If heads, that player puts a random Pokémon from their deck into their hand.
-fn forecast_mesagoza_effect(state: &State, acting_player: usize) -> Outcomes {
-    // Get the search outcomes for any Pokemon (reusing existing logic)
-    let (search_probs, search_mutations) =
-        pokemon_search_outcomes(acting_player, state, false).into_branches();
-
-    let mut branches: Vec<(f64, Mutation, Vec<CoinSeq>)> =
-        Vec::with_capacity(search_probs.len() + 1);
-    for (prob, mutation) in search_probs.into_iter().zip(search_mutations) {
-        let wrapped: Mutation = Box::new(move |rng, state, action| {
-            state.has_used_stadium[action.actor] = true;
-            mutation(rng, state, action);
-            debug!("Mesagoza: Flipped heads, searched for Pokemon");
-        });
-        branches.push((0.5 * prob, wrapped, vec![CoinSeq(vec![true])]));
-    }
-    let tails_mutation: Mutation = Box::new(move |_, state, action| {
-        state.has_used_stadium[action.actor] = true;
-        debug!("Mesagoza: Flipped tails, nothing happens");
-    });
-    branches.push((0.5, tails_mutation, vec![CoinSeq(vec![false])]));
-
-    // Not `binary_coin`: heads fans out into many weighted search outcomes, not one mutation.
-    Outcomes::from_coin_branches(branches).expect("Mesagoza coin branches should be valid")
-}
-
-/// Fragrant Forest: Once during each player's turn, that player may put a random Basic [G] Pokémon from their deck into their hand.
-fn forecast_fragrant_forest_effect(state: &State, acting_player: usize) -> Outcomes {
-    pokemon_search_outcomes_by_type_for_player(acting_player, state, true, EnergyType::Grass)
-        .map_mutations(|mutation| {
-            Box::new(move |rng, state, action| {
-                state.has_used_stadium[action.actor] = true;
-                mutation(rng, state, action);
-            })
-        })
-}
-
 // Test that when evolving a damanged pokemon, damage stays.
 #[cfg(test)]
 mod tests {
     use rand::SeedableRng;
 
     use super::*;
+
+    /// Gholdengo ex's Spending Rush with 5 Metal Energy against 3 Pokémon: the 5 random hits
+    /// split C(7, 2) = 21 ways, one more than search players see.
+    fn spending_rush_with_21_outcomes() -> (State, Action) {
+        let game = crate::test_support::get_test_game_with_board(
+            vec![PlayedCard::from_id(CardId::B2a078GholdengoEx)
+                .with_energy(vec![EnergyType::Metal; 5])],
+            // 220+ HP each: no target is knocked out by the 200 damage, so every split shows.
+            vec![PlayedCard::from_id(CardId::B1a020MegaBlastoiseEx); 3],
+        );
+        let action = Action {
+            actor: 0,
+            action: crate::test_support::attack_action(CardId::B2a078GholdengoEx, 0),
+            is_stack: false,
+        };
+        (game.get_state_clone(), action)
+    }
+
+    #[test]
+    fn search_forecasts_are_capped_and_reproducible() {
+        let (state, action) = spending_rush_with_21_outcomes();
+        assert_eq!(forecast_action_exact(&state, &action).len(), 21);
+        let forecast = forecast_action(&state, &action);
+        assert!(forecast.len() <= MAX_FORECAST_BRANCHES);
+        let (probabilities, _) = forecast.into_branches();
+        assert!((probabilities.iter().sum::<f64>() - 1.0).abs() < 1e-9);
+        // Seeded by the state and action: the same forecast every time.
+        let (again, _) = forecast_action(&state, &action).into_branches();
+        assert_eq!(probabilities, again);
+    }
+
+    #[test]
+    fn playing_an_action_still_samples_every_outcome() {
+        // The cap is for search only: applying the attack reaches all 21 damage splits,
+        // not just the (at most 20) branches a search forecast keeps.
+        let (state, action) = spending_rush_with_21_outcomes();
+        let mut seen = std::collections::HashSet::new();
+        for seed in 0..3000 {
+            let mut played = state.clone();
+            apply_action(&mut StdRng::seed_from_u64(seed), &mut played, &action);
+            let split: Vec<u32> = (0..4)
+                .filter_map(|i| played.in_play_pokemon[1][i].as_ref())
+                .map(|p| p.get_remaining_hp())
+                .collect();
+            seen.insert(split);
+        }
+        assert_eq!(seen.len(), 21);
+    }
+
+    #[test]
+    fn sample_down_keeps_at_most_k_branches_with_valid_probabilities() {
+        let (state, action) = spending_rush_with_21_outcomes();
+        for k in [1, 5, 20] {
+            let mut rng = StdRng::seed_from_u64(k as u64);
+            let sampled = forecast_action_exact(&state, &action).sample_down(k, &mut rng);
+            assert!(sampled.len() <= k && !sampled.is_empty());
+            let (probabilities, _) = sampled.into_branches();
+            assert!((probabilities.iter().sum::<f64>() - 1.0).abs() < 1e-9);
+            assert!(probabilities
+                .iter()
+                .all(|p| (p * k as f64).fract().abs() < 1e-9));
+        }
+    }
     use crate::card_ids::CardId;
     use crate::database::get_card_by_enum;
     use crate::{

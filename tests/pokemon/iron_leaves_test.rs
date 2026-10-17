@@ -1,8 +1,8 @@
 use deckgym::{
-    actions::{Action, SimpleAction},
+    actions::Action,
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
-    test_support::get_initialized_game,
+    test_support::{attack_action, get_initialized_game},
 };
 
 fn played_card_with_base_hp(card_id: CardId, base_hp: u32) -> PlayedCard {
@@ -32,7 +32,7 @@ fn test_iron_leaves_avenging_edge_base_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a028IronLeaves, 0),
         is_stack: false,
     });
 
@@ -64,7 +64,7 @@ fn test_iron_leaves_avenging_edge_boosted_damage() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a028IronLeaves, 0),
         is_stack: false,
     });
 

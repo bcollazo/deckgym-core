@@ -3,7 +3,7 @@ use deckgym::{
     card_ids::CardId,
     database::get_card_by_enum,
     models::{EnergyType, PlayedCard},
-    test_support::get_test_game_with_board,
+    test_support::{attack_action, get_test_game_with_board},
     Game,
 };
 
@@ -119,7 +119,7 @@ fn test_hadron_ray_extra_damage_per_lightning_energy() {
 
     game.apply_action(&Action {
         actor: 0,
-        action: SimpleAction::Attack(0),
+        action: attack_action(CardId::B3a019MiraidonEx, 0),
         is_stack: false,
     });
 
