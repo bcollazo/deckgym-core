@@ -199,9 +199,9 @@ Review the results to ensure the games complete without errors.
 Run the targeted automated checks for the code you touched:
 
 ```bash
-cargo test --features test-utils --test pokemon
-cargo test --features test-utils --test tools
-cargo test --features test-utils --test stadiums
+cargo test --features test-utils --test cards
+cargo test --features test-utils --test cards -- tools::
+cargo test --features test-utils --test cards -- stadiums::
 cargo test --features test-utils --test mechanics
 ```
 

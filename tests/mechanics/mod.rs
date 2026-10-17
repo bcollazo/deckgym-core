@@ -1,0 +1,15 @@
+mod ability_effects_test;
+mod activated_ability_test;
+mod attack_effects_test;
+mod basic_knockout_happy_paths_test;
+mod board_damage_ability_test;
+mod confusion_test;
+mod end_of_turn_knockout_ordering_test;
+mod hoopa_ex_deceptive_needle_quick_growth_test;
+mod hp_aura_promotion_test;
+mod knock_back_knockout_test;
+mod knockout_retaliation_test;
+mod on_evolve_ability_test;
+mod retreat_cost_abilities_test;
+mod retreat_test;
+mod static_passive_ability_test;

@@ -21,7 +21,7 @@ fn test_team_discards_from_opponent_ability_pokemon_only() {
     );
     state.current_player = 0;
     state.turn_count = 1;
-    state.hands[0] = vec![get_card_by_enum(CardId::B2a088Team)];
+    state.hands[0] = vec![get_card_by_enum(CardId::B2a088TeamStarGrunt)];
     game.set_state(state);
 
     let state = game.get_state_clone();
@@ -31,7 +31,7 @@ fn test_team_discards_from_opponent_ability_pokemon_only() {
         .find(|action| {
             matches!(
                 &action.action,
-                SimpleAction::Play { trainer_card } if trainer_card.name == "Team"
+                SimpleAction::Play { trainer_card } if trainer_card.name == "Team Star Grunt"
             )
         })
         .expect("Expected Team to be playable");
@@ -78,7 +78,7 @@ fn test_team_not_playable_without_valid_opponent_target() {
     let has_team_play = actions.iter().any(|action| {
         matches!(
             &action.action,
-            SimpleAction::Play { trainer_card } if trainer_card.name == "Team"
+            SimpleAction::Play { trainer_card } if trainer_card.name == "Team Star Grunt"
         )
     });
 

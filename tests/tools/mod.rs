@@ -1,0 +1,16 @@
+mod berries_test;
+mod booster_capsule_test;
+mod coverage_tools_test;
+mod deceptive_needle_test;
+mod dual_customization_test;
+mod electrical_cord_test;
+mod leftovers_test;
+mod lucky_egg_test;
+mod lucky_ice_pop_test;
+mod protective_poncho_test;
+mod raikou_rocky_helmet_order_test;
+mod rocky_helmet_delayed_counterattack_test;
+mod small_balloon_test;
+mod steel_apron_test;
+mod tool_effect_gating_test;
+mod tools_integration_test;

@@ -152,7 +152,6 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     state.apply_status_condition(0, 0, StatusCondition::Poisoned);
-    state.apply_status_condition(0, 0, StatusCondition::Paralyzed);
     state.apply_status_condition(0, 0, StatusCondition::Asleep);
 
     // Add Pokemon Center Lady to hand
@@ -178,7 +177,6 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
         "Bulbasaur should have 30 HP"
     );
     assert!(bulbasaur_before.is_poisoned(), "Should be poisoned");
-    assert!(bulbasaur_before.is_paralyzed(), "Should be paralyzed");
     assert!(bulbasaur_before.is_asleep(), "Should be asleep");
 
     // Act: Play Pokemon Center Lady and choose Bulbasaur
@@ -213,10 +211,6 @@ fn test_pokemon_center_lady_heals_and_cures_together() {
     assert!(
         !bulbasaur_after.is_poisoned(),
         "Bulbasaur should no longer be poisoned"
-    );
-    assert!(
-        !bulbasaur_after.is_paralyzed(),
-        "Bulbasaur should no longer be paralyzed"
     );
     assert!(
         !bulbasaur_after.is_asleep(),

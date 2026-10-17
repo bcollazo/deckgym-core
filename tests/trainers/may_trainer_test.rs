@@ -30,7 +30,7 @@ fn test_may_generates_all_combinations() {
     state.current_player = 0;
 
     // Call May effect
-    let (probabilities, mutations) = may_effect(0, &state);
+    let (probabilities, mutations) = may_effect(0, &state).into_branches();
 
     // Should have 1 outcome (drawing {Charmander, Squirtle} - order doesn't matter)
     assert_eq!(probabilities.len(), 1);
@@ -107,7 +107,7 @@ fn test_may_probabilities_with_multiple_pokemon() {
     state.current_player = 0;
 
     // Call May effect
-    let (probabilities, mutations) = may_effect(0, &state);
+    let (probabilities, mutations) = may_effect(0, &state).into_branches();
 
     // Should have C(4,2) = 6 outcomes
     assert_eq!(
