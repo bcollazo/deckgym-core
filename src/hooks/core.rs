@@ -336,10 +336,7 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
             AbilityMechanic::EndTurnDrawCardIfActive { amount: 1 }
         ) {
             debug!("Legendary Pulse: Drawing a card");
-            state.move_generation_stack.push((
-                player_ending_turn,
-                vec![SimpleAction::DrawCard { amount: 1 }],
-            ));
+            state.maybe_draw_card(player_ending_turn);
         }
         if let AbilityMechanic::EndTurnHealSelfIfActive { amount } = mechanic {
             debug!("Full-Mouth Manner: Healing 20 damage from active");
