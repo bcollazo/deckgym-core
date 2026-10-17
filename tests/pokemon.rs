@@ -282,6 +282,8 @@ mod milotic_ex_aqua_charge_test;
 mod miltank_rolling_frenzy_test;
 #[path = "pokemon/mimic_shuffle_draw_test.rs"]
 mod mimic_shuffle_draw_test;
+#[path = "pokemon/mimikyu_ex_disguise_test.rs"]
+mod mimikyu_ex_disguise_test;
 #[path = "pokemon/mimikyu_try_to_imitate_test.rs"]
 mod mimikyu_try_to_imitate_test;
 #[path = "pokemon/miraidon_ex_test.rs"]
