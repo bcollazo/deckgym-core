@@ -24,6 +24,8 @@ mod iris_trainer_test;
 mod jasmine_test;
 #[path = "trainers/juliana_test.rs"]
 mod juliana_test;
+#[path = "trainers/kiawe_test.rs"]
+mod kiawe_test;
 #[path = "trainers/korrina_cabbie_parasol_lady_test.rs"]
 mod korrina_cabbie_parasol_lady_test;
 #[path = "trainers/lana_test.rs"]
