@@ -174,6 +174,8 @@ mod hisuian_goodra_securely_sheltered_test;
 mod hisuian_lilligant_dress_up_test;
 #[path = "pokemon/hisuian_zoroark_ex_test.rs"]
 mod hisuian_zoroark_ex_test;
+#[path = "pokemon/hit_back_abilities_test.rs"]
+mod hit_back_abilities_test;
 #[path = "pokemon/hitmonchan_ex_test.rs"]
 mod hitmonchan_ex_test;
 #[path = "pokemon/ho_oh_ex_phoenix_turbo_test.rs"]
