@@ -7,6 +7,8 @@ mod attack_damage_only_test;
 mod checkup_order_test;
 #[path = "rules/damage_order_test.rs"]
 mod damage_order_test;
+#[path = "rules/double_knockout_promotion_order_test.rs"]
+mod double_knockout_promotion_order_test;
 #[path = "rules/evolution_timing_test.rs"]
 mod evolution_timing_test;
 #[path = "rules/opponent_only_damage_cuts_test.rs"]
