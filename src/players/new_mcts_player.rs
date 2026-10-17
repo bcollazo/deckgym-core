@@ -189,7 +189,7 @@ fn simulate(arena: &[MctsNode], node_idx: usize, rng: &mut StdRng, investigator:
 }
 
 /// Walk up the parent chain, updating visits and reward at every node.
-fn backpropagate(arena: &mut Vec<MctsNode>, start_idx: usize, reward: f64) {
+fn backpropagate(arena: &mut [MctsNode], start_idx: usize, reward: f64) {
     let mut current = Some(start_idx);
     while let Some(idx) = current {
         arena[idx].visits += 1;
