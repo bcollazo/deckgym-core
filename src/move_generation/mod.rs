@@ -72,6 +72,14 @@ fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
 
     // Free play actions. User can always end turn.
     let current_player = state.current_player;
+    // An empty Active Spot always queues a promotion or ends the game, so free play should never
+    // see one. Reaching here without an Active means a caller is generating moves for a finished
+    // game (or a removal path forgot to call `trigger_promotion_or_declare_winner`).
+    debug_assert!(
+        state.in_play_pokemon[current_player][0].is_some(),
+        "Free-play move generation without an Active Pokemon (winner: {:?})",
+        state.winner
+    );
     let mut actions = vec![SimpleAction::EndTurn];
 
     // Hand actions (Play Support Cards, Trainer, or Place Pokemons in mat)
