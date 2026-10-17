@@ -12,6 +12,7 @@ mod information_trainers_test;
 mod iris_trainer_test;
 mod jasmine_test;
 mod juliana_test;
+mod kiawe_test;
 mod korrina_cabbie_parasol_lady_test;
 mod lana_test;
 mod mallow_test;

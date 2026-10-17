@@ -10,15 +10,8 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
         total_damage += 20;
     }
 
-    // Temporary counterattack effects (e.g. Alolan Sandslash's Spike Armor).
-    total_damage += card
-        .get_active_effects()
-        .iter()
-        .filter_map(|effect| match effect {
-            CardEffect::Counterattack { amount } => Some(*amount),
-            _ => None,
-        })
-        .sum::<u32>();
+    // Temporary counterattack effects (e.g. Mega Sableye ex's Cursed Jewel).
+    total_damage += get_delayed_counterattack_damage(card);
 
     // Some cards have it as an ability (Rough Skin and its reprints, Iron Jugulis).
     if let Some(AbilityMechanic::CounterattackDamage { amount }) = card.ability_mechanic() {
@@ -26,6 +19,18 @@ pub(crate) fn get_counterattack_damage(card: &PlayedCard) -> u32 {
     }
 
     total_damage
+}
+
+/// Counterattack damage from temporary effects set up by an earlier attack (e.g. Mega Sableye
+/// ex's Cursed Jewel), as opposed to Rocky Helmet or an ability.
+pub(crate) fn get_delayed_counterattack_damage(card: &PlayedCard) -> u32 {
+    card.get_active_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::Counterattack { amount } => Some(*amount),
+            _ => None,
+        })
+        .sum()
 }
 
 /// Check if the defending Pokemon should poison the attacker when damaged.

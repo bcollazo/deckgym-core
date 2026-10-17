@@ -10,8 +10,9 @@ use crate::{
     card_ids::CardId,
     effects::TurnEffect,
     hooks::{
-        get_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn, on_knockout,
-        should_poison_attacker, DamageModifierContext,
+        get_counterattack_damage, get_delayed_counterattack_damage, modify_damage,
+        on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
+        DamageModifierContext,
     },
     models::{Card, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -706,6 +707,7 @@ pub(crate) fn handle_damage_only(
                 0
             }
         };
+        let delayed_counter_damage = get_delayed_counterattack_damage(target_pokemon);
         let should_poison = should_poison_attacker(target_pokemon);
         // "If this Pokémon is in the Active Spot and is Knocked Out by damage from an attack from
         // your opponent's Pokémon, do X damage to ..." (Pyukumuku's Innards Out, Team Rocket's
@@ -728,6 +730,24 @@ pub(crate) fn handle_damage_only(
                 counter_damage,
                 attacking_pokemon.get_remaining_hp()
             );
+
+            // The attacking Pokemon was itself just damaged by the defender's delayed counterattack
+            // (e.g. Mega Sableye ex's Cursed Jewel). If it's holding its own Rocky Helmet, that
+            // hit reflects 20 damage back onto the original defender too. Rocky Helmet's own
+            // recoil does not count, so two helmets don't ping-pong.
+            let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                .as_ref()
+                .expect("Active Pokemon should be there");
+            if delayed_counter_damage > 0 && has_tool(attacking_pokemon, CardId::A2148RockyHelmet) {
+                let target_pokemon = state.in_play_pokemon[target_player][target_pokemon_idx]
+                    .as_mut()
+                    .expect("Pokemon should be there if taking damage");
+                target_pokemon.apply_damage(20);
+                debug!(
+                    "Rocky Helmet reflects 20 damage back to the original defender. Remaining HP: {}",
+                    target_pokemon.get_remaining_hp()
+                );
+            }
         }
 
         match knockout_retaliation {
