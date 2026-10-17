@@ -2014,12 +2014,20 @@ fn apply_electrical_cord(
         return;
     }
 
+    // Only Energy that a Benched Pokémon can take is moved; the rest stays on the knocked out
+    // Pokémon and is discarded with it.
+    let bench_indices: Vec<_> = state
+        .enumerate_bench_pokemon(knocked_out_player)
+        .map(|(idx, _)| idx)
+        .take(2)
+        .collect();
+
     // Collect up to 2 Lightning energies from the knocked out Pokemon
     let mut lightning_energies = vec![];
     let knocked_out_pokemon_mut = state.in_play_pokemon[knocked_out_player][knocked_out_idx]
         .as_mut()
         .expect("Pokemon should be there if knocked out");
-    for _ in 0..2 {
+    for _ in 0..bench_indices.len() {
         if let Some(pos) = knocked_out_pokemon_mut
             .attached_energy
             .iter()
@@ -2038,21 +2046,13 @@ fn apply_electrical_cord(
         "Electrical Cord: Moving {} Lightning Energy from knocked out Pokemon",
         lightning_energies.len()
     );
-    // Collect just the indices to avoid borrow checker issues
-    let bench_indices: Vec<_> = state
-        .enumerate_bench_pokemon(knocked_out_player)
-        .map(|(idx, _)| idx)
-        .collect();
-    for (i, energy) in lightning_energies.into_iter().enumerate() {
-        if i < bench_indices.len() {
-            let bench_idx = bench_indices[i];
-            if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut() {
-                pokemon.attached_energy.push(energy);
-                debug!(
-                    "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
-                    bench_idx
-                );
-            }
+    for (energy, bench_idx) in lightning_energies.into_iter().zip(bench_indices) {
+        if let Some(pokemon) = state.in_play_pokemon[knocked_out_player][bench_idx].as_mut() {
+            pokemon.attached_energy.push(energy);
+            debug!(
+                "Electrical Cord: Attached Lightning Energy to benched Pokemon at position {}",
+                bench_idx
+            );
         }
     }
 }
