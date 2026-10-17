@@ -213,22 +213,7 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                     // Evolutions can only be played if previous stage
                     // is there, and wasn't played this turn, and isn't the first 2 turns.
                     // Exception: Eevee with Boosted Evolution ability can evolve on first turn
-                    // or turn it was played, if it's in the active spot.
-
-                    // Check if we should skip evolution checks due to first turn
-                    // (unless there's a Boosted Evolution Eevee in active spot)
-                    let has_boosted_evolution_in_active = state.in_play_pokemon[current_player][0]
-                        .as_ref()
-                        .is_some_and(|active| {
-                            matches!(
-                                active.ability_mechanic(),
-                                Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
-                            )
-                        });
-
-                    if state.is_users_first_turn() && !has_boosted_evolution_in_active {
-                        return;
-                    }
+                    // or turn it was played, if it's in the active spot (that Eevee only).
 
                     // Malamar's Evolution Jammer: "they can't play any Pokémon from their hand to
                     // evolve their Pokémon."
@@ -250,6 +235,10 @@ fn generate_hand_actions(state: &State) -> Vec<SimpleAction> {
                                     pokemon.ability_mechanic(),
                                     Some(AbilityMechanic::CanEvolveOnFirstTurnIfActive)
                                 );
+
+                            if state.is_users_first_turn() && !can_bypass_timing {
+                                return;
+                            }
 
                             if (!pokemon.played_this_turn || can_bypass_timing)
                                 && can_evolve_into(hand_card, pokemon)
