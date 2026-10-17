@@ -124,3 +124,34 @@ fn test_rocky_helmet_recoil_does_not_trigger_opposing_rocky_helmet() {
         "Defender takes only Triple Bombardment's 130 damage (230 - 130 = 100)"
     );
 }
+
+/// Rocky Helmet only triggers on damage "from an attack from your opponent's Pokémon". Druddigon's
+/// Rough Skin counterattack is an ability, not an attack, so it must not trigger the attacker's
+/// Rocky Helmet: Bulbasaur takes Rough Skin's 20 and the Druddigon takes only Vine Whip's 40.
+#[test]
+fn test_rough_skin_counterattack_does_not_trigger_rocky_helmet() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])
+            .with_tool(get_card_by_enum(CardId::A2148RockyHelmet))],
+        vec![PlayedCard::from_id(CardId::A1a056Druddigon)],
+    );
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: attack_action(CardId::A1001Bulbasaur, 0),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(0).get_remaining_hp(),
+        50,
+        "Bulbasaur takes Rough Skin's 20 (70 - 20 = 50)"
+    );
+    assert_eq!(
+        state.get_active(1).get_remaining_hp(),
+        60,
+        "Druddigon takes only Vine Whip's 40, not a Rocky Helmet reflection (100 - 40 = 60)"
+    );
+}
