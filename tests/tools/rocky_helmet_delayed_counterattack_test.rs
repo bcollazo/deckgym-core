@@ -82,3 +82,45 @@ fn test_rocky_helmet_reflects_mega_sableye_ex_cursed_jewel_counterattack() {
         "Player 1 should have won 3 points for knocking out a Mega Pokemon"
     );
 }
+
+/// Rocky Helmet's own recoil is not a delayed counterattack, so it must not itself trigger the
+/// attacker's Rocky Helmet: with a helmet on each side, the attacker takes just one 20-damage
+/// recoil and the defender takes only the attack's damage.
+#[test]
+fn test_rocky_helmet_recoil_does_not_trigger_opposing_rocky_helmet() {
+    let helmet = get_card_by_enum(CardId::A2148RockyHelmet);
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::B1a020MegaBlastoiseEx)
+            .with_energy(vec![
+                EnergyType::Water,
+                EnergyType::Water,
+                EnergyType::Colorless,
+            ])
+            .with_tool(helmet.clone())],
+        vec![PlayedCard::from_id(CardId::B1a020MegaBlastoiseEx)
+            .with_energy(vec![
+                EnergyType::Water,
+                EnergyType::Water,
+                EnergyType::Colorless,
+            ])
+            .with_tool(helmet)],
+    );
+
+    game.apply_action(&Action {
+        actor: 0,
+        action: attack_action(CardId::B1a020MegaBlastoiseEx, 0),
+        is_stack: false,
+    });
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(0).get_remaining_hp(),
+        210,
+        "Attacker takes only the defender's 20 Rocky Helmet recoil (230 - 20 = 210)"
+    );
+    assert_eq!(
+        state.get_active(1).get_remaining_hp(),
+        100,
+        "Defender takes only Triple Bombardment's 130 damage (230 - 130 = 100)"
+    );
+}
