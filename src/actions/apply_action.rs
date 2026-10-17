@@ -157,6 +157,9 @@ pub(crate) fn resolve_pending_coin_reflip(
         {
             state.mark_coin_reflip_used(pending.actor, mechanic);
         }
+        // Will covered the original flip (the parked coins were rolled from the forced
+        // outcomes). The reflip is a fresh batch of coins, so Will is spent.
+        state.consume_pending_will_first_heads();
     }
 
     let outcomes = forecast_action(state, &attack_action);
