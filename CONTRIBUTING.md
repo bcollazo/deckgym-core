@@ -76,4 +76,6 @@ cargo clippy --features tui -- -D warnings
 cargo test --features "tui test-utils"
 ```
 
+See [TESTING.md](./TESTING.md) for how tests are organized and where to add new ones.
+
 Thank you for your contributions!
