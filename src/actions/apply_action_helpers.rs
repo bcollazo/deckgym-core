@@ -936,7 +936,14 @@ pub(crate) fn handle_knockouts(
         return;
     }
 
-    // Queue up promotion actions if the game is still on after a knockout
+    // Queue up promotion actions if the game is still on after a knockout. After a double Knock
+    // Out from an attack, the attacking (turn) player promotes first, whichever seat that is.
+    // `sort_by_key` is stable, and `get_knocked_out` lists seat 0 first, so every other order
+    // (Checkup, Abilities) is unchanged.
+    let mut knockouts = knockouts;
+    if is_from_active_attack {
+        knockouts.sort_by_key(|(ko_receiver, _)| *ko_receiver != attacking_ref.0);
+    }
     for (ko_receiver, ko_pokemon_idx) in knockouts {
         if ko_pokemon_idx != 0 {
             continue; // Only promote if K.O. was on Active
