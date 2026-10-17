@@ -48,6 +48,8 @@ mod protection_trainers_test;
 mod psychic_test;
 #[path = "trainers/puppy_loving_girl_test.rs"]
 mod puppy_loving_girl_test;
+#[path = "trainers/rare_candy_test.rs"]
+mod rare_candy_test;
 #[path = "trainers/skyla_test.rs"]
 mod skyla_test;
 #[path = "trainers/team_rockets_boss_test.rs"]
