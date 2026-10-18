@@ -8,13 +8,13 @@ use crate::{
         abilities::AbilityMechanic, ability_mechanic_from_effect, shared_mutations, SimpleAction,
     },
     card_ids::CardId,
-    effects::TurnEffect,
+    effects::{CardEffect, TurnEffect},
     hooks::{
         get_counterattack_damage, get_delayed_counterattack_damage, modify_damage,
         on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
         DamageModifierContext,
     },
-    models::{Card, StatusCondition, TrainerType},
+    models::{Card, PlayedCard, StatusCondition, TrainerType},
     state::GameOutcome,
     tools::has_tool,
     State,
@@ -570,6 +570,48 @@ pub(crate) fn guts_flipping_targets(
         })
         .map(|(target, _)| target)
         .collect();
+    flipping.sort_unstable();
+    flipping
+}
+
+/// The damage a defender's coin-flip ability removes on heads: Carefree Steps prevents all of it
+/// (`u32::MAX`), Securely Sheltered subtracts a fixed amount.
+pub(crate) fn coin_flip_damage_reduction(pokemon: &PlayedCard) -> Option<u32> {
+    pokemon
+        .get_effective_card_effects()
+        .iter()
+        .find_map(|e| match e {
+            CardEffect::CoinFlipToPreventIncomingDamage => Some(u32::MAX),
+            CardEffect::CoinFlipToReduceIncomingDamage { amount } => Some(*amount),
+            _ => None,
+        })
+}
+
+/// The opponent Pokémon that flip a coin-flip damage ability for an `ApplyDamage`, paired with
+/// their heads reduction. Only damage from an attack counts, and each Pokémon flips once however
+/// many entries of `targets` hit it.
+pub(crate) fn damage_prevention_flipping_targets(
+    state: &State,
+    attacking_player: usize,
+    targets: &[(u32, usize, usize)], // damage, target_player, in_play_idx
+    is_from_active_attack: bool,
+) -> Vec<(usize, u32)> {
+    if !is_from_active_attack {
+        return vec![];
+    }
+    let opponent = (attacking_player + 1) % 2;
+    let mut flipping: Vec<(usize, u32)> = vec![];
+    for (damage, player, idx) in targets {
+        if *damage == 0 || *player != opponent || flipping.iter().any(|(i, _)| i == idx) {
+            continue;
+        }
+        let reduction = state.in_play_pokemon[opponent][*idx]
+            .as_ref()
+            .and_then(coin_flip_damage_reduction);
+        if let Some(reduction) = reduction {
+            flipping.push((*idx, reduction));
+        }
+    }
     flipping.sort_unstable();
     flipping
 }

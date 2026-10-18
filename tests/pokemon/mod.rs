@@ -30,6 +30,7 @@ mod breloom_test;
 mod budew_prickly_powder_test;
 mod camerupt_eruption_test;
 mod carbink_glittering_gift_test;
+mod carefree_steps_queued_damage_test;
 mod carracosta_blocking_shell_test;
 mod cascoon_harden_test;
 mod castform_test;

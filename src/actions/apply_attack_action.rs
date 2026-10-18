@@ -7,7 +7,8 @@ use crate::{
     actions::{
         abilities::AbilityMechanic,
         apply_action_helpers::{
-            handle_knockouts, shuffle_in_play_pokemon_and_attachments_into_deck,
+            coin_flip_damage_reduction, handle_knockouts,
+            shuffle_in_play_pokemon_and_attachments_into_deck,
         },
         apply_evolve,
         attack_helpers::{
@@ -137,15 +138,7 @@ fn apply_defender_damage_prevention_if_needed(
         .enumerate_in_play_pokemon(opponent)
         .filter(|(idx, _)| !(ignores_active_effects && *idx == 0))
         .filter_map(|(idx, pokemon)| {
-            pokemon
-                .get_effective_card_effects()
-                .iter()
-                .find_map(|e| match e {
-                    CardEffect::CoinFlipToPreventIncomingDamage => Some(u32::MAX),
-                    CardEffect::CoinFlipToReduceIncomingDamage { amount } => Some(*amount),
-                    _ => None,
-                })
-                .map(|reduction| (idx, reduction))
+            coin_flip_damage_reduction(pokemon).map(|reduction| (idx, reduction))
         })
         .collect();
 
