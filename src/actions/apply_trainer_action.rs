@@ -2047,7 +2047,7 @@ fn nemona_effect(_: &mut StdRng, state: &mut State, _: &Action) {
 fn clemonts_backpack_effect(_: &mut StdRng, state: &mut State, _: &Action) {
     // During this turn, attacks used by your Magneton or Heliolisk do +20 damage to your opponent's Pokémon.
     state.add_turn_effect(
-        TurnEffect::IncreasedDamageForSpecificPokemon {
+        TurnEffect::IncreasedDamageForSpecificPokemonToAnyOpponentPokemon {
             amount: 20,
             pokemon_names: vec!["Magneton".to_string(), "Heliolisk".to_string()],
         },

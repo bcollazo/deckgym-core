@@ -1072,6 +1072,38 @@ fn get_increased_turn_effect_modifiers(
         .sum::<u32>()
 }
 
+/// Turn effects whose bonus reaches every opponent's Pokémon the attack damages, Benched ones
+/// included (Clemont's Backpack: "to your opponent's Pokémon"). The Active-to-Active case is
+/// deliberately not handled by `get_increased_turn_effect_modifiers`, so nothing is counted twice.
+fn get_increased_any_opponent_pokemon_modifiers(
+    state: &State,
+    attacking_pokemon: &PlayedCard,
+    is_from_active_attack: bool,
+    attacking_player: usize,
+    target_player: usize,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+    let attacker_name = attacking_pokemon.get_name();
+    state
+        .get_current_turn_effects()
+        .iter()
+        .map(|effect| match effect {
+            TurnEffect::IncreasedDamageForSpecificPokemonToAnyOpponentPokemon {
+                amount,
+                pokemon_names,
+            } if pokemon_names
+                .iter()
+                .any(|name| name.as_str() == attacker_name) =>
+            {
+                *amount
+            }
+            _ => 0,
+        })
+        .sum::<u32>()
+}
+
 fn get_increased_attack_specific_modifiers(
     attacking_pokemon: &crate::models::PlayedCard,
     is_active_to_active: bool,
@@ -1496,6 +1528,12 @@ pub(crate) fn modify_damage(
         target_is_ex,
         attacker_is_eevee_evolution,
         attacking_pokemon,
+    ) + get_increased_any_opponent_pokemon_modifiers(
+        state,
+        attacking_pokemon,
+        is_from_active_attack,
+        attacking_player,
+        target_player,
     );
     let increased_attack_specific_modifiers = get_increased_attack_specific_modifiers(
         attacking_pokemon,

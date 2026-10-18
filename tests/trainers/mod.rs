@@ -1,5 +1,6 @@
 mod barry_test;
 mod cheren_test;
+mod clemonts_backpack_test;
 mod coverage_items_test;
 mod coverage_supporters_test;
 mod cynthia_test;
