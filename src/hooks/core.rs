@@ -514,11 +514,17 @@ pub(crate) fn on_end_turn(player_ending_turn: usize, state: &mut State) {
 
     apply_leftovers_healing(player_ending_turn, state);
 
-    apply_berry_tools(state);
-
     apply_deceptive_needle_damage(player_ending_turn, state);
 
-    apply_bad_dreams_damage(state);
+    // Berries and Bad Dreams say "at the end of each turn", so they belong to both players, but
+    // the effects of the player whose turn is ending resolve first. So when Darkrai's owner ends
+    // the turn, Bad Dreams hits an Asleep Pokémon before its Lum Berry cures it; when the berry
+    // holder's owner ends the turn, the berry resolves first and Bad Dreams finds nothing.
+    let other_player = (player_ending_turn + 1) % 2;
+    for player in [player_ending_turn, other_player] {
+        apply_berry_tools(player, state);
+        apply_bad_dreams_damage(player, state);
+    }
 }
 
 /// Leftovers: At the end of your turn, if the Pokémon this card is attached to is in the Active
@@ -537,33 +543,31 @@ fn apply_leftovers_healing(player_ending_turn: usize, state: &mut State) {
 /// Lum Berry and Sitrus Berry both trigger "at the end of each turn" — that is, at the end of
 /// *either* player's turn and for Pokémon belonging to either player, not just the player whose
 /// turn is ending. Both discard themselves when they fire, so each is checked once per end of
-/// turn across every Pokémon in play.
-fn apply_berry_tools(state: &mut State) {
+/// turn across every Pokémon of `player`.
+fn apply_berry_tools(player: usize, state: &mut State) {
     // The berry discards *itself*, so the slot is recorded by card id: a Pokémon with two Tool
     // slots (Revavroom) must keep its other Tool.
     let mut to_discard: Vec<(usize, usize, CardId)> = Vec::new();
-    for player in 0..2 {
-        for in_play_idx in 0..4 {
-            let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].as_mut() else {
-                continue;
-            };
-            // Lum Berry: "...if the Pokémon this card is attached to is affected by any Special
-            // Conditions, it recovers from all of them, and discard this card."
-            if has_tool(pokemon, CardId::A2149LumBerry) && pokemon.has_status_condition() {
-                debug!("Lum Berry: Curing all Special Conditions and discarding the tool");
-                pokemon.cure_status_conditions();
-                to_discard.push((player, in_play_idx, CardId::A2149LumBerry));
-                continue;
-            }
-            // Sitrus Berry: "...if the Pokémon this card is attached to has half of its maximum HP
-            // or less remaining, heal 30 damage from it. If you do, discard this card."
-            if has_tool(pokemon, CardId::B1218SitrusBerry)
-                && pokemon.get_remaining_hp() * 2 <= pokemon.get_effective_total_hp()
-            {
-                debug!("Sitrus Berry: Healing 30 damage and discarding the tool");
-                pokemon.heal(30);
-                to_discard.push((player, in_play_idx, CardId::B1218SitrusBerry));
-            }
+    for in_play_idx in 0..4 {
+        let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].as_mut() else {
+            continue;
+        };
+        // Lum Berry: "...if the Pokémon this card is attached to is affected by any Special
+        // Conditions, it recovers from all of them, and discard this card."
+        if has_tool(pokemon, CardId::A2149LumBerry) && pokemon.has_status_condition() {
+            debug!("Lum Berry: Curing all Special Conditions and discarding the tool");
+            pokemon.cure_status_conditions();
+            to_discard.push((player, in_play_idx, CardId::A2149LumBerry));
+            continue;
+        }
+        // Sitrus Berry: "...if the Pokémon this card is attached to has half of its maximum HP
+        // or less remaining, heal 30 damage from it. If you do, discard this card."
+        if has_tool(pokemon, CardId::B1218SitrusBerry)
+            && pokemon.get_remaining_hp() * 2 <= pokemon.get_effective_total_hp()
+        {
+            debug!("Sitrus Berry: Healing 30 damage and discarding the tool");
+            pokemon.heal(30);
+            to_discard.push((player, in_play_idx, CardId::B1218SitrusBerry));
         }
     }
     for (player, in_play_idx, berry_id) in to_discard {
@@ -619,28 +623,23 @@ fn apply_soothing_shore_healing(player_ending_turn: usize, state: &mut State) {
     }
 }
 
-/// Apply Bad Dreams ability damage: for each player's Darkrai in play, if that player's
+/// Apply Bad Dreams ability damage for each of `darkrai_owner`'s Darkrai in play: if their
 /// opponent has an Asleep Active Pokémon, deal 20 damage to it.
-fn apply_bad_dreams_damage(state: &mut State) {
-    let sources: Vec<(usize, usize, u32)> = (0..2)
-        .flat_map(|player| {
-            state
-                .enumerate_in_play_pokemon(player)
-                .filter_map(move |(idx, pokemon)| {
-                    if pokemon.is_knocked_out() {
-                        return None;
-                    }
-                    pokemon.ability_mechanic().and_then(|m| match m {
-                        AbilityMechanic::BadDreamsEndOfTurn { amount } => {
-                            Some((player, idx, *amount))
-                        }
-                        _ => None,
-                    })
-                })
+fn apply_bad_dreams_damage(darkrai_owner: usize, state: &mut State) {
+    let sources: Vec<(usize, u32)> = state
+        .enumerate_in_play_pokemon(darkrai_owner)
+        .filter_map(|(idx, pokemon)| {
+            if pokemon.is_knocked_out() {
+                return None;
+            }
+            pokemon.ability_mechanic().and_then(|m| match m {
+                AbilityMechanic::BadDreamsEndOfTurn { amount } => Some((idx, *amount)),
+                _ => None,
+            })
         })
         .collect();
 
-    for (darkrai_owner, darkrai_idx, amount) in sources {
+    for (darkrai_idx, amount) in sources {
         if state.in_play_pokemon[darkrai_owner][darkrai_idx].is_none() {
             continue;
         }
