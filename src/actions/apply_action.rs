@@ -1132,7 +1132,7 @@ fn apply_retreat(player: usize, state: &mut State, bench_idx: usize, is_free: bo
             .as_ref()
             .expect("Active Pokemon should be there if paid retreating");
         let double_grass = active.has_double_grass(state, player);
-        let retreat_cost = get_retreat_cost(state, active).len();
+        let retreat_cost = get_retreat_cost(state, player, active, true).len();
         let attached_energy: &mut Vec<_> = state.in_play_pokemon[player][0]
             .as_mut()
             .expect("Active Pokemon should be there if paid retreating")

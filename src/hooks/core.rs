@@ -10,6 +10,7 @@ use crate::{
     },
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
+    hooks::retreat::get_retreat_cost,
     models::{
         Attack, Card, EnergyType, PlayedCard, StatusCondition, TrainerCard, TrainerType,
         BASIC_STAGE,
@@ -711,11 +712,12 @@ fn get_heavy_helmet_reduction(
         .expect("Defending Pokemon should be there when checking Heavy Helmet");
     // Heavy Helmet: "...it takes -20 damage from attacks from your opponent's Pokémon."
     if has_tool(defending_pokemon, CardId::B1219HeavyHelmet) {
-        if let Card::Pokemon(pokemon_card) = &defending_pokemon.card {
-            if pokemon_card.retreat_cost.len() >= 3 {
-                debug!("Heavy Helmet: Reducing damage by 20");
-                return 20;
-            }
+        // "has a Retreat Cost" is the current cost, where the holder sits.
+        let retreat_cost =
+            get_retreat_cost(state, target_player, defending_pokemon, target_idx == 0);
+        if retreat_cost.len() >= 3 {
+            debug!("Heavy Helmet: Reducing damage by 20");
+            return 20;
         }
     }
     0

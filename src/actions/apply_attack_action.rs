@@ -4822,7 +4822,7 @@ fn extra_damage_per_retreat_cost(
 ) -> AttackOutcomes {
     let opponent = (state.current_player + 1) % 2;
     let opponent_active = state.get_active(opponent);
-    let retreat_cost = get_retreat_cost(state, opponent_active);
+    let retreat_cost = get_retreat_cost(state, opponent, opponent_active, true);
     let damage = base_damage + (retreat_cost.len() as u32) * damage_per_energy;
     active_damage_doutcome(damage)
 }
