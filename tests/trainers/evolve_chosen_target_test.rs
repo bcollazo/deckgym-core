@@ -17,7 +17,12 @@ fn trainer(card_id: CardId) -> TrainerCard {
 
 /// A game (from `seed`) on turn 3 with `board` in play for player 0, `deck` as its deck and `card`
 /// in hand.
-fn game_with(seed: u64, board: Vec<PlayedCard>, deck: Vec<CardId>, card: &TrainerCard) -> Game<'static> {
+fn game_with(
+    seed: u64,
+    board: Vec<PlayedCard>,
+    deck: Vec<CardId>,
+    card: &TrainerCard,
+) -> Game<'static> {
     let mut game = get_initialized_game(seed);
     let mut state = game.get_state_clone();
     state.current_player = 0;
@@ -58,7 +63,11 @@ fn quick_grow_extract_lets_the_player_choose_which_pokemon_evolves() {
                 PlayedCard::from_id(CardId::B3b001Caterpie),
                 PlayedCard::from_id(CardId::B3005Treecko),
             ],
-            vec![CardId::B3b002Metapod, CardId::B3b002Metapod, CardId::B3006Grovyle],
+            vec![
+                CardId::B3b002Metapod,
+                CardId::B3b002Metapod,
+                CardId::B3006Grovyle,
+            ],
             &extract,
         );
         play(&mut game, &extract);

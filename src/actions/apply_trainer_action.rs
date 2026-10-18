@@ -2160,8 +2160,14 @@ fn wallace_effect(acting_player: usize, state: &State) -> Outcomes {
 /// random one of its evolutions; with more, the player picks it (`EvolveIntoRandomFromDeck`) and
 /// the evolution is drawn then. Drawing over every pair would pick the Pokémon at random too,
 /// weighted by how many evolutions of it are left in the deck.
-fn evolve_chosen_into_random_from_deck(candidates: Vec<(usize, Card)>, energy: EnergyType) -> Outcomes {
-    let mut targets: Vec<usize> = candidates.iter().map(|(in_play_idx, _)| *in_play_idx).collect();
+fn evolve_chosen_into_random_from_deck(
+    candidates: Vec<(usize, Card)>,
+    energy: EnergyType,
+) -> Outcomes {
+    let mut targets: Vec<usize> = candidates
+        .iter()
+        .map(|(in_play_idx, _)| *in_play_idx)
+        .collect();
     targets.dedup();
     match targets.as_slice() {
         [] => Outcomes::single_fn(|rng, state, action| {
