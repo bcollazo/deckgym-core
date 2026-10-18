@@ -9,6 +9,12 @@ pub enum CardEffect {
     ReducedDamage {
         amount: u32,
     },
+    /// Attacks used by this Pokémon do `amount` less damage (e.g. Cubone's Growl, Bonsly's Teary
+    /// Attack). It sits on the Pokémon that was hit, so it is an effect on the *Attacking* Pokémon:
+    /// it comes off before Weakness and is gone once that Pokémon leaves the Active Spot.
+    ReducedAttackDamage {
+        amount: u32,
+    },
     IncreasedVulnerability {
         amount: u32,
     },
