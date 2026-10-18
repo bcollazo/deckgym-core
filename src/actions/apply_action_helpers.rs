@@ -10,9 +10,9 @@ use crate::{
     card_ids::CardId,
     effects::{CardEffect, TurnEffect},
     hooks::{
-        get_counterattack_damage, get_delayed_counterattack_damage, modify_damage,
-        on_attack_knockout, on_end_turn, on_knockout, should_poison_attacker,
-        DamageModifierContext,
+        get_attack_hit_back_weakness_extra, get_counterattack_damage,
+        get_delayed_counterattack_damage, modify_damage, on_attack_knockout, on_end_turn,
+        on_knockout, should_poison_attacker, DamageModifierContext,
     },
     models::{Card, PlayedCard, StatusCondition, TrainerType},
     state::GameOutcome,
@@ -763,10 +763,25 @@ pub(crate) fn handle_damage_only(
 
         // Apply counterattack damage and poison
         if counter_damage > 0 {
+            // The hit back an attack left (Cursed Jewel, Spike Armor, ...) is part of that
+            // attack, so it takes Weakness. Rocky Helmet's and Abilities' damage stays flat.
+            let hit_back_weakness_extra = if delayed_counter_damage > 0 {
+                let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
+                    .as_ref()
+                    .expect("Active Pokemon should be there");
+                get_attack_hit_back_weakness_extra(
+                    state,
+                    target_pokemon,
+                    attacking_pokemon,
+                    delayed_counter_damage,
+                )
+            } else {
+                0
+            };
             let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
                 .as_mut()
                 .expect("Active Pokemon should be there");
-            attacking_pokemon.apply_damage(counter_damage);
+            attacking_pokemon.apply_damage(counter_damage + hit_back_weakness_extra);
             debug!(
                 "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
                 counter_damage,
