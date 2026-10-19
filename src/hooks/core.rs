@@ -1679,6 +1679,11 @@ pub(crate) fn modify_damage(
             is_from_active_attack,
             attacking_player != target_player,
         ));
+    // An attack cut to 0 (or below) here does no damage, so Weakness has nothing to add to: it is
+    // treated like an attack whose own damage is 0. Not yet recorded in game; see #426.
+    if attacker_side_damage == 0 {
+        return 0;
+    }
 
     // Step 3.
     let after_weakness = match weakness_application {

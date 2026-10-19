@@ -93,3 +93,21 @@ fn test_growl_cut_reduces_the_defending_pokemons_attack() {
         "Ember (30) used by the Defending Pokémon does -20 damage"
     );
 }
+
+/// Weedle's Sting (20) into Cubone, which is weak to [G]: Growl's -20 takes the attack to 0 in step 2.
+/// An attack reduced to 0 does no damage, so Weakness has nothing to add to (not `0 + 20 = 20`).
+/// Anything cut below 0 is floored to 0 first and does no damage either.
+#[test]
+fn test_growl_cut_to_zero_does_no_damage_even_against_weakness() {
+    let mut game = growl_then_pass(vec![
+        PlayedCard::from_id(CardId::A1008Weedle).with_energy(vec![EnergyType::Grass])
+    ]);
+
+    act(&mut game, 1, attack_action(CardId::A1008Weedle, 0));
+
+    assert_eq!(
+        cubone_hp(&game),
+        60,
+        "Sting 20 - Growl 20 = 0: no damage, so Weakness adds nothing"
+    );
+}
