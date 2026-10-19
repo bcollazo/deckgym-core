@@ -111,3 +111,34 @@ fn test_growl_cut_to_zero_does_no_damage_even_against_weakness() {
         "Sting 20 - Growl 20 = 0: no damage, so Weakness adds nothing"
     );
 }
+
+/// Recorded in-game test (Oct 19): after Growl, Pheromosa's Jump Blues ("20; this attack also does
+/// 20 damage to 1 of your opponent's Benched Pokémon") did 0 to the Active Cubone and 0 to the
+/// Benched Pokémon. The cut is on the attack, so it reduces every target the attack damages.
+/// Lurantis' Petal Blizzard (20 to each of the opponent's Pokémon) shows it without a target choice.
+#[test]
+fn test_growl_cut_also_reduces_damage_to_the_bench() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1151Cubone).with_energy(vec![EnergyType::Colorless]),
+            PlayedCard::from_id(CardId::A1151Cubone),
+        ],
+        vec![PlayedCard::from_id(CardId::A3015Lurantis).with_energy(vec![EnergyType::Grass])],
+    );
+    act(&mut game, 0, attack_action(CardId::A1151Cubone, 0));
+    act(&mut game, 0, SimpleAction::EndTurn);
+
+    act(&mut game, 1, attack_action(CardId::A3015Lurantis, 0));
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_remaining_hp(0, 0),
+        60,
+        "Active Cubone: Petal Blizzard 20 - Growl 20 = 0, and no Weakness on 0"
+    );
+    assert_eq!(
+        state.get_remaining_hp(0, 1),
+        60,
+        "Benched Cubone: the same attack's 20 is also cut to 0"
+    );
+}
