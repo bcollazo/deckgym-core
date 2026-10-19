@@ -171,6 +171,12 @@ pub enum TurnEffect {
         amount: u32,
         pokemon_names: Vec<String>,
     },
+    /// Like `IncreasedDamageForSpecificPokemon`, but the bonus applies to damage on any of the
+    /// opponent's Pokémon (Active or Benched), not only the Active one (Clemont's Backpack).
+    IncreasedDamageForSpecificPokemonToAnyOpponentPokemon {
+        amount: u32,
+        pokemon_names: Vec<String>,
+    },
     IncreasedDamageForSpecificPokemonAgainstEx {
         amount: u32,
         pokemon_names: Vec<String>,
