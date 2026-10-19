@@ -1,0 +1,9 @@
+mod arcade_test;
+mod area_zero_test;
+mod arena_of_antiquity_test;
+mod fragrant_forest_test;
+mod hiking_trail_test;
+mod kids_room_test;
+mod rainbow_cave_test;
+mod soothing_shore_test;
+mod stadium_test;
