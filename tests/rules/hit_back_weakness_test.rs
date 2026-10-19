@@ -86,7 +86,7 @@ fn test_hit_back_left_by_an_attack_without_weakness_stays_30() {
 }
 
 #[test]
-fn test_hit_back_left_by_an_attack_doubles_under_bounded_field() {
+fn test_hit_back_left_by_an_attack_keeps_plus_20_under_bounded_field() {
     let game = togedemaru_spikes_then_attacked_by(
         mega_altaria(),
         CardId::B1102MegaAltariaEx,
@@ -95,8 +95,8 @@ fn test_hit_back_left_by_an_attack_doubles_under_bounded_field() {
 
     assert_eq!(
         game.get_state_clone().get_remaining_hp(1, 0),
-        ALTARIA_HP - 2 * (30 * 2),
-        "Bounded Field turns Weakness into x2: the attack and its hit back each do 30 x 2 = 60"
+        ALTARIA_HP - (30 * 2) - (30 + 20),
+        "Bounded Field doubles the attack (30 x 2 = 60); its hit back keeps the flat +20 (30 + 20 = 50)"
     );
 }
 

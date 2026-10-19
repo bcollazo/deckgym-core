@@ -1352,19 +1352,21 @@ fn weakness_application_against(
 
 /// Extra damage Weakness adds to the hit back an attack left ("During your opponent's next turn,
 /// if this Pokémon is damaged by an attack, do X damage to the Attacking Pokémon"): `holder` is
-/// the Pokémon that attack was used by, `receiver` the Attacking Pokémon taking `amount` from it.
-/// The hit back is part of that attack, so it follows Weakness like the attack's own damage:
-/// +20, or doubled under Bounded Field. Rocky Helmet and hit-back Abilities don't go through here.
+/// the Pokémon that attack was used by, `receiver` the Attacking Pokémon taking the hit back.
+/// The hit back is part of that attack, so it follows Weakness like the attack's own damage: +20.
+/// Under Bounded Field it keeps that flat +20: doubling the hit back has not been seen in game, so
+/// the verified +20 is used until it is recorded. Rocky Helmet and hit-back Abilities don't go
+/// through here.
 pub(crate) fn get_attack_hit_back_weakness_extra(
     state: &State,
     holder: &PlayedCard,
     receiver: &PlayedCard,
-    amount: u32,
 ) -> u32 {
     match weakness_application_against(state, receiver, holder) {
         WeaknessApplication::None => 0,
         WeaknessApplication::Flat(extra) => extra,
-        WeaknessApplication::Double => amount,
+        // Unverified in game for a hit back: keep the flat +20 rather than doubling.
+        WeaknessApplication::Double => 20,
     }
 }
 

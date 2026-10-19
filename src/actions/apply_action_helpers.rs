@@ -769,12 +769,7 @@ pub(crate) fn handle_damage_only(
                 let attacking_pokemon = state.in_play_pokemon[attacking_player][0]
                     .as_ref()
                     .expect("Active Pokemon should be there");
-                get_attack_hit_back_weakness_extra(
-                    state,
-                    target_pokemon,
-                    attacking_pokemon,
-                    delayed_counter_damage,
-                )
+                get_attack_hit_back_weakness_extra(state, target_pokemon, attacking_pokemon)
             } else {
                 0
             };
@@ -784,7 +779,7 @@ pub(crate) fn handle_damage_only(
             attacking_pokemon.apply_damage(counter_damage + hit_back_weakness_extra);
             debug!(
                 "Dealt {} counterattack damage to active Pokemon. Remaining HP: {}",
-                counter_damage,
+                counter_damage + hit_back_weakness_extra,
                 attacking_pokemon.get_remaining_hp()
             );
 
