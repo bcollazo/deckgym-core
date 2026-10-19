@@ -128,3 +128,79 @@ fn test_sitrus_berry_fires_at_the_end_of_the_opponents_turn_too() {
     assert_eq!(chansey.get_remaining_hp(), 80);
     assert!(chansey.attached_tools.is_empty());
 }
+
+/// Bad Dreams: "At the end of each turn, if your opponent's Active Pokémon is Asleep, do 20 damage
+/// to that Pokémon." The effects of the player whose turn is ending resolve first, so when
+/// Darkrai's owner ends the turn, Bad Dreams hits the Asleep Pokémon before its Lum Berry (the
+/// other player's effect) cures it.
+#[test]
+fn test_bad_dreams_resolves_before_opponents_lum_berry_when_darkrai_owner_ends_turn() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
+        vec![PlayedCard::from_id(CardId::A1202Chansey)
+            .with_tool(get_card_by_enum(CardId::A2149LumBerry))],
+    );
+    let mut state = game.get_state_clone();
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
+    game.set_state(state);
+
+    end_turn(&mut game);
+
+    let state = game.get_state_clone();
+    let chansey = state.get_active(1);
+    assert_eq!(
+        chansey.get_remaining_hp(),
+        100,
+        "Bad Dreams should hit first"
+    );
+    assert!(!chansey.is_asleep(), "Lum Berry should still cure Sleep");
+    assert!(chansey.attached_tools.is_empty());
+}
+
+/// The mirror case: the Lum Berry holder's owner is ending the turn, so the berry resolves first,
+/// cures Sleep, and the opponent's Bad Dreams then has nothing to hit.
+#[test]
+fn test_lum_berry_resolves_before_bad_dreams_when_holder_owner_ends_turn() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1202Chansey)
+            .with_tool(get_card_by_enum(CardId::A2149LumBerry))],
+        vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
+    );
+    let mut state = game.get_state_clone();
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
+    game.set_state(state);
+
+    end_turn(&mut game);
+
+    let state = game.get_state_clone();
+    let chansey = state.get_active(0);
+    assert_eq!(
+        chansey.get_remaining_hp(),
+        120,
+        "Bad Dreams should find nothing"
+    );
+    assert!(!chansey.is_asleep());
+    assert!(chansey.attached_tools.is_empty());
+}
+
+/// Same order for Sitrus Berry: Bad Dreams from the ending player's Darkrai takes the holder from
+/// 70 to 50 HP first, which then brings it to half of its 120 HP, so the Sitrus Berry heals 30.
+#[test]
+fn test_bad_dreams_resolves_before_opponents_sitrus_berry_when_darkrai_owner_ends_turn() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::B2b040Darkrai)],
+        vec![PlayedCard::from_id(CardId::A1202Chansey)
+            .with_remaining_hp(70)
+            .with_tool(get_card_by_enum(CardId::B1218SitrusBerry))],
+    );
+    let mut state = game.get_state_clone();
+    state.apply_status_condition(1, 0, StatusCondition::Asleep);
+    game.set_state(state);
+
+    end_turn(&mut game);
+
+    let state = game.get_state_clone();
+    let chansey = state.get_active(1);
+    assert_eq!(chansey.get_remaining_hp(), 80);
+    assert!(chansey.attached_tools.is_empty());
+}
