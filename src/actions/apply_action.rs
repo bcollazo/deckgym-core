@@ -28,8 +28,9 @@ use crate::{
 
 use super::{
     apply_action_helpers::{
-        enumerate_guts_survivor_subsets, forecast_end_turn, guts_flipping_targets, handle_damage,
-        handle_damage_only, handle_knockouts, set_guts_survivors_to_10, Mutation, Mutations,
+        damage_prevention_flipping_targets, enumerate_guts_survivor_subsets, forecast_end_turn,
+        guts_flipping_targets, handle_damage, handle_damage_only, handle_knockouts,
+        set_guts_survivors_to_10, Mutations,
     },
     apply_attack_action::forecast_attack,
     apply_stadium_action::{self, forecast_use_stadium},
@@ -376,57 +377,79 @@ fn forecast_deterministic_action() -> Outcomes {
 }
 
 /// ApplyDamage (damage queued through the move-generation stack, e.g. Mega Kangaskhan's second
-/// punch or Raikou ex's spot damage) is deterministic unless a target has the Guts ability and
-/// would be knocked out: each such target flips its own survival coin, independently of any
-/// Guts flip already resolved earlier in the same attack.
+/// punch or Raikou ex's spot damage) is deterministic unless a target flips a defender coin:
+/// - a target with a coin-flip damage ability (Carefree Steps, Securely Sheltered) flips for the
+///   attack damage, and on heads its damage is reduced before anything else happens;
+/// - a target with the Guts ability that would be knocked out by what is left flips its own
+///   survival coin.
+///
+/// These are independent of any flip already resolved earlier in the same attack.
 fn forecast_apply_damage(
     state: &State,
     attacking_ref: (usize, usize),
     targets: &[(u32, usize, usize)],
     is_from_active_attack: bool,
 ) -> Outcomes {
-    let flipping = guts_flipping_targets(
-        state,
-        attacking_ref,
-        targets,
-        is_from_active_attack,
-        DamageModifierContext {
-            attack_name: None,
-            attack_effect: None,
-        },
-    );
+    let context = DamageModifierContext {
+        attack_name: None,
+        attack_effect: None,
+    };
+    let prevention =
+        damage_prevention_flipping_targets(state, attacking_ref.0, targets, is_from_active_attack);
+    let prevention_subsets = enumerate_guts_survivor_subsets(&prevention);
 
-    if flipping.is_empty() {
-        let targets = targets.to_vec();
-        return Outcomes::single_fn(move |_, state, _| {
-            handle_damage(state, attacking_ref, &targets, is_from_active_attack, None);
-        });
+    let mut probabilities = vec![];
+    let mut mutations: Mutations = vec![];
+    for prevented in &prevention_subsets {
+        // Heads on a prevention coin: that Pokémon's summed damage is reduced (and dropped at 0).
+        let mut reduced_targets = targets.to_vec();
+        for (idx, reduction) in prevented {
+            let total: u32 = targets
+                .iter()
+                .filter(|(_, player, i)| *player != attacking_ref.0 && i == idx)
+                .map(|(damage, _, _)| damage)
+                .sum();
+            reduced_targets.retain(|(_, player, i)| *player == attacking_ref.0 || i != idx);
+            let reduced = total.saturating_sub(*reduction);
+            if reduced > 0 {
+                reduced_targets.push((reduced, (attacking_ref.0 + 1) % 2, *idx));
+            }
+        }
+
+        let flipping = guts_flipping_targets(
+            state,
+            attacking_ref,
+            &reduced_targets,
+            is_from_active_attack,
+            context,
+        );
+        // One branch per heads/tails combination of the Guts coins; on heads the damage still
+        // applies (so on-damage triggers fire) and the survivor's remaining HP is set to 10
+        // before knockouts resolve.
+        let survivor_subsets = enumerate_guts_survivor_subsets(&flipping);
+        let probability = 1.0 / (prevention_subsets.len() * survivor_subsets.len()) as f64;
+        for survivors in survivor_subsets {
+            let targets = reduced_targets.clone();
+            probabilities.push(probability);
+            mutations.push(Box::new(
+                move |_: &mut StdRng, state: &mut State, _: &Action| {
+                    if survivors.is_empty() {
+                        handle_damage(state, attacking_ref, &targets, is_from_active_attack, None);
+                        return;
+                    }
+                    handle_damage_only(
+                        state,
+                        attacking_ref,
+                        &targets,
+                        is_from_active_attack,
+                        context,
+                    );
+                    set_guts_survivors_to_10(state, &survivors);
+                    handle_knockouts(state, attacking_ref, is_from_active_attack);
+                },
+            ));
+        }
     }
-
-    // One branch per heads/tails combination; on heads the damage still applies (so on-damage
-    // triggers fire) and the survivor's remaining HP is set to 10 before knockouts resolve.
-    let subsets = enumerate_guts_survivor_subsets(&flipping);
-    let probabilities = vec![1.0 / subsets.len() as f64; subsets.len()];
-    let mutations: Mutations = subsets
-        .into_iter()
-        .map(|survivors| {
-            let targets = targets.to_vec();
-            Box::new(move |_: &mut StdRng, state: &mut State, _: &Action| {
-                handle_damage_only(
-                    state,
-                    attacking_ref,
-                    &targets,
-                    is_from_active_attack,
-                    DamageModifierContext {
-                        attack_name: None,
-                        attack_effect: None,
-                    },
-                );
-                set_guts_survivors_to_10(state, &survivors);
-                handle_knockouts(state, attacking_ref, is_from_active_attack);
-            }) as Mutation
-        })
-        .collect();
     Outcomes::from_parts(probabilities, mutations)
 }
 
