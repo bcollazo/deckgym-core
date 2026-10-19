@@ -24,7 +24,17 @@ pub(crate) fn can_retreat(state: &State) -> bool {
     !state.has_retreated && !has_no_retreat_effect && !is_fossil && !is_immobilized
 }
 
-pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyType> {
+/// The current Retreat Cost of `card`, a Pokémon of `player`. Ordinary retreat passes the current
+/// player's Active; Heavy Helmet and the attacks that count the defender's Retreat Cost pass the
+/// defender's owner. Modifiers that name the Active Pokémon (Sky Support, Trap Territory, the typed
+/// Bench discounts, the Active auras) apply only when `is_active`, and one-turn effects (X Speed)
+/// only to the current player.
+pub(crate) fn get_retreat_cost(
+    state: &State,
+    player: usize,
+    card: &PlayedCard,
+    is_active: bool,
+) -> Vec<EnergyType> {
     if let Card::Pokemon(pokemon_card) = &card.card {
         if matches!(
             card.ability_mechanic(),
@@ -33,7 +43,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         {
             return vec![];
         }
-        if has_no_retreat_cost_from_abilities(state, card) {
+        if has_no_retreat_cost_from_abilities(state, player, card, is_active) {
             return vec![];
         }
         let mut normal_cost = pokemon_card.retreat_cost.clone();
@@ -61,7 +71,9 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         let mut to_subtract = state
             .get_current_turn_effects()
             .iter()
-            .filter(|x| matches!(x, TurnEffect::ReducedRetreatCost { .. }))
+            .filter(|x| {
+                player == state.current_player && matches!(x, TurnEffect::ReducedRetreatCost { .. })
+            })
             .map(|x| match x {
                 TurnEffect::ReducedRetreatCost { amount } => *amount,
                 _ => 0,
@@ -69,10 +81,9 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
             .sum::<u8>();
 
         // Shaymin's Sky Support: As long as this Pokémon is on your Bench, your Active Basic Pokémon's Retreat Cost is 1 less.
-        if pokemon_card.stage == 0 {
+        if pokemon_card.stage == 0 && is_active {
             // Only affects Basic Pokemon
-            let current_player = state.current_player;
-            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
+            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(player) {
                 if matches!(
                     benched_pokemon.ability_mechanic(),
                     Some(
@@ -85,15 +96,16 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         }
         // Each benched source applies its reduction once, even if the Active Pokémon happens to
         // count as the required type through more than one of its in-play types.
-        let current_player = state.current_player;
-        for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(current_player) {
-            if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
-                energy_type,
-                amount,
-            }) = benched_pokemon.ability_mechanic()
-            {
-                if card.is_type(*energy_type) {
-                    to_subtract += *amount as u8;
+        if is_active {
+            for (_idx, benched_pokemon) in state.enumerate_bench_pokemon(player) {
+                if let Some(AbilityMechanic::ReduceRetreatCostOfYourActiveTypedFromBench {
+                    energy_type,
+                    amount,
+                }) = benched_pokemon.ability_mechanic()
+                {
+                    if card.is_type(*energy_type) {
+                        to_subtract += *amount as u8;
+                    }
                 }
             }
         }
@@ -104,7 +116,7 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         if let Some(AbilityMechanic::ReduceRetreatCostIfAnotherSameNameInPlay { amount }) =
             card.ability_mechanic()
         {
-            if count_in_play_by_name(state, state.current_player, &card.get_name()) > 1 {
+            if count_in_play_by_name(state, player, &card.get_name()) > 1 {
                 to_subtract += *amount;
             }
         }
@@ -121,13 +133,15 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
         // Ariados Trap Territory: Your opponent's Active Pokémon's Retreat Cost is 1 more.
         // This check needs to look at if the OPPONENT has Ariados in play. It is printed on each
         // Ariados, so every Ariados adds its own 1.
-        let opponent = (state.current_player + 1) % 2;
-        for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
-            if matches!(
-                pokemon.ability_mechanic(),
-                Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
-            ) {
-                normal_cost.push(EnergyType::Colorless);
+        if is_active {
+            let opponent = (player + 1) % 2;
+            for (_idx, pokemon) in state.enumerate_in_play_pokemon(opponent) {
+                if matches!(
+                    pokemon.ability_mechanic(),
+                    Some(AbilityMechanic::IncreaseRetreatCostForOpponentActive { amount: 1 })
+                ) {
+                    normal_cost.push(EnergyType::Colorless);
+                }
             }
         }
 
@@ -141,8 +155,12 @@ pub(crate) fn get_retreat_cost(state: &State, card: &PlayedCard) -> Vec<EnergyTy
 /// self-scoped ones read off `card`'s own ability (Speed Link, Fantastical Floating, Wimp Out,
 /// Surge Surfer), and auras granted by any of the owner's in-play Pokémon (Jumpluff's Fluffy
 /// Flight, Tatsugiri's Retreat Directive).
-fn has_no_retreat_cost_from_abilities(state: &State, card: &PlayedCard) -> bool {
-    let player = state.current_player;
+fn has_no_retreat_cost_from_abilities(
+    state: &State,
+    player: usize,
+    card: &PlayedCard,
+    is_active: bool,
+) -> bool {
     let self_scoped = match card.ability_mechanic() {
         Some(AbilityMechanic::NoRetreatCostIfNamedPokemonInPlay { names }) => {
             has_named_pokemon_in_play(state, player, names)
@@ -157,13 +175,14 @@ fn has_no_retreat_cost_from_abilities(state: &State, card: &PlayedCard) -> bool 
 
     // Auras only free the *Active* Pokémon, so they never apply to a Benched retreat-cost query.
     let card_name = card.get_name();
-    state
-        .enumerate_in_play_pokemon(player)
-        .any(|(_, pokemon)| match pokemon.ability_mechanic() {
-            Some(AbilityMechanic::NoRetreatCostForYourActive { pokemon_name }) => {
-                pokemon_name.as_ref().is_none_or(|name| *name == card_name)
+    is_active
+        && state.enumerate_in_play_pokemon(player).any(|(_, pokemon)| {
+            match pokemon.ability_mechanic() {
+                Some(AbilityMechanic::NoRetreatCostForYourActive { pokemon_name }) => {
+                    pokemon_name.as_ref().is_none_or(|name| *name == card_name)
+                }
+                _ => false,
             }
-            _ => false,
         })
 }
 
@@ -197,7 +216,7 @@ mod tests {
         let state = State::default();
         let card = get_card_by_enum(CardId::A1055Blastoise);
         let playable_card = to_playable_card(&card, false);
-        let retreat_cost = get_retreat_cost(&state, &playable_card);
+        let retreat_cost = get_retreat_cost(&state, 0, &playable_card, true);
         assert_eq!(
             retreat_cost,
             vec![
@@ -214,7 +233,7 @@ mod tests {
         state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 1 }, 0);
         let card = get_card_by_enum(CardId::A1055Blastoise);
         let playable_card = to_playable_card(&card, false);
-        let retreat_cost = get_retreat_cost(&state, &playable_card);
+        let retreat_cost = get_retreat_cost(&state, 0, &playable_card, true);
         assert_eq!(
             retreat_cost,
             vec![EnergyType::Colorless, EnergyType::Colorless]
@@ -229,7 +248,7 @@ mod tests {
         state.add_turn_effect(TurnEffect::ReducedRetreatCost { amount: 2 }, 0);
         let card = get_card_by_enum(CardId::A1211Snorlax);
         let playable_card = to_playable_card(&card, false);
-        let retreat_cost = get_retreat_cost(&state, &playable_card);
+        let retreat_cost = get_retreat_cost(&state, 0, &playable_card, true);
         assert_eq!(retreat_cost, vec![]);
     }
 
@@ -241,7 +260,7 @@ mod tests {
         playable_card = playable_card.with_tool(crate::database::get_card_by_enum(
             CardId::A4a067InflatableBoat,
         ));
-        let retreat_cost = get_retreat_cost(&state, &playable_card);
+        let retreat_cost = get_retreat_cost(&state, 0, &playable_card, true);
         assert_eq!(
             retreat_cost,
             vec![EnergyType::Colorless, EnergyType::Colorless]

@@ -107,7 +107,12 @@ fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
     // Maybe retreat pokemon
     if let Some(card) = &state.in_play_pokemon[current_player][0] {
         if can_retreat(state)
-            && contains_energy(card, &get_retreat_cost(state, card), state, current_player)
+            && contains_energy(
+                card,
+                &get_retreat_cost(state, current_player, card, true),
+                state,
+                current_player,
+            )
         {
             state
                 .enumerate_bench_pokemon(current_player)
