@@ -1,6 +1,5 @@
-use log::debug;
-use rand::{rngs::StdRng, seq::SliceRandom, Rng};
-use std::{collections::HashMap, fmt::Debug};
+use rand::{rngs::StdRng, Rng};
+use std::fmt::Debug;
 
 use super::{Player, RandomPlayer};
 use crate::{
@@ -9,56 +8,49 @@ use crate::{
     Deck, Game, State,
 };
 
+const EXPLORATION_CONSTANT: f64 = std::f64::consts::SQRT_2;
+
 pub struct MctsPlayer {
     pub deck: Deck,
-    pub iterations: u64, // Number of iterations for MCTS
-    node_lookup: HashMap<State, MctsNode>,
+    pub iterations: u64,
 }
+
 impl MctsPlayer {
     pub fn new(deck: Deck, iterations: u64) -> Self {
-        Self {
-            deck,
-            iterations,
-            node_lookup: HashMap::new(),
-        }
+        Self { deck, iterations }
     }
 }
 
 impl Player for MctsPlayer {
-    /// Perform MCTS search and return the best action
     fn decision_fn(
         &mut self,
         rng: &mut StdRng,
         state: &State,
         possible_actions: &[Action],
     ) -> Action {
-        // Step 1: Initialize the root node of the search tree
-        let investigator = possible_actions[0].actor; // myself
-        let mut root = self
-            .node_lookup
-            .entry(state.clone())
-            .or_insert_with(|| MctsNode::new(state.clone(), possible_actions.to_vec()))
-            .clone();
-
-        // Step 2: Perform iterations of MCTS
-        for _ in 0..self.iterations {
-            // Selection: Traverse the tree to a leaf node
-            let leaf = root.select(rng);
-
-            // Expansion: Expand the leaf node if it is not terminal
-            if !leaf.is_terminal() {
-                leaf.expand(rng, &mut self.node_lookup);
-            }
-
-            // Simulation: Simulate a random playout from the expanded node
-            let reward = leaf.simulate(rng, investigator);
-
-            // Backpropagation: Update the tree with the simulation result
-            leaf.backpropagate(reward);
+        if possible_actions.len() == 1 {
+            return possible_actions[0].clone();
         }
 
-        // Step 3: Choose the best action from the root node
-        root.best_action()
+        let investigator = possible_actions[0].actor;
+        let root = MctsNode::new(state.clone(), possible_actions.to_vec(), None);
+        let mut arena: Vec<MctsNode> = vec![root];
+
+        for _ in 0..self.iterations {
+            let path = select(&arena, investigator);
+            let leaf_idx = *path.last().unwrap();
+
+            let simulate_from = if arena[leaf_idx].is_terminal() {
+                leaf_idx
+            } else {
+                expand(&mut arena, leaf_idx, rng)
+            };
+
+            let reward = simulate(&arena, simulate_from, rng, investigator);
+            backpropagate(&mut arena, simulate_from, reward);
+        }
+
+        best_action(&arena)
     }
 
     fn get_deck(&self) -> Deck {
@@ -72,23 +64,26 @@ impl Debug for MctsPlayer {
     }
 }
 
-// Struct to represent a node in the MCTS search tree
-#[derive(Clone)]
 struct MctsNode {
     state: State,
+    // All legal actions from this state; children[i] was produced by actions[i]
     actions: Vec<Action>,
-
-    children: Vec<MctsNode>,
+    num_expanded: usize,
+    // Indices into the arena Vec
+    children: Vec<usize>,
+    parent: Option<usize>,
     visits: usize,
-    reward: f64,
+    reward: f64, // Cumulative reward from investigator's perspective
 }
 
 impl MctsNode {
-    fn new(state: State, actions: Vec<Action>) -> Self {
+    fn new(state: State, actions: Vec<Action>, parent: Option<usize>) -> Self {
         Self {
             state,
             actions,
+            num_expanded: 0,
             children: Vec::new(),
+            parent,
             visits: 0,
             reward: 0.0,
         }
@@ -98,87 +93,187 @@ impl MctsNode {
         self.state.winner.is_some()
     }
 
-    fn expand(&mut self, rng: &mut StdRng, node_lookup: &mut HashMap<State, MctsNode>) {
-        for action in &self.actions {
-            let mut new_state = self.state.clone();
-            apply_action(rng, &mut new_state, action);
+    fn is_fully_expanded(&self) -> bool {
+        self.num_expanded >= self.actions.len()
+    }
+}
 
-            let node = node_lookup.get(&new_state).cloned();
-            if node.is_none() {
-                debug!("Missed a node in the lookup table");
+/// Walk from root to a node that still has unexplored actions (or is terminal).
+/// Returns the path as a Vec of arena indices from root to the chosen leaf.
+fn select(arena: &[MctsNode], investigator: usize) -> Vec<usize> {
+    let mut path = vec![0usize];
+    loop {
+        let idx = *path.last().unwrap();
+        let node = &arena[idx];
+        if node.is_terminal() || !node.is_fully_expanded() {
+            return path;
+        }
+        let next = best_ucb_child(arena, idx, investigator);
+        path.push(next);
+    }
+}
+
+/// Among fully-expanded children of `parent_idx`, pick the one with the best UCB1 score.
+fn best_ucb_child(arena: &[MctsNode], parent_idx: usize, investigator: usize) -> usize {
+    let parent = &arena[parent_idx];
+    let parent_visits_ln = (parent.visits as f64).ln();
+    // Flip exploitation sign based on who is making this decision. That is the actor of the
+    // node's actions, which is not always `current_player` (e.g. the defending player chooses
+    // their promotion after a Knock Out during the attacker's turn).
+    let decision_maker = parent.actions[0].actor;
+    let sign: f64 = if decision_maker == investigator {
+        1.0
+    } else {
+        -1.0
+    };
+
+    *parent
+        .children
+        .iter()
+        .max_by(|&&a, &&b| {
+            let score_a = ucb_score(&arena[a], parent_visits_ln, sign);
+            let score_b = ucb_score(&arena[b], parent_visits_ln, sign);
+            score_a.partial_cmp(&score_b).unwrap()
+        })
+        .unwrap()
+}
+
+fn ucb_score(node: &MctsNode, parent_visits_ln: f64, sign: f64) -> f64 {
+    if node.visits == 0 {
+        return f64::INFINITY;
+    }
+    let exploitation = sign * node.reward / node.visits as f64;
+    let exploration = EXPLORATION_CONSTANT * (parent_visits_ln / node.visits as f64).sqrt();
+    exploitation + exploration
+}
+
+/// Expand one unexplored action from the node at `node_idx`.
+/// Adds the new child to the arena and returns its index.
+fn expand(arena: &mut Vec<MctsNode>, node_idx: usize, rng: &mut StdRng) -> usize {
+    let action = arena[node_idx].actions[arena[node_idx].num_expanded].clone();
+    arena[node_idx].num_expanded += 1;
+
+    let mut new_state = arena[node_idx].state.clone();
+    apply_action(rng, &mut new_state, &action);
+    // A finished game has no moves (and may have an empty Active Spot, e.g. after a game-ending
+    // Knock Out), so terminal children get none; `is_terminal` keeps them from being expanded.
+    let new_actions = if new_state.is_game_over() {
+        vec![]
+    } else {
+        new_state.generate_possible_actions().1
+    };
+
+    let child_idx = arena.len();
+    arena.push(MctsNode::new(new_state, new_actions, Some(node_idx)));
+    arena[node_idx].children.push(child_idx);
+
+    child_idx
+}
+
+/// Run a random game from the node's state; return +1 (investigator wins), -1, or 0.
+fn simulate(arena: &[MctsNode], node_idx: usize, rng: &mut StdRng, investigator: usize) -> f64 {
+    let random_players: Vec<Box<dyn Player>> = vec![
+        Box::new(RandomPlayer {
+            deck: Deck::default(),
+        }),
+        Box::new(RandomPlayer {
+            deck: Deck::default(),
+        }),
+    ];
+    let seed: u64 = rng.gen();
+    let mut game = Game::from_state(arena[node_idx].state.clone(), random_players, seed);
+    match game.play() {
+        Some(GameOutcome::Win(winner)) => {
+            if winner == investigator {
+                1.0
             } else {
-                debug!("Found a node in the lookup table");
+                -1.0
             }
-
-            // No need to have actor as part of possible_actions, since when
-            // expanding we use the .apply_action, and the first line there
-            // will take the actor from the action itself. This is different
-            // than how .play_tick does it, because there we need the actor
-            // to choose who plays.
-            //
-            // A finished game has no moves (and may have an empty Active Spot, e.g. after a
-            // game-ending Knock Out), so terminal children get none; `is_terminal` keeps them
-            // from being expanded.
-            let new_actions = if new_state.is_game_over() {
-                vec![]
-            } else {
-                new_state.generate_possible_actions().1
-            };
-            self.children.push(MctsNode::new(new_state, new_actions));
         }
+        Some(GameOutcome::Tie) | None => 0.0,
     }
+}
 
-    fn select(&mut self, rng: &mut StdRng) -> &mut Self {
-        if self.children.is_empty() {
-            self
-        } else {
-            self.children.choose_mut(rng).unwrap()
+/// Walk up the parent chain, updating visits and reward at every node.
+fn backpropagate(arena: &mut [MctsNode], start_idx: usize, reward: f64) {
+    let mut current = Some(start_idx);
+    while let Some(idx) = current {
+        arena[idx].visits += 1;
+        arena[idx].reward += reward;
+        current = arena[idx].parent;
+    }
+}
+
+/// Return the action from root that leads to the most-visited child.
+fn best_action(arena: &[MctsNode]) -> Action {
+    let root = &arena[0];
+    let best_child_pos = root
+        .children
+        .iter()
+        .enumerate()
+        .max_by_key(|(_, &child_idx)| arena[child_idx].visits)
+        .map(|(pos, _)| pos)
+        .expect("Root must have at least one child after iterations");
+    root.actions[best_child_pos].clone()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        card_ids::CardId,
+        models::{EnergyType, PlayedCard},
+        test_support::{attack_action, get_test_game_with_board},
+    };
+
+    /// After the investigator's attack Knocks Out the opponent's Active, the opponent (not the
+    /// current player) picks the promotion, so UCB must prefer the child that is worse for the
+    /// investigator at that node.
+    #[test]
+    fn test_ucb_uses_decision_maker_not_current_player_for_promotion() {
+        let mut game = get_test_game_with_board(
+            vec![PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
+            vec![
+                PlayedCard::from_id(CardId::A1001Bulbasaur).with_remaining_hp(10),
+                PlayedCard::from_id(CardId::A1001Bulbasaur),
+            ],
+        );
+        game.apply_action(&Action {
+            actor: 0,
+            action: attack_action(CardId::A1001Bulbasaur, 0),
+            is_stack: false,
+        });
+        let state = game.get_state_clone();
+        let (actor, actions) = state.generate_possible_actions();
+        assert_eq!(actor, 1, "the opponent chooses the promotion");
+        assert_eq!(
+            state.current_player, 0,
+            "while it is still the investigator's turn"
+        );
+
+        let investigator = 0;
+        let mut parent = MctsNode::new(state.clone(), actions, None);
+        parent.num_expanded = parent.actions.len();
+        parent.visits = 20;
+        let mut arena = vec![parent];
+        // Child 1 always wins for the investigator, child 2 always loses.
+        for (reward, _) in [
+            (10.0, "good for investigator"),
+            (-10.0, "bad for investigator"),
+        ] {
+            let mut child = MctsNode::new(state.clone(), vec![], Some(0));
+            child.visits = 10;
+            child.reward = reward;
+            let idx = arena.len();
+            arena.push(child);
+            arena[0].children.push(idx);
         }
-    }
 
-    // Simulate a random playout from the current state, and return 1 or -1 or 0
-    fn simulate(&self, rng: &mut StdRng, investigator: usize) -> f64 {
-        let random_players: Vec<Box<dyn Player>> = vec![
-            Box::new(RandomPlayer {
-                deck: Deck::default(),
-            }),
-            Box::new(RandomPlayer {
-                deck: Deck::default(),
-            }),
-        ];
-        let seed: u64 = rng.gen();
-
-        // Since we emplace the state, we can keep using our "seating position" as investigator
-        let mut game_copy = Game::from_state(self.state.clone(), random_players, seed);
-        let outcome = game_copy.play();
-
-        // If winner is my ID, return 1.0, if winner is opponent ID, return -1.0, else return 0.0
-        match outcome {
-            Some(GameOutcome::Win(winner)) => {
-                if winner == investigator {
-                    1.0
-                } else {
-                    -1.0
-                }
-            }
-            Some(GameOutcome::Tie) | None => 0.0,
-        }
-    }
-
-    fn backpropagate(&mut self, reward: f64) {
-        self.visits += 1;
-        self.reward += reward;
-    }
-
-    fn best_action(&self) -> Action {
-        let (best_index, _) = self
-            .children
-            .iter()
-            .enumerate()
-            .max_by(|(_, child_a), (_, child_b)| {
-                child_a.reward.partial_cmp(&child_b.reward).unwrap()
-            })
-            .expect("There should be at least one child node");
-        self.actions[best_index].clone()
+        let chosen = best_ucb_child(&arena, 0, investigator);
+        assert_eq!(
+            chosen, 2,
+            "the opponent should pick the child that is worst for the investigator"
+        );
     }
 }
