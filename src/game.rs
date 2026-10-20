@@ -133,6 +133,10 @@ impl<'a> Game<'a> {
         self.state.clone()
     }
 
+    pub fn state(&self) -> &State {
+        &self.state
+    }
+
     // TODO: Maybe make these only available for testing?
     pub fn apply_action(&mut self, action: &Action) {
         apply_action(&mut self.rng, &mut self.state, action);
