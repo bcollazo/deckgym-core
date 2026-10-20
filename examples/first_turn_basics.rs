@@ -82,6 +82,38 @@ struct Args {
     /// Print every action of N games of the first plan cell and exit
     #[arg(long)]
     trace: Option<u64>,
+    /// Non-mirror mode: the opponent plays the cell deck but with this many Tools.
+    #[arg(long)]
+    opp_t: Option<u32>,
+    /// Non-mirror mode: the opponent plays this fixed cell, given as "c,m,p,r,cc,t".
+    #[arg(long)]
+    opp_cell: Option<String>,
+}
+
+/// Who the opponent is: the same cell (mirror) or an override.
+#[derive(Clone, Copy, Debug)]
+enum Opponent {
+    Mirror,
+    Tools(u32),
+    Fixed(Cell),
+}
+
+impl Opponent {
+    fn deck_cell(&self, cell: &Cell) -> Cell {
+        match self {
+            Opponent::Mirror => *cell,
+            Opponent::Tools(t) => Cell { t: *t, ..*cell },
+            Opponent::Fixed(c) => *c,
+        }
+    }
+
+    fn label(&self) -> String {
+        match self {
+            Opponent::Mirror => "mirror".into(),
+            Opponent::Tools(t) => format!("opp_t={t}"),
+            Opponent::Fixed(c) => format!("opp={},{},{},{},{},{}", c.c, c.m, c.p, c.r, c.cc, c.t),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -299,6 +331,7 @@ impl Player for FirstTurnBot {
 /// Per-seat tallies. Index 0 = going first, 1 = going second.
 #[derive(Default, Clone, Copy)]
 struct Tally {
+    n: [u64; 2],
     opening: [u64; 2],
     in1: [u64; 2],
     in2: [u64; 2],
@@ -309,6 +342,7 @@ struct Tally {
 impl Tally {
     fn add(mut self, o: Tally) -> Tally {
         for s in 0..2 {
+            self.n[s] += o.n[s];
             self.opening[s] += o.opening[s];
             self.in1[s] += o.in1[s];
             self.in2[s] += o.in2[s];
@@ -330,19 +364,34 @@ fn game_seed(base: u64, cell: &Cell, policy: Policy, i: u64) -> u64 {
     z ^ (z >> 31)
 }
 
-fn play_one(deck: &Deck, cell: &Cell, policy: Policy, seed: u64, trace: bool) -> Tally {
+/// Plays one game with `decks.0` as the measured deck. In a mirror (`decks.1` is None) both
+/// players are measured; otherwise only player 0 is.
+fn play_one(
+    decks: (&Deck, Option<&Deck>),
+    cells: (&Cell, &Cell),
+    policy: Policy,
+    seed: u64,
+    trace: bool,
+) -> Tally {
+    let mirror = decks.1.is_none();
+    let opp_deck = decks.1.unwrap_or(decks.0);
     let mut rng = StdRng::seed_from_u64(seed);
-    let state = State::initialize(deck, deck, &mut rng);
+    let state = State::initialize(decks.0, opp_deck, &mut rng);
     let first = state.current_player;
+    let measured = |player: usize| mirror || player == 0;
     let mut tally = Tally::default();
     for player in 0..2 {
         let seat = if player == first { 0 } else { 1 };
-        if targets_in_hand(&state, player) > 0 {
-            tally.opening[seat] = 1;
+        if measured(player) {
+            tally.n[seat] = 1;
+            if targets_in_hand(&state, player) > 0 {
+                tally.opening[seat] = 1;
+            }
         }
     }
-    let players: Vec<Box<dyn Player>> = (0..2)
-        .map(|_| {
+    let players: Vec<Box<dyn Player>> = [(decks.0, cells.0), (opp_deck, cells.1)]
+        .into_iter()
+        .map(|(deck, cell)| {
             Box::new(FirstTurnBot {
                 deck: deck.clone(),
                 copies: cell.c,
@@ -366,7 +415,7 @@ fn play_one(deck: &Deck, cell: &Cell, policy: Policy, seed: u64, trace: bool) ->
             );
         }
         if let Some(t) = trainer_of(&action) {
-            if t.name == "Copycat" {
+            if t.name == "Copycat" && measured(action.actor) {
                 let seat = if action.actor == first { 0 } else { 1 };
                 tally.copycats[seat] += 1;
                 tally.copycat_draws[seat] += game.state().hands[action.actor].len() as u64;
@@ -378,10 +427,10 @@ fn play_one(deck: &Deck, cell: &Cell, policy: Policy, seed: u64, trace: bool) ->
             let seat = (before - 1) as usize;
             let player = if seat == 0 { first } else { (first + 1) % 2 };
             let n = targets_in_play(game.state(), player);
-            if n >= 1 {
+            if measured(player) && n >= 1 {
                 tally.in1[seat] = 1;
             }
-            if n >= 2 {
+            if measured(player) && n >= 2 {
                 tally.in2[seat] = 1;
             }
             if seat == 1 {
@@ -395,11 +444,27 @@ fn play_one(deck: &Deck, cell: &Cell, policy: Policy, seed: u64, trace: bool) ->
     tally
 }
 
-fn run_cell(cell: &Cell, games: u64, policy: Policy, base_seed: u64) -> Result<Tally, String> {
+fn build_deck(cell: &Cell) -> Result<Deck, String> {
     let deck = Deck::from_string(&cell.deck_string()?)?;
     if deck.cards.len() != 20 {
         return Err(format!("deck has {} cards", deck.cards.len()));
     }
+    Ok(deck)
+}
+
+fn run_cell(
+    cell: &Cell,
+    games: u64,
+    policy: Policy,
+    opponent: Opponent,
+    base_seed: u64,
+) -> Result<Tally, String> {
+    let deck = build_deck(cell)?;
+    let opp_cell = opponent.deck_cell(cell);
+    let opp_deck = match opponent {
+        Opponent::Mirror => None,
+        _ => Some(build_deck(&opp_cell)?),
+    };
     const CHUNK: u64 = 500;
     let chunks = games.div_ceil(CHUNK);
     let tally = (0..chunks)
@@ -408,7 +473,13 @@ fn run_cell(cell: &Cell, games: u64, policy: Policy, base_seed: u64) -> Result<T
             let lo = k * CHUNK;
             let hi = (lo + CHUNK).min(games);
             (lo..hi).fold(Tally::default(), |acc, i| {
-                acc.add(play_one(&deck, cell, policy, game_seed(base_seed, cell, policy, i), false))
+                acc.add(play_one(
+                    (&deck, opp_deck.as_ref()),
+                    (cell, &opp_cell),
+                    policy,
+                    game_seed(base_seed, cell, policy, i),
+                    false,
+                ))
             })
         })
         .reduce(Tally::default, Tally::add);
@@ -423,12 +494,13 @@ fn parse_cell(v: &Value) -> (Cell, u64) {
     )
 }
 
-fn done_keys(out: &str, policy: &str, seed: u64) -> HashSet<(u64, u64)> {
+fn done_keys(out: &str, policy: &str, opponent: &str, seed: u64) -> HashSet<(u64, u64)> {
     let mut done = HashSet::new();
     if let Ok(f) = File::open(out) {
         for line in BufReader::new(f).lines().map_while(Result::ok) {
             if let Ok(v) = serde_json::from_str::<Value>(&line) {
-                if v["policy"] == policy && v["seed"] == seed {
+                let opp = v["opponent"].as_str().unwrap_or("mirror");
+                if v["policy"] == policy && opp == opponent && v["seed"] == seed {
                     let (cell, games) = parse_cell(&v);
                     done.insert((cell.key(), games));
                 }
@@ -463,16 +535,31 @@ fn main() {
         .map(|l| parse_cell(&serde_json::from_str(&l).expect("plan json")))
         .take(args.limit.unwrap_or(usize::MAX))
         .collect();
+    let opponent = match (args.opp_t, &args.opp_cell) {
+        (Some(t), _) => Opponent::Tools(t),
+        (None, Some(spec)) => {
+            let v: Vec<u32> = spec.split(',').map(|x| x.trim().parse().expect("opp_cell")).collect();
+            assert_eq!(v.len(), 6, "--opp-cell takes c,m,p,r,cc,t");
+            Opponent::Fixed(Cell { c: v[0], m: v[1], p: v[2], r: v[3], cc: v[4], t: v[5] })
+        }
+        (None, None) => Opponent::Mirror,
+    };
     if let Some(n) = args.trace {
         let cell = plan[0].0;
-        let deck = Deck::from_string(&cell.deck_string().expect("deck")).expect("deck");
+        let opp_cell = opponent.deck_cell(&cell);
+        let deck = build_deck(&cell).expect("deck");
+        let opp_deck = match opponent {
+            Opponent::Mirror => None,
+            _ => Some(build_deck(&opp_cell).expect("deck")),
+        };
         for i in 0..n {
-            eprintln!("game {i} {cell:?}");
-            play_one(&deck, &cell, policy, game_seed(args.seed, &cell, policy, i), true);
+            eprintln!("game {i} {cell:?} vs {}", opponent.label());
+            let seed = game_seed(args.seed, &cell, policy, i);
+            play_one((&deck, opp_deck.as_ref()), (&cell, &opp_cell), policy, seed, true);
         }
         return;
     }
-    let done = done_keys(&args.out, &args.policy, args.seed);
+    let done = done_keys(&args.out, &args.policy, &opponent.label(), args.seed);
     let commit = engine_commit();
     let mut out = OpenOptions::new()
         .create(true)
@@ -489,7 +576,7 @@ fn main() {
             continue;
         }
         let t0 = Instant::now();
-        let tally = match run_cell(cell, *games, policy, args.seed) {
+        let tally = match run_cell(cell, *games, policy, opponent, args.seed) {
             Ok(t) => t,
             Err(e) => {
                 eprintln!("skip {cell:?}: {e}");
@@ -499,13 +586,15 @@ fn main() {
         let secs = t0.elapsed().as_secs_f64();
         let seat = |s: usize| {
             json!({
+                "n": tally.n[s],
                 "opening": tally.opening[s], "in1": tally.in1[s], "in2": tally.in2[s],
                 "copycats": tally.copycats[s], "copycatDraws": tally.copycat_draws[s],
             })
         };
         let line = json!({
             "c": cell.c, "m": cell.m, "p": cell.p, "r": cell.r, "cc": cell.cc, "t": cell.t,
-            "games": games, "policy": args.policy, "seed": args.seed, "commit": commit,
+            "games": games, "policy": args.policy, "opponent": opponent.label(),
+            "seed": args.seed, "commit": commit,
             "first": seat(0), "second": seat(1), "secs": secs,
         });
         writeln!(out, "{line}").expect("write");
@@ -518,8 +607,8 @@ fn main() {
             plan.len(),
             cell,
             *games as f64 / secs,
-            tally.in1[0] as f64 / *games as f64,
-            tally.in1[1] as f64 / *games as f64,
+            tally.in1[0] as f64 / tally.n[0].max(1) as f64,
+            tally.in1[1] as f64 / tally.n[1].max(1) as f64,
             elapsed
         );
     }
