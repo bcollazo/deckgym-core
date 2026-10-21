@@ -7,6 +7,7 @@ mod damage_order_test;
 mod double_knockout_promotion_order_test;
 mod evolution_timing_test;
 mod heavy_helmet_retreat_cost_test;
+mod hit_back_weakness_test;
 mod opponent_only_damage_cuts_test;
 mod special_conditions_test;
 mod weakness_active_only_test;

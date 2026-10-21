@@ -12,6 +12,7 @@ pub(crate) use core::can_play_support;
 pub(crate) use core::contains_energy;
 pub(crate) use core::energy_missing;
 
+pub(crate) use core::get_attack_hit_back_weakness_extra;
 pub(crate) use core::get_effective_attack_cost;
 pub(crate) use core::get_extra_random_spread_hits;
 pub(crate) use core::get_stage;

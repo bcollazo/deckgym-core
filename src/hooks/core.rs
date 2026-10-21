@@ -1306,8 +1306,16 @@ fn get_weakness_application(
     if !is_active_to_active || attack_effect_ignores_weakness(context) {
         return WeaknessApplication::None;
     }
-    let receiving = state.get_active(target_player);
+    weakness_application_against(state, state.get_active(target_player), attacking_pokemon)
+}
 
+/// The Weakness rule itself: +20 when `receiving`'s Weakness is one of the attacker's types,
+/// or ×2 of the total under Bounded Field for an attacker that isn't a Mega ex.
+fn weakness_application_against(
+    state: &State,
+    receiving: &PlayedCard,
+    attacking_pokemon: &crate::models::PlayedCard,
+) -> WeaknessApplication {
     if receiving
         .get_active_effects()
         .iter()
@@ -1340,6 +1348,25 @@ fn get_weakness_application(
         }
     }
     WeaknessApplication::None
+}
+
+/// Extra damage Weakness adds to the hit back an attack left ("During your opponent's next turn,
+/// if this Pokémon is damaged by an attack, do X damage to the Attacking Pokémon"): `holder` is
+/// the Pokémon that attack was used by, `receiver` the Attacking Pokémon taking `amount` from it.
+/// The hit back is part of that attack, so it follows Weakness like the attack's own damage: +20,
+/// or doubled under Bounded Field (recorded in game: Alolan Sandslash's Spike Armor did 40 x 2 = 80
+/// to a Water-weak Heatran). Rocky Helmet and hit-back Abilities don't go through here.
+pub(crate) fn get_attack_hit_back_weakness_extra(
+    state: &State,
+    holder: &PlayedCard,
+    receiver: &PlayedCard,
+    amount: u32,
+) -> u32 {
+    match weakness_application_against(state, receiver, holder) {
+        WeaknessApplication::None => 0,
+        WeaknessApplication::Flat(extra) => extra,
+        WeaknessApplication::Double => amount,
+    }
 }
 
 fn get_future_booster_damage_bonus(attacking_pokemon: &PlayedCard) -> u32 {
