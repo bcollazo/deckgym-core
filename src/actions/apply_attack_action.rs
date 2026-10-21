@@ -5146,15 +5146,8 @@ fn knock_back_attack(damage: u32) -> AttackOutcomes {
 fn mawile_crunch() -> AttackOutcomes {
     AttackOutcomes::binary_coin(
         active_damage_effect_outcome(20, move |rng, state, action| {
-            // Heads: damage + discard random energy
-            let opponent = (action.actor + 1) % 2;
-            let active = state.get_active_mut(opponent);
-
-            if !active.attached_energy.is_empty() {
-                let energy_count = active.attached_energy.len();
-                let rand_idx = rng.gen_range(0..energy_count);
-                active.attached_energy.remove(rand_idx);
-            }
+            // Heads: damage + discard random energy (Clear Veil / Crystal Body prevent it)
+            discard_random_energy_from_opponent_active(rng, state, action.actor, 1);
         }),
         active_damage_outcome(20), // Tails: just damage
     )
