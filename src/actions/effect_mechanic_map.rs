@@ -462,8 +462,8 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert(
         "During your opponent's next turn, attacks used by the Defending Pokémon do -20 damage.",
         Mechanic::DamageAndCardEffect {
-            opponent: false,
-            effect: CardEffect::ReducedDamage { amount: 20 },
+            opponent: true,
+            effect: CardEffect::ReducedAttackDamage { amount: 20 },
             duration: 1,
             coin_flip: false,
         },
@@ -471,8 +471,8 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert(
         "During your opponent's next turn, attacks used by the Defending Pokémon do -30 damage.",
         Mechanic::DamageAndCardEffect {
-            opponent: false,
-            effect: CardEffect::ReducedDamage { amount: 30 },
+            opponent: true,
+            effect: CardEffect::ReducedAttackDamage { amount: 30 },
             duration: 1,
             coin_flip: false,
         },

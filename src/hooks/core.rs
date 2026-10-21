@@ -1178,6 +1178,27 @@ fn get_reduced_from_ex_card_effect_modifiers(
         .sum::<u32>()
 }
 
+/// Growl-type cuts ("attacks used by the Defending Pokémon do -N damage"): an effect on the
+/// *Attacking* Pokémon, so it reduces every opposing target of its attacks, Benched ones included,
+/// and is applied before Weakness. Ability and status damage is not an attack and is not cut.
+fn get_attacker_reduced_attack_damage(
+    attacking_pokemon: &crate::models::PlayedCard,
+    is_from_active_attack: bool,
+    is_against_opponent: bool,
+) -> u32 {
+    if !is_from_active_attack || !is_against_opponent {
+        return 0;
+    }
+    attacking_pokemon
+        .get_active_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            CardEffect::ReducedAttackDamage { amount } => Some(*amount),
+            _ => None,
+        })
+        .sum::<u32>()
+}
+
 fn get_increased_vulnerability_modifiers(
     state: &State,
     is_active_to_active: bool,
@@ -1679,6 +1700,17 @@ pub(crate) fn modify_damage(
         + stadium_damage_bonus
         + future_booster_damage_bonus
         + beastite_damage_bonus;
+    let attacker_side_damage =
+        attacker_side_damage.saturating_sub(get_attacker_reduced_attack_damage(
+            attacking_pokemon,
+            is_from_active_attack,
+            attacking_player != target_player,
+        ));
+    // An attack cut to 0 (or below) here does no damage, so Weakness has nothing to add to: it is
+    // treated like an attack whose own damage is 0. Not yet recorded in game; see #426.
+    if attacker_side_damage == 0 {
+        return 0;
+    }
 
     // Step 3.
     let after_weakness = match weakness_application {
