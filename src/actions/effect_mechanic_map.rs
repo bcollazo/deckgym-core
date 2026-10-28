@@ -16,6 +16,11 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Mega Tyranitar ex
+    map.insert(
+        "Discard the top 2 cards of your deck.",
+        Mechanic::DiscardTopSelfDeck { count: 2 },
+    );
     // Mega Skarmory ex
     map.insert(
         "Flip a coin until you get tails. This attack does 50 more damage for each heads.",

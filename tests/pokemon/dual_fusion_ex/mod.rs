@@ -45,3 +45,5 @@ mod mega_dragonite;
 mod mega_mewtwo_y;
 
 mod mega_skarmory;
+
+mod mega_tyranitar;
