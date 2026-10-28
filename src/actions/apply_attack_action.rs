@@ -7082,11 +7082,13 @@ mod test {
 
         /// Every hit sequence enumerated one by one: the definition the grouped
         /// enumeration must match.
+        type WeightedDamage = (f64, Vec<(usize, usize, u32)>);
+
         fn brute_force(
             targets: &[(usize, usize)],
             times: usize,
             damage: u32,
-        ) -> Vec<(f64, Vec<(usize, usize, u32)>)> {
+        ) -> Vec<WeightedDamage> {
             let n = targets.len();
             let total = n.pow(times as u32);
             let mut groups: HashMap<Vec<(usize, usize, u32)>, f64> = HashMap::new();

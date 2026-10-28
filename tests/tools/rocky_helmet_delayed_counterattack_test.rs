@@ -18,6 +18,7 @@ use deckgym::{
 ///   - Turn 2: 130 from Mega Blastoise ex's Triple Bombardment.
 ///   - Turn 2: 20 more from that same Rocky Helmet, reflected off Cursed Jewel's own delayed
 ///     counterattack landing on Mega Blastoise ex (the interaction under test).
+///
 /// 20 + 130 + 20 = 170, exactly knocking out a 170 HP Mega Sableye ex.
 #[test]
 fn test_rocky_helmet_reflects_mega_sableye_ex_cursed_jewel_counterattack() {
