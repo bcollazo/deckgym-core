@@ -80,6 +80,10 @@ static SITRUS_BERRY_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B1218SitrusBerry));
 static LUCKY_MITTENS_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B1220LuckyMittens));
+static EVIOLITE_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::C1123Eviolite));
+static LIGHT_BALL_EFFECT: LazyLock<String> =
+    LazyLock::new(|| tool_effect_text_from_card_id(CardId::C1124LightBall));
 static CLEAR_VEIL_EFFECT: LazyLock<String> =
     LazyLock::new(|| tool_effect_text_from_card_id(CardId::B4149ClearVeil));
 
@@ -167,5 +171,7 @@ pub fn is_tool_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == SITRUS_BERRY_EFFECT.as_str()
             || e == LUCKY_MITTENS_EFFECT.as_str()
             || e == CLEAR_VEIL_EFFECT.as_str()
+            || e == EVIOLITE_EFFECT.as_str()
+            || e == LIGHT_BALL_EFFECT.as_str()
     )
 }

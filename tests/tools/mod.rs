@@ -1,5 +1,6 @@
 mod berries_test;
 mod booster_capsule_test;
+mod c1_tools_test;
 mod coverage_tools_test;
 mod deceptive_needle_test;
 mod dual_customization_test;

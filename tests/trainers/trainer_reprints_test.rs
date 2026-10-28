@@ -76,11 +76,7 @@ fn trainer_coverage_has_only_the_documented_pending_designs() {
         .collect();
     missing.sort_by_key(|id| format!("{id:?}"));
     missing.dedup();
-    let mut pending = vec![
-        CardId::C1123Eviolite,
-        CardId::C1124LightBall,
-        CardId::C1131AbandonedStation,
-    ];
+    let mut pending = vec![CardId::C1131AbandonedStation];
     pending.sort_by_key(|id| format!("{id:?}"));
     assert_eq!(
         missing, pending,
