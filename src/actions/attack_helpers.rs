@@ -66,6 +66,32 @@ pub(crate) fn energy_blender_choices(
     choices
 }
 
+/// Lunala's Wings of the Moone: the choices offered at one step of "move all Energy from this
+/// Pokémon to your Benched Pokémon in any way you like" — every distinct Energy type on the Active
+/// Pokémon moved to every Benched Pokémon. Empty once the Active Pokémon has no Energy left (or
+/// there is no Bench), so there is no early stop.
+pub(crate) fn active_energy_to_bench_choices(state: &State, player: usize) -> Vec<SimpleAction> {
+    let Some(active) = state.in_play_pokemon[player][0].as_ref() else {
+        return Vec::new();
+    };
+    let mut types_seen: Vec<EnergyType> = Vec::new();
+    for energy_type in &active.attached_energy {
+        if !types_seen.contains(energy_type) {
+            types_seen.push(*energy_type);
+        }
+    }
+    let mut choices = Vec::new();
+    for energy_type in types_seen {
+        for (to_in_play_idx, _) in state.enumerate_bench_pokemon(player) {
+            choices.push(SimpleAction::MoveActiveEnergyToBenchAndReoffer {
+                to_in_play_idx,
+                energy_type,
+            });
+        }
+    }
+    choices
+}
+
 /// The total Energy attached across all of `player`'s Pokémon in play. Used as the move budget for
 /// `energy_blender_choices`: no Energy ever has to move more than once to reach a given board.
 pub(crate) fn total_attached_energy(state: &State, player: usize) -> usize {

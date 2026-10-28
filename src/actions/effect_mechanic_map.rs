@@ -3671,5 +3671,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
+    // Lunala - Wings of the Moone
+    map.insert(
+        "Move all Energy from this Pokémon to your Benched Pokémon in any way you like.",
+        Mechanic::MoveAllEnergyToBenchAnyWay,
+    );
     map
 });

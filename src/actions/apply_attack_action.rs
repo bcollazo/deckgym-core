@@ -12,8 +12,9 @@ use crate::{
         },
         apply_evolve,
         attack_helpers::{
-            collect_in_play_indices_by_type, energy_any_way_choices, energy_blender_choices,
-            generate_distributions, total_attached_energy,
+            active_energy_to_bench_choices, collect_in_play_indices_by_type,
+            energy_any_way_choices, energy_blender_choices, generate_distributions,
+            total_attached_energy,
         },
         attacks::{BenchSide, CopyAttackSource, Mechanic, RevealCriterion},
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
@@ -1176,6 +1177,9 @@ fn forecast_effect_attack_by_mechanic(
             damage_and_discard_all_energy(attack.fixed_damage)
         }
         Mechanic::MoveOwnEnergyAnyWay => move_own_energy_any_way(attack.fixed_damage),
+        Mechanic::MoveAllEnergyToBenchAnyWay => {
+            move_all_energy_to_bench_any_way(attack.fixed_damage)
+        }
         Mechanic::ExtraDamageIfSameEnergyCountAsOpponent { extra_damage } => {
             extra_damage_if_same_energy_count_as_opponent(state, attack.fixed_damage, *extra_damage)
         }
@@ -1481,6 +1485,24 @@ fn inflict_poison_with_damage(damage: u32, poison_damage: u32) -> AttackOutcomes
 /// *from* the attacker (spot damage it deals, Energy it moves, a switch it makes) must not run
 /// after it has been knocked out — e.g. by Rocky Helmet recoil on the attack's own damage — both
 /// because the card says so and because `ApplyDamage` needs a live `attacking_ref`.
+/// Lunala - Wings of the Moone: after damage, all of the attacker's Energy has to go to its
+/// Benched Pokémon; the player picks where each one goes (see
+/// `SimpleAction::MoveActiveEnergyToBenchAndReoffer`).
+fn move_all_energy_to_bench_any_way(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::single(AttackOutcome::damage_then_effect(
+        vec![(damage, true, 0)],
+        move |_, state, action| {
+            if !attacker_still_in_play(state, action.actor) {
+                return;
+            }
+            let choices = active_energy_to_bench_choices(state, action.actor);
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        },
+    ))
+}
+
 fn attacker_still_in_play(state: &State, actor: usize) -> bool {
     state.in_play_pokemon[actor][0]
         .as_ref()
