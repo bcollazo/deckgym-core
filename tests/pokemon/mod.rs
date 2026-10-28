@@ -240,4 +240,5 @@ mod printed_dual_types_test;
 
 mod dual_fusion_ex;
 
+mod c1_abilities;
 mod c1_attacks;

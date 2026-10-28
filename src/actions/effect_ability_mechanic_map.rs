@@ -486,6 +486,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             },
         );
         map.insert(
+            "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to the [L] Pokémon in the Active Spot.",
+            AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
+                energy_type: EnergyType::Lightning,
+            },
+        );
+        map.insert(
             "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.",
             AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
                 energy_type: EnergyType::Psychic,
