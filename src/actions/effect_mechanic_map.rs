@@ -3596,5 +3596,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             damage_per_energy: 20,
         },
     );
+    // Umbreon - Moonlit Raid
+    map.insert(
+        "If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage.",
+        Mechanic::ExtraDamageIfDefenderIsBasic { extra_damage: 50 },
+    );
     map
 });
