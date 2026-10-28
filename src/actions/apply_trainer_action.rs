@@ -58,6 +58,7 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
         CardId::A2b111PokeBall => pokemon_search_outcomes(acting_player, state, true),
@@ -2253,6 +2254,20 @@ fn team_rocket_grunt_outcomes() -> Outcomes {
             },
         )
     })
+}
+
+fn lorelei_effect(_: &mut StdRng, state: &mut State, _: &Action) {
+    state.add_turn_effect(
+        TurnEffect::IncreasedDamageForSpecificPokemonToAnyOpponentPokemon {
+            amount: 30,
+            pokemon_names: vec![
+                "Dewgong".to_string(),
+                "Cloyster".to_string(),
+                "Lapras".to_string(),
+            ],
+        },
+        0,
+    );
 }
 
 #[cfg(test)]

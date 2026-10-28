@@ -83,7 +83,6 @@ fn trainer_coverage_has_only_the_documented_pending_designs() {
         CardId::C1122FullHeal,
         CardId::C1123Eviolite,
         CardId::C1124LightBall,
-        CardId::C1125Lorelei,
         CardId::C1126BluesProvocation,
         CardId::C1127SerenasChoice,
         CardId::C1128Rika,

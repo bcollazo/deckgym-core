@@ -43,3 +43,5 @@ mod volkner_test;
 mod wallace_test;
 mod wally_test;
 mod will_test;
+
+mod dual_fusion_supporters;

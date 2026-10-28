@@ -87,6 +87,7 @@ pub fn trainer_move_generation_implementation(
     // Dispatch on the first printing of this effect text, so every reprint shares one arm.
     let trainer_id = canonical_trainer_id(trainer_card)?;
     match trainer_id {
+        CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),
