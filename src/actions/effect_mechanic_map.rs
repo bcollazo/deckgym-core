@@ -3601,5 +3601,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If your opponent's Active Pokémon is a Basic Pokémon, this attack does 50 more damage.",
         Mechanic::ExtraDamageIfDefenderIsBasic { extra_damage: 50 },
     );
+    // Pidgeot - Clean Hit
+    map.insert(
+        "If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",
+        Mechanic::ExtraDamageIfDefenderIsEvolution { extra_damage: 80 },
+    );
     map
 });

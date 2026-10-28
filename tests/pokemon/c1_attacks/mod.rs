@@ -38,3 +38,4 @@ fn defender_damage(game: &Game<'static>) -> u32 {
 mod alakazam;
 mod espeon;
 mod umbreon;
+mod pidgeot;
