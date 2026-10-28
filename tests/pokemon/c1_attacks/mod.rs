@@ -48,3 +48,4 @@ mod umbreon;
 mod pidgeot;
 mod whiscash;
 mod porygon_z;
+mod pupitar;

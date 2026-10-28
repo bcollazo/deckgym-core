@@ -3627,5 +3627,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             coin_flip: false,
         },
     );
+    // Pupitar - Amass
+    map.insert(
+        "Take 2 [F] Energy from your Energy Zone and attach it to this Pokémon.",
+        Mechanic::SelfChargeActive {
+            energies: vec![EnergyType::Fighting, EnergyType::Fighting],
+        },
+    );
     map
 });
