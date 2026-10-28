@@ -43,13 +43,14 @@ fn defender_damage(game: &Game<'static>) -> u32 {
 }
 
 mod alakazam;
+mod deoxys;
+mod eevee;
+mod electrode;
 mod espeon;
-mod umbreon;
+mod malamar;
 mod pidgeot;
-mod whiscash;
+mod pidgey;
 mod porygon_z;
 mod pupitar;
-mod electrode;
-mod eevee;
-mod malamar;
-mod pidgey;
+mod umbreon;
+mod whiscash;

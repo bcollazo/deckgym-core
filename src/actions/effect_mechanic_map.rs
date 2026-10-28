@@ -3658,5 +3658,18 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energy_type: EnergyType::Colorless,
         },
     );
+    // Deoxys - Psycho Boost
+    map.insert(
+        "During your next turn, this Pokémon's Psycho Boost does -50 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::ReducedDamageForAttack {
+                attack_name: "Psycho Boost".to_string(),
+                amount: 50,
+            },
+            duration: 2,
+            coin_flip: false,
+        },
+    );
     map
 });

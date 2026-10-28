@@ -1214,10 +1214,12 @@ fn get_reduced_from_ex_card_effect_modifiers(
 /// Growl-type cuts ("attacks used by the Defending Pokémon do -N damage"): an effect on the
 /// *Attacking* Pokémon, so it reduces every opposing target of its attacks, Benched ones included,
 /// and is applied before Weakness. Ability and status damage is not an attack and is not cut.
+/// Also covers a named-attack cut on its own user (`ReducedDamageForAttack`, Deoxys's Psycho Boost).
 fn get_attacker_reduced_attack_damage(
     attacking_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
     is_against_opponent: bool,
+    attack_name: Option<&str>,
 ) -> u32 {
     if !is_from_active_attack || !is_against_opponent {
         return 0;
@@ -1227,6 +1229,10 @@ fn get_attacker_reduced_attack_damage(
         .iter()
         .filter_map(|effect| match effect {
             CardEffect::ReducedAttackDamage { amount } => Some(*amount),
+            CardEffect::ReducedDamageForAttack {
+                attack_name: effect_attack_name,
+                amount,
+            } if Some(effect_attack_name.as_str()) == attack_name => Some(*amount),
             _ => None,
         })
         .sum::<u32>()
@@ -1755,6 +1761,7 @@ pub(crate) fn modify_damage(
             attacking_pokemon,
             is_from_active_attack,
             attacking_player != target_player,
+            context.attack_name,
         ));
     // An attack cut to 0 (or below) here does no damage, so Weakness has nothing to add to: it is
     // treated like an attack whose own damage is 0. Not yet recorded in game; see #426.
