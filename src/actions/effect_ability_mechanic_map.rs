@@ -385,6 +385,10 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::HealActiveYourPokemon { amount: 20 },
         );
         map.insert(
+            "Once during your turn, you may heal 30 damage from your Active Pokémon.",
+            AbilityMechanic::HealActiveYourPokemon { amount: 30 },
+        );
+        map.insert(
             "Once during your turn, you may heal 30 damage from each of your [W] Pokémon.",
             AbilityMechanic::HealAllYourPokemon {
                 amount: 30,

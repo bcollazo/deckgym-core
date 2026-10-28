@@ -104,3 +104,33 @@ fn test_ceruledge_rally_back_adds_damage_after_a_knockout_last_turn() {
         );
     }
 }
+
+/// Venusaur - Sunny Heal: once during your turn, you may heal 30 damage from your Active Pokémon.
+#[test]
+fn test_venusaur_sunny_heal_heals_active_once_per_turn() {
+    use deckgym::actions::SimpleAction;
+
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_damage(50),
+            PlayedCard::from_id(CardId::C1003Venusaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+    );
+    let ability = Action {
+        actor: 0,
+        action: SimpleAction::UseAbility { in_play_idx: 1 },
+        is_stack: false,
+    };
+    assert!(game
+        .get_state_clone()
+        .generate_possible_actions()
+        .1
+        .contains(&ability));
+    game.apply_action(&ability);
+    game.play_until_stable();
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(0).get_remaining_hp(), 70 - 50 + 30);
+    assert!(!state.generate_possible_actions().1.contains(&ability));
+}
