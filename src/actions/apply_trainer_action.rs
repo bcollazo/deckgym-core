@@ -58,6 +58,7 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1127SerenasChoice => Outcomes::single_fn(serenas_choice_effect),
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
@@ -2269,6 +2270,22 @@ fn lorelei_effect(_: &mut StdRng, state: &mut State, _: &Action) {
         },
         0,
     );
+}
+
+fn serenas_choice_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let mut choices = Vec::new();
+    for card in state.decks[action.actor].cards.iter().take(3) {
+        let choice = SimpleAction::TakeTopDeckCardAndShuffle {
+            card: card.clone(),
+            look_count: 3,
+        };
+        if !choices.contains(&choice) {
+            choices.push(choice);
+        }
+    }
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
+    }
 }
 
 #[cfg(test)]
