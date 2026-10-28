@@ -51,3 +51,4 @@ mod porygon_z;
 mod pupitar;
 mod electrode;
 mod eevee;
+mod malamar;
