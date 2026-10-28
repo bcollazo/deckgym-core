@@ -16,6 +16,41 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Mew ex
+    map.insert("Flip 3 coins. Take an amount of [P] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [P] Pokémon in any way you like.", Mechanic::CoinFlipsAttachEnergyToTypedBench { num_coins: 3, energy_type: EnergyType::Psychic });
+    // Mega Tyranitar ex
+    map.insert(
+        "Discard the top 2 cards of your deck.",
+        Mechanic::DiscardTopSelfDeck { count: 2 },
+    );
+    // Mega Skarmory ex
+    map.insert(
+        "Flip a coin until you get tails. This attack does 50 more damage for each heads.",
+        Mechanic::FlipUntilTailsBonusDamage {
+            damage_per_heads: 50,
+        },
+    );
+    // Mega Mewtwo Y ex
+    map.insert("Flip a coin for each [P] Energy attached to this Pokémon. This attack does 60 damage for each heads.", Mechanic::CoinFlipPerSpecificEnergyType { energy_type: EnergyType::Psychic, include_fixed_damage: false, damage_per_heads: 60 });
+    // Mega Dragonite ex
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random. Do 250 damage to it.",
+        Mechanic::RandomSpreadDamage {
+            times: 1,
+            damage_per_hit: 250,
+            include_own_bench: false,
+        },
+    );
+    // Fuecoco ex
+    map.insert(
+        "If this Pokémon has damage on it, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfHurt {
+            extra_damage: 70,
+            opponent: false,
+        },
+    );
+    // Alolan Exeggutor ex
+    map.insert("1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it.", Mechanic::RandomBenchDamage { times: 1, damage_per_hit: 50 });
     // Alolan Muk ex - Chemical Panic
     map.insert(
         "1 Special Condition from among Asleep, Burned, Confused, Paralyzed, and Poisoned is chosen at random, and your opponent's Active Pokémon is now affected by that Special Condition. Any Special Conditions already affecting that Pokémon will not be chosen.",

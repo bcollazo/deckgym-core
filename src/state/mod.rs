@@ -1089,8 +1089,10 @@ mod tests {
 
     #[test]
     fn promotion_is_resolved_before_a_pending_end_turn() {
-        let mut state = State::default();
-        state.turn_count = 1;
+        let mut state = State {
+            turn_count: 1,
+            ..State::default()
+        };
         state.in_play_pokemon[0][1] = Some(PlayedCard::from_id(CardId::A1001Bulbasaur));
         state.end_turn_pending = true;
 

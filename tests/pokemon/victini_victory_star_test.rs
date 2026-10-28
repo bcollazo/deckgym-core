@@ -175,6 +175,7 @@ fn test_declining_victory_star_reproduces_original_coin_result() {
 ///      is actually re-rolled rather than fixed.
 ///   2. For at least some seeds, the reflipped result DIFFERS from what declining would have
 ///      produced on that same seed -- proving the reflip is independent of the original flip.
+///
 /// Snorlax (150 HP, not Weak to [R]) absorbs either result without a knockout or weakness math.
 #[test]
 fn test_accepting_victory_star_reflips_with_independent_coins() {

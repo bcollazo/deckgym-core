@@ -16,7 +16,6 @@ use deckgym::{
 /// discard pick), not through the attack's own damage. That damage is still attack damage, so the
 /// coin has to flip there too. Each test sweeps seeds and records which HP values the Meowth ends
 /// on: a coin that never flips leaves a single value.
-
 fn meowth_with_hp(hp: u32) -> PlayedCard {
     PlayedCard::new(
         get_card_by_enum(CardId::B2124Meowth),
