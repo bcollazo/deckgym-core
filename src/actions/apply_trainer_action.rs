@@ -2214,7 +2214,7 @@ pub(crate) fn forecast_evolve_into_random_from_deck(
             .cards
             .iter()
             .filter(|card| {
-                matches!(card, Card::Pokemon(pokemon) if pokemon.energy_type == energy)
+                matches!(card, Card::Pokemon(pokemon) if pokemon.is_type(energy))
                     && target.card.can_evolve_into(card)
             })
             .map(|card| (in_play_idx, card.clone()))

@@ -173,10 +173,9 @@ pub fn can_use_fragrant_forest(state: &State, player: usize) -> bool {
     if state.has_used_stadium[player] {
         return false;
     }
-    state.decks[player]
-        .cards
-        .iter()
-        .any(|card| matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Grass))
+    state.decks[player].cards.iter().any(
+        |card| matches!(card, Card::Pokemon(p) if p.stage == 0 && p.is_type(EnergyType::Grass)),
+    )
 }
 
 pub fn is_area_zero_active(state: &State) -> bool {

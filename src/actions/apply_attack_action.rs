@@ -6465,7 +6465,7 @@ fn extra_damage_per_pokemon_type_in_discard_attack(
 ) -> AttackOutcomes {
     let pokemon_count = state.discard_piles[state.current_player]
         .iter()
-        .filter(|card| matches!(card, Card::Pokemon(pokemon) if pokemon.energy_type == energy_type))
+        .filter(|card| matches!(card, Card::Pokemon(pokemon) if pokemon.is_type(energy_type)))
         .count() as u32;
     let total_damage = base_damage + (pokemon_count * damage_per_pokemon);
     active_damage_doutcome(total_damage)

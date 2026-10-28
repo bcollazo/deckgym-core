@@ -4104,6 +4104,253 @@ pub enum CardId {
     B4b427MegaDiancieEx,
     B4b428MiraidonEx,
     B4b429KoraidonEx,
+    SP103Mew,
+    SP102Mew,
+    SP101Mew,
+    SP1001Bulbasaur,
+    SP1002Charmander,
+    SP1003Squirtle,
+    SP1004Chikorita,
+    SP1005Cyndaquil,
+    SP1006Totodile,
+    SP1007Treecko,
+    SP1008Torchic,
+    SP1009Mudkip,
+    SP1010Turtwig,
+    SP1011Chimchar,
+    SP1012Piplup,
+    SP1013Snivy,
+    SP1014Tepig,
+    SP1015Oshawott,
+    SP1016Chespin,
+    SP1017Fennekin,
+    SP1018Froakie,
+    SP1019Rowlet,
+    SP1020Litten,
+    SP1021Popplio,
+    SP1022Grookey,
+    SP1023Scorbunny,
+    SP1024Sobble,
+    SP1025Sprigatito,
+    SP1026Fuecoco,
+    SP1027Quaxly,
+    C1001Bulbasaur,
+    C1002Ivysaur,
+    C1003Venusaur,
+    C1004Exeggcute,
+    C1005AlolanExeggutorEx,
+    C1006Pinsir,
+    C1007Combee,
+    C1008Vespiquen,
+    C1009Deerling,
+    C1010Sawsbuck,
+    C1011Foongus,
+    C1012Amoonguss,
+    C1013Genesect,
+    C1014Cutiefly,
+    C1015Ribombee,
+    C1016Charmander,
+    C1017Charmeleon,
+    C1018Charizard,
+    C1019Volcanion,
+    C1020Salandit,
+    C1021Salazzle,
+    C1022Scorbunny,
+    C1023Raboot,
+    C1024Cinderace,
+    C1025FuecocoEx,
+    C1026Charcadet,
+    C1027Armarouge,
+    C1028Ceruledge,
+    C1029Squirtle,
+    C1030Wartortle,
+    C1031Blastoise,
+    C1032Seel,
+    C1033Dewgong,
+    C1034Shellder,
+    C1035Cloyster,
+    C1036Jynx,
+    C1037Lapras,
+    C1038Palkia,
+    C1039Basculin,
+    C1040Froakie,
+    C1041Frogadier,
+    C1042MegaGreninjaEx,
+    C1043PikachuEx,
+    C1044Voltorb,
+    C1045Electrode,
+    C1046Stunfisk,
+    C1047Zeraora,
+    C1048Pawmi,
+    C1049Pawmo,
+    C1050Pawmot,
+    C1051Jigglypuff,
+    C1052Wigglytuff,
+    C1053Abra,
+    C1054Kadabra,
+    C1055Alakazam,
+    C1056MegaMewtwoXEx,
+    C1057MewEx,
+    C1058Marill,
+    C1059Azumarill,
+    C1060Espeon,
+    C1061Wobbuffet,
+    C1062Deoxys,
+    C1063Mimikyu,
+    C1064Cosmog,
+    C1065Cosmoem,
+    C1066Lunala,
+    C1067Diglett,
+    C1068Dugtrio,
+    C1069Rhyhorn,
+    C1070Rhydon,
+    C1071Rhyperior,
+    C1072Sudowoodo,
+    C1073PaldeanWooper,
+    C1074PaldeanClodsire,
+    C1075Larvitar,
+    C1076Pupitar,
+    C1077Barboach,
+    C1078Whiscash,
+    C1079Rockruff,
+    C1080LycanrocEx,
+    C1081Gastly,
+    C1082Haunter,
+    C1083Gengar,
+    C1084Umbreon,
+    C1085MegaTyranitarEx,
+    C1086Seviper,
+    C1087Zorua,
+    C1088Zoroark,
+    C1089Nickit,
+    C1090Thievul,
+    C1091MegaSkarmoryEx,
+    C1092Dialga,
+    C1093Ferroseed,
+    C1094Ferrothorn,
+    C1095Solgaleo,
+    C1096Meltan,
+    C1097Melmetal,
+    C1098Dratini,
+    C1099Dragonair,
+    C1100MegaDragoniteEx,
+    C1101GiratinaEx,
+    C1102Pidgey,
+    C1103Pidgeotto,
+    C1104Pidgeot,
+    C1105Spearow,
+    C1106Fearow,
+    C1107Eevee,
+    C1108Porygon,
+    C1109Porygon2,
+    C1110PorygonZ,
+    C1111Snorlax,
+    C1112Zangoose,
+    C1113Bidoof,
+    C1114Bibarel,
+    C1115Buneary,
+    C1116Lopunny,
+    C1117Stufful,
+    C1118BewearEx,
+    C1119SweetHoney,
+    C1120SuperPotion,
+    C1121MaxRepel,
+    C1122FullHeal,
+    C1123Eviolite,
+    C1124LightBall,
+    C1125Lorelei,
+    C1126BluesProvocation,
+    C1127SerenasChoice,
+    C1128Rika,
+    C1129PokeMartGuy,
+    C1130RisingStar,
+    C1131AbandonedStation,
+    C1132Venusaur,
+    C1133Exeggcute,
+    C1134Deerling,
+    C1135Ribombee,
+    C1136Charizard,
+    C1137Raboot,
+    C1138Ceruledge,
+    C1139Blastoise,
+    C1140Palkia,
+    C1141Frogadier,
+    C1142Pawmot,
+    C1143Mimikyu,
+    C1144Cosmoem,
+    C1145Larvitar,
+    C1146Pupitar,
+    C1147PaldeanClodsire,
+    C1148Gengar,
+    C1149Dialga,
+    C1150Melmetal,
+    C1151Bidoof,
+    C1152SweetHoney,
+    C1153AlolanExeggutorEx,
+    C1154FuecocoEx,
+    C1155MegaGreninjaEx,
+    C1156PikachuEx,
+    C1157MegaMewtwoXEx,
+    C1158MewEx,
+    C1159LycanrocEx,
+    C1160MegaTyranitarEx,
+    C1161MegaSkarmoryEx,
+    C1162MegaDragoniteEx,
+    C1163GiratinaEx,
+    C1164BewearEx,
+    C1165Lorelei,
+    C1166BluesProvocation,
+    C1167SerenasChoice,
+    C1168Rika,
+    C1169PokeMartGuy,
+    C1170RisingStar,
+    C1171AlolanExeggutorEx,
+    C1172FuecocoEx,
+    C1173MegaGreninjaEx,
+    C1174PikachuEx,
+    C1175MegaMewtwoXEx,
+    C1176MewEx,
+    C1177LycanrocEx,
+    C1178MegaTyranitarEx,
+    C1179MegaSkarmoryEx,
+    C1180MegaDragoniteEx,
+    C1181GiratinaEx,
+    C1182BewearEx,
+    C1183PikachuEx,
+    C1184Jigglypuff,
+    C1185MegaMewtwoXEx,
+    C1186Umbreon,
+    C1187Celebi,
+    C1188Treecko,
+    C1189Grovyle,
+    C1190Cyndaquil,
+    C1191Quilava,
+    C1192Seel,
+    C1193Dewgong,
+    C1194Pachirisu,
+    C1195Abra,
+    C1196Kadabra,
+    C1197Alakazam,
+    C1198Lunala,
+    C1199Rhyhorn,
+    C1200Rhydon,
+    C1201Morpeko,
+    C1202Solgaleo,
+    C1203Spearow,
+    C1204Fearow,
+    C1205HisuianZorua,
+    C1206Stufful,
+    C1207MegaSceptileEx,
+    C1208TyphlosionEx,
+    C1209MegaGalladeEx,
+    C1210LycanrocEx,
+    C1211MegaDragoniteEx,
+    C1212MegaAudinoEx,
+    C1213HisuianZoroarkEx,
+    C1214BewearEx,
+    C1215FuecocoEx,
+    C1216Pawmot,
+    C1217GiratinaEx,
     PA001Potion,
     PA002XSpeed,
     PA003HandScope,
@@ -4324,10 +4571,63 @@ pub enum CardId {
     PB101Charmander,
     PB102Drampa,
     PB103PikachuEx,
+    PC001Pikachu,
+    PC002MegaMewtwoYEx,
+    PC003Deoxys,
+    PC004Inkay,
+    PC005Malamar,
+    PC006Cosmog,
+    PC007Cosmoem,
+    PC008Lunala,
+    PC009GenomeConverterY,
+    PC010Stantler,
+    PC011Alcremie,
+    PC012Delibird,
+    PC013MegaDragoniteEx,
 }
 
 static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     let mut map = HashMap::new();
+    add_card_ids_chunk_0(&mut map);
+    add_card_ids_chunk_1(&mut map);
+    add_card_ids_chunk_2(&mut map);
+    add_card_ids_chunk_3(&mut map);
+    add_card_ids_chunk_4(&mut map);
+    add_card_ids_chunk_5(&mut map);
+    add_card_ids_chunk_6(&mut map);
+    add_card_ids_chunk_7(&mut map);
+    add_card_ids_chunk_8(&mut map);
+    add_card_ids_chunk_9(&mut map);
+    add_card_ids_chunk_10(&mut map);
+    add_card_ids_chunk_11(&mut map);
+    add_card_ids_chunk_12(&mut map);
+    add_card_ids_chunk_13(&mut map);
+    add_card_ids_chunk_14(&mut map);
+    add_card_ids_chunk_15(&mut map);
+    add_card_ids_chunk_16(&mut map);
+    add_card_ids_chunk_17(&mut map);
+    add_card_ids_chunk_18(&mut map);
+    add_card_ids_chunk_19(&mut map);
+    add_card_ids_chunk_20(&mut map);
+    add_card_ids_chunk_21(&mut map);
+    add_card_ids_chunk_22(&mut map);
+    add_card_ids_chunk_23(&mut map);
+    add_card_ids_chunk_24(&mut map);
+    add_card_ids_chunk_25(&mut map);
+    add_card_ids_chunk_26(&mut map);
+    add_card_ids_chunk_27(&mut map);
+    add_card_ids_chunk_28(&mut map);
+    add_card_ids_chunk_29(&mut map);
+    add_card_ids_chunk_30(&mut map);
+    add_card_ids_chunk_31(&mut map);
+    add_card_ids_chunk_32(&mut map);
+    add_card_ids_chunk_33(&mut map);
+    add_card_ids_chunk_34(&mut map);
+    add_card_ids_chunk_35(&mut map);
+    map
+});
+
+fn add_card_ids_chunk_0(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A1 001", CardId::A1001Bulbasaur);
     map.insert("A1 002", CardId::A1002Ivysaur);
     map.insert("A1 003", CardId::A1003Venusaur);
@@ -4456,6 +4756,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A1 126", CardId::A1126MrMime);
     map.insert("A1 127", CardId::A1127Jynx);
     map.insert("A1 128", CardId::A1128Mewtwo);
+}
+
+fn add_card_ids_chunk_1(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A1 129", CardId::A1129MewtwoEx);
     map.insert("A1 130", CardId::A1130Ralts);
     map.insert("A1 131", CardId::A1131Kirlia);
@@ -4584,6 +4887,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A1 254", CardId::A1254ArcanineEx);
     map.insert("A1 255", CardId::A1255MoltresEx);
     map.insert("A1 256", CardId::A1256BlastoiseEx);
+}
+
+fn add_card_ids_chunk_2(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A1 257", CardId::A1257StarmieEx);
     map.insert("A1 258", CardId::A1258ArticunoEx);
     map.insert("A1 259", CardId::A1259PikachuEx);
@@ -4712,6 +5018,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A2 010", CardId::A2010Turtwig);
     map.insert("A2 011", CardId::A2011Grotle);
     map.insert("A2 012", CardId::A2012Torterra);
+}
+
+fn add_card_ids_chunk_3(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A2 013", CardId::A2013Kricketot);
     map.insert("A2 014", CardId::A2014Kricketune);
     map.insert("A2 015", CardId::A2015Burmy);
@@ -4840,6 +5149,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A2 138", CardId::A2138Lopunny);
     map.insert("A2 139", CardId::A2139Glameow);
     map.insert("A2 140", CardId::A2140Purugly);
+}
+
+fn add_card_ids_chunk_4(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A2 141", CardId::A2141Chatot);
     map.insert("A2 142", CardId::A2142FanRotom);
     map.insert("A2 143", CardId::A2143Regigigas);
@@ -4968,6 +5280,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A2a 059", CardId::A2a059Bronzong);
     map.insert("A2a 060", CardId::A2a060OriginFormeDialga);
     map.insert("A2a 061", CardId::A2a061Giratina);
+}
+
+fn add_card_ids_chunk_5(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A2a 062", CardId::A2a062Eevee);
     map.insert("A2a 063", CardId::A2a063Snorlax);
     map.insert("A2a 064", CardId::A2a064Hoothoot);
@@ -5096,6 +5411,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A2b 091", CardId::A2b091TeamRocketGrunt);
     map.insert("A2b 092", CardId::A2b092PikachuEx);
     map.insert("A2b 093", CardId::A2b093PaldeanClodsireEx);
+}
+
+fn add_card_ids_chunk_6(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A2b 094", CardId::A2b094TinkatonEx);
     map.insert("A2b 095", CardId::A2b095BibarelEx);
     map.insert("A2b 096", CardId::A2b096GiratinaEx);
@@ -5224,6 +5542,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A3 108", CardId::A3108AlolanMeowth);
     map.insert("A3 109", CardId::A3109AlolanPersian);
     map.insert("A3 110", CardId::A3110AlolanGrimer);
+}
+
+fn add_card_ids_chunk_7(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A3 111", CardId::A3111AlolanMukEx);
     map.insert("A3 112", CardId::A3112Absol);
     map.insert("A3 113", CardId::A3113Trubbish);
@@ -5352,6 +5673,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A3 236", CardId::A3236MarowakEx);
     map.insert("A3 237", CardId::A3237WigglytuffEx);
     map.insert("A3 238", CardId::A3238LunalaEx);
+}
+
+fn add_card_ids_chunk_8(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A3 239", CardId::A3239SolgaleoEx);
     map.insert("A3a 001", CardId::A3a001Petilil);
     map.insert("A3a 002", CardId::A3a002Lilligant);
@@ -5480,6 +5804,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A3b 022", CardId::A3b022Popplio);
     map.insert("A3b 023", CardId::A3b023Brionne);
     map.insert("A3b 024", CardId::A3b024PrimarinaEx);
+}
+
+fn add_card_ids_chunk_9(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A3b 025", CardId::A3b025Jolteon);
     map.insert("A3b 026", CardId::A3b026Joltik);
     map.insert("A3b 027", CardId::A3b027Galvantula);
@@ -5608,6 +5935,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4 043", CardId::A4043KingdraEx);
     map.insert("A4 044", CardId::A4044Magikarp);
     map.insert("A4 045", CardId::A4045Gyarados);
+}
+
+fn add_card_ids_chunk_10(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4 046", CardId::A4046Totodile);
     map.insert("A4 047", CardId::A4047Croconaw);
     map.insert("A4 048", CardId::A4048Feraligatr);
@@ -5736,6 +6066,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4 171", CardId::A4171Pichu);
     map.insert("A4 172", CardId::A4172Ampharos);
     map.insert("A4 173", CardId::A4173Togepi);
+}
+
+fn add_card_ids_chunk_11(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4 174", CardId::A4174Xatu);
     map.insert("A4 175", CardId::A4175Wobbuffet);
     map.insert("A4 176", CardId::A4176Gligar);
@@ -5864,6 +6197,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4a 058", CardId::A4a058Lickilicky);
     map.insert("A4a 059", CardId::A4a059Igglybuff);
     map.insert("A4a 060", CardId::A4a060Teddiursa);
+}
+
+fn add_card_ids_chunk_12(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4a 061", CardId::A4a061Ursaring);
     map.insert("A4a 062", CardId::A4a062Miltank);
     map.insert("A4a 063", CardId::A4a063Azurill);
@@ -5992,6 +6328,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4b 081", CardId::A4b081Torracat);
     map.insert("A4b 082", CardId::A4b082IncineroarEx);
     map.insert("A4b 083", CardId::A4b083Squirtle);
+}
+
+fn add_card_ids_chunk_13(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4b 084", CardId::A4b084Squirtle);
     map.insert("A4b 085", CardId::A4b085Wartortle);
     map.insert("A4b 086", CardId::A4b086Wartortle);
@@ -6120,6 +6459,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4b 209", CardId::A4b209GarchompEx);
     map.insert("A4b 210", CardId::A4b210Riolu);
     map.insert("A4b 211", CardId::A4b211Riolu);
+}
+
+fn add_card_ids_chunk_14(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4b 212", CardId::A4b212Lucario);
     map.insert("A4b 213", CardId::A4b213Lucario);
     map.insert("A4b 214", CardId::A4b214LucarioEx);
@@ -6248,6 +6590,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("A4b 337", CardId::A4b337Silver);
     map.insert("A4b 338", CardId::A4b338Sabrina);
     map.insert("A4b 339", CardId::A4b339Sabrina);
+}
+
+fn add_card_ids_chunk_15(map: &mut HashMap<&'static str, CardId>) {
     map.insert("A4b 340", CardId::A4b340Iono);
     map.insert("A4b 341", CardId::A4b341Iono);
     map.insert("A4b 342", CardId::A4b342Dawn);
@@ -6376,6 +6721,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1 086", CardId::B1086Shinx);
     map.insert("B1 087", CardId::B1087Luxio);
     map.insert("B1 088", CardId::B1088Luxray);
+}
+
+fn add_card_ids_chunk_16(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B1 089", CardId::B1089Pachirisu);
     map.insert("B1 090", CardId::B1090Blitzle);
     map.insert("B1 091", CardId::B1091Zebstrika);
@@ -6504,6 +6852,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1 214", CardId::B1214PlumeFossil);
     map.insert("B1 215", CardId::B1215HittingHammer);
     map.insert("B1 216", CardId::B1216CoverFossil);
+}
+
+fn add_card_ids_chunk_17(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B1 217", CardId::B1217FlamePatch);
     map.insert("B1 218", CardId::B1218SitrusBerry);
     map.insert("B1 219", CardId::B1219HeavyHelmet);
@@ -6632,6 +6983,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B1a 011", CardId::B1a011Charmander);
     map.insert("B1a 012", CardId::B1a012Charmeleon);
     map.insert("B1a 013", CardId::B1a013Charizard);
+}
+
+fn add_card_ids_chunk_18(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B1a 014", CardId::B1a014MegaCharizardYEx);
     map.insert("B1a 015", CardId::B1a015Houndour);
     map.insert("B1a 016", CardId::B1a016Houndoom);
@@ -6760,6 +7114,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2 036", CardId::B2036MegaSwampertEx);
     map.insert("B2 037", CardId::B2037Vanillite);
     map.insert("B2 038", CardId::B2038Vanillish);
+}
+
+fn add_card_ids_chunk_19(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B2 039", CardId::B2039Vanilluxe);
     map.insert("B2 040", CardId::B2040Cryogonal);
     map.insert("B2 041", CardId::B2041Amaura);
@@ -6888,6 +7245,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2 164", CardId::B2164Cramorant);
     map.insert("B2 165", CardId::B2165Minun);
     map.insert("B2 166", CardId::B2166Toxel);
+}
+
+fn add_card_ids_chunk_20(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B2 167", CardId::B2167GalarianPonyta);
     map.insert("B2 168", CardId::B2168Snubbull);
     map.insert("B2 169", CardId::B2169Indeedee);
@@ -7016,6 +7376,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2a 058", CardId::B2a058PaldeanTauros);
     map.insert("B2a 059", CardId::B2a059Toedscool);
     map.insert("B2a 060", CardId::B2a060Toedscruel);
+}
+
+fn add_card_ids_chunk_21(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B2a 061", CardId::B2a061Klawf);
     map.insert("B2a 062", CardId::B2a062TingLu);
     map.insert("B2a 063", CardId::B2a063Koraidon);
@@ -7144,6 +7507,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B2b 055", CardId::B2b055Fraxure);
     map.insert("B2b 056", CardId::B2b056Haxorus);
     map.insert("B2b 057", CardId::B2b057Druddigon);
+}
+
+fn add_card_ids_chunk_22(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B2b 058", CardId::B2b058Jigglypuff);
     map.insert("B2b 059", CardId::B2b059Wigglytuff);
     map.insert("B2b 060", CardId::B2b060Miltank);
@@ -7272,6 +7638,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B3 066", CardId::B3066Meowstic);
     map.insert("B3 067", CardId::B3067Diancie);
     map.insert("B3 068", CardId::B3068Oricorio);
+}
+
+fn add_card_ids_chunk_23(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B3 069", CardId::B3069Hatenna);
     map.insert("B3 070", CardId::B3070Hattrem);
     map.insert("B3 071", CardId::B3071Hatterene);
@@ -7400,6 +7769,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B3 194", CardId::B3194MegaSceptileEx);
     map.insert("B3 195", CardId::B3195MegaCameruptEx);
     map.insert("B3 196", CardId::B3196VaporeonEx);
+}
+
+fn add_card_ids_chunk_24(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B3 197", CardId::B3197MagnezoneEx);
     map.insert("B3 198", CardId::B3198CrustleEx);
     map.insert("B3 199", CardId::B3199ZoroarkEx);
@@ -7528,6 +7900,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B3a 088", CardId::B3a088ProfessorTuro);
     map.insert("B3a 089", CardId::B3a089IronBundleEx);
     map.insert("B3a 090", CardId::B3a090MiraidonEx);
+}
+
+fn add_card_ids_chunk_25(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B3a 091", CardId::B3a091FlutterManeEx);
     map.insert("B3a 092", CardId::B3a092KoraidonEx);
     map.insert("B3a 093", CardId::B3a093TerapagosEx);
@@ -7656,6 +8031,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4 001", CardId::B4001Wurmple);
     map.insert("B4 002", CardId::B4002Silcoon);
     map.insert("B4 003", CardId::B4003Beautifly);
+}
+
+fn add_card_ids_chunk_26(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4 004", CardId::B4004Cascoon);
     map.insert("B4 005", CardId::B4005Dustox);
     map.insert("B4 006", CardId::B4006Lileep);
@@ -7784,6 +8162,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4 129", CardId::B4129Rattata);
     map.insert("B4 130", CardId::B4130Raticate);
     map.insert("B4 131", CardId::B4131Eevee);
+}
+
+fn add_card_ids_chunk_27(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4 132", CardId::B4132Aipom);
     map.insert("B4 133", CardId::B4133Ambipom);
     map.insert("B4 134", CardId::B4134Skitty);
@@ -7912,6 +8293,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4a 024", CardId::B4a024TeamRocketsPincurchin);
     map.insert("B4a 025", CardId::B4a025TeamRocketsSlowpoke);
     map.insert("B4a 026", CardId::B4a026TeamRocketsSlowkingEx);
+}
+
+fn add_card_ids_chunk_28(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4a 027", CardId::B4a027TeamRocketsDrowzee);
     map.insert("B4a 028", CardId::B4a028TeamRocketsHypno);
     map.insert("B4a 029", CardId::B4a029TeamRocketsMrMime);
@@ -8040,6 +8424,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4b 042", CardId::B4b042Numel);
     map.insert("B4b 043", CardId::B4b043MegaCameruptEx);
     map.insert("B4b 044", CardId::B4b044Victini);
+}
+
+fn add_card_ids_chunk_29(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4b 045", CardId::B4b045BlacephalonEx);
     map.insert("B4b 046", CardId::B4b046Fuecoco);
     map.insert("B4b 047", CardId::B4b047Crocalor);
@@ -8168,6 +8555,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4b 170", CardId::B4b170Dragonair);
     map.insert("B4b 171", CardId::B4b171Vibrava);
     map.insert("B4b 172", CardId::B4b172FlygonEx);
+}
+
+fn add_card_ids_chunk_30(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4b 173", CardId::B4b173MegaRayquazaEx);
     map.insert("B4b 174", CardId::B4b174Axew);
     map.insert("B4b 175", CardId::B4b175Fraxure);
@@ -8296,6 +8686,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4b 298", CardId::B4b298Helioptile);
     map.insert("B4b 299", CardId::B4b299Heliolisk);
     map.insert("B4b 300", CardId::B4b300Yamper);
+}
+
+fn add_card_ids_chunk_31(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4b 301", CardId::B4b301Toxel);
     map.insert("B4b 302", CardId::B4b302Tadbulb);
     map.insert("B4b 303", CardId::B4b303IronThorns);
@@ -8424,7 +8817,260 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("B4b 426", CardId::B4b426DedenneEx);
     map.insert("B4b 427", CardId::B4b427MegaDiancieEx);
     map.insert("B4b 428", CardId::B4b428MiraidonEx);
+}
+
+fn add_card_ids_chunk_32(map: &mut HashMap<&'static str, CardId>) {
     map.insert("B4b 429", CardId::B4b429KoraidonEx);
+    map.insert("SP1 -03", CardId::SP103Mew);
+    map.insert("SP1 -02", CardId::SP102Mew);
+    map.insert("SP1 -01", CardId::SP101Mew);
+    map.insert("SP1 001", CardId::SP1001Bulbasaur);
+    map.insert("SP1 002", CardId::SP1002Charmander);
+    map.insert("SP1 003", CardId::SP1003Squirtle);
+    map.insert("SP1 004", CardId::SP1004Chikorita);
+    map.insert("SP1 005", CardId::SP1005Cyndaquil);
+    map.insert("SP1 006", CardId::SP1006Totodile);
+    map.insert("SP1 007", CardId::SP1007Treecko);
+    map.insert("SP1 008", CardId::SP1008Torchic);
+    map.insert("SP1 009", CardId::SP1009Mudkip);
+    map.insert("SP1 010", CardId::SP1010Turtwig);
+    map.insert("SP1 011", CardId::SP1011Chimchar);
+    map.insert("SP1 012", CardId::SP1012Piplup);
+    map.insert("SP1 013", CardId::SP1013Snivy);
+    map.insert("SP1 014", CardId::SP1014Tepig);
+    map.insert("SP1 015", CardId::SP1015Oshawott);
+    map.insert("SP1 016", CardId::SP1016Chespin);
+    map.insert("SP1 017", CardId::SP1017Fennekin);
+    map.insert("SP1 018", CardId::SP1018Froakie);
+    map.insert("SP1 019", CardId::SP1019Rowlet);
+    map.insert("SP1 020", CardId::SP1020Litten);
+    map.insert("SP1 021", CardId::SP1021Popplio);
+    map.insert("SP1 022", CardId::SP1022Grookey);
+    map.insert("SP1 023", CardId::SP1023Scorbunny);
+    map.insert("SP1 024", CardId::SP1024Sobble);
+    map.insert("SP1 025", CardId::SP1025Sprigatito);
+    map.insert("SP1 026", CardId::SP1026Fuecoco);
+    map.insert("SP1 027", CardId::SP1027Quaxly);
+    map.insert("C1 001", CardId::C1001Bulbasaur);
+    map.insert("C1 002", CardId::C1002Ivysaur);
+    map.insert("C1 003", CardId::C1003Venusaur);
+    map.insert("C1 004", CardId::C1004Exeggcute);
+    map.insert("C1 005", CardId::C1005AlolanExeggutorEx);
+    map.insert("C1 006", CardId::C1006Pinsir);
+    map.insert("C1 007", CardId::C1007Combee);
+    map.insert("C1 008", CardId::C1008Vespiquen);
+    map.insert("C1 009", CardId::C1009Deerling);
+    map.insert("C1 010", CardId::C1010Sawsbuck);
+    map.insert("C1 011", CardId::C1011Foongus);
+    map.insert("C1 012", CardId::C1012Amoonguss);
+    map.insert("C1 013", CardId::C1013Genesect);
+    map.insert("C1 014", CardId::C1014Cutiefly);
+    map.insert("C1 015", CardId::C1015Ribombee);
+    map.insert("C1 016", CardId::C1016Charmander);
+    map.insert("C1 017", CardId::C1017Charmeleon);
+    map.insert("C1 018", CardId::C1018Charizard);
+    map.insert("C1 019", CardId::C1019Volcanion);
+    map.insert("C1 020", CardId::C1020Salandit);
+    map.insert("C1 021", CardId::C1021Salazzle);
+    map.insert("C1 022", CardId::C1022Scorbunny);
+    map.insert("C1 023", CardId::C1023Raboot);
+    map.insert("C1 024", CardId::C1024Cinderace);
+    map.insert("C1 025", CardId::C1025FuecocoEx);
+    map.insert("C1 026", CardId::C1026Charcadet);
+    map.insert("C1 027", CardId::C1027Armarouge);
+    map.insert("C1 028", CardId::C1028Ceruledge);
+    map.insert("C1 029", CardId::C1029Squirtle);
+    map.insert("C1 030", CardId::C1030Wartortle);
+    map.insert("C1 031", CardId::C1031Blastoise);
+    map.insert("C1 032", CardId::C1032Seel);
+    map.insert("C1 033", CardId::C1033Dewgong);
+    map.insert("C1 034", CardId::C1034Shellder);
+    map.insert("C1 035", CardId::C1035Cloyster);
+    map.insert("C1 036", CardId::C1036Jynx);
+    map.insert("C1 037", CardId::C1037Lapras);
+    map.insert("C1 038", CardId::C1038Palkia);
+    map.insert("C1 039", CardId::C1039Basculin);
+    map.insert("C1 040", CardId::C1040Froakie);
+    map.insert("C1 041", CardId::C1041Frogadier);
+    map.insert("C1 042", CardId::C1042MegaGreninjaEx);
+    map.insert("C1 043", CardId::C1043PikachuEx);
+    map.insert("C1 044", CardId::C1044Voltorb);
+    map.insert("C1 045", CardId::C1045Electrode);
+    map.insert("C1 046", CardId::C1046Stunfisk);
+    map.insert("C1 047", CardId::C1047Zeraora);
+    map.insert("C1 048", CardId::C1048Pawmi);
+    map.insert("C1 049", CardId::C1049Pawmo);
+    map.insert("C1 050", CardId::C1050Pawmot);
+    map.insert("C1 051", CardId::C1051Jigglypuff);
+    map.insert("C1 052", CardId::C1052Wigglytuff);
+    map.insert("C1 053", CardId::C1053Abra);
+    map.insert("C1 054", CardId::C1054Kadabra);
+    map.insert("C1 055", CardId::C1055Alakazam);
+    map.insert("C1 056", CardId::C1056MegaMewtwoXEx);
+    map.insert("C1 057", CardId::C1057MewEx);
+    map.insert("C1 058", CardId::C1058Marill);
+    map.insert("C1 059", CardId::C1059Azumarill);
+    map.insert("C1 060", CardId::C1060Espeon);
+    map.insert("C1 061", CardId::C1061Wobbuffet);
+    map.insert("C1 062", CardId::C1062Deoxys);
+    map.insert("C1 063", CardId::C1063Mimikyu);
+    map.insert("C1 064", CardId::C1064Cosmog);
+    map.insert("C1 065", CardId::C1065Cosmoem);
+    map.insert("C1 066", CardId::C1066Lunala);
+    map.insert("C1 067", CardId::C1067Diglett);
+    map.insert("C1 068", CardId::C1068Dugtrio);
+    map.insert("C1 069", CardId::C1069Rhyhorn);
+    map.insert("C1 070", CardId::C1070Rhydon);
+    map.insert("C1 071", CardId::C1071Rhyperior);
+    map.insert("C1 072", CardId::C1072Sudowoodo);
+    map.insert("C1 073", CardId::C1073PaldeanWooper);
+    map.insert("C1 074", CardId::C1074PaldeanClodsire);
+    map.insert("C1 075", CardId::C1075Larvitar);
+    map.insert("C1 076", CardId::C1076Pupitar);
+    map.insert("C1 077", CardId::C1077Barboach);
+    map.insert("C1 078", CardId::C1078Whiscash);
+    map.insert("C1 079", CardId::C1079Rockruff);
+    map.insert("C1 080", CardId::C1080LycanrocEx);
+    map.insert("C1 081", CardId::C1081Gastly);
+    map.insert("C1 082", CardId::C1082Haunter);
+    map.insert("C1 083", CardId::C1083Gengar);
+    map.insert("C1 084", CardId::C1084Umbreon);
+    map.insert("C1 085", CardId::C1085MegaTyranitarEx);
+    map.insert("C1 086", CardId::C1086Seviper);
+    map.insert("C1 087", CardId::C1087Zorua);
+    map.insert("C1 088", CardId::C1088Zoroark);
+    map.insert("C1 089", CardId::C1089Nickit);
+    map.insert("C1 090", CardId::C1090Thievul);
+    map.insert("C1 091", CardId::C1091MegaSkarmoryEx);
+    map.insert("C1 092", CardId::C1092Dialga);
+    map.insert("C1 093", CardId::C1093Ferroseed);
+    map.insert("C1 094", CardId::C1094Ferrothorn);
+    map.insert("C1 095", CardId::C1095Solgaleo);
+    map.insert("C1 096", CardId::C1096Meltan);
+    map.insert("C1 097", CardId::C1097Melmetal);
+}
+
+fn add_card_ids_chunk_33(map: &mut HashMap<&'static str, CardId>) {
+    map.insert("C1 098", CardId::C1098Dratini);
+    map.insert("C1 099", CardId::C1099Dragonair);
+    map.insert("C1 100", CardId::C1100MegaDragoniteEx);
+    map.insert("C1 101", CardId::C1101GiratinaEx);
+    map.insert("C1 102", CardId::C1102Pidgey);
+    map.insert("C1 103", CardId::C1103Pidgeotto);
+    map.insert("C1 104", CardId::C1104Pidgeot);
+    map.insert("C1 105", CardId::C1105Spearow);
+    map.insert("C1 106", CardId::C1106Fearow);
+    map.insert("C1 107", CardId::C1107Eevee);
+    map.insert("C1 108", CardId::C1108Porygon);
+    map.insert("C1 109", CardId::C1109Porygon2);
+    map.insert("C1 110", CardId::C1110PorygonZ);
+    map.insert("C1 111", CardId::C1111Snorlax);
+    map.insert("C1 112", CardId::C1112Zangoose);
+    map.insert("C1 113", CardId::C1113Bidoof);
+    map.insert("C1 114", CardId::C1114Bibarel);
+    map.insert("C1 115", CardId::C1115Buneary);
+    map.insert("C1 116", CardId::C1116Lopunny);
+    map.insert("C1 117", CardId::C1117Stufful);
+    map.insert("C1 118", CardId::C1118BewearEx);
+    map.insert("C1 119", CardId::C1119SweetHoney);
+    map.insert("C1 120", CardId::C1120SuperPotion);
+    map.insert("C1 121", CardId::C1121MaxRepel);
+    map.insert("C1 122", CardId::C1122FullHeal);
+    map.insert("C1 123", CardId::C1123Eviolite);
+    map.insert("C1 124", CardId::C1124LightBall);
+    map.insert("C1 125", CardId::C1125Lorelei);
+    map.insert("C1 126", CardId::C1126BluesProvocation);
+    map.insert("C1 127", CardId::C1127SerenasChoice);
+    map.insert("C1 128", CardId::C1128Rika);
+    map.insert("C1 129", CardId::C1129PokeMartGuy);
+    map.insert("C1 130", CardId::C1130RisingStar);
+    map.insert("C1 131", CardId::C1131AbandonedStation);
+    map.insert("C1 132", CardId::C1132Venusaur);
+    map.insert("C1 133", CardId::C1133Exeggcute);
+    map.insert("C1 134", CardId::C1134Deerling);
+    map.insert("C1 135", CardId::C1135Ribombee);
+    map.insert("C1 136", CardId::C1136Charizard);
+    map.insert("C1 137", CardId::C1137Raboot);
+    map.insert("C1 138", CardId::C1138Ceruledge);
+    map.insert("C1 139", CardId::C1139Blastoise);
+    map.insert("C1 140", CardId::C1140Palkia);
+    map.insert("C1 141", CardId::C1141Frogadier);
+    map.insert("C1 142", CardId::C1142Pawmot);
+    map.insert("C1 143", CardId::C1143Mimikyu);
+    map.insert("C1 144", CardId::C1144Cosmoem);
+    map.insert("C1 145", CardId::C1145Larvitar);
+    map.insert("C1 146", CardId::C1146Pupitar);
+    map.insert("C1 147", CardId::C1147PaldeanClodsire);
+    map.insert("C1 148", CardId::C1148Gengar);
+    map.insert("C1 149", CardId::C1149Dialga);
+    map.insert("C1 150", CardId::C1150Melmetal);
+    map.insert("C1 151", CardId::C1151Bidoof);
+    map.insert("C1 152", CardId::C1152SweetHoney);
+    map.insert("C1 153", CardId::C1153AlolanExeggutorEx);
+    map.insert("C1 154", CardId::C1154FuecocoEx);
+    map.insert("C1 155", CardId::C1155MegaGreninjaEx);
+    map.insert("C1 156", CardId::C1156PikachuEx);
+    map.insert("C1 157", CardId::C1157MegaMewtwoXEx);
+    map.insert("C1 158", CardId::C1158MewEx);
+    map.insert("C1 159", CardId::C1159LycanrocEx);
+    map.insert("C1 160", CardId::C1160MegaTyranitarEx);
+    map.insert("C1 161", CardId::C1161MegaSkarmoryEx);
+    map.insert("C1 162", CardId::C1162MegaDragoniteEx);
+    map.insert("C1 163", CardId::C1163GiratinaEx);
+    map.insert("C1 164", CardId::C1164BewearEx);
+    map.insert("C1 165", CardId::C1165Lorelei);
+    map.insert("C1 166", CardId::C1166BluesProvocation);
+    map.insert("C1 167", CardId::C1167SerenasChoice);
+    map.insert("C1 168", CardId::C1168Rika);
+    map.insert("C1 169", CardId::C1169PokeMartGuy);
+    map.insert("C1 170", CardId::C1170RisingStar);
+    map.insert("C1 171", CardId::C1171AlolanExeggutorEx);
+    map.insert("C1 172", CardId::C1172FuecocoEx);
+    map.insert("C1 173", CardId::C1173MegaGreninjaEx);
+    map.insert("C1 174", CardId::C1174PikachuEx);
+    map.insert("C1 175", CardId::C1175MegaMewtwoXEx);
+    map.insert("C1 176", CardId::C1176MewEx);
+    map.insert("C1 177", CardId::C1177LycanrocEx);
+    map.insert("C1 178", CardId::C1178MegaTyranitarEx);
+    map.insert("C1 179", CardId::C1179MegaSkarmoryEx);
+    map.insert("C1 180", CardId::C1180MegaDragoniteEx);
+    map.insert("C1 181", CardId::C1181GiratinaEx);
+    map.insert("C1 182", CardId::C1182BewearEx);
+    map.insert("C1 183", CardId::C1183PikachuEx);
+    map.insert("C1 184", CardId::C1184Jigglypuff);
+    map.insert("C1 185", CardId::C1185MegaMewtwoXEx);
+    map.insert("C1 186", CardId::C1186Umbreon);
+    map.insert("C1 187", CardId::C1187Celebi);
+    map.insert("C1 188", CardId::C1188Treecko);
+    map.insert("C1 189", CardId::C1189Grovyle);
+    map.insert("C1 190", CardId::C1190Cyndaquil);
+    map.insert("C1 191", CardId::C1191Quilava);
+    map.insert("C1 192", CardId::C1192Seel);
+    map.insert("C1 193", CardId::C1193Dewgong);
+    map.insert("C1 194", CardId::C1194Pachirisu);
+    map.insert("C1 195", CardId::C1195Abra);
+    map.insert("C1 196", CardId::C1196Kadabra);
+    map.insert("C1 197", CardId::C1197Alakazam);
+    map.insert("C1 198", CardId::C1198Lunala);
+    map.insert("C1 199", CardId::C1199Rhyhorn);
+    map.insert("C1 200", CardId::C1200Rhydon);
+    map.insert("C1 201", CardId::C1201Morpeko);
+    map.insert("C1 202", CardId::C1202Solgaleo);
+    map.insert("C1 203", CardId::C1203Spearow);
+    map.insert("C1 204", CardId::C1204Fearow);
+    map.insert("C1 205", CardId::C1205HisuianZorua);
+    map.insert("C1 206", CardId::C1206Stufful);
+    map.insert("C1 207", CardId::C1207MegaSceptileEx);
+    map.insert("C1 208", CardId::C1208TyphlosionEx);
+    map.insert("C1 209", CardId::C1209MegaGalladeEx);
+    map.insert("C1 210", CardId::C1210LycanrocEx);
+    map.insert("C1 211", CardId::C1211MegaDragoniteEx);
+    map.insert("C1 212", CardId::C1212MegaAudinoEx);
+    map.insert("C1 213", CardId::C1213HisuianZoroarkEx);
+    map.insert("C1 214", CardId::C1214BewearEx);
+    map.insert("C1 215", CardId::C1215FuecocoEx);
+    map.insert("C1 216", CardId::C1216Pawmot);
+    map.insert("C1 217", CardId::C1217GiratinaEx);
     map.insert("P-A 001", CardId::PA001Potion);
     map.insert("P-A 002", CardId::PA002XSpeed);
     map.insert("P-A 003", CardId::PA003HandScope);
@@ -8433,6 +9079,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-A 006", CardId::PA006RedCard);
     map.insert("P-A 007", CardId::PA007ProfessorsResearch);
     map.insert("P-A 008", CardId::PA008PokedEx);
+}
+
+fn add_card_ids_chunk_34(map: &mut HashMap<&'static str, CardId>) {
     map.insert("P-A 009", CardId::PA009Pikachu);
     map.insert("P-A 010", CardId::PA010Mewtwo);
     map.insert("P-A 011", CardId::PA011Chansey);
@@ -8561,6 +9210,9 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 017", CardId::PB017Swablu);
     map.insert("P-B 018", CardId::PB018Heliolisk);
     map.insert("P-B 019", CardId::PB019Buneary);
+}
+
+fn add_card_ids_chunk_35(map: &mut HashMap<&'static str, CardId>) {
     map.insert("P-B 020", CardId::PB020Charmeleon);
     map.insert("P-B 021", CardId::PB021Onix);
     map.insert("P-B 022", CardId::PB022Hawlucha);
@@ -8645,8 +9297,20 @@ static CARD_ID_MAP: LazyLock<HashMap<&'static str, CardId>> = LazyLock::new(|| {
     map.insert("P-B 101", CardId::PB101Charmander);
     map.insert("P-B 102", CardId::PB102Drampa);
     map.insert("P-B 103", CardId::PB103PikachuEx);
-    map
-});
+    map.insert("P-C 001", CardId::PC001Pikachu);
+    map.insert("P-C 002", CardId::PC002MegaMewtwoYEx);
+    map.insert("P-C 003", CardId::PC003Deoxys);
+    map.insert("P-C 004", CardId::PC004Inkay);
+    map.insert("P-C 005", CardId::PC005Malamar);
+    map.insert("P-C 006", CardId::PC006Cosmog);
+    map.insert("P-C 007", CardId::PC007Cosmoem);
+    map.insert("P-C 008", CardId::PC008Lunala);
+    map.insert("P-C 009", CardId::PC009GenomeConverterY);
+    map.insert("P-C 010", CardId::PC010Stantler);
+    map.insert("P-C 011", CardId::PC011Alcremie);
+    map.insert("P-C 012", CardId::PC012Delibird);
+    map.insert("P-C 013", CardId::PC013MegaDragoniteEx);
+}
 
 impl CardId {
     pub fn from_card_id(id: &str) -> Option<Self> {

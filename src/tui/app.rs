@@ -529,6 +529,7 @@ mod tests {
             evolves_from: None,
             hp: 60,
             energy_type: EnergyType::Colorless,
+            secondary_energy_type: None,
             ability: None,
             attacks: vec![],
             weakness: None,

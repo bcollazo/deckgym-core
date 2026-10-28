@@ -45,6 +45,7 @@ lazy_static! {
         evolves_from: None,
         hp: 70,
         energy_type: EnergyType::Grass,
+        secondary_energy_type: None,
         ability: None,
         attacks: vec![Attack {
             energy_required: vec![EnergyType::Grass, EnergyType::Colorless],
@@ -75,6 +76,7 @@ pub fn get_card_create(id: CardId) -> Card {
             evolves_from: None,
             hp: 70,
             energy_type: EnergyType::Grass,
+            secondary_energy_type: None,
             ability: None,
             attacks: vec![Attack {
                 energy_required: vec![EnergyType::Grass, EnergyType::Colorless],

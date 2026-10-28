@@ -34,7 +34,7 @@ pub fn quick_grow_extract_candidates(state: &State, player: usize) -> Vec<(usize
         // Find Grass evolutions in deck that evolve from this Pokemon
         for deck_card in state.decks[player].cards.iter() {
             if let Card::Pokemon(deck_pokemon) = deck_card {
-                if deck_pokemon.energy_type == EnergyType::Grass
+                if deck_pokemon.is_type(EnergyType::Grass)
                     && pokemon.card.can_evolve_into(deck_card)
                 {
                     evolution_choices.push((in_play_idx, deck_card.clone()));

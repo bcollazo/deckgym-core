@@ -233,3 +233,5 @@ mod zarude_dark_vengeance_test;
 mod zekrom_bolt_strike_test;
 mod zorua_zoroark_ex_test;
 mod zubat_crobat_b3_test;
+
+mod printed_dual_types_test;

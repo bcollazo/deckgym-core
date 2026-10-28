@@ -7,3 +7,5 @@ mod cov2_cross_feature_test;
 mod on_play_turn_test;
 mod pokemon_checkup_test;
 mod turn_action_limit_test;
+
+mod catalog_consistency_test;
