@@ -97,6 +97,7 @@ pub fn trainer_move_generation_implementation(
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty => can_play_misty(state, trainer_card),
+        CardId::C1119SweetHoney => can_play_trainer(state, trainer_card),
         CardId::A1221Blaine => can_play_trainer(state, trainer_card),
         CardId::A2152Cynthia => can_play_trainer(state, trainer_card),
         CardId::A1224Brock => can_play_trainer(state, trainer_card),
