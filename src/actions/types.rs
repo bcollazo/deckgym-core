@@ -284,6 +284,14 @@ pub enum SimpleAction {
         to_in_play_idx: usize,
         amount: Option<u32>,
     },
+    /// Lunala's Wings of the Moone: move one Energy of `energy_type` from the actor's Active
+    /// Pokémon to one of their Benched Pokémon, then offer the same choice again for the Energy
+    /// still on the Active Pokémon. Unlike `MoveEnergyAndReoffer` there is no way to stop early:
+    /// the attack moves *all* of the Energy. One Energy at a time, for the reason given there.
+    MoveActiveEnergyToBenchAndReoffer {
+        to_in_play_idx: usize,
+        energy_type: EnergyType,
+    },
     /// Sandy Shocks's Pull In and Pound / Team Rocket's Hypno's Entrap: switch the opponent's
     /// Benched Pokémon at `in_play_idx` into their Active Spot, then deal `damage` to the new
     /// Active Pokémon. The two halves are one action so the damage always lands on the Pokémon
@@ -556,6 +564,15 @@ impl fmt::Display for SimpleAction {
                 amount,
             } => {
                 write!(f, "MoveActiveEnergyToBench(to:{to_in_play_idx}, {amount:?})")
+            }
+            SimpleAction::MoveActiveEnergyToBenchAndReoffer {
+                to_in_play_idx,
+                energy_type,
+            } => {
+                write!(
+                    f,
+                    "MoveActiveEnergyToBenchAndReoffer(to:{to_in_play_idx}, {energy_type:?})"
+                )
             }
             SimpleAction::SwitchOpponentBenchedThenDamage {
                 in_play_idx,

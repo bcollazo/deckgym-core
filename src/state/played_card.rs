@@ -71,6 +71,13 @@ pub struct PlayedCard {
     #[serde(default)]
     paralyzed_on_turn: Option<u8>,
     asleep: bool,
+    /// Coins this Pokemon's owner flips at each Checkup to recover from its current Sleep, when an
+    /// attack replaced the usual single flip ("Your opponent flips 2 coins for this Special
+    /// Condition, and if any of them are tails, that Pokémon is still Asleep." — Jigglypuff's
+    /// Soothing Lullaby). Cleared whenever the Sleep is cleared or re-applied normally, so a later
+    /// ordinary Sleep is back to 1 coin.
+    #[serde(default)]
+    sleep_coins_override: Option<usize>,
     burned: bool,
     confused: bool,
     pub cards_behind: Vec<Card>,
@@ -104,6 +111,11 @@ impl PlayedCard {
             effective_effects: self.get_effective_card_effects(),
             poison_damage: if self.poisoned {
                 self.poison_base_damage()
+            } else {
+                0
+            },
+            sleep_coins: if self.asleep {
+                self.sleep_checkup_coins()
             } else {
                 0
             },
@@ -144,6 +156,7 @@ impl PlayedCard {
             paralyzed: false,
             paralyzed_on_turn: None,
             asleep: false,
+            sleep_coins_override: None,
             burned: false,
             confused: false,
             effects: vec![],
@@ -469,6 +482,18 @@ impl PlayedCard {
         self.asleep
     }
 
+    /// Replaces the number of Checkup coins of this Pokemon's current Sleep. Set right after the
+    /// Sleep lands; `set_status_raw(Asleep)` and every cure path reset it.
+    pub(crate) fn set_sleep_coins_override(&mut self, num_coins: usize) {
+        self.sleep_coins_override = Some(num_coins);
+    }
+
+    /// The coins flipped at Checkup to wake this Pokemon, which recovers only if all of them are
+    /// heads: the usual 1 unless an attack overrode it.
+    pub(crate) fn sleep_checkup_coins(&self) -> usize {
+        self.sleep_coins_override.unwrap_or(1)
+    }
+
     pub fn is_burned(&self) -> bool {
         self.burned
     }
@@ -666,6 +691,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.paralyzed_on_turn = None;
         self.asleep = false;
+        self.sleep_coins_override = None;
         self.burned = false;
         self.confused = false;
         self.effects.clear();
@@ -677,6 +703,7 @@ impl PlayedCard {
         self.paralyzed = false;
         self.paralyzed_on_turn = None;
         self.asleep = false;
+        self.sleep_coins_override = None;
         self.burned = false;
         self.confused = false;
     }
@@ -691,7 +718,10 @@ impl PlayedCard {
                 self.paralyzed = false;
                 self.paralyzed_on_turn = None;
             }
-            StatusCondition::Asleep => self.asleep = false,
+            StatusCondition::Asleep => {
+                self.asleep = false;
+                self.sleep_coins_override = None;
+            }
             StatusCondition::Burned => self.burned = false,
             StatusCondition::Confused => self.confused = false,
         }
@@ -700,7 +730,11 @@ impl PlayedCard {
     /// Raw status setter — does NOT check immunity. Use `State::apply_status_condition` instead.
     pub(crate) fn set_status_raw(&mut self, status: StatusCondition) {
         match status {
-            StatusCondition::Asleep => self.asleep = true,
+            StatusCondition::Asleep => {
+                self.asleep = true;
+                // An ordinary Sleep replaces any earlier custom-coin Sleep.
+                self.sleep_coins_override = None;
+            }
             StatusCondition::Paralyzed => self.paralyzed = true,
             StatusCondition::Poisoned => {
                 self.poisoned = true;
