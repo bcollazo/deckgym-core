@@ -53,3 +53,28 @@ fn test_amoonguss_astonish_shuffles_a_random_hand_card_back() {
     assert_eq!(state.hands[1].len(), hand_before - 1);
     assert_eq!(state.decks[1].cards.len(), deck_before + 1);
 }
+/// Volcanion - Dynamite Steam: flip 2 coins, 110 damage for each heads.
+#[test]
+fn test_volcanion_dynamite_steam_damage_scales_with_heads() {
+    let mut seen = std::collections::BTreeSet::new();
+    for seed in 0..40 {
+        let mut game = get_initialized_game_with_board(
+            seed,
+            0,
+            3,
+            vec![
+                PlayedCard::from_id(CardId::C1019Volcanion).with_energy(vec![
+                    EnergyType::Fire,
+                    EnergyType::Fire,
+                    EnergyType::Fire,
+                    EnergyType::Colorless,
+                ]),
+            ],
+            vec![PlayedCard::from_id(CardId::B4197WailordEx)],
+        );
+        attack(&mut game, CardId::C1019Volcanion);
+        let state = game.get_state_clone();
+        seen.insert(250 - state.get_active(1).get_remaining_hp());
+    }
+    assert_eq!(seen, [0, 110, 220].into_iter().collect());
+}

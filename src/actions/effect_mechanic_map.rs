@@ -664,6 +664,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "Flip 2 coins. This attack does 110 damage for each heads.",
+        Mechanic::ExtraDamageForEachHeads {
+            include_fixed_damage: false,
+            damage_per_head: 110,
+            num_coins: 2,
+        },
+    );
+    map.insert(
         "Flip 2 coins. This attack does 20 damage for each heads.",
         Mechanic::ExtraDamageForEachHeads {
             include_fixed_damage: false,
