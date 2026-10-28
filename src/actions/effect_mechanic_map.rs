@@ -3634,5 +3634,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energies: vec![EnergyType::Fighting, EnergyType::Fighting],
         },
     );
+    // Electrode - Self-Destruct
+    map.insert(
+        "This Pokémon also does 90 damage to itself.",
+        Mechanic::SelfDamage { amount: 90 },
+    );
     map
 });
