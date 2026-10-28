@@ -16,6 +16,15 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Mega Dragonite ex
+    map.insert(
+        "1 of your opponent's Pokémon is chosen at random. Do 250 damage to it.",
+        Mechanic::RandomSpreadDamage {
+            times: 1,
+            damage_per_hit: 250,
+            include_own_bench: false,
+        },
+    );
     // Fuecoco ex
     map.insert(
         "If this Pokémon has damage on it, this attack does 70 more damage.",

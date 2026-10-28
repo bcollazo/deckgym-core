@@ -39,3 +39,5 @@ mod alolan_exeggutor;
 mod fuecoco;
 
 mod lycanroc;
+
+mod mega_dragonite;
