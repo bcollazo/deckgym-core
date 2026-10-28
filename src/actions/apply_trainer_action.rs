@@ -58,6 +58,7 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1130RisingStar => Outcomes::single_fn(skyla_effect),
         CardId::C1129PokeMartGuy => {
             card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
                 ["Super Potion", "Max Repel", "Full Heal"].contains(&card.get_name().as_str())

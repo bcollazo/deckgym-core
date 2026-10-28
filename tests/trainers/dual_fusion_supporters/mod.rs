@@ -41,3 +41,5 @@ mod serena;
 mod rika;
 
 mod mart;
+
+mod rising;
