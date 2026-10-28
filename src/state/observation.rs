@@ -12,6 +12,7 @@ pub struct SlotDetails {
     pub effects: Vec<(CardEffect, u8)>,
     pub effective_effects: Vec<CardEffect>,
     pub poison_damage: u32,
+    pub sleep_coins: usize,
     pub paralyzed_on_turn: Option<u8>,
     pub heal_blocked: bool,
     pub abilities_disabled: bool,

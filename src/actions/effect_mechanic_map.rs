@@ -3658,6 +3658,11 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             energy_type: EnergyType::Colorless,
         },
     );
+    // Jigglypuff - Soothing Lullaby
+    map.insert(
+        "Your opponent's Active Pokémon is now Asleep. Your opponent flips 2 coins for this Special Condition, and if any of them are tails, that Pokémon is still Asleep.",
+        Mechanic::InflictSleepWithCoins { num_coins: 2 },
+    );
     // Deoxys - Psycho Boost
     map.insert(
         "During your next turn, this Pokémon's Psycho Boost does -50 damage.",

@@ -47,6 +47,7 @@ mod deoxys;
 mod eevee;
 mod electrode;
 mod espeon;
+mod jigglypuff;
 mod lunala;
 mod malamar;
 mod pidgeot;

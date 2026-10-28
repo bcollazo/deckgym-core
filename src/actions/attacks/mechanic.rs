@@ -968,6 +968,12 @@ pub enum Mechanic {
     InflictPoisonWithDamage {
         poison_damage: u32,
     },
+    /// Jigglypuff's Soothing Lullaby: the opponent's Active Pokémon is now Asleep, but its owner
+    /// flips `num_coins` coins at each Checkup instead of 1 and it recovers only if all of them
+    /// are heads.
+    InflictSleepWithCoins {
+        num_coins: usize,
+    },
     /// Delcatty's Energy Blender: after damage, the attacker may freely redistribute the Energy
     /// attached to their own Pokémon in play. Resolved one Energy at a time through
     /// `SimpleAction::MoveEnergyAndReoffer`; see that variant for why.

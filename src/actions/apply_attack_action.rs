@@ -1173,6 +1173,9 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::InflictPoisonWithDamage { poison_damage } => {
             inflict_poison_with_damage(attack.fixed_damage, *poison_damage)
         }
+        Mechanic::InflictSleepWithCoins { num_coins } => {
+            inflict_sleep_with_coins(attack.fixed_damage, *num_coins)
+        }
         Mechanic::RequireBenchedNamesThenDiscardAllEnergy { .. } => {
             damage_and_discard_all_energy(attack.fixed_damage)
         }
@@ -1478,6 +1481,15 @@ fn inflict_poison_with_damage(damage: u32, poison_damage: u32) -> AttackOutcomes
     active_damage_effect_doutcome(damage, move |_, state, action| {
         let opponent = (action.actor + 1) % 2;
         state.apply_poison_with_damage(opponent, 0, poison_damage);
+    })
+}
+
+/// Jigglypuff - Soothing Lullaby: put the opponent's Active Pokémon to sleep, with its owner
+/// flipping `num_coins` coins at each Checkup instead of 1 and recovering only on all heads.
+fn inflict_sleep_with_coins(damage: u32, num_coins: usize) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        state.apply_sleep_with_coins(opponent, 0, num_coins);
     })
 }
 
