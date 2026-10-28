@@ -3639,5 +3639,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "This Pokémon also does 90 damage to itself.",
         Mechanic::SelfDamage { amount: 90 },
     );
+    // Eevee - Signs of Evolution
+    map.insert(
+        "Put a random card that evolves from Eevee from your deck into your hand.",
+        Mechanic::SearchToHandByEvolvesFrom {
+            name: "Eevee".to_string(),
+        },
+    );
     map
 });
