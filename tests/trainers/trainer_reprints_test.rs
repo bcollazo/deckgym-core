@@ -77,7 +77,6 @@ fn trainer_coverage_has_only_the_documented_pending_designs() {
     missing.sort_by_key(|id| format!("{id:?}"));
     missing.dedup();
     let mut pending = vec![
-        CardId::C1119SweetHoney,
         CardId::C1120SuperPotion,
         CardId::C1121MaxRepel,
         CardId::C1122FullHeal,
