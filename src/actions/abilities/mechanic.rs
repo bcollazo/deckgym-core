@@ -129,6 +129,13 @@ pub enum AbilityMechanic {
     ReduceDamageToAllYourPokemonWithOtherUnown {
         amount: u32,
     },
+    /// Melmetal's Metal Scrum: "As long as this Pokémon is in play, all of your `energy_type`
+    /// Pokémon take -`amount` damage from attacks from your opponent's Pokémon. This effect
+    /// doesn't stack." Resolved in `hooks::modify_damage`.
+    ReduceDamageToYourTypeWhileInPlay {
+        amount: u32,
+        energy_type: EnergyType,
+    },
     /// Unown POWER: "This Ability works if you have any Unown in play with an Ability other than
     /// POWER. Attacks used by your Pokémon do +`amount` damage to your opponent's Active
     /// Pokémon." Resolved in `hooks::modify_damage`.

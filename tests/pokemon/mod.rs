@@ -140,6 +140,7 @@ mod mega_sceptile_terminating_tail_test;
 mod mega_scizor_ex_test;
 mod mega_steelix_adamantine_rolling_test;
 mod meganium_bloomshine_test;
+mod melmetal_metal_scrum_test;
 mod meowstic_test;
 mod meowth_carefree_steps_test;
 mod mew_miraculous_memory_test;
