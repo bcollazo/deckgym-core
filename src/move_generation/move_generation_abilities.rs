@@ -149,6 +149,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::DrawCardIfActive { .. } => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::ConfuseOpponentActive => _in_play_index == 0 && !card.ability_used,
         AbilityMechanic::BurnOpponentActive => !card.ability_used,
+        AbilityMechanic::PutRentalCardInHand { .. } => !card.ability_used,
         AbilityMechanic::RandomStatusConditionToOpponentActive { options } => {
             !card.ability_used
                 && !selectable_status_conditions(

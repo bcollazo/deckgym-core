@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::Action,
+    actions::{Action, SimpleAction},
     card_ids::CardId,
     models::{EnergyType, PlayedCard},
     test_support::{attack_action, get_initialized_game_with_board, get_test_game_with_board},
@@ -179,4 +179,39 @@ fn test_two_raboots_stack_jumping_coach() {
     assert!(seen.iter().all(|damage| damage % 20 == 0));
     assert!(seen.iter().max().unwrap() > &100);
     assert!(seen.iter().max().unwrap() <= &160);
+}
+
+/// Ribombee - Honey Gather: once during your turn, put a Sweet Honey rental card into your hand.
+#[test]
+fn test_ribombee_honey_gather_puts_sweet_honey_in_hand_once_per_turn() {
+    for ribombee in [CardId::C1015Ribombee, CardId::C1135Ribombee] {
+        let mut game = get_test_game_with_board(
+            vec![PlayedCard::from_id(ribombee)],
+            vec![PlayedCard::from_id(CardId::A1211Snorlax)],
+        );
+        let hand_before = game.get_state_clone().hands[0].len();
+        let deck_before = game.get_state_clone().decks[0].cards.len();
+
+        game.apply_action(&Action {
+            actor: 0,
+            action: SimpleAction::UseAbility { in_play_idx: 0 },
+            is_stack: false,
+        });
+
+        let state = game.get_state_clone();
+        assert_eq!(state.hands[0].len(), hand_before + 1);
+        assert_eq!(state.decks[0].cards.len(), deck_before);
+        assert_eq!(
+            state.hands[0].last().unwrap().get_name(),
+            "Sweet Honey",
+            "a Sweet Honey is added to the hand"
+        );
+        let (_, actions) = state.generate_possible_actions();
+        assert!(
+            !actions
+                .iter()
+                .any(|a| matches!(a.action, SimpleAction::UseAbility { .. })),
+            "Honey Gather is once per turn"
+        );
+    }
 }

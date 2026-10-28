@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 use crate::actions::abilities::AbilityMechanic;
+use crate::card_ids::CardId;
 use crate::effects::CardEffect;
 use crate::models::{Card, EnergyType, StatusCondition};
 
@@ -202,6 +203,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         map.insert(
             "If this Pokémon is in the Active Spot, once during your turn, you may switch in 1 of your opponent's Benched Basic Pokémon to the Active Spot.",
             AbilityMechanic::VictreebelFragranceTrap,
+        );
+        map.insert(
+            "Once during your turn, you may use this Ability. Put a Sweet Honey rental card into your hand.",
+            AbilityMechanic::PutRentalCardInHand {
+                card_id: CardId::C1119SweetHoney,
+            },
         );
         map.insert(
             "If this Pokémon would be Knocked Out by damage from an attack, flip a coin. If heads, this Pokémon is not Knocked Out, and its remaining HP becomes 10.",

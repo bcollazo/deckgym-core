@@ -1,4 +1,7 @@
-use crate::models::{EnergyType, StatusCondition};
+use crate::{
+    card_ids::CardId,
+    models::{EnergyType, StatusCondition},
+};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub enum AbilityMechanic {
@@ -205,6 +208,12 @@ pub enum AbilityMechanic {
     PoisonOpponentActive,
     ConfuseOpponentActive,
     BurnOpponentActive,
+    /// Ribombee's Honey Gather: "Once during your turn, you may use this Ability. Put a Sweet
+    /// Honey rental card into your hand." The card is not taken from the deck: it is a new copy
+    /// of `card_id` (see questions file for the rental-card rules).
+    PutRentalCardInHand {
+        card_id: CardId,
+    },
     /// Team Rocket's Slowking ex's Evil Inspiration: "Once during your turn, if this Pokémon is
     /// in the Active Spot, you may draw a card." Unlike `EndTurnDrawCardIfActive`, this is an
     /// actively-used ability (offered any time during the turn, not just at its end).
