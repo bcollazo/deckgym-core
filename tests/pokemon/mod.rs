@@ -28,6 +28,7 @@ mod bonsly_teary_attack_test;
 mod brambleghast_accept_pain_test;
 mod breloom_test;
 mod budew_prickly_powder_test;
+mod c1_grass_fire_test;
 mod camerupt_eruption_test;
 mod carbink_glittering_gift_test;
 mod carefree_steps_queued_damage_test;

@@ -241,6 +241,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "Discard a [G] Energy from this Pokémon.",
+        Mechanic::SelfDiscardEnergy {
+            energies: vec![EnergyType::Grass],
+        },
+    );
+    map.insert(
         "Discard a [R] Energy from this Pokémon.",
         Mechanic::SelfDiscardEnergy {
             energies: vec![EnergyType::Fire],
