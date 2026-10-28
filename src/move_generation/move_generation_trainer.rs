@@ -95,6 +95,7 @@ pub fn trainer_move_generation_implementation(
         CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
+        CardId::C1120SuperPotion => can_play_super_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty => can_play_misty(state, trainer_card),
         CardId::C1119SweetHoney => can_play_trainer(state, trainer_card),
@@ -413,6 +414,18 @@ fn can_play_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
         .filter(|(_, x)| x.is_damaged())
         .count();
     if damaged_count > 0 {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Super Potion needs a damaged Pokémon that has Energy attached.
+fn can_play_super_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, x)| x.is_damaged() && !x.attached_energy.is_empty());
+    if has_target {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()

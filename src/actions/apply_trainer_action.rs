@@ -69,6 +69,7 @@ pub fn forecast_trainer_action(
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
+        CardId::C1120SuperPotion => Outcomes::single_fn(super_potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
         CardId::A2b111PokeBall => pokemon_search_outcomes(acting_player, state, true),
         CardId::PA006RedCard => Outcomes::single_fn(red_card_effect),
@@ -887,6 +888,26 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+/// Super Potion: heal 40 from 1 of your Pokémon with Energy attached; if damage was healed,
+/// discard a random Energy from it. The random Energy is drawn now, per candidate, which is
+/// distributed identically to drawing it when the heal resolves.
+fn super_potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| x.is_damaged() && !x.attached_energy.is_empty())
+        .map(|(in_play_idx, x)| SimpleAction::HealAndDiscardEnergy {
+            in_play_idx,
+            heal_amount: 40,
+            discard_energies: vec![x.attached_energy[rng.gen_range(0..x.attached_energy.len())]],
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 // Coin flip: heads = random Item from deck to hand, tails = random Tool from deck to hand

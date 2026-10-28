@@ -1,0 +1,58 @@
+use deckgym::{
+    actions::SimpleAction,
+    card_ids::CardId,
+    models::{Card, EnergyType, PlayedCard},
+    test_support::{get_test_game_with_board, play_trainer, trainer_from_id},
+};
+
+fn give_card(game: &mut deckgym::Game<'static>, card_id: CardId) {
+    let mut state = game.get_state_clone();
+    state.hands[0] = vec![Card::Trainer(trainer_from_id(card_id))];
+    game.set_state(state);
+}
+
+/// Super Potion: "Heal 40 damage from 1 of your Pokémon that has any Energy attached. If you
+/// healed any damage in this way, discard a random Energy from that Pokémon."
+#[test]
+fn test_super_potion_heals_40_and_discards_an_energy() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur)
+                .with_remaining_hp(20)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Grass]),
+            PlayedCard::from_id(CardId::A1033Charmander).with_remaining_hp(10),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    give_card(&mut game, CardId::C1120SuperPotion);
+    play_trainer(&mut game, 0, trainer_from_id(CardId::C1120SuperPotion));
+
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert_eq!(actions.len(), 1, "only the Pokémon with Energy is a target");
+    game.apply_action(&actions[0]);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(0).get_remaining_hp(), 60);
+    assert_eq!(state.get_active(0).attached_energy.len(), 1);
+    assert_eq!(state.discard_energies[0].len(), 1);
+    assert!(state.hands[0].is_empty());
+}
+
+/// No Energy discard when no damage was actually healed.
+#[test]
+fn test_super_potion_needs_a_damaged_pokemon_with_energy() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur).with_energy(vec![EnergyType::Grass]),
+            PlayedCard::from_id(CardId::A1033Charmander).with_remaining_hp(10),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    give_card(&mut game, CardId::C1120SuperPotion);
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert!(!actions
+        .iter()
+        .any(|a| matches!(a.action, SimpleAction::Play { .. })));
+}
