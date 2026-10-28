@@ -3588,5 +3588,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "Switch in 1 of your opponent's Benched Pokémon to the Active Spot. If you do, this attack does 50 damage to the new Active Pokémon.",
         Mechanic::SwitchOpponentBenchInAndDamage { damage: 50 },
     );
+    // Espeon - Brainwave
+    map.insert(
+        "This attack does 20 more damage for each [P] Energy attached to this Pokémon.",
+        Mechanic::ExtraDamagePerSpecificEnergy {
+            energy_type: EnergyType::Psychic,
+            damage_per_energy: 20,
+        },
+    );
     map
 });
