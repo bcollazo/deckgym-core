@@ -37,3 +37,5 @@ fn attack(game: &mut Game<'static>, id: CardId, index: usize) {
 mod alolan_exeggutor;
 
 mod fuecoco;
+
+mod lycanroc;

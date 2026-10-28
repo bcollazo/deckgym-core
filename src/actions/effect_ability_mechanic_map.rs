@@ -12,6 +12,8 @@ use crate::models::{Card, EnergyType, StatusCondition};
 pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMechanic>> =
     LazyLock::new(|| {
         let mut map: HashMap<&'static str, AbilityMechanic> = HashMap::new();
+        // Lycanroc ex
+        map.insert("If this Pokémon is in the Active Spot and is damaged by an attack from your opponent's Pokémon, do 30 damage to the Attacking Pokémon.", AbilityMechanic::CounterattackDamage { amount: 30 });
         map.insert(
             "Each of your evolved Pokémon can use any attack from its previous Evolutions. (You still need the necessary Energy to use each attack.)",
             AbilityMechanic::TimeRecall,
