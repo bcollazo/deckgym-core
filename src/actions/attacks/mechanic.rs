@@ -1185,6 +1185,13 @@ pub enum Mechanic {
         damage_per_match: u32,
         criterion: RevealCriterion,
     },
+    /// Vespiquen's Honey Rush: reveal all cards named `card_name` in your hand; the attack does
+    /// `damage_per_card` for each. The attack's `fixed_damage` is the per-card amount, so it is
+    /// not added as a base. Revealed cards stay in hand.
+    DamagePerNamedCardInHand {
+        card_name: String,
+        damage_per_card: u32,
+    },
     /// Chatot's Mimic / Mime Jr.'s Mime-y Shuffle: shuffle your hand into your deck, then draw a
     /// card for each card in your opponent's hand.
     ShuffleHandAndDrawPerOpponentHandCard,

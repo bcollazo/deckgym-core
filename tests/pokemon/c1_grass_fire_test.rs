@@ -215,3 +215,35 @@ fn test_ribombee_honey_gather_puts_sweet_honey_in_hand_once_per_turn() {
         );
     }
 }
+
+/// Vespiquen - Honey Rush: reveal all of the Sweet Honey in your hand; 50 damage for each.
+#[test]
+fn test_vespiquen_honey_rush_does_50_per_sweet_honey_in_hand() {
+    for (honey_count, expected_damage) in [(0usize, 0u32), (1, 50), (3, 150)] {
+        let mut game = get_test_game_with_board(
+            vec![PlayedCard::from_id(CardId::C1008Vespiquen)
+                .with_energy(vec![EnergyType::Grass, EnergyType::Grass])],
+            vec![PlayedCard::from_id(CardId::B4197WailordEx)],
+        );
+        let mut state = game.get_state_clone();
+        state.hands[0] = vec![deckgym::database::get_card_by_enum(CardId::A1001Bulbasaur)];
+        for _ in 0..honey_count {
+            state.hands[0].push(deckgym::database::get_card_by_enum(CardId::C1119SweetHoney));
+        }
+        game.set_state(state);
+
+        attack(&mut game, CardId::C1008Vespiquen);
+
+        let state = game.get_state_clone();
+        assert_eq!(
+            state.get_active(1).get_remaining_hp(),
+            250 - expected_damage,
+            "{honey_count} Sweet Honey in hand"
+        );
+        assert_eq!(
+            state.hands[0].len(),
+            honey_count + 1,
+            "revealed cards stay in hand"
+        );
+    }
+}

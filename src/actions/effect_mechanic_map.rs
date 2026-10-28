@@ -1654,6 +1654,14 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             name: "Rockruff".to_string(),
         },
     );
+    // Vespiquen - Honey Rush
+    map.insert(
+        "Reveal all of the Sweet Honey in your hand, and this attack does 50 damage for each card you revealed in this way.",
+        Mechanic::DamagePerNamedCardInHand {
+            card_name: "Sweet Honey".to_string(),
+            damage_per_card: 50,
+        },
+    );
     // Golurk - Heavy Rocket
     map.insert(
         "Reveal the top 3 cards of your deck. This attack does 60 damage for each Pokémon with a Retreat Cost of 3 or more you find there. Shuffle the revealed cards back into your deck.",
