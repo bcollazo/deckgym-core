@@ -52,3 +52,4 @@ mod pupitar;
 mod electrode;
 mod eevee;
 mod malamar;
+mod pidgey;

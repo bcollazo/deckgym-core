@@ -3651,5 +3651,12 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If your opponent's Active Pokémon is Confused, this attack does 90 more damage.",
         Mechanic::ExtraDamageIfDefenderConfused { extra_damage: 90 },
     );
+    // Pidgey - Find a Friend
+    map.insert(
+        "Put 1 random [C] Pokémon from your deck into your hand.",
+        Mechanic::SearchToHandByEnergy {
+            energy_type: EnergyType::Colorless,
+        },
+    );
     map
 });
