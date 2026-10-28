@@ -16,6 +16,8 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Mega Mewtwo Y ex
+    map.insert("Flip a coin for each [P] Energy attached to this Pokémon. This attack does 60 damage for each heads.", Mechanic::CoinFlipPerSpecificEnergyType { energy_type: EnergyType::Psychic, include_fixed_damage: false, damage_per_heads: 60 });
     // Mega Dragonite ex
     map.insert(
         "1 of your opponent's Pokémon is chosen at random. Do 250 damage to it.",
