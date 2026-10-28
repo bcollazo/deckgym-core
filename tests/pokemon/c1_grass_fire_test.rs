@@ -35,3 +35,21 @@ fn test_sawsbuck_leaf_litter_tackle_discards_a_grass_energy() {
     );
     assert_eq!(state.discard_energies[0], vec![EnergyType::Grass]);
 }
+/// Amoonguss - Astonish: a random card from the opponent's hand is shuffled into their deck.
+#[test]
+fn test_amoonguss_astonish_shuffles_a_random_hand_card_back() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::C1012Amoonguss)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Colorless])],
+        vec![PlayedCard::from_id(CardId::A1211Snorlax)],
+    );
+    let state = game.get_state_clone();
+    let hand_before = state.hands[1].len();
+    let deck_before = state.decks[1].cards.len();
+
+    attack(&mut game, CardId::C1012Amoonguss);
+
+    let state = game.get_state_clone();
+    assert_eq!(state.hands[1].len(), hand_before - 1);
+    assert_eq!(state.decks[1].cards.len(), deck_before + 1);
+}

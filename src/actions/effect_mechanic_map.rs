@@ -2317,6 +2317,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
 
     // ------------------------------------------------------------------------------------------
     // Attacks whose effect text is not present in the generated skeleton above.
+    map.insert(
+        "Look at a random card from your opponent's hand and shuffle it into their deck.",
+        Mechanic::ShuffleRandomOpponentHandCardIntoDeck,
+    );
     // ------------------------------------------------------------------------------------------
     map.insert(
         "Before doing damage, shuffle all Pokémon Tools from each of your opponent's Pokémon into their deck.",
