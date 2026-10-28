@@ -2,7 +2,9 @@ use deckgym::{
     actions::SimpleAction,
     card_ids::CardId,
     models::{Card, PlayedCard},
-    test_support::{get_initialized_game_with_board, play_trainer, trainer_from_id},
+    test_support::{
+        get_initialized_game_with_board, get_test_game_with_board, play_trainer, trainer_from_id,
+    },
 };
 
 /// Sweet Honey: "Choose 1 of your Pokémon, and then flip a coin until you get tails. For each
@@ -45,4 +47,35 @@ fn test_sweet_honey_heals_20_per_heads_until_tails() {
     );
     assert!(healed_amounts.contains(&20));
     assert!(healed_amounts.contains(&40));
+}
+
+/// Like Potion, Sweet Honey needs a damaged Pokémon to target.
+#[test]
+fn test_sweet_honey_needs_a_damaged_pokemon() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    let mut state = game.get_state_clone();
+    state.hands[0] = vec![Card::Trainer(trainer_from_id(CardId::C1119SweetHoney))];
+    game.set_state(state);
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert!(!actions
+        .iter()
+        .any(|a| matches!(a.action, SimpleAction::Play { .. })));
+
+    // A damaged Benched Pokémon is enough to play it.
+    let mut state = game.get_state_clone();
+    state.in_play_pokemon[0][1] =
+        Some(PlayedCard::from_id(CardId::A1033Charmander).with_remaining_hp(10));
+    game.set_state(state);
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert!(actions
+        .iter()
+        .any(|a| matches!(a.action, SimpleAction::Play { .. })));
 }
