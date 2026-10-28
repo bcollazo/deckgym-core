@@ -256,20 +256,46 @@ The pre-commit hook runs:
 
 This helps maintain code quality and prevents broken commits, but it's optional and each developer can choose whether to enable it.
 
+**Dual Fusion catalog and implementation work**
+
+The catalog includes Dual Fusion (C1), Special Pack: First Partners (SP1), and
+P-C promos, including all alternate printings. Catalog presence does not imply
+that a card's rules are implemented. Use `cargo run --bin card_status --
+--incomplete-only` to find pending effects, then the incremental generators below
+to add attack and ability mappings. New Trainer designs still awaiting rules are
+listed explicitly in `tests/trainers/trainer_reprints_test.rs`; remove an entry
+when implementing that design.
+
+Printed dual types are available through `Card::get_types()` and `Card::is_type()`
+in every zone, and through `PlayedCard` type queries in play. Use these queries
+instead of comparing the primary `PokemonCard::energy_type` field. Existing
+single-type JSON remains valid; struct literals must provide
+`secondary_energy_type: None` for single-type Pokémon.
+
 **Generating database.rs**
 
-Ensure database.json is up-to-date with latest data. Mock the `get_card_by_enum` in `database.rs` with a `_ => panic` so that
-it compiles mid-way through the generation.
+Ensure `database.json` is up to date, then build the generator once while the
+existing Rust source files still agree. The executable reads JSON at runtime, so
+both new files can be generated without compiling an inconsistent intermediate
+state. No temporary placeholder card implementation is needed.
 
 ```bash
-cargo run --bin card_enum_generator > tmp.rs && mv tmp.rs src/card_ids.rs && cargo fmt
+cargo build --bin card_enum_generator
+./target/debug/card_enum_generator > card_ids.next.rs
+./target/debug/card_enum_generator --database > database.next.rs
+rustfmt --edition 2021 card_ids.next.rs database.next.rs
+# Replace sources only after both generation commands and formatting succeed.
+mv card_ids.next.rs src/card_ids.rs
+mv database.next.rs src/database.rs
+cargo fmt
+cargo test --features "tui test-utils" --all-targets
 ```
 
-Then temporarily edit `database.rs` for `_` to match Bulbasaur (this is so that the next code can compile-run).
-
-```bash
-cargo run --bin card_enum_generator -- --database > tmp.rs && mv tmp.rs src/database.rs && cargo fmt
-```
+The commands above use a Bash-compatible shell. In Windows PowerShell, use the
+`.exe` executable and UTF-8 output (PowerShell 7), not PowerShell 5's UTF-16
+redirection. If Cargo uses a custom target directory, obtain it with
+`cargo metadata --no-deps --format-version 1` and use its debug executable.
+Generated lookup functions are bounded so large catalogs also format on Windows.
 
 To generate attacks do (first time):
 ```bash

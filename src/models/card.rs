@@ -105,6 +105,9 @@ pub struct PokemonCard {
     pub evolves_from: Option<String>,
     pub hp: u32,
     pub energy_type: EnergyType,
+    /// Second printed Pokémon type; independent of attached Energy and attack costs.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub secondary_energy_type: Option<EnergyType>,
     pub ability: Option<Ability>,
     pub attacks: Vec<Attack>,
     pub weakness: Option<EnergyType>,
@@ -112,6 +115,22 @@ pub struct PokemonCard {
     pub rarity: String,
     pub booster_pack: String,
 }
+impl PokemonCard {
+    pub fn get_types(&self) -> Vec<EnergyType> {
+        let mut types = vec![self.energy_type];
+        if let Some(secondary) = self.secondary_energy_type {
+            if !types.contains(&secondary) {
+                types.push(secondary);
+            }
+        }
+        types
+    }
+
+    pub fn is_type(&self, energy_type: EnergyType) -> bool {
+        self.energy_type == energy_type || self.secondary_energy_type == Some(energy_type)
+    }
+}
+
 impl PartialEq for PokemonCard {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
@@ -242,18 +261,14 @@ impl Card {
 
     /// The Energy types this card is **printed** as.
     ///
-    /// Today every printed Pokémon has exactly one type, so this is always a 0- or 1-element
-    /// vector. It is the single seam for printed dual-type Pokémon (e.g. Mega Mewtwo X ex,
-    /// [P] + [F]): when `PokemonCard` grows a second type, this method returns both and every
-    /// in-play type check downstream (which goes through `PlayedCard::get_energy_types` /
-    /// `PlayedCard::is_type`) picks them up with no further engine change.
+    /// Includes both printed types for dual-type Pokémon.
     ///
     /// Note this is the *printed* type set — it deliberately knows nothing about Abilities, which
     /// only apply while the card is in play. Use it for cards in a deck, hand or discard pile;
     /// use `PlayedCard::get_energy_types` for cards on the board.
     pub fn get_types(&self) -> Vec<EnergyType> {
         match self {
-            Card::Pokemon(pokemon_card) => vec![pokemon_card.energy_type],
+            Card::Pokemon(pokemon_card) => pokemon_card.get_types(),
             _ => vec![],
         }
     }
@@ -262,7 +277,7 @@ impl Card {
     /// counterpart of `get_types().contains(..)`.
     pub fn is_type(&self, energy_type: EnergyType) -> bool {
         match self {
-            Card::Pokemon(pokemon_card) => pokemon_card.energy_type == energy_type,
+            Card::Pokemon(pokemon_card) => pokemon_card.is_type(energy_type),
             _ => false,
         }
     }

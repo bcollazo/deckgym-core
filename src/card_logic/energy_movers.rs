@@ -24,9 +24,9 @@ pub fn distinct_attached_energy_types(state: &State, player: usize) -> usize {
 pub fn fishing_net_candidates(state: &State, player: usize) -> Vec<Card> {
     state.discard_piles[player]
         .iter()
-        .filter(|card| {
-            matches!(card, Card::Pokemon(p) if p.stage == 0 && p.energy_type == EnergyType::Water)
-        })
+        .filter(
+            |card| matches!(card, Card::Pokemon(p) if p.stage == 0 && p.is_type(EnergyType::Water)),
+        )
         .cloned()
         .collect()
 }
@@ -36,7 +36,7 @@ pub fn fishing_net_candidates(state: &State, player: usize) -> Vec<Card> {
 pub fn water_pokemon_in_discard(state: &State, player: usize) -> Vec<Card> {
     state.discard_piles[player]
         .iter()
-        .filter(|card| matches!(card, Card::Pokemon(p) if p.energy_type == EnergyType::Water))
+        .filter(|card| matches!(card, Card::Pokemon(p) if p.is_type(EnergyType::Water)))
         .cloned()
         .collect()
 }

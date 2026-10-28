@@ -81,7 +81,7 @@ impl Deck {
         if energy_types.is_empty() {
             cards.iter().for_each(|x| {
                 if let Card::Pokemon(pokemon_card) = x {
-                    energy_types.insert(pokemon_card.energy_type);
+                    energy_types.extend(pokemon_card.get_types());
                 }
             });
         }
