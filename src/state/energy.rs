@@ -140,27 +140,29 @@ impl State {
             }
         }
 
-        // Check for Darkrai ex's Nightmare Aura ability
+        // Check for Zone-attach damage abilities (Darkrai ex's Nightmare Aura, Charizard's Flame Aura)
         if let Some(mechanic) = mechanic {
-            if matches!(
-                mechanic,
-                AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf {
-                    energy_type: EnergyType::Darkness,
-                    amount: 20,
-                    only_turn_energy: true,
-                }
-            ) && energy_type == EnergyType::Darkness
-                && is_turn_energy
+            if let AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf {
+                energy_type: trigger_type,
+                amount,
+                only_turn_energy,
+            } = mechanic
             {
-                // Deal 20 damage to opponent's active Pokémon
-                let opponent = (actor + 1) % 2;
-                handle_damage_only(
-                    self,
-                    (actor, in_play_idx),
-                    &[(20, opponent, 0)],
-                    false,
-                    DamageModifierContext::default(),
-                );
+                let triggered = if only_turn_energy {
+                    is_turn_energy
+                } else {
+                    from_zone
+                };
+                if energy_type == trigger_type && triggered {
+                    let opponent = (actor + 1) % 2;
+                    handle_damage_only(
+                        self,
+                        (actor, in_play_idx),
+                        &[(amount, opponent, 0)],
+                        false,
+                        DamageModifierContext::default(),
+                    );
+                }
             }
 
             // Check for Komala's Comatose ability

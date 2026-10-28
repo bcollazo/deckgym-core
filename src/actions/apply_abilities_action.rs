@@ -15,7 +15,9 @@ use crate::{
         shared_mutations::{pokemon_search_outcomes, tool_search_outcomes},
         Action, SimpleAction,
     },
+    card_ids::CardId,
     combinatorics::generate_combinations,
+    database::get_card_by_enum,
     effects::{CardEffect, TurnEffect},
     hooks::is_ultra_beast,
     models::{Card, EnergyType, PlayedCard, StatusCondition, TrainerCard, TrainerType},
@@ -156,6 +158,9 @@ fn forecast_ability_by_mechanic(
         | AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => {
             panic!("Board-dependent damage modifier mechanics are passive abilities")
         }
+        AbilityMechanic::FlipMoreCoinsForNamedAttack { .. } => {
+            panic!("FlipMoreCoinsForNamedAttack is a passive ability")
+        }
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => {
             panic!("IncreaseDamageWhenRemainingHpAtMost is a passive ability")
         }
@@ -218,6 +223,7 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::PoisonOpponentActive => poison_opponent_active(),
         AbilityMechanic::ConfuseOpponentActive => confuse_opponent_active(),
         AbilityMechanic::BurnOpponentActive => burn_opponent_active(),
+        AbilityMechanic::PutRentalCardInHand { card_id } => put_rental_card_in_hand(*card_id),
         AbilityMechanic::DrawCardIfActive { amount } => draw_card_if_active(*amount),
         AbilityMechanic::RandomStatusConditionToOpponentActive { options } => {
             random_status_condition_to_opponent_active(state, action.actor, options)
@@ -649,6 +655,15 @@ fn draw_card_if_active(amount: u32) -> Outcomes {
         for _ in 0..amount {
             state.maybe_draw_card(action.actor);
         }
+    })
+}
+
+/// Ribombee - Honey Gather: add a fresh copy of the rental card to the hand. Rental cards are not
+/// part of the deck, so deck and discard counts are untouched; once played it is discarded like
+/// any other Item.
+fn put_rental_card_in_hand(card_id: CardId) -> Outcomes {
+    Outcomes::single_fn(move |_rng, state, action| {
+        state.hands[action.actor].push(get_card_by_enum(card_id));
     })
 }
 

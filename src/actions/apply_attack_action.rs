@@ -457,6 +457,7 @@ fn forecast_effect_attack_by_mechanic(
             *damage_per_head,
             *num_coins,
             attack,
+            state,
         ),
         Mechanic::ExtraDamageForEachHeadsSelfStatus {
             num_coins,
@@ -1413,6 +1414,10 @@ fn forecast_effect_attack_by_mechanic(
             damage_per_match,
             criterion,
         } => reveal_top_damage_per_match(state, *count, *damage_per_match, criterion),
+        Mechanic::DamagePerNamedCardInHand {
+            card_name,
+            damage_per_card,
+        } => damage_per_named_card_in_hand(state, card_name, *damage_per_card),
         Mechanic::ShuffleHandAndDrawPerOpponentHandCard => {
             shuffle_hand_and_draw_per_opponent_hand_card(attack.fixed_damage)
         }
@@ -3100,12 +3105,28 @@ fn generate_energy_distributions(
     all_choices
 }
 
+/// Raboot - Jumping Coach: extra coins for the named attack, once per Pokémon with the ability.
+fn extra_coins_from_abilities(state: &State, attack: &Attack) -> usize {
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::FlipMoreCoinsForNamedAttack {
+                attack_title,
+                extra_coins,
+            }) if *attack_title == attack.title => Some(*extra_coins),
+            _ => None,
+        })
+        .sum()
+}
+
 fn damage_for_each_heads_attack(
     include_fixed_damage: bool,
     damage_per_head: u32,
     num_coins: usize,
     attack: &Attack,
+    state: &State,
 ) -> AttackOutcomes {
+    let num_coins = num_coins + extra_coins_from_abilities(state, attack);
     let fixed_damage = if include_fixed_damage {
         attack.fixed_damage
     } else {
@@ -5892,6 +5913,19 @@ fn reveal_top_damage_per_match(
     active_damage_effect_doutcome(matches * damage_per_match, move |rng, state, action| {
         state.decks[action.actor].shuffle(false, rng);
     })
+}
+
+/// Vespiquen - Honey Rush: 50 damage for each Sweet Honey revealed from the hand.
+fn damage_per_named_card_in_hand(
+    state: &State,
+    card_name: &str,
+    damage_per_card: u32,
+) -> AttackOutcomes {
+    let revealed = state.hands[state.current_player]
+        .iter()
+        .filter(|card| card.get_name() == card_name)
+        .count() as u32;
+    active_damage_doutcome(revealed * damage_per_card)
 }
 
 fn reveal_criterion_matches(card: &Card, criterion: &RevealCriterion) -> bool {

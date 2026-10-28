@@ -1,4 +1,5 @@
 mod barry_test;
+mod c1_sweet_honey_test;
 mod cheren_test;
 mod clemonts_backpack_test;
 mod coverage_items_test;
