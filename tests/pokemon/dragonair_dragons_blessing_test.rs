@@ -6,12 +6,12 @@ use deckgym::{
 };
 
 /// Dragon's Blessing: "Once during your turn, if this Pokémon is on your Bench, you may attach
-/// an Energy from your discard pile to your Active Pokémon."
+/// an Energy from your discard pile to your Active [N] Pokémon."
 #[test]
 fn test_dragonair_dragons_blessing_attaches_chosen_energy_to_active() {
     let mut game = get_test_game_with_board(
         vec![
-            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B4116Dratini),
             PlayedCard::from_id(CardId::B4175Dragonair),
         ],
         vec![PlayedCard::from_id(CardId::A1002Ivysaur)],
@@ -88,4 +88,26 @@ fn test_dragonair_dragons_blessing_not_available_while_active() {
     assert!(!actions
         .iter()
         .any(|action| matches!(action.action, SimpleAction::UseAbility { in_play_idx: 0 })));
+}
+
+/// Dragon's Blessing only targets an Active [N] Pokémon: with a non-Dragon Active it is not
+/// offered, even with Energy in the discard pile.
+#[test]
+fn test_dragonair_dragons_blessing_not_available_when_active_is_not_dragon() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::B4175Dragonair),
+        ],
+        vec![PlayedCard::from_id(CardId::A1002Ivysaur)],
+    );
+
+    let mut state = game.get_state_clone();
+    state.discard_energies[0] = vec![EnergyType::Fire, EnergyType::Water];
+    game.set_state(state);
+
+    let (_actor, actions) = game.get_state_clone().generate_possible_actions();
+    assert!(!actions
+        .iter()
+        .any(|action| matches!(action.action, SimpleAction::UseAbility { in_play_idx: 1 })));
 }
