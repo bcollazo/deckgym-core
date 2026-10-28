@@ -767,6 +767,39 @@ fn get_steel_apron_reduction(
     0
 }
 
+fn get_eviolite_reduction(
+    state: &State,
+    attacking_player: usize,
+    (target_player, target_idx): (usize, usize),
+    is_from_active_attack: bool,
+) -> u32 {
+    if !is_from_active_attack || attacking_player == target_player {
+        return 0;
+    }
+
+    let defending_pokemon = &state.in_play_pokemon[target_player][target_idx]
+        .as_ref()
+        .expect("Defending Pokemon should be there when checking Eviolite");
+    // Eviolite: "The Basic Pokémon this card is attached to takes -20 damage..."
+    if has_tool(defending_pokemon, CardId::C1123Eviolite) && defending_pokemon.card.is_basic() {
+        debug!("Eviolite: Reducing damage by 20");
+        return 20;
+    }
+    0
+}
+
+/// Light Ball: "Attacks used by the Pikachu ex this card is attached to do +30 damage to your
+/// opponent's Active Pokémon."
+fn get_light_ball_damage_bonus(attacking_pokemon: &PlayedCard) -> u32 {
+    if has_tool(attacking_pokemon, CardId::C1124LightBall)
+        && attacking_pokemon.get_name() == "Pikachu ex"
+    {
+        debug!("Light Ball: Increasing damage by 30");
+        return 30;
+    }
+    0
+}
+
 fn get_intimidating_fang_reduction(
     state: &State,
     attacking_ref: (usize, usize),
@@ -1548,6 +1581,16 @@ pub(crate) fn modify_damage(
             is_from_active_attack,
         )
     };
+    let eviolite_reduction = if skip_target_effects {
+        0
+    } else {
+        get_eviolite_reduction(
+            state,
+            attacking_player,
+            (target_player, target_idx),
+            is_from_active_attack,
+        )
+    };
     let ability_damage_reduction = if skip_target_effects {
         0
     } else {
@@ -1661,6 +1704,12 @@ pub(crate) fn modify_damage(
         0
     };
 
+    let light_ball_damage_bonus = if is_active_to_active {
+        get_light_ball_damage_bonus(attacking_pokemon)
+    } else {
+        0
+    };
+
     debug!(
         "Attack: {:?}, IncreasedDamage: {}, IncreasedAttackSpecific: {}, IncreasedVulnerability: {}, ReducedDamage: {}, TurnEffectReduction: {}, HeavyHelmet: {}, MetalCoreBarrier: {}, SteelApron: {}, IntimidatingFang: {}, AbilityReduction: {}, AbilityIncrease: {}, TypeBoost: {}, StadiumBonus: {}, FutureBooster: {}",
         base_damage,
@@ -1699,7 +1748,8 @@ pub(crate) fn modify_damage(
         + type_boost_bonus
         + stadium_damage_bonus
         + future_booster_damage_bonus
-        + beastite_damage_bonus;
+        + beastite_damage_bonus
+        + light_ball_damage_bonus;
     let attacker_side_damage =
         attacker_side_damage.saturating_sub(get_attacker_reduced_attack_damage(
             attacking_pokemon,
@@ -1727,6 +1777,7 @@ pub(crate) fn modify_damage(
             + heavy_helmet_reduction
             + metal_core_barrier_reduction
             + steel_apron_reduction
+            + eviolite_reduction
             + intimidating_fang_reduction
             + ability_damage_reduction,
     );

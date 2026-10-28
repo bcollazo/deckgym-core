@@ -17,8 +17,9 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         acerola_targets, can_rare_candy_evolve, diantha_targets, fishing_net_candidates,
-        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_candidates,
-        wallace_candidates, water_pokemon_in_discard, LT_SURGE_TARGETS,
+        genome_converter_y_sources, ilima_targets, mallow_targets, psychic_energy_sources,
+        quick_grow_extract_candidates, wallace_candidates, water_pokemon_in_discard,
+        LT_SURGE_TARGETS,
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
@@ -69,6 +70,9 @@ pub fn forecast_trainer_action(
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
+        CardId::PC009GenomeConverterY => Outcomes::single_fn(genome_converter_y_effect),
+        CardId::C1122FullHeal => Outcomes::single_fn(full_heal_effect),
+        CardId::C1120SuperPotion => Outcomes::single_fn(super_potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
         CardId::A2b111PokeBall => pokemon_search_outcomes(acting_player, state, true),
         CardId::PA006RedCard => Outcomes::single_fn(red_card_effect),
@@ -93,7 +97,7 @@ pub fn forecast_trainer_action(
         CardId::A3152Lana => Outcomes::single_fn(lana_effect),
         CardId::A2155Mars => Outcomes::single_fn(mars_effect),
         CardId::A3144RareCandy => Outcomes::single_fn(rare_candy_effect),
-        CardId::A3a064Repel => Outcomes::single_fn(repel_effect),
+        CardId::A3a064Repel | CardId::C1121MaxRepel => Outcomes::single_fn(repel_effect),
         CardId::A2146PokemonCommunication => Outcomes::single_fn(pokemon_communication_effect),
         CardId::A2154Dawn => Outcomes::single_fn(dawn_effect),
         CardId::A4151ElementalSwitch => Outcomes::single_fn(elemental_switch_effect),
@@ -889,6 +893,52 @@ fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
 }
 
+/// Genome Converter Y: move all [P] Energy from 1 of your Benched [P] Pokémon to your Mega Mewtwo
+/// Y ex in the Active Spot.
+fn genome_converter_y_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = genome_converter_y_sources(state, action.actor)
+        .into_iter()
+        .map(|(from_in_play_idx, amount)| SimpleAction::MoveEnergy {
+            from_in_play_idx,
+            to_in_play_idx: 0,
+            energy_type: EnergyType::Psychic,
+            amount,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
+/// Full Heal: "Your Active Pokémon recovers from all Special Conditions."
+fn full_heal_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+        active.cure_status_conditions();
+    }
+}
+
+/// Super Potion: heal 40 from 1 of your Pokémon with Energy attached; if damage was healed,
+/// discard a random Energy from it. The random Energy is drawn now, per candidate, which is
+/// distributed identically to drawing it when the heal resolves.
+fn super_potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| x.is_damaged() && !x.attached_energy.is_empty())
+        .map(|(in_play_idx, x)| SimpleAction::HealAndDiscardEnergy {
+            in_play_idx,
+            heal_amount: 40,
+            discard_energies: vec![x.attached_energy[rng.gen_range(0..x.attached_energy.len())]],
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
+}
+
 // Coin flip: heads = random Item from deck to hand, tails = random Tool from deck to hand
 fn arven_outcomes(acting_player: usize, state: &State) -> Outcomes {
     let (item_probs, item_mutations) = item_search_outcomes(acting_player, state).into_branches();
@@ -1089,7 +1139,8 @@ fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 }
 
 fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    // Repel / Max Repel: switch out your opponent's Active Basic / Stage 2 Pokémon to the Bench.
+    // (Your opponent chooses the new Active Pokémon.) Eligibility is checked at move generation.
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)

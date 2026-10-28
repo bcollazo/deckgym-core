@@ -3,9 +3,9 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         acerola_targets, active_has_psychic_attack, can_rare_candy_evolve, diantha_targets,
-        distinct_attached_energy_types, fishing_net_candidates, ilima_targets, mallow_targets,
-        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
-        LT_SURGE_TARGETS,
+        distinct_attached_energy_types, fishing_net_candidates, genome_converter_y_sources,
+        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_candidates,
+        wallace_candidates, LT_SURGE_TARGETS,
     },
     effects::TurnEffect,
     hooks::{
@@ -95,6 +95,15 @@ pub fn trainer_move_generation_implementation(
         CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
+        CardId::PC009GenomeConverterY => {
+            if genome_converter_y_sources(state, state.current_player).is_empty() {
+                cannot_play_trainer()
+            } else {
+                can_play_trainer(state, trainer_card)
+            }
+        }
+        CardId::C1122FullHeal => can_play_full_heal(state, trainer_card),
+        CardId::C1120SuperPotion => can_play_super_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),
         CardId::A1220Misty => can_play_misty(state, trainer_card),
         CardId::C1119SweetHoney => can_play_trainer(state, trainer_card),
@@ -113,6 +122,7 @@ pub fn trainer_move_generation_implementation(
         CardId::A2154Dawn => can_play_dawn(state, trainer_card),
         CardId::A4151ElementalSwitch => can_play_elemental_switch(state, trainer_card),
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
+        CardId::C1121MaxRepel => can_play_max_repel(state, trainer_card),
         CardId::A2146PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
         CardId::A3a067Gladion => can_play_gladion(state, trainer_card),
         CardId::A3a069Lusamine => can_play_lusamine(state, trainer_card),
@@ -419,6 +429,30 @@ fn can_play_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simp
     }
 }
 
+/// Full Heal needs an Active Pokémon with a Special Condition.
+fn can_play_full_heal(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_condition = state
+        .maybe_get_active(state.current_player)
+        .is_some_and(|active| active.has_status_condition());
+    if has_condition {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
+/// Super Potion needs a damaged Pokémon that has Energy attached.
+fn can_play_super_potion(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let has_target = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, x)| x.is_damaged() && !x.attached_energy.is_empty());
+    if has_target {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+
 /// Check if Ilima can be played (requires a damaged Colorless Pokemon in play)
 fn can_play_ilima(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
     if !ilima_targets(state, state.current_player).is_empty() {
@@ -620,6 +654,17 @@ fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         if opponent_active.card.is_basic() && opponent_bench_count > 0 {
             return can_play_trainer(state, trainer_card);
         }
+    }
+    cannot_play_trainer()
+}
+
+fn can_play_max_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_stage_2_active = state
+        .maybe_get_active(opponent)
+        .is_some_and(|active| get_stage(active) == 2);
+    if has_stage_2_active && state.enumerate_bench_pokemon(opponent).count() > 0 {
+        return can_play_trainer(state, trainer_card);
     }
     cannot_play_trainer()
 }
