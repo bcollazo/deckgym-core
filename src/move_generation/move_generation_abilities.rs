@@ -111,6 +111,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { .. } => false,
         AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,
+        AbilityMechanic::FlipMoreCoinsForNamedAttack { .. } => false,
         AbilityMechanic::IncreaseDamageForTypeInPlay { .. } => false,
         AbilityMechanic::IncreaseDamageForTwoTypesInPlay { .. } => false,
         AbilityMechanic::StartTurnRandomPokemonToHand { .. } => false,

@@ -457,6 +457,7 @@ fn forecast_effect_attack_by_mechanic(
             *damage_per_head,
             *num_coins,
             attack,
+            state,
         ),
         Mechanic::ExtraDamageForEachHeadsSelfStatus {
             num_coins,
@@ -3100,12 +3101,28 @@ fn generate_energy_distributions(
     all_choices
 }
 
+/// Raboot - Jumping Coach: extra coins for the named attack, once per Pokémon with the ability.
+fn extra_coins_from_abilities(state: &State, attack: &Attack) -> usize {
+    state
+        .enumerate_in_play_pokemon(state.current_player)
+        .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::FlipMoreCoinsForNamedAttack {
+                attack_title,
+                extra_coins,
+            }) if *attack_title == attack.title => Some(*extra_coins),
+            _ => None,
+        })
+        .sum()
+}
+
 fn damage_for_each_heads_attack(
     include_fixed_damage: bool,
     damage_per_head: u32,
     num_coins: usize,
     attack: &Attack,
+    state: &State,
 ) -> AttackOutcomes {
+    let num_coins = num_coins + extra_coins_from_abilities(state, attack);
     let fixed_damage = if include_fixed_damage {
         attack.fixed_damage
     } else {

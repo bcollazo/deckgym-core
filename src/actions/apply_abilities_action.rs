@@ -156,6 +156,9 @@ fn forecast_ability_by_mechanic(
         | AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => {
             panic!("Board-dependent damage modifier mechanics are passive abilities")
         }
+        AbilityMechanic::FlipMoreCoinsForNamedAttack { .. } => {
+            panic!("FlipMoreCoinsForNamedAttack is a passive ability")
+        }
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => {
             panic!("IncreaseDamageWhenRemainingHpAtMost is a passive ability")
         }

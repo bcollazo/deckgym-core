@@ -139,6 +139,12 @@ pub enum AbilityMechanic {
         evolves_from: String,
         amount: u32,
     },
+    /// Raboot - Jumping Coach: the named attack, when used by any of your Pokémon, flips
+    /// `extra_coins` more coins for each Pokémon in play with this ability.
+    FlipMoreCoinsForNamedAttack {
+        attack_title: String,
+        extra_coins: usize,
+    },
     IncreaseDamageWhenRemainingHpAtMost {
         amount: u32,
         hp_threshold: u32,

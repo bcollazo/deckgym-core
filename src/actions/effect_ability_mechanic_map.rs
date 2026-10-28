@@ -208,6 +208,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::CoinFlipToSurviveKnockOut,
         );
         map.insert(
+            "As long as this Pokémon is in play, flip 3 more coins for the Rabbit Jumping attack used by your Pokémon.",
+            AbilityMechanic::FlipMoreCoinsForNamedAttack {
+                attack_title: "Rabbit Jumping".to_string(),
+                extra_coins: 3,
+            },
+        );
+        map.insert(
             "If you have Arceus or Arceus ex in play, attacks used by this Pokémon cost 1 less [C] Energy.",
             AbilityMechanic::ReduceAttackCostIfArceusInPlay { amount: 1 },
         );

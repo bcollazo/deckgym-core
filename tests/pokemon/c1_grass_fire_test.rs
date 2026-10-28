@@ -134,3 +134,49 @@ fn test_venusaur_sunny_heal_heals_active_once_per_turn() {
     assert_eq!(state.get_active(0).get_remaining_hp(), 70 - 50 + 30);
     assert!(!state.generate_possible_actions().1.contains(&ability));
 }
+
+/// Scorbunny's Rabbit Jumping: damage dealt over many seeds, with `raboots` benched.
+fn rabbit_jumping_damages(raboots: Vec<CardId>) -> std::collections::BTreeSet<u32> {
+    let mut seen = std::collections::BTreeSet::new();
+    for seed in 0..300 {
+        let mut board =
+            vec![PlayedCard::from_id(CardId::C1022Scorbunny)
+                .with_energy(vec![EnergyType::Colorless])];
+        board.extend(raboots.iter().map(|id| PlayedCard::from_id(*id)));
+        let mut game = get_initialized_game_with_board(
+            seed,
+            0,
+            3,
+            board,
+            vec![PlayedCard::from_id(CardId::B4197WailordEx)],
+        );
+        attack(&mut game, CardId::C1022Scorbunny);
+        let state = game.get_state_clone();
+        seen.insert(250 - state.get_active(1).get_remaining_hp());
+    }
+    seen
+}
+
+/// Raboot - Jumping Coach: Rabbit Jumping flips 3 more coins while a Raboot is in play.
+#[test]
+fn test_raboot_jumping_coach_adds_three_coins_to_rabbit_jumping() {
+    assert_eq!(
+        rabbit_jumping_damages(vec![]),
+        [0, 20, 40].into_iter().collect()
+    );
+    // 5 coins, 20 damage per heads.
+    assert_eq!(
+        rabbit_jumping_damages(vec![CardId::C1023Raboot]),
+        (0..=5).map(|heads| heads * 20).collect()
+    );
+}
+
+/// Raboot - Jumping Coach: each Raboot in play adds 3 more coins (printings stack).
+#[test]
+fn test_two_raboots_stack_jumping_coach() {
+    // 2 + 3 + 3 = 8 coins.
+    let seen = rabbit_jumping_damages(vec![CardId::C1023Raboot, CardId::C1137Raboot]);
+    assert!(seen.iter().all(|damage| damage % 20 == 0));
+    assert!(seen.iter().max().unwrap() > &100);
+    assert!(seen.iter().max().unwrap() <= &160);
+}
