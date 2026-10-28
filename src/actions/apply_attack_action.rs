@@ -1263,6 +1263,9 @@ fn forecast_effect_attack_by_mechanic(
             shuffle_opponent_tools_into_deck_before_damage(attack.fixed_damage)
         }
         Mechanic::DiscardStadiumInPlay => discard_stadium_in_play(attack.fixed_damage),
+        Mechanic::DiscardOpponentStadiumInPlay => {
+            discard_opponent_stadium_in_play(attack.fixed_damage)
+        }
         Mechanic::RandomizeOpponentActiveEnergyType => {
             randomize_opponent_active_energy_type(attack.fixed_damage)
         }
@@ -1925,6 +1928,19 @@ fn discard_stadium_in_play(damage: u32) -> AttackOutcomes {
             // A Stadium returns to the discard pile of the player who put it into play, matching
             // `SimpleAction::DiscardActiveStadium` (Field Blower).
             state.discard_piles[owner.unwrap_or(action.actor)].push(stadium);
+        }
+    })
+}
+
+/// Palkia's Spacial Rend: discard the Stadium in play only if the opponent put it into play.
+fn discard_opponent_stadium_in_play(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if state.active_stadium_owner != Some(opponent) {
+            return;
+        }
+        if let Some((stadium, _)) = state.take_active_stadium() {
+            state.discard_piles[opponent].push(stadium);
         }
     })
 }

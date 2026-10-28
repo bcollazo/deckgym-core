@@ -2577,7 +2577,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("Discard a Stadium in play.", Mechanic::DiscardStadiumInPlay);
     map.insert(
         "If your opponent has a Stadium in play, discard it.",
-        Mechanic::DiscardStadiumInPlay,
+        Mechanic::DiscardOpponentStadiumInPlay,
     );
     map.insert(
         "During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.",

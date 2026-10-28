@@ -780,6 +780,8 @@ pub enum Mechanic {
     /// Machop's Shatter / Conkeldurr's Bedrock Breaker: discard the Stadium in play, if any.
     /// Stadium effects apply to both players, so there is no choice to make.
     DiscardStadiumInPlay,
+    /// Palkia's Spacial Rend: discard the Stadium in play only if the opponent put it into play.
+    DiscardOpponentStadiumInPlay,
     /// Smeargle's Splatter Coating: re-roll the type of one random Energy attached to the
     /// opponent's Active Pokémon into one of the 8 basic Energy types, uniformly at random.
     RandomizeOpponentActiveEnergyType,

@@ -88,9 +88,7 @@ fn test_dewgong_dual_blizzard_with_lone_target_hits_it_once() {
     assert_eq!(state.get_active(0).attached_energy, vec![EnergyType::Water]);
 }
 
-/// Palkia - Spacial Rend: 70 damage, and if the opponent has a Stadium in play, discard it.
-#[test]
-fn test_palkia_spacial_rend_discards_the_stadium_in_play() {
+fn palkia_attacks_with_stadium(stadium_owner: usize) -> deckgym::State {
     let mut game = get_test_game_with_board(
         vec![PlayedCard::from_id(CardId::C1038Palkia).with_energy(vec![
             EnergyType::Water,
@@ -100,7 +98,7 @@ fn test_palkia_spacial_rend_discards_the_stadium_in_play() {
         vec![PlayedCard::from_id(CardId::B4197WailordEx)],
     );
     let mut state = game.get_state_clone();
-    state.active_stadium = Some(get_card_by_enum(CardId::B4a072Arcade));
+    state.set_active_stadium_for_player(stadium_owner, get_card_by_enum(CardId::B4a072Arcade));
     game.set_state(state);
 
     game.apply_action(&Action {
@@ -109,10 +107,29 @@ fn test_palkia_spacial_rend_discards_the_stadium_in_play() {
         is_stack: false,
     });
     game.play_until_stable();
+    game.get_state_clone()
+}
 
-    let state = game.get_state_clone();
+/// Palkia - Spacial Rend: 70 damage, and if the opponent has a Stadium in play, discard it.
+#[test]
+fn test_palkia_spacial_rend_discards_the_opponents_stadium() {
+    let state = palkia_attacks_with_stadium(1);
     assert_eq!(state.get_active(1).get_remaining_hp(), 250 - 70);
     assert!(state.active_stadium.is_none());
+    assert!(state.discard_piles[1]
+        .iter()
+        .any(|card| *card == get_card_by_enum(CardId::B4a072Arcade)));
+}
+
+/// Palkia leaves its own player's Stadium in play.
+#[test]
+fn test_palkia_spacial_rend_keeps_your_own_stadium() {
+    let state = palkia_attacks_with_stadium(0);
+    assert_eq!(state.get_active(1).get_remaining_hp(), 250 - 70);
+    assert_eq!(
+        state.active_stadium,
+        Some(get_card_by_enum(CardId::B4a072Arcade))
+    );
 }
 
 /// Palkia deals its damage normally when there is no Stadium to discard.
