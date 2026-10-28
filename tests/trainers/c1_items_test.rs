@@ -135,3 +135,57 @@ fn test_full_heal_not_playable_without_a_special_condition() {
         .iter()
         .any(|a| matches!(a.action, SimpleAction::Play { .. })));
 }
+
+/// Genome Converter Y: "Move all [P] Energy from 1 of your Benched [P] Pokémon to your Mega
+/// Mewtwo Y ex in the Active Spot."
+#[test]
+fn test_genome_converter_y_moves_all_psychic_energy_to_mega_mewtwo() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::PC002MegaMewtwoYEx),
+            PlayedCard::from_id(CardId::A1115Abra).with_energy(vec![
+                EnergyType::Psychic,
+                EnergyType::Psychic,
+                EnergyType::Fire,
+            ]),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    give_card(&mut game, CardId::PC009GenomeConverterY);
+    play_trainer(&mut game, 0, trainer_from_id(CardId::PC009GenomeConverterY));
+
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert_eq!(actions.len(), 1);
+    game.apply_action(&actions[0]);
+
+    let state = game.get_state_clone();
+    assert_eq!(
+        state.get_active(0).attached_energy,
+        vec![EnergyType::Psychic; 2]
+    );
+    assert_eq!(
+        state.in_play_pokemon[0][1]
+            .as_ref()
+            .unwrap()
+            .attached_energy,
+        vec![EnergyType::Fire]
+    );
+}
+
+#[test]
+fn test_genome_converter_y_requires_mega_mewtwo_y_ex_active() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1115Abra),
+            PlayedCard::from_id(CardId::A1115Abra).with_energy(vec![EnergyType::Psychic]),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    give_card(&mut game, CardId::PC009GenomeConverterY);
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert!(!actions
+        .iter()
+        .any(|a| matches!(a.action, SimpleAction::Play { .. })));
+}

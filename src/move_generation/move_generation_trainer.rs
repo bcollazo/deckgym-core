@@ -3,9 +3,9 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         acerola_targets, active_has_psychic_attack, can_rare_candy_evolve, diantha_targets,
-        distinct_attached_energy_types, fishing_net_candidates, ilima_targets, mallow_targets,
-        psychic_energy_sources, quick_grow_extract_candidates, wallace_candidates,
-        LT_SURGE_TARGETS,
+        distinct_attached_energy_types, fishing_net_candidates, genome_converter_y_sources,
+        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_candidates,
+        wallace_candidates, LT_SURGE_TARGETS,
     },
     effects::TurnEffect,
     hooks::{
@@ -95,6 +95,13 @@ pub fn trainer_move_generation_implementation(
         CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
+        CardId::PC009GenomeConverterY => {
+            if genome_converter_y_sources(state, state.current_player).is_empty() {
+                cannot_play_trainer()
+            } else {
+                can_play_trainer(state, trainer_card)
+            }
+        }
         CardId::C1122FullHeal => can_play_full_heal(state, trainer_card),
         CardId::C1120SuperPotion => can_play_super_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),

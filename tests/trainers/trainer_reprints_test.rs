@@ -80,7 +80,6 @@ fn trainer_coverage_has_only_the_documented_pending_designs() {
         CardId::C1123Eviolite,
         CardId::C1124LightBall,
         CardId::C1131AbandonedStation,
-        CardId::PC009GenomeConverterY,
     ];
     pending.sort_by_key(|id| format!("{id:?}"));
     assert_eq!(

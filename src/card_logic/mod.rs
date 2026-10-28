@@ -1,6 +1,7 @@
 mod acerola;
 mod diantha;
 mod energy_movers;
+mod genome_converter;
 mod ilima;
 mod mallow;
 mod psychic;
@@ -14,6 +15,7 @@ pub use energy_movers::{
     distinct_attached_energy_types, fishing_net_candidates, water_pokemon_in_discard,
     LT_SURGE_TARGETS,
 };
+pub use genome_converter::genome_converter_y_sources;
 pub use ilima::ilima_targets;
 pub use mallow::mallow_targets;
 pub use psychic::{active_has_psychic_attack, psychic_energy_sources};

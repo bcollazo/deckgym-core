@@ -17,8 +17,9 @@ use crate::{
     card_ids::CardId,
     card_logic::{
         acerola_targets, can_rare_candy_evolve, diantha_targets, fishing_net_candidates,
-        ilima_targets, mallow_targets, psychic_energy_sources, quick_grow_extract_candidates,
-        wallace_candidates, water_pokemon_in_discard, LT_SURGE_TARGETS,
+        genome_converter_y_sources, ilima_targets, mallow_targets, psychic_energy_sources,
+        quick_grow_extract_candidates, wallace_candidates, water_pokemon_in_discard,
+        LT_SURGE_TARGETS,
     },
     combinatorics::generate_combinations,
     effects::{CardEffect, TurnEffect},
@@ -69,6 +70,7 @@ pub fn forecast_trainer_action(
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
+        CardId::PC009GenomeConverterY => Outcomes::single_fn(genome_converter_y_effect),
         CardId::C1122FullHeal => Outcomes::single_fn(full_heal_effect),
         CardId::C1120SuperPotion => Outcomes::single_fn(super_potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
@@ -889,6 +891,25 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+/// Genome Converter Y: move all [P] Energy from 1 of your Benched [P] Pokémon to your Mega Mewtwo
+/// Y ex in the Active Spot.
+fn genome_converter_y_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = genome_converter_y_sources(state, action.actor)
+        .into_iter()
+        .map(|(from_in_play_idx, amount)| SimpleAction::MoveEnergy {
+            from_in_play_idx,
+            to_in_play_idx: 0,
+            energy_type: EnergyType::Psychic,
+            amount,
+        })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 /// Full Heal: "Your Active Pokémon recovers from all Special Conditions."
