@@ -16,6 +16,8 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Mew ex
+    map.insert("Flip 3 coins. Take an amount of [P] Energy from your Energy Zone equal to the number of heads and attach it to your Benched [P] Pokémon in any way you like.", Mechanic::CoinFlipsAttachEnergyToTypedBench { num_coins: 3, energy_type: EnergyType::Psychic });
     // Mega Tyranitar ex
     map.insert(
         "Discard the top 2 cards of your deck.",

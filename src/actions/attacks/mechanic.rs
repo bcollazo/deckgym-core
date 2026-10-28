@@ -308,6 +308,11 @@ pub enum Mechanic {
     PalkiaExDimensionalStorm,
     MegaKangaskhanExDoublePunchingFamily,
     MoltresExInfernoDance,
+    /// Flip coins and distribute one Energy per heads among matching Benched Pokémon.
+    CoinFlipsAttachEnergyToTypedBench {
+        num_coins: usize,
+        energy_type: EnergyType,
+    },
     CelebiExPowerfulBloom,
     CoinFlipPerSpecificEnergyType {
         energy_type: EnergyType,

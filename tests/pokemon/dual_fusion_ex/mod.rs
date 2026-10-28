@@ -47,3 +47,5 @@ mod mega_mewtwo_y;
 mod mega_skarmory;
 
 mod mega_tyranitar;
+
+mod mew;
