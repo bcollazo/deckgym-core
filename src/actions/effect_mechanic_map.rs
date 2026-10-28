@@ -3614,5 +3614,18 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
             extra_damage: 60,
         },
     );
+    // Porygon-Z - Overdrive Smash
+    map.insert(
+        "During your next turn, this Pokémon's Overdrive Smash attack does +50 damage.",
+        Mechanic::DamageAndCardEffect {
+            opponent: false,
+            effect: CardEffect::IncreasedDamageForAttack {
+                attack_name: "Overdrive Smash".to_string(),
+                amount: 50,
+            },
+            duration: 2,
+            coin_flip: false,
+        },
+    );
     map
 });

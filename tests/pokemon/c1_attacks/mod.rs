@@ -1,5 +1,5 @@
 use deckgym::{
-    actions::Action,
+    actions::{Action, SimpleAction},
     card_ids::CardId,
     database::get_card_by_enum,
     models::{Card, PlayedCard},
@@ -31,6 +31,13 @@ fn attack(game: &mut Game<'static>, id: CardId, index: usize) {
         is_stack: false,
     });
 }
+fn end_turn(game: &mut Game<'static>, actor: usize) {
+    game.apply_action(&Action {
+        actor,
+        action: SimpleAction::EndTurn,
+        is_stack: false,
+    });
+}
 fn defender_damage(game: &Game<'static>) -> u32 {
     game.get_state_clone().get_active(1).public_details().damage
 }
@@ -40,3 +47,4 @@ mod espeon;
 mod umbreon;
 mod pidgeot;
 mod whiscash;
+mod porygon_z;
