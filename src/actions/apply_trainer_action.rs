@@ -69,6 +69,7 @@ pub fn forecast_trainer_action(
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
+        CardId::C1122FullHeal => Outcomes::single_fn(full_heal_effect),
         CardId::C1120SuperPotion => Outcomes::single_fn(super_potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
         CardId::A2b111PokeBall => pokemon_search_outcomes(acting_player, state, true),
@@ -888,6 +889,13 @@ fn guzma_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 
 fn potion_effect(rng: &mut StdRng, state: &mut State, action: &Action) {
     inner_healing_effect(rng, state, action, 20, None);
+}
+
+/// Full Heal: "Your Active Pokémon recovers from all Special Conditions."
+fn full_heal_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    if let Some(active) = state.in_play_pokemon[action.actor][0].as_mut() {
+        active.cure_status_conditions();
+    }
 }
 
 /// Super Potion: heal 40 from 1 of your Pokémon with Energy attached; if damage was healed,

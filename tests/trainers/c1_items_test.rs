@@ -1,7 +1,7 @@
 use deckgym::{
     actions::SimpleAction,
     card_ids::CardId,
-    models::{Card, EnergyType, PlayedCard},
+    models::{Card, EnergyType, PlayedCard, StatusCondition},
     test_support::{get_test_game_with_board, play_trainer, trainer_from_id},
 };
 
@@ -96,4 +96,42 @@ fn test_max_repel_not_playable_against_basic_active_or_empty_bench() {
             .iter()
             .any(|a| matches!(a.action, SimpleAction::Play { .. })));
     }
+}
+
+/// Full Heal: "Your Active Pokémon recovers from all Special Conditions."
+#[test]
+fn test_full_heal_cures_all_special_conditions_on_the_active() {
+    let mut game = get_test_game_with_board(
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1033Charmander),
+        ],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    let mut state = game.get_state_clone();
+    state.apply_status_condition(0, 0, StatusCondition::Poisoned);
+    state.apply_status_condition(0, 0, StatusCondition::Burned);
+    state.apply_status_condition(0, 0, StatusCondition::Asleep);
+    game.set_state(state);
+    give_card(&mut game, CardId::C1122FullHeal);
+    play_trainer(&mut game, 0, trainer_from_id(CardId::C1122FullHeal));
+
+    let state = game.get_state_clone();
+    let active = state.get_active(0);
+    assert!(!active.is_poisoned() && !active.is_burned() && !active.is_asleep());
+    assert!(state.hands[0].is_empty());
+}
+
+#[test]
+fn test_full_heal_not_playable_without_a_special_condition() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+    );
+    give_card(&mut game, CardId::C1122FullHeal);
+    let state = game.get_state_clone();
+    let (_, actions) = state.generate_possible_actions();
+    assert!(!actions
+        .iter()
+        .any(|a| matches!(a.action, SimpleAction::Play { .. })));
 }
