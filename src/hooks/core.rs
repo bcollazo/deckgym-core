@@ -204,6 +204,18 @@ pub(crate) fn on_evolve(
         | Some(AbilityMechanic::PreventAllDamageAndEffectsOnEvolve) => {
             offer_on_evolve_ability(actor, state, in_play_idx);
         }
+        Some(AbilityMechanic::PutRandomNamedFromDeckOnBenchOnEvolve { name }) => {
+            let has_target = state.decks[actor]
+                .cards
+                .iter()
+                .any(|card| card.get_name() == *name);
+            let has_space = state.in_play_pokemon[actor]
+                .iter()
+                .any(|slot| slot.is_none());
+            if has_target && has_space {
+                offer_on_evolve_ability(actor, state, in_play_idx);
+            }
+        }
         Some(AbilityMechanic::DiscardRandomEnergyFromOpponentActiveOnEvolve) => {
             let opponent = (actor + 1) % 2;
             let has_energy = state

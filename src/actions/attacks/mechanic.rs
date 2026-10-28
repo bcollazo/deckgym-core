@@ -780,6 +780,8 @@ pub enum Mechanic {
     /// Machop's Shatter / Conkeldurr's Bedrock Breaker: discard the Stadium in play, if any.
     /// Stadium effects apply to both players, so there is no choice to make.
     DiscardStadiumInPlay,
+    /// Palkia's Spacial Rend: discard the Stadium in play only if the opponent put it into play.
+    DiscardOpponentStadiumInPlay,
     /// Smeargle's Splatter Coating: re-roll the type of one random Energy attached to the
     /// opponent's Active Pokémon into one of the 8 basic Energy types, uniformly at random.
     RandomizeOpponentActiveEnergyType,
@@ -798,6 +800,13 @@ pub enum Mechanic {
     /// Kyogre's Tidal Blast: discard the listed Energy from the attacking Pokémon, then deal
     /// `damage` to EVERY one of the opponent's Pokémon.
     SelfDiscardEnergyAndDamageAllOpponentPokemon {
+        energies: Vec<EnergyType>,
+        damage: u32,
+    },
+    /// Dewgong's Dual Blizzard: discard the listed Energy from the attacking Pokémon, then deal
+    /// `damage` to each of 2 of the opponent's Pokémon of the attacker's choice (all of them if
+    /// fewer than 2 are in play).
+    SelfDiscardEnergyAndDamageTwoOpponentPokemon {
         energies: Vec<EnergyType>,
         damage: u32,
     },

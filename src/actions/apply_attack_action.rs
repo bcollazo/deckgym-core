@@ -1263,6 +1263,9 @@ fn forecast_effect_attack_by_mechanic(
             shuffle_opponent_tools_into_deck_before_damage(attack.fixed_damage)
         }
         Mechanic::DiscardStadiumInPlay => discard_stadium_in_play(attack.fixed_damage),
+        Mechanic::DiscardOpponentStadiumInPlay => {
+            discard_opponent_stadium_in_play(attack.fixed_damage)
+        }
         Mechanic::RandomizeOpponentActiveEnergyType => {
             randomize_opponent_active_energy_type(attack.fixed_damage)
         }
@@ -1274,6 +1277,9 @@ fn forecast_effect_attack_by_mechanic(
         }
         Mechanic::SelfDiscardEnergyAndDamageAllOpponentPokemon { energies, damage } => {
             self_discard_energy_and_damage_all_opponent_pokemon(state, energies.clone(), *damage)
+        }
+        Mechanic::SelfDiscardEnergyAndDamageTwoOpponentPokemon { energies, damage } => {
+            self_discard_energy_and_damage_two_opponent_pokemon(energies.clone(), *damage)
         }
         Mechanic::SelfDiscardEnergyAndChoiceBenchDamage {
             energies,
@@ -1926,6 +1932,19 @@ fn discard_stadium_in_play(damage: u32) -> AttackOutcomes {
     })
 }
 
+/// Palkia's Spacial Rend: discard the Stadium in play only if the opponent put it into play.
+fn discard_opponent_stadium_in_play(damage: u32) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        if state.active_stadium_owner != Some(opponent) {
+            return;
+        }
+        if let Some((stadium, _)) = state.take_active_stadium() {
+            state.discard_piles[opponent].push(stadium);
+        }
+    })
+}
+
 /// Smeargle's Splatter Coating: re-roll one random Energy on the opponent's Active Pokémon into
 /// one of the 8 Energy Zone types, uniformly at random (the new type may equal the old one).
 fn randomize_opponent_active_energy_type(damage: u32) -> AttackOutcomes {
@@ -1989,6 +2008,42 @@ fn self_discard_energy_and_damage_any_opponent_pokemon(
     active_damage_effect_doutcome(0, move |_, state, action| {
         discard_requested_energy_from_active_best_effort(state, action.actor, &energies);
         push_direct_damage_choices(state, action, damage, false);
+    })
+}
+
+/// Dewgong's Dual Blizzard: discard the listed Energy from the attacker, then the attacker picks
+/// 2 of the opponent's Pokémon to take `damage` each (all of them if fewer than 2 are in play).
+fn self_discard_energy_and_damage_two_opponent_pokemon(
+    energies: Vec<EnergyType>,
+    damage: u32,
+) -> AttackOutcomes {
+    active_damage_effect_doutcome(0, move |_, state, action| {
+        discard_requested_energy_from_active_best_effort(state, action.actor, &energies);
+        let opponent = (action.actor + 1) % 2;
+        let in_play: Vec<usize> = state
+            .enumerate_in_play_pokemon(opponent)
+            .map(|(in_play_idx, _)| in_play_idx)
+            .collect();
+        let apply_to = |picked: Vec<usize>| SimpleAction::ApplyDamage {
+            attacking_ref: (action.actor, 0),
+            targets: picked
+                .into_iter()
+                .map(|idx| (damage, opponent, idx))
+                .collect(),
+            is_from_active_attack: true,
+        };
+        let choices: Vec<SimpleAction> = if in_play.len() <= 2 {
+            vec![apply_to(in_play)]
+        } else {
+            let mut pairs = Vec::new();
+            for i in 0..in_play.len() {
+                for j in (i + 1)..in_play.len() {
+                    pairs.push(apply_to(vec![in_play[i], in_play[j]]));
+                }
+            }
+            pairs
+        };
+        state.move_generation_stack.push((action.actor, choices));
     })
 }
 
