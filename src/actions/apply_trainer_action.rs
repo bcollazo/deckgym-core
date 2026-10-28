@@ -94,7 +94,7 @@ pub fn forecast_trainer_action(
         CardId::A3152Lana => Outcomes::single_fn(lana_effect),
         CardId::A2155Mars => Outcomes::single_fn(mars_effect),
         CardId::A3144RareCandy => Outcomes::single_fn(rare_candy_effect),
-        CardId::A3a064Repel => Outcomes::single_fn(repel_effect),
+        CardId::A3a064Repel | CardId::C1121MaxRepel => Outcomes::single_fn(repel_effect),
         CardId::A2146PokemonCommunication => Outcomes::single_fn(pokemon_communication_effect),
         CardId::A2154Dawn => Outcomes::single_fn(dawn_effect),
         CardId::A4151ElementalSwitch => Outcomes::single_fn(elemental_switch_effect),
@@ -1110,7 +1110,8 @@ fn sabrina_effect(_: &mut StdRng, state: &mut State, action: &Action) {
 }
 
 fn repel_effect(_: &mut StdRng, state: &mut State, action: &Action) {
-    // Switch out your opponent's Active Basic Pokémon to the Bench. (Your opponent chooses the new Active Pokémon.)
+    // Repel / Max Repel: switch out your opponent's Active Basic / Stage 2 Pokémon to the Bench.
+    // (Your opponent chooses the new Active Pokémon.) Eligibility is checked at move generation.
     let opponent_player = (action.actor + 1) % 2;
     let possible_moves = state
         .enumerate_bench_pokemon(opponent_player)

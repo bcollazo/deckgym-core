@@ -56,3 +56,44 @@ fn test_super_potion_needs_a_damaged_pokemon_with_energy() {
         .iter()
         .any(|a| matches!(a.action, SimpleAction::Play { .. })));
 }
+
+/// Max Repel: "Switch out your opponent's Active Stage 2 Pokémon to the Bench."
+#[test]
+fn test_max_repel_switches_out_a_stage_2_active() {
+    let mut game = get_test_game_with_board(
+        vec![PlayedCard::from_id(CardId::A1033Charmander)],
+        vec![
+            PlayedCard::from_id(CardId::A1003Venusaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+    );
+    give_card(&mut game, CardId::C1121MaxRepel);
+    play_trainer(&mut game, 0, trainer_from_id(CardId::C1121MaxRepel));
+
+    let state = game.get_state_clone();
+    let (actor, actions) = state.generate_possible_actions();
+    assert_eq!(actor, 1, "the opponent chooses the new Active");
+    game.apply_action(&actions[0]);
+    let state = game.get_state_clone();
+    assert_eq!(state.get_active(1).get_name(), "Bulbasaur");
+}
+
+#[test]
+fn test_max_repel_not_playable_against_basic_active_or_empty_bench() {
+    for opp in [
+        vec![
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+            PlayedCard::from_id(CardId::A1001Bulbasaur),
+        ],
+        vec![PlayedCard::from_id(CardId::A1003Venusaur)],
+    ] {
+        let mut game =
+            get_test_game_with_board(vec![PlayedCard::from_id(CardId::A1033Charmander)], opp);
+        give_card(&mut game, CardId::C1121MaxRepel);
+        let state = game.get_state_clone();
+        let (_, actions) = state.generate_possible_actions();
+        assert!(!actions
+            .iter()
+            .any(|a| matches!(a.action, SimpleAction::Play { .. })));
+    }
+}

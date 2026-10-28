@@ -114,6 +114,7 @@ pub fn trainer_move_generation_implementation(
         CardId::A2154Dawn => can_play_dawn(state, trainer_card),
         CardId::A4151ElementalSwitch => can_play_elemental_switch(state, trainer_card),
         CardId::A3a064Repel => can_play_repel(state, trainer_card),
+        CardId::C1121MaxRepel => can_play_max_repel(state, trainer_card),
         CardId::A2146PokemonCommunication => can_play_pokemon_communication(state, trainer_card),
         CardId::A3a067Gladion => can_play_gladion(state, trainer_card),
         CardId::A3a069Lusamine => can_play_lusamine(state, trainer_card),
@@ -633,6 +634,17 @@ fn can_play_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<Simpl
         if opponent_active.card.is_basic() && opponent_bench_count > 0 {
             return can_play_trainer(state, trainer_card);
         }
+    }
+    cannot_play_trainer()
+}
+
+fn can_play_max_repel(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let opponent = (state.current_player + 1) % 2;
+    let has_stage_2_active = state
+        .maybe_get_active(opponent)
+        .is_some_and(|active| get_stage(active) == 2);
+    if has_stage_2_active && state.enumerate_bench_pokemon(opponent).count() > 0 {
+        return can_play_trainer(state, trainer_card);
     }
     cannot_play_trainer()
 }
