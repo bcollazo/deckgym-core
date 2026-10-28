@@ -2130,6 +2130,15 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert(
+        "This attack does 30 more damage for each of your opponent's Benched Pokémon.",
+        Mechanic::BenchCountDamage {
+            include_fixed_damage: true,
+            damage_per: 30,
+            energy_type: None,
+            bench_side: BenchSide::OpponentBench,
+        },
+    );
+    map.insert(
         "This attack does 30 damage for each of your Benched Pokémon.",
         Mechanic::BenchCountDamage {
             include_fixed_damage: false,

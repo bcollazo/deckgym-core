@@ -239,3 +239,5 @@ mod zubat_crobat_b3_test;
 mod printed_dual_types_test;
 
 mod dual_fusion_ex;
+
+mod c1_attacks;
