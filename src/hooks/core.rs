@@ -923,12 +923,27 @@ fn get_ability_damage_reduction(
         })
         .sum();
 
+    // Melmetal's Metal Scrum: an aura over the owner's [M] Pokémon that doesn't stack, so the
+    // largest cut among the Melmetal in play applies once.
+    let type_aura_reduction: u32 = state
+        .enumerate_in_play_pokemon(target_player)
+        .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::ReduceDamageToYourTypeWhileInPlay {
+                amount,
+                energy_type,
+            }) if from_opponent && receiving_pokemon.is_type(*energy_type) => Some(*amount),
+            _ => None,
+        })
+        .max()
+        .unwrap_or(0);
+
     effect_reduction
         + arceus_reduction
         + attacker_type_reduction
         + full_hp_reduction
         + same_name_reduction
         + unown_guard_reduction
+        + type_aura_reduction
 }
 
 /// How many of `player`'s in-play Pokémon share `name`.

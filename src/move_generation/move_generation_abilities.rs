@@ -108,6 +108,7 @@ fn can_use_ability_by_mechanic(
         AbilityMechanic::ReduceDamageFromAttacksIfFullHp { .. } => false,
         AbilityMechanic::BuffIfAnotherSameNameInPlay { .. } => false,
         AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { .. } => false,
+        AbilityMechanic::ReduceDamageToYourTypeWhileInPlay { .. } => false,
         AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { .. } => false,
         AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => false,
         AbilityMechanic::IncreaseDamageWhenRemainingHpAtMost { .. } => false,

@@ -530,6 +530,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { amount: 10 },
         );
         map.insert(
+            "As long as this Pokémon is in play, all of your [M] Pokémon take -20 damage from attacks from your opponent's Pokémon. This effect doesn't stack.",
+            AbilityMechanic::ReduceDamageToYourTypeWhileInPlay {
+                amount: 20,
+                energy_type: EnergyType::Metal,
+            },
+        );
+        map.insert(
             "This Ability works if you have any Unown in play with an Ability other than POWER. Attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.",
             AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { amount: 10 },
         );
