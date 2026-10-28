@@ -87,6 +87,7 @@ pub fn trainer_move_generation_implementation(
     // Dispatch on the first printing of this effect text, so every reprint shares one arm.
     let trainer_id = canonical_trainer_id(trainer_card)?;
     match trainer_id {
+        CardId::C1128Rika => can_play_rika(state, trainer_card),
         CardId::C1127SerenasChoice => can_play_trainer(state, trainer_card),
         CardId::C1126BluesProvocation => can_play_blues_provocation(state, trainer_card),
         CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
@@ -1112,6 +1113,16 @@ fn can_play_blues_provocation(
         });
     if eligible {
         can_play_sabrina(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+fn can_play_rika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, p)| ["Whiscash", "Paldean Clodsire"].contains(&p.get_name().as_str()))
+    {
+        can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
     }

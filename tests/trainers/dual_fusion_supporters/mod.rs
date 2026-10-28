@@ -37,3 +37,5 @@ mod lorelei;
 mod blue;
 
 mod serena;
+
+mod rika;

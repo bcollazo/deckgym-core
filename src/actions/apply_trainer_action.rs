@@ -58,6 +58,7 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1128Rika => Outcomes::single_fn(rika_effect),
         CardId::C1127SerenasChoice => Outcomes::single_fn(serenas_choice_effect),
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
@@ -2283,6 +2284,20 @@ fn serenas_choice_effect(_: &mut StdRng, state: &mut State, action: &Action) {
             choices.push(choice);
         }
     }
+    if !choices.is_empty() {
+        state.move_generation_stack.push((action.actor, choices));
+    }
+}
+
+fn rika_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let choices = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, p)| ["Whiscash", "Paldean Clodsire"].contains(&p.get_name().as_str()))
+        .map(|(idx, _)| SimpleAction::Attach {
+            attachments: vec![(2, EnergyType::Fighting, idx)],
+            is_turn_energy: false,
+        })
+        .collect::<Vec<_>>();
     if !choices.is_empty() {
         state.move_generation_stack.push((action.actor, choices));
     }
