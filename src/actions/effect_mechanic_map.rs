@@ -16,6 +16,14 @@ use crate::{
 /// Map from attack effect text to its implementation.
 pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = LazyLock::new(|| {
     let mut map: HashMap<&'static str, Mechanic> = HashMap::new();
+    // Fuecoco ex
+    map.insert(
+        "If this Pokémon has damage on it, this attack does 70 more damage.",
+        Mechanic::ExtraDamageIfHurt {
+            extra_damage: 70,
+            opponent: false,
+        },
+    );
     // Alolan Exeggutor ex
     map.insert("1 of your opponent's Benched Pokémon is chosen at random. This attack also does 50 damage to it.", Mechanic::RandomBenchDamage { times: 1, damage_per_hit: 50 });
     // Alolan Muk ex - Chemical Panic
