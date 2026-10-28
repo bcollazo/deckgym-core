@@ -58,6 +58,11 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1129PokeMartGuy => {
+            card_search_outcomes_with_filter_multiple(acting_player, state, 2, |card| {
+                ["Super Potion", "Max Repel", "Full Heal"].contains(&card.get_name().as_str())
+            })
+        }
         CardId::C1128Rika => Outcomes::single_fn(rika_effect),
         CardId::C1127SerenasChoice => Outcomes::single_fn(serenas_choice_effect),
         CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
