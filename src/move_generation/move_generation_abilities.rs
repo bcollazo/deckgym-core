@@ -242,6 +242,7 @@ fn can_use_ability_by_mechanic(
         // Offered by the on-evolve / on-bench hooks, not by free ability move generation.
         AbilityMechanic::PutRandomToolsFromDiscardToHandOnEvolve { .. } => false,
         AbilityMechanic::TakeItemsFromTopOfDeckOnEvolve { .. } => false,
+        AbilityMechanic::PutRandomNamedFromDeckOnBenchOnEvolve { .. } => false,
         AbilityMechanic::PutSupporterFromDiscardToHandOnEvolve => false,
         AbilityMechanic::OpponentShuffleHandAndDrawPerRemainingPointOnEvolve => false,
         AbilityMechanic::PreventAllDamageAndEffectsOnEvolve => false,

@@ -335,6 +335,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::PutRandomToolsFromDiscardToHandOnEvolve { amount: 2 },
         );
         map.insert(
+            "Once during your turn, when you play this card from your hand to evolve 1 of your Pokémon, you may use this Ability. Put a random Frogadier from your deck onto your Bench.",
+            AbilityMechanic::PutRandomNamedFromDeckOnBenchOnEvolve {
+                name: "Frogadier".to_string(),
+            },
+        );
+        map.insert(
             "Once during your turn, when you play this Pokémon from your hand to evolve 1 of your Pokémon, you may put a Supporter card from your discard pile into your hand.",
             AbilityMechanic::PutSupporterFromDiscardToHandOnEvolve,
         );

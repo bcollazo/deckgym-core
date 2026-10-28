@@ -415,6 +415,11 @@ pub enum AbilityMechanic {
     TakeItemsFromTopOfDeckOnEvolve {
         amount: usize,
     },
+    /// Frogadier's Sudden Duplication: "…when you play this Pokémon from your hand to evolve 1 of
+    /// your Pokémon, you may put a random Pokémon named `name` from your deck onto your Bench."
+    PutRandomNamedFromDeckOnBenchOnEvolve {
+        name: String,
+    },
     /// Delcatty's Search for Friends: "…you may put a Supporter card from your discard pile into
     /// your hand." The player chooses which Supporter.
     PutSupporterFromDiscardToHandOnEvolve,

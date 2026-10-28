@@ -801,6 +801,13 @@ pub enum Mechanic {
         energies: Vec<EnergyType>,
         damage: u32,
     },
+    /// Dewgong's Dual Blizzard: discard the listed Energy from the attacking Pokémon, then deal
+    /// `damage` to each of 2 of the opponent's Pokémon of the attacker's choice (all of them if
+    /// fewer than 2 are in play).
+    SelfDiscardEnergyAndDamageTwoOpponentPokemon {
+        energies: Vec<EnergyType>,
+        damage: u32,
+    },
     /// Rapid Strike Urshifu's Tornado Shot: discard the listed Energy from the attacking Pokémon,
     /// deal the attack's `fixed_damage` to the Defending Pokémon, and also deal `bench_damage` to
     /// 1 chosen Benched Pokémon.

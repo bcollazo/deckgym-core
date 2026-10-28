@@ -12,7 +12,9 @@ use crate::{
         apply_trainer_action::forecast_trainer_action,
         effect_ability_mechanic_map::ability_mechanic_from_effect,
         outcomes::Outcomes,
-        shared_mutations::{pokemon_search_outcomes, tool_search_outcomes},
+        shared_mutations::{
+            pokemon_search_outcomes, search_and_bench_by_name, tool_search_outcomes,
+        },
         Action, SimpleAction,
     },
     card_ids::CardId,
@@ -334,6 +336,9 @@ fn forecast_ability_by_mechanic(
         }
         AbilityMechanic::TakeItemsFromTopOfDeckOnEvolve { amount } => {
             take_items_from_top_of_deck(*amount)
+        }
+        AbilityMechanic::PutRandomNamedFromDeckOnBenchOnEvolve { name } => {
+            search_and_bench_by_name(state, name.clone())
         }
         AbilityMechanic::PutSupporterFromDiscardToHandOnEvolve => {
             put_supporter_from_discard_to_hand()

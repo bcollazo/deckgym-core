@@ -2344,6 +2344,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         Mechanic::ShuffleOpponentToolsIntoDeckBeforeDamage,
     );
     map.insert(
+        "Discard 2 [W] Energy from this Pokémon, and this attack does 60 damage to 2 of your opponent's Pokémon.",
+        Mechanic::SelfDiscardEnergyAndDamageTwoOpponentPokemon {
+            energies: vec![EnergyType::Water, EnergyType::Water],
+            damage: 60,
+        },
+    );
+    map.insert(
         "Discard 3 [W] Energy from this Pokémon, and this attack does 50 damage to each of your opponent's Pokémon.",
         Mechanic::SelfDiscardEnergyAndDamageAllOpponentPokemon {
             energies: vec![EnergyType::Water, EnergyType::Water, EnergyType::Water],
@@ -2559,6 +2566,10 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         },
     );
     map.insert("Discard a Stadium in play.", Mechanic::DiscardStadiumInPlay);
+    map.insert(
+        "If your opponent has a Stadium in play, discard it.",
+        Mechanic::DiscardStadiumInPlay,
+    );
     map.insert(
         "During your next turn, attacks used by your Pokémon do +20 damage to your opponent's Active Pokémon.",
         Mechanic::DamageAndTurnEffect {
