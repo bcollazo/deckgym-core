@@ -39,6 +39,7 @@ mod caterpie_quick_growth_test;
 mod celebi_temporal_leaves_test;
 mod celebi_time_recall_test;
 mod chansey_blissey_test;
+mod charizard_flame_aura_test;
 mod charmeleon_ignition_test;
 mod coalossal_coal_drop_test;
 mod coalossal_mountain_crush_test;

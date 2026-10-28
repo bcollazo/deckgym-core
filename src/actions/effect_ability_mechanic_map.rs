@@ -587,6 +587,14 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             },
         );
         map.insert(
+            "Whenever you attach a [R] Energy from your Energy Zone to this Pokémon, do 30 damage to your opponent's Active Pokémon.",
+            AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf {
+                energy_type: EnergyType::Fire,
+                amount: 30,
+                only_turn_energy: false,
+            },
+        );
+        map.insert(
             "Whenever you attach a [P] Energy from your Energy Zone to this Pokémon, heal 20 damage from this Pokémon.",
             AbilityMechanic::HealSelfOnZoneAttach {
                 energy_type: EnergyType::Psychic,
