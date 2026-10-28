@@ -357,6 +357,87 @@ fn test_clear_veil_prevents_a_special_condition_from_an_opponents_attack() {
     );
 }
 
+/// Clear Veil also prevents an opponent's attack from discarding Energy from the holder (Beedrill
+/// ex's Crushing Spear: "Discard a random Energy from your opponent's Active Pokémon."), while
+/// the attack's damage still goes through. Oricorio's Kindle discards from both Active Pokémon:
+/// the attacker still loses its own Energy.
+#[test]
+fn test_clear_veil_prevents_energy_discard_from_an_opponents_attack() {
+    let after_attack = |veil: bool, attacker: PlayedCard, attacker_id: CardId| {
+        let mut defender = PlayedCard::from_id(CardId::A1202Chansey)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless]);
+        if veil {
+            defender = defender.with_tool(get_card_by_enum(CardId::B4149ClearVeil));
+        }
+        let mut game = get_initialized_game_with_board(0, 1, 3, vec![defender], vec![attacker]);
+        attack(&mut game, 1, attacker_id, 0);
+        game.play_until_stable();
+        let state = game.get_state_clone();
+        (
+            state.get_active(0).attached_energy.len(),
+            state.get_active(0).get_remaining_hp(),
+            state.get_active(1).attached_energy.len(),
+        )
+    };
+    let beedrill = || {
+        PlayedCard::from_id(CardId::A2b003BeedrillEx)
+            .with_energy(vec![EnergyType::Grass, EnergyType::Grass])
+    };
+    assert_eq!(
+        after_attack(false, beedrill(), CardId::A2b003BeedrillEx),
+        (1, 40, 2)
+    );
+    assert_eq!(
+        after_attack(true, beedrill(), CardId::A2b003BeedrillEx),
+        (2, 40, 2)
+    );
+
+    let oricorio = || {
+        PlayedCard::from_id(CardId::A3034Oricorio)
+            .with_energy(vec![EnergyType::Fire, EnergyType::Fire])
+    };
+    assert_eq!(
+        after_attack(false, oricorio(), CardId::A3034Oricorio),
+        (1, 80, 1)
+    );
+    assert_eq!(
+        after_attack(true, oricorio(), CardId::A3034Oricorio),
+        (2, 80, 1)
+    );
+}
+
+/// Same for the single coin-flip discard (Drednaw's Crunch: "Flip a coin. If heads, discard a
+/// random Energy from your opponent's Active Pokémon."): over many seeds the Energy is discarded on
+/// heads without Clear Veil, and never with it.
+#[test]
+fn test_clear_veil_prevents_coin_flip_energy_discard_from_an_opponents_attack() {
+    let energies_after = |seed: u64, veil: bool| {
+        let mut defender = PlayedCard::from_id(CardId::A1202Chansey)
+            .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless]);
+        if veil {
+            defender = defender.with_tool(get_card_by_enum(CardId::B4149ClearVeil));
+        }
+        let drednaw = PlayedCard::from_id(CardId::A1a023Drednaw).with_energy(vec![
+            EnergyType::Water,
+            EnergyType::Water,
+            EnergyType::Water,
+        ]);
+        let mut game = get_initialized_game_with_board(seed, 1, 3, vec![defender], vec![drednaw]);
+        attack(&mut game, 1, CardId::A1a023Drednaw, 0);
+        game.play_until_stable();
+        game.get_state_clone().get_active(0).attached_energy.len()
+    };
+    let without_veil: Vec<usize> = (0..40).map(|seed| energies_after(seed, false)).collect();
+    assert!(
+        without_veil.contains(&1) && without_veil.contains(&2),
+        "Crunch should discard on heads and not on tails: {without_veil:?}"
+    );
+    assert!(
+        (0..40).all(|seed| energies_after(seed, true) == 2),
+        "Clear Veil should keep the Energy on heads too"
+    );
+}
+
 /// Clear Veil is a Tool like any other: it can be attached and shows up as an attachment choice.
 #[test]
 fn test_clear_veil_is_an_attachable_tool() {

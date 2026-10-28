@@ -3791,6 +3791,17 @@ fn coin_flips_discard_energy_from_opponent_active(damage: u32, num_coins: usize)
     })
 }
 
+/// Discards Energy from `player`'s Active Pokémon as an effect of the current attack. Discarding
+/// is an effect "done to" that Pokémon, so Clear Veil / Crystal Body on the opponent's Active
+/// prevent it (the attacker's own Active is never shielded from its own attack).
+fn discard_from_opponent_active(state: &mut State, player: usize, to_discard: &[EnergyType]) {
+    if state.is_shielded_from_opponent_attack_effects(player, 0) {
+        trace!("Clear Veil / Crystal Body: Preventing Energy discard from the opponent's attack");
+        return;
+    }
+    state.discard_from_active(player, to_discard);
+}
+
 fn discard_random_energy_from_opponent_active(
     rng: &mut StdRng,
     state: &mut State,
@@ -3812,7 +3823,7 @@ fn discard_random_energy_from_opponent_active(
     }
 
     if !to_discard.is_empty() {
-        state.discard_from_active(opponent, &to_discard);
+        discard_from_opponent_active(state, opponent, &to_discard);
     }
 }
 
@@ -3900,7 +3911,7 @@ fn vaporeon_hyper_whirlpool(_state: &State, damage: u32) -> AttackOutcomes {
 
             // Discard collected energies properly (moves to discard pile)
             if !to_discard.is_empty() {
-                state.discard_from_active(opponent, &to_discard);
+                discard_from_opponent_active(state, opponent, &to_discard);
             }
         })
     })
@@ -4342,7 +4353,7 @@ fn damage_and_discard_opponent_active_energy_of_type(
             .copied()
             .collect();
         if !to_discard.is_empty() {
-            state.discard_from_active(opponent, &to_discard);
+            discard_from_opponent_active(state, opponent, &to_discard);
         }
     })
 }
@@ -4358,7 +4369,7 @@ fn discard_random_energy_both_active(damage: u32) -> AttackOutcomes {
             }
             let idx = rng.gen_range(0..active.attached_energy.len());
             let energy = active.attached_energy[idx];
-            state.discard_from_active(player, &[energy]);
+            discard_from_opponent_active(state, player, &[energy]);
         }
     })
 }
@@ -5148,15 +5159,8 @@ fn knock_back_attack(damage: u32) -> AttackOutcomes {
 fn mawile_crunch() -> AttackOutcomes {
     AttackOutcomes::binary_coin(
         active_damage_effect_outcome(20, move |rng, state, action| {
-            // Heads: damage + discard random energy
-            let opponent = (action.actor + 1) % 2;
-            let active = state.get_active_mut(opponent);
-
-            if !active.attached_energy.is_empty() {
-                let energy_count = active.attached_energy.len();
-                let rand_idx = rng.gen_range(0..energy_count);
-                active.attached_energy.remove(rand_idx);
-            }
+            // Heads: damage + discard random energy (Clear Veil / Crystal Body prevent it)
+            discard_random_energy_from_opponent_active(rng, state, action.actor, 1);
         }),
         active_damage_outcome(20), // Tails: just damage
     )
