@@ -12,8 +12,9 @@ use crate::{
         },
         apply_evolve,
         attack_helpers::{
-            collect_in_play_indices_by_type, energy_any_way_choices, energy_blender_choices,
-            generate_distributions, total_attached_energy,
+            active_energy_to_bench_choices, collect_in_play_indices_by_type,
+            energy_any_way_choices, energy_blender_choices, generate_distributions,
+            total_attached_energy,
         },
         attacks::{BenchSide, CopyAttackSource, Mechanic, RevealCriterion},
         effect_mechanic_map::EFFECT_MECHANIC_MAP,
@@ -1172,10 +1173,16 @@ fn forecast_effect_attack_by_mechanic(
         Mechanic::InflictPoisonWithDamage { poison_damage } => {
             inflict_poison_with_damage(attack.fixed_damage, *poison_damage)
         }
+        Mechanic::InflictSleepWithCoins { num_coins } => {
+            inflict_sleep_with_coins(attack.fixed_damage, *num_coins)
+        }
         Mechanic::RequireBenchedNamesThenDiscardAllEnergy { .. } => {
             damage_and_discard_all_energy(attack.fixed_damage)
         }
         Mechanic::MoveOwnEnergyAnyWay => move_own_energy_any_way(attack.fixed_damage),
+        Mechanic::MoveAllEnergyToBenchAnyWay => {
+            move_all_energy_to_bench_any_way(attack.fixed_damage)
+        }
         Mechanic::ExtraDamageIfSameEnergyCountAsOpponent { extra_damage } => {
             extra_damage_if_same_energy_count_as_opponent(state, attack.fixed_damage, *extra_damage)
         }
@@ -1480,10 +1487,37 @@ fn inflict_poison_with_damage(damage: u32, poison_damage: u32) -> AttackOutcomes
     })
 }
 
+/// Jigglypuff - Soothing Lullaby: put the opponent's Active Pokémon to sleep, with its owner
+/// flipping `num_coins` coins at each Checkup instead of 1 and recovering only on all heads.
+fn inflict_sleep_with_coins(damage: u32, num_coins: usize) -> AttackOutcomes {
+    active_damage_effect_doutcome(damage, move |_, state, action| {
+        let opponent = (action.actor + 1) % 2;
+        state.apply_sleep_with_coins(opponent, 0, num_coins);
+    })
+}
+
 /// Whether the attacking Pokémon is still in the Active Spot and alive. Follow-up effects that act
 /// *from* the attacker (spot damage it deals, Energy it moves, a switch it makes) must not run
 /// after it has been knocked out — e.g. by Rocky Helmet recoil on the attack's own damage — both
 /// because the card says so and because `ApplyDamage` needs a live `attacking_ref`.
+/// Lunala - Wings of the Moone: after damage, all of the attacker's Energy has to go to its
+/// Benched Pokémon; the player picks where each one goes (see
+/// `SimpleAction::MoveActiveEnergyToBenchAndReoffer`).
+fn move_all_energy_to_bench_any_way(damage: u32) -> AttackOutcomes {
+    AttackOutcomes::single(AttackOutcome::damage_then_effect(
+        vec![(damage, true, 0)],
+        move |_, state, action| {
+            if !attacker_still_in_play(state, action.actor) {
+                return;
+            }
+            let choices = active_energy_to_bench_choices(state, action.actor);
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        },
+    ))
+}
+
 fn attacker_still_in_play(state: &State, actor: usize) -> bool {
     state.in_play_pokemon[actor][0]
         .as_ref()

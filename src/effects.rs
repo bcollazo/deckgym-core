@@ -31,6 +31,13 @@ pub enum CardEffect {
         attack_name: String,
         amount: u32,
     },
+    /// The attack named `attack_name`, when used by the Pokémon carrying this effect, does
+    /// `amount` less damage (e.g. Deoxys's Psycho Boost: "-50 damage" on its next use). It is an
+    /// attacker-side effect, applied before Weakness.
+    ReducedDamageForAttack {
+        attack_name: String,
+        amount: u32,
+    },
     /// Like `IncreasedDamageForAttack`, but for a *spread* attack, whose bonus has to reach every
     /// target rather than only the Active-to-Active damage that `hooks::modify_damage` sees (e.g.
     /// Archeops's Wild Spin: "+20 damage to each of your opponent's Pokémon"). The attack's own

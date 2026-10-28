@@ -7,8 +7,8 @@ use crate::effects::TurnEffect;
 use crate::hooks::{can_evolve_into, can_retreat, contains_energy, get_retreat_cost};
 use crate::models::Card;
 use crate::stadiums::{
-    can_use_arcade, can_use_area_zero, can_use_fragrant_forest, can_use_kids_room,
-    can_use_mesagoza, can_use_rainbow_cave,
+    can_use_abandoned_station, can_use_arcade, can_use_area_zero, can_use_fragrant_forest,
+    can_use_kids_room, can_use_mesagoza, can_use_rainbow_cave,
 };
 use crate::state::State;
 
@@ -140,6 +140,7 @@ fn generate_possible_actions_unwatched(state: &State) -> (usize, Vec<Action>) {
         || can_use_kids_room(state, current_player)
         || can_use_rainbow_cave(state, current_player)
         || can_use_arcade(state, current_player)
+        || can_use_abandoned_station(state, current_player)
     {
         actions.push(SimpleAction::UseStadium);
     }

@@ -1,3 +1,4 @@
+mod abandoned_station_test;
 mod arcade_test;
 mod area_zero_test;
 mod arena_of_antiquity_test;

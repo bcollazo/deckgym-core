@@ -975,10 +975,20 @@ pub enum Mechanic {
     InflictPoisonWithDamage {
         poison_damage: u32,
     },
+    /// Jigglypuff's Soothing Lullaby: the opponent's Active Pokémon is now Asleep, but its owner
+    /// flips `num_coins` coins at each Checkup instead of 1 and it recovers only if all of them
+    /// are heads.
+    InflictSleepWithCoins {
+        num_coins: usize,
+    },
     /// Delcatty's Energy Blender: after damage, the attacker may freely redistribute the Energy
     /// attached to their own Pokémon in play. Resolved one Energy at a time through
     /// `SimpleAction::MoveEnergyAndReoffer`; see that variant for why.
     MoveOwnEnergyAnyWay,
+    /// Lunala's Wings of the Moone: after damage, move ALL Energy from the attacker to its Benched
+    /// Pokémon in any way the player likes (one Energy at a time through
+    /// `SimpleAction::MoveActiveEnergyToBenchAndReoffer`).
+    MoveAllEnergyToBenchAnyWay,
     /// Mesprit's Supreme Blast: usable only while every Pokémon named in `required_bench_names` is
     /// on the attacker's Bench; on use, all Energy is discarded from the attacking Pokémon. The
     /// usability half is enforced in `move_generation::attacks`, which consults this variant.

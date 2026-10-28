@@ -492,6 +492,12 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             },
         );
         map.insert(
+            "Once during your turn, you may take a [L] Energy from your Energy Zone and attach it to the [L] Pokémon in the Active Spot.",
+            AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
+                energy_type: EnergyType::Lightning,
+            },
+        );
+        map.insert(
             "Once during your turn, you may take a [P] Energy from your Energy Zone and attach it to the [P] Pokémon in the Active Spot.",
             AbilityMechanic::AttachEnergyFromZoneToActiveTypedPokemon {
                 energy_type: EnergyType::Psychic,
@@ -528,6 +534,13 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
         map.insert(
             "This Ability works if you have any Unown in play with an Ability other than GUARD. All of your Pokémon take -10 damage from attacks from your opponent's Pokémon.",
             AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { amount: 10 },
+        );
+        map.insert(
+            "As long as this Pokémon is in play, all of your [M] Pokémon take -20 damage from attacks from your opponent's Pokémon. This effect doesn't stack.",
+            AbilityMechanic::ReduceDamageToYourTypeWhileInPlay {
+                amount: 20,
+                energy_type: EnergyType::Metal,
+            },
         );
         map.insert(
             "This Ability works if you have any Unown in play with an Ability other than POWER. Attacks used by your Pokémon do +10 damage to your opponent's Active Pokémon.",

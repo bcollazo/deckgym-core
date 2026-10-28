@@ -156,6 +156,7 @@ fn forecast_ability_by_mechanic(
         AbilityMechanic::ReduceDamageFromAttacksIfFullHp { .. }
         | AbilityMechanic::BuffIfAnotherSameNameInPlay { .. }
         | AbilityMechanic::ReduceDamageToAllYourPokemonWithOtherUnown { .. }
+        | AbilityMechanic::ReduceDamageToYourTypeWhileInPlay { .. }
         | AbilityMechanic::IncreaseDamageOfYourPokemonWithOtherUnown { .. }
         | AbilityMechanic::IncreaseDamageForEvolvesFromWhileBenched { .. } => {
             panic!("Board-dependent damage modifier mechanics are passive abilities")

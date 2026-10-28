@@ -996,6 +996,23 @@ impl State {
         }
     }
 
+    /// Puts `player`'s Pokemon at `in_play_idx` to sleep such that its owner flips `num_coins`
+    /// coins at each Checkup instead of 1 (Jigglypuff's Soothing Lullaby). If the Pokemon turns
+    /// out to be immune to Asleep the coin count is not recorded either.
+    pub(crate) fn apply_sleep_with_coins(
+        &mut self,
+        player: usize,
+        in_play_idx: usize,
+        num_coins: usize,
+    ) {
+        self.apply_status_condition(player, in_play_idx, StatusCondition::Asleep);
+        if let Some(pokemon) = self.in_play_pokemon[player][in_play_idx].as_mut() {
+            if pokemon.is_asleep() {
+                pokemon.set_sleep_coins_override(num_coins);
+            }
+        }
+    }
+
     pub(crate) fn record_attack_used(&mut self, player: usize, attack_name: String) {
         *self.attack_name_used_count[player]
             .entry(attack_name.clone())

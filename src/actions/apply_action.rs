@@ -15,7 +15,7 @@ use crate::{
             apply_activate, shuffle_in_play_pokemon_and_attachments_into_deck,
             wrap_with_common_logic,
         },
-        attack_helpers::energy_blender_choices,
+        attack_helpers::{active_energy_to_bench_choices, energy_blender_choices},
     },
     effects::{CardEffect, TurnEffect},
     hooks::{
@@ -257,6 +257,7 @@ fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
         | SimpleAction::ShuffleRandomOwnHandCardIntoDeck
         | SimpleAction::MoveOpponentActiveEnergyToSelf { .. }
         | SimpleAction::MoveActiveEnergyToBench { .. }
+        | SimpleAction::MoveActiveEnergyToBenchAndReoffer { .. }
         | SimpleAction::SwitchOpponentBenchedThenDamage { .. } => forecast_deterministic_action(),
         // Noop is the "decline" branch of Victini's Victory Star prompt when a coin result is
         // parked; otherwise it is an ordinary no-op ("say no" to an optional effect).
@@ -670,6 +671,16 @@ fn apply_deterministic_action(rng: &mut StdRng, state: &mut State, action: &Acti
             to_in_play_idx,
             amount,
         } => apply_move_active_energy_to_bench(state, action.actor, *to_in_play_idx, *amount),
+        SimpleAction::MoveActiveEnergyToBenchAndReoffer {
+            to_in_play_idx,
+            energy_type,
+        } => {
+            apply_move_energy(state, action.actor, 0, *to_in_play_idx, *energy_type, 1);
+            let choices = active_energy_to_bench_choices(state, action.actor);
+            if !choices.is_empty() {
+                state.move_generation_stack.push((action.actor, choices));
+            }
+        }
         SimpleAction::SwitchOpponentBenchedThenDamage {
             in_play_idx,
             damage,

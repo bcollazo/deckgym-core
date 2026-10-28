@@ -935,12 +935,27 @@ fn get_ability_damage_reduction(
         })
         .sum();
 
+    // Melmetal's Metal Scrum: an aura over the owner's [M] Pokémon that doesn't stack, so the
+    // largest cut among the Melmetal in play applies once.
+    let type_aura_reduction: u32 = state
+        .enumerate_in_play_pokemon(target_player)
+        .filter_map(|(_, pokemon)| match pokemon.ability_mechanic() {
+            Some(AbilityMechanic::ReduceDamageToYourTypeWhileInPlay {
+                amount,
+                energy_type,
+            }) if from_opponent && receiving_pokemon.is_type(*energy_type) => Some(*amount),
+            _ => None,
+        })
+        .max()
+        .unwrap_or(0);
+
     effect_reduction
         + arceus_reduction
         + attacker_type_reduction
         + full_hp_reduction
         + same_name_reduction
         + unown_guard_reduction
+        + type_aura_reduction
 }
 
 /// How many of `player`'s in-play Pokémon share `name`.
@@ -1226,10 +1241,12 @@ fn get_reduced_from_ex_card_effect_modifiers(
 /// Growl-type cuts ("attacks used by the Defending Pokémon do -N damage"): an effect on the
 /// *Attacking* Pokémon, so it reduces every opposing target of its attacks, Benched ones included,
 /// and is applied before Weakness. Ability and status damage is not an attack and is not cut.
+/// Also covers a named-attack cut on its own user (`ReducedDamageForAttack`, Deoxys's Psycho Boost).
 fn get_attacker_reduced_attack_damage(
     attacking_pokemon: &crate::models::PlayedCard,
     is_from_active_attack: bool,
     is_against_opponent: bool,
+    attack_name: Option<&str>,
 ) -> u32 {
     if !is_from_active_attack || !is_against_opponent {
         return 0;
@@ -1239,6 +1256,10 @@ fn get_attacker_reduced_attack_damage(
         .iter()
         .filter_map(|effect| match effect {
             CardEffect::ReducedAttackDamage { amount } => Some(*amount),
+            CardEffect::ReducedDamageForAttack {
+                attack_name: effect_attack_name,
+                amount,
+            } if Some(effect_attack_name.as_str()) == attack_name => Some(*amount),
             _ => None,
         })
         .sum::<u32>()
@@ -1767,6 +1788,7 @@ pub(crate) fn modify_damage(
             attacking_pokemon,
             is_from_active_attack,
             attacking_player != target_player,
+            context.attack_name,
         ));
     // An attack cut to 0 (or below) here does no damage, so Weakness has nothing to add to: it is
     // treated like an attack whose own damage is 0. Not yet recorded in game; see #426.
