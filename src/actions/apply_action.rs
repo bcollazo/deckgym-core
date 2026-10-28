@@ -221,7 +221,8 @@ pub fn forecast_action_exact(state: &State, action: &Action) -> Outcomes {
 fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
     let mut outcomes = match &action.action {
         // Deterministic Actions
-        SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
+        SimpleAction::TakeTopDeckCardAndShuffle { .. }
+        | SimpleAction::DrawCard { .. } // TODO: DrawCard should return actual deck probabilities.
         | SimpleAction::Place(_, _)
         | SimpleAction::Attach { .. }
         | SimpleAction::MoveEnergy { .. }
@@ -464,6 +465,9 @@ fn forecast_apply_damage(
 
 fn apply_deterministic_action(rng: &mut StdRng, state: &mut State, action: &Action) {
     match &action.action {
+        SimpleAction::TakeTopDeckCardAndShuffle { card, look_count } => {
+            take_top_deck_card_and_shuffle(rng, state, action.actor, card, *look_count)
+        }
         SimpleAction::DrawCard { amount } => {
             for _ in 0..*amount {
                 state.maybe_draw_card(action.actor);
@@ -1539,6 +1543,26 @@ fn apply_heal_all_eevee_evolutions(acting_player: usize, state: &mut State) {
 }
 
 // Test that when evolving a damanged pokemon, damage stays.
+
+fn take_top_deck_card_and_shuffle(
+    rng: &mut StdRng,
+    state: &mut State,
+    actor: usize,
+    card: &Card,
+    look_count: usize,
+) {
+    let index = state.decks[actor]
+        .cards
+        .iter()
+        .take(look_count)
+        .position(|candidate| candidate == card);
+    if let Some(index) = index {
+        let chosen = state.decks[actor].cards.remove(index);
+        state.hands[actor].push(chosen);
+        state.decks[actor].shuffle(false, rng);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use rand::SeedableRng;

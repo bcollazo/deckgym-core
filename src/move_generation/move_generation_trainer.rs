@@ -87,6 +87,12 @@ pub fn trainer_move_generation_implementation(
     // Dispatch on the first printing of this effect text, so every reprint shares one arm.
     let trainer_id = canonical_trainer_id(trainer_card)?;
     match trainer_id {
+        CardId::C1130RisingStar => can_play_rising_star(state, trainer_card),
+        CardId::C1129PokeMartGuy => can_play_trainer(state, trainer_card),
+        CardId::C1128Rika => can_play_rika(state, trainer_card),
+        CardId::C1127SerenasChoice => can_play_trainer(state, trainer_card),
+        CardId::C1126BluesProvocation => can_play_blues_provocation(state, trainer_card),
+        CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
         CardId::A1219Erika => can_play_erika(state, trainer_card),
@@ -1093,6 +1099,47 @@ fn can_play_professor_turo(state: &State, trainer_card: &TrainerCard) -> Option<
         .enumerate_in_play_pokemon(state.current_player)
         .any(|(_, pokemon)| is_future_pokemon(&pokemon.get_name()));
     if has_future {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+fn can_play_blues_provocation(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let eligible = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, p)| {
+            ["Venusaur", "Charizard", "Blastoise", "Pidgeot"].contains(&p.get_name().as_str())
+        });
+    if eligible {
+        can_play_sabrina(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+fn can_play_rika(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    if state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, p)| ["Whiscash", "Paldean Clodsire"].contains(&p.get_name().as_str()))
+    {
+        can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+fn can_play_rising_star(state: &State, trainer_card: &TrainerCard) -> Option<Vec<SimpleAction>> {
+    let types: std::collections::BTreeSet<_> = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .flat_map(|(_, p)| p.get_energy_types())
+        .collect();
+    if types.len() >= 3
+        && state
+            .enumerate_bench_pokemon(state.current_player)
+            .next()
+            .is_some()
+    {
         can_play_trainer(state, trainer_card)
     } else {
         cannot_play_trainer()
