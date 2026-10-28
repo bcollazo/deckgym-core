@@ -1191,6 +1191,7 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 60 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { energy_type: None, extra_damage: 60, status: None });
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 40 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { energy_type: None, extra_damage: 40, status: None });
     map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 50 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { energy_type: None, extra_damage: 50, status: None });
+    map.insert("If any of your Pokémon were Knocked Out by damage from an attack during your opponent's last turn, this attack does 70 more damage.", Mechanic::ExtraDamageIfKnockedOutLastTurn { energy_type: None, extra_damage: 70, status: None });
     map.insert("If the Defending Pokémon is a Basic Pokémon, it can't attack during your opponent's next turn.", Mechanic::BlockBasicAttack);
     // Octillery - Octazooka. The effect lasts until the Defending Pokemon leaves the Active
     // Spot, which `u8::MAX` models: effects are cleared whenever a Pokemon leaves the Active

@@ -78,3 +78,29 @@ fn test_volcanion_dynamite_steam_damage_scales_with_heads() {
     }
     assert_eq!(seen, [0, 110, 220].into_iter().collect());
 }
+/// Ceruledge - Rally Back: +70 damage if one of our Pokémon was Knocked Out by an attack last turn.
+#[test]
+fn test_ceruledge_rally_back_adds_damage_after_a_knockout_last_turn() {
+    for (knocked_out, expected_damage) in [(true, 140), (false, 70)] {
+        let mut game = get_test_game_with_board(
+            vec![
+                PlayedCard::from_id(CardId::C1028Ceruledge).with_energy(vec![
+                    EnergyType::Fire,
+                    EnergyType::Fire,
+                    EnergyType::Colorless,
+                ]),
+            ],
+            vec![PlayedCard::from_id(CardId::B4197WailordEx)],
+        );
+        let mut state = game.get_state_clone();
+        state.set_knocked_out_by_opponent_attack_last_turn(knocked_out);
+        game.set_state(state);
+        attack(&mut game, CardId::C1028Ceruledge);
+
+        let state = game.get_state_clone();
+        assert_eq!(
+            250 - state.get_active(1).get_remaining_hp(),
+            expected_damage
+        );
+    }
+}
