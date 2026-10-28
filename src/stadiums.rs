@@ -56,6 +56,8 @@ static RAINBOW_CAVE_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4155RainbowCave));
 static ARCADE_EFFECT: LazyLock<String> =
     LazyLock::new(|| stadium_effect_text_from_card_id(CardId::B4a072Arcade));
+static ABANDONED_STATION_EFFECT: LazyLock<String> =
+    LazyLock::new(|| stadium_effect_text_from_card_id(CardId::C1131AbandonedStation));
 
 pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
     ensure_stadium_trainer(trainer_card);
@@ -75,6 +77,7 @@ pub fn is_stadium_effect_implemented(trainer_card: &TrainerCard) -> bool {
             || e == SOOTHING_SHORE_EFFECT.as_str()
             || e == RAINBOW_CAVE_EFFECT.as_str()
             || e == ARCADE_EFFECT.as_str()
+            || e == ABANDONED_STATION_EFFECT.as_str()
     )
 }
 
@@ -239,4 +242,16 @@ pub fn is_arcade_active(state: &State) -> bool {
 /// and the player has room in hand to benefit from drawing up to 7 cards).
 pub fn can_use_arcade(state: &State, player: usize) -> bool {
     is_arcade_active(state) && !state.has_used_stadium[player] && state.hands[player].len() < 7
+}
+
+pub fn is_abandoned_station_active(state: &State) -> bool {
+    has_stadium(state, CardId::C1131AbandonedStation)
+}
+
+/// Returns true if the player can use Abandoned Station's effect (stadium is active, not used
+/// this turn, and the deck has a card to draw).
+pub fn can_use_abandoned_station(state: &State, player: usize) -> bool {
+    is_abandoned_station_active(state)
+        && !state.has_used_stadium[player]
+        && !state.decks[player].cards.is_empty()
 }
