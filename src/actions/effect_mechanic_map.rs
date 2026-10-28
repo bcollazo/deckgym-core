@@ -3606,5 +3606,13 @@ pub static EFFECT_MECHANIC_MAP: LazyLock<HashMap<&'static str, Mechanic>> = Lazy
         "If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",
         Mechanic::ExtraDamageIfDefenderIsEvolution { extra_damage: 80 },
     );
+    // Whiscash - Power Press
+    map.insert(
+        "If this Pokémon has at least 3 extra [F] Energy attached, this attack does 60 more damage.",
+        Mechanic::ExtraDamageIfExtraEnergy {
+            required_extra_energy: vec![EnergyType::Fighting; 3],
+            extra_damage: 60,
+        },
+    );
     map
 });

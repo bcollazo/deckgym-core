@@ -39,3 +39,4 @@ mod alakazam;
 mod espeon;
 mod umbreon;
 mod pidgeot;
+mod whiscash;
