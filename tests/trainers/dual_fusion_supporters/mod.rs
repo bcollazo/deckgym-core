@@ -43,3 +43,26 @@ mod rika;
 mod mart;
 
 mod rising;
+
+#[test]
+fn every_supporter_printing_is_implemented_including_all_twelve_new_printings() {
+    use deckgym::card_validation::{get_implementation_status, ImplementationStatus};
+    use deckgym::models::TrainerType;
+    use strum::IntoEnumIterator;
+    let mut new_printings = 0;
+    for id in CardId::iter() {
+        if let Card::Trainer(t) = get_card_by_enum(id) {
+            if t.trainer_card_type == TrainerType::Supporter {
+                assert_eq!(
+                    get_implementation_status(id),
+                    ImplementationStatus::Complete,
+                    "{id:?}"
+                );
+                if t.id.starts_with("C1 ") {
+                    new_printings += 1;
+                }
+            }
+        }
+    }
+    assert_eq!(new_printings, 12);
+}
