@@ -33,3 +33,5 @@ fn play(game: &mut Game<'static>, id: CardId) {
 }
 
 mod lorelei;
+
+mod blue;

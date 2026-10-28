@@ -87,6 +87,7 @@ pub fn trainer_move_generation_implementation(
     // Dispatch on the first printing of this effect text, so every reprint shares one arm.
     let trainer_id = canonical_trainer_id(trainer_card)?;
     match trainer_id {
+        CardId::C1126BluesProvocation => can_play_blues_provocation(state, trainer_card),
         CardId::C1125Lorelei => can_play_trainer(state, trainer_card),
         // Complex cases: need to check specific conditions
         CardId::PA001Potion => can_play_potion(state, trainer_card),
@@ -1095,6 +1096,21 @@ fn can_play_professor_turo(state: &State, trainer_card: &TrainerCard) -> Option<
         .any(|(_, pokemon)| is_future_pokemon(&pokemon.get_name()));
     if has_future {
         can_play_trainer(state, trainer_card)
+    } else {
+        cannot_play_trainer()
+    }
+}
+fn can_play_blues_provocation(
+    state: &State,
+    trainer_card: &TrainerCard,
+) -> Option<Vec<SimpleAction>> {
+    let eligible = state
+        .enumerate_in_play_pokemon(state.current_player)
+        .any(|(_, p)| {
+            ["Venusaur", "Charizard", "Blastoise", "Pidgeot"].contains(&p.get_name().as_str())
+        });
+    if eligible {
+        can_play_sabrina(state, trainer_card)
     } else {
         cannot_play_trainer()
     }

@@ -58,6 +58,7 @@ pub fn forecast_trainer_action(
     let trainer_id =
         canonical_trainer_id(trainer_card).expect("Trainer effect should be in the database");
     match trainer_id {
+        CardId::C1126BluesProvocation => Outcomes::single_fn(lana_effect),
         CardId::C1125Lorelei => Outcomes::single_fn(lorelei_effect),
         CardId::PA001Potion => Outcomes::single_fn(potion_effect),
         CardId::PA002XSpeed => Outcomes::single_fn(x_speed_effect),
