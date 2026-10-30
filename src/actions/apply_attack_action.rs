@@ -4598,9 +4598,18 @@ fn discard_random_global_energy_attack(
             for player_idx in 0..2 {
                 for (in_play_idx, pokemon) in state.enumerate_in_play_pokemon(player_idx) {
                     let energy_count = pokemon.attached_energy.len();
-                    if energy_count > 0 {
-                        pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
+                    if energy_count == 0 {
+                        continue;
                     }
+                    // Discarding is an effect done to the Pokémon, so Clear Veil / Crystal Body
+                    // on the opponent's Pokémon keep its Energy out of the random pick.
+                    if state.is_shielded_from_opponent_attack_effects(player_idx, in_play_idx) {
+                        trace!(
+                            "Clear Veil / Crystal Body: Excluding Pokémon from the random discard"
+                        );
+                        continue;
+                    }
+                    pokemon_with_energy.push((player_idx, in_play_idx, energy_count));
                 }
             }
 

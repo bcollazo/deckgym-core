@@ -438,6 +438,99 @@ fn test_clear_veil_prevents_coin_flip_energy_discard_from_an_opponents_attack() 
     );
 }
 
+/// Clear Veil and Crystal Body also keep an opponent's attack from discarding Energy from the holder
+/// when the Energy is picked at random from the whole board (Swampert's Large Whirlpool: "Discard a
+/// random Energy from among the Energy attached to all Pokémon (both yours and your opponent's)").
+/// Over many seeds the shielded Pokémon keep all their Energy, while the unshielded ones still lose
+/// Energy on some of them.
+#[test]
+fn test_clear_veil_and_crystal_body_prevent_global_random_energy_discard() {
+    let mut discarded_from_unshielded = 0;
+    for seed in 0..40 {
+        let mut game = get_initialized_game_with_board(
+            seed,
+            1,
+            3,
+            vec![
+                PlayedCard::from_id(CardId::A1202Chansey)
+                    .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless]),
+                PlayedCard::from_id(CardId::A1202Chansey)
+                    .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
+                    .with_tool(get_card_by_enum(CardId::B4149ClearVeil)),
+                PlayedCard::from_id(CardId::A2034Regice)
+                    .with_energy(vec![EnergyType::Water, EnergyType::Water]),
+            ],
+            vec![PlayedCard::from_id(CardId::B2035Swampert).with_energy(vec![EnergyType::Water; 3])],
+        );
+        attack(&mut game, 1, CardId::B2035Swampert, 0);
+        game.play_until_stable();
+
+        let state = game.get_state_clone();
+        assert_eq!(
+            state.in_play_pokemon[0][1]
+                .as_ref()
+                .unwrap()
+                .attached_energy
+                .len(),
+            2,
+            "Clear Veil should keep its Energy from the opponent's attack (seed {seed})"
+        );
+        assert_eq!(
+            state.in_play_pokemon[0][2]
+                .as_ref()
+                .unwrap()
+                .attached_energy
+                .len(),
+            2,
+            "Crystal Body should keep its Energy from the opponent's attack (seed {seed})"
+        );
+        if state.get_active(0).attached_energy.len() < 2
+            || state.get_active(1).attached_energy.len() < 3
+        {
+            discarded_from_unshielded += 1;
+        }
+    }
+    assert!(
+        discarded_from_unshielded > 0,
+        "The random discard should still hit the unshielded Pokémon on some seeds"
+    );
+}
+
+/// Clear Veil shields the holder only from the opponent's attacks. Swampert's Large Whirlpool picks
+/// a random Energy from the whole board, but the opponent's shielded Pokémon are left out of that
+/// pick: the discard always lands on the attacker's own Energy, even when the attacker holds a
+/// Clear Veil itself.
+#[test]
+fn test_global_random_energy_discard_skips_shielded_opponent_pokemon() {
+    for seed in 0..40 {
+        let mut game = get_initialized_game_with_board(
+            seed,
+            1,
+            3,
+            vec![PlayedCard::from_id(CardId::A1202Chansey)
+                .with_energy(vec![EnergyType::Colorless, EnergyType::Colorless])
+                .with_tool(get_card_by_enum(CardId::B4149ClearVeil))],
+            vec![PlayedCard::from_id(CardId::B2035Swampert)
+                .with_energy(vec![EnergyType::Water; 3])
+                .with_tool(get_card_by_enum(CardId::B4149ClearVeil))],
+        );
+        attack(&mut game, 1, CardId::B2035Swampert, 0);
+        game.play_until_stable();
+
+        let state = game.get_state_clone();
+        assert_eq!(
+            state.get_active(0).attached_energy.len(),
+            2,
+            "The shielded opponent should keep its Energy (seed {seed})"
+        );
+        assert_eq!(
+            state.get_active(1).attached_energy.len(),
+            2,
+            "The attacker should lose its own Energy (seed {seed})"
+        );
+    }
+}
+
 /// Clear Veil is a Tool like any other: it can be attached and shows up as an attachment choice.
 #[test]
 fn test_clear_veil_is_an_attachable_tool() {
