@@ -1029,16 +1029,22 @@ pub(crate) fn handle_knockouts(
     // Losing an HP aura can knock out a Benched Pokemon after an earlier
     // knockout already queued promotion choices. Never offer a now-empty slot:
     // activating it would leave the Active Spot empty after the stack resolves.
+    // The same goes for an offered Ability: a Basic kept alive only by Starting Plains
+    // loses the bonus when it evolves, so the evolution can be knocked out with its
+    // on-evolve offer still on the stack. The offer's Noop stays: on a Victory Star
+    // offer, it is what resolves the pending attack.
     let occupied = state
         .in_play_pokemon
         .each_ref()
         .map(|board| board.each_ref().map(Option::is_some));
-    for (_, choices) in &mut state.move_generation_stack {
+    for (actor, choices) in &mut state.move_generation_stack {
+        let actor = *actor;
         choices.retain(|choice| match choice {
             SimpleAction::Activate {
                 player,
                 in_play_idx,
             } => occupied[*player][*in_play_idx],
+            SimpleAction::UseAbility { in_play_idx } => occupied[actor][*in_play_idx],
             _ => true,
         });
     }
