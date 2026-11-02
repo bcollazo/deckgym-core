@@ -591,7 +591,8 @@ impl State {
     /// What counts as an "effect": the Special Conditions and the `CardEffect`s an attack imposes
     /// on the targeted Pokémon — the two channels every attack uses to place something *on* a
     /// Pokémon, i.e. `apply_status_condition` and `add_effect_to_in_play` — plus discarding
-    /// Energy from it (`discard_from_opponent_active` in `apply_attack_action`). Damage, and the
+    /// Energy from it (`discard_from_opponent_active`, and the random pick of
+    /// `discard_random_global_energy_attack`, both in `apply_attack_action`). Damage, and the
     /// Knock Out that may follow from it, are explicitly *not* effects, so a shielded Pokémon
     /// still takes full damage and can still be Knocked Out.
     ///
