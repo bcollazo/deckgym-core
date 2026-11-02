@@ -269,6 +269,16 @@ fn forecast_action_unwatched(state: &State, action: &Action) -> Outcomes {
             }
         }
         SimpleAction::UseAbility { in_play_idx } => forecast_ability(state, action, *in_play_idx),
+        SimpleAction::FlipUntilTailsThenAttach {
+            in_play_idx,
+            energy_type,
+            max_heads,
+        } => forecast_flip_until_tails_then_attach(*in_play_idx, *energy_type, *max_heads),
+        SimpleAction::FlipUntilTailsThenHeal {
+            in_play_idx,
+            amount_per_heads,
+            max_heads,
+        } => forecast_flip_until_tails_then_heal(*in_play_idx, *amount_per_heads, *max_heads),
         SimpleAction::ApplyDamage {
             attacking_ref,
             targets,
@@ -378,6 +388,49 @@ fn forecast_decline_coin_reflip() -> Outcomes {
         if let Some(pending) = state.take_pending_coin_reflip() {
             resolve_pending_coin_reflip(rng, state, pending, false);
         }
+    })
+}
+
+/// Misty: the target is already chosen; flip until tails and attach one Energy from the Energy
+/// Zone per heads. These are effect attachments (`is_turn_energy: false`).
+fn forecast_flip_until_tails_then_attach(
+    in_play_idx: usize,
+    energy_type: EnergyType,
+    max_heads: usize,
+) -> Outcomes {
+    Outcomes::geometric_until_tails(max_heads, move |heads| {
+        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
+            if heads > 0 {
+                apply_attach_energy(
+                    state,
+                    action.actor,
+                    &[(heads as u32, energy_type, in_play_idx)],
+                    false,
+                );
+            }
+        })
+    })
+}
+
+/// Sweet Honey: the target is already chosen; flip until tails and heal `amount_per_heads` per
+/// heads.
+fn forecast_flip_until_tails_then_heal(
+    in_play_idx: usize,
+    amount_per_heads: u32,
+    max_heads: usize,
+) -> Outcomes {
+    Outcomes::geometric_until_tails(max_heads, move |heads| {
+        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
+            if heads > 0 {
+                apply_healing(
+                    action.actor,
+                    state,
+                    in_play_idx,
+                    amount_per_heads * heads as u32,
+                    false,
+                );
+            }
+        })
     })
 }
 

@@ -83,38 +83,50 @@ fn test_darkrai_ex_nightmare_aura_only_darkness() {
     );
 }
 
-#[test]
-fn test_darkrai_ex_nightmare_aura_only_turn_energy() {
-    // Test that the ability only triggers for energy from Energy Zone (is_turn_energy = true)
-
+/// Darkrai ex on the Active Spot against a 70-HP Bulbasaur; `energy` attached to it by an effect
+/// (`is_turn_energy: false`, e.g. Misty or an Ability) rather than as the turn's attachment.
+fn effect_attach(energy: EnergyType) -> deckgym::State {
     let mut game = get_initialized_game(0);
     let mut state = game.get_state_clone();
-
     state.set_board(
         vec![PlayedCard::from_id(CardId::A2110DarkraiEx)],
         vec![PlayedCard::from_id(CardId::A1001Bulbasaur)],
     );
     state.current_player = 0;
     game.set_state(state);
-
-    // Attach Darkness energy NOT from Energy Zone (is_turn_energy = false, e.g., from an ability)
-    let attach_action = Action {
+    game.apply_action(&Action {
         actor: 0,
         action: SimpleAction::Attach {
-            attachments: vec![(1, EnergyType::Darkness, 0)],
+            attachments: vec![(1, energy, 0)],
             is_turn_energy: false,
         },
         is_stack: false,
-    };
+    });
+    game.get_state_clone()
+}
 
-    game.apply_action(&attach_action);
-    let state = game.get_state_clone();
+#[test]
+fn test_darkrai_ex_nightmare_aura_triggers_on_effect_attachment_from_zone() {
+    // Nightmare Aura reads "attach a [D] Energy from your Energy Zone", like Charizard's Flame
+    // Aura: an effect that attaches from the Energy Zone triggers it, not only the turn's
+    // attachment.
+    let state = effect_attach(EnergyType::Darkness);
+    assert_eq!(state.get_active(0).attached_energy.len(), 1);
+    assert_eq!(
+        state.get_active(1).get_remaining_hp(),
+        50,
+        "Opponent's active should have taken 20 damage (70 - 20 = 50)"
+    );
+}
 
-    // Check that opponent's active did NOT take damage
+#[test]
+fn test_darkrai_ex_nightmare_aura_ignores_non_darkness_effect_attachment() {
+    let state = effect_attach(EnergyType::Water);
+    assert_eq!(state.get_active(0).attached_energy.len(), 1);
     assert_eq!(
         state.get_active(1).get_remaining_hp(),
         70,
-        "Opponent's active should not have taken damage when energy is not from Energy Zone"
+        "Opponent's active should not have taken damage from a non-Darkness Energy"
     );
 }
 

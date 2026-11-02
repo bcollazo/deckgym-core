@@ -22,6 +22,7 @@ mod lana_test;
 mod mallow_test;
 mod marlon_test;
 mod may_trainer_test;
+mod misty_test;
 mod mythical_slab_test;
 mod order_pad_test;
 mod penny_test;

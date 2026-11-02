@@ -78,8 +78,8 @@ pub fn forecast_trainer_action(
         CardId::PA006RedCard => Outcomes::single_fn(red_card_effect),
         CardId::A4b373ProfessorsResearch => Outcomes::single_fn(professor_oak_effect),
         CardId::A1219Erika => Outcomes::single_fn(erika_effect),
-        CardId::A1220Misty => misty_outcomes(),
-        CardId::C1119SweetHoney => sweet_honey_outcomes(),
+        CardId::A1220Misty => Outcomes::single_fn(misty_effect),
+        CardId::C1119SweetHoney => Outcomes::single_fn(sweet_honey_effect),
         CardId::A1221Blaine => Outcomes::single_fn(blaine_effect),
         CardId::A2152Cynthia => Outcomes::single_fn(cynthia_effect),
         CardId::A1224Brock => Outcomes::single_fn(brock_effect),
@@ -1070,49 +1070,43 @@ fn inner_healing_effect(
     }
 }
 
-/// Sweet Honey: flip a coin until tails; the chosen Pokémon heals 20 damage for each heads.
-/// With no heads there is nothing to choose, so no decision is queued.
-fn sweet_honey_outcomes() -> Outcomes {
-    Outcomes::geometric_until_tails(8, move |heads| {
-        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
-            if heads == 0 {
-                return;
-            }
-            let possible_moves = state
-                .enumerate_in_play_pokemon(action.actor)
-                .map(|(i, _)| SimpleAction::Heal {
-                    in_play_idx: i,
-                    amount: 20 * heads as u32,
-                    cure_status: false,
-                })
-                .collect::<Vec<_>>();
-            state
-                .move_generation_stack
-                .push((action.actor, possible_moves));
+/// Sweet Honey: choose 1 of your damaged Pokémon first (the Pokémon Potion could heal); the coins
+/// are flipped only after the choice (`SimpleAction::FlipUntilTailsThenHeal`, 20 per heads, at
+/// most 8 heads).
+fn sweet_honey_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| x.is_damaged())
+        .map(|(i, _)| SimpleAction::FlipUntilTailsThenHeal {
+            in_play_idx: i,
+            amount_per_heads: 20,
+            max_heads: 8,
         })
-    })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
-// Will return 6 outputs, one that attaches no energy, one that
-//  queues decision of attaching 1 energy to in_play waters.
-fn misty_outcomes() -> Outcomes {
-    Outcomes::geometric_until_tails(5, move |heads| {
-        Box::new(move |_: &mut StdRng, state: &mut State, action: &Action| {
-            let possible_moves = state
-                .enumerate_in_play_pokemon(action.actor)
-                .filter(|(_, x)| x.is_type(EnergyType::Water))
-                .map(|(i, _)| SimpleAction::Attach {
-                    attachments: vec![(heads as u32, EnergyType::Water, i)],
-                    is_turn_energy: false,
-                })
-                .collect::<Vec<_>>();
-            if !possible_moves.is_empty() {
-                state
-                    .move_generation_stack
-                    .push((action.actor, possible_moves));
-            }
+/// Misty: choose 1 of your [W] Pokémon first; the coins are flipped only after the choice
+/// (`SimpleAction::FlipUntilTailsThenAttach`, at most 5 heads).
+fn misty_effect(_: &mut StdRng, state: &mut State, action: &Action) {
+    let possible_moves = state
+        .enumerate_in_play_pokemon(action.actor)
+        .filter(|(_, x)| x.is_type(EnergyType::Water))
+        .map(|(i, _)| SimpleAction::FlipUntilTailsThenAttach {
+            in_play_idx: i,
+            energy_type: EnergyType::Water,
+            max_heads: 5,
         })
-    })
+        .collect::<Vec<_>>();
+    if !possible_moves.is_empty() {
+        state
+            .move_generation_stack
+            .push((action.actor, possible_moves));
+    }
 }
 
 // Remember to implement these in the main controller / hooks.

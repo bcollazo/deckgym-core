@@ -70,6 +70,9 @@ pub enum AbilityMechanic {
     DamageOpponentActiveOnZoneAttachToSelf {
         energy_type: EnergyType,
         amount: u32,
+        /// `true`: only the turn's Energy attachment triggers it; `false`: any attachment from
+        /// the Energy Zone does, including by an effect (Darkrai ex's Nightmare Aura and
+        /// Charizard's Flame Aura, whose text reads "from your Energy Zone").
         only_turn_energy: bool,
     },
     /// Porygon2's Buggy Evolution: "Whenever you attach an Energy from your Energy Zone to this

@@ -71,6 +71,20 @@ pub enum SimpleAction {
         heal_amount: u32,
         discard_energies: Vec<EnergyType>,
     },
+    /// The Pokémon is chosen first; then flip a coin until tails and, for each heads (at most
+    /// `max_heads`), attach an `energy_type` Energy from the Energy Zone to it (Misty).
+    FlipUntilTailsThenAttach {
+        in_play_idx: usize,
+        energy_type: EnergyType,
+        max_heads: usize,
+    },
+    /// The Pokémon is chosen first; then flip a coin until tails and, for each heads (at most
+    /// `max_heads`), heal `amount_per_heads` damage from it (Sweet Honey).
+    FlipUntilTailsThenHeal {
+        in_play_idx: usize,
+        amount_per_heads: u32,
+        max_heads: usize,
+    },
     MoveAllDamage {
         from: usize,
         to: usize,
@@ -359,6 +373,22 @@ impl fmt::Display for SimpleAction {
                 amount,
                 cure_status,
             } => write!(f, "Heal({in_play_idx}, {amount}, cure:{cure_status})"),
+            SimpleAction::FlipUntilTailsThenAttach {
+                in_play_idx,
+                energy_type,
+                max_heads,
+            } => write!(
+                f,
+                "FlipUntilTailsThenAttach({in_play_idx}, {energy_type:?}, max:{max_heads})"
+            ),
+            SimpleAction::FlipUntilTailsThenHeal {
+                in_play_idx,
+                amount_per_heads,
+                max_heads,
+            } => write!(
+                f,
+                "FlipUntilTailsThenHeal({in_play_idx}, {amount_per_heads}, max:{max_heads})"
+            ),
             SimpleAction::HealAndDiscardEnergy {
                 in_play_idx,
                 heal_amount,

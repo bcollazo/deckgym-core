@@ -616,7 +616,7 @@ pub static EFFECT_ABILITY_MECHANIC_MAP: LazyLock<HashMap<&'static str, AbilityMe
             AbilityMechanic::DamageOpponentActiveOnZoneAttachToSelf {
                 energy_type: EnergyType::Darkness,
                 amount: 20,
-                only_turn_energy: true,
+                only_turn_energy: false,
             },
         );
         map.insert(
