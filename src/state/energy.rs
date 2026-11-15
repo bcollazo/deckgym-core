@@ -153,8 +153,13 @@ impl State {
                 } else {
                     from_zone
                 };
-                if energy_type == trigger_type && triggered {
-                    let opponent = (actor + 1) % 2;
+                let opponent = (actor + 1) % 2;
+                // The opponent's Active Spot can be empty here: an attack that Knocks Out the
+                // Active and then attaches Zone Energy (Flareon's Assisting Heater) resolves the
+                // attachment before the opponent promotes. With no Active Pokémon there is
+                // nothing to damage.
+                let opponent_has_active = self.in_play_pokemon[opponent][0].is_some();
+                if energy_type == trigger_type && triggered && opponent_has_active {
                     handle_damage_only(
                         self,
                         (actor, in_play_idx),
