@@ -121,8 +121,8 @@ impl GameplayStatsCollector {
 
     /// Track when players run out of deck cards
     fn track_deck_empty(&mut self, state: &State) {
-        for player in 0..2 {
-            let deck_size = state.decks[player].cards.len();
+        for (player, deck) in state.decks.iter().enumerate() {
+            let deck_size = deck.cards.len();
 
             // If deck is empty and we haven't recorded it yet for this game
             if deck_size == 0

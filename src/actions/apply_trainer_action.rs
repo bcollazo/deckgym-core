@@ -376,10 +376,7 @@ fn move_all_bench_energy_to_active(
     only_type: Option<EnergyType>,
 ) {
     let mut moved: Vec<EnergyType> = Vec::new();
-    for in_play_idx in 1..4 {
-        let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].as_mut() else {
-            continue;
-        };
+    for pokemon in state.in_play_pokemon[player][1..4].iter_mut().flatten() {
         match only_type {
             Some(energy_type) => {
                 let (matching, rest): (Vec<_>, Vec<_>) = pokemon
