@@ -408,12 +408,8 @@ impl State {
 
     pub(crate) fn end_turn_maintenance(&mut self) {
         // Maintain PlayedCard state for _all_ players
-        for i in 0..2 {
-            self.in_play_pokemon[i].iter_mut().for_each(|x| {
-                if let Some(played_card) = x {
-                    played_card.end_turn_maintenance();
-                }
-            });
+        for played_card in self.in_play_pokemon.iter_mut().flatten().flatten() {
+            played_card.end_turn_maintenance();
         }
 
         self.has_played_support = false;

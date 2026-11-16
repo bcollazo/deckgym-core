@@ -406,8 +406,8 @@ fn apply_snowy_terrain_checkup_damage(state: &mut State) {
     let mut active_only_damage: Vec<(usize, u32)> = vec![];
     let mut all_opponent_damage: Vec<(usize, u32)> = vec![];
 
-    for player in 0..2 {
-        let Some(active) = state.in_play_pokemon[player][0].as_ref() else {
+    for (player, slots) in state.in_play_pokemon.iter().enumerate() {
+        let Some(active) = slots[0].as_ref() else {
             continue;
         };
         if active.is_knocked_out() {

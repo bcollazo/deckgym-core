@@ -561,8 +561,8 @@ fn apply_berry_tools(player: usize, state: &mut State) {
     // The berry discards *itself*, so the slot is recorded by card id: a Pokémon with two Tool
     // slots (Revavroom) must keep its other Tool.
     let mut to_discard: Vec<(usize, usize, CardId)> = Vec::new();
-    for in_play_idx in 0..4 {
-        let Some(pokemon) = state.in_play_pokemon[player][in_play_idx].as_mut() else {
+    for (in_play_idx, slot) in state.in_play_pokemon[player].iter_mut().enumerate() {
+        let Some(pokemon) = slot.as_mut() else {
             continue;
         };
         // Lum Berry: "...if the Pokémon this card is attached to is affected by any Special
